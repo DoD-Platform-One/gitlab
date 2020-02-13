@@ -9,4 +9,4 @@ bases:
 
 resources:
   - namespace.yaml
-  - networking/aes-mapping.yaml
+  - networking/virtual-services.yaml
