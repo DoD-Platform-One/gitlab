@@ -1,4 +1,5 @@
-namespace: redis
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-4"
 
 resources:
   - generate/generated.yaml

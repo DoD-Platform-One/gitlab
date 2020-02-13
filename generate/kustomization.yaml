@@ -1,0 +1,5 @@
+# commonAnnotations:
+#   argocd.argoproj.io/sync-wave: "0"
+
+resources:
+  - generated.yaml

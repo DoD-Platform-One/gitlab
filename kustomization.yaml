@@ -5,8 +5,8 @@ bases:
   # - minio
   - redis
   # - secrets
+  - generate
 
 resources:
   - namespace.yaml
-  - generate/generated.yaml
   - networking/virtual-services.yaml

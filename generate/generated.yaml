@@ -3089,8 +3089,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: gitlab-unicorn
-  minReplicas: 2
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 1
   metrics:
   - type: Resource
     resource:
@@ -3474,6 +3474,138 @@ spec:
           requests:
             cpu: 50m
 ---
+# Source: gitlab/charts/shared-secrets/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-shared-secrets.1-qg6
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        app: shared-secrets
+        release: gitlab
+    spec:
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+      serviceAccountName: gitlab-shared-secrets
+      restartPolicy: Never      
+      containers:
+        - name: shared-secrets
+          image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
+          command: ['/bin/bash', '/scripts/generate-secrets']
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: ssh
+              mountPath: /etc/ssh
+          resources:
+            requests:
+              cpu: 50m
+      volumes:
+      - name: scripts
+        configMap:
+          name: gitlab-shared-secrets
+      - name: ssh
+        emptyDir: {}
+---
+# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-shared-secrets.1-oa2-selfsign
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        app: shared-secrets
+        release: gitlab
+    spec:
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+      serviceAccountName: gitlab-shared-secrets
+      restartPolicy: Never      
+      initContainers:
+      - name: cfssl-self-sign
+        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
+        env:
+        - name: CA_SUBJECT
+          value: "GitLab Helm Chart" # defaults to GitLab in container
+        - name: CA_ORG
+          value: "gitlab" # defaults to GitLab in container
+        - name: CA_ORG_UNIT
+          value: "gitlab" # defaults to Cloud Native in container
+        - name: CERT_SUBJECT
+          value: "gitlab.kube.dev" # defaults to GitLab in container
+        - name: CERT_DOMAIN
+          value: "gitlab.kube.dev" # defaults to example.com in container
+        - name: EXPIRY
+          value: "365d" # defaults to 8076h in container
+        - name: ALGORITHM
+          value: "rsa" # defaults to ecdsa in container
+        - name: KEY_SIZE
+          value: "4096" # defaults to 256 inside container
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
+      containers:
+      - name: kubectl
+        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          certname=gitlab-wildcard-tls
+          # create wildcard certificate secret
+          kubectl create secret tls $certname \
+            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
+          kubectl --namespace=$namespace label \
+            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+          # create CA certificate secret
+          kubectl create secret generic ${certname}-ca \
+            --from-file=cfssl_ca=/output/ca.pem || true
+          kubectl --namespace=$namespace label \
+            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
+      volumes:
+      - name: certs-path
+        emptyDir: {}
+---
 # Source: gitlab/charts/shared-secrets/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -3613,6 +3745,30 @@ data:
     generate_secret_if_needed "gitlab-registry-httpsecret" --from-literal="secret"=$(gen_random 'a-z0-9' 128 | base64 -w 0)
 ---
 # Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: gitlab-shared-secrets
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-shared-secrets
+    namespace: gitlab
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -3648,159 +3804,3 @@ rules:
 - apiGroups: [""]
   resources: ["secrets"]
   verbs: ["get", "list", "create", "patch"]
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: gitlab-shared-secrets
-subjects:
-  - kind: ServiceAccount
-    name: gitlab-shared-secrets
-    namespace: gitlab
----
-# Source: gitlab/charts/shared-secrets/templates/job.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: gitlab-shared-secrets.1-by4
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-spec:
-  template:
-    metadata:
-      labels:
-        app: shared-secrets
-        release: gitlab
-    spec:
-      securityContext:
-        runAsUser: 65534
-        fsGroup: 65534
-      serviceAccountName: gitlab-shared-secrets
-      restartPolicy: Never      
-      containers:
-        - name: shared-secrets
-          image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
-          command: ['/bin/bash', '/scripts/generate-secrets']
-          imagePullPolicy: "Always"
-          volumeMounts:
-            - name: scripts
-              mountPath: /scripts
-            - name: ssh
-              mountPath: /etc/ssh
-          resources:
-            requests:
-              cpu: 50m
-      volumes:
-      - name: scripts
-        configMap:
-          name: gitlab-shared-secrets
-      - name: ssh
-        emptyDir: {}
----
-# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: gitlab-shared-secrets.1-w7p-selfsign
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-spec:
-  template:
-    metadata:
-      labels:
-        app: shared-secrets
-        release: gitlab
-    spec:
-      securityContext:
-        runAsUser: 65534
-        fsGroup: 65534
-      serviceAccountName: gitlab-shared-secrets
-      restartPolicy: Never      
-      initContainers:
-      - name: cfssl-self-sign
-        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
-        env:
-        - name: CA_SUBJECT
-          value: "GitLab Helm Chart" # defaults to GitLab in container
-        - name: CA_ORG
-          value: "gitlab" # defaults to GitLab in container
-        - name: CA_ORG_UNIT
-          value: "gitlab" # defaults to Cloud Native in container
-        - name: CERT_SUBJECT
-          value: "gitlab.kube.dev" # defaults to GitLab in container
-        - name: CERT_DOMAIN
-          value: "gitlab.kube.dev" # defaults to example.com in container
-        - name: EXPIRY
-          value: "365d" # defaults to 8076h in container
-        - name: ALGORITHM
-          value: "rsa" # defaults to ecdsa in container
-        - name: KEY_SIZE
-          value: "4096" # defaults to 256 inside container
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
-      containers:
-      - name: kubectl
-        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          certname=gitlab-wildcard-tls
-          # create wildcard certificate secret
-          kubectl create secret tls $certname \
-            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
-          kubectl --namespace=$namespace label \
-            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-          # create CA certificate secret
-          kubectl create secret generic ${certname}-ca \
-            --from-file=cfssl_ca=/output/ca.pem || true
-          kubectl --namespace=$namespace label \
-            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
-      volumes:
-      - name: certs-path
-        emptyDir: {}

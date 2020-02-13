@@ -1,3 +1,6 @@
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-4"
+
 resources:
   - gitlab-cluster.yaml
   - destinationrule.yaml
