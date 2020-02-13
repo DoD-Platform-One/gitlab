@@ -1,0 +1,6 @@
+# NOTE: helm template redis stable/redis -f values -n redis > generated.yaml
+cluster:
+  enabled: true
+
+sentinel:
+  enabled: true

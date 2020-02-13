@@ -1,0 +1,4 @@
+namespace: redis
+
+resources:
+  - generate/generated.yaml

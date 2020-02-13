@@ -3,6 +3,7 @@ namespace: gitlab
 bases:
   - psql
   - minio
+  - redis
   - secrets
 
 resources:
