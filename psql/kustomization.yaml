@@ -1,0 +1,3 @@
+resources:
+  - gitlab-cluster.yaml
+  - destinationrule.yaml

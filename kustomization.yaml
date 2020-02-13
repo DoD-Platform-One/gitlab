@@ -1,0 +1,11 @@
+namespace: gitlab
+
+bases:
+  - psql
+  - minio
+  - secrets
+
+resources:
+  - namespace.yaml
+  - generate/generated.yaml
+  - networking/virtual-services.yaml
