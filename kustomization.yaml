@@ -2,9 +2,9 @@ namespace: gitlab
 
 bases:
   - psql
-  - minio
+  # - minio
   - redis
-  - secrets
+  # - secrets
 
 resources:
   - namespace.yaml

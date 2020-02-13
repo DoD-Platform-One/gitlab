@@ -75,6 +75,26 @@ spec:
       app: unicorn
       release: gitlab
 ---
+# Source: gitlab/charts/minio/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: gitlab-minio-v1
+  namespace: gitlab
+  labels:
+    app: minio
+    chart: minio-0.4.3
+    release: gitlab
+    heritage: Helm
+    
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: minio
+      release: gitlab
+      component: app
+---
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/configmap.yml
 apiVersion: v1
 kind: ConfigMap
@@ -153,7 +173,7 @@ data:
 
     # Redis settings used for pushing commit notices to gitlab
     redis:
-      host: redis.redis.svc.cluster.local
+      host: redis
       port: 6379
       pass: "<%= File.read("/etc/gitlab-secrets/redis/redis_password").strip.dump[1..-2] %>"
       database: nil
@@ -208,7 +228,7 @@ data:
           - probe_retries
           - probe_stats
         opts:
-          redis_url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis.redis.svc.cluster.local:6379
+          redis_url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis:6379
           redis_enable_client: false
 
       metrics:
@@ -449,7 +469,7 @@ data:
 
     # Redis settings used for pushing commit notices to gitlab
     redis:
-      host: redis.redis.svc.cluster.local
+      host: redis
       port: 6379
       pass: "<%= File.read("/etc/gitlab-secrets/redis/password").strip.dump[1..-2] %>"
       database: nil
@@ -514,7 +534,7 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis.redis.svc.cluster.local:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis:6379
       id:
   gitlab.yml.erb: |
     production: &base
@@ -609,7 +629,7 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis.redis.svc.cluster.local:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis:6379
       id:
   gitlab.yml.erb: |
     production: &base
@@ -649,38 +669,66 @@ data:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-artifacts-storage
+          remote_directory: gitlab-artifacts
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/artifacts").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       lfs:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-lfs-storage
+          remote_directory: git-lfs
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/lfs").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       uploads:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-uploads-storage
+          remote_directory: gitlab-uploads
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/uploads").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       packages:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-packages-storage
+          remote_directory: gitlab-packages
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/packages").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       external_diffs:
         enabled: 
         when: 
@@ -690,10 +738,26 @@ data:
           direct_upload: true
           background_upload: false
           proxy_download: true
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       pseudonymizer:
         manifest: config/pseudonymizer.yml
         upload:
           remote_directory: gitlab-pseudo
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       
       pages:
         enabled: false
@@ -799,7 +863,7 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis.redis.svc.cluster.local:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis:6379
       id:
   gitlab.yml.erb: |
     production: &base
@@ -832,38 +896,66 @@ data:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-artifacts-storage
+          remote_directory: gitlab-artifacts
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/artifacts").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       lfs:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-lfs-storage
+          remote_directory: git-lfs
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/lfs").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       uploads:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-uploads-storage
+          remote_directory: gitlab-uploads
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/uploads").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       packages:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-packages-storage
+          remote_directory: gitlab-packages
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/packages").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       external_diffs:
         enabled: 
         when: 
@@ -873,10 +965,26 @@ data:
           direct_upload: true
           background_upload: false
           proxy_download: true
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       pseudonymizer:
         manifest: config/pseudonymizer.yml
         upload:
           remote_directory: gitlab-pseudo
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       
       pages:
         enabled: false
@@ -1019,7 +1127,7 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis.redis.svc.cluster.local:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@redis:6379
       id:
   unicorn.rb: |
     # This file should be equivalent to `unicorn.rb` from:
@@ -1129,38 +1237,66 @@ data:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-artifacts-storage
+          remote_directory: gitlab-artifacts
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/artifacts").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       lfs:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-lfs-storage
+          remote_directory: git-lfs
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/lfs").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       uploads:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-uploads-storage
+          remote_directory: gitlab-uploads
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/uploads").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       packages:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: my-packages-storage
+          remote_directory: gitlab-packages
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/packages").to_json() %>
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       external_diffs:
         enabled: 
         when: 
@@ -1170,6 +1306,14 @@ data:
           direct_upload: true
           background_upload: false
           proxy_download: true
+          connection:
+            provider: AWS
+            region: us-east-1
+            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
+            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+            host: minio.gitlab.kube.dev
+            endpoint: http://gitlab-minio-svc:9000
+            path_style: true
       
       pages:
         enabled: false
@@ -1266,7 +1410,7 @@ data:
     gitlab-helm-chart
   workhorse-config.toml.erb: |
     [redis]
-    URL = "redis://redis.redis.svc.cluster.local:6379"
+    URL = "redis://redis:6379"
     Password = "<%= File.read("/etc/gitlab/redis/password").strip.dump[1..-2] %>"
   configure: |
       set -e
@@ -1275,6 +1419,227 @@ data:
       mkdir -p /init-secrets-workhorse/redis
       cp -v -r -L /init-config/redis/password /init-secrets-workhorse/redis/
 # Leave this here - This line denotes end of block to the parser.
+---
+# Source: gitlab/charts/minio/templates/minioconfig_configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-minio-config-cm
+  namespace: gitlab
+  labels:
+    app: minio
+    chart: minio-0.4.3
+    release: gitlab
+    heritage: Helm
+    
+data:
+  initialize: |-
+    #!/bin/sh
+    # minio/mc container has Busybox Ash, be sure to be POSIX compliant and avoid Bash-isms
+    set -e ; # Have script exit in the event of a failed command.
+    
+    # connectToMinio
+    # Use a check-sleep-check loop to wait for Minio service to be available
+    connectToMinio() {
+      set -e ; # fail if we can't read the keys.
+      ACCESS=$(cat /config/accesskey) ; SECRET=$(cat /config/secretkey) ;
+      set +e ; # The connections to minio are allowed to fail.
+      echo "Connecting to Minio server: http://$MINIO_ENDPOINT:$MINIO_PORT" ;
+      MC_COMMAND="mc config host add myminio http://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
+      $MC_COMMAND ;
+      STATUS=$? ;
+      until [ $STATUS -eq 0 ] ;
+      do
+        sleep 1 ; # 1 second intervals between attempts
+        $MC_COMMAND ;
+        STATUS=$? ;
+      done ;
+      set -e ; # reset `e` as active
+      return 0
+    }
+    
+    # checkBucketExists ($bucket)
+    # Check if the bucket exists, by using the exit code of `mc ls`
+    checkBucketExists() {
+      BUCKET=$1
+      CMD=$(/usr/bin/mc ls myminio/$BUCKET > /dev/null 2>&1)
+      return $?
+    }
+    
+    # createBucket ($bucket, $policy, $purge)
+    # Ensure bucket exists, purging if asked to
+    createBucket() {
+      BUCKET=$1
+      POLICY=$2
+      PURGE=$3
+    
+    
+      # Purge the bucket, if set & exists
+      # Since PURGE is user input, check explicitly for `true`
+      if [ $PURGE = true ]; then
+        if checkBucketExists $BUCKET ; then
+          echo "Purging bucket '$BUCKET'."
+          set +e ; # don't exit if this fails
+          /usr/bin/mc rm -r --force myminio/$BUCKET
+          set -e ; # reset `e` as active
+        else
+          echo "Bucket '$BUCKET' does not exist, skipping purge."
+        fi
+      fi
+    
+      # Create the bucket if it does not exist
+      if ! checkBucketExists $BUCKET ; then
+        echo "Creating bucket '$BUCKET'"
+        /usr/bin/mc mb myminio/$BUCKET
+      else
+        echo "Bucket '$BUCKET' already exists."
+      fi
+    
+      # At this point, the bucket should exist, skip checking for existance
+      # Set policy on the bucket
+      echo "Setting policy of bucket '$BUCKET' to '$POLICY'."
+      /usr/bin/mc policy $POLICY myminio/$BUCKET
+    }
+    
+    connectToMinio
+    createBucket registry none false
+    createBucket git-lfs none false
+    createBucket runner-cache none false
+    createBucket gitlab-uploads none false
+    createBucket gitlab-artifacts none false
+    createBucket gitlab-backups none false
+    createBucket gitlab-packages none false
+    createBucket tmp none false
+    createBucket gitlab-pseudo none false
+    createBucket gitlab-mr-diffs none false
+    
+  configure: |-
+    sed -e 's@ACCESS_KEY@'"$(cat /config/accesskey)"'@' -e 's@SECRET_KEY@'"$(cat /config/secretkey)"'@' /config/config.json > /minio/config.json
+  config.json: |-
+    {
+      "version": "20",
+      "credential": {
+        "accessKey": "ACCESS_KEY",
+        "secretKey": "SECRET_KEY"
+      },
+      "region": "us-east-1",
+      "browser": "on",
+      "domain": "",
+      "logger": {
+        "console": {
+          "enable": true
+        },
+        "file": {
+          "enable": false,
+          "fileName": ""
+        }
+      },
+      "notify": {
+        "amqp": {
+          "1": {
+            "enable": false,
+            "url": "",
+            "exchange": "",
+            "routingKey": "",
+            "exchangeType": "",
+            "deliveryMode": 0,
+            "mandatory": false,
+            "immediate": false,
+            "durable": false,
+            "internal": false,
+            "noWait": false,
+            "autoDeleted": false
+          }
+        },
+        "nats": {
+          "1": {
+            "enable": false,
+            "address": "",
+            "subject": "",
+            "username": "",
+            "password": "",
+            "token": "",
+            "secure": false,
+            "pingInterval": 0,
+            "streaming": {
+              "enable": false,
+              "clusterID": "",
+              "clientID": "",
+              "async": false,
+              "maxPubAcksInflight": 0
+            }
+          }
+        },
+        "elasticsearch": {
+          "1": {
+            "enable": false,
+            "format": "namespace",
+            "url": "",
+            "index": ""
+          }
+        },
+        "redis": {
+          "1": {
+            "enable": false,
+            "format": "namespace",
+            "address": "",
+            "password": "",
+            "key": ""
+          }
+        },
+        "postgresql": {
+          "1": {
+            "enable": false,
+            "format": "namespace",
+            "connectionString": "",
+            "table": "",
+            "host": "",
+            "port": "",
+            "user": "",
+            "password": "",
+            "database": ""
+          }
+        },
+        "kafka": {
+          "1": {
+            "enable": false,
+            "brokers": null,
+            "topic": ""
+          }
+        },
+        "webhook": {
+          "1": {
+            "enable": false,
+            "endpoint": ""
+          }
+        },
+        "mysql": {
+          "1": {
+            "enable": false,
+            "format": "namespace",
+            "dsnString": "",
+            "table": "",
+            "host": "",
+            "port": "",
+            "user": "",
+            "password": "",
+            "database": ""
+          }
+        },
+        "mqtt": {
+          "1": {
+            "enable": false,
+            "broker": "",
+            "topic": "",
+            "qos": 0,
+            "clientId": "",
+            "username": "",
+            "password": ""
+          }
+        }
+      }
+    }
+# Blank line to signal end of Block
 ---
 # Source: gitlab/templates/chart-info.yaml
 apiVersion: v1
@@ -1291,6 +1656,26 @@ metadata:
 data:
   gitlabVersion: "12.7.6"
   gitlabChartVersion: "3.0.4"
+---
+# Source: gitlab/charts/minio/templates/minio_pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: gitlab-minio
+  namespace: gitlab
+  labels:
+    app: minio
+    chart: minio-0.4.3
+    release: gitlab
+    heritage: Helm
+    
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"
+  selector:
 ---
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/service.yaml
 apiVersion: v1
@@ -1400,6 +1785,32 @@ spec:
     app: unicorn
     release: gitlab
 ---
+# Source: gitlab/charts/minio/templates/minio_svc.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: gitlab-minio-svc
+  namespace: gitlab
+  labels:
+    app: minio
+    chart: minio-0.4.3
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    
+spec:
+  type: ClusterIP
+  selector:
+    app: minio
+    release: gitlab
+    component: app
+  ports:
+    - name: service
+      port: 9000
+      targetPort: 9000
+      protocol: TCP
+---
 # Source: gitlab/charts/gitlab/charts/gitlab-exporter/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1424,7 +1835,7 @@ spec:
         app: gitlab-exporter
         release: gitlab
       annotations:
-        checksum/config: d7ec99a2d77ef794d898b06c817c1f44ebb08cae0dc48f65c7258d49377252a5
+        checksum/config: 1b9082581824484a4bf152da00db38b927b730d248669f11a30cb2dbbee9280b
         prometheus.io/path: /metrics
         prometheus.io/port: "9168"
         prometheus.io/scrape: "true"
@@ -1480,7 +1891,7 @@ spec:
       containers:
         
         - name: gitlab-exporter
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter:5.1.0"
           imagePullPolicy: "Always"
           env:
             - name: CONFIG_TEMPLATE_DIRECTORY
@@ -1578,7 +1989,7 @@ spec:
         app: gitlab-shell
         release: gitlab
       annotations:
-        checksum/config: 733626e92c4072783b31b50ca1c0be13ef6992fb4151ef3d390ae72cb5d6c943
+        checksum/config: d53aa5ad14fc667eeece0be3ef61ffd0dae886f57d7af68d5bcd9cb7f3926692
         checksum/config-sshd: bcec9a24d8e455f9703b10436fc9e818617eaead1ca66f8211fc11732598d0aa
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
@@ -1631,7 +2042,7 @@ spec:
       containers:
         
         - name: gitlab-shell
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-shell:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-shell:v11.0.0"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 2222
@@ -1741,7 +2152,7 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: 3a132fc49882c2cd08903a74bb642dd2a52372fd55dc095f93403518c6481588
+        checksum/configmap: b62896be61880b0784459d675023197a040d2ef9db8a5727a0aba09402e9a6d8
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         checksum/configmap-pod: f29142374270b15b4028609d30118f57fcd1cd9c15a90cc0a2b491eb46faa834
         prometheus.io/port: "3807"
@@ -1796,7 +2207,7 @@ spec:
             requests:
               cpu: 50m
         - name: dependencies
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.7.6"
           imagePullPolicy: "Always"
           args:
             - /scripts/wait-for-deps
@@ -1829,7 +2240,7 @@ spec:
       containers:
         
         - name: sidekiq
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.7.6"
           imagePullPolicy: "Always"
           env:
             - name: prometheus_multiproc_dir
@@ -1949,30 +2360,17 @@ spec:
                 - key: registry-auth.key
                   path: registry/gitlab-registry.key
           # mount secret for minio
+          - secret:
+              name: "gitlab-minio-secret"
+              items:
+                - key: accesskey
+                  path: minio/accesskey
+                - key: secretkey
+                  path: minio/secretkey
           # mount secret for lfs
-          - secret:
-              name: my-objectstore-lfs-secret
-              items:
-                - key: connection
-                  path: objectstorage/lfs
           # mount secret for artifacts
-          - secret:
-              name: my-objectstore-artifacts-secret
-              items:
-                - key: connection
-                  path: objectstorage/artifacts
           # mount secret for uploads
-          - secret:
-              name: my-objectstore-uploads-secret
-              items:
-                - key: connection
-                  path: objectstorage/uploads
           # mount secret for packages
-          - secret:
-              name: my-objectstore-packages-secret
-              items:
-                - key: connection
-                  path: objectstorage/packages
           # mount secret for external_diffs
           # mount secret for pseudonymizer
           # mount secrets for LDAP
@@ -2018,7 +2416,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 8557315be61874ca948a66729c97f834fb66610cae371815975979810dbafd5f
+        checksum/config: 35733b1f4ade910a842de55f01f4a2e2585ef6fbe323f1b1d72a1558f16f7f12
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -2066,25 +2464,25 @@ spec:
             - /bin/bash
             - -c
             - cp -v -r -L /etc/gitlab/.s3cfg $HOME/.s3cfg && while sleep 3600; do :; done # alpine sleep has no infinity
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:v12.7.6"
           imagePullPolicy: "Always"
           env:
             - name: ARTIFACTS_BUCKET_NAME
-              value: my-artifacts-storage
+              value: gitlab-artifacts
             - name: REGISTRY_BUCKET_NAME
-              value: my-registry-storage
+              value: registry
             - name: LFS_BUCKET_NAME
-              value: my-lfs-storage
+              value: git-lfs
             - name: UPLOADS_BUCKET_NAME
-              value: my-uploads-storage
+              value: gitlab-uploads
             - name: PACKAGES_BUCKET_NAME
-              value: my-packages-storage
+              value: gitlab-packages
             - name: BACKUP_BUCKET_NAME
-              value: my-backup-storage
+              value: gitlab-backups
             - name: BACKUP_BACKEND
               value: s3
             - name: TMP_BUCKET_NAME
-              value: my-tmp-storage
+              value: tmp
             - name: GITALY_FEATURE_DEFAULT_ON
               value: "1"
             - name: ENABLE_BOOTSNAP
@@ -2161,36 +2559,18 @@ spec:
               items:
                 - key: registry-auth.key
                   path: registry/gitlab-registry.key
-          - secret:
-              name: my-s3cmd-config
-              items:
-                - key: config
-                  path: objectstorage/.s3cfg
           # mount secret for minio
+          - secret:
+              name: "gitlab-minio-secret"
+              items:
+                - key: accesskey
+                  path: minio/accesskey
+                - key: secretkey
+                  path: minio/secretkey
           # mount secret for artifacts
-          - secret:
-              name: my-objectstore-artifacts-secret
-              items:
-                - key: connection
-                  path: objectstorage/artifacts
           # mount secret for lfs
-          - secret:
-              name: my-objectstore-lfs-secret
-              items:
-                - key: connection
-                  path: objectstorage/lfs
           # mount secret for uploads
-          - secret:
-              name: my-objectstore-uploads-secret
-              items:
-                - key: connection
-                  path: objectstorage/uploads
           # mount secret for packages
-          - secret:
-              name: my-objectstore-packages-secret
-              items:
-                - key: connection
-                  path: objectstorage/packages
           # mount secret for external_diffs
           # mount secret for pseudonymizer
           # mount secrets for LDAP
@@ -2233,7 +2613,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: 3cf2e952c7ba4c06a010d8aff31b8e35a487acb6afa52c8425ff54f64797f70f
+        checksum/config: 058c4e77c0de61f306d62cea7c30707752a7cfe50494e7d0f8713761135e0917
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -2298,7 +2678,7 @@ spec:
             requests:
               cpu: 50m
         - name: dependencies
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.7.6"
           imagePullPolicy: "Always"
           args:
             - /scripts/wait-for-deps
@@ -2328,7 +2708,7 @@ spec:
       containers:
         
         - name: unicorn
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.7.6"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8080
@@ -2401,7 +2781,7 @@ spec:
               cpu: 300m
               memory: 1.2G
         - name: gitlab-workhorse
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee:v12.7.6"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8181
@@ -2513,30 +2893,17 @@ spec:
                 - key: "shared_secret"
                   path: gitlab-workhorse/secret
           # mount secret for minio
+          - secret:
+              name: "gitlab-minio-secret"
+              items:
+                - key: accesskey
+                  path: minio/accesskey
+                - key: secretkey
+                  path: minio/secretkey
           # mount secret for artifacts
-          - secret:
-              name: my-objectstore-artifacts-secret
-              items:
-                - key: connection
-                  path: objectstorage/artifacts
           # mount secret for lfs
-          - secret:
-              name: my-objectstore-lfs-secret
-              items:
-                - key: connection
-                  path: objectstorage/lfs
           # mount secret for uploads
-          - secret:
-              name: my-objectstore-uploads-secret
-              items:
-                - key: connection
-                  path: objectstorage/uploads
           # mount secret for packages
-          - secret:
-              name: my-objectstore-packages-secret
-              items:
-                - key: connection
-                  path: objectstorage/packages
           # mount secret for external_diffs
           # mount secrets for LDAP
           
@@ -2560,6 +2927,100 @@ spec:
           sources:
           - secret:
               name: gitlab-wildcard-tls-ca
+---
+# Source: gitlab/charts/minio/templates/minio_deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-minio
+  namespace: gitlab
+  labels:
+    app: minio
+    chart: minio-0.4.3
+    release: gitlab
+    heritage: Helm
+    
+spec:
+  strategy:
+    type: Recreate
+    # The following entry allows updates without intervention, due to previous defaults.
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app: minio
+      release: "gitlab"
+      component: app
+  template:
+    metadata:
+      name: gitlab-minio
+      labels:
+        app: minio
+        chart: "minio-0.4.3"
+        release: "gitlab"
+        heritage: "Helm"
+        component: app
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      volumes:
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "labels"
+                fieldRef:
+                  fieldPath: metadata.labels
+        - name: export
+          persistentVolumeClaim:
+            claimName: gitlab-minio
+        - name: minio-configuration
+          projected:
+            sources:
+            - configMap:
+                name: gitlab-minio-config-cm
+            - secret:
+                name: "gitlab-minio-secret"
+        - name: minio-server-config
+          emptyDir:
+            medium: "Memory"
+      initContainers:
+        - name: configure
+          image: "busybox:latest"
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "/config/configure"]
+          volumeMounts:
+            - name: minio-configuration
+              mountPath: /config
+            - name: minio-server-config
+              mountPath: /minio
+          resources:
+            requests:
+              cpu: 50m      
+      containers:
+        - name: minio
+          image: minio/minio:RELEASE.2017-12-28T01-21-00Z
+          imagePullPolicy: Always
+          args: ["-C", "/tmp/.minio", "--quiet", "server", "/export"]
+          volumeMounts:
+            - name: export
+              mountPath: /export
+            - name: minio-server-config
+              # this path altered from upstream, for use with `securityContext`/UID 1000
+              mountPath: "/tmp/.minio"
+            - name: podinfo
+              mountPath: /podinfo
+              readOnly: false
+          ports:
+            - name: service
+              containerPort: 9000
+          livenessProbe:
+            tcpSocket:
+              port: 9000
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
 ---
 # Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/hpa.yaml
 apiVersion: autoscaling/v2beta1
@@ -2662,7 +3123,7 @@ spec:
         app: gitaly
         release: gitlab
       annotations:
-        checksum/config: e8053248f4670065207170f6a85b9d983538e37f89009b1e3d697bbcaff6a3d2
+        checksum/config: 9386dca7ab8982abbfa594adade700873dad60e48512f575c6dc492df664f45f
     spec:
       terminationGracePeriodSeconds: 30
       initContainers:
@@ -2714,7 +3175,7 @@ spec:
       containers:
         
         - name: gitaly
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitaly:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitaly:v1.83.0"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8075
@@ -2878,7 +3339,7 @@ spec:
       containers:
         
         - name: migrations
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-rails-ee:master-ubi8"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-rails-ee:v12.7.6"
           args:
             - /scripts/wait-for-deps
             - /scripts/db-migrate
@@ -2967,66 +3428,51 @@ spec:
           - secret:
               name: gitlab-wildcard-tls-ca
 ---
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: v1
-kind: ServiceAccount
+# Source: gitlab/charts/minio/templates/create-buckets-job.yaml
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: gitlab-shared-secrets
+  name: gitlab-minio-create-buckets.1
   namespace: gitlab
   labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
+    app: minio
+    chart: minio-0.4.3
     release: gitlab
     heritage: Helm
     
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get", "list", "create", "patch"]
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: gitlab-shared-secrets
-subjects:
-  - kind: ServiceAccount
-    name: gitlab-shared-secrets
-    namespace: gitlab
+spec:
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        app: minio
+        release: gitlab
+        component: create-buckets
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+        - name: minio-configuration
+          projected:
+            sources:
+            - configMap:
+                name: gitlab-minio-config-cm
+            - secret:
+                name: "gitlab-minio-secret"      
+      containers:
+      - name: minio-mc
+        image: minio/mc:RELEASE.2018-07-13T00-53-22Z
+        command: ["/bin/sh", "/config/initialize"]
+        env:
+          - name: MINIO_ENDPOINT
+            value: gitlab-minio-svc
+          - name: MINIO_PORT
+            value: "9000"
+        volumeMounts:
+          - name: minio-configuration
+            mountPath: /config
+        resources:
+          requests:
+            cpu: 50m
 ---
 # Source: gitlab/charts/shared-secrets/templates/configmap.yaml
 apiVersion: v1
@@ -3103,6 +3549,8 @@ data:
     # Gitaly secret
     generate_secret_if_needed "gitlab-gitaly-secret" --from-literal="token"=$(gen_random 'a-zA-Z0-9' 64)
     
+    # Minio secret
+    generate_secret_if_needed "gitlab-minio-secret" --from-literal=accesskey=$(gen_random 'a-zA-Z0-9' 64) --from-literal=secretkey=$(gen_random 'a-zA-Z0-9' 64)
     
     
     # Gitlab runner secret
@@ -3164,11 +3612,119 @@ data:
     # Registry http.secret secret
     generate_secret_if_needed "gitlab-registry-httpsecret" --from-literal="secret"=$(gen_random 'a-z0-9' 128 | base64 -w 0)
 ---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "create", "patch"]
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: gitlab-shared-secrets
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-shared-secrets
+    namespace: gitlab
+---
+# Source: gitlab/charts/shared-secrets/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-shared-secrets.1-by4
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        app: shared-secrets
+        release: gitlab
+    spec:
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+      serviceAccountName: gitlab-shared-secrets
+      restartPolicy: Never      
+      containers:
+        - name: shared-secrets
+          image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
+          command: ['/bin/bash', '/scripts/generate-secrets']
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: ssh
+              mountPath: /etc/ssh
+          resources:
+            requests:
+              cpu: 50m
+      volumes:
+      - name: scripts
+        configMap:
+          name: gitlab-shared-secrets
+      - name: ssh
+        emptyDir: {}
+---
 # Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-k8k-selfsign
+  name: gitlab-shared-secrets.1-w7p-selfsign
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -3219,7 +3775,7 @@ spec:
             cpu: 50m
       containers:
       - name: kubectl
-        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.12.10-ubi8"
+        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
         command:
         - /bin/bash
         - -exc
@@ -3248,201 +3804,3 @@ spec:
       volumes:
       - name: certs-path
         emptyDir: {}
----
-# Source: gitlab/charts/shared-secrets/templates/job.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: gitlab-shared-secrets.1-7ee
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-spec:
-  template:
-    metadata:
-      labels:
-        app: shared-secrets
-        release: gitlab
-    spec:
-      securityContext:
-        runAsUser: 65534
-        fsGroup: 65534
-      serviceAccountName: gitlab-shared-secrets
-      restartPolicy: Never      
-      containers:
-        - name: shared-secrets
-          image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.12.10-ubi8"
-          command: ['/bin/bash', '/scripts/generate-secrets']
-          imagePullPolicy: "Always"
-          volumeMounts:
-            - name: scripts
-              mountPath: /scripts
-            - name: ssh
-              mountPath: /etc/ssh
-          resources:
-            requests:
-              cpu: 50m
-      volumes:
-      - name: scripts
-        configMap:
-          name: gitlab-shared-secrets
-      - name: ssh
-        emptyDir: {}
----
-# Source: gitlab/templates/upgrade_check_hook.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-gitlab-upgrade-check
-  namespace: gitlab
-  labels:
-    app: gitlab
-    chart: gitlab-3.0.4
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    "helm.sh/hook": pre-upgrade
-    "helm.sh/hook-weight": "-11"
-    "helm.sh/hook-delete-policy": before-hook-creation
-data:
-  runcheck: |
-    #!/bin/sh
-    
-    set -e
-    
-    notify() {
-      echo "$1"
-      echo -n "$1 " >> /dev/termination-log
-    }
-    
-    greater_version()
-    {
-      test "$(printf '%s\n' "$@" | sort -V | tail -n 1)" = "$1";
-    }
-    
-    # For the PostgreSQL upgrade, you either need both secrets, or no secrets.
-    # If there are no secrets, we will create them for you.
-    # If the secrets aren't in either of these states, we assume you are upgrading from an older version
-    # This is running ahead of version checks to ensure this always runs. This is to account for
-    # installations outside of the official helm repo.
-    secrets_dir="/etc/secrets/postgresql"
-    if [ -d "${secrets_dir}" ]; then
-      if [ ! "$(ls -A ${secrets_dir}/..data/)" = "" ]; then
-        if [ ! -f "${secrets_dir}/postgresql-postgres-password" ] || [ ! -f "${secrets_dir}/password" ]; then
-          notify "You seem to be upgrading from a previous version of GitLab using the bundled PostgreSQL chart"
-          notify "There are some manual steps which need to be performed in order to upgrade the database"
-          notify "Please see the upgrade documentation for instructions on how to proceed:"
-          notify "https://docs.gitlab.com/charts/installation/upgrade.html"
-          exit 1
-        fi
-      fi
-    fi
-    MIN_VERSION=12.6
-    CHART_MIN_VERSION=2.6
-    
-    # Only run check for semver releases
-    if ! awk 'BEGIN{exit(!(ARGV[1] ~ /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/))}' "$GITLAB_VERSION"; then
-      exit 0
-    fi
-    
-    NEW_MAJOR_VERSION=$(echo $GITLAB_VERSION | awk -F "." '{print $1}')
-    NEW_MINOR_VERSION=$(echo $GITLAB_VERSION | awk -F "." '{print $1"."$2}')
-    
-    NEW_CHART_MAJOR_VERSION=$(echo $CHART_VERSION | awk -F "." '{print $1}')
-    NEW_CHART_MINOR_VERSION=$(echo $CHART_VERSION | awk -F "." '{print $1"."$2}')
-    
-    if [ ! -f /chart-info/gitlabVersion ]; then
-      notify "It seems you are attempting an unsupported upgrade path."
-      notify "Please follow the upgrade documentation at https://docs.gitlab.com/ee/policy/maintenance.html#upgrade-recommendations"
-      exit 1
-    fi
-    
-    OLD_VERSION_STRING=$(cat /chart-info/gitlabVersion)
-    OLD_CHART_VERSION_STRING=$(cat /chart-info/gitlabChartVersion)
-    
-    # Skip check if old version wasn't semver
-    if ! awk 'BEGIN{exit(!(ARGV[1] ~ /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/))}' "$OLD_VERSION_STRING"; then
-      exit 0
-    fi
-    
-    OLD_MAJOR_VERSION=$(echo $OLD_VERSION_STRING | awk -F "." '{print $1}')
-    OLD_MINOR_VERSION=$(echo $OLD_VERSION_STRING | awk -F "." '{print $1"."$2}')
-    OLD_CHART_MAJOR_VERSION=$(echo $OLD_CHART_VERSION_STRING | awk -F "." '{print $1}')
-    OLD_CHART_MINOR_VERSION=$(echo $OLD_CHART_VERSION_STRING | awk -F "." '{print $1"."$2}')
-    
-    # Checking Version
-    # (i) if it is a major version jump
-    # (ii) if existing version is less than required minimum version
-    if [ ${OLD_MAJOR_VERSION} -lt ${NEW_MAJOR_VERSION} ] || [ ${OLD_CHART_MAJOR_VERSION} -lt ${NEW_CHART_MAJOR_VERSION} ]; then
-      if ( ! greater_version $OLD_MINOR_VERSION $MIN_VERSION ) || ( ! greater_version $OLD_CHART_MINOR_VERSION $CHART_MIN_VERSION ); then
-        notify "It seems you are upgrading the GitLab Helm Chart from ${OLD_CHART_VERSION_STRING} (GitLab ${OLD_VERSION_STRING}) to ${CHART_VERSION} (GitLab ${GITLAB_VERSION})."
-        notify "It is required to upgrade to the last minor version in a major version series"
-        notify "first before jumping to the next major version."
-        notify "Please follow the upgrade documentation at https://docs.gitlab.com/charts/releases/3_0.html"
-        notify "and upgrade to GitLab Helm Chart version 2.6.0 before upgrading to ${CHART_VERSION}."
-        exit 1
-      fi
-    fi
----
-# Source: gitlab/templates/upgrade_check_hook.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: gitlab-gitlab-upgrade-check
-  namespace: gitlab
-  labels:
-    app: gitlab
-    chart: gitlab-3.0.4
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    "helm.sh/hook": pre-upgrade
-    "helm.sh/hook-weight": "-10"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-spec:
-  backoffLimit: 2
-  template:
-    metadata:
-      labels:
-        app: gitlab
-        release: gitlab
-    spec:
-      securityContext:
-        runAsUser: 65534
-        fsGroup: 65534
-      restartPolicy: Never      
-      containers:
-        - name: run-check
-          image: "busybox:latest"
-          command: ['/bin/sh', '/scripts/runcheck']
-          imagePullPolicy: "Always"
-          env:
-            - name: GITLAB_VERSION
-              value: '12.7.6'
-            - name: CHART_VERSION
-              value: '3.0.4'
-          volumeMounts:
-            - name: chart-info
-              mountPath: /chart-info
-            - name: scripts
-              mountPath: /scripts
-          resources:
-            requests:
-              cpu: 50m
-      volumes:
-      - name: chart-info
-        configMap:
-          name: gitlab-gitlab-chart-info
-          optional: true
-      - name: scripts
-        configMap:
-          name: gitlab-gitlab-upgrade-check
