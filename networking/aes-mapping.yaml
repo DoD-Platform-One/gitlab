@@ -1,0 +1,24 @@
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: gitlab
+spec:
+  prefix: /
+  service: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
+  host: "gitlab.*"
+  host_regex: true
+  # tls: istio-upstream
+
+---
+
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: gitlab-admin
+spec:
+  prefix: /admin/sidekiq
+  service: http://gitlab-unicorn.gitlab.svc.cluster.local:8080
+  host: "gitlab.*"
+  host_regex: true
+  # tls: istio-upstream
+
