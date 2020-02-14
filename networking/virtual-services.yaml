@@ -33,25 +33,24 @@
 #       #   mode: SIMPLE
 #       #   privateKey: sds
 #       #   serverCertificate: sds
-# # ---
-# apiVersion: networking.istio.io/v1alpha3
-# kind: VirtualService
-# metadata:
-#   name: gitlab-ssh-virtual-service
-# spec:
-#   hosts:
-#     - "*"
-#     # - gitlab.${MY_DOMAIN}
-#   gateways:
-#     - gitlab-gateway
-#   tcp:
-#     - match:
-#         - port: 22
-#       route:
-#         - destination:
-#             host: gitlab-gitlab-shell.gitlab.svc.cluster.local
-#             port:
-#               number: 22
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: gitlab-ssh-virtual-service
+spec:
+  hosts:
+    - "gitlab.kube.dev"
+  gateways:
+    - istio-system/public-gateway
+  tcp:
+    - match:
+        - port: 22
+      route:
+        - destination:
+            host: gitlab-gitlab-shell.gitlab.svc.cluster.local
+            port:
+              number: 22
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -62,7 +61,7 @@ spec:
     - "gitlab.kube.dev"
     # - gitlab.${MY_DOMAIN}
   gateways:
-    - gitlab-gateway
+    - istio-system/public-gateway
   http:
     - route:
         - destination:
