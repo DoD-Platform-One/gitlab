@@ -1,38 +1,3 @@
-# ---
-# apiVersion: networking.istio.io/v1alpha3
-# kind: Gateway
-# metadata:
-#   name: gitlab-gateway
-# spec:
-#   selector:
-#     istio: ingressgateway
-#   servers:
-#     # - port:
-#         # number: 22
-#         # name: ssh-gitlab
-#         # protocol: TCP
-#       # hosts:
-#       #   - gitlab.${MY_DOMAIN}
-#     - port:
-#         number: 80
-#         name: http-gitlab
-#         protocol: HTTP
-#       hosts:
-#         - "*"
-#       # tls:
-#       #   httpsRedirect: true
-#     # - port:
-#     #     number: 443
-#     #     name: https-gitlab
-#     #     protocol: HTTPS
-#       # hosts:
-#       #   - gitlab.${MY_DOMAIN}
-#       #   - minio.${MY_DOMAIN}
-#       # tls:
-#       #   credentialName: ingress-cert-${LETSENCRYPT_ENVIRONMENT}
-#       #   mode: SIMPLE
-#       #   privateKey: sds
-#       #   serverCertificate: sds
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -42,7 +7,7 @@ spec:
   hosts:
     - "gitlab.kube.dev"
   gateways:
-    - istio-system/public-gateway
+    - public-gateway.istio-system.svc.cluster.local
   tcp:
     - match:
         - port: 22
@@ -51,34 +16,45 @@ spec:
             host: gitlab-gitlab-shell.gitlab.svc.cluster.local
             port:
               number: 22
+
 ---
+
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: gitlab-http-virtual-service
+  name: gitlab-ui-virtual-service
 spec:
   hosts:
     - "gitlab.kube.dev"
     # - gitlab.${MY_DOMAIN}
   gateways:
-    - istio-system/public-gateway
+    - public-gateway.istio-system.svc.cluster.local
   http:
     - route:
-        - destination:
-            host: gitlab-unicorn.gitlab.svc.cluster.local
-            port:
-              number: 8181
+      - destination:
+          host: gitlab-unicorn.gitlab.svc.cluster.local
+          port:
+            number: 8181
       match:
-        - url:
-            prefix: /
+      - url:
+          prefix: /
+      websocketUpgrade: true
     - match:
-        - uri:
-            prefix: /admin/sidekiq
+      - uri:
+          prefix: /admin/sidekiq
       route:
-        - destination:
-            host: gitlab-unicorn.gitlab.svc.cluster.local
-            port:
-              number: 8080
+      - destination:
+          host: gitlab-unicorn.gitlab.svc.cluster.local
+          port:
+            number: 8080
+  tcp:
+  - match:
+    - port: 22
+    route:
+    - destination:
+        host: gitlab-gitlab-shell.gitlab.svc.cluster.local
+        port:
+          number: 22
 # ---
 # apiVersion: networking.istio.io/v1alpha3
 # kind: VirtualService
@@ -103,7 +79,22 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: gitlab-destination
-  namespace: gitlab
+  name: gitlab-ui
 spec:
   host: gitlab-unicorn.gitlab.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+
+---
+
+# TODO: Need this until we get some sidecar injection going
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: gitlab-ssh
+spec:
+  host: gitlab-unicorn.gitlab.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
