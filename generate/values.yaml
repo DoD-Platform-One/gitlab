@@ -1,19 +1,19 @@
-postgresql:
-  install: false
+# postgresql:
+#   install: false
 
-nginx-ingress:
-  enabled: false
+# nginx-ingress:
+#   enabled: false
 
 certmanager:
   install: false
 
-redis:
-  install: false
+# redis:
+#   install: false
 
-registry:
-  enabled: false
-  ingress:
-    enabled: false
+# registry:
+#   enabled: false
+#   ingress:
+#     enabled: false
 
 # Don't use this b/c it's still using extensions/v1beta1 for deployments 
 prometheus:
@@ -32,21 +32,21 @@ global:
   operator:
     enabled: false
 
-  psql:
-    host: gitlab-cluster
-    password:
-      secret: gitlab.gitlab-cluster.credentials
-      key: password
-    port: 5432
-    database: gitlab
-    username: gitlab
+  # psql:
+  #   host: gitlab-cluster
+  #   password:
+  #     secret: gitlab.gitlab-cluster.credentials
+  #     key: password
+  #   port: 5432
+  #   database: gitlab
+  #   username: gitlab
 
-  redis:
-    host: redis
-    password:
-      secret: redis
-      key: redis-password
-    port: 6379
+  # redis:
+  #   host: redis
+  #   password:
+  #     secret: redis
+  #     key: redis-password
+  #   port: 6379
 
   minio:
     enabled: true
@@ -141,9 +141,6 @@ gitlab:
       enabled: false
     ingress:
       enabled: false
-
-shared-secrets:
-  enabled: true
 
 upgradeCheck:
   enabled: false
