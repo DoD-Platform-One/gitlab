@@ -4,7 +4,6 @@ bases:
   # - psql
   # - minio
   # - redis
-  # - secrets
   - generate
 
 resources:
