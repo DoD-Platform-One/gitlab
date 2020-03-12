@@ -3,7 +3,8 @@ kind: Namespace
 metadata:
   name: gitlab
   annotations:
-    argocd.argoproj.io/hook: PreSync
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 
   # TODO: lol
   # labels:
