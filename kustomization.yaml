@@ -1,9 +1,6 @@
 namespace: gitlab
 
 bases:
-  # - psql
-  # - minio
-  # - redis
   - generate
 
 resources:

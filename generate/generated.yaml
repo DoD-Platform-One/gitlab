@@ -4,10 +4,10 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-gitaly
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitaly
-    chart: gitaly-3.1.0
+    chart: gitaly-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -18,34 +18,15 @@ spec:
       app: gitaly
       release: gitlab
 ---
-# Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/pdb.yaml
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: gitlab-gitlab-shell
-  namespace: gitlab
-  labels:
-    app: gitlab-shell
-    chart: gitlab-shell-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: gitlab-shell
-      release: gitlab
----
 # Source: gitlab/charts/gitlab/charts/sidekiq/templates/pdb.yaml
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-sidekiq
-  namespace: gitlab
+  namespace: default
   labels:
     app: sidekiq
-    chart: sidekiq-3.1.0
+    chart: sidekiq-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -61,10 +42,10 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-unicorn
-  namespace: gitlab
+  namespace: default
   labels:
     app: unicorn
-    chart: unicorn-3.1.0
+    chart: unicorn-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -75,108 +56,15 @@ spec:
       app: unicorn
       release: gitlab
 ---
-# Source: gitlab/charts/minio/templates/pdb.yaml
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: gitlab-minio-v1
-  namespace: gitlab
-  labels:
-    app: minio
-    chart: minio-0.4.3
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: minio
-      release: gitlab
-      component: app
----
-# Source: gitlab/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: gitlab-nginx-ingress-controller
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "controller"
-spec:
-  selector:
-    matchLabels:
-      app: nginx-ingress
-      release: gitlab
-      component: "controller"
-  minAvailable: 2
----
-# Source: gitlab/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: gitlab-nginx-ingress-default-backend
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "default-backend"
-spec:
-  selector:
-    matchLabels:
-      app: nginx-ingress
-      release: gitlab
-      component: "default-backend"
-  minAvailable: 1
----
-# Source: gitlab/charts/registry/templates/pdb.yaml
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: gitlab-registry-v1
-  namespace: gitlab
-  labels:
-    app: registry
-    chart: registry-0.4.0
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: registry
-      release: gitlab
----
-# Source: gitlab/charts/nginx-ingress/templates/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: gitlab-nginx-ingress
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
----
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/configmap.yml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitaly
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitaly
-    chart: gitaly-3.1.0
+    chart: gitaly-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -246,7 +134,7 @@ data:
 
     # Redis settings used for pushing commit notices to gitlab
     redis:
-      host: gitlab-redis-master
+      host: $(REDIS_HOST)
       port: 6379
       pass: "<%= File.read("/etc/gitlab-secrets/redis/redis_password").strip.dump[1..-2] %>"
       database: nil
@@ -263,10 +151,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitlab-exporter
-    chart: gitlab-exporter-3.1.0
+    chart: gitlab-exporter-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -281,7 +169,7 @@ data:
         methods:
           - probe_db
         opts:
-          connection_string: dbname=gitlabhq_production user=gitlab host=gitlab-postgresql port=5432 password='<%= File.read("/etc/gitlab/postgres/psql-password").strip.gsub(/[\'\\]/) { |esc| '\\' + esc } %>'
+          connection_string: dbname=gitlab user=gitlab host=$(PSQL_HOST) port=5432 password='<%= File.read("/etc/gitlab/postgres/psql-password").strip.gsub(/[\'\\]/) { |esc| '\\' + esc } %>'
       database:
         multiple: true
         ci_builds:
@@ -301,7 +189,7 @@ data:
           - probe_retries
           - probe_stats
         opts:
-          redis_url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@gitlab-redis-master:6379
+          redis_url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@$(REDIS_HOST):6379
           redis_enable_client: false
 
       metrics:
@@ -336,255 +224,15 @@ data:
     
 # Leave this here - This line denotes end of block to the parser.
 ---
-# Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/configmap-sshd.yml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-gitlab-shell-sshd
-  namespace: gitlab
-  labels:
-    app: gitlab-shell
-    chart: gitlab-shell-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-data:
-  sshd_config: |
-    #	$OpenBSD: sshd_config,v 1.101 2017/03/14 07:19:07 djm Exp $
-
-    # This is the sshd server system-wide configuration file.  See
-    # sshd_config(5) for more information.
-
-    # This sshd was compiled with PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
-    # The strategy used for options in the default sshd_config shipped with
-    # OpenSSH is to specify options with their default value where
-    # possible, but leave them commented.  Uncommented options override the
-    # default value.
-
-    Port 2222
-    #AddressFamily any
-    #ListenAddress 0.0.0.0
-    #ListenAddress ::
-
-    #HostKey /etc/ssh/ssh_host_rsa_key
-    #HostKey /etc/ssh/ssh_host_dsa_key
-    #HostKey /etc/ssh/ssh_host_ecdsa_key
-    #HostKey /etc/ssh/ssh_host_ed25519_key
-
-    # Ciphers and keying
-    #RekeyLimit default none
-
-    # Logging
-    #SyslogFacility AUTH
-    #LogLevel INFO
-
-    # Authentication:
-
-    PermitRootLogin no
-    #StrictModes yes
-    #MaxAuthTries 6
-    #MaxSessions 10
-
-    #PubkeyAuthentication yes
-
-    #AuthorizedPrincipalsFile none
-
-    # For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
-    #HostbasedAuthentication no
-    # Change to yes if you don't trust ~/.ssh/known_hosts for
-    # HostbasedAuthentication
-    #IgnoreUserKnownHosts no
-    # Don't read the user's ~/.rhosts and ~/.shosts files
-    #IgnoreRhosts yes
-
-    #PermitEmptyPasswords no
-
-    # Change to no to disable s/key passwords
-    #ChallengeResponseAuthentication yes
-
-    # Kerberos options
-    #KerberosAuthentication no
-    #KerberosOrLocalPasswd yes
-    #KerberosTicketCleanup yes
-    #KerberosGetAFSToken no
-
-    # GSSAPI options
-    #GSSAPIAuthentication no
-    #GSSAPICleanupCredentials yes
-
-    # Set this to 'yes' to enable PAM authentication, account processing,
-    # and session processing. If this is enabled, PAM authentication will
-    # be allowed through the ChallengeResponseAuthentication and
-    # PasswordAuthentication.  Depending on your PAM configuration,
-    # PAM authentication via ChallengeResponseAuthentication may bypass
-    # the setting of "PermitRootLogin without-password".
-    # If you just want the PAM account and session checks to run without
-    # PAM authentication, then enable this but set PasswordAuthentication
-    # and ChallengeResponseAuthentication to 'no'.
-    #UsePAM no
-
-    #AllowAgentForwarding yes
-    #AllowTcpForwarding yes
-    #GatewayPorts no
-    #X11Forwarding no
-    #X11DisplayOffset 10
-    #X11UseLocalhost yes
-    #PermitTTY yes
-    #PrintMotd yes
-    #PrintLastLog yes
-    #TCPKeepAlive yes
-    #UseLogin no
-    #PermitUserEnvironment no
-    #Compression delayed
-    #ClientAliveInterval 0
-    #ClientAliveCountMax 3
-    #UseDNS no
-    UsePrivilegeSeparation no
-    PidFile /srv/sshd/sshd.pid
-    #PermitTunnel no
-    #ChrootDirectory none
-    #VersionAddendum none
-
-    # no default banner path
-    #Banner none
-
-    # override default of no subsystems
-    # Subsystem	sftp	/usr/lib/ssh/sftp-server
-
-    # the following are HPN related configuration options
-    # tcp receive buffer polling. disable in non autotuning kernels
-    #TcpRcvBufPoll yes
-
-    # disable hpn performance boosts
-    #HPNDisabled no
-
-    # buffer size for hpn to non-hpn connections
-    #HPNBufferSize 2048
-
-
-    # Example of overriding settings on a per-user basis
-    #Match User anoncvs
-    #	X11Forwarding no
-    #	AllowTcpForwarding no
-    #	PermitTTY no
-    #	ForceCommand cvs server
-
-    # The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
-    # but this is overridden so installations will only check .ssh/authorized_keys
-    AuthorizedKeysFile	.ssh/authorized_keys
-
-    AuthorizedKeysCommand /authorized_keys %u %k
-    AuthorizedKeysCommandUser git
-
-    PasswordAuthentication no
-
-    AllowUsers git
-
-    # Enable the use of Git protcol v2
-    AcceptEnv GIT_PROTOCOL
-    
-    # Specifies the maximum number of concurrent unauthenticated connections to the SSH daemon.
-    # See `man sshd_config(5)`
-    
-    MaxStartups 10:30:100
-    
-
-    # Specifies amount of time athat the server will disconnect after if the user has not successfully logged in
-    LoginGraceTime 120
-# Leave this here - This line denotes end of block to the parser.
----
-# Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/configmap.yml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-gitlab-shell
-  namespace: gitlab
-  labels:
-    app: gitlab-shell
-    chart: gitlab-shell-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-data:
-  configure: |
-    set -e
-    config_dir="/init-config"
-    secret_dir="/init-secrets"
-    
-    for secret in shell ; do
-      mkdir -p "${secret_dir}/${secret}"
-      cp -v -r -L "${config_dir}/${secret}/." "${secret_dir}/${secret}/"
-    done
-    for secret in redis minio objectstorage ldap omniauth smtp ; do
-      if [ -e "${config_dir}/${secret}" ]; then
-        mkdir -p "${secret_dir}/${secret}"
-        cp -v -r -L "${config_dir}/${secret}/." "${secret_dir}/${secret}/"
-      fi
-    done
-    mkdir -p /${secret_dir}/ssh
-    cp -v -r -L /${config_dir}/ssh_host_* /${secret_dir}/ssh/
-    chmod 0400 /${secret_dir}/ssh/ssh_host_*
-  config.yml.erb: |
-    # GitLab user. git by default
-    user: git
-
-    # Url to gitlab instance. Used for api calls. Should end with a slash.
-    gitlab_url: "http://gitlab-unicorn:8181/"
-
-    secret_file: /etc/gitlab-secrets/shell/.gitlab_shell_secret
-
-    http_settings:
-      self_signed_cert: false
-
-    # File used as authorized_keys for gitlab user
-    auth_file: "/home/git/.ssh/authorized_keys"
-
-    # Redis settings used for pushing commit notices to gitlab
-    redis:
-      host: gitlab-redis-master
-      port: 6379
-      pass: "<%= File.read("/etc/gitlab-secrets/redis/password").strip.dump[1..-2] %>"
-      database: nil
-      namespace: resque:gitlab
-
-    # Log file.
-    # Default is gitlab-shell.log in the root directory.
-    log_file: "/var/log/gitlab-shell/gitlab-shell.log"
-
-    # Log level. INFO by default
-    log_level: INFO
-
-    # Audit usernames.
-    # Set to true to see real usernames in the logs instead of key ids, which is easier to follow, but
-    # incurs an extra API call on every gitlab-shell command.
-    audit_usernames: false
-# Leave this here - This line denotes end of block to the parser.
----
-# Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/nginx-tcp-configmap.yml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-nginx-ingress-tcp
-  namespace: gitlab
-  labels:
-    app: gitlab-shell
-    chart: gitlab-shell-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-data:
-  22: "gitlab/gitlab-gitlab-shell:22"
----
 # Source: gitlab/charts/gitlab/charts/migrations/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-migrations
-  namespace: gitlab
+  namespace: default
   labels:
     app: migrations
-    chart: migrations-3.1.0
+    chart: migrations-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -593,10 +241,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "$(PSQL_HOST)"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -607,7 +255,7 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@gitlab-redis-master:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@$(REDIS_HOST):6379
       id:
   gitlab.yml.erb: |
     production: &base
@@ -619,7 +267,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
           
       
   configure: |
@@ -647,10 +295,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-sidekiq-all-in-1
-  namespace: gitlab
+  namespace: default
   labels:
     app: sidekiq
-    chart: sidekiq-3.1.0
+    chart: sidekiq-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -671,10 +319,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-sidekiq
-  namespace: gitlab
+  namespace: default
   labels:
     app: sidekiq
-    chart: sidekiq-3.1.0
+    chart: sidekiq-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -685,10 +333,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "$(PSQL_HOST)"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -702,12 +350,12 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@gitlab-redis-master:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@$(REDIS_HOST):6379
       id:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.gitlab.kube.dev
+        host: gitlab.gitlab.replace.me
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -726,9 +374,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@gitlab.kube.dev"
+        email_from: "gitlab@gitlab.replace.me"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@gitlab.kube.dev"
+        email_reply_to: "noreply@gitlab.replace.me"
         email_subject_suffix: ""
       gravatar:
         plain_url: 
@@ -742,66 +390,38 @@ data:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-artifacts
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/artifacts").to_json() %>
       lfs:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: git-lfs
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/lfs").to_json() %>
       uploads:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-uploads
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/uploads").to_json() %>
       packages:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-packages
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/packages").to_json() %>
       external_diffs:
         enabled: 
         when: 
@@ -811,26 +431,10 @@ data:
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
       pseudonymizer:
         manifest: config/pseudonymizer.yml
         upload:
           remote_directory: gitlab-pseudo
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
       
       pages:
         enabled: false
@@ -839,7 +443,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.gitlab.kube.dev
+        host: registry.gitlab.replace.me
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -866,7 +470,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -913,10 +517,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-task-runner
-  namespace: gitlab
+  namespace: default
   labels:
     app: task-runner
-    chart: task-runner-3.1.0
+    chart: task-runner-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -925,10 +529,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "$(PSQL_HOST)"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -938,12 +542,12 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@gitlab-redis-master:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@$(REDIS_HOST):6379
       id:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.gitlab.kube.dev
+        host: gitlab.gitlab.replace.me
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -962,75 +566,47 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@gitlab.kube.dev"
+        email_from: "gitlab@gitlab.replace.me"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@gitlab.kube.dev"
+        email_reply_to: "noreply@gitlab.replace.me"
         email_subject_suffix: ""
       
       artifacts:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-artifacts
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/artifacts").to_json() %>
       lfs:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: git-lfs
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/lfs").to_json() %>
       uploads:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-uploads
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/uploads").to_json() %>
       packages:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-packages
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/packages").to_json() %>
       external_diffs:
         enabled: 
         when: 
@@ -1040,26 +616,10 @@ data:
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
       pseudonymizer:
         manifest: config/pseudonymizer.yml
         upload:
           remote_directory: gitlab-pseudo
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
       
       pages:
         enabled: false
@@ -1068,7 +628,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.gitlab.kube.dev
+        host: registry.gitlab.replace.me
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -1095,7 +655,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -1138,8 +698,8 @@ data:
     access_key = $(cat /init-secrets/minio/accesskey)
     secret_key = $(cat /init-secrets/minio/secretkey)
     bucket_location = us-east-1
-    host_base = minio.gitlab.kube.dev
-    host_bucket = minio.gitlab.kube.dev/%(bucket)
+    host_base = minio.gitlab.replace.me
+    host_bucket = minio.gitlab.replace.me/%(bucket)
     default_mime_type = binary/octet-stream
     enable_multipart = True
     multipart_max_chunks = 10000
@@ -1152,7 +712,7 @@ data:
     socket_timeout = 300
     use_mime_magic = True
     verbosity = WARNING
-    website_endpoint = https://minio.gitlab.kube.dev
+    website_endpoint = https://minio.gitlab.replace.me
     EOF
     else
       mv "/${secret_dir}/objectstorage/.s3cfg" "/${secret_dir}/.s3cfg"
@@ -1171,10 +731,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-unicorn
-  namespace: gitlab
+  namespace: default
   labels:
     app: unicorn
-    chart: unicorn-3.1.0
+    chart: unicorn-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -1185,10 +745,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "$(PSQL_HOST)"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -1202,7 +762,7 @@ data:
   resque.yml.erb: |
     production:
       # Redis (single instance)
-      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@gitlab-redis-master:6379
+      url: redis://:<%= URI.escape(File.read("/etc/gitlab/redis/password").strip) %>@$(REDIS_HOST):6379
       id:
   unicorn.rb: |
     # This file should be equivalent to `unicorn.rb` from:
@@ -1277,7 +837,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.gitlab.kube.dev
+        host: gitlab.gitlab.replace.me
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -1296,9 +856,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@gitlab.kube.dev"
+        email_from: "gitlab@gitlab.replace.me"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@gitlab.kube.dev"
+        email_reply_to: "noreply@gitlab.replace.me"
         email_subject_suffix: ""
       
       gravatar:
@@ -1312,66 +872,38 @@ data:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-artifacts
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/artifacts").to_json() %>
       lfs:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: git-lfs
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/lfs").to_json() %>
       uploads:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-uploads
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/uploads").to_json() %>
       packages:
         enabled: true
         object_store:
           enabled: true
-          remote_directory: gitlab-packages
+          remote_directory: t-rex-p1-k8s-gitlab-storage
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
+          connection: <%= YAML.load_file("/etc/gitlab/objectstorage/packages").to_json() %>
       external_diffs:
         enabled: 
         when: 
@@ -1381,14 +913,6 @@ data:
           direct_upload: true
           background_upload: false
           proxy_download: true
-          connection:
-            provider: AWS
-            region: us-east-1
-            aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
-            aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.kube.dev
-            endpoint: http://gitlab-minio-svc:9000
-            path_style: true
       
       pages:
         enabled: false
@@ -1417,7 +941,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -1448,7 +972,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.gitlab.kube.dev
+        host: registry.gitlab.replace.me
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -1473,10 +997,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-workhorse-config
-  namespace: gitlab
+  namespace: default
   labels:
     app: unicorn
-    chart: unicorn-3.1.0
+    chart: unicorn-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -1485,7 +1009,7 @@ data:
     gitlab-helm-chart
   workhorse-config.toml.erb: |
     [redis]
-    URL = "redis://gitlab-redis-master:6379"
+    URL = "redis://$(REDIS_HOST):6379"
     Password = "<%= File.read("/etc/gitlab/redis/password").strip.dump[1..-2] %>"
   configure: |
       set -e
@@ -1495,644 +1019,31 @@ data:
       cp -v -r -L /init-config/redis/password /init-secrets-workhorse/redis/
 # Leave this here - This line denotes end of block to the parser.
 ---
-# Source: gitlab/charts/minio/templates/minioconfig_configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-minio-config-cm
-  namespace: gitlab
-  labels:
-    app: minio
-    chart: minio-0.4.3
-    release: gitlab
-    heritage: Helm
-    
-data:
-  initialize: |-
-    #!/bin/sh
-    # minio/mc container has Busybox Ash, be sure to be POSIX compliant and avoid Bash-isms
-    set -e ; # Have script exit in the event of a failed command.
-    
-    # connectToMinio
-    # Use a check-sleep-check loop to wait for Minio service to be available
-    connectToMinio() {
-      set -e ; # fail if we can't read the keys.
-      ACCESS=$(cat /config/accesskey) ; SECRET=$(cat /config/secretkey) ;
-      set +e ; # The connections to minio are allowed to fail.
-      echo "Connecting to Minio server: http://$MINIO_ENDPOINT:$MINIO_PORT" ;
-      MC_COMMAND="mc config host add myminio http://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
-      $MC_COMMAND ;
-      STATUS=$? ;
-      until [ $STATUS -eq 0 ] ;
-      do
-        sleep 1 ; # 1 second intervals between attempts
-        $MC_COMMAND ;
-        STATUS=$? ;
-      done ;
-      set -e ; # reset `e` as active
-      return 0
-    }
-    
-    # checkBucketExists ($bucket)
-    # Check if the bucket exists, by using the exit code of `mc ls`
-    checkBucketExists() {
-      BUCKET=$1
-      CMD=$(/usr/bin/mc ls myminio/$BUCKET > /dev/null 2>&1)
-      return $?
-    }
-    
-    # createBucket ($bucket, $policy, $purge)
-    # Ensure bucket exists, purging if asked to
-    createBucket() {
-      BUCKET=$1
-      POLICY=$2
-      PURGE=$3
-    
-    
-      # Purge the bucket, if set & exists
-      # Since PURGE is user input, check explicitly for `true`
-      if [ $PURGE = true ]; then
-        if checkBucketExists $BUCKET ; then
-          echo "Purging bucket '$BUCKET'."
-          set +e ; # don't exit if this fails
-          /usr/bin/mc rm -r --force myminio/$BUCKET
-          set -e ; # reset `e` as active
-        else
-          echo "Bucket '$BUCKET' does not exist, skipping purge."
-        fi
-      fi
-    
-      # Create the bucket if it does not exist
-      if ! checkBucketExists $BUCKET ; then
-        echo "Creating bucket '$BUCKET'"
-        /usr/bin/mc mb myminio/$BUCKET
-      else
-        echo "Bucket '$BUCKET' already exists."
-      fi
-    
-      # At this point, the bucket should exist, skip checking for existance
-      # Set policy on the bucket
-      echo "Setting policy of bucket '$BUCKET' to '$POLICY'."
-      /usr/bin/mc policy $POLICY myminio/$BUCKET
-    }
-    
-    connectToMinio
-    createBucket registry none false
-    createBucket git-lfs none false
-    createBucket runner-cache none false
-    createBucket gitlab-uploads none false
-    createBucket gitlab-artifacts none false
-    createBucket gitlab-backups none false
-    createBucket gitlab-packages none false
-    createBucket tmp none false
-    createBucket gitlab-pseudo none false
-    createBucket gitlab-mr-diffs none false
-    
-  configure: |-
-    sed -e 's@ACCESS_KEY@'"$(cat /config/accesskey)"'@' -e 's@SECRET_KEY@'"$(cat /config/secretkey)"'@' /config/config.json > /minio/config.json
-  config.json: |-
-    {
-      "version": "20",
-      "credential": {
-        "accessKey": "ACCESS_KEY",
-        "secretKey": "SECRET_KEY"
-      },
-      "region": "us-east-1",
-      "browser": "on",
-      "domain": "",
-      "logger": {
-        "console": {
-          "enable": true
-        },
-        "file": {
-          "enable": false,
-          "fileName": ""
-        }
-      },
-      "notify": {
-        "amqp": {
-          "1": {
-            "enable": false,
-            "url": "",
-            "exchange": "",
-            "routingKey": "",
-            "exchangeType": "",
-            "deliveryMode": 0,
-            "mandatory": false,
-            "immediate": false,
-            "durable": false,
-            "internal": false,
-            "noWait": false,
-            "autoDeleted": false
-          }
-        },
-        "nats": {
-          "1": {
-            "enable": false,
-            "address": "",
-            "subject": "",
-            "username": "",
-            "password": "",
-            "token": "",
-            "secure": false,
-            "pingInterval": 0,
-            "streaming": {
-              "enable": false,
-              "clusterID": "",
-              "clientID": "",
-              "async": false,
-              "maxPubAcksInflight": 0
-            }
-          }
-        },
-        "elasticsearch": {
-          "1": {
-            "enable": false,
-            "format": "namespace",
-            "url": "",
-            "index": ""
-          }
-        },
-        "redis": {
-          "1": {
-            "enable": false,
-            "format": "namespace",
-            "address": "",
-            "password": "",
-            "key": ""
-          }
-        },
-        "postgresql": {
-          "1": {
-            "enable": false,
-            "format": "namespace",
-            "connectionString": "",
-            "table": "",
-            "host": "",
-            "port": "",
-            "user": "",
-            "password": "",
-            "database": ""
-          }
-        },
-        "kafka": {
-          "1": {
-            "enable": false,
-            "brokers": null,
-            "topic": ""
-          }
-        },
-        "webhook": {
-          "1": {
-            "enable": false,
-            "endpoint": ""
-          }
-        },
-        "mysql": {
-          "1": {
-            "enable": false,
-            "format": "namespace",
-            "dsnString": "",
-            "table": "",
-            "host": "",
-            "port": "",
-            "user": "",
-            "password": "",
-            "database": ""
-          }
-        },
-        "mqtt": {
-          "1": {
-            "enable": false,
-            "broker": "",
-            "topic": "",
-            "qos": 0,
-            "clientId": "",
-            "username": "",
-            "password": ""
-          }
-        }
-      }
-    }
-# Blank line to signal end of Block
----
-# Source: gitlab/charts/nginx-ingress/templates/controller-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-nginx-ingress-controller
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "controller"
-data:
-  enable-vts-status: "true"
-  proxy-set-headers: gitlab/gitlab-nginx-ingress-custom-headers
-  enable-vts-status: "true"
-  hsts-include-subdomains: "false"
-  server-name-hash-bucket-size: "256"
-  server-tokens: "false"
-  ssl-ciphers: ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4
-  ssl-protocols: TLSv1.3 TLSv1.2
-  use-http2: "false"
----
-# Source: gitlab/charts/nginx-ingress/templates/headers-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-nginx-ingress-custom-headers
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "controller"
-data:
-  Referrer-Policy: strict-origin-when-cross-origin
----
-# Source: gitlab/charts/redis/templates/configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-redis
-  labels:
-    app: redis
-    chart: redis-10.3.4
-    heritage: Helm
-    release: gitlab
-data:
-  redis.conf: |-
-    # User-supplied configuration:
-    # Enable AOF https://redis.io/topics/persistence#append-only-file
-    appendonly yes
-    # Disable RDB persistence, AOF persistence already enabled.
-    save ""
-  master.conf: |-
-    dir /data
-    rename-command FLUSHDB ""
-    rename-command FLUSHALL ""
-  replica.conf: |-
-    dir /data
-    slave-read-only yes
-    rename-command FLUSHDB ""
-    rename-command FLUSHALL ""
----
-# Source: gitlab/charts/redis/templates/health-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-redis-health
-  labels:
-    app: redis
-    chart: redis-10.3.4
-    heritage: Helm
-    release: gitlab
-data:
-  ping_readiness_local.sh: |-
-    password_aux=`cat ${REDIS_PASSWORD_FILE}`
-    export REDIS_PASSWORD=$password_aux
-    response=$(
-      timeout -s 9 $1 \
-      redis-cli \
-        -a $REDIS_PASSWORD --no-auth-warning \
-        -h localhost \
-        -p $REDIS_PORT \
-        ping
-    )
-    if [ "$response" != "PONG" ]; then
-      echo "$response"
-      exit 1
-    fi
-  ping_liveness_local.sh: |-
-    password_aux=`cat ${REDIS_PASSWORD_FILE}`
-    export REDIS_PASSWORD=$password_aux
-    response=$(
-      timeout -s 9 $1 \
-      redis-cli \
-        -a $REDIS_PASSWORD --no-auth-warning \
-        -h localhost \
-        -p $REDIS_PORT \
-        ping
-    )
-    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
-      echo "$response"
-      exit 1
-    fi
-  ping_readiness_master.sh: |-
-    password_aux=`cat ${REDIS_MASTER_PASSWORD_FILE}`
-    export REDIS_MASTER_PASSWORD=$password_aux
-    response=$(
-      timeout -s 9 $1 \
-      redis-cli \
-        -a $REDIS_MASTER_PASSWORD --no-auth-warning \
-        -h $REDIS_MASTER_HOST \
-        -p $REDIS_MASTER_PORT_NUMBER \
-        ping
-    )
-    if [ "$response" != "PONG" ]; then
-      echo "$response"
-      exit 1
-    fi
-  ping_liveness_master.sh: |-
-    password_aux=`cat ${REDIS_MASTER_PASSWORD_FILE}`
-    export REDIS_MASTER_PASSWORD=$password_aux
-    response=$(
-      timeout -s 9 $1 \
-      redis-cli \
-        -a $REDIS_MASTER_PASSWORD --no-auth-warning \
-        -h $REDIS_MASTER_HOST \
-        -p $REDIS_MASTER_PORT_NUMBER \
-        ping
-    )
-    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
-      echo "$response"
-      exit 1
-    fi
-  ping_readiness_local_and_master.sh: |-
-    script_dir="$(dirname "$0")"
-    exit_status=0
-    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
-    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
-    exit $exit_status
-  ping_liveness_local_and_master.sh: |-
-    script_dir="$(dirname "$0")"
-    exit_status=0
-    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
-    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
-    exit $exit_status
----
-# Source: gitlab/charts/registry/templates/configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-registry
-  namespace: gitlab
-  labels:
-    app: registry
-    chart: registry-0.4.0
-    release: gitlab
-    heritage: Helm
-    
-data:
-  configure: |-
-    if [ -e /config/accesskey ] ; then
-      sed -e 's@ACCESS_KEY@'"$(cat /config/accesskey)"'@' -e 's@SECRET_KEY@'"$(cat /config/secretkey)"'@' /config/config.yml > /registry/config.yml
-    else
-      cp -v -r -L /config/config.yml  /registry/config.yml
-    fi
-    # Place the `http.secret` value from the kubernetes secret
-    sed -i -e 's@HTTP_SECRET@'"$(cat /config/httpSecret)"'@' /registry/config.yml
-    # Insert any provided `storage` block from kubernetes secret
-    if [ -d /config/storage ]; then
-      # Copy contents of storage secret(s)
-      mkdir -p /registry/storage
-      cp -v -r -L /config/storage/* /registry/storage/
-      # Ensure there is a new line in the end
-      echo '' >> /registry/storage/config
-      # Default `delete.enabled: true` if not present.
-      ## Note: busybox grep doesn't support multiline, so we chain `egrep`.
-      if ! $(egrep -A1 '^delete:\s*$' /registry/storage/config | egrep -q '\s{2,4}enabled:') ; then
-        echo 'delete:' >> /registry/storage/config
-        echo '  enabled: true' >> /registry/storage/config
-      fi
-      # Indent /registry/storage/config 2 spaces before inserting into config.yml
-      sed -i 's/^/  /' /registry/storage/config
-      # Insert into /registry/config.yml after `storage:`
-      sed -i '/storage:/ r /registry/storage/config' /registry/config.yml
-      # Remove the now extraneous `config` file
-      rm /registry/storage/config
-    fi
-    # Set to known path, to used ConfigMap
-    cat /config/certificate.crt > /registry/certificate.crt
-  config.yml: |
-    version: 0.1
-    log:
-      fields:
-        service: registry
-      level: warn
-    http:
-      debug:
-        addr: ':5001'
-        prometheus:
-          enabled: false
-          path: /metrics
-      draintimeout: 0
-      headers:
-        X-Content-Type-Options: [nosniff]
-      addr: :5000
-      secret: "HTTP_SECRET"
-      relativeurls: false
-    health:
-      storagedriver:
-        enabled: false
-        interval: 10s
-        threshold: 3
-    auth:
-      token:
-        realm: https://gitlab.gitlab.kube.dev/jwt/auth
-        service: container_registry
-        issuer: "gitlab-issuer"
-        # This is provided from the initContainer execution, at a known path.
-        rootcertbundle: /etc/docker/registry/certificate.crt
-        autoredirect: false
-    compatibility:
-      schema1:
-        enabled: false
-    validation:
-      disabled: true
-    storage:
-      maintenance:
-        readonly:
-          enabled: false
-      s3:
-        accesskey: "ACCESS_KEY"
-        secretkey: "SECRET_KEY"
-        region: us-east-1
-        regionendpoint: http://gitlab-minio-svc:9000
-        bucket: registry
-        secure: true
-        v4auth: true
-        rootdirectory: /
-      cache:
-        blobdescriptor: 'inmemory'
-      delete:
-        enabled: true
-      redirect:
-        disable: true
----
 # Source: gitlab/templates/chart-info.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitlab-chart-info
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitlab
-    chart: gitlab-3.1.0
+    chart: gitlab-3.1.5
     release: gitlab
     heritage: Helm
     
 data:
-  gitlabVersion: "12.8.0"
-  gitlabChartVersion: "3.1.0"
----
-# Source: gitlab/templates/initdb-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-postgresql-init-db
-  namespace: gitlab
-  labels:
-    app: gitlab
-    chart: gitlab-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-data:
-  enable_extensions.sh: |
-    PGPASS=$(cat ${POSTGRES_POSTGRES_PASSWORD_FILE}) psql -d gitlabhq_production -U postgres -c 'CREATE EXTENSION pg_trgm;'
-# Leave this here - This line denotes end of block to the parser.
----
-# Source: gitlab/charts/minio/templates/minio_pvc.yaml
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: gitlab-minio
-  namespace: gitlab
-  labels:
-    app: minio
-    chart: minio-0.4.3
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  accessModes:
-    - "ReadWriteOnce"
-  resources:
-    requests:
-      storage: "10Gi"
-  selector:
----
-# Source: gitlab/charts/nginx-ingress/templates/role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: gitlab-nginx-ingress
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - namespaces
-    verbs:
-      - get
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-      - pods
-      - secrets
-      - endpoints
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - services
-    verbs:
-      - get
-      - list
-      - update
-      - watch
-  - apiGroups:
-      - extensions
-    resources:
-      - ingresses
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - extensions
-    resources:
-      - ingresses/status
-    verbs:
-      - update
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    resourceNames:
-      - ingress-controller-leader-gitlab-nginx
-    verbs:
-      - get
-      - update
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - create
-  - apiGroups:
-      - ""
-    resources:
-      - endpoints
-    verbs:
-      - create
-      - get
-      - update
-  - apiGroups:
-      - ""
-    resources:
-      - events
-    verbs:
-      - create
-      - patch
----
-# Source: gitlab/charts/nginx-ingress/templates/rolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: gitlab-nginx-ingress
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: gitlab-nginx-ingress
-subjects:
-  - kind: ServiceAccount
-    name: gitlab-nginx-ingress
-    namespace: gitlab
+  gitlabVersion: "12.8.7"
+  gitlabChartVersion: "3.1.5"
 ---
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-gitaly
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitaly
-    chart: gitaly-3.1.0
+    chart: gitaly-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -2158,10 +1069,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitlab-exporter
-    chart: gitlab-exporter-3.1.0
+    chart: gitlab-exporter-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -2178,40 +1089,15 @@ spec:
     app: gitlab-exporter
     release: gitlab
 ---
-# Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-gitlab-shell
-  namespace: gitlab
-  labels:
-    app: gitlab-shell
-    chart: gitlab-shell-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    
-spec:
-  type: ClusterIP
-  ports:
-    - port: 22
-      targetPort: 2222
-      protocol: TCP
-      name: ssh
-  selector:
-    app: gitlab-shell
-    release: gitlab
----
 # Source: gitlab/charts/gitlab/charts/unicorn/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-unicorn
-  namespace: gitlab
+  namespace: default
   labels:
     app: unicorn
-    chart: unicorn-3.1.0
+    chart: unicorn-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -2232,308 +1118,15 @@ spec:
     app: unicorn
     release: gitlab
 ---
-# Source: gitlab/charts/minio/templates/minio_svc.yaml
-kind: Service
-apiVersion: v1
-metadata:
-  name: gitlab-minio-svc
-  namespace: gitlab
-  labels:
-    app: minio
-    chart: minio-0.4.3
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    
-spec:
-  type: ClusterIP
-  selector:
-    app: minio
-    release: gitlab
-    component: app
-  ports:
-    - name: service
-      port: 9000
-      targetPort: 9000
-      protocol: TCP
----
-# Source: gitlab/charts/nginx-ingress/templates/controller-metrics-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-nginx-ingress-controller-metrics
-  namespace: gitlab
-  annotations:
-    prometheus.io/port: "10254"
-    prometheus.io/scrape: "true"
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "controller"
-spec:
-  
-  ports:
-    - name: metrics
-      port: 9913
-      targetPort: metrics
-  selector:
-    app: nginx-ingress
-    component: "controller"
-    release: gitlab
-  type: "ClusterIP"
----
-# Source: gitlab/charts/nginx-ingress/templates/controller-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-nginx-ingress-controller
-  namespace: gitlab
-  labels:
-    component: "controller"
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  
-  externalTrafficPolicy: "Local"
-  ports:
-    - name: http
-      port: 80
-      protocol: TCP
-      targetPort: http
-    - name: https
-      port: 443
-      protocol: TCP
-      targetPort: https
-    - name: gitlab-shell
-      port: 22
-      protocol: TCP
-      targetPort: gitlab-shell
-  selector:
-    app: nginx-ingress
-    component: "controller"
-    release: gitlab
-  type: "LoadBalancer"
----
-# Source: gitlab/charts/nginx-ingress/templates/controller-stats-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-nginx-ingress-controller-stats
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "controller"
-spec:
-  
-  ports:
-    - name: stats
-      port: 18080
-      targetPort: stats
-  selector:
-    app: nginx-ingress
-    component: "controller"
-    release: gitlab
-  type: "ClusterIP"
----
-# Source: gitlab/charts/nginx-ingress/templates/default-backend-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-nginx-ingress-default-backend
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "default-backend"
-spec:
-  
-  ports:
-    - name: http
-      port: 80
-      protocol: TCP
-      targetPort: http
-  selector:
-    app: nginx-ingress
-    component: "default-backend"
-    release: gitlab
-  type: "ClusterIP"
----
-# Source: gitlab/charts/postgresql/templates/metrics-svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-postgresql-metrics
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-  annotations:
-    prometheus.io/port: "9187"
-    prometheus.io/scrape: "true"
-spec:
-  type: ClusterIP
-  ports:
-    - name: metrics
-      port: 9187
-      targetPort: metrics
-  selector:
-    app: postgresql
-    release: gitlab
-    role: master
----
-# Source: gitlab/charts/postgresql/templates/svc-headless.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-postgresql-headless
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-spec:
-  type: ClusterIP
-  clusterIP: None
-  ports:
-    - name: postgresql
-      port: 5432
-      targetPort: postgresql
-  selector:
-    app: postgresql
-    release: "gitlab"
----
-# Source: gitlab/charts/postgresql/templates/svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-postgresql
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-spec:
-  type: ClusterIP
-  ports:
-    - name: postgresql
-      port: 5432
-      targetPort: postgresql
-  selector:
-    app: postgresql
-    release: "gitlab"
-    role: master
----
-# Source: gitlab/charts/redis/templates/headless-svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-redis-headless
-  labels:
-    app: redis
-    chart: redis-10.3.4
-    release: gitlab
-    heritage: Helm
-spec:
-  type: ClusterIP
-  clusterIP: None
-  ports:
-  - name: redis
-    port: 6379
-    targetPort: redis
-  selector:
-    app: redis
-    release: gitlab
----
-# Source: gitlab/charts/redis/templates/metrics-svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-redis-metrics
-  labels:
-    app: redis
-    chart: redis-10.3.4
-    release: gitlab
-    heritage: Helm
-spec:
-  type: ClusterIP
-  ports:
-  - name: metrics
-    port: 9121
-    targetPort: metrics
-  selector:
-    app: redis
-    release: gitlab
----
-# Source: gitlab/charts/redis/templates/redis-master-svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-redis-master
-  labels:
-    app: redis
-    chart: redis-10.3.4
-    release: gitlab
-    heritage: Helm
-spec:
-  type: ClusterIP
-  ports:
-  - name: redis
-    port: 6379
-    targetPort: redis
-  selector:
-    app: redis
-    release: gitlab
-    role: master
----
-# Source: gitlab/charts/registry/templates/service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-registry
-  namespace: gitlab
-  labels:
-    app: registry
-    chart: registry-0.4.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    
-spec:
-  type: ClusterIP
-  ports:
-  - port: 5000
-    targetPort: 5000
-    protocol: TCP
-    name: registry
-  selector:
-    app: registry
-    release: gitlab
----
 # Source: gitlab/charts/gitlab/charts/gitlab-exporter/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitlab-exporter
-    chart: gitlab-exporter-3.1.0
+    chart: gitlab-exporter-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -2549,7 +1142,7 @@ spec:
         app: gitlab-exporter
         release: gitlab
       annotations:
-        checksum/config: b8e7027faa78b6410424350d72f3f0413591014f340ae4a361a6de3b44f988a2
+        checksum/config: b2993fcefc931a3bf31c65d033f44719ebf99fbb14f7c9477e184d252b0f6968
         prometheus.io/path: /metrics
         prometheus.io/port: "9168"
         prometheus.io/scrape: "true"
@@ -2657,176 +1250,16 @@ spec:
           defaultMode: 0400
           sources:
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
-              name: "gitlab-redis-secret"
+              name: "redis-secret"
               items:
-                - key: "secret"
+                - key: "redis-password"
                   path: redis/password
       - name: gitlab-exporter-secrets
-        emptyDir:
-          medium: "Memory"
-      
-      - name: etc-ssl-certs
-        emptyDir:
-          medium: "Memory"
-      - name: custom-ca-certificates
-        projected:
-          defaultMode: 0400
-          sources:
-          - secret:
-              name: gitlab-wildcard-tls-ca
----
-# Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab-gitlab-shell
-  namespace: gitlab
-  labels:
-    app: gitlab-shell
-    chart: gitlab-shell-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  selector:
-    matchLabels:
-      app: gitlab-shell
-      release: gitlab
-  template:
-    metadata:
-      labels:
-        app: gitlab-shell
-        release: gitlab
-      annotations:
-        checksum/config: 8cd25ef4cb61966def28a0edde107babf12cec742f81a7a8521bea7d4ca8edc1
-        checksum/config-sshd: c6e1943ffae9e9d6654d80c45f5d8935e8ba3a3350ef583ef956cdf3738781cd
-        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-    spec:
-      initContainers:
-        
-        
-        - name: certificates
-          image: "registry.gitlab.com/gitlab-org/build/cng/alpine-certificates:20171114-r3"
-          imagePullPolicy: "Always"
-          volumeMounts:
-          - name: etc-ssl-certs
-            mountPath: /etc/ssl/certs
-            readOnly: false
-          - name: custom-ca-certificates
-            mountPath: /usr/local/share/ca-certificates
-            readOnly: true
-          resources:
-            requests:
-              cpu: 50m
-        - name: configure
-          command: ['sh', '/config/configure']
-          image: "busybox:latest"
-          volumeMounts:
-          
-          - name: shell-config
-            mountPath: /config
-            readOnly: true
-          - name: shell-init-secrets
-            mountPath: /init-config
-            readOnly: true
-          - name: shell-secrets
-            mountPath: /init-secrets
-            readOnly: false
-          resources:
-            requests:
-              cpu: 50m
-      securityContext:
-        runAsUser: 1000
-        fsGroup: 1000      
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app: gitlab-shell
-                  release: gitlab
-      containers:
-        
-        - name: gitlab-shell
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-shell:v11.0.0"
-          imagePullPolicy: "Always"
-          ports:
-            - containerPort: 2222
-              name: ssh
-          env:
-            - name: GITALY_FEATURE_DEFAULT_ON
-              value: "1"
-            - name: CONFIG_TEMPLATE_DIRECTORY
-              value: '/etc/gitlab-shell'
-            - name: CONFIG_DIRECTORY
-              value: '/srv/gitlab-shell'
-            - name: KEYS_DIRECTORY
-              value: '/etc/gitlab-secrets/ssh'
-          volumeMounts:
-            - name: shell-config
-              mountPath: '/etc/gitlab-shell'
-            - name: shell-secrets
-              mountPath: '/etc/gitlab-secrets'
-              readOnly: true
-            - name: sshd-config
-              mountPath: /etc/ssh/sshd_config
-              subPath: sshd_config
-              readOnly: true
-            
-            - name: etc-ssl-certs
-              mountPath: /etc/ssl/certs/
-              readOnly: true
-          livenessProbe:
-            exec:
-              command:
-              - /scripts/healthcheck
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 3
-            successThreshold: 1
-            failureThreshold: 3
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: 2222
-          resources:
-            requests:
-              cpu: 0
-              memory: 6M
-      volumes:
-      
-      - name: shell-config
-        configMap:
-          name: gitlab-gitlab-shell
-      - name: sshd-config
-        configMap:
-          name: gitlab-gitlab-shell-sshd
-      - name: shell-init-secrets
-        projected:
-          defaultMode: 0440
-          sources:
-            - secret:
-                name: "gitlab-gitlab-shell-host-keys"
-            - secret:
-                name: "gitlab-gitlab-shell-secret"
-                items:
-                  - key: "secret"
-                    path: shell/.gitlab_shell_secret
-            - secret:
-                name: "gitlab-redis-secret"
-                items:
-                  - key: "secret"
-                    path: redis/password
-      # Actual config dirs that will be used in the container
-      - name: shell-secrets
         emptyDir:
           medium: "Memory"
       
@@ -2845,10 +1278,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-sidekiq-all-in-1-v1
-  namespace: gitlab
+  namespace: default
   labels:
     app: sidekiq
-    chart: sidekiq-3.1.0
+    chart: sidekiq-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -2866,9 +1299,9 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: fcea97f182d40ba8d61e256907db9d7940084b2b7dc3a6400d81aa2189a53b5b
+        checksum/configmap: 3616ff24a9b46ea28a9ac3e500ed9aa066e2412efbb1ac67938b30d9db3cb1eb
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-        checksum/configmap-pod: f1e3863f3313cd1c67faa3a5e24c54473568dc5cce2a752277ee0ee6d5d642b8
+        checksum/configmap-pod: 7b1f1aa8eb64abbc06eb8b77197a039923992ac43b29b146096d7e80db37ceaf
         prometheus.io/port: "3807"
         prometheus.io/scrape: "true"
     spec:
@@ -2921,7 +1354,7 @@ spec:
             requests:
               cpu: 50m
         - name: dependencies
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.8.7"
           imagePullPolicy: "Always"
           args:
             - /scripts/wait-for-deps
@@ -2956,7 +1389,7 @@ spec:
       containers:
         
         - name: sidekiq
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.8.7"
           imagePullPolicy: "Always"
           env:
             - name: prometheus_multiproc_dir
@@ -3063,14 +1496,14 @@ spec:
                 - key: "token"
                   path: gitaly/gitaly_token
           - secret:
-              name: "gitlab-redis-secret"
+              name: "redis-secret"
               items:
-                - key: "secret"
+                - key: "redis-password"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-registry-secret"
@@ -3078,17 +1511,30 @@ spec:
                 - key: registry-auth.key
                   path: registry/gitlab-registry.key
           # mount secret for minio
+          # mount secret for lfs
           - secret:
-              name: "gitlab-minio-secret"
+              name: gitlab-credentials
               items:
                 - key: accesskey
-                  path: minio/accesskey
-                - key: secretkey
-                  path: minio/secretkey
-          # mount secret for lfs
+                  path: objectstorage/lfs
           # mount secret for artifacts
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/artifacts
           # mount secret for uploads
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/uploads
           # mount secret for packages
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/packages
           # mount secret for external_diffs
           # mount secret for pseudonymizer
           # mount secrets for LDAP
@@ -3112,10 +1558,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-task-runner
-  namespace: gitlab
+  namespace: default
   labels:
     app: task-runner
-    chart: task-runner-3.1.0
+    chart: task-runner-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -3134,7 +1580,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 50fdb4ba8faf5b4f783e4ac04fee1d975765483285ae526f623ff204892780ec
+        checksum/config: 1ebebf85544e7e275d7a20b6be734d0d3060f32ab528528a459dbc951d0eb33c
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -3182,21 +1628,21 @@ spec:
             - /bin/bash
             - -c
             - cp -v -r -L /etc/gitlab/.s3cfg $HOME/.s3cfg && while sleep 3600; do :; done # alpine sleep has no infinity
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:v12.8.7"
           imagePullPolicy: "Always"
           env:
             - name: ARTIFACTS_BUCKET_NAME
-              value: gitlab-artifacts
+              value: t-rex-p1-k8s-gitlab-storage
             - name: REGISTRY_BUCKET_NAME
               value: registry
             - name: LFS_BUCKET_NAME
-              value: git-lfs
+              value: t-rex-p1-k8s-gitlab-storage
             - name: UPLOADS_BUCKET_NAME
-              value: gitlab-uploads
+              value: t-rex-p1-k8s-gitlab-storage
             - name: PACKAGES_BUCKET_NAME
-              value: gitlab-packages
+              value: t-rex-p1-k8s-gitlab-storage
             - name: BACKUP_BUCKET_NAME
-              value: gitlab-backups
+              value: t-rex-p1-k8s-gitlab-storage
             - name: BACKUP_BACKEND
               value: s3
             - name: TMP_BUCKET_NAME
@@ -3263,32 +1709,50 @@ spec:
                 - key: "token"
                   path: gitaly/gitaly_token
           - secret:
-              name: "gitlab-redis-secret"
+              name: "redis-secret"
               items:
-                - key: "secret"
+                - key: "redis-password"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-registry-secret"
               items:
                 - key: registry-auth.key
                   path: registry/gitlab-registry.key
-          # mount secret for minio
           - secret:
-              name: "gitlab-minio-secret"
+              name: s3cmd-config
+              items:
+                - key: config
+                  path: objectstorage/.s3cfg
+          # mount secret for minio
+          # mount secret for artifacts
+          - secret:
+              name: gitlab-credentials
               items:
                 - key: accesskey
-                  path: minio/accesskey
-                - key: secretkey
-                  path: minio/secretkey
-          # mount secret for artifacts
+                  path: objectstorage/artifacts
           # mount secret for lfs
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/lfs
           # mount secret for uploads
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/uploads
           # mount secret for packages
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/packages
           # mount secret for external_diffs
           # mount secret for pseudonymizer
           # mount secrets for LDAP
@@ -3312,10 +1776,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-unicorn
-  namespace: gitlab
+  namespace: default
   labels:
     app: unicorn
-    chart: unicorn-3.1.0
+    chart: unicorn-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -3331,7 +1795,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: a4d77c3c075a93ebaf01b9206c415888f9686edf2ff4c95d8f5bc3218d53c1ff
+        checksum/config: 7868613c3e6898e7eddc3bc880ee58a3d77cf6f08a7ea85f35c6be771dc48cbe
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -3396,7 +1860,7 @@ spec:
             requests:
               cpu: 50m
         - name: dependencies
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.8.7"
           imagePullPolicy: "Always"
           args:
             - /scripts/wait-for-deps
@@ -3428,7 +1892,7 @@ spec:
       containers:
         
         - name: unicorn
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ee:v12.8.7"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8080
@@ -3503,7 +1967,7 @@ spec:
               cpu: 300m
               memory: 1.2G
         - name: gitlab-workhorse
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee:v12.8.7"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8181
@@ -3595,14 +2059,14 @@ spec:
                 - key: "token"
                   path: gitaly/gitaly_token
           - secret:
-              name: "gitlab-redis-secret"
+              name: "redis-secret"
               items:
-                - key: "secret"
+                - key: "redis-password"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-registry-secret"
@@ -3615,17 +2079,30 @@ spec:
                 - key: "shared_secret"
                   path: gitlab-workhorse/secret
           # mount secret for minio
+          # mount secret for artifacts
           - secret:
-              name: "gitlab-minio-secret"
+              name: gitlab-credentials
               items:
                 - key: accesskey
-                  path: minio/accesskey
-                - key: secretkey
-                  path: minio/secretkey
-          # mount secret for artifacts
+                  path: objectstorage/artifacts
           # mount secret for lfs
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/lfs
           # mount secret for uploads
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/uploads
           # mount secret for packages
+          - secret:
+              name: gitlab-credentials
+              items:
+                - key: accesskey
+                  path: objectstorage/packages
           # mount secret for external_diffs
           # mount secrets for LDAP
           
@@ -3650,439 +2127,15 @@ spec:
           - secret:
               name: gitlab-wildcard-tls-ca
 ---
-# Source: gitlab/charts/minio/templates/minio_deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab-minio
-  namespace: gitlab
-  labels:
-    app: minio
-    chart: minio-0.4.3
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  strategy:
-    type: Recreate
-    # The following entry allows updates without intervention, due to previous defaults.
-    rollingUpdate: null
-  selector:
-    matchLabels:
-      app: minio
-      release: "gitlab"
-      component: app
-  template:
-    metadata:
-      name: gitlab-minio
-      labels:
-        app: minio
-        chart: "minio-0.4.3"
-        release: "gitlab"
-        heritage: "Helm"
-        component: app
-    spec:
-      securityContext:
-        runAsUser: 1000
-        fsGroup: 1000
-      volumes:
-        - name: podinfo
-          downwardAPI:
-            items:
-              - path: "labels"
-                fieldRef:
-                  fieldPath: metadata.labels
-        - name: export
-          persistentVolumeClaim:
-            claimName: gitlab-minio
-        - name: minio-configuration
-          projected:
-            sources:
-            - configMap:
-                name: gitlab-minio-config-cm
-            - secret:
-                name: "gitlab-minio-secret"
-        - name: minio-server-config
-          emptyDir:
-            medium: "Memory"
-      initContainers:
-        - name: configure
-          image: "busybox:latest"
-          imagePullPolicy: IfNotPresent
-          command: ["sh", "/config/configure"]
-          volumeMounts:
-            - name: minio-configuration
-              mountPath: /config
-            - name: minio-server-config
-              mountPath: /minio
-          resources:
-            requests:
-              cpu: 50m      
-      containers:
-        - name: minio
-          image: minio/minio:RELEASE.2017-12-28T01-21-00Z
-          imagePullPolicy: Always
-          args: ["-C", "/tmp/.minio", "--quiet", "server", "/export"]
-          volumeMounts:
-            - name: export
-              mountPath: /export
-            - name: minio-server-config
-              # this path altered from upstream, for use with `securityContext`/UID 1000
-              mountPath: "/tmp/.minio"
-            - name: podinfo
-              mountPath: /podinfo
-              readOnly: false
-          ports:
-            - name: service
-              containerPort: 9000
-          livenessProbe:
-            tcpSocket:
-              port: 9000
-            timeoutSeconds: 1
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
----
-# Source: gitlab/charts/nginx-ingress/templates/controller-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab-nginx-ingress-controller
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "controller"
-spec:
-  replicas: 3
-  revisionHistoryLimit: 10
-  strategy:
-    {}
-  minReadySeconds: 0
-  selector:
-    matchLabels:
-      app: nginx-ingress
-      component: "controller"
-      release: gitlab
-  template:
-    metadata:
-      annotations:
-      labels:
-        app: nginx-ingress
-        component: "controller"
-        release: gitlab
-    spec:
-      dnsPolicy: ClusterFirst
-      containers:
-        - name: nginx-ingress-controller
-          image: "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.0"
-          imagePullPolicy: "IfNotPresent"
-          args:
-            - /nginx-ingress-controller
-            - --default-backend-service=gitlab/gitlab-nginx-ingress-default-backend
-            - --publish-service=gitlab/gitlab-nginx-ingress-controller
-            - --election-id=ingress-controller-leader
-            - --ingress-class=gitlab-nginx
-            - --configmap=gitlab/gitlab-nginx-ingress-controller
-            - --tcp-services-configmap=gitlab/gitlab-nginx-ingress-tcp
-            - --watch-namespace=gitlab
-            - --force-namespace-isolation
-          securityContext:
-            capabilities:
-                drop:
-                - ALL
-                add:
-                - NET_BIND_SERVICE
-            runAsUser: 33
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 10254
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 3
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-            - name: https
-              containerPort: 443
-              protocol: TCP
-            - name: stats
-              containerPort: 18080
-              protocol: TCP
-            - name: metrics
-              containerPort: 10254
-              protocol: TCP
-            - name: gitlab-shell
-              containerPort: 22
-              protocol: TCP
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 10254
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 3
-          resources:
-            requests:
-              cpu: 100m
-              memory: 100Mi
-      hostNetwork: false
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app: nginx-ingress
-                  component: controller
-                  release: gitlab
-      serviceAccountName: gitlab-nginx-ingress
-      terminationGracePeriodSeconds: 60
----
-# Source: gitlab/charts/nginx-ingress/templates/default-backend-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab-nginx-ingress-default-backend
-  namespace: gitlab
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-0.30.0-1
-    release: gitlab
-    heritage: Helm
-    
-    component: "default-backend"
-spec:
-  replicas: 2
-  revisionHistoryLimit: 10
-  selector:
-    matchLabels:
-      app: nginx-ingress
-      component: "default-backend"
-      release: gitlab
-  template:
-    metadata:
-      labels:
-        app: nginx-ingress
-        component: "default-backend"
-        release: gitlab
-    spec:
-      containers:
-        - name: nginx-ingress-default-backend
-          image: "k8s.gcr.io/defaultbackend:1.4"
-          imagePullPolicy: "IfNotPresent"
-          args:
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-          ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
-          resources:
-            requests:
-              cpu: 5m
-              memory: 5Mi
-      terminationGracePeriodSeconds: 60
----
-# Source: gitlab/charts/registry/templates/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab-registry
-  namespace: gitlab
-  labels:
-    app: registry
-    chart: registry-0.4.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: registry
-      release: gitlab
-  template:
-    metadata:
-      labels:
-        app: registry
-        release: gitlab
-      annotations:
-        checksum/configmap: 5486a9f739c0403452963602b0444bae152d5fcfcdc12776b1a18edc769bf575
-        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-    spec:
-      securityContext:
-        runAsUser: 1000
-        fsGroup: 1000
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app: registry
-                  release: gitlab
-      initContainers:
-        
-        - name: certificates
-          image: "registry.gitlab.com/gitlab-org/build/cng/alpine-certificates:20171114-r3"
-          imagePullPolicy: "IfNotPresent"
-          volumeMounts:
-          - name: etc-ssl-certs
-            mountPath: /etc/ssl/certs
-            readOnly: false
-          - name: custom-ca-certificates
-            mountPath: /usr/local/share/ca-certificates
-            readOnly: true
-          resources:
-            requests:
-              cpu: 50m
-        - name: configure
-          image: "busybox:latest"
-          imagePullPolicy: IfNotPresent
-          command: ["sh", "/config/configure"]
-          volumeMounts:
-            - name: registry-secrets
-              mountPath: /config
-            - name: registry-server-config
-              mountPath: /registry
-          resources:
-            requests:
-              cpu: 50m      
-      containers:
-        - name: registry
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry:v2.8.1-gitlab"
-          imagePullPolicy: "IfNotPresent"
-          volumeMounts:
-          - name: registry-server-config
-            mountPath: /etc/docker/registry/
-            readOnly: true
-          - name: etc-ssl-certs
-            mountPath: /etc/ssl/certs/
-            readOnly: true
-          livenessProbe:
-            httpGet:
-              path: /debug/health
-              port: 5001
-              scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /debug/health
-              port: 5001
-              scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 3
-          resources:
-            requests:
-              cpu: 50m
-              memory: 32Mi
-      terminationGracePeriodSeconds: 30
-      volumes:
-      - name: registry-server-config
-        emptyDir:
-          medium: "Memory"
-      - name: registry-secrets
-        projected:
-          sources:
-          - configMap:
-              name: gitlab-registry
-          - secret:
-              name: "gitlab-registry-secret"
-              items:
-                  - key: registry-auth.crt
-                    path: certificate.crt
-          - secret:
-              name: "gitlab-registry-httpsecret"
-              items:
-                - key: "secret"
-                  path: httpSecret
-          - secret:
-              name: "gitlab-minio-secret"
-      
-      - name: etc-ssl-certs
-        emptyDir:
-          medium: "Memory"
-      - name: custom-ca-certificates
-        projected:
-          defaultMode: 0400
-          sources:
-          - secret:
-              name: gitlab-wildcard-tls-ca
----
-# Source: gitlab/charts/gitlab/charts/gitlab-shell/templates/hpa.yaml
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: gitlab-gitlab-shell
-  namespace: gitlab
-  labels:
-    app: gitlab-shell
-    chart: gitlab-shell-3.1.0
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: gitlab-gitlab-shell
-  minReplicas: 2
-  maxReplicas: 10
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageValue: 100m
----
 # Source: gitlab/charts/gitlab/charts/sidekiq/templates/hpa.yaml
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: gitlab-sidekiq-all-in-1-v1
-  namespace: gitlab
+  namespace: default
   labels:
     app: sidekiq
-    chart: sidekiq-3.1.0
+    chart: sidekiq-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -4104,10 +2157,10 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: gitlab-unicorn
-  namespace: gitlab
+  namespace: default
   labels:
     app: unicorn
-    chart: unicorn-3.1.0
+    chart: unicorn-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -4116,45 +2169,20 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: gitlab-unicorn
-  minReplicas: 1
-  maxReplicas: 1
+  minReplicas: 2
+  maxReplicas: 10
   metrics:
   - type: Resource
     resource:
       name: cpu
       targetAverageValue: 1
 ---
-# Source: gitlab/charts/registry/templates/hpa.yaml
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: gitlab-registry
-  namespace: gitlab
-  labels:
-    app: registry
-    chart: registry-0.4.0
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: gitlab-registry
-  minReplicas: 2
-  maxReplicas: 10
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        targetAverageUtilization: 75
----
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/statefulset.yml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: gitlab-gitaly
-  namespace: gitlab
+  namespace: default
   labels:
     app: gitaly
     chart: gitaly
@@ -4175,7 +2203,7 @@ spec:
         app: gitaly
         release: gitlab
       annotations:
-        checksum/config: 6eba5241c6d3ba92c03ab00ab116d58dfe22e636c25a60f4f25f0f581b9c6b84
+        checksum/config: d1aa56d367e07e0b4105aebba34e336c924838f2ed86cc7b5caea085548be83d
     spec:
       terminationGracePeriodSeconds: 30
       initContainers:
@@ -4227,7 +2255,7 @@ spec:
       containers:
         
         - name: gitaly
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitaly:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitaly:v12.8.7"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8075
@@ -4300,9 +2328,9 @@ spec:
                 - key: "secret"
                   path: ".gitlab_shell_secret"
           - secret:
-              name: "gitlab-redis-secret"
+              name: "redis-secret"
               items:
-                - key: "secret"
+                - key: "redis-password"
                   path: redis_password
       
       - name: etc-ssl-certs
@@ -4328,356 +2356,15 @@ spec:
             storage: "50Gi"
         selector:
 ---
-# Source: gitlab/charts/postgresql/templates/statefulset.yaml
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: gitlab-postgresql
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-spec:
-  serviceName: gitlab-postgresql-headless
-  replicas: 1
-  updateStrategy:
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      app: postgresql
-      release: "gitlab"
-      role: master
-  template:
-    metadata:
-      name: gitlab-postgresql
-      labels:
-        app: postgresql
-        chart: postgresql-7.7.3
-        release: "gitlab"
-        heritage: "Helm"
-        role: master
-    spec:      
-      securityContext:
-        fsGroup: 1001
-      initContainers:
-        - name: init-chmod-data
-          image: docker.io/bitnami/minideb:stretch
-          imagePullPolicy: "Always"
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-          command:
-            - /bin/sh
-            - -c
-            - |
-              mkdir -p /bitnami/postgresql/data
-              chmod 700 /bitnami/postgresql/data
-              find /bitnami/postgresql -mindepth 0 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
-                xargs chown -R 1001:1001
-              chmod -R 777 /dev/shm
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: data
-              mountPath: /bitnami/postgresql
-              subPath: 
-            - name: dshm
-              mountPath: /dev/shm
-      containers:
-        - name: gitlab-postgresql
-          image: docker.io/bitnami/postgresql:10.9.0
-          imagePullPolicy: "IfNotPresent"
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-          securityContext:
-            runAsUser: 1001
-          env:
-            - name: BITNAMI_DEBUG
-              value: "false"
-            - name: POSTGRESQL_PORT_NUMBER
-              value: "5432"
-            - name: POSTGRESQL_VOLUME_DIR
-              value: "/bitnami/postgresql"
-            - name: PGDATA
-              value: "/bitnami/postgresql/data"
-            - name: POSTGRES_POSTGRES_PASSWORD_FILE
-              value: "/opt/bitnami/postgresql/secrets/postgresql-postgres-password"
-            - name: POSTGRES_USER
-              value: "gitlab"
-            - name: POSTGRES_PASSWORD_FILE
-              value: "/opt/bitnami/postgresql/secrets/postgresql-password"
-            - name: POSTGRES_DB
-              value: "gitlabhq_production"
-            - name: POSTGRESQL_ENABLE_LDAP
-              value: "no"
-          ports:
-            - name: postgresql
-              containerPort: 5432
-          livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - exec pg_isready -U "gitlab" -d "gitlabhq_production" -h 127.0.0.1 -p 5432
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - -e
-                - |
-                  pg_isready -U "gitlab" -d "gitlabhq_production" -h 127.0.0.1 -p 5432
-                  [ -f /opt/bitnami/postgresql/tmp/.initialized ]
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          volumeMounts:
-            - name: custom-init-scripts
-              mountPath: /docker-entrypoint-initdb.d/
-            - name: postgresql-password
-              mountPath: /opt/bitnami/postgresql/secrets/
-            - name: dshm
-              mountPath: /dev/shm
-            - name: data
-              mountPath: /bitnami/postgresql
-              subPath: 
-        - name: metrics
-          image: docker.io/bitnami/postgres-exporter:0.7.0-debian-9-r12
-          imagePullPolicy: "IfNotPresent"
-          env:
-            - name: DATA_SOURCE_URI
-              value: "127.0.0.1:5432/gitlabhq_production?sslmode=disable"
-            - name: DATA_SOURCE_PASS_FILE
-              value: "/opt/bitnami/postgresql/secrets/postgresql-password"
-            - name: DATA_SOURCE_USER
-              value: gitlab
-          livenessProbe:
-            httpGet:
-              path: /
-              port: metrics
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            httpGet:
-              path: /
-              port: metrics
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          volumeMounts:
-            - name: postgresql-password
-              mountPath: /opt/bitnami/postgresql/secrets/
-          ports:
-            - name: metrics
-              containerPort: 9187
-      volumes:
-        - name: postgresql-password
-          secret:
-            secretName: "gitlab-postgresql-password"
-        - name: custom-init-scripts
-          configMap:
-            name: gitlab-postgresql-init-db
-        - name: dshm
-          emptyDir:
-            medium: Memory
-            sizeLimit: 1Gi
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: "8Gi"
----
-# Source: gitlab/charts/redis/templates/redis-master-statefulset.yaml
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: gitlab-redis-master
-  labels:
-    app: redis
-    chart: redis-10.3.4
-    release: gitlab
-    heritage: Helm
-spec:
-  selector:
-    matchLabels:
-      app: redis
-      release: gitlab
-      role: master
-  serviceName: gitlab-redis-headless
-  template:
-    metadata:
-      labels:
-        app: redis
-        chart: redis-10.3.4
-        release: gitlab
-        role: master
-      annotations:
-        checksum/health: 215dfd97143cfd419d64704134a329fd0d2a3ec5e52706acef643ea51288ddef
-        checksum/configmap: 6f1a2a4be44b21e52e6a1ffc0c2d158e470024c340801e7402a8d71de5dd152e
-        checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-        prometheus.io/port: "9121"
-        prometheus.io/scrape: "true"
-    spec:      
-      securityContext:
-        fsGroup: 1001
-      serviceAccountName: "default"
-      containers:
-      - name: gitlab-redis
-        image: "docker.io/bitnami/redis:5.0.7-debian-9-r50"
-        imagePullPolicy: "IfNotPresent"
-        securityContext:
-          runAsUser: 1001
-        command:
-        - /bin/bash
-        - -c
-        - |
-          if [[ -n $REDIS_PASSWORD_FILE ]]; then
-            password_aux=`cat ${REDIS_PASSWORD_FILE}`
-            export REDIS_PASSWORD=$password_aux
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
-          fi
-          ARGS=("--port" "${REDIS_PORT}")
-          ARGS+=("--requirepass" "${REDIS_PASSWORD}")
-          ARGS+=("--masterauth" "${REDIS_PASSWORD}")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
-          /run.sh ${ARGS[@]}
-        env:
-        - name: REDIS_REPLICATION_MODE
-          value: master
-        - name: REDIS_PASSWORD_FILE
-          value: "/opt/bitnami/redis/secrets/redis-password"
-        - name: REDIS_PORT
-          value: "6379"
-        ports:
-        - name: redis
-          containerPort: 6379
-        livenessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
-            - -c
-            - /health/ping_liveness_local.sh 5
-        readinessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
-            - -c
-            - /health/ping_readiness_local.sh 5
-        resources:
-          null
-        volumeMounts:
-        - name: health
-          mountPath: /health
-        - name: redis-password
-          mountPath: /opt/bitnami/redis/secrets/
-        - name: redis-data
-          mountPath: /data
-          subPath: 
-        - name: config
-          mountPath: /opt/bitnami/redis/mounted-etc
-        - name: redis-tmp-conf
-          mountPath: /opt/bitnami/redis/etc/
-      - name: metrics
-        image: docker.io/bitnami/redis-exporter:1.3.5-debian-9-r23
-        imagePullPolicy: "IfNotPresent"
-        command:
-        - /bin/bash
-        - -c
-        - |
-          if [[ -f '/secrets/redis-password' ]]; then
-           export REDIS_PASSWORD=$(cat /secrets/redis-password)
-          fi
-          redis_exporter
-        env:
-        - name: REDIS_ALIAS
-          value: gitlab-redis
-        volumeMounts:
-        - name: redis-password
-          mountPath: /secrets/
-        ports:
-        - name: metrics
-          containerPort: 9121
-        resources:
-          null
-      volumes:
-      - name: health
-        configMap:
-          name: gitlab-redis-health
-          defaultMode: 0755
-      - name: redis-password
-        secret:
-          secretName: "gitlab-redis-secret"
-          items:
-          - key: "secret"
-            path: redis-password
-      - name: config
-        configMap:
-          name: gitlab-redis
-      - name: redis-tmp-conf
-        emptyDir: {}
-  volumeClaimTemplates:
-    - metadata:
-        name: redis-data
-        labels:
-          app: redis
-          release: gitlab
-          heritage: Helm
-          component: master
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: "8Gi"
-        
-  updateStrategy:
-    type: RollingUpdate
----
 # Source: gitlab/charts/gitlab/charts/migrations/templates/job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: gitlab-migrations.1
-  namespace: gitlab
+  namespace: default
   labels:
     app: migrations
-    chart: migrations-3.1.0
+    chart: migrations-3.1.5
     release: gitlab
     heritage: Helm
     
@@ -4732,7 +2419,7 @@ spec:
       containers:
         
         - name: migrations
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:v12.8.0"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:v12.8.7"
           args:
             - /scripts/wait-for-deps
             - /scripts/db-migrate
@@ -4793,14 +2480,14 @@ spec:
                 - key: "token"
                   path: gitaly/gitaly_token
           - secret:
-              name: "gitlab-redis-secret"
+              name: "redis-secret"
               items:
-                - key: "secret"
+                - key: "redis-password"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-gitlab-initial-root-password"
@@ -4821,92 +2508,12 @@ spec:
           - secret:
               name: gitlab-wildcard-tls-ca
 ---
-# Source: gitlab/charts/minio/templates/create-buckets-job.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: gitlab-minio-create-buckets.1
-  namespace: gitlab
-  labels:
-    app: minio
-    chart: minio-0.4.3
-    release: gitlab
-    heritage: Helm
-    
-spec:
-  activeDeadlineSeconds: 600
-  template:
-    metadata:
-      labels:
-        app: minio
-        release: gitlab
-        component: create-buckets
-    spec:
-      restartPolicy: OnFailure
-      volumes:
-        - name: minio-configuration
-          projected:
-            sources:
-            - configMap:
-                name: gitlab-minio-config-cm
-            - secret:
-                name: "gitlab-minio-secret"      
-      containers:
-      - name: minio-mc
-        image: minio/mc:RELEASE.2018-07-13T00-53-22Z
-        command: ["/bin/sh", "/config/initialize"]
-        env:
-          - name: MINIO_ENDPOINT
-            value: gitlab-minio-svc
-          - name: MINIO_PORT
-            value: "9000"
-        volumeMounts:
-          - name: minio-configuration
-            mountPath: /config
-        resources:
-          requests:
-            cpu: 50m
----
-# Source: gitlab/charts/registry/templates/ingress.yaml
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: gitlab-registry
-  namespace: gitlab
-  labels:
-    app: registry
-    chart: registry-0.4.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    kubernetes.io/ingress.class: "gitlab-nginx"
-    kubernetes.io/ingress.provider: nginx
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
-    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-    nginx.ingress.kubernetes.io/proxy-buffering: "off"
-    
-spec:
-  rules:
-    - host: registry.gitlab.kube.dev
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: gitlab-registry
-              servicePort: 5000
-  tls:
-    - hosts:
-      - registry.gitlab.kube.dev
-      secretName: gitlab-wildcard-tls
----
 # Source: gitlab/charts/shared-secrets/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-shared-secrets
-  namespace: gitlab
+  namespace: default
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -4916,9 +2523,10 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 data:
   generate-secrets: |
-    namespace=gitlab
+    namespace=default
     release=gitlab
     env=production
     
@@ -4964,11 +2572,9 @@ data:
     generate_secret_if_needed "gitlab-gitlab-initial-root-password" --from-literal="password"=$(gen_random 'a-zA-Z0-9' 64)
     
     # Redis password
-    generate_secret_if_needed "gitlab-redis-secret" --from-literal="secret"=$(gen_random 'a-zA-Z0-9' 64)
+    generate_secret_if_needed "redis-secret" --from-literal="redis-password"=$(gen_random 'a-zA-Z0-9' 64)
     
     
-    # Postgres password
-    generate_secret_if_needed "gitlab-postgresql-password" --from-literal=postgresql-password=$(gen_random 'a-zA-Z0-9' 64) --from-literal=postgresql-postgres-password=$(gen_random 'a-zA-Z0-9' 64)
     
     
     # Gitlab shell
@@ -4977,8 +2583,6 @@ data:
     # Gitaly secret
     generate_secret_if_needed "gitlab-gitaly-secret" --from-literal="token"=$(gen_random 'a-zA-Z0-9' 64)
     
-    # Minio secret
-    generate_secret_if_needed "gitlab-minio-secret" --from-literal=accesskey=$(gen_random 'a-zA-Z0-9' 64) --from-literal=secretkey=$(gen_random 'a-zA-Z0-9' 64)
     
     
     # Gitlab runner secret
@@ -5044,8 +2648,8 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-ll1
-  namespace: gitlab
+  name: gitlab-shared-secrets.1-ja0
+  namespace: default
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -5054,7 +2658,7 @@ metadata:
     
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-2"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -5092,7 +2696,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: gitlab-shared-secrets
-  namespace: gitlab
+  namespace: default
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -5101,14 +2705,15 @@ metadata:
     
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 ---
 # Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: gitlab-shared-secrets
-  namespace: gitlab
+  namespace: default
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -5116,7 +2721,8 @@ metadata:
     heritage: Helm
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -5127,7 +2733,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: gitlab-shared-secrets
-  namespace: gitlab
+  namespace: default
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -5136,6 +2742,7 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -5143,14 +2750,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: gitlab-shared-secrets
-    namespace: gitlab
+    namespace: default
 ---
 # Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-vq9-selfsign
-  namespace: gitlab
+  name: gitlab-shared-secrets.1-bo0-selfsign
+  namespace: default
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -5159,7 +2766,7 @@ metadata:
     
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-2"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -5179,13 +2786,13 @@ spec:
         - name: CA_SUBJECT
           value: "GitLab Helm Chart" # defaults to GitLab in container
         - name: CA_ORG
-          value: "gitlab" # defaults to GitLab in container
+          value: "default" # defaults to GitLab in container
         - name: CA_ORG_UNIT
           value: "gitlab" # defaults to Cloud Native in container
         - name: CERT_SUBJECT
-          value: "gitlab.kube.dev" # defaults to GitLab in container
+          value: "gitlab.replace.me" # defaults to GitLab in container
         - name: CERT_DOMAIN
-          value: "gitlab.kube.dev" # defaults to example.com in container
+          value: "gitlab.replace.me" # defaults to example.com in container
         - name: EXPIRY
           value: "365d" # defaults to 8076h in container
         - name: ALGORITHM

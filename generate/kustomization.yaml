@@ -3,3 +3,19 @@
 
 resources:
   - generated.yaml
+
+# vars:
+# - name: REDIS_HOST
+#   objref:
+#     kind: Secret
+#     name: redis-secret
+#     apiVersion: v1
+#   fieldref:
+#     fieldpath: spec.data.host
+# - name: PSQL_HOST
+#   objref:
+#     kind: Secret
+#     name: psql-secret
+#     apiVersion: v1
+#   fieldref:
+#     fieldpath: spec.data.host
