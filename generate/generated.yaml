@@ -4,7 +4,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-3.1.5
@@ -23,7 +23,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-sidekiq
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.1.5
@@ -42,7 +42,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.1.5
@@ -61,7 +61,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-3.1.5
@@ -151,7 +151,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-3.1.5
@@ -229,7 +229,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-migrations
-  namespace: default
+  namespace: gitlab
   labels:
     app: migrations
     chart: migrations-3.1.5
@@ -267,7 +267,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       
   configure: |
@@ -295,7 +295,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-sidekiq-all-in-1
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.1.5
@@ -319,7 +319,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-sidekiq
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.1.5
@@ -470,7 +470,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -517,7 +517,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-task-runner
-  namespace: default
+  namespace: gitlab
   labels:
     app: task-runner
     chart: task-runner-3.1.5
@@ -655,7 +655,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -731,7 +731,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.1.5
@@ -941,7 +941,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -997,7 +997,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-workhorse-config
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.1.5
@@ -1024,7 +1024,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitlab-chart-info
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-3.1.5
@@ -1040,7 +1040,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-3.1.5
@@ -1069,7 +1069,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-3.1.5
@@ -1094,7 +1094,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.1.5
@@ -1123,7 +1123,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-3.1.5
@@ -1142,7 +1142,7 @@ spec:
         app: gitlab-exporter
         release: gitlab
       annotations:
-        checksum/config: b2993fcefc931a3bf31c65d033f44719ebf99fbb14f7c9477e184d252b0f6968
+        checksum/config: 6bd3ad75190ba080cb40c9ac62f75074759f3388698458f05a504a3ceacbf5e9
         prometheus.io/path: /metrics
         prometheus.io/port: "9168"
         prometheus.io/scrape: "true"
@@ -1278,7 +1278,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-sidekiq-all-in-1-v1
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.1.5
@@ -1299,9 +1299,9 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: 3616ff24a9b46ea28a9ac3e500ed9aa066e2412efbb1ac67938b30d9db3cb1eb
+        checksum/configmap: 25d079a1ff723cdf7b821acf196b5e052ea7736664567d9b4f847688209c325b
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-        checksum/configmap-pod: 7b1f1aa8eb64abbc06eb8b77197a039923992ac43b29b146096d7e80db37ceaf
+        checksum/configmap-pod: e0595ae9cb56a5eee2cd2155ae6f8a69b1325a135102ce65bfc2e7fa085be955
         prometheus.io/port: "3807"
         prometheus.io/scrape: "true"
     spec:
@@ -1558,7 +1558,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-task-runner
-  namespace: default
+  namespace: gitlab
   labels:
     app: task-runner
     chart: task-runner-3.1.5
@@ -1580,7 +1580,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 1ebebf85544e7e275d7a20b6be734d0d3060f32ab528528a459dbc951d0eb33c
+        checksum/config: 5fd3702957d24b65278c9a6f757013ecad4d0af0bdfc31e52bf6792bcd9c7532
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -1776,7 +1776,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.1.5
@@ -1795,7 +1795,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: 7868613c3e6898e7eddc3bc880ee58a3d77cf6f08a7ea85f35c6be771dc48cbe
+        checksum/config: 8e5fcf5ffbb832a8bf896d1bd339e78852136e7d87d58ae6942afcc0aa57f6da
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -2132,7 +2132,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: gitlab-sidekiq-all-in-1-v1
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.1.5
@@ -2157,7 +2157,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.1.5
@@ -2182,7 +2182,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly
@@ -2203,7 +2203,7 @@ spec:
         app: gitaly
         release: gitlab
       annotations:
-        checksum/config: d1aa56d367e07e0b4105aebba34e336c924838f2ed86cc7b5caea085548be83d
+        checksum/config: bb85074c6c555860e5c2d52a306f0f33f58491a49321b611d3d9136348766566
     spec:
       terminationGracePeriodSeconds: 30
       initContainers:
@@ -2361,7 +2361,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: gitlab-migrations.1
-  namespace: default
+  namespace: gitlab
   labels:
     app: migrations
     chart: migrations-3.1.5
@@ -2513,7 +2513,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -2526,7 +2526,7 @@ metadata:
     "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 data:
   generate-secrets: |
-    namespace=default
+    namespace=gitlab
     release=gitlab
     env=production
     
@@ -2648,8 +2648,8 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-ja0
-  namespace: default
+  name: gitlab-shared-secrets.1-ua9
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -2696,7 +2696,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -2713,7 +2713,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -2733,7 +2733,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -2750,14 +2750,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: gitlab-shared-secrets
-    namespace: default
+    namespace: gitlab
 ---
 # Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-bo0-selfsign
-  namespace: default
+  name: gitlab-shared-secrets.1-47e-selfsign
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -2786,7 +2786,7 @@ spec:
         - name: CA_SUBJECT
           value: "GitLab Helm Chart" # defaults to GitLab in container
         - name: CA_ORG
-          value: "default" # defaults to GitLab in container
+          value: "gitlab" # defaults to GitLab in container
         - name: CA_ORG_UNIT
           value: "gitlab" # defaults to Cloud Native in container
         - name: CERT_SUBJECT
