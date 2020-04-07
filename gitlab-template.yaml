@@ -4,7 +4,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-3.2.2
@@ -23,7 +23,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-sidekiq
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.2.2
@@ -42,7 +42,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.2.2
@@ -61,7 +61,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: gitlab-minio-v1
-  namespace: default
+  namespace: gitlab
   labels:
     app: minio
     chart: minio-0.4.3
@@ -170,7 +170,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-3.2.2
@@ -260,7 +260,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-3.2.2
@@ -338,7 +338,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-migrations
-  namespace: default
+  namespace: gitlab
   labels:
     app: migrations
     chart: migrations-3.2.2
@@ -377,7 +377,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       
   configure: |
@@ -405,7 +405,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-sidekiq-all-in-1
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.2.2
@@ -429,7 +429,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-sidekiq
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.2.2
@@ -624,7 +624,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -671,7 +671,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-task-runner
-  namespace: default
+  namespace: gitlab
   labels:
     app: task-runner
     chart: task-runner-3.2.2
@@ -853,7 +853,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -928,35 +928,8 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: gitlab-workhorse-config
-  namespace: default
-  labels:
-    app: unicorn
-    chart: unicorn-3.2.2
-    release: gitlab
-    heritage: Helm
-    
-data:
-  installation_type: |
-    gitlab-helm-chart
-  workhorse-config.toml.erb: |
-    [redis]
-    URL = "redis://gitlab-redis-master:6379"
-    Password = "<%= File.read("/etc/gitlab/redis/password").strip.dump[1..-2] %>"
-  configure: |
-      set -e
-      mkdir -p /init-secrets-workhorse/gitlab-workhorse
-      cp -v -r -L /init-config/gitlab-workhorse/secret /init-secrets-workhorse/gitlab-workhorse/secret
-      mkdir -p /init-secrets-workhorse/redis
-      cp -v -r -L /init-config/redis/password /init-secrets-workhorse/redis/
-# Leave this here - This line denotes end of block to the parser.
----
-# Source: gitlab/charts/gitlab/charts/unicorn/templates/configmap.yml
-apiVersion: v1
-kind: ConfigMap
-metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.2.2
@@ -1280,7 +1253,7 @@ data:
         storages: # You must have at least a `default` storage path.
           default:
             path: /var/opt/gitlab/repo
-            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.default:8075
+            gitaly_address: tcp://gitlab-gitaly-0.gitlab-gitaly.gitlab:8075
           
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
@@ -1331,12 +1304,39 @@ data:
       fi
     done
 ---
+# Source: gitlab/charts/gitlab/charts/unicorn/templates/configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-workhorse-config
+  namespace: gitlab
+  labels:
+    app: unicorn
+    chart: unicorn-3.2.2
+    release: gitlab
+    heritage: Helm
+    
+data:
+  installation_type: |
+    gitlab-helm-chart
+  workhorse-config.toml.erb: |
+    [redis]
+    URL = "redis://gitlab-redis-master:6379"
+    Password = "<%= File.read("/etc/gitlab/redis/password").strip.dump[1..-2] %>"
+  configure: |
+      set -e
+      mkdir -p /init-secrets-workhorse/gitlab-workhorse
+      cp -v -r -L /init-config/gitlab-workhorse/secret /init-secrets-workhorse/gitlab-workhorse/secret
+      mkdir -p /init-secrets-workhorse/redis
+      cp -v -r -L /init-config/redis/password /init-secrets-workhorse/redis/
+# Leave this here - This line denotes end of block to the parser.
+---
 # Source: gitlab/charts/minio/templates/minioconfig_configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-minio-config-cm
-  namespace: default
+  namespace: gitlab
   labels:
     app: minio
     chart: minio-0.4.3
@@ -1668,7 +1668,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-gitlab-chart-info
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-3.2.2
@@ -1684,7 +1684,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-postgresql-init-db
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab
     chart: gitlab-3.2.2
@@ -1701,7 +1701,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: gitlab-minio
-  namespace: default
+  namespace: gitlab
   labels:
     app: minio
     chart: minio-0.4.3
@@ -1759,14 +1759,14 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: gitlab-gitlab-runner
-  namespace: "default"
+  namespace: "gitlab"
 ---
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly-3.2.2
@@ -1795,7 +1795,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-3.2.2
@@ -1820,7 +1820,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.2.2
@@ -1849,7 +1849,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: gitlab-minio-svc
-  namespace: default
+  namespace: gitlab
   labels:
     app: minio
     chart: minio-0.4.3
@@ -2055,7 +2055,7 @@ spec:
           value: "ubuntu:16.04"
         
         - name: KUBERNETES_NAMESPACE
-          value: "default"
+          value: "gitlab"
         - name: KUBERNETES_POLL_TIMEOUT
           value: "180"
         - name: KUBERNETES_CPU_LIMIT
@@ -2138,7 +2138,7 @@ spec:
           value: "ubuntu:16.04"
         
         - name: KUBERNETES_NAMESPACE
-          value: "default"
+          value: "gitlab"
         - name: KUBERNETES_POLL_TIMEOUT
           value: "180"
         - name: KUBERNETES_CPU_LIMIT
@@ -2239,7 +2239,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-gitlab-exporter
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitlab-exporter
     chart: gitlab-exporter-3.2.2
@@ -2258,7 +2258,7 @@ spec:
         app: gitlab-exporter
         release: gitlab
       annotations:
-        checksum/config: 9f5a2bb72c8b58cc146d1ad0ff0427ec7a0fbf4573067030039e60f7565bf06c
+        checksum/config: 0678409da75538200d0a49657cfe83c126fd642bc1c31f39e8c87ef1d58ca250
         prometheus.io/path: /metrics
         prometheus.io/port: "9168"
         prometheus.io/scrape: "true"
@@ -2394,7 +2394,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-sidekiq-all-in-1-v1
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.2.2
@@ -2415,9 +2415,9 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: 6e675f6ce0bbbf92d0e25e27653a20d5a9d486ae620ba914055b3fb48d8f875c
+        checksum/configmap: f0f005c2d06d24b77f93d2cd04ae42a55caaa83f8bfcfd121d0ff83a8a4aca9f
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-        checksum/configmap-pod: 47dc7c9aeea4c1e972230245a7fdf7d04409ed27d593fcf0ed5bc7e1dffa0908
+        checksum/configmap-pod: 681c665cd325c04a4a4c86aa0294792c4ec5279298c137f368dc0e28df34afb5
         prometheus.io/port: "3807"
         prometheus.io/scrape: "true"
     spec:
@@ -2661,7 +2661,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-task-runner
-  namespace: default
+  namespace: gitlab
   labels:
     app: task-runner
     chart: task-runner-3.2.2
@@ -2683,7 +2683,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 472c3dba9cf03ae75e7fe25f87e4668e2ebc70aca483588a74b92c0e37a04805
+        checksum/config: 0b87ad34e353b94d059692818556371978cc6c6f84a5f945924a7a6fe8230e19
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -2861,7 +2861,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.2.2
@@ -2880,7 +2880,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: 5c49d1facddee8e3eec3f3f8224d922024f079a434c607ef67159585f2e842cd
+        checksum/config: c72b02c043a7c21589fef6cd65e2d20094158157c414c7224f6369dc5514fdcf
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -3206,7 +3206,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab-minio
-  namespace: default
+  namespace: gitlab
   labels:
     app: minio
     chart: minio-0.4.3
@@ -3300,7 +3300,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: gitlab-sidekiq-all-in-1-v1
-  namespace: default
+  namespace: gitlab
   labels:
     app: sidekiq
     chart: sidekiq-3.2.2
@@ -3325,7 +3325,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: gitlab-unicorn
-  namespace: default
+  namespace: gitlab
   labels:
     app: unicorn
     chart: unicorn-3.2.2
@@ -3350,7 +3350,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: gitlab-gitaly
-  namespace: default
+  namespace: gitlab
   labels:
     app: gitaly
     chart: gitaly
@@ -3371,7 +3371,7 @@ spec:
         app: gitaly
         release: gitlab
       annotations:
-        checksum/config: f51a9963a1ba396d311b305849bd2ecf54c32c4403e6a6b6b8cd961f0bcc11e9
+        checksum/config: 51bbc865325b49488ad2f414601d797121a3e170383b5e320128c1d803132301
     spec:
       terminationGracePeriodSeconds: 30
       initContainers:
@@ -3870,7 +3870,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: gitlab-migrations.1
-  namespace: default
+  namespace: gitlab
   labels:
     app: migrations
     chart: migrations-3.2.2
@@ -4022,7 +4022,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: gitlab-minio-create-buckets.1
-  namespace: default
+  namespace: gitlab
   labels:
     app: minio
     chart: minio-0.4.3
@@ -4068,7 +4068,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -4076,19 +4076,25 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 ---
 # Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
     release: gitlab
     heritage: Helm
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -4099,13 +4105,16 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
     release: gitlab
     heritage: Helm
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -4113,14 +4122,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: gitlab-shared-secrets
-    namespace: default
+    namespace: gitlab
 ---
 # Source: gitlab/charts/shared-secrets/templates/job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-2yq
-  namespace: default
+  name: gitlab-shared-secrets.1-v67
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -4128,6 +4137,8 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -4161,96 +4172,12 @@ spec:
       - name: ssh
         emptyDir: {}
 ---
-# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: gitlab-shared-secrets.1-d2n-selfsign
-  namespace: default
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-spec:
-  template:
-    metadata:
-      labels:
-        app: shared-secrets
-        release: gitlab
-    spec:
-      securityContext:
-        runAsUser: 65534
-        fsGroup: 65534
-      serviceAccountName: gitlab-shared-secrets
-      restartPolicy: Never
-      
-      initContainers:
-      - name: cfssl-self-sign
-        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
-        env:
-        - name: CA_SUBJECT
-          value: "GitLab Helm Chart" # defaults to GitLab in container
-        - name: CA_ORG
-          value: "default" # defaults to GitLab in container
-        - name: CA_ORG_UNIT
-          value: "gitlab" # defaults to Cloud Native in container
-        - name: CERT_SUBJECT
-          value: "gitlab.replace.me" # defaults to GitLab in container
-        - name: CERT_DOMAIN
-          value: "gitlab.replace.me" # defaults to example.com in container
-        - name: EXPIRY
-          value: "365d" # defaults to 8076h in container
-        - name: ALGORITHM
-          value: "rsa" # defaults to ecdsa in container
-        - name: KEY_SIZE
-          value: "4096" # defaults to 256 inside container
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
-      containers:
-      - name: kubectl
-        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          certname=gitlab-wildcard-tls
-          # create wildcard certificate secret
-          kubectl create secret tls $certname \
-            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
-          kubectl --namespace=$namespace label \
-            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-          # create CA certificate secret
-          kubectl create secret generic ${certname}-ca \
-            --from-file=cfssl_ca=/output/ca.pem || true
-          kubectl --namespace=$namespace label \
-            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
-      volumes:
-      - name: certs-path
-        emptyDir: {}
----
 # Source: gitlab/charts/shared-secrets/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-shared-secrets
-  namespace: default
+  namespace: gitlab
   labels:
     app: shared-secrets
     chart: shared-secrets-0.1.0
@@ -4258,9 +4185,12 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 data:
   generate-secrets: |
-    namespace=default
+    namespace=gitlab
     release=gitlab
     env=production
     
@@ -4381,3 +4311,89 @@ data:
     
     # Registry http.secret secret
     generate_secret_if_needed "gitlab-registry-httpsecret" --from-literal="secret"=$(gen_random 'a-z0-9' 128 | base64 -w 0)
+---
+# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-shared-secrets.1-xm8-selfsign
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        app: shared-secrets
+        release: gitlab
+    spec:
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+      serviceAccountName: gitlab-shared-secrets
+      restartPolicy: Never
+      
+      initContainers:
+      - name: cfssl-self-sign
+        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
+        env:
+        - name: CA_SUBJECT
+          value: "GitLab Helm Chart" # defaults to GitLab in container
+        - name: CA_ORG
+          value: "gitlab" # defaults to GitLab in container
+        - name: CA_ORG_UNIT
+          value: "gitlab" # defaults to Cloud Native in container
+        - name: CERT_SUBJECT
+          value: "gitlab.replace.me" # defaults to GitLab in container
+        - name: CERT_DOMAIN
+          value: "gitlab.replace.me" # defaults to example.com in container
+        - name: EXPIRY
+          value: "365d" # defaults to 8076h in container
+        - name: ALGORITHM
+          value: "rsa" # defaults to ecdsa in container
+        - name: KEY_SIZE
+          value: "4096" # defaults to 256 inside container
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
+      containers:
+      - name: kubectl
+        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          certname=gitlab-wildcard-tls
+          # create wildcard certificate secret
+          kubectl create secret tls $certname \
+            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
+          kubectl --namespace=$namespace label \
+            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+          # create CA certificate secret
+          kubectl create secret generic ${certname}-ca \
+            --from-file=cfssl_ca=/output/ca.pem || true
+          kubectl --namespace=$namespace label \
+            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
+      volumes:
+      - name: certs-path
+        emptyDir: {}
