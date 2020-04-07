@@ -2038,7 +2038,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+          value: http://gitlab-unicorn.gitlab.svc.cluster.local
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2121,7 +2121,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+          value: http://gitlab-unicorn.gitlab.svc.cluster.local
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
