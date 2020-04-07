@@ -369,7 +369,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+        host: gitlab.gitlab.replace.me
       gitaly:
         client_path: /home/git/gitaly/bin
         token: "<%= File.read('/etc/gitlab/gitaly/gitaly_token').strip.dump[1..-2] %>"
@@ -465,7 +465,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+        host: gitlab.gitlab.replace.me
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -701,7 +701,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+        host: gitlab.gitlab.replace.me
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -1113,7 +1113,7 @@ data:
   gitlab.yml.erb: |
     production: &base
       gitlab:
-        host: gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+        host: gitlab.gitlab.replace.me
         https: true
         max_request_duration_seconds: 57
         impersonation_enabled: 
@@ -2038,7 +2038,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+          value: https://gitlab.gitlab.replace.me
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2121,7 +2121,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+          value: https://gitlab.gitlab.replace.me
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2415,7 +2415,7 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: 3a5c8e63eecc9cb8a4101cbb01904926490aa73f340c0cd02d5bc6be1039ffb2
+        checksum/configmap: f0f005c2d06d24b77f93d2cd04ae42a55caaa83f8bfcfd121d0ff83a8a4aca9f
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         checksum/configmap-pod: 681c665cd325c04a4a4c86aa0294792c4ec5279298c137f368dc0e28df34afb5
         prometheus.io/port: "3807"
@@ -2683,7 +2683,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 58d7455ea43210ec85b23c5732251f820f0da067067ed2644e896dd863436e6b
+        checksum/config: 0b87ad34e353b94d059692818556371978cc6c6f84a5f945924a7a6fe8230e19
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -2880,7 +2880,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: 9b090b08f9e173ccf182be83a146a9fb945c86a8083f8577fb12692f3605ae50
+        checksum/config: c72b02c043a7c21589fef6cd65e2d20094158157c414c7224f6369dc5514fdcf
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -4063,11 +4063,11 @@ spec:
           requests:
             cpu: 50m
 ---
-# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
-apiVersion: batch/v1
-kind: Job
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: gitlab-shared-secrets.1-q79-selfsign
+  name: gitlab-shared-secrets
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4076,8 +4076,58 @@ metadata:
     heritage: Helm
     
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "create", "patch"]
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: gitlab-shared-secrets
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-shared-secrets
+    namespace: gitlab
+---
+# Source: gitlab/charts/shared-secrets/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-shared-secrets.1-v67
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
 spec:
   template:
     metadata:
@@ -4091,62 +4141,24 @@ spec:
       serviceAccountName: gitlab-shared-secrets
       restartPolicy: Never
       
-      initContainers:
-      - name: cfssl-self-sign
-        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
-        env:
-        - name: CA_SUBJECT
-          value: "GitLab Helm Chart" # defaults to GitLab in container
-        - name: CA_ORG
-          value: "gitlab" # defaults to GitLab in container
-        - name: CA_ORG_UNIT
-          value: "gitlab" # defaults to Cloud Native in container
-        - name: CERT_SUBJECT
-          value: "gitlab.replace.me" # defaults to GitLab in container
-        - name: CERT_DOMAIN
-          value: "gitlab.replace.me" # defaults to example.com in container
-        - name: EXPIRY
-          value: "365d" # defaults to 8076h in container
-        - name: ALGORITHM
-          value: "rsa" # defaults to ecdsa in container
-        - name: KEY_SIZE
-          value: "4096" # defaults to 256 inside container
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
       containers:
-      - name: kubectl
-        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          certname=gitlab-wildcard-tls
-          # create wildcard certificate secret
-          kubectl create secret tls $certname \
-            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
-          kubectl --namespace=$namespace label \
-            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-          # create CA certificate secret
-          kubectl create secret generic ${certname}-ca \
-            --from-file=cfssl_ca=/output/ca.pem || true
-          kubectl --namespace=$namespace label \
-            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
+        - name: shared-secrets
+          image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
+          command: ['/bin/bash', '/scripts/generate-secrets']
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: ssh
+              mountPath: /etc/ssh
+          resources:
+            requests:
+              cpu: 50m
       volumes:
-      - name: certs-path
+      - name: scripts
+        configMap:
+          name: gitlab-shared-secrets
+      - name: ssh
         emptyDir: {}
 ---
 # Source: gitlab/charts/shared-secrets/templates/configmap.yaml
@@ -4162,9 +4174,6 @@ metadata:
     heritage: Helm
     
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-3"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 data:
   generate-secrets: |
     namespace=gitlab
@@ -4289,11 +4298,11 @@ data:
     # Registry http.secret secret
     generate_secret_if_needed "gitlab-registry-httpsecret" --from-literal="secret"=$(gen_random 'a-z0-9' 128 | base64 -w 0)
 ---
-# Source: gitlab/charts/shared-secrets/templates/job.yaml
+# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-2kk
+  name: gitlab-shared-secrets.1-xm8-selfsign
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4302,8 +4311,6 @@ metadata:
     heritage: Helm
     
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -4317,83 +4324,60 @@ spec:
       serviceAccountName: gitlab-shared-secrets
       restartPolicy: Never
       
+      initContainers:
+      - name: cfssl-self-sign
+        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
+        env:
+        - name: CA_SUBJECT
+          value: "GitLab Helm Chart" # defaults to GitLab in container
+        - name: CA_ORG
+          value: "gitlab" # defaults to GitLab in container
+        - name: CA_ORG_UNIT
+          value: "gitlab" # defaults to Cloud Native in container
+        - name: CERT_SUBJECT
+          value: "gitlab.replace.me" # defaults to GitLab in container
+        - name: CERT_DOMAIN
+          value: "gitlab.replace.me" # defaults to example.com in container
+        - name: EXPIRY
+          value: "365d" # defaults to 8076h in container
+        - name: ALGORITHM
+          value: "rsa" # defaults to ecdsa in container
+        - name: KEY_SIZE
+          value: "4096" # defaults to 256 inside container
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
       containers:
-        - name: shared-secrets
-          image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
-          command: ['/bin/bash', '/scripts/generate-secrets']
-          imagePullPolicy: "Always"
-          volumeMounts:
-            - name: scripts
-              mountPath: /scripts
-            - name: ssh
-              mountPath: /etc/ssh
-          resources:
-            requests:
-              cpu: 50m
+      - name: kubectl
+        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          certname=gitlab-wildcard-tls
+          # create wildcard certificate secret
+          kubectl create secret tls $certname \
+            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
+          kubectl --namespace=$namespace label \
+            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+          # create CA certificate secret
+          kubectl create secret generic ${certname}-ca \
+            --from-file=cfssl_ca=/output/ca.pem || true
+          kubectl --namespace=$namespace label \
+            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
       volumes:
-      - name: scripts
-        configMap:
-          name: gitlab-shared-secrets
-      - name: ssh
+      - name: certs-path
         emptyDir: {}
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: gitlab-shared-secrets
-subjects:
-  - kind: ServiceAccount
-    name: gitlab-shared-secrets
-    namespace: gitlab
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get", "list", "create", "patch"]
