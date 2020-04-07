@@ -1,8 +1,8 @@
 namespace: gitlab
 
-bases:
-  - generate
+commonLabels:
+  app: gitlab
 
 resources:
   - namespace.yaml
-  - networking/virtual-services.yaml
+  - gitlab-template.yaml

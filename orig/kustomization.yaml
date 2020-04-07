@@ -1,0 +1,8 @@
+namespace: gitlab
+
+bases:
+  - generate
+
+resources:
+  - namespace.yaml
+  - networking/virtual-services.yaml
