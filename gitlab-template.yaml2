@@ -484,9 +484,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+        email_from: "gitlab@gitlab.replace.me"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+        email_reply_to: "noreply@gitlab.replace.me"
         email_subject_suffix: ""
       gravatar:
         plain_url: 
@@ -509,7 +509,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       lfs:
@@ -525,7 +525,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       uploads:
@@ -541,7 +541,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       packages:
@@ -557,7 +557,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       external_diffs:
@@ -574,7 +574,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       pseudonymizer:
@@ -586,7 +586,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       
@@ -597,7 +597,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+        host: registry.gitlab.replace.me
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -720,9 +720,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+        email_from: "gitlab@gitlab.replace.me"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+        email_reply_to: "noreply@gitlab.replace.me"
         email_subject_suffix: ""
       
       artifacts:
@@ -738,7 +738,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       lfs:
@@ -754,7 +754,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       uploads:
@@ -770,7 +770,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       packages:
@@ -786,7 +786,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       external_diffs:
@@ -803,7 +803,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       pseudonymizer:
@@ -815,7 +815,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       
@@ -826,7 +826,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+        host: registry.gitlab.replace.me
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -896,8 +896,8 @@ data:
     access_key = $(cat /init-secrets/minio/accesskey)
     secret_key = $(cat /init-secrets/minio/secretkey)
     bucket_location = us-east-1
-    host_base = minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
-    host_bucket = minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev/%(bucket)
+    host_base = minio.gitlab.replace.me
+    host_bucket = minio.gitlab.replace.me/%(bucket)
     default_mime_type = binary/octet-stream
     enable_multipart = True
     multipart_max_chunks = 10000
@@ -910,7 +910,7 @@ data:
     socket_timeout = 300
     use_mime_magic = True
     verbosity = WARNING
-    website_endpoint = https://minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+    website_endpoint = https://minio.gitlab.replace.me
     EOF
     else
       mv "/${secret_dir}/objectstorage/.s3cfg" "/${secret_dir}/.s3cfg"
@@ -923,33 +923,6 @@ data:
     # 3) GCP Project ID
     # 4) Decline anonymous usage statistics
     printf "$GOOGLE_APPLICATION_CREDENTIALS\nN\n\nN\n" | gsutil config -e
----
-# Source: gitlab/charts/gitlab/charts/unicorn/templates/configmap.yml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-workhorse-config
-  namespace: gitlab
-  labels:
-    app: unicorn
-    chart: unicorn-3.2.2
-    release: gitlab
-    heritage: Helm
-    
-data:
-  installation_type: |
-    gitlab-helm-chart
-  workhorse-config.toml.erb: |
-    [redis]
-    URL = "redis://gitlab-redis-master:6379"
-    Password = "<%= File.read("/etc/gitlab/redis/password").strip.dump[1..-2] %>"
-  configure: |
-      set -e
-      mkdir -p /init-secrets-workhorse/gitlab-workhorse
-      cp -v -r -L /init-config/gitlab-workhorse/secret /init-secrets-workhorse/gitlab-workhorse/secret
-      mkdir -p /init-secrets-workhorse/redis
-      cp -v -r -L /init-config/redis/password /init-secrets-workhorse/redis/
-# Leave this here - This line denotes end of block to the parser.
 ---
 # Source: gitlab/charts/gitlab/charts/unicorn/templates/configmap.yml
 apiVersion: v1
@@ -1159,9 +1132,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+        email_from: "gitlab@gitlab.replace.me"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+        email_reply_to: "noreply@gitlab.replace.me"
         email_subject_suffix: ""
       
       gravatar:
@@ -1184,7 +1157,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       lfs:
@@ -1200,7 +1173,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       uploads:
@@ -1216,7 +1189,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       packages:
@@ -1232,7 +1205,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       external_diffs:
@@ -1249,7 +1222,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+            host: minio.gitlab.replace.me
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       
@@ -1311,7 +1284,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+        host: registry.gitlab.replace.me
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -1330,6 +1303,33 @@ data:
         cp -v -r -L "${config_dir}/${secret}/." "${secret_dir}/${secret}/"
       fi
     done
+---
+# Source: gitlab/charts/gitlab/charts/unicorn/templates/configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-workhorse-config
+  namespace: gitlab
+  labels:
+    app: unicorn
+    chart: unicorn-3.2.2
+    release: gitlab
+    heritage: Helm
+    
+data:
+  installation_type: |
+    gitlab-helm-chart
+  workhorse-config.toml.erb: |
+    [redis]
+    URL = "redis://gitlab-redis-master:6379"
+    Password = "<%= File.read("/etc/gitlab/redis/password").strip.dump[1..-2] %>"
+  configure: |
+      set -e
+      mkdir -p /init-secrets-workhorse/gitlab-workhorse
+      cp -v -r -L /init-config/gitlab-workhorse/secret /init-secrets-workhorse/gitlab-workhorse/secret
+      mkdir -p /init-secrets-workhorse/redis
+      cp -v -r -L /init-config/redis/password /init-secrets-workhorse/redis/
+# Leave this here - This line denotes end of block to the parser.
 ---
 # Source: gitlab/charts/minio/templates/minioconfig_configmap.yaml
 apiVersion: v1
@@ -2038,7 +2038,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+          value: http://gitlab-unicorn.gitlab.svc.cluster.local
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2095,7 +2095,7 @@ spec:
         - name: CACHE_SHARED
           value: "true"
         - name: CACHE_S3_SERVER_ADDRESS
-          value: "minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+          value: "minio.gitlab.replace.me"
         - name: CACHE_S3_BUCKET_NAME
           value: "runner-cache"
         - name: CACHE_S3_BUCKET_LOCATION
@@ -2121,7 +2121,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+          value: http://gitlab-unicorn.gitlab.svc.cluster.local
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2178,7 +2178,7 @@ spec:
         - name: CACHE_SHARED
           value: "true"
         - name: CACHE_S3_SERVER_ADDRESS
-          value: "minio.gitlab.dev-gitlab2.fences-bootstrap.p1.dev"
+          value: "minio.gitlab.replace.me"
         - name: CACHE_S3_BUCKET_NAME
           value: "runner-cache"
         - name: CACHE_S3_BUCKET_LOCATION
@@ -2415,7 +2415,7 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: e37b985cef0777ddaf5d4d287b078fe424b34066cca575c2a9a0f29bc9c08a6d
+        checksum/configmap: 3a5c8e63eecc9cb8a4101cbb01904926490aa73f340c0cd02d5bc6be1039ffb2
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         checksum/configmap-pod: 681c665cd325c04a4a4c86aa0294792c4ec5279298c137f368dc0e28df34afb5
         prometheus.io/port: "3807"
@@ -2683,7 +2683,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 3b962d65b14cad29ee68f849f690540f39f9667aa50e9236900dec1a3efabead
+        checksum/config: 58d7455ea43210ec85b23c5732251f820f0da067067ed2644e896dd863436e6b
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -2880,7 +2880,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: 51e3652dd09b6c11e39e9b59b781b0b86b36e993f3c5a6e0fe9a31b5144b5d05
+        checksum/config: 9b090b08f9e173ccf182be83a146a9fb945c86a8083f8577fb12692f3605ae50
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -4063,72 +4063,11 @@ spec:
           requests:
             cpu: 50m
 ---
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get", "list", "create", "patch"]
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: gitlab-shared-secrets
-subjects:
-  - kind: ServiceAccount
-    name: gitlab-shared-secrets
-    namespace: gitlab
----
 # Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-aj8-selfsign
+  name: gitlab-shared-secrets.1-q79-selfsign
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4163,9 +4102,9 @@ spec:
         - name: CA_ORG_UNIT
           value: "gitlab" # defaults to Cloud Native in container
         - name: CERT_SUBJECT
-          value: "gitlab.dev-gitlab2.fences-bootstrap.p1.dev" # defaults to GitLab in container
+          value: "gitlab.replace.me" # defaults to GitLab in container
         - name: CERT_DOMAIN
-          value: "gitlab.dev-gitlab2.fences-bootstrap.p1.dev" # defaults to example.com in container
+          value: "gitlab.replace.me" # defaults to example.com in container
         - name: EXPIRY
           value: "365d" # defaults to 8076h in container
         - name: ALGORITHM
@@ -4354,7 +4293,7 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-v6n
+  name: gitlab-shared-secrets.1-2kk
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4397,3 +4336,64 @@ spec:
           name: gitlab-shared-secrets
       - name: ssh
         emptyDir: {}
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: gitlab-shared-secrets
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-shared-secrets
+    namespace: gitlab
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "create", "patch"]
