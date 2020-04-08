@@ -3,5 +3,5 @@ kind: Namespace
 metadata:
   name: gitlab
   annotations:
-    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook: Sync
 
