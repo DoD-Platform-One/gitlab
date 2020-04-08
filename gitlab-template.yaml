@@ -2869,7 +2869,6 @@ metadata:
     heritage: Helm
     
 spec:
-  replicas: 
   selector:
     matchLabels:
       app: unicorn
