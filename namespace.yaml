@@ -3,5 +3,4 @@ kind: Namespace
 metadata:
   name: gitlab
   annotations:
-    argocd.argoproj.io/hook: Sync
-
+    helm.sh/hook: 'pre-install,pre-upgrade'
