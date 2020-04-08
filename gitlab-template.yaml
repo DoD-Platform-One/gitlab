@@ -3814,9 +3814,6 @@ metadata:
     heritage: Helm
     
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-3"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 data:
   generate-secrets: |
     namespace=gitlab
@@ -3952,8 +3949,6 @@ metadata:
     heritage: Helm
     
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -4038,8 +4033,6 @@ metadata:
     heritage: Helm
     
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -4086,9 +4079,6 @@ metadata:
     heritage: Helm
     
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 ---
 # Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
 kind: Role
@@ -4102,9 +4092,6 @@ metadata:
     release: gitlab
     heritage: Helm
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -4122,9 +4109,6 @@ metadata:
     release: gitlab
     heritage: Helm
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
