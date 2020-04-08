@@ -3,8 +3,8 @@
 # EXTERNAL REDIS
 # NO NGINX CONTROLLER
 
-postgresql:
-  install: false
+#postgresql:
+#  install: false
 
 registry:
   enabled: false
@@ -33,14 +33,14 @@ global:
     domain: gitlab.dev-gitlab2.fences-bootstrap.p1.dev
 
   ## FIXME
-  psql:
-    host: 'CHANGEME'
-    password:
-      secret: psql-secret
-      key: psql-password
-    port: 5432
-    database: gitlab
-    username: gitlab
+#  psql:
+#    host: 'CHANGEME'
+#    password:
+#      secret: psql-secret
+#      key: psql-password
+#    port: 5432
+#    database: gitlab
+#    username: gitlab
 
   ## FIXME -- creds
 #  redis:
@@ -51,35 +51,35 @@ global:
 #      key: redis-password
 #    port: 6379
 
-#  minio:
-#    enabled: false
+  minio:
+    enabled: false
 
-#  appConfig:
-#    lfs:
-#      bucket: t-rex-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    artifacts:
-#      bucket: t-rex-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    uploads:
-#      bucket: t-rex-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    packages:
-#      bucket: t-rex-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    backups:
-#      bucket: t-rex-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
+  appConfig:
+    lfs:
+      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+      connection:
+        secret: gitlab-credentials
+        key: accesskey
+    artifacts:
+      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+      connection:
+        secret: gitlab-credentials
+        key: accesskey
+    uploads:
+      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+      connection:
+        secret: gitlab-credentials
+        key: accesskey
+    packages:
+      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+      connection:
+        secret: gitlab-credentials
+        key: accesskey
+    backups:
+      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+      connection:
+        secret: gitlab-credentials
+        key: accesskey
 
   grafana:
     enabled: false
@@ -105,12 +105,12 @@ gitlab:
       registry:
         enabled: false
 
-#  task-runner:
-#    backups:
-#      objectStorage:
-#        config:
-#          secret: s3cmd-config
-#          key: config
+  task-runner:
+    backups:
+      objectStorage:
+        config:
+          secret: s3cmd-config
+          key: config
 
 upgradeCheck:
   enabled: false
