@@ -3343,7 +3343,7 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageValue: 1
+      targetAverageValue: 500m
 ---
 # Source: gitlab/charts/gitlab/charts/gitaly/templates/statefulset.yml
 apiVersion: apps/v1
