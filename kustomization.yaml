@@ -1,8 +1,5 @@
 namespace: gitlab
 
-commonLabels:
-  app: gitlab
-
 resources:
   - namespace.yaml
   - gitlab-template.yaml
