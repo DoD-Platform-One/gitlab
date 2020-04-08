@@ -278,7 +278,7 @@ data:
         methods:
           - probe_db
         opts:
-          connection_string: dbname=gitlabhq_production user=gitlab host=gitlab-postgresql port=5432 password='<%= File.read("/etc/gitlab/postgres/psql-password").strip.gsub(/[\'\\]/) { |esc| '\\' + esc } %>'
+          connection_string: dbname=gitlab user=gitlab host=CHANGEME port=5432 password='<%= File.read("/etc/gitlab/postgres/psql-password").strip.gsub(/[\'\\]/) { |esc| '\\' + esc } %>'
       database:
         multiple: true
         ci_builds:
@@ -350,10 +350,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "CHANGEME"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -443,10 +443,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "CHANGEME"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -683,10 +683,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "CHANGEME"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -970,10 +970,10 @@ data:
     production:
       adapter: postgresql
       encoding: unicode
-      database: gitlabhq_production
+      database: gitlab
       username: gitlab
       password: "<%= File.read("/etc/gitlab/postgres/psql-password").strip.dump[1..-2] %>"
-      host: "gitlab-postgresql"
+      host: "CHANGEME"
       port: 5432
       pool: 10
       prepared_statements: false
@@ -1679,23 +1679,6 @@ data:
   gitlabVersion: "12.9.2"
   gitlabChartVersion: "3.2.2"
 ---
-# Source: gitlab/templates/initdb-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-postgresql-init-db
-  namespace: gitlab
-  labels:
-    app: gitlab
-    chart: gitlab-3.2.2
-    release: gitlab
-    heritage: Helm
-    
-data:
-  enable_extensions.sh: |
-    PGPASS=$(cat ${POSTGRES_POSTGRES_PASSWORD_FILE}) psql -d gitlabhq_production -U postgres -c 'CREATE EXTENSION pg_trgm;'
-# Leave this here - This line denotes end of block to the parser.
----
 # Source: gitlab/charts/minio/templates/minio_pvc.yaml
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -1870,72 +1853,6 @@ spec:
       targetPort: 9000
       protocol: TCP
 ---
-# Source: gitlab/charts/postgresql/templates/metrics-svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-postgresql-metrics
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-  annotations:
-    prometheus.io/port: "9187"
-    prometheus.io/scrape: "true"
-spec:
-  type: ClusterIP
-  ports:
-    - name: metrics
-      port: 9187
-      targetPort: metrics
-  selector:
-    app: postgresql
-    release: gitlab
-    role: master
----
-# Source: gitlab/charts/postgresql/templates/svc-headless.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-postgresql-headless
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-spec:
-  type: ClusterIP
-  clusterIP: None
-  ports:
-    - name: postgresql
-      port: 5432
-      targetPort: postgresql
-  selector:
-    app: postgresql
-    release: "gitlab"
----
-# Source: gitlab/charts/postgresql/templates/svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitlab-postgresql
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-spec:
-  type: ClusterIP
-  ports:
-    - name: postgresql
-      port: 5432
-      targetPort: postgresql
-  selector:
-    app: postgresql
-    release: "gitlab"
-    role: master
----
 # Source: gitlab/charts/redis/templates/headless-svc.yaml
 apiVersion: v1
 kind: Service
@@ -2038,7 +1955,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
+          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2121,7 +2038,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
+          value: https://gitlab.dev-gitlab2.fences-bootstrap.p1.dev
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2258,7 +2175,7 @@ spec:
         app: gitlab-exporter
         release: gitlab
       annotations:
-        checksum/config: 0678409da75538200d0a49657cfe83c126fd642bc1c31f39e8c87ef1d58ca250
+        checksum/config: 5d5de7a1be55317e08b38029132705c58fa5b9692ab0e92e84935a344ce19c9c
         prometheus.io/path: /metrics
         prometheus.io/port: "9168"
         prometheus.io/scrape: "true"
@@ -2366,9 +2283,9 @@ spec:
           defaultMode: 0400
           sources:
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-redis-secret"
@@ -2415,7 +2332,7 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: e37b985cef0777ddaf5d4d287b078fe424b34066cca575c2a9a0f29bc9c08a6d
+        checksum/configmap: 5f9d66d4db8c06883194e382fde683910c8c992a70733f539a0f6544441a1ec1
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         checksum/configmap-pod: 681c665cd325c04a4a4c86aa0294792c4ec5279298c137f368dc0e28df34afb5
         prometheus.io/port: "3807"
@@ -2617,9 +2534,9 @@ spec:
                 - key: "secret"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-registry-secret"
@@ -2683,7 +2600,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 3b962d65b14cad29ee68f849f690540f39f9667aa50e9236900dec1a3efabead
+        checksum/config: 40e8f6059c0b66686e678a85450bd0c361bec34e1c091d634b1b81c957cfda22
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -2817,9 +2734,9 @@ spec:
                 - key: "secret"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-registry-secret"
@@ -2880,7 +2797,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: 51e3652dd09b6c11e39e9b59b781b0b86b36e993f3c5a6e0fe9a31b5144b5d05
+        checksum/config: a46262e799d5405048cbe39fc2b6720c325a0dbedefe42f346f974264bac2b3a
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -3151,9 +3068,9 @@ spec:
                 - key: "secret"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-registry-secret"
@@ -3524,185 +3441,6 @@ spec:
             storage: "50Gi"
         selector:
 ---
-# Source: gitlab/charts/postgresql/templates/statefulset.yaml
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: gitlab-postgresql
-  labels:
-    app: postgresql
-    chart: postgresql-7.7.3
-    release: "gitlab"
-    heritage: "Helm"
-spec:
-  serviceName: gitlab-postgresql-headless
-  replicas: 1
-  updateStrategy:
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      app: postgresql
-      release: "gitlab"
-      role: master
-  template:
-    metadata:
-      name: gitlab-postgresql
-      labels:
-        app: postgresql
-        chart: postgresql-7.7.3
-        release: "gitlab"
-        heritage: "Helm"
-        role: master
-    spec:      
-      securityContext:
-        fsGroup: 1001
-      initContainers:
-        - name: init-chmod-data
-          image: docker.io/bitnami/minideb:stretch
-          imagePullPolicy: "Always"
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-          command:
-            - /bin/sh
-            - -c
-            - |
-              mkdir -p /bitnami/postgresql/data
-              chmod 700 /bitnami/postgresql/data
-              find /bitnami/postgresql -mindepth 0 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
-                xargs chown -R 1001:1001
-              chmod -R 777 /dev/shm
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: data
-              mountPath: /bitnami/postgresql
-              subPath: 
-            - name: dshm
-              mountPath: /dev/shm
-      containers:
-        - name: gitlab-postgresql
-          image: docker.io/bitnami/postgresql:10.9.0
-          imagePullPolicy: "IfNotPresent"
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-          securityContext:
-            runAsUser: 1001
-          env:
-            - name: BITNAMI_DEBUG
-              value: "false"
-            - name: POSTGRESQL_PORT_NUMBER
-              value: "5432"
-            - name: POSTGRESQL_VOLUME_DIR
-              value: "/bitnami/postgresql"
-            - name: PGDATA
-              value: "/bitnami/postgresql/data"
-            - name: POSTGRES_POSTGRES_PASSWORD_FILE
-              value: "/opt/bitnami/postgresql/secrets/postgresql-postgres-password"
-            - name: POSTGRES_USER
-              value: "gitlab"
-            - name: POSTGRES_PASSWORD_FILE
-              value: "/opt/bitnami/postgresql/secrets/postgresql-password"
-            - name: POSTGRES_DB
-              value: "gitlabhq_production"
-            - name: POSTGRESQL_ENABLE_LDAP
-              value: "no"
-          ports:
-            - name: postgresql
-              containerPort: 5432
-          livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - exec pg_isready -U "gitlab" -d "gitlabhq_production" -h 127.0.0.1 -p 5432
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - -e
-                - |
-                  pg_isready -U "gitlab" -d "gitlabhq_production" -h 127.0.0.1 -p 5432
-                  [ -f /opt/bitnami/postgresql/tmp/.initialized ]
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          volumeMounts:
-            - name: custom-init-scripts
-              mountPath: /docker-entrypoint-initdb.d/
-            - name: postgresql-password
-              mountPath: /opt/bitnami/postgresql/secrets/
-            - name: dshm
-              mountPath: /dev/shm
-            - name: data
-              mountPath: /bitnami/postgresql
-              subPath: 
-        - name: metrics
-          image: docker.io/bitnami/postgres-exporter:0.7.0-debian-9-r12
-          imagePullPolicy: "IfNotPresent"
-          env:
-            - name: DATA_SOURCE_URI
-              value: "127.0.0.1:5432/gitlabhq_production?sslmode=disable"
-            - name: DATA_SOURCE_PASS_FILE
-              value: "/opt/bitnami/postgresql/secrets/postgresql-password"
-            - name: DATA_SOURCE_USER
-              value: gitlab
-          livenessProbe:
-            httpGet:
-              path: /
-              port: metrics
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            httpGet:
-              path: /
-              port: metrics
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          volumeMounts:
-            - name: postgresql-password
-              mountPath: /opt/bitnami/postgresql/secrets/
-          ports:
-            - name: metrics
-              containerPort: 9187
-      volumes:
-        - name: postgresql-password
-          secret:
-            secretName: "gitlab-postgresql-password"
-        - name: custom-init-scripts
-          configMap:
-            name: gitlab-postgresql-init-db
-        - name: dshm
-          emptyDir:
-            medium: Memory
-            sizeLimit: 1Gi
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: "8Gi"
----
 # Source: gitlab/charts/redis/templates/redis-master-statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
@@ -3994,9 +3732,9 @@ spec:
                 - key: "secret"
                   path: redis/password
           - secret:
-              name: "gitlab-postgresql-password"
+              name: "psql-secret"
               items:
-                - key: "postgresql-password"
+                - key: "psql-password"
                   path: postgres/psql-password
           - secret:
               name: "gitlab-gitlab-initial-root-password"
@@ -4063,142 +3801,6 @@ spec:
           requests:
             cpu: 50m
 ---
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get", "list", "create", "patch"]
----
-# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: gitlab-shared-secrets
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-  annotations:
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: gitlab-shared-secrets
-subjects:
-  - kind: ServiceAccount
-    name: gitlab-shared-secrets
-    namespace: gitlab
----
-# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: gitlab-shared-secrets.1-aj8-selfsign
-  namespace: gitlab
-  labels:
-    app: shared-secrets
-    chart: shared-secrets-0.1.0
-    release: gitlab
-    heritage: Helm
-    
-  annotations:
-spec:
-  template:
-    metadata:
-      labels:
-        app: shared-secrets
-        release: gitlab
-    spec:
-      securityContext:
-        runAsUser: 65534
-        fsGroup: 65534
-      serviceAccountName: gitlab-shared-secrets
-      restartPolicy: Never
-      
-      initContainers:
-      - name: cfssl-self-sign
-        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
-        env:
-        - name: CA_SUBJECT
-          value: "GitLab Helm Chart" # defaults to GitLab in container
-        - name: CA_ORG
-          value: "gitlab" # defaults to GitLab in container
-        - name: CA_ORG_UNIT
-          value: "gitlab" # defaults to Cloud Native in container
-        - name: CERT_SUBJECT
-          value: "gitlab.dev-gitlab2.fences-bootstrap.p1.dev" # defaults to GitLab in container
-        - name: CERT_DOMAIN
-          value: "gitlab.dev-gitlab2.fences-bootstrap.p1.dev" # defaults to example.com in container
-        - name: EXPIRY
-          value: "365d" # defaults to 8076h in container
-        - name: ALGORITHM
-          value: "rsa" # defaults to ecdsa in container
-        - name: KEY_SIZE
-          value: "4096" # defaults to 256 inside container
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
-      containers:
-      - name: kubectl
-        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          certname=gitlab-wildcard-tls
-          # create wildcard certificate secret
-          kubectl create secret tls $certname \
-            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
-          kubectl --namespace=$namespace label \
-            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-          # create CA certificate secret
-          kubectl create secret generic ${certname}-ca \
-            --from-file=cfssl_ca=/output/ca.pem || true
-          kubectl --namespace=$namespace label \
-            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
-          kubectl --namespace=$namespace label --overwrite \
-            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
-        volumeMounts:
-        - name: certs-path
-          mountPath: /output
-        resources:
-          requests:
-            cpu: 50m
-      volumes:
-      - name: certs-path
-        emptyDir: {}
----
 # Source: gitlab/charts/shared-secrets/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -4212,6 +3814,9 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 data:
   generate-secrets: |
     namespace=gitlab
@@ -4263,8 +3868,6 @@ data:
     generate_secret_if_needed "gitlab-redis-secret" --from-literal="secret"=$(gen_random 'a-zA-Z0-9' 64)
     
     
-    # Postgres password
-    generate_secret_if_needed "gitlab-postgresql-password" --from-literal=postgresql-password=$(gen_random 'a-zA-Z0-9' 64) --from-literal=postgresql-postgres-password=$(gen_random 'a-zA-Z0-9' 64)
     
     
     # Gitlab shell
@@ -4336,11 +3939,11 @@ data:
     # Registry http.secret secret
     generate_secret_if_needed "gitlab-registry-httpsecret" --from-literal="secret"=$(gen_random 'a-z0-9' 128 | base64 -w 0)
 ---
-# Source: gitlab/charts/shared-secrets/templates/job.yaml
+# Source: gitlab/charts/shared-secrets/templates/self-signed-cert-job.yml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-v6n
+  name: gitlab-shared-secrets.1-l0h-selfsign
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4349,6 +3952,94 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        app: shared-secrets
+        release: gitlab
+    spec:
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+      serviceAccountName: gitlab-shared-secrets
+      restartPolicy: Never
+      
+      initContainers:
+      - name: cfssl-self-sign
+        image: "registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign:1.2"
+        env:
+        - name: CA_SUBJECT
+          value: "GitLab Helm Chart" # defaults to GitLab in container
+        - name: CA_ORG
+          value: "gitlab" # defaults to GitLab in container
+        - name: CA_ORG_UNIT
+          value: "gitlab" # defaults to Cloud Native in container
+        - name: CERT_SUBJECT
+          value: "gitlab.dev-gitlab2.fences-bootstrap.p1.dev" # defaults to GitLab in container
+        - name: CERT_DOMAIN
+          value: "gitlab.dev-gitlab2.fences-bootstrap.p1.dev" # defaults to example.com in container
+        - name: EXPIRY
+          value: "365d" # defaults to 8076h in container
+        - name: ALGORITHM
+          value: "rsa" # defaults to ecdsa in container
+        - name: KEY_SIZE
+          value: "4096" # defaults to 256 inside container
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
+      containers:
+      - name: kubectl
+        image: "registry.gitlab.com/gitlab-org/build/cng/kubectl:1.13.12"
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          certname=gitlab-wildcard-tls
+          # create wildcard certificate secret
+          kubectl create secret tls $certname \
+            --cert=/output/wildcard.pem --key=/output/wildcard-key.pem || true
+          kubectl --namespace=$namespace label \
+            secret $certname  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret $certname app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+          # create CA certificate secret
+          kubectl create secret generic ${certname}-ca \
+            --from-file=cfssl_ca=/output/ca.pem || true
+          kubectl --namespace=$namespace label \
+            secret ${certname}-ca  $(echo 'app.kubernetes.io/name=gitlab' | sed -E 's/=[^ ]*/-/g')
+          kubectl --namespace=$namespace label --overwrite \
+            secret ${certname}-ca app=shared-secrets chart=shared-secrets-0.1.0 release=gitlab heritage=Helm 
+        volumeMounts:
+        - name: certs-path
+          mountPath: /output
+        resources:
+          requests:
+            cpu: 50m
+      volumes:
+      - name: certs-path
+        emptyDir: {}
+---
+# Source: gitlab/charts/shared-secrets/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-shared-secrets.1-on6
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -4381,3 +4072,64 @@ spec:
           name: gitlab-shared-secrets
       - name: ssh
         emptyDir: {}
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+    
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "create", "patch"]
+---
+# Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-shared-secrets
+  namespace: gitlab
+  labels:
+    app: shared-secrets
+    chart: shared-secrets-0.1.0
+    release: gitlab
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: gitlab-shared-secrets
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-shared-secrets
+    namespace: gitlab

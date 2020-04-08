@@ -3,8 +3,8 @@
 # EXTERNAL REDIS
 # NO NGINX CONTROLLER
 
-#postgresql:
-#  install: false
+postgresql:
+  install: false
 
 registry:
   enabled: false
@@ -33,14 +33,14 @@ global:
     domain: gitlab.dev-gitlab2.fences-bootstrap.p1.dev
 
   ## FIXME
-#  psql:
-#    host: '$(PSQL_HOST)'
-#    password:
-#      secret: psql-secret
-#      key: psql-password
-#    port: 5432
-#    database: gitlab
-#    username: gitlab
+  psql:
+    host: 'CHANGEME'
+    password:
+      secret: psql-secret
+      key: psql-password
+    port: 5432
+    database: gitlab
+    username: gitlab
 
   ## FIXME -- creds
 #  redis:
