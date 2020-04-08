@@ -1,0 +1,1 @@
+helm template gitlab gitlab/gitlab -f values.yaml --namespace gitlab --set global.hosts.gitlab.name=gitlab.dev-gitlab2.fences-bootstrap.p1.dev
