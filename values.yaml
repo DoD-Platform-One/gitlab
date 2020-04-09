@@ -51,36 +51,36 @@ global:
 #      key: redis-password
 #    port: 6379
 
-  minio:
-    enabled: false
+#  minio:
+#    enabled: false
 
-  appConfig:
-    lfs:
-      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-      connection:
-        secret: gitlab-credentials
-        key: accesskey
-    artifacts:
-      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-      connection:
-        secret: gitlab-credentials
-        key: accesskey
-    uploads:
-      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-      connection:
-        secret: gitlab-credentials
-        key: accesskey
-    packages:
-      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-      connection:
-        secret: gitlab-credentials
-        key: accesskey
-    backups:
-      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-      connection:
-        secret: gitlab-credentials
-        key: accesskey
-
+#  appConfig:
+#    lfs:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    artifacts:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    uploads:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    packages:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    backups:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#
   grafana:
     enabled: false
 
