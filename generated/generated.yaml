@@ -495,9 +495,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@$ARGOCD_APP_SOURCE_TARGET_REVISION"
+        email_from: "gitlab@gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@$ARGOCD_APP_SOURCE_TARGET_REVISION"
+        email_reply_to: "noreply@gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         email_subject_suffix: ""
       gravatar:
         plain_url: 
@@ -520,7 +520,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       lfs:
@@ -536,7 +536,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       uploads:
@@ -552,7 +552,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       packages:
@@ -568,7 +568,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       external_diffs:
@@ -585,7 +585,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       pseudonymizer:
@@ -597,7 +597,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       
@@ -608,7 +608,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.$ARGOCD_APP_SOURCE_TARGET_REVISION
+        host: registry.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -731,9 +731,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@$ARGOCD_APP_SOURCE_TARGET_REVISION"
+        email_from: "gitlab@gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@$ARGOCD_APP_SOURCE_TARGET_REVISION"
+        email_reply_to: "noreply@gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         email_subject_suffix: ""
       
       artifacts:
@@ -749,7 +749,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       lfs:
@@ -765,7 +765,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       uploads:
@@ -781,7 +781,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       packages:
@@ -797,7 +797,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       external_diffs:
@@ -814,7 +814,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       pseudonymizer:
@@ -826,7 +826,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       
@@ -837,7 +837,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.$ARGOCD_APP_SOURCE_TARGET_REVISION
+        host: registry.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -907,8 +907,8 @@ data:
     access_key = $(cat /init-secrets/minio/accesskey)
     secret_key = $(cat /init-secrets/minio/secretkey)
     bucket_location = us-east-1
-    host_base = minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
-    host_bucket = minio.$ARGOCD_APP_SOURCE_TARGET_REVISION/%(bucket)
+    host_base = minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
+    host_bucket = minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev/%(bucket)
     default_mime_type = binary/octet-stream
     enable_multipart = True
     multipart_max_chunks = 10000
@@ -921,7 +921,7 @@ data:
     socket_timeout = 300
     use_mime_magic = True
     verbosity = WARNING
-    website_endpoint = https://minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+    website_endpoint = https://minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
     EOF
     else
       mv "/${secret_dir}/objectstorage/.s3cfg" "/${secret_dir}/.s3cfg"
@@ -1143,9 +1143,9 @@ data:
         webhook_timeout: 
         trusted_proxies:
         time_zone: "UTC"        
-        email_from: "gitlab@$ARGOCD_APP_SOURCE_TARGET_REVISION"
+        email_from: "gitlab@gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         email_display_name: "GitLab"
-        email_reply_to: "noreply@$ARGOCD_APP_SOURCE_TARGET_REVISION"
+        email_reply_to: "noreply@gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         email_subject_suffix: ""
       
       gravatar:
@@ -1168,7 +1168,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       lfs:
@@ -1184,7 +1184,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       uploads:
@@ -1200,7 +1200,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       packages:
@@ -1216,7 +1216,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       external_diffs:
@@ -1233,7 +1233,7 @@ data:
             region: us-east-1
             aws_access_key_id: "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>"
             aws_secret_access_key: "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
-            host: minio.$ARGOCD_APP_SOURCE_TARGET_REVISION
+            host: minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
             endpoint: http://gitlab-minio-svc:9000
             path_style: true
       
@@ -1295,7 +1295,7 @@ data:
       ## Registry Integration
       registry:
         enabled: true
-        host: registry.$ARGOCD_APP_SOURCE_TARGET_REVISION
+        host: registry.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev
         api_url: http://gitlab-registry:5000
         key: /etc/gitlab/registry/gitlab-registry.key
         issuer: gitlab-issuer
@@ -2038,7 +2038,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://$ARGOCD_APP_SOURCE_TARGET_REVISION
+          value: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2098,7 +2098,7 @@ spec:
         - name: CACHE_SHARED
           value: "true"
         - name: CACHE_S3_SERVER_ADDRESS
-          value: "minio.$ARGOCD_APP_SOURCE_TARGET_REVISION"
+          value: "minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         - name: CACHE_S3_BUCKET_NAME
           value: "runner-cache"
         - name: CACHE_S3_BUCKET_LOCATION
@@ -2124,7 +2124,7 @@ spec:
         env:
                 
         - name: CI_SERVER_URL
-          value: https://$ARGOCD_APP_SOURCE_TARGET_REVISION
+          value: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
         - name: CLONE_URL
           value: ""
         - name: RUNNER_REQUEST_CONCURRENCY
@@ -2184,7 +2184,7 @@ spec:
         - name: CACHE_SHARED
           value: "true"
         - name: CACHE_S3_SERVER_ADDRESS
-          value: "minio.$ARGOCD_APP_SOURCE_TARGET_REVISION"
+          value: "minio.gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
         - name: CACHE_S3_BUCKET_NAME
           value: "runner-cache"
         - name: CACHE_S3_BUCKET_LOCATION
@@ -2421,7 +2421,7 @@ spec:
         release: gitlab
         queue-pod-name: all-in-1
       annotations:
-        checksum/configmap: 5e6f14d9ef50b8f1bdd1def10554c29339236078180661bacb7dabee71c8e3cb
+        checksum/configmap: 1016e595665968d5d9261d8ce56d567b14bfcd9a4692826a1ed53f78299e9e9a
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         checksum/configmap-pod: 681c665cd325c04a4a4c86aa0294792c4ec5279298c137f368dc0e28df34afb5
         prometheus.io/port: "3807"
@@ -2689,7 +2689,7 @@ spec:
         app: task-runner
         release: gitlab
       annotations:
-        checksum/config: 0ba6765e991b19ace7c88855076da578953dd15f0fb8718df10ee0949ad6abdd
+        checksum/config: cf86e8c4cef858b8757e474e32e6b437eaf0bcca49e78d0304ebbb1324dca98a
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       securityContext:
@@ -2886,7 +2886,7 @@ spec:
         app: unicorn
         release: gitlab
       annotations:
-        checksum/config: 8cc9de525ef28d3b0d50b4890a48eeebb49730ec04beb274493360b77553b4dc
+        checksum/config: d62f5e9d84fe4f0d8107172b8637a513d70cde81e4dd8e207dd6f5ef6d3cc0d3
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         prometheus.io/path: /-/metrics
         prometheus.io/port: "8080"
@@ -4082,6 +4082,9 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 data:
   generate-secrets: |
     namespace=gitlab
@@ -4210,7 +4213,7 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-3mg
+  name: gitlab-shared-secrets.1-9lo
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4219,6 +4222,8 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -4265,6 +4270,9 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 ---
 # Source: gitlab/charts/shared-secrets/templates/rbac-config.yaml
 kind: Role
@@ -4278,6 +4286,9 @@ metadata:
     release: gitlab
     heritage: Helm
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -4295,6 +4306,9 @@ metadata:
     release: gitlab
     heritage: Helm
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -4308,7 +4322,7 @@ subjects:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-db2-selfsign
+  name: gitlab-shared-secrets.1-g1o-selfsign
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4317,6 +4331,8 @@ metadata:
     heritage: Helm
     
   annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
 spec:
   template:
     metadata:
@@ -4341,9 +4357,9 @@ spec:
         - name: CA_ORG_UNIT
           value: "gitlab" # defaults to Cloud Native in container
         - name: CERT_SUBJECT
-          value: "$ARGOCD_APP_SOURCE_TARGET_REVISION" # defaults to GitLab in container
+          value: "gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev" # defaults to GitLab in container
         - name: CERT_DOMAIN
-          value: "$ARGOCD_APP_SOURCE_TARGET_REVISION" # defaults to example.com in container
+          value: "gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev" # defaults to example.com in container
         - name: EXPIRY
           value: "365d" # defaults to 8076h in container
         - name: ALGORITHM

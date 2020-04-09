@@ -36,7 +36,7 @@ gitlab-runner:
 global:
   edition: ce
   hosts:
-    domain: "$ARGOCD_APP_SOURCE_TARGET_REVISION"
+    domain: "gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
     gitlab:
       name: "$ARGOCD_APP_SOURCE_TARGET_REVISION"
 
