@@ -30,7 +30,7 @@ prometheus:
 global:
   edition: ce
   hosts:
-    domain: gitlab.dev-gitlab2.fences-bootstrap.p1.dev
+    domain: CHANGEME
 
   ## FIXME
 #  psql:
