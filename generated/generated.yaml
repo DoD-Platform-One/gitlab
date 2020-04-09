@@ -2476,7 +2476,7 @@ spec:
             requests:
               cpu: 50m
         - name: dependencies
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce:v12.9.2"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.9.2"
           imagePullPolicy: "Always"
           args:
             - /scripts/wait-for-deps
@@ -2511,7 +2511,7 @@ spec:
       containers:
         
         - name: sidekiq
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce:v12.9.2"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee:v12.9.2"
           imagePullPolicy: "Always"
           env:
             - name: prometheus_multiproc_dir
@@ -2737,7 +2737,7 @@ spec:
             - /bin/bash
             - -c
             - cp -v -r -L /etc/gitlab/.s3cfg $HOME/.s3cfg && while sleep 3600; do :; done # alpine sleep has no infinity
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ce:v12.9.2"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:v12.9.2"
           imagePullPolicy: "Always"
           env:
             - name: ARTIFACTS_BUCKET_NAME
@@ -2951,7 +2951,7 @@ spec:
             requests:
               cpu: 50m
         - name: dependencies
-          image: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce:v12.9.2
+          image: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee:v12.9.2
           imagePullPolicy: "Always"
           args:
             - /scripts/wait-for-deps
@@ -2983,7 +2983,7 @@ spec:
       containers:
         
         - name: unicorn
-          image: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce:v12.9.2
+          image: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee:v12.9.2
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8080
@@ -3060,7 +3060,7 @@ spec:
               cpu: 300m
               memory: 1.5G
         - name: gitlab-workhorse
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce:v12.9.2"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee:v12.9.2"
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8181
@@ -3934,7 +3934,7 @@ spec:
       containers:
         
         - name: migrations
-          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ce:v12.9.2"
+          image: "registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee:v12.9.2"
           args:
             - /scripts/wait-for-deps
             - /scripts/db-migrate
@@ -4210,7 +4210,7 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-9lo
+  name: gitlab-shared-secrets.1-tg8
   namespace: gitlab
   labels:
     app: shared-secrets
@@ -4308,7 +4308,7 @@ subjects:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-shared-secrets.1-g1o-selfsign
+  name: gitlab-shared-secrets.1-l3s-selfsign
   namespace: gitlab
   labels:
     app: shared-secrets

@@ -34,7 +34,7 @@ gitlab-runner:
     image: alpine:3
 
 global:
-  edition: ce
+  edition: ee
   hosts:
     domain: "gitlab.$ARGOCD_APP_SOURCE_TARGET_REVISION.fences-bootstrap.p1.dev"
     gitlab:
