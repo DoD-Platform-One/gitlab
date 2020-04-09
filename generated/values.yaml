@@ -3,7 +3,8 @@
 # EXTERNAL REDIS
 # NO NGINX CONTROLLER
 
-#postgresql:
+# TODO: Use external postgresql
+# postgresql:
 #  install: false
 
 registry:
@@ -17,22 +18,29 @@ nginx-ingress:
 certmanager:
   install: false
 
-#redis:
+# TODO: Use external redis
+# redis:
 #  install: false
 
 prometheus:
   install: false
 
-# Install separately with more configs
-#gitlab-runner:
-#  install: false
+gitlab-runner:
+  # This doesn't work, it gets overriden by the CHANGEME below
+  # TODO: Fix ^
+  gitlabUrl: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
+  runners:
+    privileged: true
+    image: alpine:3
 
 global:
   edition: ce
   hosts:
-    domain: CHANGEME
+    domain: "$ARGOCD_APP_SOURCE_TARGET_REVISION"
+    gitlab:
+      name: "$ARGOCD_APP_SOURCE_TARGET_REVISION"
 
-  ## FIXME
+  # TODO: Use external postgresql
 #  psql:
 #    host: 'CHANGEME'
 #    password:
@@ -42,7 +50,7 @@ global:
 #    database: gitlab
 #    username: gitlab
 
-  ## FIXME -- creds
+  # TODO: Use external redis
 #  redis:
 #    host: '$(REDIS_HOST)'
 #    password:
@@ -51,9 +59,9 @@ global:
 #      key: redis-password
 #    port: 6379
 
+  # TODO: Use external minio
 #  minio:
 #    enabled: false
-
 #  appConfig:
 #    lfs:
 #      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
@@ -105,12 +113,12 @@ gitlab:
       registry:
         enabled: false
 
-  task-runner:
-    backups:
-      objectStorage:
-        config:
-          secret: s3cmd-config
-          key: config
+  # task-runner:
+  #   backups:
+  #     objectStorage:
+  #       config:
+  #         secret: s3cmd-config
+  #         key: config
 
 upgradeCheck:
   enabled: false
