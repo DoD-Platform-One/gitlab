@@ -4,11 +4,11 @@
 # NO NGINX CONTROLLER
 
 # TODO: Use external postgresql
-# postgresql:
-#  install: false
+postgresql:
+  install: false
 
 registry:
-  enabled: false
+#  enabled: false
   ingress:
     enabled: false
 
@@ -41,14 +41,15 @@ global:
       name: "$ARGOCD_APP_SOURCE_TARGET_REVISION"
 
   # TODO: Use external postgresql
-#  psql:
-#    host: 'CHANGEME'
-#    password:
-#      secret: psql-secret
-#      key: psql-password
-#    port: 5432
-#    database: gitlab
-#    username: gitlab
+  psql:
+    host: '${PG_HOST}'
+    password:
+      secret: gitlab-credentials
+      key: PGPASSWORD
+    port: 5432
+    database: gitlab
+    username: '${PG_USER}'
+
 
   # TODO: Use external redis
 #  redis:
