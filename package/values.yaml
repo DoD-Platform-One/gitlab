@@ -1,0 +1,117 @@
+# EXTERNAL RDS
+# EXTERNAL MINIO
+# EXTERNAL REDIS
+# NO NGINX CONTROLLER
+
+# TODO: Use external postgresql
+postgresql:
+  install: false
+
+registry:
+#  enabled: false
+  ingress:
+    enabled: false
+
+nginx-ingress:
+  enabled: false
+
+certmanager:
+  install: false
+
+# TODO: Use external redis
+# redis:
+#  install: false
+
+prometheus:
+  install: false
+
+gitlab-runner:
+  install: false
+
+global:
+  edition: ee
+  hosts:
+    domain: "gitlab.fences-bootstrap.p1.dev"
+    gitlab:
+      name: gitlab
+
+  # TODO: Use external postgresql
+  psql:
+    password:
+      secret: gitlab-credentials
+      key: PGPASSWORD
+    port: 5432
+    database: gitlab
+
+  # TODO: Use external redis
+#  redis:
+#    host: '$(REDIS_HOST)'
+#    password:
+#      enabled: true
+#      secret: redis-secret
+#      key: redis-password
+#    port: 6379
+
+  # TODO: Use external minio
+#  minio:
+#    enabled: false
+#  appConfig:
+#    lfs:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    artifacts:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    uploads:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    packages:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#    backups:
+#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
+#      connection:
+#        secret: gitlab-credentials
+#        key: accesskey
+#
+  grafana:
+    enabled: false
+
+  imagePullPolicy: Always
+
+  ingress:
+    enabled: false
+    configureCertmanager: false
+
+gitlab:
+  gitlab-shell:
+    enabled: false
+
+  unicorn:
+    helmTests:
+      enabled: false
+
+    ingress:
+      enabled: false
+
+    unicorn:
+      registry:
+        enabled: false
+
+  # task-runner:
+  #   backups:
+  #     objectStorage:
+  #       config:
+  #         secret: s3cmd-config
+  #         key: config
+
+upgradeCheck:
+  enabled: true
