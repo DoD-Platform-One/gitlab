@@ -31,14 +31,14 @@ gitlab-runner:
 global:
   edition: ee
   hosts:
-    domain: "gitlab.fences-bootstrap.p1.dev"
+    domain: "gitlab.dsopp.io"
     gitlab:
       name: gitlab
 
   # TODO: Use external postgresql
   psql:
     password:
-      secret: gitlab-credentials
+      secret: db-credentials
       key: PGPASSWORD
     port: 5432
     database: gitlab
