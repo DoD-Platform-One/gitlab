@@ -8,7 +8,12 @@ postgresql:
   install: false
 
 registry:
-#  enabled: false
+  enabled: true
+  host: registry-gitlab
+  #authEndpoint: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
+  storage:
+    secret: registry-storage
+    key: config
   ingress:
     enabled: false
 
@@ -31,9 +36,12 @@ gitlab-runner:
 global:
   edition: ee
   hosts:
-    domain: "gitlab.dsopp.io"
+    domain: "gitlab.dsop.io"
     gitlab:
       name: gitlab
+
+  registry:
+    bucket: gitlab-registry-storage
 
   # TODO: Use external postgresql
   psql:
@@ -52,36 +60,35 @@ global:
 #      key: redis-password
 #    port: 6379
 
-  # TODO: Use external minio
-#  minio:
-#    enabled: false
-#  appConfig:
-#    lfs:
-#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    artifacts:
-#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    uploads:
-#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    packages:
-#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#    backups:
-#      bucket: dev-gitlab2-fences-bootstrap-p1-k8s-gitlab-storage
-#      connection:
-#        secret: gitlab-credentials
-#        key: accesskey
-#
+  minio:
+    enabled: false
+  appConfig:
+    lfs:
+      bucket: gitlab-backups
+      connection:
+        secret: object-storage
+        key: connection
+    artifacts:
+      bucket: gitlab-backups
+      connection:
+        secret: object-storage
+        key: connection
+    uploads:
+      bucket: gitlab-backups
+      connection:
+        secret: object-storage
+        key: connection
+    packages:
+      bucket: gitlab-backups
+      connection:
+        secret: object-storage
+        key: connection
+    backups:
+      bucket: gitlab-backups
+      connection:
+        secret: object-storage
+        key: connection
+
   grafana:
     enabled: false
 
@@ -106,12 +113,16 @@ gitlab:
       registry:
         enabled: false
 
-  # task-runner:
-  #   backups:
-  #     objectStorage:
-  #       config:
-  #         secret: s3cmd-config
-  #         key: config
+  task-runner:
+    backups:
+      objectStorage:
+        config:
+          secret: s3cmd-config
+          key: config
+    persistence:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 10Gi
 
 upgradeCheck:
   enabled: true
