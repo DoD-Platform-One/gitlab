@@ -1,0 +1,9 @@
+apiVersion: p1.dsop.io/v1
+kind: kelm
+metadata:
+  name: kelmGenerator
+releaseName: gitlab
+chartPath: gitlab-4.0.0.tgz
+namespace: gitlab
+valueFiles:
+  - values.yaml

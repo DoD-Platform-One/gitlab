@@ -1,5 +1,0 @@
----
-title: "Enable expunging of deleted messages after delivery by mail_room"
-merge_request: 1123
-author:
-type: added

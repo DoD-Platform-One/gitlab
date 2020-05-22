@@ -10,7 +10,7 @@ postgresql:
 registry:
   enabled: true
   host: registry-gitlab
-  #authEndpoint: http://gitlab-unicorn.gitlab.svc.cluster.local:8181
+  #authEndpoint: http://gitlab-webservice.gitlab.svc.cluster.local:8181
   storage:
     secret: registry-storage
     key: config
@@ -102,14 +102,14 @@ gitlab:
   gitlab-shell:
     enabled: false
 
-  unicorn:
+  webservice:
     helmTests:
       enabled: false
 
     ingress:
       enabled: false
 
-    unicorn:
+    webservice:
       registry:
         enabled: false
 
