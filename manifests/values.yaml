@@ -1,29 +1,3 @@
-# TODO: Use external postgresql
-postgresql:
-  install: false
-
-registry:
-  enabled: true
-  host: registry-gitlab
-  #authEndpoint: http://gitlab-webservice.gitlab.svc.cluster.local:8181
-  storage:
-    secret: registry-storage
-    key: config
-  ingress:
-    enabled: false
-
-# Use istio instead
-nginx-ingress:
-  enabled: false
-
-# lol I wish
-certmanager:
-  install: false
-
-# Install gitlab-runner seperately
-gitlab-runner:
-  install: false
-
 global:
   edition: ee
   ingress:
@@ -111,3 +85,30 @@ gitlab:
       enabled: true
       accessMode: ReadWriteOnce
       size: 10Gi
+
+# TODO: Use external postgresql
+postgresql:
+  install: false
+
+registry:
+  enabled: true
+  host: "registry.dsop.io"
+  #authEndpoint: http://gitlab-webservice.gitlab.svc.cluster.local:8181
+  storage:
+    secret: s3-creds
+    key: registry
+  ingress:
+    enabled: false
+
+# Use istio instead
+nginx-ingress:
+  enabled: false
+
+# lol I wish
+certmanager:
+  install: false
+
+# Install gitlab-runner seperately
+gitlab-runner:
+  install: false
+
