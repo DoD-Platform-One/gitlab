@@ -1,7 +1,7 @@
-apiVersion: p1.dsop.io/v1
-kind: kelm
+apiVersion: p1.dsop.io/v1beta1
+kind: HelmGenerator
 metadata:
-  name: kelmGenerator
+  name: helmGenerator
 releaseName: gitlab
 chartPath: gitlab-4.0.0.tgz
 namespace: gitlab

@@ -1,8 +1,3 @@
-# EXTERNAL RDS
-# EXTERNAL MINIO
-# EXTERNAL REDIS
-# NO NGINX CONTROLLER
-
 # TODO: Use external postgresql
 postgresql:
   install: false
@@ -17,90 +12,78 @@ registry:
   ingress:
     enabled: false
 
+# Use istio instead
 nginx-ingress:
   enabled: false
 
+# lol I wish
 certmanager:
   install: false
 
-# TODO: Use external redis
-# redis:
-#  install: false
-
-prometheus:
-  install: false
-
+# Install gitlab-runner seperately
 gitlab-runner:
   install: false
 
 global:
   edition: ee
+  ingress:
+    enabled: false
+    configureCertmanager: false
   hosts:
-    domain: "gitlab.dsop.io"
+    domain: "code.dsop.io"
     gitlab:
-      name: gitlab
+      name: "code.dsop.io"
 
-  registry:
-    bucket: gitlab-registry-storage
+#   registry:
+#     bucket: gitlab-registry-storage
 
-  # TODO: Use external postgresql
+  # Use external postgresql
   psql:
+    host: db.admin.dsop.io
+    port: 5432
+    username: rdsuser
+    database: gitlab
     password:
       secret: db-credentials
       key: PGPASSWORD
-    port: 5432
-    database: gitlab
 
-  # TODO: Use external redis
-#  redis:
-#    host: '$(REDIS_HOST)'
-#    password:
-#      enabled: true
-#      secret: redis-secret
-#      key: redis-password
-#    port: 6379
-
-  minio:
-    enabled: false
-  appConfig:
-    lfs:
-      bucket: gitlab-backups
-      connection:
-        secret: object-storage
-        key: connection
-    artifacts:
-      bucket: gitlab-backups
-      connection:
-        secret: object-storage
-        key: connection
-    uploads:
-      bucket: gitlab-backups
-      connection:
-        secret: object-storage
-        key: connection
-    packages:
-      bucket: gitlab-backups
-      connection:
-        secret: object-storage
-        key: connection
-    backups:
-      bucket: gitlab-backups
-      connection:
-        secret: object-storage
-        key: connection
+  # Uncomment for External Minio (S3)
+  # minio:
+  #   enabled: false
+  # appConfig:
+  #   lfs:
+  #     bucket: $ARGOCD_APP_SOURCE_TARGET_REVISION-t-rex-bootstrap-p1-k8s-gitlab-storage
+  #     connection:
+  #       secret: s3-creds
+  #       key: rails
+  #   artifacts:
+  #     bucket: $ARGOCD_APP_SOURCE_TARGET_REVISION-t-rex-bootstrap-p1-k8s-gitlab-storage
+  #     connection:
+  #       secret: s3-creds
+  #       key: rails
+  #   uploads:
+  #     bucket: $ARGOCD_APP_SOURCE_TARGET_REVISION-t-rex-bootstrap-p1-k8s-gitlab-storage
+  #     connection:
+  #       secret: s3-creds
+  #       key: rails
+  #   packages:
+  #     bucket: $ARGOCD_APP_SOURCE_TARGET_REVISION-t-rex-bootstrap-p1-k8s-gitlab-storage
+  #     connection:
+  #       secret: s3-creds
+  #       key: rails
+  #   backups:
+  #     bucket: $ARGOCD_APP_SOURCE_TARGET_REVISION-t-rex-bootstrap-p1-k8s-gitlab-storage
+  #     connection:
+  #       secret: s3-creds
+  #       key: rails
 
   grafana:
     enabled: false
 
-  imagePullPolicy: Always
-
-  ingress:
-    enabled: false
-    configureCertmanager: false
-
 gitlab:
-  gitlab-shell:
-    enabled: false
+  # Disable for shell
+  # gitlab-shell:
+  #   enabled: false
 
   webservice:
     helmTests:
@@ -113,16 +96,18 @@ gitlab:
       registry:
         enabled: false
 
+  gitaly:
+    persistence:
+      size: 50Gi
+
   task-runner:
     backups:
       objectStorage:
         config:
-          secret: s3cmd-config
-          key: config
+          secret: s3-creds
+          key: backup
+
     persistence:
       enabled: true
       accessMode: ReadWriteOnce
       size: 10Gi
-
-upgradeCheck:
-  enabled: true
