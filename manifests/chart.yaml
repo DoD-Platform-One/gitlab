@@ -3,7 +3,7 @@ kind: HelmGenerator
 metadata:
   name: helmGenerator
 releaseName: gitlab
-chartPath: gitlab-4.0.0.tgz
+chartPath: gitlab-4.0.2.tgz
 namespace: gitlab
 valueFiles:
   - values.yaml
