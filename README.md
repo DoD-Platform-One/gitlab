@@ -45,23 +45,23 @@ kubectl -k ./
 The Variables required to deploy will need to be added to a Secrets folder unique to your environment.  The Secrets folder and sops are described in the documentation wiki read me.  The following yaml files will define the variables.  These variables should be encrypted following the sops processes:
 
 ### registry.s3.yaml
-s3:
-    bucket:     
-    accesskey:     
+s3: 
+    bucket: 
+    accesskey:  
     secretkey: 
     region: 
     v4auth: 
 sops:
-    kms:
-    arn: arn:aws-us-gov:kms:       
-    created_at:
-    enc:     
-	gcp_kms: []
-    azure_kv: []
+    kms: 
+    arn: arn:aws-us-gov:kms: 
+    created_at: 
+    enc: 
+    gcp_kms: [] 
+    azure_kv: [] 
     lastmodified: 
-    mac:     
-pgp: []
-    unencrypted_suffix:     
+    mac:   
+pgp: [] 
+    unencrypted_suffix:  
     version: 
 
 ### rails.s3.yaml
@@ -69,37 +69,37 @@ pgp: []
 provider: 
 region: 
 aws_access_key_id: 
-G4=,tag:
-aws_secret_access_key:
-sops:
-    kms:
-    arn: arn:aws-us-gov:kms:        
+G4=,tag: 
+aws_secret_access_key: 
+sops: 
+    kms: 
+    arn: arn:aws-us-gov:kms:  
     created_at: 
-    enc:         
-aws_profile: ""
-    gcp_kms: []
-    azure_kv: []
+    enc: 
+aws_profile: "" 
+    gcp_kms: [] 
+    azure_kv: [] 
     lastmodified: 
     mac: 
-    pgp: []
+    pgp: [] 
     unencrypted_suffix: 
     version: 
 
 ## db-creds.env
 
-PGDATABASE=
-PGHOST=
-PGPASSWORD=
-PGUSER=
-sops_kms__list_0__map_enc=
-sops_mac=
-tag:
-sops_kms__list_0__map_arn=arn:
-sops_kms__list_0__map_aws_profile=
-sops_lastmodified=
-sops_unencrypted_suffix=_
-sops_version=
-sops_kms__list_0__map_created_at=
+PGDATABASE= 
+PGHOST= 
+PGPASSWORD= 
+PGUSER= 
+sops_kms__list_0__map_enc= 
+sops_mac= 
+tag: 
+sops_kms__list_0__map_arn=arn: 
+sops_kms__list_0__map_aws_profile= 
+sops_lastmodified= 
+sops_unencrypted_suffix=_ 
+sops_version= 
+sops_kms__list_0__map_created_at= 
 
 ## db-creds-generator.yaml
 
