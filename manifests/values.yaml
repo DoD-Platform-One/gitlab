@@ -11,6 +11,20 @@ global:
 #   registry:
 #     bucket: gitlab-registry-storage
 
+  kubectl:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/kubectl
+      tag: 1.13.12
+
+  certificates:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/alpine-certificates
+      tag: 20171114-r3
+  busybox:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/busybox
+      tag: latest
+
   # Use external postgresql
   psql:
     host: db.admin.dsop.io
@@ -55,36 +69,55 @@ global:
     enabled: false
 
 gitlab:
-  # Disable for shell
-  # gitlab-shell:
-  #   enabled: false
-
+  gitlab-exporter:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-exporter
+      tag: 7.0.3
+  gitlab-shell:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-shell
+      tag: v13.2.0
+  migrations:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-task-runner-ee
+      tag: v13.0.3
+  sidekiq:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-sidekiq-ee
+      tag: v13.0.3
   webservice:
     helmTests:
       enabled: false
-
     ingress:
       enabled: false
-
     webservice:
       registry:
         enabled: false
-
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-webservice-ee
+      tag: v13.0.3
+    workhorse:
+      image: registry.dsop.io/platform-one/apps/gitlab/gitlab-workhorse-ee
+      tag: v13.0.3
   gitaly:
     persistence:
       size: 50Gi
-
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/gitaly
+      tag: v13.0.3
   task-runner:
     backups:
       objectStorage:
         config:
           secret: s3-creds
           key: backup
-
     persistence:
       enabled: true
       accessMode: ReadWriteOnce
       size: 10Gi
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-task-runner-ee
+      tag: v13.0.3
 
 # TODO: Use external postgresql
 postgresql:
@@ -99,6 +132,10 @@ registry:
     key: registry
   ingress:
     enabled: false
+  image:
+    repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-container-registry
+    tag: 'v2.9.1-gitlab'
+
 
 # Use istio instead
 nginx-ingress:
@@ -112,3 +149,38 @@ certmanager:
 gitlab-runner:
   install: false
 
+shared-secrets:
+  selfsign:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/cfssl-self-sign
+      tag: 1.2
+ 
+minio:
+  image: "registry.dsop.io/platform-one/apps/gitlab/minio/minio"
+  imageTag: "RELEASE.2017-12-28T01-21-00Z"
+  minioMc:
+    image: registry.dsop.io/platform-one/apps/gitlab/minio/mc
+    tag: "RELEASE.2018-07-13T00-53-22Z"
+
+redis:
+  image:
+    registry: registry.dsop.io/platform-one/apps/gitlab
+    repository: bitnami/redis
+    tag: 5.0.7-debian-9-r50
+  metrics:
+    image:
+      registry: registry.dsop.io/platform-one/apps/gitlab
+      repository: bitnami/redis-exporter
+      tag: 1.3.5-debian-9-r23
+
+prometheus:
+  configmapReload:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/jimmidyson/configmap-reload
+      tag: v0.3.0
+  server:
+    image:
+      repository: registry.dsop.io/platform-one/apps/gitlab/prom/prometheus
+      tag: v2.15.2
+
+ 
