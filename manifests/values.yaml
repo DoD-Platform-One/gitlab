@@ -25,15 +25,16 @@ global:
       repository: registry.dsop.io/platform-one/apps/gitlab/busybox
       tag: latest
 
+  # Uncomment for external postgresql
   # Use external postgresql
-  psql:
-    host: db.admin.dsop.io
-    port: 5432
-    username: rdsuser
-    database: gitlab
-    password:
-      secret: db-credentials
-      key: PGPASSWORD
+  # psql:
+  #   host: db.admin.dsop.io
+  #   port: 5432
+  #   username: rdsuser
+  #   database: gitlab
+  #   password:
+  #     secret: db-credentials
+  #     key: PGPASSWORD
 
   # Uncomment for External Minio (S3)
   # minio:
@@ -106,11 +107,6 @@ gitlab:
       repository: registry.dsop.io/platform-one/apps/gitlab/gitaly
       tag: v13.0.3
   task-runner:
-    backups:
-      objectStorage:
-        config:
-          secret: s3-creds
-          key: backup
     persistence:
       enabled: true
       accessMode: ReadWriteOnce
@@ -119,6 +115,13 @@ gitlab:
       repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-task-runner-ee
       tag: v13.0.3
 
+    # Use external storage
+    # backups:
+    #   objectStorage:
+    #     config:
+    #       secret: s3-creds
+    #       key: backup
+
 # TODO: Use external postgresql
 postgresql:
   install: false
@@ -126,16 +129,16 @@ postgresql:
 registry:
   enabled: true
   host: "registry.dsop.io"
-  #authEndpoint: http://gitlab-webservice.gitlab.svc.cluster.local:8181
-  storage:
-    secret: s3-creds
-    key: registry
   ingress:
     enabled: false
   image:
     repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-container-registry
     tag: 'v2.9.1-gitlab'
 
+  # Use external storage
+  # storage:
+  #   secret: s3-creds
+  #   key: registry
 
 # Use istio instead
 nginx-ingress:
