@@ -106,6 +106,15 @@ gitlab:
       repository: registry.dsop.io/platform-one/apps/gitlab/gitaly-ib
       tag: 13.0.4-ib
   task-runner:
+  # Use external postgresql - Note must be the same as global value
+    psql:
+      host: db.admin.dsop.io
+      port: 5432
+      username: rdsuser
+      database: gitlab
+      password:
+        secret: db-credentials
+        key: PGPASSWORD
     backups:
       objectStorage:
         config:
