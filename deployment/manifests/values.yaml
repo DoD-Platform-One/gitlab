@@ -135,15 +135,15 @@ postgresql:
 registry:
   enabled: true
   host: "registry.dsop.io"
-#  #authEndpoint: http://gitlab-webservice.gitlab.svc.cluster.local:8181
-#  storage:
-#    secret: s3-creds
-#    key: registry
   ingress:
     enabled: false
   image:
     repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-container-registry-ib
     tag: 13.2.0-ib
+
+#  storage:
+#    secret: s3-creds
+#    key: registry
 
 # Use istio instead
 nginx-ingress:
