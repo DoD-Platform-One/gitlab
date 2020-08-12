@@ -107,6 +107,7 @@ gitlab:
       tag: 13.0.4-ib
   task-runner:
   # Use external postgresql - Note must be the same as global value
+  # Helm chart for 4.2.0 used a different path for variable so had to duplicate
     psql:
       host: db.admin.dsop.io
       port: 5432
@@ -115,11 +116,6 @@ gitlab:
       password:
         secret: db-credentials
         key: PGPASSWORD
-#    backups:
-#      objectStorage:
-#        config:
-#          secret: s3-creds
-#          key: backup
     persistence:
       enabled: true
       accessMode: ReadWriteOnce
