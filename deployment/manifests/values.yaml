@@ -157,8 +157,8 @@ gitlab-runner:
 shared-secrets:
   selfsign:
     image:
-      repository: registry.dsop.io/platform-one/apps/gitlab/cfssl-self-sign
-      tag: 1.2
+      repository: registry.dsop.io/platform-one/apps/gitlab/cfssl-self-sign-ib
+      tag: 1.4.1-ib
 
 minio:
   image: "registry.dsop.io/platform-one/apps/gitlab/minio-ib"
@@ -185,8 +185,8 @@ redis:
 prometheus:
   configmapReload:
     image:
-      repository: registry.dsop.io/platform-one/apps/gitlab/jimmidyson/configmap-reload
-      tag: v0.3.0
+      repository: registry.dsop.io/platform-one/apps/gitlab/jimmidyson/configmap-reload-ib
+      tag: 0.4.0-ib
   server:
     image:
       repository: registry.dsop.io/platform-one/apps/gitlab/prometheus/prometheus-ib
