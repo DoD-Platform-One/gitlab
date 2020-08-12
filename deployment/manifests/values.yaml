@@ -8,8 +8,8 @@ global:
     gitlab:
       name: "code.dsop.io"
 
-  #   registry:
-  #     bucket: gitlab-registry-storage
+#   registry:
+#     bucket: gitlab-registry-storage
 
   kubectl:
     image:
@@ -115,11 +115,11 @@ gitlab:
       password:
         secret: db-credentials
         key: PGPASSWORD
-    backups:
-      objectStorage:
-        config:
-          secret: s3-creds
-          key: backup
+#    backups:
+#      objectStorage:
+#        config:
+#          secret: s3-creds
+#          key: backup
     persistence:
       enabled: true
       accessMode: ReadWriteOnce
