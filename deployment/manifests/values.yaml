@@ -135,10 +135,10 @@ postgresql:
 registry:
   enabled: true
   host: "registry.dsop.io"
-  #authEndpoint: http://gitlab-webservice.gitlab.svc.cluster.local:8181
-  storage:
-    secret: s3-creds
-    key: registry
+#  #authEndpoint: http://gitlab-webservice.gitlab.svc.cluster.local:8181
+#  storage:
+#    secret: s3-creds
+#    key: registry
   ingress:
     enabled: false
   image:
