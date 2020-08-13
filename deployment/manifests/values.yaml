@@ -22,7 +22,9 @@ global:
       tag: 20171114-r3
   busybox:
     image:
-      repository: registry.dsop.io/platform-one/apps/gitlab/busybox
+# Busybox can not be hardened with no STIGS.  Therefore, replacing with UBI8 container
+#      repository: registry.dsop.io/platform-one/apps/gitlab/busybox
+      repository: registry.dsop.io/platform-one/apps/gitlab/ubi/ubi8
       tag: latest
 
   # Use external postgresql
