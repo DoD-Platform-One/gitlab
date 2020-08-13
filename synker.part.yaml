@@ -1,0 +1,22 @@
+source:
+  images:
+    - registry.dsop.io/platform-one/apps/gitlab/busybox:latest
+    - registry.dsop.io/platform-one/apps/gitlab/gitlab-exporter-ib:13.2.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab/gitlab-shell-ib:13.2.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab/gitlab-sidekiq-ib:13.0.4-ib
+    - registry.dsop.io/platform-one/apps/gitlab/gitlab-task-runner-ib:13.2.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab/gitlab-webservice-ib:13.1.1-ib
+    - registry.dsop.io/platform-one/apps/gitlab/gitlab-workhorse-ib:13.2.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab/minio-ib:RELEASE.2020-07-02T00-15-09Z-ib
+    - registry.dsop.io/platform-one/apps/gitlab/minio/mc:RELEASE.2018-07-13T00-53-22Z
+    - registry.dsop.io/platform-one/apps/gitlab/gitlab-container-registry-ib:13.2.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab/gitaly-ib:13.0.4-ib
+    - registry.dsop.io/platform-one/apps/gitlab/bitnami/redis-ib:5.0.9-ib
+    - registry.dsop.io/platform-one/apps/gitlab/bitnami/redis-exporter-ib:1.6.1-ib
+    - registry.dsop.io/platform-one/apps/gitlab/kubectl-ib:13.2.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab/prometheus-ib:2.20.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab/cfssl-self-sign-ib:1.4.1-ib
+    - registry.dsop.io/platform-one/apps/gitlab/jimmidyson/configmap-reload-ib:0.4.0-ib
+    - registry.dsop.io/platform-one/apps/gitlab-runner/gitlab/gitlab-runner:alpine-v11.6.0
+    - registry.dsop.io/platform-one/apps/gitlab-runner/ubi8/ubi-minimal:8.2
+    - registry.dsop.io/platform-one/apps/gitlab/alpine-certificates:20171114-r3
