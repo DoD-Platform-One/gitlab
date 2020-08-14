@@ -166,8 +166,8 @@ minio:
   image: "registry.dsop.io/platform-one/apps/gitlab/minio-ib"
   imageTag: "RELEASE.2020-07-02T00-15-09Z-ib"
   minioMc:
-    image: registry.dsop.io/platform-one/apps/gitlab/minio/mc
-    tag: "RELEASE.2018-07-13T00-53-22Z"
+    image: registry-dsop-io/platform-one/apps/gitlab/minio/mc-ib
+    tag: "RELEASE.2020-08-08T02-33-58Z"
 
 redis:
   master:
