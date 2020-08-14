@@ -22,8 +22,10 @@ global:
       tag: 20171114-r3
   busybox:
     image:
-      repository: registry.dsop.io/platform-one/apps/gitlab/busybox
-      tag: latest
+#     Busybox can not be hardened with no STIGS.  Therefore, replacing with UBI8 container
+#     repository: registry.dsop.io/platform-one/apps/gitlab/busybox
+      repository: registry.dsop.io/platform-one/apps/gitlab/ubi/ubi8-ib
+      tag: 8.2-ib
 
   # Use external postgresql
   psql:
@@ -166,6 +168,9 @@ minio:
   minioMc:
     image: registry.dsop.io/platform-one/apps/gitlab/minio/mc
     tag: "RELEASE.2018-07-13T00-53-22Z"
+#  minioMc:
+#    image: "registry.dsop.io/platform-one/apps/gitlab/minio/mc-ib"
+#    tag: "RELEASE.2020-08-08T02-33-58Z"
 
 redis:
   master:
