@@ -97,7 +97,7 @@ gitlab:
         enabled: false
     image:
       repository: registry.dsop.io/platform-one/apps/gitlab/gitlab-webservice-ib
-      tag: 13.1.1-ib
+      tag: 13.2.0-ib
     workhorse:
       image: registry.dsop.io/platform-one/apps/gitlab/gitlab-workhorse-ib
       tag: 13.2.0-ib
@@ -106,7 +106,7 @@ gitlab:
       size: 50Gi
     image:
       repository: registry.dsop.io/platform-one/apps/gitlab/gitaly-ib
-      tag: 13.0.4-ib
+      tag: 13.2.0-ib
   task-runner:
   # Use external postgresql - Note must be the same as global value
   # Helm chart for 4.2.0 used a different path for variable so had to duplicate
