@@ -1,6 +1,6 @@
 create an index pattern for fluentd if not already created for you
 ```
-logstash-*
+gitlab-*
 ```
 Build filter for gitlab namespace
 ```
