@@ -19,7 +19,7 @@ global:
   certificates:
     image:
       repository: registry.dsop.io/platform-one/apps/gitlab/alpine-certificates
-      tag: 20171114-r3
+      tag: 12-3-stable
   busybox:
     image:
 #     Busybox can not be hardened with no STIGS.  Therefore, replacing with UBI8 container
