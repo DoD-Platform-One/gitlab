@@ -1,0 +1,6 @@
+namespace: gitlab
+
+resources:
+  - role.yaml
+  - roleBinding.yaml
+  - serviceMonitorGitlab.yaml
