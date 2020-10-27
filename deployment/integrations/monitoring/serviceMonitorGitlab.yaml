@@ -16,4 +16,70 @@ spec:
       path: /sidekiq
       port: gitlab-exporter
       scheme: http
-      jobLabel: gitlab
+      jobLabel: gitlab-exporter-sidekiq
+    - interval: 30s
+      path: /database
+      port: gitlab-exporter
+      scheme: http
+      jobLabel: gitlab-exporter-database
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    prometheus: k8s
+  name: gitlab-rails
+spec:
+  selector:
+    matchLabels:
+      app: webservice
+  namespaceSelector:
+    matchNames:
+      - gitlab
+  endpoints:
+    - interval: 30s
+      path: /-/metrics
+      port: http-webservice
+      scheme: http
+      jobLabel: gitlab-rails
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    prometheus: k8s
+  name: gitlab-gitaly
+spec:
+  selector:
+    matchLabels:
+      app: gitaly
+  namespaceSelector:
+    matchNames:
+      - gitlab
+  endpoints:
+    - interval: 30s
+      port: gitaly-metrics
+      scheme: http
+      jobLabel: gitlab-gitaly
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    prometheus: k8s
+  name: gitlab-redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  namespaceSelector:
+    matchNames:
+      - gitlab
+  endpoints:
+    - interval: 30s
+      port: metrics
+      scheme: http
+      jobLabel: gitlab-redis
