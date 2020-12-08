@@ -1,9 +1,0 @@
-apiVersion: p1.dsop.io/v1beta1
-kind: HelmGenerator
-metadata:
-  name: helmGenerator
-releaseName: gitlab
-chartPath: gitlab-4.2.0.tgz
-namespace: gitlab
-valueFiles:
-  - values.yaml
