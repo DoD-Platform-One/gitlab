@@ -52,9 +52,9 @@ global:
 
   ## doc/charts/globals.md#configure-ingress-settings
   ingress:
-    configureCertmanager: false
+    configureCertmanager: true
     annotations: {}
-    enabled: false
+    enabled: true
     tls: {}
     #   enabled: true
     #   secretName:
@@ -532,11 +532,11 @@ upgradeCheck:
 ## Installation & configuration of jetstack/cert-manager
 ## See requirements.yaml for current version
 certmanager:
-  createCustomResource: false
+  createCustomResource: true
   nameOverride: cert-manager
   # Install cert-manager chart. Set to false if you already have cert-manager
   # installed or if you are not using cert-manager.
-  install: false
+  install: true
   # Other cert-manager configurations from upstream
   # See https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/README.md#configuration
   rbac:
@@ -548,7 +548,7 @@ certmanager:
 ## doc/architecture/decisions.md#nginx-ingress
 ## Installation & configuration of charts/nginx
 nginx-ingress:
-  enabled: false
+  enabled: true
   tcpExternalConfig: "true"
   controller:
     config:
@@ -668,7 +668,7 @@ shared-secrets:
 ## Installation & configuration of gitlab/gitlab-runner
 ## See requirements.yaml for current version
 gitlab-runner:
-  install: false
+  install: true
   rbac:
     create: true
   runners:
@@ -751,9 +751,3 @@ gitlab:
 #     enabled: false
 ## doc/charts/gitlab/gitlab-grafana
 #   gitlab-grafana:
-
-
-# Big Bang Additions
-hostname: bigbang.dev
-istio:
-  enabled: true
