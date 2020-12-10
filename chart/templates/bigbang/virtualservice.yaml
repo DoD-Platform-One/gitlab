@@ -1,22 +1,29 @@
 {{- if .Values.istio.enabled -}}
-{{- $serviceName := include "gitlab.gitlab.hostname" . -}}
-{{- $servicePort := 8080 -}}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-    name: {{ .Release.Name }}
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
-  labels:
-    {{- include "gitlab.standardLabels" . | nindent 4 }}
 spec:
   gateways:
     - main.istio-system.svc.cluster.local
   hosts:
-    - "gitlab.{{ .Values.hostname }}"
+    - "code.{{ .Values.hostname }}"
   http:
     - route:
-        - destination:
-            port:
-              number: {{ $servicePort }}
-            host: {{ $serviceName }}
+      - destination:
+          host: gitlab-webservice.gitlab.svc.cluster.local
+          port:
+            number: 8181
+      match:
+      - uri:
+          prefix: /
+    - match:
+      - uri:
+          prefix: /admin/sidekiq
+      route:
+      - destination:
+          host: gitlab-webservice.gitlab.svc.cluster.local
+          port:
+            number: 8080
 {{- end }}

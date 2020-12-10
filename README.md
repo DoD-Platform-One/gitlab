@@ -17,3 +17,9 @@ And it can be deleted with this helm command
 helm delete gitlab -n gitlab
 ```
 
+## Initial admin login
+
+The initial admin login is user ```root```.  The password can be obtained with the following command.
+```
+kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 --decode ; echo
+```
