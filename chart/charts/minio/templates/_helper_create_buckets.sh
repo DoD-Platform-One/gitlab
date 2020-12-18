@@ -62,7 +62,9 @@ createBucket() {
   # At this point, the bucket should exist, skip checking for existance
   # Set policy on the bucket
   echo "Setting policy of bucket '$BUCKET' to '$POLICY'."
-  /usr/bin/mc policy $POLICY myminio/$BUCKET
+  # the following line was modified by PlatformOne to add "set"
+  # this was needed to work with newer versions of the mc command
+  /usr/bin/mc policy set $POLICY myminio/$BUCKET
 }
 
 connectToMinio
