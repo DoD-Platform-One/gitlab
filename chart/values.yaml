@@ -319,18 +319,20 @@ global:
     ## doc/charts/globals.md#omniauth
     omniauth:
       enabled: false
-      autoSignInWithProvider:
-      syncProfileFromProvider: []
+      # autoSignInWithProvider:
+      # syncProfileFromProvider: []
       syncProfileAttributes: ['email']
-      allowSingleSignOn: ['saml']
-      blockAutoCreatedUsers: true
-      autoLinkLdapUser: false
-      autoLinkSamlUser: false
-      externalProviders: []
-      allowBypassTwoFactor: []
+      allowSingleSignOn: ['openid_connect']
+      blockAutoCreatedUsers: false
+      # autoLinkLdapUser: false
+      # autoLinkSamlUser: false
+      # externalProviders: []
+      # allowBypassTwoFactor: []
       providers: []
-      # - secret: gitlab-google-oauth2
-      #   key: provider
+      # providers:
+      #   - secret: oidc-provider
+      #     key: gitlab-oidc.json
+
     ## doc/charts/globals.md#configure-appconfig-settings
     sentry:
       enabled: false
