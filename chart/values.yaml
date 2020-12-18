@@ -40,14 +40,16 @@ global:
     allowClusterRoles: true
   ## doc/charts/globals.md#configure-host-settings
   hosts:
-    domain: bigbang.dev
+    domain: code.bigbang.dev
     hostSuffix:
     https: true
     externalIP:
     ssh: ~
-    gitlab: {}
+    gitlab:
+      name: code.bigbang.dev
     minio: {}
-    registry: {}
+    registry:
+      name: registry.bigbang.dev
     tls: {}
 
   ## doc/charts/globals.md#configure-ingress-settings
@@ -467,8 +469,8 @@ global:
   # configuration of certificates container & custom CA injection
   certificates:
     image:
-      repository: registry.gitlab.com/gitlab-org/build/cng/alpine-certificates
-      tag: 20171114-r3
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/cfssl-self-sign
+      tag: 1.4.1
     customCAs: []
     # - secret: custom-CA
     # - secret: more-custom-CAs
@@ -485,8 +487,11 @@ global:
       fsGroup: 65534
   busybox:
     image:
-      repository: busybox
-      tag: latest
+      # repository: busybox
+      # tag: latest
+      # Busybox can not be hardened with no STIGS. Replacing with UBI-8 container
+      repository: registry1.dsop.io/ironbank/redhat/ubi/ubi8
+      tag: "8.2"
 
   ## docs/charts/globals.md#service-accounts
   serviceAccount:
@@ -596,7 +601,7 @@ nginx-ingress:
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
 prometheus:
-  install: true
+  install: false
   rbac:
     create: true
   alertmanager:
@@ -624,6 +629,19 @@ redis:
     enabled: false
   metrics:
     enabled: true
+    image:
+      registry: registry1.dsop.io/ironbank/bitnami
+      repository: analytics/redis-exporter
+      tag: 1.6.1
+  image:
+    registry: registry1.dsop.io/ironbank/opensource
+    repository: redis/redis5
+    tag: 5.0.9
+  master:
+    command: "redis-server"
+  slave:
+    command: "redis-server"
+
 
 ## Instllation & configuration of stable/prostgresql
 ## See requirements.yaml for current version
@@ -634,6 +652,10 @@ postgresql:
   install: true
   postgresqlDatabase: gitlabhq_production
   image:
+    ## could not get IronBank hardened image to work with the postgres sub-chart
+    # registry: registry1.dsop.io
+    # repository: ironbank/opensource/postgres/postgresql11
+    # tag: 11.9
     tag: 11.7.0
   usePasswordFile: true
   existingSecret: 'bogus'
@@ -646,16 +668,19 @@ postgresql:
     podAnnotations:
       postgresql.gitlab/init-revision: "1"
   metrics:
-    enabled: true
+    enabled: false
     ## Optionally define additional custom metrics
     ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
 
 ## Installation & configuration charts/registry
 ## doc/architecture/decisions.md#registry
 ## doc/charts/registry/
-# registry:
-#   enabled: false
-
+registry:
+  enabled: true
+  host: "registry.bigbang.dev"
+  image:
+    repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-container-registry
+    tag: 13.2.0
 
 ## Automatic shared secret generation
 ## doc/installation/secrets.md
@@ -735,23 +760,80 @@ gitlab:
     antiAffinityLabels:
       matchLabels:
         app: 'gitaly'
-## doc/charts/gitlab/migrations
-#   migrations:
-#     enabled: false
-## doc/charts/gitlab/webservice
-#   webservice:
-#     enabled: false
-## doc/charts/gitlab/sidekiq
-#   sidekiq:
-#     enabled: false
-## doc/charts/gitlab/gitaly
-#   gitaly:
-## doc/charts/gitlab/gitlab-shell
-#   gitlab-shell:
-#     enabled: false
-## doc/charts/gitlab/gitlab-grafana
-#   gitlab-grafana:
+    # Use external postgresql - Note must be the same as global value
+    # Helm chart for 4.2.0 used a different path for variable so had to duplicate
+    # psql:
+    #   host: db.admin.dsop.io
+    #   port: 5432
+    #   username: rdsuser
+    #   database: gitlab
+    #   password:
+    #     secret: db-credentials
+    #     key: PGPASSWORD
+    image:
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-task-runner
+      tag: 13.2.0
+  ## doc/charts/gitlab/migrations
+  migrations:
+    # enabled: false
+    image:
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-task-runner
+      tag: 13.2.0
+  ## doc/charts/gitlab/webservice
+  webservice:
+    # enabled: false
+    image:
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-webservice
+      tag: 13.2.0
+    workhorse:
+      image: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-workhorse
+      tag: 13.2.0
+  ## doc/charts/gitlab/sidekiq
+  sidekiq:
+    # enabled: false
+    image:
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-sidekiq
+      tag: 13.2.0
+  ## doc/charts/gitlab/gitaly
+  gitaly:
+    image:
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitaly
+      tag: 13.2.0
+  ## doc/charts/gitlab/gitlab-shell
+  gitlab-shell:
+    # enabled: false
+    image:
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-shell
+      tag: 13.2.0
+  ## doc/charts/gitlab/gitlab-grafana
+  #   gitlab-grafana:
+  ## gitlab exporter for prometheus metrics
+  gitlab-exporter:
+    image:
+      repository: registry1.dsop.io/ironbank/gitlab/gitlab/gitlab-exporter
+      tag: 13.2.0
+    metrics:
+      enabled: true
+      port: 9168
+      annotations:
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_port: "9168"
+        gitlab.com/prometheus_path: "/metrics"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9168"
+        prometheus.io/path: "/metrics"
 
+# use Ironbank hardened images for MinIO
+minio:
+  image: registry1.dsop.io/ironbank/opensource/minio/minio
+  imageTag: RELEASE.2020-11-19T23-48-16Z
+  minioMc:
+    # the MinIO sub-chart config script was modified to work with newer mc version in IronBank image
+    #   chart/charts/minio/templates/create-buckets-job.yaml
+    #       line 65
+    #        /usr/bin/mc policy set $POLICY myminio/$BUCKET 
+    image: registry1.dsop.io/ironbank/opensource/minio/mc
+    tag: RELEASE.2020-10-03T02-54-56Z
 
 # Big Bang Additions
 hostname: bigbang.dev
