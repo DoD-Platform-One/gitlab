@@ -88,9 +88,9 @@ kubernetes.container_name:
 kubernetes.pod_name:
     gitlab-sidekiq-all-in-1-v1-86dbff87f9-wp2fr
 kubernetes.container_image:
-    registry.dsop.io/platform-one/apps/gitlab/gitlab-sidekiq-ee:v13.0.3
+    registry.dso.mil/platform-one/apps/gitlab/gitlab-sidekiq-ee:v13.0.3
 kubernetes.container_image_id:
-    registry.dsop.io/platform-one/apps/gitlab/gitlab-sidekiq-ee@sha256:9e859328c5dfb685b5ccf176b15361091f0e58a935c770eadb80c909b67c4ac3
+    registry.dso.mil/platform-one/apps/gitlab/gitlab-sidekiq-ee@sha256:9e859328c5dfb685b5ccf176b15361091f0e58a935c770eadb80c909b67c4ac3
 kubernetes.pod_id:
     53fa245b-c148-40f1-acc0-41fc687a6f2c
 kubernetes.host:

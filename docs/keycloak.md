@@ -35,7 +35,7 @@ Reference Gitlab [documentation for SSO](https://docs.gitlab.com/charts/charts/g
       "Gitlab"
     ],
     "response_type": "code",
-    "issuer": "https://login.dsop.io/auth/realms/baby-yoda",
+    "issuer": "https://login.dso.mil/auth/realms/baby-yoda",
     "client_auth_method": "query",
     "discovery": true,
     "uid_field": "preferred_username",
@@ -43,7 +43,7 @@ Reference Gitlab [documentation for SSO](https://docs.gitlab.com/charts/charts/g
       "identifier": "platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-gitlab",
       "secret": "your-secret-here",
       "redirect_uri": "https://code.bigbang.dev/users/auth/openid_connect/callback",
-      "end_session_endpoint": "https://login.dsop.io/auth/realms/baby-yoda/protocol/openid-connect/logout"
+      "end_session_endpoint": "https://login.dso.mil/auth/realms/baby-yoda/protocol/openid-connect/logout"
     }
   }
 }
