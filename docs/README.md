@@ -13,6 +13,28 @@
 
 GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking and continuous integration/continuous deployment pipeline features, using an open-source license, developed by GitLab Inc.
 
+## Application Deployment
+
+For production deployments you must externalize the postgres and MinIO services. You should disable the internal postgres and enable RDS for the database in the values.yaml
+```
+postgresql:
+  install: false
+```
+and customize the values.yaml for your RDS credentials
+```
+ ## doc/charts/globals.md#configure-postgresql-settings
+  psql:
+    password: {}
+      # secret:
+      # key:
+    # host: postgresql.hostedsomewhere.else
+    # port: 123
+    # username: gitlab
+    # database: gitlabhq_production
+    # pool: 1
+    # preparedStatements: false
+```
+
 
 ## Keycloak SSO integration
 

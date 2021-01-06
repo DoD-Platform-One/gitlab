@@ -23,3 +23,7 @@ The initial admin login is user ```root```.  The password can be obtained with t
 ```
 kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 --decode ; echo
 ```
+
+##  Deployment
+
+For production deployments you must externalize the postgres and MinIO services. See docs/README.md.
