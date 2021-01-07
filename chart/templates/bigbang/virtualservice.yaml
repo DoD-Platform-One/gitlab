@@ -26,4 +26,21 @@ spec:
           host: {{ .Release.Namespace }}-gitlab-webservice.gitlab.svc.cluster.local
           port:
             number: 8080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-registry
+  namespace: {{ .Release.Namespace }}
+spec:
+  gateways:
+    - main.istio-system.svc.cluster.local
+  hosts:
+    - "registry.{{ .Values.hostname }}"
+  http:
+  - route:
+    - destination:
+        host: {{ .Release.Namespace }}-gitlab-registry.svc.cluster.local
+        port:
+          number: 5000
 {{- end }}
