@@ -473,6 +473,8 @@ global:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
       tag: 1.4.1
+      # pullSecrets:
+      # - name: private-registry
     customCAs: []
     # - secret: custom-CA
     # - secret: more-custom-CAs
@@ -482,7 +484,8 @@ global:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
       tag: 13.2.0
-      pullSecrets: []
+      # pullSecrets:
+      # - name: private-registry
     securityContext:
       # in most base images, this is `nobody:nogroup`
       runAsUser: 65534
@@ -635,15 +638,18 @@ redis:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
       tag: 1.6.1
+      # pullSecrets: 
+      # - private-registry
   image:
     registry: registry1.dso.mil/ironbank/opensource
     repository: redis/redis5
     tag: 5.0.9
+    # pullSecrets: 
+    # - private-registry
   master:
     command: "redis-server"
   slave:
     command: "redis-server"
-
 
 ## Instllation & configuration of stable/prostgresql
 ## See requirements.yaml for current version
@@ -683,6 +689,8 @@ registry:
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
     tag: 13.2.0
+    # pullSecrets:
+    # - name: private-registry 
 
 ## Automatic shared secret generation
 ## doc/installation/secrets.md
@@ -694,6 +702,8 @@ shared-secrets:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
       tag: 1.4.1
+      # pullSecrets:
+      # - name: private-registry
   rbac:
     create: true
 
@@ -780,38 +790,52 @@ gitlab:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry 
   ## doc/charts/gitlab/migrations
   migrations:
     # enabled: false
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry 
   ## doc/charts/gitlab/webservice
   webservice:
     # enabled: false
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry 
     workhorse:
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry 
   ## doc/charts/gitlab/sidekiq
   sidekiq:
     # enabled: false
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry 
   ## doc/charts/gitlab/gitaly
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry 
   ## doc/charts/gitlab/gitlab-shell
   gitlab-shell:
     # enabled: false
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry
   ## doc/charts/gitlab/gitlab-grafana
   #   gitlab-grafana:
   ## gitlab exporter for prometheus metrics
@@ -819,6 +843,8 @@ gitlab:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
       tag: 13.2.0
+      # pullSecrets:
+      # - name: private-registry 
     metrics:
       enabled: true
       port: 9168
@@ -834,6 +860,8 @@ gitlab:
 minio:
   image: registry1.dso.mil/ironbank/opensource/minio/minio
   imageTag: RELEASE.2020-11-19T23-48-16Z
+  # pullSecrets:
+  # - name: private-registry
   minioMc:
     # the MinIO sub-chart config script was modified to work with newer mc version in IronBank image
     #   chart/charts/minio/templates/create-buckets-job.yaml
