@@ -39,6 +39,12 @@ chose not to enable this by default. See https://docs.gitlab.com/runner/install/
 {{- end }}
 {{ if $.Values.postgresql.install }}
 WARNING: If you are upgrading from a previous version of the GitLab Helm Chart, there is a major upgrade to the included PostgreSQL chart, which requires manual steps be performed. Please see our upgrade documentation for more information: https://docs.gitlab.com/charts/installation/upgrade.html
+
+#####################
+PLATFORM ONE WARNING: You have enabled an internal postgres database in the values configuration. 
+                      PlatformOne does not support this option for production deployments.
+                      This non-default option should only be used for development or CI pipelines.                      
+#####################
 {{- end -}}
 
 {{/* task-runner replicas */}}
