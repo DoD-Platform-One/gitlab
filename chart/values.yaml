@@ -657,7 +657,7 @@ postgresql:
   postgresqlUsername: gitlab
   # This just needs to be set. It will use a second entry in existingSecret for postgresql-postgres-password
   postgresqlPostgresPassword: bogus
-  install: false
+  install: true
   postgresqlDatabase: gitlabhq_production
   image:
     ## could not get IronBank hardened image to work with the postgres sub-chart
