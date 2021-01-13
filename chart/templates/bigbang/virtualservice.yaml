@@ -38,9 +38,12 @@ spec:
   hosts:
     - "registry.{{ .Values.hostname }}"
   http:
-  - route:
+  - match:
+    - uri:
+        prefix: /
+    route:
     - destination:
-        host: {{ .Release.Namespace }}-gitlab-registry.svc.cluster.local
+        host: {{ .Release.Namespace }}-gitlab-registry.gitlab.svc.cluster.local
         port:
           number: 5000
 {{- end }}
