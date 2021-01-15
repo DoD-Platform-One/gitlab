@@ -12,7 +12,7 @@ spec:
   http:
     - route:
       - destination:
-          host: {{ .Release.Namespace }}-gitlab-webservice.{{ .Release.Namespace }}.svc.cluster.local
+          host: {{ .Release.Name }}-webservice.{{ .Release.Namespace }}.svc.cluster.local
           port:
             number: 8181
       match:
@@ -23,7 +23,7 @@ spec:
           prefix: /admin/sidekiq
       route:
       - destination:
-          host: {{ .Release.Namespace }}-gitlab-webservice.{{ .Release.Namespace }}.svc.cluster.local
+          host: {{ .Release.Name }}-webservice.{{ .Release.Namespace }}.svc.cluster.local
           port:
             number: 8080
 ---
@@ -43,7 +43,7 @@ spec:
         prefix: /
     route:
     - destination:
-        host: {{ .Release.Namespace }}-gitlab-registry.{{ .Release.Namespace }}.svc.cluster.local
+        host: {{ .Release.Name }}-registry.{{ .Release.Namespace }}.svc.cluster.local
         port:
           number: 5000
 {{- end }}
