@@ -42,7 +42,7 @@ WARNING: If you are upgrading from a previous version of the GitLab Helm Chart, 
 
 #####################
 PLATFORM ONE WARNING: You have enabled an internal postgres database in the values configuration.
-                      PlatformOne does not support this option for production deployments because your persistent data can be be permanently lost.
+                      PlatformOne does not support this option for production deployments because your persistent data can be permanently lost.
                       This option should only be used for development or CI pipelines.
 #####################
 {{- end -}}
