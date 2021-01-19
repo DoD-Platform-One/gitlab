@@ -660,11 +660,14 @@ postgresql:
   install: true
   postgresqlDatabase: gitlabhq_production
   image:
-    ## could not get IronBank hardened image to work with the postgres sub-chart
-    # registry: registry1.dso.mil
+    ## Could not get IronBank hardened image to work with the postgres sub-chart
+    ## Instead, copied to GitLab.  Since we don't use internal postgres for production, the image
+    ## here will only be used for development and testing.
+    registry: registry.dso.mil
+    repository: platform-one/big-bang/apps/developer-tools/gitlab/postgresql
     # repository: ironbank/opensource/postgres/postgresql11
+    tag: 11.7.0-debian-10-r90
     # tag: 11.9
-    tag: 11.7.0
   usePasswordFile: true
   existingSecret: 'bogus'
   initdbScriptsConfigMap: 'bogus'
