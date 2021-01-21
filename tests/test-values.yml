@@ -1,0 +1,72 @@
+global:
+  hosts:
+    domain: code.bigbang.dev
+    gitlab:
+      name: code.bigbang.dev
+    registry:
+      name: registry.bigbang.dev
+  certificates:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+  kubectl:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+redis:
+  metrics:
+    image:
+      pullSecrets:
+      - private-registry-mil
+  image:
+    pullSecrets:
+    - private-registry-mil
+registry:
+  image:
+    pullSecrets:
+    - name: private-registry-mil
+shared-secrets:
+  selfsign:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+gitlab:
+  task-runner:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+  migrations:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+  webservice:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+    workhorse:
+      pullSecrets:
+      - name: private-registry-mil
+  sidekiq:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+  gitaly:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+  gitlab-shell:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+  gitlab-exporter:
+    image:
+      pullSecrets:
+      - name: private-registry-mil
+minio:
+  pullSecrets:
+  - name: private-registry-mil
+
+istio:
+  enabled: true
+monitoring:
+  enabled: false
