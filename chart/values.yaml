@@ -606,7 +606,6 @@ nginx-ingress:
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
 prometheus:
-  install: false
   rbac:
     create: true
   alertmanager:
@@ -620,6 +619,7 @@ prometheus:
   pushgateway:
     enabled: false
   server:
+    enabled: false
     retention: 15d
 
 ## Configuration of Redis
