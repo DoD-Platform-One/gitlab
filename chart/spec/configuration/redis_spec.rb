@@ -96,7 +96,7 @@ describe 'Redis configuration' do
         expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).to include("resque.redis")
         expect(t.dig('ConfigMap/test-webservice','data','redis.cache.yml.erb')).to include("redis/cache-password")
         expect(t.dig('ConfigMap/test-webservice','data','redis.cache.yml.erb')).to include("cache.redis")
-        secret_mounts =  t.projected_volume_sources('Deployment/test-webservice','init-webservice-secrets').select { |item|
+        secret_mounts =  t.projected_volume_sources('Deployment/test-webservice-default','init-webservice-secrets').select { |item|
           item['secret']['name'] == 'rspec-resque'
         }
         expect(secret_mounts.length).to eq(2)
@@ -127,7 +127,7 @@ describe 'Redis configuration' do
       it 'sub-queue inherits from global' do
         t = HelmTemplate.new(values)
         expect(t.exit_code).to eq(0)
-        projected_volume = t.projected_volume_sources('Deployment/test-webservice','init-webservice-secrets')
+        projected_volume = t.projected_volume_sources('Deployment/test-webservice-default','init-webservice-secrets')
         redis_mount =  projected_volume.select { |item| item['secret']['name'] == "rspec-resque" }
         cache_mount =  projected_volume.select { |item| item['secret']['name'] == "rspec-cache" }
         # check that it gets consumed
@@ -165,7 +165,7 @@ describe 'Redis configuration' do
       it 'sub-queue uses password, global does not' do
         t = HelmTemplate.new(values)
         expect(t.exit_code).to eq(0)
-        projected_volume = t.projected_volume_sources('Deployment/test-webservice','init-webservice-secrets')
+        projected_volume = t.projected_volume_sources('Deployment/test-webservice-default','init-webservice-secrets')
         redis_mount =  projected_volume.select { |item| item['secret']['name'] == "rspec-resque" }
         cache_mount =  projected_volume.select { |item| item['secret']['name'] == "rspec-cache" }
         # check that it gets consumed
@@ -203,7 +203,7 @@ describe 'Redis configuration' do
       it 'sub-queue does not use password, global does' do
         t = HelmTemplate.new(values)
         expect(t.exit_code).to eq(0)
-        projected_volume = t.projected_volume_sources('Deployment/test-webservice','init-webservice-secrets')
+        projected_volume = t.projected_volume_sources('Deployment/test-webservice-default','init-webservice-secrets')
         redis_mount =  projected_volume.select { |item| item['secret']['name'] == "rspec-resque" }
         cache_mount =  projected_volume.select { |item| item['secret']['name'] == "rspec-cache" }
         # check that it gets consumed

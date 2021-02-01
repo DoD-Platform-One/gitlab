@@ -12,16 +12,16 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 It is recommended that you restore a backup to the same version of GitLab on which it was created.
 
-GitLab backup restores are taken by running the `backup-utility` command on the `task-runner` pod provided in the chart.
+GitLab backup restores are taken by running the `backup-utility` command on the Task Runner pod provided in the chart.
 
-Before running the restore for the first time, you should ensure the [task-runner is properly configured](index.md) for
+Before running the restore for the first time, you should ensure the [Task Runner is properly configured](index.md) for
 access to [object storage](index.md#object-storage)
 
 The backup utility provided by GitLab Helm chart supports restoring a tarball from any of the following locations
 
 1. The `gitlab-backups` bucket in the object storage service associated to the instance. This is the default scenario.
 1. A public URL that can be accessed from the pod.
-1. A local file that you can copy to the `task-runner` pod using `kubectl cp`
+1. A local file that you can copy to the Task Runner pod using `kubectl cp`
 
 ## Restoring the secrets
 
@@ -62,7 +62,8 @@ Once you have the secrets created as a local YAML file:
 
 ### Restart the pods
 
-In order to use the new secrets, the `webservice`, `sidekiq` and `task-runner` pods need to be restarted. The safest way to restart those pods is to run:
+In order to use the new secrets, the Webservice, Sidekiq and Task Runner pods
+need to be restarted. The safest way to restart those pods is to run:
 
 ```shell
 kubectl delete pods -lapp=sidekiq,release=<helm release name>
@@ -74,7 +75,7 @@ kubectl delete pods -lapp=task-runner,release=<helm release name>
 
 The steps for restoring a GitLab installation are
 
-1. Make sure you have a running GitLab instance by deploying the charts. Ensure the `task-runner` pod is enabled and running by executing the following command
+1. Make sure you have a running GitLab instance by deploying the charts. Ensure the Task Runner pod is enabled and running by executing the following command
 
    ```shell
    kubectl get pods -lrelease=RELEASE_NAME,app=task-runner
@@ -84,13 +85,13 @@ The steps for restoring a GitLab installation are
 1. Run the backup utility to restore the tarball
 
    ```shell
-   kubectl exec <task-runner pod name> -it -- backup-utility --restore -t <timestamp>_<version>
+   kubectl exec <Task Runner pod name> -it -- backup-utility --restore -t <timestamp>_<version>
    ```
 
    Here, `<timestamp>_<version>` is from the name of the tarball stored in `gitlab-backups` bucket. In case you want to provide a public URL, use the following command
 
    ```shell
-   kubectl exec <task-runner pod name> -it -- backup-utility --restore -f <URL>
+   kubectl exec <Task Runner pod name> -it -- backup-utility --restore -f <URL>
    ```
 
     You can provide a local path as a URL as long as it's in the format: `file://<path>`
@@ -98,7 +99,10 @@ The steps for restoring a GitLab installation are
 1. This process will take time depending on the size of the tarball.
 1. The restoration process will erase the existing contents of database, move existing repositories to temporary locations and extract the contents of the tarball. Repositories will be moved to their corresponding locations on the disk and other data, like artifacts, uploads, LFS etc. will be uploaded to corresponding buckets in Object Storage.
 
-> During restoration, the backup tarball needs to be extracted to disk. This means the `task-runner` pod should have disk of necessary size available.
+NOTE:
+During restoration, the backup tarball needs to be extracted to disk.
+This means the Task Runner pod should have disk of necessary size available.
+For more details and configuration please see the [Task Runner documentation](../charts/gitlab/task-runner/index.md#persistence-configuration).
 
 ### Restore the runner registration token
 
@@ -110,7 +114,7 @@ Follow these [troubleshooting steps](../troubleshooting/index.md#included-gitlab
 If the restored backup was not from an existing installation of the chart, you will also need to enable some Kubernetes specific features after the restore. Such as
 [incremental CI job logging](https://docs.gitlab.com/ee/administration/job_logs.html#new-incremental-logging-architecture).
 
-1. Find your `task-runner` pod by executing the following command
+1. Find your Task Runner pod by executing the following command
 
    ```shell
    kubectl get pods -lrelease=RELEASE_NAME,app=task-runner
@@ -118,13 +122,13 @@ If the restored backup was not from an existing installation of the chart, you w
 
 1. Run the instance setup script to enable the necessary features
 
-  ```shell
-  kubectl exec <task-runner pod name> -it -- /scripts/custom-instance-setup
-  ```
+   ```shell
+   kubectl exec <Task Runner pod name> -it -- /scripts/custom-instance-setup
+   ```
 
 ## Restart the pods
 
-In order to use the new changes, the `webservice` and `sidekiq` pods need to be restarted. The safest way to restart those pods is to run:
+In order to use the new changes, the Webservice and Sidekiq pods need to be restarted. The safest way to restart those pods is to run:
 
 ```shell
 kubectl delete pods -lapp=sidekiq,release=<helm release name>
@@ -135,10 +139,10 @@ kubectl delete pods -lapp=webservice,release=<helm release name>
 
 The restoration process does not update the `gitlab-initial-root-password` secret with the value from backup. For logging in as `root`, use the original password included in the backup. In the case that the password is no longer accessible, follow the steps below to reset it.
 
-1. Attach to the webservice pod by executing the command
+1. Attach to the Webservice pod by executing the command
 
    ```shell
-   kubectl exec <webservice pod name> -it bash
+   kubectl exec <Webservice pod name> -it bash
    ```
 
 1. Run the following command to reset the password of `root` user. Replace `#{password}` with a password of your choice

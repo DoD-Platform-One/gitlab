@@ -22,6 +22,7 @@ spec:
       labels:
         component: operator
         {{- include "gitlab.immutableLabels" . | nindent 8 }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
     spec:
       {{- if .Values.tolerations }}
       tolerations:

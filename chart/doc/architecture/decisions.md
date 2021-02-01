@@ -6,7 +6,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Design Decisions
 
-This documentation collects reasoning and documentation regard decisions made
+This documentation collects reasoning and decisions made
 regarding the design of the Helm charts in this repository.
 
 ## Attempt to catch problematic configurations
@@ -134,7 +134,7 @@ Our [registry chart](../charts/registry/index.md) was altered from the upstream 
 
 ### NGINX Ingress
 
-Our [NGINX Ingress chart](../charts/nginx/index.md) was altered from the upstream [NGINX Ingress](https://github.com/helm/charts/tree/master/stable/nginx-ingress).
+Our [NGINX Ingress chart](../charts/nginx/index.md) was altered from the upstream [NGINX Ingress](https://github.com/kubernetes/ingress-nginx).
 
 - Add feature to allow for the tcp configmap to be external to the chart
 - Add feature to allow Ingress class to be templated based on release name

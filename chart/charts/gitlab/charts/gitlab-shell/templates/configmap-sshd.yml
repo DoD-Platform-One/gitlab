@@ -20,7 +20,7 @@ data:
     # possible, but leave them commented.  Uncommented options override the
     # default value.
 
-    Port 2222
+    Port {{ .Values.service.internalPort }}
     #AddressFamily any
     #ListenAddress 0.0.0.0
     #ListenAddress ::
@@ -98,7 +98,6 @@ data:
     #ClientAliveInterval 0
     #ClientAliveCountMax 3
     #UseDNS no
-    UsePrivilegeSeparation no
     PidFile /srv/sshd/sshd.pid
     #PermitTunnel no
     #ChrootDirectory none

@@ -31,6 +31,7 @@ to the `helm install` command using the `--set` flags.
 | Parameter                        | Default               | Description                                    |
 | -------------------------------- | --------------------- | ---------------------------------------------- |
 | `annotations`                    |                       | Pod annotations                                |
+| `podLabels`                      |                       | Supplemental Pod labels. Will not be used for selectors. |
 | `enabled`                        | `true`                | GitLab Exporter enabled flag                   |
 | `extraContainers`                |                       | List of extra containers to include            |
 | `extraInitContainers`            |                       | List of extra init containers to include       |
@@ -47,6 +48,7 @@ to the `helm install` command using the `--set` flags.
 | `metrics.port`                   | `9168`                | Listen port for the Prometheus metrics exporter |
 | `resources.requests.cpu`         | `75m`                 | GitLab Exporter minimum cpu                    |
 | `resources.requests.memory`      | `100M`                | GitLab Exporter minimum memory                 |
+| `serviceLabels`                  | `{}`                  | Supplemental service labels                    |
 | `service.externalPort`           | `9168`                | GitLab Exporter exposed port                   |
 | `service.internalPort`           | `9168`                | GitLab Exporter internal port                  |
 | `service.name`                   | `gitlab-exporter`     | GitLab Exporter service name                   |

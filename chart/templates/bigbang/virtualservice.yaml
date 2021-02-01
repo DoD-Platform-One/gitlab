@@ -8,11 +8,11 @@ spec:
   gateways:
     - main.istio-system.svc.cluster.local
   hosts:
-    - "code.{{ .Values.hostname }}"
+    - "{{ .Values.global.hosts.gitlab.name }}"
   http:
     - route:
       - destination:
-          host: {{ .Release.Name }}-webservice.{{ .Release.Namespace }}.svc.cluster.local
+          host: {{ .Release.Name }}-webservice-default.{{ .Release.Namespace }}.svc.cluster.local
           port:
             number: 8181
       match:
@@ -23,7 +23,7 @@ spec:
           prefix: /admin/sidekiq
       route:
       - destination:
-          host: {{ .Release.Name }}-webservice.{{ .Release.Namespace }}.svc.cluster.local
+          host: {{ .Release.Name }}-webservice-default.{{ .Release.Namespace }}.svc.cluster.local
           port:
             number: 8080
 ---
@@ -36,7 +36,7 @@ spec:
   gateways:
     - main.istio-system.svc.cluster.local
   hosts:
-    - "registry.{{ .Values.hostname }}"
+    - "{{ .Values.global.hosts.registry.name }}"
   http:
   - match:
     - uri:

@@ -61,10 +61,14 @@ Privileged containers have extended capabilities, for example they can mount arb
 | `gitlab-runner.runners.builds.memoryLimit`     | Build container memory limit               |                                       |
 | `gitlab-runner.runners.builds.cpuRequests`     | Build container requested cpu              |                                       |
 | `gitlab-runner.runners.builds.memoryRequests`  | Build container requested memory           |                                       |
-| `gitlab-runner.runners.service.cpuLimit`       | Service container cpu limit                |                                       |
-| `gitlab-runner.runners.service.memoryLimit`    | Service container memory limit             |                                       |
-| `gitlab-runner.runners.service.cpuRequests`    | Service container requested cpu            |                                       |
-| `gitlab-runner.runners.service.memoryRequests` | Service container requested memory         |                                       |
+| `gitlab-runner.runners.services.cpuLimit`      | Service container cpu limit                |                                       |
+| `gitlab-runner.runners.services.memoryLimit`   | Service container memory limit             |                                       |
+| `gitlab-runner.runners.services.cpuRequests`   | Service container requested cpu            |                                       |
+| `gitlab-runner.runners.services.memoryRequests`| Service container requested memory         |                                       |
+| `gitlab-runner.runners.helpers.cpuLimit`       | Helper container cpu limit                 |                                       |
+| `gitlab-runner.runners.helpers.memoryLimit`    | Helper container memory limit              |                                       |
+| `gitlab-runner.runners.helpers.cpuRequests`    | Helper container requested cpu             |                                       |
+| `gitlab-runner.runners.helpers.memoryRequests` | Helper container requested memory          |                                       |
 | `gitlab-runner.resources.limits.cpu`           | Runner cpu limit                           |                                       |
 | `gitlab-runner.resources.limits.memory`        | Runner memory limit                        |                                       |
 | `gitlab-runner.resources.requests.cpu`         | Runner requested cpu                       |                                       |

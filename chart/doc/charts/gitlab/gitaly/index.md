@@ -29,7 +29,7 @@ and [chart settings](#chart-settings).
 Gitaly is by default deployed as a component when deploying the GitLab
 chart. If deploying Gitaly separately, `global.gitaly.enabled` needs to
 be set to `false` and additional configuration will need to be performed
-as described in the [external Gitaly documenation](../../../advanced/external-gitaly/).
+as described in the [external Gitaly documentation](../../../advanced/external-gitaly/).
 
 ### Installation command line options
 
@@ -39,6 +39,7 @@ the `helm install` command using the `--set` flags.
 | Parameter                       | Default                                    | Description                                                                                                                                                          |
 | ------------------------------  | ------------------------------------------ | ----------------------------------------                                                                                                                             |
 | `annotations`                   |                                            | Pod annotations                                                                                                                                                      |
+| `podLabels`                     |                                            | Supplemental Pod labels. Will not be used for selectors.                                                                                                             |
 | `external[].hostname`           | `- ""`                                     | hostname of external node                                                                                                                                            |
 | `external[].name`               | `- ""`                                     | name of external node storage                                                                                                                                        |
 | `external[].port`               | `- ""`                                     | port of external node                                                                                                                                                |
@@ -51,10 +52,11 @@ the `helm install` command using the `--set` flags.
 | `image.pullPolicy`              | `Always`                                   | Gitaly image pull policy                                                                                                                                             |
 | `image.pullSecrets`             |                                            | Secrets for the image repository                                                                                                                                     |
 | `image.repository`              | `registry.com/gitlab-org/build/cng/gitaly` | Gitaly image repository                                                                                                                                              |
-| `image.tag`                     | `latest`                                   | Gitaly image tag                                                                                                                                                     |
+| `image.tag`                     | `master`                                   | Gitaly image tag                                                                                                                                                     |
 | `init.image.repository`         |                                            | initContainer image                                                                                                                                                  |
 | `init.image.tag`                |                                            | initContainer image tag                                                                                                                                              |
 | `internal.names[]`              | `- default`                                | Ordered names of statfulset storages                                                                                                                                 |
+| `serviceLabels`                 | `{}`                                       | Supplemental service labels                                                                                                                                          |
 | `service.externalPort`          | `8075`                                     | Gitaly service exposed port                                                                                                                                          |
 | `service.internalPort`          | `8075`                                     | Gitaly internal port                                                                                                                                                 |
 | `service.name`                  | `gitaly`                                   | The name of the Service port that Gitaly is behind in the Service object.                                                                                            |
@@ -165,6 +167,26 @@ Below is an example use of `priorityClassName`:
 priorityClassName: persistence-enabled
 ```
 
+### Altering security contexts
+
+Gitaly `StatefulSet` performance may suffer when repositories have large
+amounts of files due to a [known issue with `fsGroup` in upstream Kubernetes](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#configure-volume-permission-and-ownership-change-policy-for-pods).
+Mitigate the issue by changing or fully deleting the settings for the
+`securityContext`.
+
+```yaml
+gitlab:
+  gitaly:
+    securityContext:
+      fsGroup: ""
+      runAsUser: ""
+```
+
+NOTE:
+The example syntax eliminates the `securityContext` setting entirely.
+Setting `securityContext: {}` or `securityContext:` does not work due
+to the way Helm merges default values with user provided configuration.
+
 ## External Services
 
 This chart should be attached the Workhorse service.
@@ -188,11 +210,12 @@ workhorse:
 
 The following values are used to configure the Gitaly Pods.
 
-NOTE: **Note:** Gitaly uses an Auth Token to authenticate with the Workhorse and Sidekiq
-  services. The Auth Token secret and key are sourced from the `global.gitaly.authToken`
-  value. Additionally, the Gitaly container has a copy of GitLab Shell, which has some configuration
-  that can be set. The Shell authToken is sourced from the `global.shell.authToken`
-  values.
+NOTE:
+Gitaly uses an Auth Token to authenticate with the Workhorse and Sidekiq
+services. The Auth Token secret and key are sourced from the `global.gitaly.authToken`
+value. Additionally, the Gitaly container has a copy of GitLab Shell, which has some configuration
+that can be set. The Shell authToken is sourced from the `global.shell.authToken`
+values.
 
 ### Git Repository Persistence
 
@@ -201,13 +224,15 @@ volume for the Git repository data. You'll need physical storage available in th
 Kubernetes cluster for this to work. If you'd rather use emptyDir, disable PersistentVolumeClaim
 with: `persistence.enabled: false`.
 
-NOTE: **Note:** The persistence settings for Gitaly are used in a volumeClaimTemplate
-  that should be valid for all your Gitaly pods. You should *not* include settings
-  that are meant to reference a single specific volume (ie volumeName). If you want
-  to reference a specific volume, you need to manually create the PersistentVolumeClaim.
-  
-NOTE: **Note:** You can't change these through our settings once you've deployed. In [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
-  the `VolumeClaimTemplate` is immutable.
+NOTE:
+The persistence settings for Gitaly are used in a volumeClaimTemplate
+that should be valid for all your Gitaly pods. You should *not* include settings
+that are meant to reference a single specific volume (ie volumeName). If you want
+to reference a specific volume, you need to manually create the PersistentVolumeClaim.
+
+NOTE:
+You can't change these through our settings once you've deployed. In [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
+the `VolumeClaimTemplate` is immutable.
 
 ```yaml
 persistence:
@@ -234,7 +259,8 @@ persistence:
 
 ### Running Gitaly over TLS
 
-NOTE: **Note:** This section refers to Gitaly being run inside the cluster using
+NOTE:
+This section refers to Gitaly being run inside the cluster using
 the Helm charts. If you are using an external Gitaly instance and want to use
 TLS for communicating with it, refer [the external Gitaly documentation](../../../advanced/external-gitaly/index.md#connecting-to-external-gitaly-over-tls)
 
@@ -248,15 +274,16 @@ Follow the steps to run Gitaly over TLS:
    added as a Subject Alternate Name (SAN) to the certificate.
 
    To know the hostnames to use, check the file `/srv/gitlab/config/gitlab.yml`
-   file in the task-runner pod and check the various
+   file in the Task Runner pod and check the various
    `gitaly_address` fields specified under `repositories.storages` key within it.
 
    ```shell
-   kubectl exec -it <task-runner pod> -- grep gitaly_address /srv/gitlab/config/gitlab.yml
+   kubectl exec -it <Task Runner pod> -- grep gitaly_address /srv/gitlab/config/gitlab.yml
    ```
 
-NOTE: **Note:** A basic script for generating custom signed certificates for
-internal Gitaly pods [can be found in this repo](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/gitaly_statefulset_certificates.sh).
+NOTE:
+A basic script for generating custom signed certificates for
+internal Gitaly pods [can be found in this repo](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/generate_certificates.sh).
 Users can use or refer that script to generate certificates with proper
 SAN attributes.
 
@@ -266,4 +293,20 @@ SAN attributes.
    kubectl create secret tls gitaly-server-tls --cert=gitaly.crt --key=gitaly.key
    ```
 
-1. Redeploy the Helm chart by passing the arguments `--set global.gitaly.tls.enabled=true --set global.gitaly.tls.secretName=<secret name>`
+1. Redeploy the Helm chart by passing the additional arguments `--set global.gitaly.tls.enabled=true --set global.gitaly.tls.secretName=<secret name>`
+
+### Global server hooks
+
+The Gitaly StatefulSet has support for [Global server hooks](https://docs.gitlab.com/ee/administration/server_hooks.html#create-a-global-server-hook-for-all-repositories). The hook scripts run on the Gitaly pod, and are therefore limited to the tools available in the [Gitaly container](https://gitlab.com/gitlab-org/build/CNG/-/blob/master/gitaly/Dockerfile).
+
+The hooks are populated using [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/), and can be used by setting the following values as appropriate:
+
+1. `global.gitaly.hooks.preReceive.configmap`
+1. `global.gitaly.hooks.postReceive.configmap`
+1. `global.gitaly.hooks.update.configmap`
+
+To populate the ConfigMap, you can point `kubectl` to a directory of scripts:
+
+```shell
+kubectl create configmap MAP_NAME --from-file /PATH/TO/SCRIPT/DIR
+```

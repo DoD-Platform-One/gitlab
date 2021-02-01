@@ -11,7 +11,7 @@ to the service name
 {{-   .redisMergedConfig.host -}}
 {{- else -}}
 {{-   $name := default "redis" .Values.redis.serviceName -}}
-{{-   printf "%s-%s-master" .Release.Name $name -}}
+{{-   printf "%s-%s-master.%s.svc" .Release.Name $name .Release.Namespace -}}
 {{- end -}}
 {{- end -}}
 

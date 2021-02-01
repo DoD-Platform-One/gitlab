@@ -26,21 +26,23 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 ## Migration Steps
 
-CAUTION: **CAUTION:**
+WARNING:
 JUnit test report artifact (`junit.xml.gz`) migration
-[is not supported](https://gitlab.com/gitlab-org/gitlab/-/issues/27698)
+[was not supported until GitLab 12.8](https://gitlab.com/gitlab-org/gitlab/-/issues/27698#note_317190991)
 by the `gitlab:artifacts:migrate` script below.
 
 1. Migrate existing files (uploads, artifacts, lfs objects) from package based
    installation to object storage.
 
    1. Modify `/etc/gitlab/gitlab.rb` file and configure object storage for
-      [uploads](https://docs.gitlab.com/ee/administration/uploads.html#s3-compatible-connection-settings),
-      [artifacts](https://docs.gitlab.com/ee/administration/job_artifacts.html#s3-compatible-connection-settings)
-      and [LFS](https://docs.gitlab.com/ee/workflow/lfs/lfs_administration.html#s3-for-omnibus-installations).
+      - [Uploads](https://docs.gitlab.com/ee/administration/uploads.html#s3-compatible-connection-settings)
+      - [Artifacts](https://docs.gitlab.com/ee/administration/job_artifacts.html#s3-compatible-connection-settings)
+      - [LFS](https://docs.gitlab.com/ee/administration/lfs/index.html#s3-for-omnibus-installations)
+      - [Packages](https://docs.gitlab.com/ee/administration/packages/#using-object-storage)
 
-      **`Note:`** This **must** be the same object storage service that the
-      Helm charts based deployment is connected to.
+      NOTE:
+      This **must** be the same object storage service that the Helm charts based deployment is
+      connected to.
 
    1. Run reconfigure to apply the changes
 
@@ -60,6 +62,12 @@ by the `gitlab:artifacts:migrate` script below.
       sudo gitlab-rake gitlab:lfs:migrate
       ```
 
+   1. Migrate existing Packages to object storage:
+
+      ```shell
+      gitlab-rake gitlab:packages:migrate
+      ```
+
    1. Migrate existing uploads to object storage
 
       ```shell
@@ -73,30 +81,10 @@ by the `gitlab:artifacts:migrate` script below.
       avatars are rendered fine, image and other files added to issues load
       correctly, etc.
 
-   1. Move the uploaded files from their current location so that
-      they won't end up in the tarball. The default locations are:
-
-      - uploads: `/var/opt/gitlab/gitlab-rails/uploads/`
-      - lfs: `/var/opt/gitlab/gitlab-rails/shared/lfs-objects`
-      - artifacts: `/var/opt/gitlab/gitlab-rails/shared/artifacts`
-
-      ```shell
-      sudo mv /var/opt/gitlab/gitlab-rails/uploads{,.bak}
-      sudo mv /var/opt/gitlab/gitlab-rails/shared/lfs-objects{,.bak}
-      sudo mv /var/opt/gitlab/gitlab-rails/shared/artifacts{,.bak}
-      ```
-
-   1. Run reconfigure to recreate empty directories in place, so backup task
-      won't fail.
-
-      ```shell
-      sudo gitlab-ctl reconfigure
-      ```
-
-1. [Create backup tarball](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system)
+1. [Create backup tarball](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system) and exclude already migrated uploads:
 
    ```shell
-   sudo gitlab-rake gitlab:backup:create
+   sudo gitlab-rake gitlab:backup:create SKIP=artifacts,lfs,uploads
    ```
 
    The backup file will be stored in `/var/opt/gitlab/backups` directory, unless

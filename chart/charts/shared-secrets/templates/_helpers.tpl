@@ -9,7 +9,7 @@ reduce collision
 {{- define "shared-secrets.jobname" -}}
 {{- $name := include "fullname" . | trunc 55 | trimSuffix "-" -}}
 {{- $rand := randAlphaNum 3 | lower }}
-{{- printf "%s.%d-%s" $name .Release.Revision $rand | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%d-%s" $name .Release.Revision $rand | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{/*
 Create the name of the service account to use

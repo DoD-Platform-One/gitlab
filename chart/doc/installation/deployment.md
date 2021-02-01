@@ -88,7 +88,7 @@ purposes only.
 
 > **NOTE: This configuration is not recommended for use in production.**
 >
-> - A single StatefulSet is provided by [bitnami/PostgreSQL](https://hub.helm.sh/charts/bitnami/postgresql) by default.
+> - A single StatefulSet is provided by [bitnami/PostgreSQL](https://artifacthub.io/packages/helm/bitnami/postgresql) by default.
 > - As of 4.0.0 of these charts, replication is available internally, but _not enabled by default_. Such functionality has not been load tested by GitLab.
 
 You can read more about setting up your production-ready database in the [advanced database docs](../advanced/external-db/index.md).
@@ -112,7 +112,7 @@ All Redis configuration settings have been moved and consolidated on the
 
 > **NOTE: This configuration is not recommended for use in production.**
 >
-> - A single StatefulSet is provided by [bitnami/Redis](https://hub.helm.sh/charts/bitnami/redis) by default.
+> - A single StatefulSet is provided by [bitnami/Redis](https://artifacthub.io/packages/helm/bitnami/redis) by default.
 > - As of 4.0.0 of these charts, replication is available internally, but _not enabled by default_. Such functionality has not been load tested by GitLab.
 
 You can read more about setting up a production-ready Redis instance in the [advanced Redis docs](../advanced/external-redis/index.md).
@@ -129,12 +129,26 @@ You can read more about setting up your production-ready object storage in the [
 
 ### Prometheus
 
-We use the [upstream Prometheus chart](https://github.com/helm/charts/tree/master/stable/prometheus#configuration),
-and do not override values from our own defaults.
-We do, however, default disable `alertmanager`, `nodeExporter`, and
-`pushgateway`.
+We use the [upstream Prometheus chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus#configuration),
+and do not override values from our own defaults other than a customized
+`prometheus.yml` file to limit collection of metrics to the Kubernetes API
+and the objects created by the GitLab chart. We do, however, default disable
+`alertmanager`, `nodeExporter`, and `pushgateway`.
 
-Refer to the [Prometheus chart documentation](https://github.com/helm/charts/tree/master/stable/prometheus#configuration) for the
+The `prometheus.yml` file instructs Prometheus to collect metrics from
+resources that have the `gitlab.com/prometheus_scrape` annotation. In addition,
+the `gitlab.com/prometheus_path` and `gitlab.com/prometheus_port` annotations
+may be used to configure how metrics are discovered. Each of these annotations
+are comparable to the `prometheus.io/{scrape,path,port}` annotations.
+
+For users that may be monitoring or want to monitor the GitLab application
+with their installation of Prometheus, the original `prometheus.io/*`
+annotations are still added to the appropriate Pods and Services. This allows
+continuity of metrics collection for existing users and provides the ability
+to use the default Prometheus configuration to capture both the GitLab
+application metrics and other applications running in a Kubernetes cluster.
+
+Refer to the [Prometheus chart documentation](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus#configuration) for the
 exhaustive list of configuration options and ensure they are sub-keys to
 `prometheus`, as we use this as requirement chart.
 
@@ -173,35 +187,11 @@ is blocked](https://cloud.google.com/compute/docs/tutorials/sending-mail/#using_
 
 ### Incoming email
 
-By default incoming email is disabled. To enable it, provide details of your
-IMAP server and access credentials using the `global.appConfig.incomingEmail`
-settings. You can find details for these settings in the [command line options](command-line-options.md#incoming-email-configuration).
-You will also have to create a Kubernetes secret containing IMAP password as
-described in the [secrets guide](secrets.md#imap-password-for-incoming-emails).
-
-To use reply-by-email feature, where users can reply to notification emails to
-comment on issues and MRs, you need to configure both outgoing email and
-incoming email settings.
+The configuration of incoming email is now documented in the [mailroom chart](../charts/gitlab/mailroom/index.md#incoming-email).
 
 ### Service desk email
 
-By default service desk email is disabled. To enable it, provide details of your
-IMAP server and access credentials using the `global.appConfig.serviceDeskEmail`
-settings. You can find details for these settings in the [command line options](command-line-options.md#service-desk-email-configuration).
-You will also have to create a Kubernetes secret containing IMAP password as
-described in the [secrets guide](secrets.md#imap-password-for-service-desk-emails).
-
-NOTE: **Note** Service desk email _requires_ that [Incoming email](#incoming-email) be configured.
-
-### Deploy the Community Edition
-
-By default, the Helm charts use the Enterprise Edition of GitLab. If desired, you can instead use the Community Edition. Learn more about the [difference between the two](https://about.gitlab.com/install/ce-or-ee/).
-
-*To deploy the Community Edition, include this option in your Helm install command:*
-
-```shell
---set global.edition=ce
-```
+The configuration of incoming email is now documented in the [mailroom chart](../charts/gitlab/mailroom/index.md#service-desk-email).
 
 ### RBAC
 
@@ -242,35 +232,24 @@ helm upgrade --install gitlab gitlab/gitlab \
   --set certmanager-issuer.email=me@example.com
 ```
 
-NOTE: **Note**:
-All Helm commands are specified using Helm v3 syntax. If the
-Helm v2 syntax differs every effort is made to provide a note that details
-the difference.
+Note the following:
 
-NOTE: **Note**:
-If `helm install` is used there is a slight difference in the way
-that Helm v2 and Helm v3 operate. When using Helm v2 if a release name
-was not specified with the `--name` option it would randomly generate the
-release name. Helm v3 requires that the release name be specified as a
-positional argument on the command line unless the `--generate-name`
-option is used.
-
-NOTE: **Note**:
-The timeout option above is handled differently between Helm v2
-and Helm v3. With Helm v3 allows one to specify a duration with a unit
-appended to the value (e.g. `120s` = `2m` and `210s` = `3m30s`). The
-`--timeout` option is handled as the number of seconds _without_ the
-unit specification.
-
-NOTE: **Note**:
-The use of the `--timeout` option is deceptive in that there are
-multiple components that are deployed during an Helm install or upgrade
-in which the `--timeout` is applied. The `--timeout` value is applied to
-the installation of each component individually and not applied for the
-installation of all the components. So intending to abort the Helm install
-after 3 minutes by using `--timeout=3m` may result in the install completing
-after 5 minutes because none of the installed components took longer than
-3 minutes to install.
+- All Helm commands are specified using Helm v3 syntax. If the Helm v2 syntax differs every effort
+  is made to provide a note that details the difference.
+- If `helm install` is used there is a slight difference in the way that Helm v2 and Helm v3
+  operate. When using Helm v2 if a release name was not specified with the `--name` option it would
+  randomly generate the release name. Helm v3 requires that the release name be specified as a
+  positional argument on the command line unless the `--generate-name` option is used.
+- The timeout option above is handled differently between Helm v2 and Helm v3. With Helm v3 allows
+  one to specify a duration with a unit appended to the value (e.g. `120s` = `2m` and `210s` =
+  `3m30s`). The `--timeout` option is handled as the number of seconds _without_ the unit
+  specification.
+- The use of the `--timeout` option is deceptive in that there are multiple components that are
+  deployed during an Helm install or upgrade in which the `--timeout` is applied. The `--timeout`
+  value is applied to the installation of each component individually and not applied for the
+  installation of all the components. So intending to abort the Helm install after 3 minutes by
+  using `--timeout=3m` may result in the install completing after 5 minutes because none of the
+  installed components took longer than 3 minutes to install.
 
 You can also use `--version <installation version>` option if you would like to install a specific version of GitLab.
 
@@ -300,4 +279,14 @@ if you used the command above).
 
 ```shell
 kubectl get secret <name>-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
+```
+
+## Deploy the Community Edition
+
+By default, the Helm charts use the Enterprise Edition of GitLab. The Enterprise Edition is a free, open core version of GitLab with the option of upgrading to a paid tier to unlock additional features. If desired, you can instead use the Community Edition which is licensed under the MIT Expat license. Learn more about the [difference between the two](https://about.gitlab.com/install/ce-or-ee/).
+
+*To deploy the Community Edition, include this option in your Helm install command:*
+
+```shell
+--set global.edition=ce
 ```

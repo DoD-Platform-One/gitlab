@@ -149,15 +149,8 @@ This overrides the upstream postegresql chart so that we can deterministically
 use the name of the service the upstream chart creates
 */}}
 {{- define "gitlab.psql.host" -}}
-{{- with default .Values.global.psql .Values.psql -}}
-{{- if .host -}}
-{{- .host -}}
-{{- else if .serviceName -}}
-{{- .serviceName -}}
-{{- else -}}
-{{- printf "%s-%s" $.Release.Name "postgresql" -}}
-{{- end -}}
-{{- end -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{- coalesce (pluck "host" $local .Values.global.psql | first) (printf "%s.%s.svc" (include "postgresql.fullname" .) $.Release.Namespace) -}}
 {{- end -}}
 
 {{/*
@@ -178,17 +171,19 @@ Alias of gitlab.psql.initdbscripts
 {{- end -}}
 
 {{/*
-Alias of gitlab.psql.host
+Overrides the full name of PostegreSQL in the upstream chart.
 */}}
 {{- define "postgresql.fullname" -}}
-{{- template "gitlab.psql.host" . -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{- coalesce (pluck "serviceName" $local .Values.global.psql | first) (printf "%s-%s" $.Release.Name "postgresql") -}}
 {{- end -}}
 
 {{/*
 Return the db database name
 */}}
 {{- define "gitlab.psql.database" -}}
-{{- coalesce (default .Values.global.psql .Values.psql).database "gitlabhq_production" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{- coalesce (pluck "database" $local .Values.global.psql | first) "gitlabhq_production" -}}
 {{- end -}}
 
 {{/*
@@ -197,7 +192,8 @@ If the postgresql username is provided, it will use that, otherwise it will fall
 to "gitlab" default
 */}}
 {{- define "gitlab.psql.username" -}}
-{{- coalesce (default .Values.global.psql .Values.psql).username "gitlab" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{- coalesce (pluck "username" $local .Values.global.psql | first) "gitlab" -}}
 {{- end -}}
 
 {{/*
@@ -217,7 +213,8 @@ Defaults to a release-based name and falls back to .Values.global.psql.secretNam
 */}}
 {{- define "gitlab.psql.password.secret" -}}
 {{- $local := pluck "psql" $.Values | first -}}
-{{- default (printf "%s-%s" .Release.Name "postgresql-password") (pluck "password" $local $.Values.global.psql | first ).secret | quote -}}
+{{- $localPass := pluck "password" $local | first -}}
+{{- default (printf "%s-%s" .Release.Name "postgresql-password") (pluck "secret" $localPass $.Values.global.psql.password | first ) | quote -}}
 {{- end -}}
 
 {{/*
@@ -234,15 +231,23 @@ Uses `postgresql-password` to match upstream postgresql chart when not using an
 */}}
 {{- define "gitlab.psql.password.key" -}}
 {{- $local := pluck "psql" $.Values | first -}}
-{{- default "postgresql-password" (pluck "password" $local $.Values.global.psql | first ).key | quote -}}
+{{- $localPass := pluck "password" $local | first -}}
+{{- default "postgresql-password" (pluck "key" $localPass $.Values.global.psql.password | first ) | quote -}}
 {{- end -}}
 
 {{/*
-Return if pool should be used by PostgreSQL.
-Defaults to 1
+Return the application name that should be presented to PostgreSQL.
+A blank string tells the client NOT to send an application name.
+A nil value will use the process name by default.
+See https://github.com/Masterminds/sprig/issues/53 for how we distinguish these.
+Defaults to nil.
 */}}
-{{- define "gitlab.psql.pool" -}}
-{{- default 1 (default .Values.global.psql .Values.psql).pool | int -}}
+{{- define "gitlab.psql.applicationName" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{- $appname := pluck "applicationName" $local .Values.global.psql | first -}}
+{{- if not ( kindIs "invalid" $appname ) -}}
+{{- $appname | quote -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -250,9 +255,18 @@ Return if prepared statements should be used by PostgreSQL.
 Defaults to false
 */}}
 {{- define "gitlab.psql.preparedStatements" -}}
-{{- eq true (default false (default .Values.global.psql .Values.psql).preparedStatements) -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{- eq true (default false (pluck "preparedStatements" $local .Values.global.psql | first)) -}}
 {{- end -}}
 
+{{/*
+Return connect_timeout value
+Defaults to nil
+*/}}
+{{- define "gitlab.psql.connectTimeout" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{ pluck "connectTimeout" $local .Values.global.psql | first -}}
+{{- end -}}
 {{/* ######### ingress templates */}}
 
 {{/*
@@ -263,16 +277,16 @@ Returns the nginx ingress class
 {{- end -}}
 
 {{/*
-Overrides the nginx-ingress template to make sure gitlab-shell name matches
+Overrides the ingress-nginx template to make sure gitlab-shell name matches
 */}}
-{{- define "nginx-ingress.tcp-configmap" -}}
-{{ .Release.Name}}-nginx-ingress-tcp
+{{- define "ingress-nginx.tcp-configmap" -}}
+{{ .Release.Name}}-ingress-nginx-tcp
 {{- end -}}
 
 {{/*
-Overrides the nginx-ingress template to make sure our ingresses match
+Overrides the ingress-nginx template to make sure our ingresses match
 */}}
-{{- define "nginx-ingress.controller.ingress-class" -}}
+{{- define "ingress-nginx.controller.ingress-class" -}}
 {{ template "gitlab.ingressclass" . }}
 {{- end -}}
 
@@ -295,6 +309,32 @@ Handles merging a set of deployment annotations
 {{- $allAnnotations := merge (default (dict) (default (dict) .Values.deployment).annotations) .Values.global.deployment.annotations -}}
 {{- if $allAnnotations -}}
 {{- toYaml $allAnnotations -}}
+{{- end -}}
+{{- end -}}
+
+{{/* ######### labels */}}
+
+{{/*
+Handles merging a set of non-selector labels
+*/}}
+{{- define "gitlab.podLabels" -}}
+{{- $allLabels := merge (default (dict) .Values.podLabels) .Values.global.pod.labels -}}
+{{- if $allLabels -}}
+{{-   range $key, $value := $allLabels }}
+{{ $key }}: {{ $value }}
+{{-   end }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Handles merging a set of labels for services
+*/}}
+{{- define "gitlab.serviceLabels" -}}
+{{- $allLabels := merge (default (dict) .Values.serviceLabels) .Values.global.service.labels -}}
+{{- if $allLabels -}}
+{{-   range $key, $value := $allLabels }}
+{{ $key }}: {{ $value }}
+{{-   end }}
 {{- end -}}
 {{- end -}}
 
@@ -323,6 +363,7 @@ We're explicitly checking for an actual value being present, not the existance o
 {{- $webservice  := pluck "secretName" $.Values.gitlab.webservice.ingress.tls | first -}}
 {{- $registry    := pluck "secretName" $.Values.registry.ingress.tls | first -}}
 {{- $minio       := pluck "secretName" $.Values.minio.ingress.tls | first -}}
+{{- $smartcard   := pluck "smartcardSecretName" $.Values.gitlab.webservice.ingress.tls | first -}}
 {{/* Set each item to configured value, or !enabled
      This works because `false` is the same as empty, so we'll use the value when `enabled: true`
      - default "" (not true) => ''
@@ -334,8 +375,9 @@ We're explicitly checking for an actual value being present, not the existance o
 {{- $webservice  :=  default $webservice (not $.Values.gitlab.webservice.enabled) -}}
 {{- $registry    :=  default $registry (not $.Values.registry.enabled) -}}
 {{- $minio       :=  default $minio (not $.Values.global.minio.enabled) -}}
+{{- $smartcard   :=  default $smartcard (not $.Values.global.appConfig.smartcard.enabled) -}}
 {{/* Check that all enabled items have been configured */}}
-{{- if or $global (and $webservice (and $registry $minio)) -}}
+{{- if or $global (and $webservice $registry $minio $smartcard) -}}
 true
 {{- end -}}
 {{- end -}}

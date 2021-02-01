@@ -26,6 +26,14 @@ function need_eksctl(){
   need_tool "eksctl" "https://eksctl.io"
 }
 
+function need_az(){
+  need_tool "az" "https://docs.microsoft.com/en-us/cli/azure/install-azure-cli"
+}
+
+function need_jq(){
+  need_tool "jq" "https://stedolan.github.io/jq/download/"
+}
+
 function validate_tools(){
   for tool in "$@"
   do

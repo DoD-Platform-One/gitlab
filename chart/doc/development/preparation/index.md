@@ -67,7 +67,7 @@ use `git lfs`:
    ```shell
    git clone URL
    cd project
-   curl -JLO https://gitlab.com/gitlab-com/gitlab-artwork/raw/master/logo/logo.png
+   curl -JLO "https://gitlab.com/gitlab-com/gitlab-artwork/raw/master/logo/logo.png"
    git lfs track "*.png"
    git add .gitattributes
    git add logo.png

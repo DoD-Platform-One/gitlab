@@ -14,6 +14,7 @@ data:
       touch "$POSTGRESQL_VOLUME_DIR/.gitlab_{{ $initRevision }}_scripts_initialized"
     fi
   enable_extensions.sh: |
-    PGPASSWORD=$(cat ${POSTGRES_POSTGRES_PASSWORD_FILE}) psql -d {{ template "gitlab.psql.database" .}} -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm; CREATE EXTENSION IF NOT EXISTS btree_gist;'
+    [[ -n "${POSTGRES_POSTGRES_PASSWORD_FILE:-}" ]] && POSTGRES_POSTGRES_PASSWORD=$(cat ${POSTGRES_POSTGRES_PASSWORD_FILE})
+    PGPASSWORD=${POSTGRES_POSTGRES_PASSWORD} psql -d {{ template "gitlab.psql.database" .}} -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm; CREATE EXTENSION IF NOT EXISTS btree_gist;'
 # Leave this here - This line denotes end of block to the parser.
 {{- end -}}

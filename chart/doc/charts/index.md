@@ -27,6 +27,7 @@ There are some common global settings that apply to multiple charts. See the
 - GitLab/[Gitaly](gitlab/gitaly/index.md)
 - GitLab/[GitLab Runner](gitlab/gitlab-runner/index.md)
 - GitLab/[GitLab Shell](gitlab/gitlab-shell/index.md)
+- GitLab/[KAS](gitlab/kas/index.md)
 - GitLab/[migrations](gitlab/migrations/index.md)
 - GitLab/[Sidekiq](gitlab/sidekiq/index.md)
 - GitLab/[Webservice](gitlab/webservice/index.md)

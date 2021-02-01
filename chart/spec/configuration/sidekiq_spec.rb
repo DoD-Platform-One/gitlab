@@ -163,4 +163,140 @@ describe 'Sidekiq configuration' do
       end
     end
   end
+
+  context 'when configuring memoryKiller' do
+    let(:default_values) do
+      {
+        'certmanager-issuer' => { 'email' => 'test@example.com' }
+      }
+    end
+
+    let(:hard_limit) do
+      {
+        'gitlab' => {
+          'sidekiq' => {
+            'memoryKiller' => {
+              'hardLimitRss' => 9_000_000
+            }
+          }
+        }
+      }.deep_merge(default_values)
+    end
+
+    it 'uses defaults or uses chart global values' do
+      t = HelmTemplate.new(default_values)
+
+      expect(t.exit_code).to eq(0)
+      expect(t.env(
+        'Deployment/test-sidekiq-all-in-1-v1',
+        'sidekiq')).to include(
+          { 'name' => 'SIDEKIQ_DAEMON_MEMORY_KILLER', 'value' => '1' },
+          { 'name' => 'SIDEKIQ_MEMORY_KILLER_CHECK_INTERVAL', 'value' => '3' },
+          { 'name' => 'SIDEKIQ_MEMORY_KILLER_MAX_RSS', 'value' => '2000000' },
+          { 'name' => 'SIDEKIQ_MEMORY_KILLER_GRACE_TIME', 'value' => '900' },
+          { 'name' => 'SIDEKIQ_MEMORY_KILLER_SHUTDOWN_WAIT', 'value' => '30' }
+        )
+
+      expect(t.env(
+        'Deployment/test-sidekiq-all-in-1-v1',
+        'sidekiq')).not_to include(
+          { 'name' => 'SIDEKIQ_MEMORY_KILLER_HARD_LIMIT_RSS' }
+        )
+    end
+
+    it 'configures the hard limit' do
+      t = HelmTemplate.new(hard_limit)
+
+      expect(t.exit_code).to eq(0)
+      expect(t.env(
+        'Deployment/test-sidekiq-all-in-1-v1',
+        'sidekiq')).to include(
+          { 'name' => 'SIDEKIQ_MEMORY_KILLER_HARD_LIMIT_RSS', 'value' => '9000000' }
+        )
+    end
+
+    context 'uses pod level configurations' do
+      let(:pod_zero) do
+        {
+          'name' => 's0',
+          'queues' => 'zero'
+        }
+      end
+
+      let(:pod_one) do
+        {
+          'name' => 's1',
+          'queues' => 'one',
+          'memoryKiller' => {
+            'maxRss' => 9
+          }
+        }
+      end
+
+      let(:minimum_multi_pod_values) do
+        {
+          'certmanager-issuer' => { 'email' => 'test@example.com' },
+          'gitlab' => {
+            'sidekiq' => {
+              'pods' => [
+                pod_zero
+              ]
+            }
+          }
+        }
+      end
+
+      let(:override_multi_pod_values) do
+        {
+          'certmanager-issuer' => { 'email' => 'test@example.com' },
+          'gitlab' => {
+            'sidekiq' => {
+              'pods' => [
+                pod_zero,
+                pod_one
+              ]
+            }
+          }
+        }
+      end
+
+      it 'with the chart defaults' do
+        t = HelmTemplate.new(minimum_multi_pod_values)
+
+        expect(t.exit_code).to eq(0)
+        expect(t.env(
+          'Deployment/test-sidekiq-s0-v1',
+          'sidekiq')).to include(
+            { 'name' => 'SIDEKIQ_DAEMON_MEMORY_KILLER', 'value' => '1' },
+            { 'name' => 'SIDEKIQ_MEMORY_KILLER_CHECK_INTERVAL', 'value' => '3' },
+            { 'name' => 'SIDEKIQ_MEMORY_KILLER_MAX_RSS', 'value' => '2000000' },
+            { 'name' => 'SIDEKIQ_MEMORY_KILLER_GRACE_TIME', 'value' => '900' },
+            { 'name' => 'SIDEKIQ_MEMORY_KILLER_SHUTDOWN_WAIT', 'value' => '30' }
+          )
+
+        expect(t.env(
+          'Deployment/test-sidekiq-s0-v1',
+          'sidekiq')).not_to include(
+            { 'name' => 'SIDEKIQ_MEMORY_KILLER_HARD_LIMIT_RSS' }
+          )
+      end
+
+      it 'with pod overrides' do
+        t = HelmTemplate.new(override_multi_pod_values)
+
+        expect(t.exit_code).to eq(0)
+        expect(t.env(
+          'Deployment/test-sidekiq-s0-v1',
+          'sidekiq')).not_to include(
+            { 'name' => 'SIDEKIQ_MEMORY_KILLER_HARD_LIMIT_RSS' }
+          )
+
+        expect(t.env(
+          'Deployment/test-sidekiq-s1-v1',
+          'sidekiq')).to include(
+            { 'name' => 'SIDEKIQ_MEMORY_KILLER_MAX_RSS', 'value' => '9' },
+          )
+      end
+    end
+  end
 end

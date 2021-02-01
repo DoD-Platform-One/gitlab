@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ template "registry.fullname" . }}
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
@@ -49,11 +49,41 @@ data:
     validation:
       disabled: {{ eq true .Values.validation.disabled }}
     {{- include "registry.notifications.config" $ | nindent 4 }}
+    reporting:
+      {{- if .Values.reporting.sentry.enabled }}
+      sentry:
+        enabled: true
+        dsn: {{ .Values.reporting.sentry.dsn }}
+        {{- if .Values.reporting.sentry.environment }}
+        environment: {{ .Values.reporting.sentry.environment }}
+        {{- end }}
+      {{- end }}
+    profiling:
+      {{- if .Values.profiling.stackdriver.enabled }}
+      stackdriver:
+        enabled: true
+        service: {{ template "gitlab.registry.profiling.stackdriver.service" . }}
+        serviceversion: {{ .Values.image.tag }}
+        {{- if .Values.profiling.stackdriver.projectid }}
+        projectid: {{ .Values.profiling.stackdriver.projectid }}
+        {{- end }}
+        {{- if .Values.profiling.stackdriver.credentials.secret }}
+        keyfile: /etc/docker/registry/profiling-key.json
+        {{- end }}
+      {{- end }}
     storage:
       maintenance:
         readonly:
           enabled: {{ .Values.maintenance.readOnly.enabled }}
       {{- if .Values.storage }}
+      {{- with .Values.storage.redirect }}
+      redirect:
+        disable: {{ default false .disable }}
+        exceptions:
+        {{- range .exceptions }}
+          - {{ . }}
+        {{- end }}
+      {{- end }}
       {{- else if .Values.global.minio.enabled }}
       s3:
         accesskey: "ACCESS_KEY"

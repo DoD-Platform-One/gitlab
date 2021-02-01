@@ -32,7 +32,7 @@ to the service name
 {{-     .Values.registry.api.host -}}
 {{-   else -}}
 {{-     $name := default .Values.global.hosts.registry.serviceName .Values.registry.api.serviceName -}}
-{{-     printf "%s-%s" .Release.Name $name -}}
+{{-     printf "%s-%s.%s.svc" .Release.Name $name .Release.Namespace -}}
 {{-   end -}}
 {{- end -}}
 

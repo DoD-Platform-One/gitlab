@@ -69,7 +69,7 @@ Administrators may also want to consider the
 [new AWS Service Operator for Kubernetes](https://aws.amazon.com/blogs/opensource/aws-service-operator-kubernetes-available/)
 to simplify this process.
 
-NOTE: **Note:**
+NOTE:
 Enabling the AWS Service Operator requires a method of managing roles within the cluster. The initial
 services handling that management task are provided by third party developers. Administrators should
 keep that in mind when planning for deployment.
@@ -107,7 +107,7 @@ You can fetch your ELB's hostname to place in the CNAME record with the followin
 kubectl get ingress/RELEASE-webservice -ojsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
 
-NOTE: **Note:**
+NOTE:
 For environments where internal load balancers are required,
 [Amazon's Elastic Load Balancers](https://docs.aws.amazon.com/eks/latest/userguide/load-balancing.html)
 require [special annotations](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/eks_loadbalancer_annotations.yml).

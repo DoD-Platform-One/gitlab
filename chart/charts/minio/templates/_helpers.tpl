@@ -35,7 +35,7 @@ reduce collision
 */}}
 {{- define "minio.createBucketsJobName" -}}
 {{- $name := include "minio.fullname" . | trunc 40 | trimSuffix "-" -}}
-{{- printf "%s-create-buckets.%d" $name .Release.Revision -}}
+{{- printf "%s-create-buckets-%d" $name .Release.Revision -}}
 {{- end -}}
 
 {{/*

@@ -8,7 +8,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 [ChaosKube](https://github.com/linki/chaoskube) is similar to
 Netflix's [chaos monkey](https://github.com/Netflix/chaosmonkey) for Kubernetes
-clusters. It schedules randomly killing of pods in order to test fault tolerance
+clusters. It schedules random termination of pods in order to test the fault tolerance
 of a highly available system.
 
 ## Why

@@ -12,20 +12,20 @@ corresponding to the specific release you want to upgrade to and look for any
 [release notes](../releases/index.md) that might pertain to the new GitLab chart
 version.
 
-CAUTION: **Caution:**
+WARNING:
 If you are upgrading from the `3.x` version of the chart to the latest `4.0` release, you need
 to first update to the latest `3.3.x` patch release in order for the upgrade to work.
 The [4.0 release notes](../releases/4_0.md) describe the supported upgrade path.
 
-CAUTION: **Caution:**
+WARNING:
 If you are upgrading from the `2.x` version of the chart to the latest 3.0 release, you need
 to first update to the latest `2.6.x` patch release in order for the upgrade to work.
 The [3.0 release notes](../releases/3_0.md) describe the supported upgrade path.
 
-We also recommend that you take a [backup](../backup-restore/index.md) first.
-Also note that you need to provide all values using `helm upgrade --set key=value` syntax or `-f values.yml` instead of using `--reuse-values` because some of the current values might be deprecated.
+We also recommend that you take a [backup](../backup-restore/index.md) first. Also note that you
+must provide all values using `helm upgrade --set key=value` syntax or `-f values.yml` instead of
+using `--reuse-values`, because some of the current values might be deprecated.
 
-NOTE: **Note:**
 You can retrieve your previous `--set` arguments cleanly, with
 `helm get values <release name>`. If you direct this into a file
 (`helm get values <release name> > gitlab.yaml`), you can safely pass this
@@ -36,16 +36,14 @@ Mappings between chart versioning and GitLab versioning can be found [here](../i
 
 ## Steps
 
-NOTE: **Note:**
-If you are upgrading to the `4.0` version of the chart, please follow the [manual upgrade steps for 4.0](#upgrade-steps-for-40-release).
-
-NOTE: **Note:**
-If you are upgrading to the `3.0` version of the chart, please follow the [manual upgrade steps for 3.0](#upgrade-steps-for-30-release).
+NOTE:
+If you're upgrading to the `4.0` version of the chart, follow the [manual upgrade steps for 4.0](#upgrade-steps-for-40-release).
+If you're upgrading to the `3.0` version of the chart, follow the [manual upgrade steps for 3.0](#upgrade-steps-for-30-release).
 
 The following are the steps to upgrade GitLab to a newer version:
 
 1. Check the [change log](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md) for the specific version you would like to upgrade to
-1. Go through [deployment documentation](./deployment.md) step by step
+1. Go through [deployment documentation](deployment.md) step by step
 1. Extract your previous `--set` arguments with
 
    ```shell
@@ -53,7 +51,7 @@ The following are the steps to upgrade GitLab to a newer version:
    ```
 
 1. Decide on all the values you need to set
-1. If you would like to use the GitLab Operator go through the steps outlined in [Operator installation](./operator.md)
+1. If you would like to use the GitLab Operator go through the steps outlined in [Operator installation](operator.md)
 1. Perform the upgrade, with all `--set` arguments extracted in step 4
 
    ```shell
@@ -64,9 +62,23 @@ The following are the steps to upgrade GitLab to a newer version:
      --set ...
    ```
 
-NOTE: **Note:**
-During a major database upgrade, we ask you to set `gitlab.migrations.enabled` set to `false`. You will want to
-ensure that you explicitly set it back to `true` for future updates.
+During a major database upgrade, we ask you to set `gitlab.migrations.enabled` set to `false`.
+Ensure that you explicitly set it back to `true` for future updates.
+
+## Upgrade the bundled PostgreSQL to version 12 (optional)
+
+NOTE:
+If you aren't using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need to
+perform this step.
+
+Upgrading to PostgreSQL 12 for GitLab 13.x is optional. PostgreSQL 12 is supported by GitLab 13.4 and later. PostgreSQL 12 will become the minimum required PostgreSQL version in [GitLab 14.0, scheduled for April 2021](https://gitlab.com/groups/gitlab-org/-/epics/2374#phased-plan). [PostgreSQL 12 brings significant performance improvements](https://www.postgresql.org/about/news/postgresql-12-released-1976/).
+
+To upgrade the bundled PostgreSQL to version 12, the following steps are required:
+
+1. [Prepare the existing database](#prepare-the-existing-database).
+1. [Delete existing PostgreSQL data](#delete-existing-postgresql-data).
+1. Update the `postgresql.image.tag` value to `12.4.0` and [reinstall the chart](#upgrade-gitlab) to create a new PostgreSQL 12 database.
+1. [Restore the database](#restore-the-database).
 
 ## Upgrade the bundled PostgreSQL chart
 
@@ -78,39 +90,47 @@ The steps have been documented in the [3.0 upgrade steps](#upgrade-steps-for-30-
 
 ## Upgrade steps for 4.0 release
 
-The `4.0.0` release requires manual steps in order to perform the upgrade.
+The `4.0.0` release requires manual steps in order to perform the upgrade. If you're using the
+bundled PostgreSQL, the best way to perform this upgrade is to back up your old database, and
+restore into a new database instance.
 
-NOTE: **Note:**
-Remember to take a [backup](../backup-restore/index.md) before proceeding with
-the upgrade.
-
-If you are using the bundled PostgreSQL, the best way to perform this upgrade is to back up your old database, and restore into a new database instance.
-
-CAUTION: **Caution:**
-Failure to perform these steps as documented **may** result in the loss of your database. Ensure you have a separate
-backup.
+WARNING:
+Remember to make a [backup](../backup-restore/index.md)
+before proceeding with the upgrade. Failure to perform these steps as documented **may** result in
+the loss of your database. Ensure you have a separate backup.
 
 ### Prepare the existing database
 
-NOTE: **Note:** If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need to perform this step.
+Note the following:
 
-NOTE: **Note:** If you have multiple charts installed in the same namespace. It may be necessary to pass the Helm release name to the database-upgrade script as well. Replace `bash -s STAGE` with `bash -s -- -r RELEASE STAGE` in the example commands provided later.
+- If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need
+  to perform this step.
+- If you have multiple charts installed in the same namespace. It may be necessary to pass the Helm
+  release name to the database-upgrade script as well. Replace `bash -s STAGE` with
+  `bash -s -- -r RELEASE STAGE` in the example commands provided later.
+- If you installed a chart to a namespace other than your `kubectl` context's default, you must pass
+  the namespace to the database-upgrade script. Replace `bash -s STAGE` with
+  `bash -s -- -n NAMESPACE STAGE` in the example commands provided later. This option can be used
+  along with `-r RELEASE`. You can set the context's default namespace by running
+  `kubectl config set-context --current --namespace=NAMESPACE`, or using
+  [`kubens` from kubectx](https://github.com/ahmetb/kubectx).
 
-NOTE: **Note:** If you installed a chart to a namespace other than your `kubectl` context's default, you must pass the namespace to the database-upgrade script. Replace `bash -s STAGE` with `bash -s -- -n NAMESPACE STAGE` in the example commands provided later. This option can be used along with `-r RELEASE`. You can set the context's default namespace by running `kubectl config set-context --current --namespace=NAMESPACE`, or using [`kubens` from kubectx](https://github.com/ahmetb/kubectx)
-
-The `pre` stage will create a backup of your database using the backup-utility script in the task-runner pod, which gets saved to the configured s3 bucket (MinIO by default):
+The `pre` stage will create a backup of your database using the backup-utility script in the Task Runner, which gets saved to the configured s3 bucket (MinIO by default):
 
 ```shell
 # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v4.0.0
-curl -s https://gitlab.com/gitlab-org/charts/gitlab/raw/${GITLAB_RELEASE}/scripts/database-upgrade | bash -s pre
+curl -s "https://gitlab.com/gitlab-org/charts/gitlab/raw/${GITLAB_RELEASE}/scripts/database-upgrade" | bash -s pre
 ```
 
 ### Delete existing PostgreSQL data
 
-NOTE: **Note:** If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need to perform this step.
+NOTE:
+If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need
+to perform this step.
 
-CAUTION: **Caution:**
-Ensure that you have created a database backup in the previous step. Without a backup, GitLab data will be lost.
+WARNING:
+Ensure that you have created a database backup in the previous step. Without a backup, GitLab data
+will be lost.
 
 The `4.0` release updates the default bundled PostgreSQL version from 10.9.0 to 11.7.0. Since the
 data format has changed, upgrading requires removing the existing PostgreSQL StatefulSet before
@@ -133,17 +153,20 @@ We will perform the migrations for the Database in a later step for the bundled 
 
 ### Restore the Database
 
-NOTE: **Note:** If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need to perform this step.
+Note the following:
 
-NOTE: **Note:** You'll need to be using Bash 4.0 or above to run the script successfully as it requires the use of bash associative arrays.
+- If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need
+  to perform this step.
+- You'll need to be using Bash 4.0 or above to run the script successfully as it requires the use of
+  bash associative arrays.
 
-1. Wait for the upgrade to complete for the task-runner pod. RELEASE_NAME should be the name of the GitLab release from `helm list`
+1. Wait for the upgrade to complete for the Task Runner pod. RELEASE_NAME should be the name of the GitLab release from `helm list`
 
    ```shell
    kubectl rollout status -w deployment/RELEASE_NAME-task-runner
    ```
 
-1. After the task-runner pod is deployed successfully, run the `post` steps:
+1. After the Task Runner pod is deployed successfully, run the `post` steps:
 
    This step will do the following:
 
@@ -154,7 +177,7 @@ NOTE: **Note:** You'll need to be using Bash 4.0 or above to run the script succ
 
    ```shell
    # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v4.0.0
-   curl -s https://gitlab.com/gitlab-org/charts/gitlab/raw/${GITLAB_RELEASE}/scripts/database-upgrade | bash -s post
+   curl -s "https://gitlab.com/gitlab-org/charts/gitlab/raw/${GITLAB_RELEASE}/scripts/database-upgrade" | bash -s post
    ```
 
 ### Troubleshooting 4.0 release upgrade process
@@ -170,29 +193,36 @@ NOTE: **Note:** You'll need to be using Bash 4.0 or above to run the script succ
 
 The `3.0.0` release requires manual steps in order to perform the upgrade.
 
-NOTE: **Note:**
-Remember to take a [backup](../backup-restore/index.md) before proceeding with
-the upgrade.
+WARNING:
+Remember to make a [backup](../backup-restore/index.md)
+before proceeding with the upgrade. Failure to perform these steps as documented **may** result in
+the loss of your database. Ensure you have a separate backup.
 
-If you are using the bundled PostgreSQL, the best way to perform this upgrade is to backup your old database, and restore into a new database instance. We've automated some of the steps, as an alternative, you can perform the steps manually.
-
-NOTE: **Note:**
-Failure to perform these steps as documented **may** result in the loss of your database. Ensure you have a separate
-backup.
+If you're using the bundled PostgreSQL, the best way to perform this upgrade is to backup your old
+database, and restore into a new database instance. We've automated some of the steps, as an
+alternative, you can perform the steps manually.
 
 ### Prepare the existing database
 
-NOTE: **Note:** If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need to perform this step.
+Note the following:
 
-NOTE: **Note:** If you have multiple charts installed in the same namespace. It may be necessary to pass the Helm release name to the database-upgrade script as well. Replace `bash -s STAGE` with `bash -s -- -r RELEASE STAGE` in the example commands provided later.
+- If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need
+  to perform this step.
+- If you have multiple charts installed in the same namespace. It may be necessary to pass the Helm
+  release name to the database-upgrade script as well. Replace `bash -s STAGE` with
+  `bash -s -- -r RELEASE STAGE` in the example commands provided later.
+- If you installed a chart to a namespace other than your `kubectl` context's default, you must pass
+  the namespace to the database-upgrade script. Replace `bash -s STAGE` with
+  `bash -s -- -n NAMESPACE STAGE` in the example commands provided later. This option can be used
+  along with `-r RELEASE`. You can set the context's default namespace by running
+  `kubectl config set-context --current --namespace=NAMESPACE`, or using
+  [`kubens` from kubectx](https://github.com/ahmetb/kubectx).
 
-NOTE: **Note:** If you installed a chart to a namespace other than your `kubectl` context's default, you must pass the namespace to the database-upgrade script. Replace `bash -s STAGE` with `bash -s -- -n NAMESPACE STAGE` in the example commands provided later. This option can be used along with `-r RELEASE`. You can set the context's default namespace by running `kubectl config set-context --current --namespace=NAMESPACE`, or using [`kubens` from kubectx](https://github.com/ahmetb/kubectx)
-
-The `pre` stage will create a backup of your database using the backup-utility script in the task-runner pod, which gets saved to the configured s3 bucket (MinIO by default):
+The `pre` stage will create a backup of your database using the backup-utility script in the Task Runner, which gets saved to the configured s3 bucket (MinIO by default):
 
 ```shell
 # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v3.0.0
-curl -s https://gitlab.com/gitlab-org/charts/gitlab/-/raw/${GITLAB_RELEASE}/scripts/database-upgrade  | bash -s pre
+curl -s "https://gitlab.com/gitlab-org/charts/gitlab/-/raw/${GITLAB_RELEASE}/scripts/database-upgrade" | bash -s pre
 ```
 
 ### Prepare the cluster database secrets
@@ -233,7 +263,7 @@ before upgrading. You can see more details in our troubleshooting documentation,
    kubectl delete services -lrelease=RELEASE_NAME
    ```
 
-CAUTION: **Caution:**
+WARNING:
 This will change any dynamic value for the `LoadBalancer` for NGINX Ingress from this chart, if in use. See
 [global Ingress settings documentation](../charts/globals.md#configure-ingress-settings) for more details regarding
 `externalIP`. You may be required to update DNS records!
@@ -250,17 +280,20 @@ We will perform the migrations for the Database in a later step for the bundled 
 
 ### Restore the Database
 
-NOTE: **Note:** If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need to perform this step.
+Note the following:
 
-NOTE: **Note:** You'll need to be using Bash 4.0 or above to run the script successfully as it requires the use of bash associative arrays.
+- If you are not using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need
+  to perform this step.
+- You'll need to be using Bash 4.0 or above to run the script successfully as it requires the use of
+  bash associative arrays.
 
-1. Wait for the upgrade to complete for the task-runner pod. RELEASE_NAME should be the name of the GitLab release from `helm list`
+1. Wait for the upgrade to complete for the Task Runner pod. RELEASE_NAME should be the name of the GitLab release from `helm list`
 
    ```shell
    kubectl rollout status -w deployment/RELEASE_NAME-task-runner
    ```
 
-1. After the task-runner pod is deployed successfully, run the `post` steps:
+1. After the Task Runner pod is deployed successfully, run the `post` steps:
 
    This step will do the following:
 
@@ -271,7 +304,7 @@ NOTE: **Note:** You'll need to be using Bash 4.0 or above to run the script succ
 
    ```shell
    # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v3.0.0
-   curl -s https://gitlab.com/gitlab-org/charts/gitlab/-/raw/${GITLAB_RELEASE}/scripts/database-upgrade | bash -s post
+   curl -s "https://gitlab.com/gitlab-org/charts/gitlab/-/raw/${GITLAB_RELEASE}/scripts/database-upgrade" | bash -s post
    ```
 
 ### Troubleshooting 3.0 release upgrade process

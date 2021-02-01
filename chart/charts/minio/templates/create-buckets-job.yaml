@@ -35,7 +35,7 @@ spec:
         command: ["/bin/sh", "/config/initialize"]
         env:
           - name: MINIO_ENDPOINT
-            value: {{ template "minio.fullname" . }}-svc
+            value: {{ printf "%s-svc.%s.svc" (include "minio.fullname" .) .Release.Namespace }}
           - name: MINIO_PORT
             value: {{ .Values.servicePort | quote }}
         volumeMounts:

@@ -41,13 +41,17 @@ global:
     image:
       tag: 1.12.10-ubi8
 
+  certificates:
+    image:
+      tag: master-ubi8
+
   # See: https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/installation/tls.md#option-2-use-your-own-wildcard-certificate
   ingress:
     configureCertmanager: false
     tls:
       secretName: my-wildcard-cert-secret  # Your wildcard certificate.
 
-  # `global.hosts.ssh` is needed for `gitlab-shell` because `nginx-ingress` is disabled, 
+  # `global.hosts.ssh` is needed for `gitlab-shell` because `nginx-ingress` is disabled,
   # and it needs to be exposed separately.
   hosts:
     ssh: ssh.gitlab.example.com

@@ -28,8 +28,9 @@ GITLAB_CHART_VERSION=v3.0.0
 kubectl apply -f https://gitlab.com/gitlab-org/charts/gitlab/raw/${GITLAB_CHART_VERSION}/support/crd.yaml
 ```
 
-**NOTE:** This needs to done only for the first time before installing the Operator or _when the CRD is changed_.
-Further upgrades will follow the normal [upgrade procedures](./upgrade.md).
+NOTE:
+This needs to done only for the first time before installing the Operator or _when the CRD is changed_.
+Further upgrades will follow the normal [upgrade procedures](upgrade.md).
 
 ### Enabling the Operator
 
@@ -46,12 +47,13 @@ helm upgrade --install <release-name> . --set global.operator.enabled=true ...
 GitLab Chart does not manage the lifecycle of the CRD and it needs to be done outside the Chart. For more details see
 [crdctl](crdctl.md) utility.
 
-**NOTE:** The Operator is transitioning from a ClusterRole to a regular Role that operates within a Namespace. Operator
-containers after version `0.4` will have this new behavior by default.
+Note the following:
 
-**NOTE:** Test new versions of the Operator by setting `gitlab.operator.image.tag` to either the branch name of a GitLab
-Operator container build or a specific tagged release number.
-
-**NOTE:** The versions prior to 1.9.0 use the release name as a prefix for CRD name. This feature has been removed and
-the CRD does not have a prefix. This can cause Helm complain about missing `GitLab` type while upgrading from an older
-version. To solve this issue you can use `gitlab.operator.crdPrefix` value and pass the release name for upgrade.
+- The Operator is transitioning from a ClusterRole to a regular Role that operates within a
+  Namespace. Operator containers after version `0.4` will have this new behavior by default.
+- Test new versions of the Operator by setting `gitlab.operator.image.tag` to either the branch name
+  of a GitLab Operator container build or a specific tagged release number.
+- The versions prior to 1.9.0 use the release name as a prefix for CRD name. This feature has been
+  removed and the CRD does not have a prefix. This can cause Helm complain about missing `GitLab`
+  type while upgrading from an older version. To solve this issue you can use
+  `gitlab.operator.crdPrefix` value and pass the release name for upgrade.

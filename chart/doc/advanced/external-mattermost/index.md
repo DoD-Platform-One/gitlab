@@ -19,7 +19,7 @@ refer to the [Mattermost Helm configuration guide](https://github.com/mattermost
 - [Tiller](https://rancher.com/docs/rancher/v2.x/en/installation/options/helm2/helm-init/) (the Helm server-side component)
   installed on the cluster if using Helm v2.
 
-NOTE: **Note:**
+NOTE:
 For the Team Edition you can have just one replica running.
 
 ## Deploy the Mattermost Team Edition Helm Chart
@@ -32,7 +32,7 @@ helm repo update
 helm upgrade --install mattermost -f values.yaml mattermost/mattermost-team-edition
 ```
 
-Wait for the pods to run. Then, using the Ingress host you specified in the configuration, access your Mattermost server.  
+Wait for the pods to run. Then, using the Ingress host you specified in the configuration, access your Mattermost server.
 
 For additional configuration information, refer to the [Mattermost Helm configuration guide](https://github.com/mattermost/mattermost-helm/tree/master/charts/mattermost-team-edition#configuration).
 you experience any issues with this, please view the [Mattermost Helm Chart issue repository](https://github.com/mattermost/mattermost-helm/issues) or
@@ -40,7 +40,7 @@ the [Mattermost Forum](https://forum.mattermost.org/search?q=helm).
 
 ## Deploy GitLab Helm Chart
 
-To deploy the GitLab Helm Chart, follow the instructions described [here](https://docs.gitlab.com/ee/install/kubernetes/gitlab_chart.html).
+To deploy the GitLab Helm Chart, follow the instructions described [here](../../index.md).
 
 Here's a light way to install it:
 
@@ -54,7 +54,7 @@ helm upgrade --install gitlab gitlab/gitlab \
   --set certmanager-issuer.email=<email>
 ```
 
-NOTE: **Note**:
+NOTE:
 If using Helm v2, please see notes about the `--timeout` option
 in the [Deployment documentation](../../installation/deployment.md#deploy-using-helm).
 
@@ -69,7 +69,7 @@ Once you've deployed the GitLab instance, follow the instructions for the [initi
 The next part of the process is setting up the GitLab SSO integration.
 To do so, you need to [create the OAuth application](https://docs.mattermost.com/deployment/sso-gitlab.html) to allow Mattermost to use GitLab as the authentication provider.
 
-NOTE: **Note:**
+NOTE:
 Only the default GitLab SSO is officially supported. “Double SSO”, where GitLab SSO is chained to other SSO solutions, is not supported. It may be possible to connect
 GitLab SSO with AD, LDAP, SAML, or MFA add-ons in some cases, but because of the special logic required they’re not officially
 supported and are known not to work on some experiences.

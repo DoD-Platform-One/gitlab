@@ -24,6 +24,7 @@ spec:
       labels:
         app: {{ template "name" . }}
         release: {{ .Release.Name }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yml") . | sha256sum }}
       {{- range $key, $value := .Values.annotations }}
@@ -59,9 +60,15 @@ spec:
             readOnly: false
           resources:
             {{- toYaml .Values.init.resources | nindent 12 }}
+      {{- if .Values.securityContext }}
       securityContext:
+        {{- if not (empty .Values.securityContext.runAsUser) }}
         runAsUser: {{ .Values.securityContext.runAsUser }}
+        {{- end }}
+        {{- if not (empty .Values.securityContext.fsGroup) }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
+        {{- end }}
+      {{- end }}
 {{- include "pullsecrets" .Values.image | indent 6 }}
       {{- if eq (default .Values.global.antiAffinity .Values.antiAffinity) "hard" }}
       affinity:
@@ -93,7 +100,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.parseAppVersion" (dict "appVersion" .Chart.AppVersion "prepend" "true")) }}"
           {{ template "gitlab.imagePullPolicy" . }}
           ports:
-            - containerPort: {{ .Values.service.internalPort }}
+            - containerPort: {{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}
            {{- if .Values.metrics.enabled }}
             - containerPort: {{ .Values.metrics.metricsPort }}
            {{- end }}
@@ -110,10 +117,6 @@ spec:
             - name: GITALY_PROMETHEUS_LISTEN_ADDR
               value: ':{{ .Values.metrics.metricsPort }}'
             {{- end }}
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
             {{- include "gitlab.tracing.env" . | nindent 12 }}
             {{- include "gitlab.extraEnv" . | nindent 12 }}
           volumeMounts:
@@ -129,6 +132,20 @@ spec:
               {{- if and .Values.persistence.enabled .Values.persistence.subPath }}
               subPath: "{{ .Values.persistence.subPath }}"
               {{- end }}
+            {{- with .Values.global.gitaly.hooks }}
+            {{- if .preReceive }}
+            - name: gitaly-hooks-pre-recieve
+              mountPath: "/home/git/custom_hooks/pre-receive.d"
+            {{- end }}
+            {{- if .postReceive }}
+            - name: gitaly-hooks-post-recieve
+              mountPath: "/home/git/custom_hooks/post-receive.d"
+            {{- end }}
+            {{- if .update }}
+            - name: gitaly-hooks-update
+              mountPath: "/home/git/custom_hooks/update.d"
+            {{- end }}
+            {{- end }}
           livenessProbe:
             exec:
               command:
@@ -180,6 +197,26 @@ spec:
                 - key: "tls.key"
                   path: "gitaly.key"
           {{- end }}
+      {{- with .Values.global.gitaly.hooks }}
+      {{- if and .preReceive (has .preReceive .configmap) }}
+      - name: gitaly-hooks-preReceive
+        configMap:
+          name: {{ .preReceive.configmap }}
+          defaultMode: 0555
+      {{- end }}
+      {{- if and .postReceive (has .postReceive .configmap) }}
+      - name: gitaly-hooks-postReceive
+        configMap:
+          name: {{ .postReceive.configmap }}
+          defaultMode: 0555
+      {{- end }}
+      {{- if and .update (hasKey .update "configmap") }}
+      - name: gitaly-hooks-update
+        configMap:
+          name: {{ .update.configmap }}
+          defaultMode: 0555
+      {{- end }}
+      {{- end }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
     {{- if .Values.nodeSelector }}
       nodeSelector:

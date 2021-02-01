@@ -17,7 +17,7 @@ data:
     user: git
 
     # Url to gitlab instance. Used for api calls. Should end with a slash.
-    gitlab_url: "http://{{ template "gitlab.workhorse.host" . }}:{{ template "gitlab.workhorse.port" . }}/"
+    gitlab_url: "{{ template "gitlab.workhorse.url" . }}/"
 
     secret_file: /etc/gitlab-secrets/shell/.gitlab_shell_secret
 
@@ -34,11 +34,13 @@ data:
     # Log level. INFO by default
     log_level: INFO
 
+    log_format: {{ .Values.logging.format }}
+
     # Audit usernames.
     # Set to true to see real usernames in the logs instead of key ids, which is easier to follow, but
     # incurs an extra API call on every gitlab-shell command.
     audit_usernames: false
-    
+
     {{ if .Values.global.tracing.connection.string }}
     gitlab_tracing: {{ .Values.global.tracing.connection.string }}
     {{ end }}

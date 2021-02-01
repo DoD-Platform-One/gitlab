@@ -141,3 +141,25 @@ Sensitive registry notification headers mounted as secrets
   {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "registry.fullname" -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the sub-chart serviceAccount name
+If that is not present it will use the global chart serviceAccount name
+Failing that a serviceAccount will be generated automatically
+*/}}
+{{- define "registry.serviceAccount.name" -}}
+{{- coalesce .Values.serviceAccount.name .Values.global.serviceAccount.name ( include "registry.fullname" . ) -}}
+{{- end -}}

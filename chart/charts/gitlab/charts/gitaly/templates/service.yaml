@@ -6,27 +6,30 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.serviceLabels" . | nindent 4 }}
   annotations:
   {{- if .Values.metrics.enabled }}
+    gitlab.com/prometheus_scrape: "true"
+    gitlab.com/prometheus_port: "{{ .Values.metrics.metricsPort }}"
     prometheus.io/scrape: "true"
     prometheus.io/port: "{{ .Values.metrics.metricsPort }}"
   {{- end }}
     {{- include "gitlab.serviceAnnotations" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ coalesce .Values.service.type .Values.global.gitaly.service.type }}
   clusterIP: "None"
   ports:
-    - port: {{ .Values.service.externalPort }}
-      name: {{ .Values.service.name }}
-      targetPort: {{ .Values.service.internalPort }}
+    - port: {{ coalesce .Values.service.externalPort .Values.global.gitaly.service.externalPort }}
+      name: {{ coalesce .Values.service.name .Values.global.gitaly.service.name }}
+      targetPort: {{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}
    {{- if .Values.metrics.enabled }}
     - port: {{ .Values.metrics.metricsPort }}
-      name: {{ .Values.service.name }}-metrics
+      name: {{ coalesce .Values.service.name .Values.global.gitaly.service.name }}-metrics
    {{- end }}
    {{- if $.Values.global.gitaly.tls.enabled }}
-    - port: {{ .Values.service.tls.externalPort }}
-      name: {{ .Values.service.name }}-tls
-      targetPort: {{ .Values.service.tls.internalPort }}
+    - port: {{ coalesce .Values.service.tls.externalPort .Values.global.gitaly.service.tls.externalPort }}
+      name: {{coalesce  .Values.service.name .Values.global.gitaly.service.name }}-tls
+      targetPort: {{ coalesce .Values.service.tls.internalPort .Values.global.gitaly.service.tls.internalPort }}
    {{- end }}
   selector:
     app: {{ template "name" . }}

@@ -68,6 +68,16 @@ generate_secret_if_needed {{ template "gitlab.minio.credentials.secret" . }} --f
 # Gitlab runner secret
 generate_secret_if_needed {{ template "gitlab.gitlab-runner.registrationToken.secret" . }} --from-literal=runner-registration-token=$(gen_random 'a-zA-Z0-9' 64) --from-literal=runner-token=""
 
+# GitLab pages secret
+{{ if or (eq $.Values.global.pages.enabled true) (not (empty $.Values.global.pages.host)) }}
+generate_secret_if_needed {{ template "gitlab.pages.apiSecret.secret" . }} --from-literal={{ template "gitlab.pages.apiSecret.key" . }}=$(gen_random 'a-zA-Z0-9' 32 | base64)
+{{ end }}
+
+{{ if .Values.global.kas.enabled -}}
+# Gitlab-kas secret
+generate_secret_if_needed {{ template "gitlab.kas.secret" . }} --from-literal={{ template "gitlab.kas.key" . }}=$(gen_random 'a-zA-Z0-9' 32 | base64)
+{{ end }}
+
 # Registry certificates
 mkdir -p certs
 openssl req -new -newkey rsa:4096 -subj "/CN=gitlab-issuer" -nodes -x509 -keyout certs/registry-example-com.key -out certs/registry-example-com.crt -days 3650
@@ -85,6 +95,7 @@ if [ -n "$env" ]; then
     db_key_base=$(fetch_rails_value secrets.yml "${env}.db_key_base")
     openid_connect_signing_key=$(fetch_rails_value secrets.yml "${env}.openid_connect_signing_key")
     ci_jwt_signing_key=$(fetch_rails_value secrets.yml "${env}.ci_jwt_signing_key")
+    encrypted_settings_key_base=$(fetch_rails_value secrets.yml "${env}.encrypted_settings_key_base")
   fi;
 
   # Generate defaults for any unset secrets
@@ -93,6 +104,7 @@ if [ -n "$env" ]; then
   db_key_base="${db_key_base:-$(gen_random 'a-f0-9' 128)}" # equavilent to secureRandom.hex(64)
   openid_connect_signing_key="${openid_connect_signing_key:-$(openssl genrsa 2048)}"
   ci_jwt_signing_key="${ci_jwt_signing_key:-$(openssl genrsa 2048)}"
+  encrypted_settings_key_base="${encrypted_settings_key_base:-$(gen_random 'a-f0-9' 128)}" # equavilent to secureRandom.hex(64)
 
   # Update the existing secret
   cat << EOF > rails-secrets.yml
@@ -107,6 +119,7 @@ stringData:
       secret_key_base: $secret_key_base
       otp_key_base: $otp_key_base
       db_key_base: $db_key_base
+      encrypted_settings_key_base: $encrypted_settings_key_base
       openid_connect_signing_key: |
 $(echo "${openid_connect_signing_key}" | awk '{print "        " $0}')
       ci_jwt_signing_key: |
@@ -133,3 +146,10 @@ generate_secret_if_needed {{ template "gitlab.registry.httpSecret.secret" . }} -
 generate_secret_if_needed "gitlab-grafana-initial-password" --from-literal=password=$(gen_random 'a-zA-Z0-9' 64)
 {{ end }}
 
+{{ if .Values.global.praefect.enabled }}
+# Praefect DB password
+generate_secret_if_needed {{ template "gitlab.praefect.dbSecret.secret" . }} --from-literal={{ template "gitlab.praefect.dbSecret.key" . }}=$(gen_random 'a-zA-Z0-9', 32)
+
+# Gitaly secret
+generate_secret_if_needed {{ template "gitlab.praefect.authToken.secret" . }} --from-literal={{ template "gitlab.praefect.authToken.key" . }}=$(gen_random 'a-zA-Z0-9' 64)
+{{ end }}

@@ -46,7 +46,7 @@ obj.dig('ConfigMap/test-gitaly', 'data', 'config.toml.erb')
 This will return the contents of the `config.toml.erb` file contained in the
 `test-gitaly` ConfigMap.
 
-NOTE: **Note**:
+NOTE:
 Using the `HelmTemplate` class will always use the release name of "test"
 when executing the `helm template` command.
 
@@ -132,3 +132,18 @@ Return the STDERR output from the execution of `helm template` command.
 
 Return a dictionary of all values that were used in the execution of the
 `helm template` command.
+
+## Tests that require a Kubernetes cluster
+
+The majority of the RSpec tests execute `helm template` and then analyze
+the generated YAML for the correct structures given the feature being
+tested. Occasionally an RSpec test requires access to a Kubernetes cluster
+with the GitLab Helm chart deployed to it. Tests that interact with the
+chart deployed in a Kubernetes cluster should be placed in the `features`
+directory.
+
+If the RSpec tests are being executed and a Kubernetes cluster is not
+available, then the tests in the `features` directory will be skipped. At
+the start of an RSpec run `kubectl get nodes` will be checked for results
+and if it returns successfully the tests in the `features` directory will
+be included.

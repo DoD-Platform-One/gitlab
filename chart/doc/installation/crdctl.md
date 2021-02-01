@@ -24,5 +24,6 @@ different pipelines.
 When you decide to use CRD prefix, you need to pass it to the Chart as well, so the Operator will be able to work with
 the expected CRD. To do so, use `gitlab.operator.crdPrefix` value.
 
-**NOTE:** This utility uses `kubectl`. For versions prior to v1.14 you also need `kustomize`. To use an external
+NOTE:
+This utility uses `kubectl`. For versions prior to v1.14 you also need `kustomize`. To use an external
 `kustomize` set `KUSTOMIZE_CMD` environment variable, e.g. `export KUSTOMIZE_CMD="kustomize build"`.

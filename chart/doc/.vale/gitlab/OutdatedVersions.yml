@@ -6,16 +6,16 @@
 # For a list of all options, see https://errata-ai.gitbook.io/vale/getting-started/styles
 extends: existence
 message: 'Can this reference to "%s" be refactored?'
-link: https://docs.gitlab.com/ee/development/documentation/styleguide.html#importance-of-referencing-gitlab-versions-and-tiers
-level: warning
+link: https://docs.gitlab.com/ee/development/documentation/styleguide/index.html#gitlab-versions
+level: suggestion
 nonword: true
 ignorecase: true
 tokens:
-  - "GitLab 2."
-  - "GitLab 3."
-  - "GitLab 4."
-  - "GitLab 5."
-  - "GitLab 6."
-  - "GitLab 7."
-  - "GitLab 8."
-  - "GitLab 9."
+  - "GitLab (v)?2."
+  - "GitLab (v)?3."
+  - "GitLab (v)?4."
+  - "GitLab (v)?5."
+  - "GitLab (v)?6."
+  - "GitLab (v)?7."
+  - "GitLab (v)?8."
+  - "GitLab (v)?9."

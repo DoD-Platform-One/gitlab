@@ -22,13 +22,65 @@ has been provided in the [examples](https://gitlab.com/gitlab-org/charts/gitlab/
 
 This documentation specifies usage of access and secret keys for AWS. It is also possible to use [IAM roles](aws-iam-roles.md).
 
-NOTE: **Note:** GitLab does not currently support using [Amazon KMS](https://aws.amazon.com/kms/)
-to encrypt data stored in S3 buckets. Adding KMS support is being discussed in
-[issue #1012](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/1012).
+## S3 encryption
+
+> [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2251) in GitLab 13.4.
+
+GitLab supports [Amazon KMS](https://aws.amazon.com/kms/)
+to [encrypt data stored in S3 buckets](https://docs.gitlab.com/ee/administration/object_storage.html#encrypted-s3-buckets).
+You can enable this in two ways:
+
+- In AWS, [configure the S3 bucket to use default encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html).
+- In GitLab, enable [server side encryption headers](../../charts/globals.md#storage_options).
+
+These two options are not mutually exclusive. If you choose the first option, you do not need to do
+the other option, unless you want to [set an S3 bucket policy to require encrypted objects](https://aws.amazon.com/premiumsupport/knowledge-center/s3-bucket-store-kms-encrypted-objects/).
+You can set a default encryption policy but also enable server-side encryption headers to override those defaults.
+
+See the [GitLab documentation on encrypted S3 buckets](https://docs.gitlab.com/ee/administration/object_storage.html#encrypted-s3-buckets)
+for more details.
 
 ## Azure Blob Storage
 
-GitLab uses [fog](https://github.com/fog/fog), but [doesn't currently support Fog Azure](https://gitlab.com/gitlab-org/gitlab-foss/-/issues/55624). To make use Azure Blob Storage, you will have to set up an [Azure MinIO gateway](azure-minio-gateway.md).
+> [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/25877) in GitLab 13.4.
+
+Direct support for Azure Blob storage is available for
+[uploaded attachments, CI job artifacts, LFS, and other object types supported via the consolidated settngs](https://docs.gitlab.com/ee/administration/object_storage.html#storage-specific-configuration). In previous GitLab versions, an [Azure MinIO gateway](azure-minio-gateway.md) was needed.
+
+The Azure MinIO gateway is still needed for backups. Follow [this issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2298)
+for more details.
+
+NOTE:
+GitLab [does not support](https://github.com/minio/minio/issues/9978) the Azure MinIO gateway as the storage for the Docker Registry.
+Please refer to the [corresponding Azure example](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/registry.azure.yaml) when [setting up the Docker Registry](#docker-registry-images).
+
+Although Azure uses the word container to denote a collection of blobs,
+GitLab standardizes on the term bucket.
+
+Azure Blob storage requires the use of the [consolidated object storage
+settings](../../charts/globals.md#consolidated-object-storage). A
+single Azure storage account name and key must be used across multiple
+Azure blob containers. Customizing individual `connection` settings by
+object type (for example, `artifacts`, `uploads`, and so on) is not permitted.
+
+To enable Azure Blob storage, see
+[`rails.azurerm.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.azurerm.yaml)
+as an example to define the Azure `connection`. You can load this as a
+secret via:
+
+```shell
+kubectl create secret generic gitlab-rails-storage --from-file=connection=rails.azurerm.yml
+```
+
+Then, disable MinIO and set these global settings:
+
+```shell
+--set global.minio.enabled=false
+--set global.appConfig.object_store.enabled=true
+--set global.appConfig.object_store.connection.secret=gitlab-rails-storage
+```
+
+Be sure to create Azure containers for the [default names or set the container names in the bucket configuration](../../charts/globals.md#specify-buckets).
 
 ## Docker Registry images
 
@@ -45,7 +97,7 @@ the global is used by GitLab backups.
 
 Create the secret per [registry chart documentation on storage](../../charts/registry/index.md#storage), then configure the chart to make use of this secret.
 
-Examples for [S3](https://docs.docker.com/registry/storage-drivers/s3/)(any s3 compatible), [Azure](https://docs.docker.com/registry/storage-drivers/azure/) and [GCS](https://docs.docker.com/registry/storage-drivers/gcs/) drivers can be found in
+Examples for [S3](https://docs.docker.com/registry/storage-drivers/s3/)(S3 compatible storages, but Azure MinIO gateway not supported, see [Azure Blob Storage](#azure-blob-storage)), [Azure](https://docs.docker.com/registry/storage-drivers/azure/) and [GCS](https://docs.docker.com/registry/storage-drivers/gcs/) drivers can be found in
 [examples/objectstorage](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage).
 
 - [`registry.s3.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/registry.s3.yaml)
@@ -60,12 +112,13 @@ Examples for [S3](https://docs.docker.com/registry/storage-drivers/s3/)(any s3 c
 1. Follow [registry chart documentation on storage](../../charts/registry/index.md#storage) for creating the secret.
 1. Configure the chart as documented.
 
-## LFS, Artifacts, Uploads, Packages, External Diffs, Pseudonymizer, Terraform State
+## LFS, Artifacts, Uploads, Packages, External Diffs, Pseudonymizer, Terraform State, Dependency Proxy
 
 Configuration of object storage for LFS, artifacts, uploads, packages, external
 diffs, and pseudonymizer is done via the `global.appConfig.lfs`,
 `global.appConfig.artifacts`, `global.appConfig.uploads`,
-`global.appConfig.packages`, `global.appConfig.externalDiffs` and `global.appConfig.pseudonymizer` keys.
+`global.appConfig.packages`, `global.appConfig.externalDiffs`,
+`global.appConfig.dependencyProxy` and `global.appConfig.pseudonymizer` keys.
 
 ```shell
 --set global.appConfig.lfs.bucket=gitlab-lfs-storage
@@ -95,15 +148,21 @@ diffs, and pseudonymizer is done via the `global.appConfig.lfs`,
 --set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage
 --set global.appConfig.pseudonymizer.connection.secret=object-storage
 --set global.appConfig.pseudonymizer.connection.key=connection
+
+--set global.appConfig.dependencyProxy.bucket=gitlab-dependencyproxy-storage
+--set global.appConfig.dependencyProxy.connection.secret=object-storage
+--set global.appConfig.dependencyProxy.connection.key=connection
 ```
 
-NOTE: **Note:**
-Currently a different bucket is needed for each, otherwise performing a restore from backup will not properly function.
+Notes:
 
-NOTE: **Note:**
-Storing MR diffs on external storage is not enabled by default. So,
-for the object storage settings for `externalDiffs` to take effect,
-`global.appConfig.externalDiffs.enabled` key should have a `true` value.
+- Currently a different bucket is needed for each, otherwise performing a restore from backup will not properly function.
+- Storing MR diffs on external storage is not enabled by default. So,
+  for the object storage settings for `externalDiffs` to take effect,
+  `global.appConfig.externalDiffs.enabled` key should have a `true` value.
+- The dependency proxy feature is not enabled by default. So,
+  for the object storage settings for `dependencyProxy` to take effect,
+  `global.appConfig.dependencyProxy.enabled` key should have a `true` value.
 
 See the [charts/globals documentation on appConfig](../../charts/globals.md#configure-appconfig-settings) for full details.
 
@@ -115,6 +174,7 @@ Examples for [AWS](https://fog.io/storage/#using-amazon-s3-and-fog) (any S3 comp
 - [`rails.s3.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.s3.yaml)
 - [`rails.gcs.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.gcs.yaml)
 - [`rails.azure.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.azure.yaml)
+- [`rails.azurerm.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.azurerm.yaml)
 
 ### appConfig configuration
 
@@ -171,6 +231,7 @@ See the [backup/restore object storage documentation](../../backup-restore/index
      access_key = BOGUS_ACCESS_KEY
      secret_key = BOGUS_SECRET_KEY
      bucket_location = us-east-1
+     multipart_chunk_size_mb = 128 # default is 15 (MB)
      ```
 
    - On Google Cloud Storage, you can create the file by creating a service account
@@ -195,6 +256,7 @@ See the [backup/restore object storage documentation](../../backup-restore/index
      # Leave as default
      bucket_location = us-west-1
      use_https = True
+     multipart_chunk_size_mb = 128 # default is 15 (MB)
 
      # Setup access keys
      # Access Key = Azure Storage Account name

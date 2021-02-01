@@ -12,6 +12,8 @@ resources: {}
 ## Support for tolerations for pod scheduling
 tolerations: []
 
+podLabels: {}
+
 env: production
 global: {}
 enabled: false

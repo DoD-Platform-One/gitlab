@@ -2,7 +2,7 @@
 
 {{/*
 Return the sub-chart serviceAccount name
-If that is not present it will user the global chart serviceAccount name
+If that is not present it will use the global chart serviceAccount name
 Failing that a serviceAccount will be generated automatically
 */}}
 {{- define "gitlab.serviceAccount.name" -}}
