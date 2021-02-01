@@ -460,6 +460,6 @@ helm upgrade --install review-update-app-h8qogp gitlab/gitlab \
   <your other config settings>
 ```
 
-NOTE: **Note**:
+NOTE:
 With Helm v2, one may need to specify the namespace that the release was
 deployed to with the `--namespace <namespace>` option.

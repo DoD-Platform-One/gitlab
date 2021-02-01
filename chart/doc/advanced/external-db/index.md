@@ -8,7 +8,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 This document assumes you already have your own PostgreSQL database.
 
-If you do not have one, consider a cloud provided solution like [AWS Aurora](https://aws.amazon.com/rds/aurora/) or [GCP Cloud SQL](https://cloud.google.com/sql/). For on-premise or deployment to VM, consider our [Omnibus GitLab package](./external-omnibus-psql.md).
+If you do not have one, consider a cloud provided solution like [AWS Aurora](https://aws.amazon.com/rds/aurora/) or [GCP Cloud SQL](https://cloud.google.com/sql/). For on-premise or deployment to VM, consider our [Omnibus GitLab package](external-omnibus-psql.md).
 
 ## External database requirements
 
@@ -24,7 +24,7 @@ To use an external database with the `gitlab` chart, there are a few prerequisit
 1. A [Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/) with the password for the user above.
 1. Ensure that the database is reachable from the cluster. Be sure firewall policies are in place to allow traffic.
 
-NOTE: **Note**:
+NOTE:
 The `pg_trgm` and `btree_gist` extensions need to be added to the GitLab
 database. This means that the `CREATE EXTENSION` command should be executed
 while connected to the GitLab database (by default named `gitlabhq_production`)
@@ -45,7 +45,7 @@ You need to set the following parameters:
 - `postgresql.install`: Set to `false` to disable the embedded database.
 - `global.psql.host`: Set to the hostname of the external database, can be a domain or an IP address.
 - `global.psql.password.secret`: The name of the [secret which contains the database password for the `gitlab` user](../../installation/secrets.md#postgresql-password).
-- `global.psql.password.key`: The key within the secret, which contains the password. The password should be *unencoded* value.
+- `global.psql.password.key`: The key within the secret, which contains the password.
 
 Items below can be further customized if you are not using the defaults:
 

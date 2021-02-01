@@ -18,7 +18,7 @@ should first purge the failed install before installing again.
 helm uninstall <release-name>
 ```
 
-NOTE: **Note**:
+NOTE:
 With Helm v2, the uninstall command would be `helm delete --purge <release-name>`.
 
 If instead, the initial install command timed out, but GitLab still came up successfully,
@@ -41,7 +41,7 @@ example, `Test Username` is the culprit:
 helm upgrade gitlab gitlab/gitlab --timeout 600s --set global.email.display_name=Test Username ...
 ```
 
-NOTE: **Note**:
+NOTE:
 If using Helm v2, please see notes about the `--timeout` option
 in the [Deployment documentation](../installation/deployment.md#deploy-using-helm).
 
@@ -143,12 +143,10 @@ This can happen when you have TLS termination before the NGINX Ingress, and the 
    helm ... --set-string global.ingress.annotations."nginx.ingress.kubernetes.io/ssl-redirect"=false
    ```
 
-1. Apply the change
+1. Apply the change.
 
->>>
-**NOTE:**
+NOTE:
 When using an external service for SSL termination, that service is responsible for redirecting to https (if so desired).
->>>
 
 ## Upgrades fail with Immutable Field Error
 
@@ -176,7 +174,10 @@ This can be solved by simply removing all of the affected services.
 1. Perform an upgrade via Helm.
 1. Future upgrades will not face this error.
 
-NOTE: **Note:** This will change any dynamic value for the `LoadBalancer` for NGINX Ingress from this chart, if in use. See [global Ingress settings documentation](../charts/globals.md#configure-ingress-settings) for more details regarding `externalIP`. You may be required to update DNS records!
+NOTE:
+This will change any dynamic value for the `LoadBalancer` for NGINX Ingress from this chart, if in use.
+See [global Ingress settings documentation](../charts/globals.md#configure-ingress-settings) for more
+details regarding `externalIP`. You may be required to update DNS records!
 
 ### spec.selector
 
@@ -203,3 +204,8 @@ If you are using [`global.gitlabVersion`](../charts/globals.md#gitlab-version),
 start by removing that property.
 Check the [version mappings between the chart and GitLab](../index.md#gitlab-version-mappings)
 and specify a compatible version of the `gitlab/gitlab` chart in your `helm` command.
+
+## UPGRADE FAILED: "cannot patch ..." after `helm 2to3 convert`
+
+This is a known issue. After migrating a Helm 2 release to Helm 3, the subsequent upgrades may fail.
+You can find the full explanation and workaround in [Migrating from Helm v2 to Helm v3](../installation/migration/helm.md#known-issues).

@@ -2,6 +2,429 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 4.7.2 (2021-01-07)
+
+### Fixed (1 change)
+
+- Fix nginx-ingress checkConfig error. !1730
+
+
+## 4.7.1 (2020-12-23)
+
+### Changed (1 change)
+
+- GitLab Runner to 0.24.0. !1724
+
+
+## 4.7.0 (2020-12-22)
+
+### Fixed (3 changes)
+
+- Make consolidated object store config a non-default option. !1588
+- Support using dedicated bucket for Minio. !1652
+- Add extraEnv to task-runner backup job. !1721
+
+### Changed (10 changes, 1 of them is from the community)
+
+- Rename and deprecate configuration keys because Piwik rebranded as Matomo. !1602 (Katrin Leinweber @katrinleinweber)
+- Remove Service port from gitlab-kas. !1659
+- Add prometheus annotations for kas. !1660
+- Allow toggling redirects to storage backends on a per-repository basis. !1667
+- Use gitlab-exporter v7.1.2. !1675
+- Registry: update to v2.12.0-gitlab. !1683
+- Update gitlab-kas to v13.7.0. !1694
+- Add install survey link to helm install notes. !1711
+- Add ability to customize workhorse scheme. !1714
+- Webservice: convert to generator pattern, allow splitting traffic groups.
+
+### Added (7 changes)
+
+- Add TLS support to Praefect. !1613
+- Add encrypted_settings_key_base rails secret. !1617
+- Add server-side global hook support through configmaps. !1653
+- Allow change or deletion of settings in Gitaly StatefulSet securityContexts. !1665
+- Add support for /database_bloat endpoint in gitlab-exporter. !1673
+- Configurable termination graceperiod for NGINX. !1685
+- Support setting of application_name in database.yml. !1712
+
+### Other (2 changes)
+
+- Update NGINX from v0.20.0 to 0.41.2. !1690
+- Changes the default loglevel for registry to info. !1703
+
+
+## 4.6.3 (2020-12-10)
+
+### Changed (1 change, 1 of them is from the community)
+
+- Update gitlab-runner from 0.22.0 to 0.23.0. !1686 (Jan Brummelte)
+
+
+## 4.6.2 (2020-12-07)
+
+- No changes.
+
+## 4.6.1 (2020-11-23)
+
+- No changes.
+
+## 4.6.0 (2020-11-22)
+
+### Fixed (2 changes)
+
+- Configures gitlab-kas ingress with its own TLS certificate. !1644
+- GitLab Shell: sshd_config observe internalPort. !1663
+
+### Changed (10 changes)
+
+- Update default service ports for GitLab Kubernetes Agent Server (kas). !1587
+- custom ca: Loosen the mount permissions to 0440. !1605
+- Populate three dots of DNS for internal Services. !1606
+- Change KAS service route to be subdomain by default, instead of a fixed path. !1623
+- Upgraded Ruby bundler gem to 2.1.4. !1624
+- Certificates: update to 20191127-r2 tag. !1625
+- Mark Sidekiq queue selector as no longer experimental. !1631
+- NGINX: reduce controller to 2 replicas by default. !1635
+- Use config file instead of command line arguments for kas. !1655
+- Set default annotation to help balance webservice traffic. !1661
+
+### Added (5 changes)
+
+- Export GitLab Pages settings in Rails pods. !1598
+- Support Sentry for container registry. !1609
+- Adds configurability of terminationGracePeriod for GitLab-Shell. !1610
+- Expose observability port for gitlab-kas. !1646
+- Adds readiness probe for gitlab-shell. !1649
+
+### Other (3 changes)
+
+- Add Image Resizer config defaults. !1595
+- Update resource specifications for Webservice and Sidekiq. !1634
+- Set release_package to run manually. !1641
+
+
+## 4.5.5 (2020-12-07)
+
+### Other (1 change)
+
+- Set release_package to run manually. !1641
+
+
+## 4.5.4 (2020-11-13)
+
+- No changes.
+
+## 4.5.3 (2020-11-04)
+
+- No changes.
+
+## 4.5.2 (2020-11-02)
+
+### Fixed (2 changes)
+
+- geo-logcursor: move redis secrets to optional. !1614
+- Remove trailing space causing errors in the deprecation template. !1615
+
+
+## 4.5.1 (2020-10-22)
+
+- No changes.
+
+## 4.5.0 (2020-10-22)
+
+### Fixed (1 change)
+
+- Fix PG password error when enabling extensions during DB init. !1593
+
+### Changed (3 changes)
+
+- Make stackdriver profiling credentials optional. !1558
+- Updated location for Grafana chart. !1594
+- Update Prometheus chart location. !1596
+
+### Added (3 changes)
+
+- Add auto_link_user setting. !1555
+- Adds configurable termination grace period for webservice. !1569
+- Adds log format configuration for gitlab-shell chart. !1581
+
+### Other (3 changes)
+
+- Remove db-pool configuration. !1551
+- cleanup registry.fullname templates. !1568
+- Bump default gitlab-kas image tag to v0.0.6. !1582
+
+
+## 4.4.6 (2020-12-07)
+
+### Other (1 change)
+
+- Set release_package to run manually. !1641
+
+
+## 4.4.5 (2020-11-04)
+
+### Fixed (2 changes)
+
+- Fix PG password error when enabling extensions during DB init. !1593
+- geo-logcursor: move redis secrets to optional. !1614
+
+
+## 4.4.4 (2020-10-15)
+
+### Fixed (1 change)
+
+- Praefect: fixup certificates mounts #2341. !1590
+
+
+## 4.4.3 (2020-10-07)
+
+### Added (1 change)
+
+- Adds NetworkPolicy for gitlab-shell. !1580
+
+
+## 4.4.2 (2020-10-01)
+
+### Changed (1 change)
+
+- GitLab Runner chart to 0.21.1. !1573
+
+### Other (2 changes)
+
+- Bump default gitlab-kas image tag to v0.0.5. !1565
+- Update GitLab Version to 13.4.2.
+
+
+## 4.4.1 (2020-09-24)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.4.1.
+
+
+## 4.4.0 (2020-09-22)
+
+### Fixed (1 change)
+
+- Moves GITLAB_WORKHORSE_SENTRY_DSN to the workhorse container. !1543
+
+### Changed (7 changes, 1 of them is from the community)
+
+- Disable MIME type guessing in s3cmd. !1512
+- Disable workhorse archive cache by default. !1520
+- Removing dots from job names. !1540
+- Upgrade default PostgreSQL version to 11.9. !1550
+- Add PG connect_timeout setting. !1552
+- Update container-registry to 2.11.0-gitlab. !1553
+- Make Gitaly service values global options. !1559
+
+### Added (11 changes, 1 of them is from the community)
+
+- Add support for Praefect. !1493
+- Support Stackdriver Profiling for registry. !1494
+- Add support for configuring smartcard authentication. !1510
+- Support UBI certificates container. !1511
+- Exposes the workhorse prometheus port. !1514
+- Adds Content Security Policy (CSP) configuration. !1534
+- Allow for additional labels for services. !1537
+- Add danger job for validating the extension of changelog entries. !1542 (Matthias van de Meent)
+- Document upgrade steps for PostgreSQL 11 -> 12. !1545
+- Add Azure Blob storage configuration options. !1546
+- Add S3 server side encryption settings. !1549
+
+### Other (2 changes)
+
+- Adds capability to specify memoryKiller per Pod. !1536
+- Update GitLab Version to 13.4.0.
+
+
+## 4.3.9 (2020-11-02)
+
+- No changes.
+
+## 4.3.8 (2020-10-23)
+
+- No changes.
+
+## 4.3.7 (2020-10-01)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.7.
+
+
+## 4.3.6 (2020-09-14)
+
+### Changed (1 change)
+
+- Update runner chart to Runner 13.3.1 (chart 0.20.1). !1538
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.6.
+
+
+## 4.3.5 (2020-09-04)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.5.
+
+
+## 4.3.4 (2020-09-02)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.4.
+
+
+## 4.3.3 (2020-09-02)
+
+### Fixed (1 change)
+
+- Only create object_storage 'connection' block if feature enabled. !1517
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.3.
+
+
+## 4.3.2 (2020-08-28)
+
+### Fixed (2 changes, 2 of them are from the community)
+
+- Add missing bucket variables. !1515 (Chris Boot)
+- Add object_store secret to backup CronJob. !1516 (Chris Boot)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.2.
+
+
+## 4.3.1 (2020-08-25)
+
+### Changed (1 change)
+
+- Update GitLab Runner to 13.3.0 (runner chart 0.20.0). !1513
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.1.
+
+
+## 4.3.0 (2020-08-22)
+
+### Removed (1 change)
+
+- Geo - Remove FDW related config. !1496
+
+### Fixed (1 change)
+
+- Fix misaligned indent for rack_attack.
+
+### Changed (4 changes)
+
+- Changed Prometheus to use GitLab specific annotations. !1439
+- Update GitLab Operator to v0.10. !1478
+- Bump Container Registry to v2.10.1-gitlab. !1483
+- Flips daemonMode option for Memory Killer. !1490
+
+### Added (5 changes, 1 of them is from the community)
+
+- Provide possibility of passing the postgresql password via a file instead of secret. !1422 (Tiago Posse <tiagoposse@gmail.com>)
+- Add support for DependencyProxy. !1464
+- Support consolidated object storage configuration. !1479
+- Adds NetworkPolicy object for the Webservice. !1491
+- Workhorse: support configuring logFormat, default JSON. !1497
+
+### Other (1 change)
+
+- Update GitLab Version to 13.3.0.
+
+
+## 4.2.10 (2020-10-01)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.10.
+
+
+## 4.2.9 (2020-09-04)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.9.
+
+
+## 4.2.8 (2020-09-02)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.8.
+
+
+## 4.2.7 (2020-09-02)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.7.
+
+
+## 4.2.6 (2020-08-18)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.6.
+
+
+## 4.2.5 (2020-08-18)
+
+### Changed (1 change)
+
+- Update GitLab Runner chart to 0.19.2. !1489
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.5.
+
+
+## 4.2.4 (2020-08-11)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.4.
+
+
+## 4.2.3 (2020-08-05)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.3.
+
+
+## 4.2.2 (2020-07-30)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.2.
+
+
+## 4.2.1 (2020-07-24)
+
+### Fixed (1 change, 1 of them is from the community)
+
+- Use the global `psql` config parameters when the local `psql` configuration does not contain that config key, instead of going to the default option. !1461 (Matthias van de Meent)
+
+### Changed (1 change)
+
+- Update GitLab Runner to 0.19.1. !500
+
+### Other (1 change)
+
+- Update GitLab Version to 13.2.1.
+
+
 ## 4.2.0 (2020-07-22)
 
 ### Fixed (2 changes)
@@ -24,6 +447,55 @@ entry.
 
 - Add an annotations support to the migrations job template. !1423 (Tiago Posse)
 - Update GitLab Version to 13.2.0.
+
+
+## 4.1.12 (2020-09-04)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.1.11.
+
+
+## 4.1.11 (2020-09-02)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.1.10.
+
+
+## 4.1.10 (2020-09-02)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.1.9.
+
+
+## 4.1.9 (2020-08-18)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.1.8.
+
+
+## 4.1.7 (2020-08-05)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.1.6.
+
+
+## 4.1.6 (2020-07-24)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.1.5.
+
+
+## 4.1.5 (2020-07-24)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.1.5.
 
 
 ## 4.1.4 (2020-07-09)
@@ -100,6 +572,27 @@ entry.
 - Ensure upgraded to 4.0 before 4.1. !1403
 - Update GitLab Runner chart to 0.18.0. !1416
 - Update GitLab Version to 13.1.0.
+
+
+## 4.0.12 (2020-08-18)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.0.14.
+
+
+## 4.0.11 (2020-08-18)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.0.13.
+
+
+## 4.0.10 (2020-08-05)
+
+### Other (1 change)
+
+- Update GitLab Version to 13.0.12.
 
 
 ## 4.0.9 (2020-07-09)

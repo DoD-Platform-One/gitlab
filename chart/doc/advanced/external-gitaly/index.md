@@ -9,9 +9,10 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 This document intends to provide documentation on how to configure this Helm chart with an external Gitaly service.
 
 If you don't have Gitaly configured, for on-premise or deployment to VM,
-consider using our [Omnibus GitLab package](./external-omnibus-gitaly.md).
+consider using our [Omnibus GitLab package](external-omnibus-gitaly.md).
 
-NOTE: **Note:** External Gitaly _services_ can be provided by Gitaly nodes, or
+NOTE:
+External Gitaly _services_ can be provided by Gitaly nodes, or
 [Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) clusters.
 
 ## Configure the Chart
@@ -126,7 +127,8 @@ have to
            tlsEnabled: true
    ```
 
-NOTE: **Note**: You can choose any valid secret name and key for this, but make
+NOTE:
+You can choose any valid secret name and key for this, but make
 sure the key is unique across all the secrets specified in `customCAs` to avoid
 collision since all keys within the secrets will be mounted. You **do not**
 need to provide the key for the certificate, as this is the _client side_.

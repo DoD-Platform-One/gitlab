@@ -9,5 +9,5 @@ reduce collision
 */}}
 {{- define "migrations.jobname" -}}
 {{- $name := include "fullname" . | trunc 55 | trimSuffix "-" -}}
-{{- printf "%s.%d" $name .Release.Revision | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%d" $name .Release.Revision | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

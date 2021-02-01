@@ -5,6 +5,14 @@ nodes:
   extraPortMappings:
     # containerPort below must match the values file:
     #   nginx-ingress.controller.service.nodePorts.https
+    # Change hostPort if port 443 is already in use.
   - containerPort: 32443
     hostPort: 443
+    listenAddress: "0.0.0.0"
+    # containerPort below must match the values file:
+    #   nginx-ingress.controller.service.nodePorts.ssh
+    # Using high-numbered hostPort assuming port 22 is
+    #   already in use.
+  - containerPort: 32022
+    hostPort: 32022
     listenAddress: "0.0.0.0"

@@ -5,7 +5,7 @@ image:
   pullSecrets: []
   # pullPolicy: IfNotPresent
   # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee
-  # tag: latest
+  # tag: master
 init:
   image: {}
     # repository:
@@ -34,12 +34,29 @@ shutdown:
 
 annotations: {}
 
+podLabels: {}
+serviceLabels: {}
+
 metrics:
   enabled: true
   annotations:
+    gitlab.com/prometheus_scrape: "true"
+    gitlab.com/prometheus_port: "8080"
+    gitlab.com/prometheus_path: "/-/metrics"
     prometheus.io/scrape: "true"
     prometheus.io/port: "8080"
     prometheus.io/path: "/-/metrics"
+
+networkpolicy:
+  enabled: false
+  egress:
+    enabled: false
+    rules: []
+  ingress:
+    enabled: false
+    rules: []
+  annotations: {}
+
 service:
   type: ClusterIP
   externalPort: 8080
@@ -54,8 +71,13 @@ ingress:
   proxyBodySize: "512m"
   tls: {}
     # secretName:
+    # smartcardSecretName:
     # enabled: true
-  annotations: {}
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+  # Use this in combination of .deployments below
+  requireBasePath: true
+
 workerProcesses: 2
 
 unicorn:
@@ -72,8 +94,10 @@ puma:
 
 hpa:
   targetAverageValue: 1
+  customMetrics: # optional replacement of HPA metrics definition
 
 deployment:
+  # terminationGracePeriodSeconds: 30
   livenessProbe:
     initialDelaySeconds: 20
     periodSeconds: 60
@@ -96,6 +120,7 @@ deployment:
 workhorse:
   sentryDSN: ""
   extraArgs: ""
+  logFormat: json # valid: (json, structured, text)
   resources:
     requests:
       cpu: 100m
@@ -113,6 +138,13 @@ workhorse:
     timeoutSeconds: 2
     successThreshold: 1
     failureThreshold: 3
+  monitoring:
+    exporter:
+      enabled: false
+      port: 9229
+  imageScaler:
+    maxProcs: 2 # aim for max(2, requested_cpus / 2)
+    maxFileSizeBytes: 250000
 
 psql: {}
   # port: 5432
@@ -143,8 +175,8 @@ global:
     # port: '5432'
     # database: 'gitlabhq_production'
     # username: 'gitlab'
-    # pool: 1
     # preparedStatements: false
+    # applicationName:
     # password:
     #   secret: gitlab-postgres
     #   key: psql-password
@@ -173,6 +205,16 @@ global:
     serviceDeskEmail:
       enabled: false
       address:
+    object_store:
+      connection: {}
+        # provider: AWS
+        # region: us-east-1
+        # secret:
+        # secret_key:
+        # access_key:
+      storage_options: {}
+        # server_side_encryption:
+        # server_side_encrypton_kms_key_id:
     lfs:
       enabled: true
       proxy_download: true
@@ -202,6 +244,11 @@ global:
       enabled: false
       bucket:
       connection: {}
+    dependencyProxy:
+      enabled: false
+      proxy_download: true
+      bucket:
+      connection: {}
     ldap:
       servers: {}
       # 'main' is the GitLab 'provider ID' of this LDAP server
@@ -222,6 +269,7 @@ global:
       blockAutoCreatedUsers: true
       autoLinkLdapUser: false
       autoLinkSamlUser: false
+      autoLinkUser: []
       externalProviders: []
       allowBypassTwoFactor: []
       providers: []
@@ -256,8 +304,8 @@ registry:
   tokenIssuer: gitlab-issuer
 extra: {}
   # google_analytics_id: '_your_tracking_id'
-  # piwik_url: '_your_piwik_url'
-  # piwik_site_id: '_your_piwik_site_id'
+  # matomo_url: '_your_matomo_url'
+  # matomo_site_id: '_your_matomo_site_id'
 rack_attack:
   git_basic_auth:
     enabled: false
@@ -270,10 +318,10 @@ trusted_proxies: []
 resources:
   # limits:
   #  cpu: 1.5
-  #  memory: 2G
+  #  memory: 3G
   requests:
     cpu: 300m
-    memory: 1.5G
+    memory: 2.5G
 maxUnavailable: 1
 minReplicas: 2
 maxReplicas: 10
@@ -293,8 +341,24 @@ serviceAccount:
   create: false
   annotations: {}
   ## Name to be used for serviceAccount, otherwise defaults to chart fullname
-  # name: 
+  # name:
 
 ## Allow configuring pods' priorityClassName. This is used to control pod priority in case of eviction:
 #  https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 priorityClassName: ""
+
+## deployments:
+#    Allows for splitting of service classes across multiple deployments
+#  This map will be range-walked, and each entry will create discrete
+#  Kubernetes resources: Deployment, HPA, PDB, Service, Ingress
+#    The name of the key (for example, `web`) will be appended to the
+#  end of each resource `.metadata.name`, and added as a label to each
+#  resource for tracking.
+#  https://docs.gitlab.com/charts/charts/gitlab/webservice/#deployments
+deployments: {}
+  # There must always be at least one, with `xyz.ingress.path: /`
+  # unless `ingress.requireBasePath: false`
+  #
+  # default:
+  #   ingress:
+  #     path: /

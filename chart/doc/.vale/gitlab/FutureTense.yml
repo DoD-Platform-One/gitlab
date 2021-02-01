@@ -6,19 +6,12 @@
 #
 # For a list of all options, see https://errata-ai.gitbook.io/vale/getting-started/styles
 extends: existence
-message: 'Avoid using future tense: "%s"'
+message: 'Avoid using future tense: "%s". Use present tense instead.'
 ignorecase: true
-level: suggestion
-link: https://docs.gitlab.com/ee/development/documentation/styleguide.html#language-to-avoid
-tokens:
-  - going to be
-  - going to
-  - he'll
-  - she'll
-  - they'll
-  - we'll
-  - will be
-  - will have
-  - will # Leave this word after the two-word 'will' variants as a catchall
-  - won't
-  - you'll
+level: warning
+link: https://docs.gitlab.com/ee/development/documentation/styleguide/index.html#usage-list
+raw:
+  - "(going to( |\n|[[:punct:]])[a-zA-Z]*|"
+  - "will( |\n|[[:punct:]])[a-zA-Z]*|"
+  - "won't( |\n|[[:punct:]])[a-zA-Z]*|"
+  - "[a-zA-Z]*'ll( |\n|[[:punct:]])[a-zA-Z]*)"

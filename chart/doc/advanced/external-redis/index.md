@@ -9,7 +9,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 This document intends to provide documentation on how to configure this Helm chart with an external Redis service.
 
 If you don't have Redis configured, for on-premise or deployment to VM,
-consider using our [Omnibus GitLab package](./external-omnibus-redis.md).
+consider using our [Omnibus GitLab package](external-omnibus-redis.md).
 
 ## Configure the Chart
 
@@ -38,8 +38,9 @@ helm install gitlab gitlab/gitlab  \
 ```
 
 If you are connecting to a Redis HA cluster that has Sentinel servers
-running, the `global.redis.host` attribute needs to be set to the cluster
-name as specified in the `sentinel.conf`. Sentinel servers can be referenced
+running, the `global.redis.host` attribute needs to be set to the name of
+the Redis instance group (such as `mymaster` or `resque`), as
+specified in the `sentinel.conf`. Sentinel servers can be referenced
 using the `global.redis.sentinels[0].host` and `global.redis.sentinels[0].port`
 values for the `--set` flag. The index is zero based.
 

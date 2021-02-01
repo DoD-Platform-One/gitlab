@@ -5,7 +5,7 @@ image:
   pullSecrets: []
   # pullPolicy: IfNotPresent
   # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee
-  # tag: latest
+  # tag: master
 
 init:
   image: {}
@@ -20,9 +20,10 @@ tolerations: []
 
 enabled: true
 cluster: true
-experimentalQueueSelector: false
+queueSelector: false
 
 annotations: {}
+podLabels: {}
 
 logging:
   # set to "json" for json
@@ -43,9 +44,10 @@ metrics:
   enabled: true
   port: 3807
   annotations:
+    gitlab.com/prometheus_scrape: "true"
+    gitlab.com/prometheus_port: "3807"
     prometheus.io/scrape: "true"
     prometheus.io/port: "3807"
-
 redis:
   password: {}
 
@@ -54,7 +56,7 @@ psql: {}
 
 # https://docs.gitlab.com/ee/administration/operations/sidekiq_memory_killer.html#sidekiq-memorykiller
 memoryKiller:
-  daemonMode: false
+  daemonMode: true
   maxRss: 2000000
   graceTime: 900
   shutdownWait: 30
@@ -94,7 +96,7 @@ global:
     # port: '5432'
     # database: 'gitlabhq_production'
     # username: 'gitlab'
-    # pool: 1
+    # applicationName:
     # preparedStatements: false
     # password:
     #   secret: gitlab-postgres
@@ -151,6 +153,11 @@ global:
       enabled: false
       bucket:
       connection: {}
+    dependencyProxy:
+      enabled: false
+      proxy_download: true
+      bucket:
+      connection: {}
     ldap:
       servers: {}
       # 'main' is the GitLab 'provider ID' of this LDAP server
@@ -171,6 +178,7 @@ global:
       blockAutoCreatedUsers: true
       autoLinkLdapUser: false
       autoLinkSamlUser: false
+      autoLinkUser: []
       externalProviders: []
       allowBypassTwoFactor: []
       providers: []
@@ -242,17 +250,21 @@ hpa:
 timeout: 5
 resources:
   # limits:
-  #  cpu: 500m
-  #  memory: 1G
+  #  memory: 5G
   requests:
-    cpu: 50m
-    memory: 650M
+    cpu: 900m
+    memory: 2G
 maxUnavailable: 1
 
 # Define queue groups into Pods
 pods:
   - name: all-in-1
     # concurrency: 25
+    # memoryKiller:
+    #   maxRss: 2000000
+    #   graceTime: 900
+    #   shutdownWait: 30
+    #   checkInterval: 3
     # minReplicas: 1
     # maxReplicas: 10
     # updateStrategy: {}
@@ -262,6 +274,7 @@ pods:
     # priorityClassName: ""
     # hpa:
     #   targetAverageValue:
+    # podLabels: {}
 
 ## Allow to overwrite under which User and Group we're running.
 securityContext:
@@ -274,8 +287,8 @@ serviceAccount:
   create: false
   annotations: {}
   ## Name to be used for serviceAccount, otherwise defaults to chart fullname
-  # name: 
-  
+  # name:
+
 ## Allow configuring pods' priorityClassName. This is used to control pod priority in case of eviction:
 #  https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 priorityClassName: ""

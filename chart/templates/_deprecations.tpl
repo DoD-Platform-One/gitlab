@@ -47,6 +47,9 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.service.name" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.webservice.service.configuration" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.gitaly.serviceName" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.global.psql.pool" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.global.appConfig.extra.piwik" .) -}}
+
 {{- /* prepare output */}}
 {{- $deprecated := without $deprecated "" -}}
 {{- $message := join "\n" $deprecated -}}
@@ -119,7 +122,7 @@ gitlab.task-runner:
 {{/* Migration of Registry `storage` dict to a secret */}}
 {{- define "gitlab.deprecate.registryStorage" -}}
 {{- if .Values.registry.storage -}}
-{{-   $keys := without (keys .Values.registry.storage) "secret" "key" "extraKey" -}}
+{{-   $keys := without (keys .Values.registry.storage) "secret" "key" "extraKey" "redirect" -}}
 {{-   if len $keys | ne 0 }}
 registry:
     The `storage` property has been moved into a secret. Please create a secret with these contents, and set `storage.secret`.
@@ -351,3 +354,38 @@ gitlab.gitaly.serviceName:
 {{-   end -}}
 {{- end -}}
 {{/* END gitlab.deprecate.gitlab.gitaly.serviceName */}}
+
+{{- define "gitlab.deprecate.global.psql.pool" -}}
+{{-   if hasKey $.Values.global "psql" -}}
+{{-     if hasKey $.Values.global.psql "pool" }}
+global.psql.pool:
+      Manually configuring the database connection pool has been removed. The application now manages the connection pool size.
+{{-     end -}}
+{{-   end -}}
+
+{{-   range $chart := list "webservice" "sidekiq" "task-runner" -}}
+{{-     if index $.Values.gitlab $chart -}}
+{{-       if hasKey (index $.Values.gitlab $chart) "psql" -}}
+{{-         with $localConfig := index $.Values.gitlab $chart "psql" -}}
+{{-           if hasKey $localConfig "pool" }}
+gitlab.{{ $chart }}.psql.pool:
+      Manually configuring the database connection pool has been removed. The application now manages the connection pool size.
+{{-           end -}}
+{{-         end -}}
+{{-       end -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+{{/* END gitlab.deprecate.global.psql.pool */}}
+
+{{- define "gitlab.deprecate.global.appConfig.extra.piwik" -}}
+{{- if .Values.global.appConfig.extra.piwikSiteId }}
+global.appConfig.extra.piwikSiteId:
+      Piwik config keys have been renamed to reflect the rebranding to Matomo. Please rename `piwikSiteId` to `matomoSiteId`.
+{{- end -}}
+{{- if .Values.global.appConfig.extra.piwikUrl }}
+global.appConfig.extra.piwikUrl:
+      Piwik config keys have been renamed to reflect the rebranding to Matomo. Please rename `piwikUrl` to `matomoUrl`
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.deprecate.global.appConfig.extra.piwik */}}

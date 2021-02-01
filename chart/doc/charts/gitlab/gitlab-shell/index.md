@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Using the GitLab-Shell chart
+# Using the GitLab Shell chart
 
 The `gitlab-shell` sub-chart provides an SSH server configured for Git SSH access to GitLab.
 
@@ -18,7 +18,7 @@ cluster this chart is deployed onto.
 
 In order to easily support SSH replicas, and avoid using shared storage for the SSH
 authorized keys, we are using the SSH [AuthorizedKeysCommand](https://man.openbsd.org/sshd_config#AuthorizedKeysCommand)
-to authenticate against GitLab's authorized keys endpoint. As a result, we don't persist
+to authenticate against the GitLab authorized keys endpoint. As a result, we don't persist
 or update the AuthorizedKeys file within these pods.
 
 ## Configuration
@@ -33,6 +33,7 @@ controlled by `global.shell.port`.
 | Parameter                | Default        | Description                              |
 | ------------------------ | -------------- | ---------------------------------------- |
 | `annotations`            |                | Pod annotations                          |
+| `podLabels`              |                | Supplemental Pod labels. Will not be used for selectors. |
 | `config.loginGraceTime`  | `120`          | Specifies amount of time athat the server will disconnect after if the user has not successfully logged in |
 | `config.maxStartups.full`  | `100`     | SSHd refuse probability will increase linearly and all unauthenticated connection attempts would be refused when unauthenticated connections number will reach specified number |
 | `config.maxStartups.rate`  | `30`      | SSHd will refuse connections with specified probability when there would be too many unauthenticated connections (optional) |
@@ -42,6 +43,12 @@ controlled by `global.shell.port`.
 | `deployment.livenessProbe.timeoutSeconds` | 3 | When the liveness probe times out |
 | `deployment.livenessProbe.successThreshold` | 1 | Minimum consecutive successes for the liveness probe to be considered successful after having failed |
 | `deployment.livenessProbe.failureThreshold` | 3 | Minimum consecutive failures for the liveness probe to be considered failed after having succeeded |
+| `deployment.readinessProbe.initialDelaySeconds` | 10 | Delay before readiness probe is initiated      |
+| `deployment.readinessProbe.periodSeconds`       | 5  | How often to perform the readiness probe       |
+| `deployment.readinessProbe.timeoutSeconds`      | 3  | When the readiness probe times out             |
+| `deployment.readinessProbe.successThreshold`    | 1  | Minimum consecutive successes for the readiness probe to be considered successful after having failed |
+| `deployment.readinessProbe.failureThreshold`    | 2  | Minimum consecutive failures for the readiness probe to be considered failed after having succeeded |
+| `deployment.terminationGracePeriodSeconds`  | 30 | Seconds that Kubernetes will wait for a pod to forcibly exit |
 | `enabled`                | `true`         | Shell enable flag                        |
 | `extraContainers`        |                | List of extra containers to include      |
 | `extraInitContainers`    |                | List of extra init containers to include |
@@ -49,13 +56,15 @@ controlled by `global.shell.port`.
 | `extraVolumes`           |                | List of extra volumes to create          |
 | `extraEnv`               |                | List of extra environment variables to expose |
 | `hpa.targetAverageValue` | `100m`         | Set the autoscaling target value         |
-| `image.pullPolicy`       | `Always`       | Shell image pull policy                  |
+| `image.pullPolicy`       | `IfNotPresent` | Shell image pull policy                  |
 | `image.pullSecrets`      |                | Secrets for the image repository         |
 | `image.repository`       | `registry.com/gitlab-org/build/cng/gitlab-shell` | Shell image repository |
-| `image.tag`              | `latest`       | Shell image tag                          |
+| `image.tag`              | `master`       | Shell image tag                          |
 | `init.image.repository`  |                | initContainer image                      |
 | `init.image.tag`         |                | initContainer image tag                  |
+| `logging.format`         | `text`      | Set to `json` for JSON-structured logs   |
 | `replicaCount`           | `1`            | Shell replicas                           |
+| `serviceLabels`          | `{}`           | Supplemental service labels |
 | `service.externalTrafficPolicy` | `Cluster` | Shell service external traffic policy (Cluster or Local)  |
 | `service.internalPort`   | `2222`         | Shell internal port                      |
 | `service.nodePort`       |                | Sets shell nodePort if set               |
@@ -108,6 +117,40 @@ image:
   - name: my-secret-name
   - name: my-secondary-secret-name
 ```
+
+### livenessProbe/readinessProbe
+
+`deployment.livenessProbe` and `deployment.readinessProbe` provide a mechanism
+to help control the termination of Pods under some scenarios.
+
+Larger repositories benefit from tuning liveness and readiness probe
+times to match their typical long-running connections. Set readiness
+probe duration shorter than liveness probe duration to minimize
+potential interruptions during `clone` and `push` operations. Increase
+`terminationGracePeriodSeconds` and give these operations more time before
+the scheduler terminates the pod. Consider the example below as a starting
+point to tune GitLab Shell pods for increased stability and efficiency
+with larger repository workloads.
+
+```yaml
+deployment:
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 20
+    timeoutSeconds: 3
+    successThreshold: 1
+    failureThreshold: 10
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 2
+    successThreshold: 1
+    failureThreshold: 3
+  terminationGracePeriodSeconds: 300
+```
+
+Reference the official [Kubernetes Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+for additional details regarding this configuration.
 
 ### tolerations
 
@@ -200,4 +243,59 @@ service:
   loadBalancerSourceRanges:
   - 5.6.7.8/32
   - 10.0.0.0/8
+```
+
+### Configuring the `networkpolicy`
+
+This section controls the
+[NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+This configuration is optional and is used to limit Egress and Ingress of the
+Pods to specific endpoints.
+
+| Name              | Type    | Default | Description |
+|:----------------- |:-------:|:------- |:----------- |
+| `enabled`         | Boolean | `false` | This setting enables the networkpolicy |
+| `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified. |
+| `ingress.rules`   | Array   | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
+| `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified. |
+| `egress.rules`    | Array   | `[]`    | Rules for the egress policy, these for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
+
+### Example Network Policy
+
+The `gitlab-shell` service requires Ingress connections for port 22 and Egress
+connections to various to default workhorse port 8181. This examples adds the
+following network policy:
+
+- All Ingress requests from the network on TCP `0.0.0.0/0` port 2222 are allowed
+- All Egress requests to the network on UDP `10.0.0.0/8` port 53 are allowed for DNS
+- All Egress requests to the network on TCP `10.0.0.0/8` port 8181 are allowed for Workhorse
+- All Egress requests to the network on TCP `10.0.0.0/8` port 8075 are allowed for Gitaly
+
+_Note the example provided is only an example and may not be complete_
+
+```yaml
+networkpolicy:
+  enabled: true
+  ingress:
+    enabled: true
+    rules:
+      - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+        ports:
+          - port: 2222
+            protocol: TCP
+  egress:
+    enabled: true
+    rules:
+      - to:
+        - ipBlock:
+            cidr: 10.0.0.0/8
+        ports:
+          - port: 8181
+            protocol: TCP
+          - port: 8075
+            protocol: TCP
+          - port: 53
+            protocol: UDP
 ```

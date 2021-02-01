@@ -15,7 +15,7 @@ this guide will help.
 ## TCP services in the external Ingress Controller
 
 The GitLab Shell component requires TCP traffic to pass through on
-port 22 (by default; this can be changed). Ingress does not directly support TCP services, so some additional configuration is necessary. Your NGINX Ingress Controller may have been [deployed directly](https://github.com/kubernetes/ingress-nginx/blob/master/docs/deploy/index.md) (i.e. with a Kubernetes spec file) or through the [official Helm chart](https://github.com/helm/charts/tree/master/stable/nginx-ingress). The configuration of the TCP pass through will differ depending on the deployment approach.
+port 22 (by default; this can be changed). Ingress does not directly support TCP services, so some additional configuration is necessary. Your NGINX Ingress Controller may have been [deployed directly](https://github.com/kubernetes/ingress-nginx/blob/master/docs/deploy/index.md) (i.e. with a Kubernetes spec file) or through the [official Helm chart](https://github.com/kubernetes/ingress-nginx). The configuration of the TCP pass through will differ depending on the deployment approach.
 
 ### Direct deployment
 
@@ -48,7 +48,7 @@ port 22 in addition to 80 and 443.
 
 ### Helm deployment
 
-If you have installed or will install the NGINX Ingress Controller via it's [Helm chart](https://github.com/helm/charts/tree/master/stable/nginx-ingress), then you will need to add a value to the chart via the command line:
+If you have installed or will install the NGINX Ingress Controller via it's [Helm chart](https://github.com/kubernetes/ingress-nginx), then you will need to add a value to the chart via the command line:
 
 ```shell
 --set tcp.22="gitlab/mygitlab-gitlab-shell:22"

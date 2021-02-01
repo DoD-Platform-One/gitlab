@@ -17,6 +17,8 @@ init:
 # Tolerations for pod scheduling
 tolerations: []
 
+podLabels: {}
+
 global:
   # imagePullPolicy: IfNotPresent
   redis:

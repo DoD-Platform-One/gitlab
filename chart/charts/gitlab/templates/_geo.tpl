@@ -29,7 +29,6 @@ production:
   adapter: postgresql
   encoding: unicode
   database: {{ template "gitlab.geo.psql.database" . }}
-  pool: 1
   username: {{ template "gitlab.geo.psql.username" . }}
   password: "<%= File.read("/etc/gitlab/postgres/geo-psql-password").strip.dump[1..-2] %>"
   host: {{ template "gitlab.geo.psql.host" . }}
@@ -38,7 +37,6 @@ production:
   #   hosts:
   #     - host1.example.com
   #     - host2.example.com
-  fdw: true
   {{- include "gitlab.geo.psql.ssl.config" . | nindent 2 }}
 {{- end -}}
 

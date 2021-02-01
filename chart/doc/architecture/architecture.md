@@ -38,7 +38,7 @@ The following GitLab components have images in the CNG repository.
 - GitLab Exporter
 - GitLab Shell
 - Sidekiq
-- GitLab task-runner
+- GitLab Task Runner
 - Webservice
 - Workhorse
 

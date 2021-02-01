@@ -27,24 +27,18 @@ supported with Helm v2 (2.12 or higher required, [excluding 2.15](../releases/3_
 Starting with version `v3.0.0` of the chart, Helm v3 (3.0.2 or higher required)
 is also fully supported.
 
-NOTE: **Note**:
-We are not using Helm v3 for testing in CI. If you find issues
-specific to Helm v3, please create an issue in our [issue tracker](https://gitlab.com/gitlab-org/charts/gitlab/-/issues)
-and start the issue title with the keyword `[Helm3]`.
+Note the following:
 
-NOTE: **Note**:
-Helm v2 consists of two parts, the `helm` (client) installed locally, and `tiller`
-(server) installed inside Kubernetes.
-
-NOTE: **Note**:
-If you need to run Helm v2 and are not able to run Tiller in your cluster,
-for example on OpenShift, it's possible to use [Tiller locally](#local-tiller)
-and avoid deploying it into the cluster. This should only be used when Tiller
-cannot be normally deployed.
-
-NOTE: **Note**:
-Helm v2.15.x series contained multiple [severe bugs](../releases/3_0.md#problematic-helm-215)
-that affect the use of this chart. *Do not use these versions!*
+- We are not using Helm v3 for testing in CI. If you find issues specific to Helm v3, please create
+  an issue in our [issue tracker](https://gitlab.com/gitlab-org/charts/gitlab/-/issues) and start
+  the issue title with the keyword `[Helm3]`.
+- Helm v2 consists of two parts, the `helm` (client) installed locally, and `tiller` (server)
+  installed inside Kubernetes.
+- If you need to run Helm v2 and are not able to run Tiller in your cluster, for example on
+  OpenShift, it's possible to use [Tiller locally](#local-tiller) and avoid deploying it into the
+  cluster. This should only be used when Tiller cannot be normally deployed.
+- Helm v2.15.x series contained multiple [severe bugs](../releases/3_0.md#problematic-helm-215)
+  that affect the use of this chart. *Do not use these versions!*
 
 ### Getting Helm
 
@@ -64,12 +58,12 @@ read through our [RBAC documentation](rbac.md).
 
 ### Preparing for Helm with RBAC
 
-NOTE: **Note**:
+NOTE:
 Ensure you have `kubectl` installed and it's up to date. Older versions do not
 have support for RBAC and will generate errors.
 
 Helm v3.0 does not install Tiller in the cluster and as such uses the user's
-RBAC permissions to peform the deployment of the chart.
+RBAC permissions to perform the deployment of the chart.
 
 Prior versions of Helm do install Tiller on the cluster and will need to be granted
 permissions to perform operations. These instructions grant cluster wide permissions,
@@ -132,16 +126,16 @@ cluster, use `kubectl config set-cluster minikube` to set the active cluster.
 
 #### Upload the RBAC config in GKE
 
-For GKE, you need to grab the admin credentials:
+For GKE, you need to grab the administrator credentials:
 
 ```shell
 gcloud container clusters describe <cluster-name> --zone <zone> --project <project-id> --format='value(masterAuth.password)'
 ```
 
-This command will output the admin password. We need the password to authenticate
+This command will output the administrator password. We need the password to authenticate
 with `kubectl` and create the role.
 
-We will also create an admin user for this cluster. Use a name you prefer but
+We will also create an administrator user for this cluster. Use a name you prefer but
 for this example we will include the cluster's name in it:
 
 ```shell
@@ -196,12 +190,12 @@ Some information on how all the inner workings behave:
 
 ### Tips and tricks
 
-Helm repository has some additional information on developing with Helm in it's
+Helm repository has some additional information on developing with Helm in its
 [tips and tricks section](https://helm.sh/docs/howto/charts_tips_and_tricks/).
 
 ### Local Tiller
 
-CAUTION: **Not recommended:**
+WARNING:
 This method is not well supported, but should work.
 
 If you are using Helm v2 and not able to run Tiller in your cluster,

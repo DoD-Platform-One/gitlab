@@ -38,6 +38,9 @@ data:
         issue_closing_pattern: {{ .issueClosingPattern | quote }}
         default_theme: {{ .defaultTheme }}
         {{- include "gitlab.appConfig.defaultProjectsFeatures.configuration" $ | nindent 8 }}
+        {{- if hasKey .initialDefaults "signupEnabled" }}
+        signup_enabled: {{ .initialDefaults.signupEnabled }}
+        {{- end }}
         webhook_timeout: {{ .webhookTimeout }}
         {{- end }}
         trusted_proxies:
@@ -91,7 +94,8 @@ data:
           - 0.0.0.0/0
         sidekiq_exporter:
   configure: |
-    {{- include "gitlab.scripts.configure.secrets" (dict "required" "redis postgres rails-secrets" "optional" "none") | nindent 4 -}}
+    {{- include "gitlab.scripts.configure.secrets" (dict "required" "rails-secrets" "optional" "postgres redis") | nindent 4 -}}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}
+
 # Leave this here - This line denotes end of block to the parser.
 {{- end -}}

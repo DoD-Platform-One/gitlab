@@ -21,13 +21,13 @@ data:
     bin_dir = "/usr/local/bin"
 
     # listen on a TCP socket. This is insecure (no authentication)
-    listen_addr = "0.0.0.0:{{ .Values.service.internalPort }}"
+    listen_addr = "0.0.0.0:{{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}"
 
     # Directory where internal sockets reside
     internal_socket_dir = "/home/git"
 
     {{- if $.Values.global.gitaly.tls.enabled }}
-    tls_listen_addr = "0.0.0.0:{{ .Values.service.tls.internalPort }}"
+    tls_listen_addr = "0.0.0.0:{{ coalesce .Values.service.tls.internalPort .Values.global.gitaly.service.tls.internalPort }}"
     {{- end }}
 
     # If metrics collection is enabled, inform gitaly about that
@@ -41,7 +41,7 @@ data:
     key_path = '/etc/gitlab-secrets/gitaly/gitaly.key'
     {{- end }}
 
-    <% @storages = [ {{- range (coalesce .Values.internal.names .Values.global.gitaly.internal.names) }} {{ . | quote }}, {{- end }} ] %>
+    <% @storages = [ {{ include "gitlab.gitaly.storageNames" . }}  ] %>
     <% @index=`echo ${HOSTNAME##*-}`.to_i %>
     <% if @storages.length > @index %>
     [[storage]]
@@ -113,7 +113,7 @@ data:
     # location of shared secret for GitLab Shell / API interaction
     secret_file = "/etc/gitlab-secrets/shell/.gitlab_shell_secret"
     # URL of API
-    url = "http://{{ template "gitlab.workhorse.host" . }}:{{ template "gitlab.workhorse.port" . }}/"
+    url = "{{ template "gitlab.workhorse.url" . }}/"
 
     [gitlab.http-settings]
     # read_timeout = 300

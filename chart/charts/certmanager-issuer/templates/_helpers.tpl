@@ -24,5 +24,5 @@ reduce collision
 */}}
 {{- define "certmanager-issuer.jobname" -}}
 {{- $name := printf "%s-issuer" .Release.Name | trunc 55 | trimSuffix "-" -}}
-{{- printf "%s.%d" $name .Release.Revision | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%d" $name .Release.Revision | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

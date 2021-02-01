@@ -22,6 +22,7 @@ spec:
       labels:
         app: {{ template "name" . }}
         release: {{ .Release.Name }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yml") . | sha256sum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
@@ -179,11 +180,7 @@ spec:
                 - key: secrets.yml
                   path: rails-secrets/secrets.yml
           {{- include "gitlab.redis.secrets" . | nindent 10 }}
-          - secret:
-              name: {{ template "gitlab.psql.password.secret" . }}
-              items:
-                - key: {{ template "gitlab.psql.password.key" . }}
-                  path: postgres/psql-password
+          {{- include "gitlab.psql.secret" . | nindent 10 }}
           - secret:
               name: {{ template "gitlab.geo.psql.password.secret" . }}
               items:

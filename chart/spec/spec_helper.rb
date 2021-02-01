@@ -6,17 +6,30 @@ require 'capybara-screenshot/rspec'
 require 'selenium-webdriver'
 require 'rspec/retry'
 require 'gitlab_test_helper'
+require 'rspec-parameterized'
 
 include Gitlab::TestHelper
 
 Capybara.register_driver :headless_chrome do |app|
-  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: { args: %w(headless disable-gpu no-sandbox disable-dev-shm-usage) }
-  )
+  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome()
+  options = Selenium::WebDriver::Chrome::Options.new
+
+  # Chrome won't work properly in a Docker container in sandbox mode
+  options.add_argument("no-sandbox")
+
+  # Run headless by default unless CHROME_HEADLESS specified
+  options.add_argument("headless") unless ENV['CHROME_HEADLESS'] =~ /^(false|no|0)$/i
+
+  # Disable /dev/shm use in CI. See https://gitlab.com/gitlab-org/gitlab/issues/4252
+  options.add_argument("disable-dev-shm-usage") if ENV['CI'] || ENV['CI_SERVER']
+
+  # Explicitly set user-data-dir to prevent crashes. See https://gitlab.com/gitlab-org/gitlab-foss/issues/58882#note_179811508
+  options.add_argument("user-data-dir=/tmp/chrome") if ENV['CI'] || ENV['CI_SERVER']
 
   Capybara::Selenium::Driver.new app,
     browser: :chrome,
-    desired_capabilities: capabilities
+    desired_capabilities: capabilities,
+    options: options
 end
 
 # Keep only the screenshots generated from the last failing test suite
@@ -59,4 +72,11 @@ RSpec.configure do |config|
   # enable the use of :focus to run a subset of specs
   config.filter_run :focus => true
   config.run_all_when_everything_filtered = true
+
+  # disable spec test requiring access to k8s cluster
+  k8s_access = system('kubectl --request-timeout 1s get nodes >/dev/null 2>&1')
+  unless k8s_access
+    puts 'Excluding specs that require access to k8s cluster'
+    config.filter_run_excluding :type => 'feature'
+  end
 end

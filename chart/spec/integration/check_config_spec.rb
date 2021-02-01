@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'helm_template_helper'
 require 'yaml'
 
 describe 'checkConfig template' do
   let(:check) do
-    Open3.capture3('helm template gitlab-checkconfig-test . -f -',
+    Open3.capture3(HelmTemplate.helm_template_call(name: 'gitlab-checkconfig-test'),
                    chdir: File.join(__dir__, '..', '..'),
                    stdin_data: YAML.dump(values))
   end
@@ -148,36 +149,39 @@ describe 'checkConfig template' do
                      error_description: 'when Sidekiq pods use cluster with array queues'
   end
 
-  describe 'sidekiq.queues.experimentalQueueSelector' do
-    let(:success_values) do
-      {
-        'gitlab' => {
-          'sidekiq' => {
-            'pods' => [
-              { 'name' => 'valid-1', 'cluster' => true, 'experimentalQueueSelector' => true },
-            ]
+  describe 'sidekiq.queues.queueSelector' do
+    # Simplify with https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/646
+    ['queueSelector', 'experimentalQueueSelector'].each do |config|
+      let(:success_values) do
+        {
+          'gitlab' => {
+            'sidekiq' => {
+              'pods' => [
+                { 'name' => 'valid-1', 'cluster' => true, config => true },
+              ]
+            }
           }
-        }
-      }.merge(default_required_values)
-    end
+        }.merge(default_required_values)
+      end
 
-    let(:error_values) do
-      {
-        'gitlab' => {
-          'sidekiq' => {
-            'pods' => [
-              { 'name' => 'valid-1', 'cluster' => false, 'experimentalQueueSelector' => true },
-            ]
+      let(:error_values) do
+        {
+          'gitlab' => {
+            'sidekiq' => {
+              'pods' => [
+                { 'name' => 'valid-1', 'cluster' => false, config => true },
+              ]
+            }
           }
-        }
-      }.merge(default_required_values)
+        }.merge(default_required_values)
+      end
+
+      let(:error_output) { "`#{config}` only works when `cluster` is enabled" }
+
+      include_examples 'config validation',
+                       success_description: "when Sidekiq pods use #{config} with cluster enabled",
+                       error_description: "when Sidekiq pods use #{config} without cluster enabled"
     end
-
-    let(:error_output) { '`experimentalQueueSelector` only works when `cluster` is enabled' }
-
-    include_examples 'config validation',
-                     success_description: 'when Sidekiq pods use experimentalQueueSelector with cluster enabled',
-                     error_description: 'when Sidekiq pods use experimentalQueueSelector without cluster enabled'
   end
 
   describe 'database.externaLoadBalancing' do
@@ -409,6 +413,39 @@ describe 'checkConfig template' do
                      error_description: 'when maxRequestDurationSeconds is greater than or equal to workerTimeout'
   end
 
+  describe 'appConfig.sentry.dsn' do
+    let(:success_values) do
+      {
+        'registry' => {
+          'reporting' => {
+            'sentry' => {
+              'enabled' => true,
+              'dsn' => 'somedsn'
+            }
+          }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_values) do
+      {
+        'registry' => {
+          'reporting' => {
+            'sentry' => {
+              'enabled' => true
+            }
+          }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_output) { 'When enabling sentry, you must configure at least one DSN.' }
+
+    include_examples 'config validation',
+                     success_description: 'when Sentry is enabled and DSN is defined',
+                     error_description: 'when Sentry is enabled but DSN is undefined'
+  end
+
   describe 'gitaly.extern.repos' do
     let(:success_values) do
       {
@@ -478,5 +515,74 @@ describe 'checkConfig template' do
     include_examples 'config validation',
                      success_description: 'when Redis is set to install with a single Redis instance',
                      error_description: 'when Redis is set to install with multiple Redis instances'
+  end
+
+  describe 'dependencyProxy.puma' do
+    let(:success_values) do
+      {
+        'global' => {
+          'appConfig' => {
+            'dependencyProxy' => { 'enabled' => true }
+          }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_values) do
+      {
+        'global' => {
+          'appConfig' => {
+            'dependencyProxy' => { 'enabled' => true }
+          }
+        },
+        'gitlab' => {
+          'webservice' => { 'webServer' => 'unicorn' }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_output) { 'You must be using the Puma webservice in order to use Dependency Proxy.' }
+
+    include_examples 'config validation',
+                     success_description: 'when dependencyProxy is enabled with a default install',
+                     error_description: 'when dependencyProxy is enabled with the unicorn webservice'
+  end
+
+  describe 'webserviceTermination' do
+    let(:success_values) do
+      {
+        'gitlab' => {
+          'webservice' => {
+            'deployment' => {
+              'terminationGracePeriodSeconds' => 50
+            },
+            'shutdown' => {
+              'blackoutSeconds' => 10
+            }
+          }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_values) do
+      {
+        'gitlab' => {
+          'webservice' => {
+            'deployment' => {
+              'terminationGracePeriodSeconds' => 5
+            },
+            'shutdown' => {
+              'blackoutSeconds' => 20
+            }
+          }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_output) { 'fail' }
+
+    include_examples 'config validation',
+                     success_description: 'when terminationGracePeriodSeconds is >= blackoutSeconds',
+                     error_description: 'when terminationGracePeriodSeconds is < blackoutSeconds'
   end
 end

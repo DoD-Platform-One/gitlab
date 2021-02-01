@@ -7,7 +7,11 @@ gitaly:
 {{- define "gitlab.appConfig.repositories" -}}
 repositories:
   storages: # You must have at least a `default` storage path.
+    {{- if $.Values.global.praefect.enabled }}
+    {{- include "gitlab.praefect.storages" . | nindent 4 }}
+    {{- else }}
     {{- include "gitlab.gitaly.storages" . | nindent 4 }}
+    {{- end }}
 {{- end -}}
 
 
@@ -21,6 +25,13 @@ incoming_email:
 service_desk_email:
   enabled: {{ eq .serviceDeskEmail.enabled true }}
   address: {{ .serviceDeskEmail.address | quote }}
+{{- end -}}
+
+{{- define "gitlab.appConfig.kas" -}}
+{{- if .Values.global.kas.enabled -}}
+gitlab_kas:
+  secret_file: /etc/gitlab/kas/.gitlab_kas_secret
+{{- end -}}
 {{- end -}}
 
 {{- define "gitlab.appConfig.shell" -}}
@@ -44,11 +55,11 @@ extra:
   {{ if .extra.googleAnalyticsId }}
   google_analytics_id: {{ .extra.googleAnalyticsId | quote }}
   {{- end }}
-  {{ if .extra.piwikUrl }}
-  piwik_url: {{ .extra.piwikUrl | quote }}
+  {{ if .extra.matomoUrl }}
+  matomo_url: {{ .extra.matomoUrl | quote }}
   {{- end }}
-  {{ if .extra.piwikSiteId }}
-  piwik_site_id: {{ .extra.piwikSiteId | quote }}
+  {{ if .extra.matomoSiteId }}
+  matomo_site_id: {{ .extra.matomoSiteId | quote }}
   {{- end }}
 {{- end -}}
 
@@ -56,7 +67,7 @@ extra:
 rack_attack:
   git_basic_auth:
     {{- if .Values.rack_attack.git_basic_auth.enabled }}
-  {{- toYaml .Values.rack_attack.git_basic_auth | nindent 2 }}
+    {{- toYaml .Values.rack_attack.git_basic_auth | nindent 4 }}
     {{- end }}
 {{- end -}}
 

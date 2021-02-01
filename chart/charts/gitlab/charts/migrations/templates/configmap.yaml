@@ -24,11 +24,14 @@ data:
     production: &base
       gitlab:
         host: {{ template "gitlab.gitlab.hostname" . }}
+        {{- if hasKey .Values.global.appConfig.initialDefaults "signupEnabled" }}
+        signup_enabled: {{ .Values.global.appConfig.initialDefaults.signupEnabled }}
+        {{- end }}
       {{- include "gitlab.appConfig.gitaly" . | nindent 6 }}
       {{- include "gitlab.appConfig.repositories" . | nindent 6 }}
       {{- include "gitlab.geo.config" $ | nindent 6 }}
   configure: |
-    {{- include "gitlab.scripts.configure.secrets" (dict "required" "postgres rails-secrets migrations gitaly") | nindent 4 -}}
+    {{- include "gitlab.scripts.configure.secrets" (dict "required" "rails-secrets migrations gitaly") | nindent 4 -}}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}
     {{- include "gitlab.geo.psql.ssl.initScript" . | nindent 4 }}
 {{- if .Values.global.operator.enabled }}

@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ template "registry.fullname" . }}
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
@@ -22,9 +22,18 @@ spec:
       labels:
         app: {{ template "name" . }}
         release: {{ .Release.Name }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        {{- if .Values.debug.prometheus.enabled }}
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_path: {{ .Values.debug.prometheus.path | quote }}
+        gitlab.com/prometheus_port: {{ .Values.debug.addr.port | quote }}
+        prometheus.io/scrape: "true"
+        prometheus.io/path: {{ .Values.debug.prometheus.path | quote }}
+        prometheus.io/port: {{ .Values.debug.addr.port | quote }}
+        {{- end }}
       {{- range $key, $value := .Values.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
@@ -60,6 +69,9 @@ spec:
                 matchLabels:
                   app: {{ template "name" . }}
                   release: {{ .Release.Name }}
+      {{- end }}
+      {{- if or $.Values.serviceAccount.enabled $.Values.global.serviceAccount.enabled }}
+      serviceAccountName: {{ include "registry.serviceAccount.name" $ }}
       {{- end }}
       initContainers:
         {{- include "gitlab.certificates.initContainer" . | nindent 8 }}
@@ -119,7 +131,7 @@ spec:
         projected:
           sources:
           - configMap:
-              name: {{ template "fullname" . }}
+              name: {{ template "registry.fullname" . }}
           - secret:
               name: {{ template "gitlab.registry.certificate.secret" . }}
               items:
@@ -144,6 +156,13 @@ spec:
                 - key: {{ .Values.storage.extraKey }}
                   path: storage/{{ .Values.storage.extraKey }}
                 {{- end }}
+          {{- end }}
+          {{- if .Values.profiling.stackdriver.credentials.secret }}
+          - secret:
+              name: {{ .Values.profiling.stackdriver.credentials.secret }}
+              items:
+                - key: {{ template "gitlab.registry.profiling.stackdriver.credentials.key" . }}
+                  path: profiling-key.json
           {{- end }}
           {{- include "registry.notifications.secrets" $ | nindent 10 }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}

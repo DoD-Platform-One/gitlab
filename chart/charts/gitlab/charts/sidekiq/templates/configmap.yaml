@@ -40,6 +40,9 @@ data:
         issue_closing_pattern: {{ .issueClosingPattern | quote }}
         default_theme: {{ .defaultTheme }}
         {{- include "gitlab.appConfig.defaultProjectsFeatures.configuration" $ | nindent 8 }}
+        {{- if hasKey .initialDefaults "signupEnabled" }}
+        signup_enabled: {{ .initialDefaults.signupEnabled }}
+        {{- end }}
         webhook_timeout: {{ .webhookTimeout }}
         {{- end }}
         trusted_proxies:
@@ -49,17 +52,32 @@ data:
         time_zone: {{ .Values.global.time_zone | quote }}
         {{- include "gitlab.outgoing_email_settings" . | indent 8 }}
       {{- with .Values.global.appConfig }}
-      {{- if eq .incomingEmail.enabled true }}
-      {{- include "gitlab.appConfig.incoming_email" . | nindent 6 }}
-      {{- end }}
-      {{- if eq .serviceDeskEmail.enabled true }}
-      {{- include "gitlab.appConfig.service_desk_email" . | nindent 6 }}
-      {{- end }}
+      {{-   if eq .incomingEmail.enabled true }}
+      {{-     include "gitlab.appConfig.incoming_email" . | nindent 6 }}
+      {{-   end }}
+      {{-   if eq .serviceDeskEmail.enabled true }}
+      {{-     include "gitlab.appConfig.service_desk_email" . | nindent 6 }}
+      {{-   end }}
+      {{-   include "gitlab.appConfig.cronJobs" . | nindent 6 }}
       gravatar:
         plain_url: {{ .gravatar.plainUrl }}
         ssl_url: {{ .gravatar.sslUrl }}
-      {{- include "gitlab.appConfig.cronJobs" . | nindent 6 }}
-      {{- include "gitlab.appConfig.extra" . | nindent 6 }}
+      {{-   include "gitlab.appConfig.extra" . | nindent 6 }}
+      {{- end }}
+
+      {{- if $.Values.global.appConfig.object_store.enabled }}
+      # Consolidated object storage configuration
+      ## property local configuration will override object_store
+      {{- include "gitlab.appConfig.objectStorage.configuration" (dict "name" "object_store" "config" $.Values.global.appConfig.object_store "context" $) | nindent 6 }}
+        objects:
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "artifacts" "config" $.Values.global.appConfig.artifacts) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "lfs" "config" $.Values.global.appConfig.lfs) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "uploads" "config" $.Values.global.appConfig.uploads) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "packages" "config" $.Values.global.appConfig.packages) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "external_diffs" "config" $.Values.global.appConfig.externalDiffs) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "terraform_state" "config" $.Values.global.appConfig.terraformState) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "dependency_proxy" "config" $.Values.global.appConfig.dependencyProxy) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 10 -}}
       {{- end }}
       {{- include "gitlab.appConfig.artifacts.configuration" (dict "config" $.Values.global.appConfig.artifacts "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.lfs.configuration" (dict "config" $.Values.global.appConfig.lfs "context" $) | nindent 6 }}
@@ -67,11 +85,11 @@ data:
       {{- include "gitlab.appConfig.packages.configuration" (dict "config" $.Values.global.appConfig.packages "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.external_diffs.configuration" (dict "config" $.Values.global.appConfig.externalDiffs "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.terraformState.configuration" (dict "config" $.Values.global.appConfig.terraformState "context" $) | nindent 6 }}
+      {{- include "gitlab.appConfig.dependencyProxy.configuration" (dict "config" $.Values.global.appConfig.dependencyProxy "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.pseudonymizer.configuration" $ | nindent 6 }}
       {{- include "gitlab.geo.config" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sentry.configuration" $ | nindent 6 }}
-      pages:
-        enabled: false
+      {{- include "gitlab.pages.config" $ | nindent 6 }}
       mattermost:
         enabled: false
       ## Registry Integration
@@ -86,6 +104,7 @@ data:
       {{- include "gitlab.appConfig.repositories" . | nindent 6 }}
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
+      {{- include "gitlab.appConfig.kas" . | nindent 6 }}
       {{- include "gitlab.appConfig.shell" . | nindent 6 }}
       workhorse:
       git:
@@ -103,7 +122,7 @@ data:
       sidekiq:
         log_format: {{ .Values.logging.format }}
   configure: |
-    {{- include "gitlab.scripts.configure.secrets" (dict "required" "gitaly registry postgres rails-secrets") | nindent 4 -}}
+    {{- include "gitlab.scripts.configure.secrets" (dict "required" "gitaly registry rails-secrets") | nindent 4 -}}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}
     {{- include "gitlab.geo.psql.ssl.initScript" . | nindent 4 }}
 # Leave this here - This line denotes end of block to the parser.

@@ -82,8 +82,7 @@ module Gitlab
     end
 
     def restore_from_backup
-      backup = ENV['BACKUP_TIMESTAMP'] || '0_12.10.8'
-      cmd = full_command("backup-utility --restore -t #{backup}")
+      cmd = full_command("backup-utility --restore -t original")
       stdout, status = Open3.capture2e(cmd)
 
       return [stdout, status]
@@ -103,8 +102,20 @@ module Gitlab
       return [stdout, status]
     end
 
-    def restart_unicorn
-      filters = 'app=unicorn'
+    def restart_webservice
+      filters = 'app=webservice'
+
+      if ENV['RELEASE_NAME']
+        filters="#{filters},release=#{ENV['RELEASE_NAME']}"
+      end
+
+      stdout, status = Open3.capture2e("kubectl delete pods -l #{filters} --wait=true")
+      return [stdout, status]
+    end
+
+    def restart_gitlab_runner
+      release = ENV['RELEASE_NAME'] || 'gitlab'
+      filters = "app=#{release}-gitlab-runner"
 
       if ENV['RELEASE_NAME']
         filters="#{filters},release=#{ENV['RELEASE_NAME']}"
@@ -116,7 +127,7 @@ module Gitlab
 
     def set_runner_token
       rails_dir = ENV['RAILS_DIR'] || '/srv/gitlab'
-      cmd = full_command("#{rails_dir}/bin/rails runner \"settings = ApplicationSetting.current_without_cache; settings.set_runners_registration_token('#{runner_registration_token}'); settings.save!\"")
+      cmd = full_command("#{rails_dir}/bin/rails runner \"settings = ApplicationSetting.current_without_cache; settings.set_runners_registration_token('#{runner_registration_token}'); settings.save!; Ci::Runner.delete_all\"")
 
       stdout, status = Open3.capture2e(cmd)
       return [stdout, status]
@@ -169,12 +180,12 @@ module Gitlab
 
     def ensure_backups_on_object_storage
       storage_url = 'https://storage.googleapis.com/gitlab-charts-ci/test-backups'
-      backup_file_names = ['12.10.8_gitlab_backup.tar']
+      backup_file_names = ["#{ENV['TEST_BACKUP_PREFIX']}_gitlab_backup.tar"]
       backup_file_names.each do |file_name|
         file = open("#{storage_url}/#{file_name}").read
         object_storage.put_object(
           bucket: 'gitlab-backups',
-          key: "0_#{file_name}",
+          key: 'original_gitlab_backup.tar',
           body: file
         )
         puts "Uploaded #{file_name}"

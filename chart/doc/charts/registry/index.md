@@ -29,7 +29,9 @@ A Kubernetes `Deployment` was chosen as the deployment method for this chart to 
 for simple scaling of instances, while allowing for
 [rolling updates](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/).
 
-This chart makes use of only two secrets:
+This chart makes use of two required secrets and one optional:
+
+### Required
 
 - `global.registry.certificate.secret`: A global secret that will contain the public
   certificate bundle to verify the authentication tokens provided by the associated
@@ -37,6 +39,17 @@ This chart makes use of only two secrets:
   on using GitLab as an auth endpoint.
 - `global.registry.httpSecret.secret`: A global secret that will contain the
   [shared secret](https://docs.docker.com/registry/configuration/#http) between registry pods.
+
+### Optional
+
+- `profiling.stackdriver.credentials.secret`: If stackdriver profiling is enabled and
+  you need to provide explicit service account credentials, then the value in this secret
+  (in the `credentials` key by default) is the GCP service account JSON credentials.
+  If you are using GKE and are providing service accounts to your workloads using
+  [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity)
+  (or node service accounts, although this is not recommended), then this secret is not required
+  and should not be supplied. In either case, the service account requires the role
+  `roles/cloudprofiler.agent` or equivalent [manual permissions](https://cloud.google.com/profiler/docs/iam#roles)
 
 ## Configuration
 
@@ -50,7 +63,7 @@ registry:
     readOnly:
       enabled: false
   image:
-    tag: 'v2.9.1-gitlab'
+    tag: 'v2.12.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -87,7 +100,7 @@ registry:
     enabled: false
     tls:
       enabled: true
-      serviceName: redis
+      secretName: redis
     annotations:
     proxyReadTimeout:
     proxyBodySize:
@@ -109,6 +122,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | Parameter                                  | Default                                      | Description                                                                                          |
 |--------------------------------------------|----------------------------------------------|------------------------------------------------------------------------------------------------------|
 | `annotations`                              |                                              | Pod annotations                                                                                      |
+| `podLabels`                                |                                              | Supplemental Pod labels. Will not be used for selectors.                                             |
 | `authAutoRedirect`                         | `true`                                       | Auth auto-redirect (must be true for Windows clients to work)                                        |
 | `authEndpoint`                             | `global.hosts.gitlab.name`                   | Auth endpoint (only host and port)                                                                   |
 | `certificate.secret`                       | `gitlab-registry`                            | JWT certificate                                                                                      |
@@ -126,12 +140,20 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                         |                                              | Pull policy for the registry image                                                                   |
 | `image.pullSecrets`                        |                                              | Secrets to use for image repository                                                                  |
 | `image.repository`                         | `registry`                                   | Registry image                                                                                       |
-| `image.tag`                                | `v2.9.1-gitlab`                              | Version of the image to use                                                                          |
+| `image.tag`                                | `v2.12.0-gitlab`                              | Version of the image to use                                                                          |
 | `init.image.repository`                    |                                              | initContainer image                                                                                  |
 | `init.image.tag`                           |                                              | initContainer image tag                                                                              |
-| `log`                                      | `{level: warn, fields: {service: registry}}` | Configure the logging options                                                                        |
+| `log`                                      | `{level: info, fields: {service: registry}}` | Configure the logging options                                                                        |
 | `minio.bucket`                             | `global.registry.bucket`                     | Legacy registry bucket name                                                                          |
 | `maintenance.readOnly.enabled`             | `false`                                      | Enable registry's read-only mode                                                                     |
+| `reporting.sentry.enabled`                 | `false`                                      | Enable reporting using Sentry                                                                        |
+| `reporting.sentry.dsn`                     |                                              | The Sentry DSN (Data Source Name)                                                                    |
+| `reporting.sentry.environment`             |                                              | The Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/)                 |
+| `profiling.stackdriver.enabled`            | `false`                                      | Enable continuous profiling using stackdriver                                                        |
+| `profiling.stackdriver.credentials.secret` | `gitlab-registry-profiling-creds`            | Name of the secret containing creds                                                                  |
+| `profiling.stackdriver.credentials.key`    | `credentials`                                | Secret key in which the creds are stored                                                             |
+| `profiling.stackdriver.service`            | `RELEASE-registry` (templated Service name)| Name of the stackdriver service to record profiles under                                             |
+| `profiling.stackdriver.projectid`          | GCP project where running                    | GCP project to report profiles to                                                                    |
 | `securityContext.fsGroup`                  | `1000`                                       | Group ID under which the pod should be started                                                       |
 | `securityContext.runAsUser`                | `1000`                                       | User ID under which the pod should be started                                                        |
 | `tokenService`                             | `container_registry`                         | JWT token service                                                                                    |
@@ -205,7 +227,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v2.9.1-gitlab'`
+- `tag: 'v2.12.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -469,10 +491,11 @@ If you chose to use the `filesystem` driver:
 For the sake of resiliency and simplicity, it is recommended to make use of an
 external service, such as `s3`, `gcs`, `azure` or other compatible Object Storage.
 
-NOTE: **Note:** The chart will populate `delete.enabled: true` into this configuration
-  by default if not specified by the user. This keeps expected behavior in line with
-  the default use of MinIO, as well as the Omnibus GitLab. Any user provided value
-  will supersede this default.
+NOTE:
+The chart will populate `delete.enabled: true` into this configuration
+by default if not specified by the user. This keeps expected behavior in line with
+the default use of MinIO, as well as the Omnibus GitLab. Any user provided value
+will supersede this default.
 
 ### debug
 
@@ -500,6 +523,32 @@ health:
     enabled: false
     interval: 10s
     threshold: 3
+```
+
+### reporting
+
+The `reporting` property is optional and enables [reporting](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#reporting)
+
+```yaml
+reporting:
+  sentry:
+    enabled: true
+    dsn: 'https://<key>@sentry.io/<project>'
+    environment: 'production'
+```
+
+### profiling
+
+The `profiling` property is optional and enables [continuous profiling](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#profiling)
+
+```yaml
+profiling:
+  stackdriver:
+    enabled: true
+    credentials:
+      secret: gitlab-registry-profiling-creds
+      key: credentials
+    service: gitlab-registry
 ```
 
 ## Garbage Collection

@@ -1,0 +1,5 @@
+---
+title: Support custom labels for Pods of GitLab components
+merge_request: 1457
+author: Maxence Laude
+type: added

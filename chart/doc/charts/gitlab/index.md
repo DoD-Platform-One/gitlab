@@ -6,13 +6,17 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # GitLab components sub-charts
 
-The following is the documentation list for the GitLab component service subcharts:
+Use the following list to learn more about the available GitLab component
+service sub-charts:
 
-- GitLab/[Gitaly](gitaly/index.md)
-- GitLab/[GitLab Exporter](gitlab-exporter/index.md)
-- GitLab/[GitLab Grafana](gitlab-grafana/index.md)
-- GitLab/[GitLab Runner](gitlab-runner/index.md)
-- GitLab/[GitLab Shell](gitlab-shell/index.md)
-- GitLab/[Migrations](migrations/index.md)
-- GitLab/[Sidekiq](sidekiq/index.md)
-- GitLab/[Webservice](webservice/index.md)
+- [Gitaly](gitaly/index.md)
+- [GitLab Exporter](gitlab-exporter/index.md)
+- [GitLab Grafana](gitlab-grafana/index.md)
+- [GitLab Runner](gitlab-runner/index.md)
+- [GitLab Shell](gitlab-shell/index.md)
+- [Kubernetes Agent Server (KAS)](kas/index.md)
+- [Migrations](migrations/index.md)
+- [Praefect](praefect/index.md)
+- [Sidekiq](sidekiq/index.md)
+- [Task Runner](task-runner/index.md)
+- [Webservice](webservice/index.md)

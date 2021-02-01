@@ -23,7 +23,7 @@ Follow the installation instructions for [Omnibus GitLab](https://about.gitlab.c
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be very explicit about what is enabled on this node, use the contents below.
 
-*Note*: This example is not intended to provide [PostgreSQL HA](https://docs.gitlab.com/ee/administration/high_availability/database.html).
+*Note*: This example is not intended to provide [PostgreSQL for scaling](https://docs.gitlab.com/ee/administration/postgresql/index.html).
 
 _**NOTE**: The values below should be replaced_
 
@@ -54,6 +54,7 @@ gitlab_rails['db_password'] = "DB_PASSSWORD"
 ## Disable everything else
 sidekiq['enable'] = false
 unicorn['enable'] = false
+puma['enable'] = false
 registry['enable'] = false
 gitaly['enable'] = false
 gitlab_workhorse['enable'] = false

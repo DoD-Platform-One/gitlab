@@ -17,7 +17,7 @@ data:
       - name: GitLab installed Prometheus
         type: prometheus
         orgId: 1
-        url: "http://{{ .Release.Name }}-prometheus-server"
+        url: "http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc"
         access: proxy
         isDefault: true
         editable: false

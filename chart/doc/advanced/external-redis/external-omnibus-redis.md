@@ -23,7 +23,7 @@ Follow the installation instructions for [Omnibus GitLab](https://about.gitlab.c
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be _very_ explicit about what is enabled on this node, use the contents below.
 
-*Note*: This example is not intended to provide [Redis HA](https://docs.gitlab.com/ee/administration/high_availability/redis.html#configuring-redis-ha).
+*Note*: This example is not intended to provide [Redis for scaling](https://docs.gitlab.com/ee/administration/redis/index.html).
 
 - `REDIS_PASSWORD` should be replaced with the value in the [`gitlab-redis` secret](../../installation/secrets.md#redis-password).
 

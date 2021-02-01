@@ -5,7 +5,7 @@ image:
   pullSecrets: []
   # pullPolicy: IfNotPresent
   # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee
-  # tag: latest
+  # tag: master
 
 init:
   image: {}
@@ -20,6 +20,9 @@ tolerations: []
 
 # Annotations for the job
 annotations: {}
+
+# Labels for the job
+podLabels: {}
 
 enabled: true
 initialRootPassword: {}
@@ -43,7 +46,7 @@ global:
     # port: '5432'
     # database: 'gitlabhq_production'
     # username: 'gitlab'
-    # pool: 1
+    # applicationName:
     # preparedStatements: false
     # password:
     #   secret: gitlab-postgres

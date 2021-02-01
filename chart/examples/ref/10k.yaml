@@ -1,0 +1,177 @@
+gitlab:
+  sidekiq:
+    hpa:
+      targetAverageValue: 700m
+    maxReplicas: 16
+    minReplicas: 12
+    nodeSelector:
+      workload: sidekiq
+    resources:
+      # Running up to 16 pods with a ratio of roughly 1 vCPU to 2 GB RAM as a starting point for requests.
+      # Per the 10k reference architecture (https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html),
+      # consider the resource limitations in play:
+      # For an n1-standard-4 node in GKE: 4 vCPU, 15 GB memory
+      # - 4 nodes x 4 vCPU = 16 cores in total
+      # - 4 nodes x 15 GB = 60GB of memory in total
+      # - 60GB memory / 16 cores = ~3.75 GB memory / core, excluding overhead
+      # Each Sidekiq node has the following resources allocatable (roughly):
+      # - cpu:    3920m
+      # - memory: 12698332Ki
+      # Notice that there is actually only <4 vCPU and <13GB memory allocatable.
+      limits:
+        memory: 5G
+      requests:
+        cpu: 900m # Assume single-process, 1 CPU
+        memory: 2G
+  task-runner:
+    backups:
+      # Below, GCS is used an example for the ObjectStorage section.
+      # All ObjectStorage options are documented here:
+      # https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#configure-the-object-storage
+      objectStorage:
+        backend: gcs
+        config:
+          gcpProject: example-gcp-projectname
+          key: gcs.json
+          secret: example-connection-secret
+  # n1-highcpu-32 in GKE is
+  # - cpu:    31850m
+  # - memory: 26041340Ki
+  webservice:
+    hpa:
+      targetAverageValue: 1.5
+    ingress:
+      proxyBodySize: 2048m # GPT uses large imports
+    maxReplicas: 28
+    maxUnavailable: 14
+    minReplicas: 28
+    nodeSelector:
+      workload: webservice
+    puma:
+      disableWorkerKiller: false
+      threads:
+        max: 10
+        min: 10
+      # `workerMaxMemory` below is configured based on .com:
+      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/8760#note_262243793
+      workerMaxMemory: 1324
+    resources:
+      limits:
+        memory: 3000M # roughly, 1.5GB/worker
+      requests:
+        cpu: 2 # requests.cpu <= workerProcesses
+        memory: 2500M # roughly, 1.25GB/worker
+    workerProcesses: 2
+    workhorse:
+      # The arguments below are documented in the gitlab-workhorse project:
+      # https://gitlab.com/gitlab-org/gitlab-workhorse/-/blob/master/doc/operations/configuration.md
+      extraArgs: -apiLimit 11 -apiQueueLimit 200 -apiQueueDuration 60s
+
+# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
+gitlab-runner:
+  install: false
+
+global:
+  appConfig:
+    # For context on the ObjectStorage configuration below, see:
+    # https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#configure-the-object-storage
+    object_store:
+      enabled: true
+      connection:
+        secret: example-storage-secret
+  gitaly:
+    authToken:
+      secret: example-gitaly-authtoken
+    enabled: false # Run Gitaly outside of cluster
+    external:
+    - hostname: default.gitaly.com
+      name: default
+    - hostname: storage1.gitaly.com
+      name: storage1
+    - hostname: storage2.gitaly.com
+      name: storage2
+  gitlab:
+    license:
+      secret: example-gitlab-license
+  grafana:
+    enabled: true
+  hosts:
+    domain: example.com
+  minio:
+    enabled: false
+  psql:
+    host: db.example.com
+    password:
+      secret: example-postgresql-secret
+    port: 6432
+  redis:
+    cache:
+      host: example-redis-cache-1
+      password:
+        key: password
+        secret: example-redis-secret
+      sentinels:
+      - host: cache.sentinel1.example.com
+      - host: cache.sentinel2.example.com
+      - host: cache.sentinel3.example.com
+    host: example-redis-queue-1
+    password:
+      key: password
+      secret: example-redis-secret
+    sentinels:
+    - host: sentinel1.example.com
+    - host: sentinel2.example.com
+    - host: sentinel3.example.com
+  registry:
+    bucket: example-registry-storage
+  shell:
+    authToken:
+      secret: example-shell-secret
+
+# Below, we use nodeSelectors to send certain
+# workloads to a node separate from the nodes
+# used for the Webservice and Sidekiq workloads.
+# This helps to ensure Webservice and Sidekiq have
+# sufficient resources to schedule enough pods to
+# meet the 10k reference architecture specifications.
+grafana:
+  nodeSelector:
+    workload: ""
+nginx-ingress:
+  controller:
+    nodeSelector:
+      workload: ""
+  defaultBackend:
+    nodeSelector:
+      workload: ""
+prometheus:
+  alertmanager:
+    nodeSelector:
+      workload: ""
+  install: true
+  kubeStateMetrics:
+    nodeSelector:
+      workload: ""
+  nodeExporter:
+    nodeSelector:
+      workload: ""
+  pushgateway:
+    nodeSelector:
+      workload: ""
+  server:
+    nodeSelector:
+      workload: ""
+
+# Run Redis outside of cluster
+redis:
+  install: false
+
+registry:
+  storage:
+    extraKey: gcs.json
+    key: registry-config
+    secret: gcs-secret-example
+
+# Database run outside of cluster
+postgresql:
+  install: false

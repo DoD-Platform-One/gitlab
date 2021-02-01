@@ -13,6 +13,10 @@
 {{- $minioSecret := include "gitlab.minio.credentials.secret" . -}}
 {{- $gitalySecret := include "gitlab.gitaly.authToken.secret" . -}}
 {{- $gitalyKey := include "gitlab.gitaly.authToken.key" . -}}
+{{- if $.Values.global.praefect.enabled -}}
+{{- $gitalySecret = include "gitlab.praefect.authToken.secret" . -}}
+{{- $gitalyKey = include "gitlab.praefect.authToken.key" . -}}
+{{- end -}}
 {{- $railsSecretName := include "gitlab.rails-secrets.secret" . -}}
 {{- $metricsEnabled := .Values.metrics.enabled -}}
 {{- $metricsPort := .Values.metrics.port -}}
@@ -58,6 +62,10 @@ spec:
         app: {{ $name }}
         release: {{ $releaseName }}
         queue-pod-name: {{ .name }}
+        {{- include "gitlab.podLabels" $ | nindent 8 -}}
+      {{- range $key, $value := .podLabels }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
       annotations:
         checksum/configmap: {{ $configMapChecksum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
@@ -186,6 +194,9 @@ spec:
               value: '/srv/gitlab/config'
             - name: SIDEKIQ_CLUSTER
               value: {{ include "gitlab.boolean.local" (dict "global" $.Values.cluster "local" .cluster "default" true) | quote }}
+            - name: SIDEKIQ_QUEUE_SELECTOR
+              value: {{ include "gitlab.boolean.local" (dict "global" $.Values.queueSelector "local" .queueSelector "default" false) | quote }}
+{{/* Remove with https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/646 */}}
             - name: SIDEKIQ_EXPERIMENTAL_QUEUE_SELECTOR
               value: {{ include "gitlab.boolean.local" (dict "global" $.Values.experimentalQueueSelector "local" .experimentalQueueSelector "default" false) | quote }}
             - name: SIDEKIQ_CONCURRENCY
@@ -198,18 +209,20 @@ spec:
               value: {{ default $.Values.negateQueues .negateQueues | quote }}
             - name: SIDEKIQ_DAEMON_MEMORY_KILLER
               value: {{ int $.Values.memoryKiller.daemonMode | quote }}
+            {{- with default $.Values.memoryKiller .memoryKiller }}
             - name: SIDEKIQ_MEMORY_KILLER_CHECK_INTERVAL
-              value: {{ int $.Values.memoryKiller.checkInterval | quote }}
+              value: {{ int .checkInterval | quote }}
             - name: SIDEKIQ_MEMORY_KILLER_MAX_RSS
-              value: {{ int $.Values.memoryKiller.maxRss | quote }}
-            {{- if $.Values.memoryKiller.hardLimitRss }}
+              value: {{ int .maxRss | quote }}
+            {{- if .hardLimitRss }}
             - name: SIDEKIQ_MEMORY_KILLER_HARD_LIMIT_RSS
-              value: {{ int $.Values.memoryKiller.hardLimitRss | quote }}
+              value: {{ int .hardLimitRss | quote }}
             {{- end }}
             - name: SIDEKIQ_MEMORY_KILLER_GRACE_TIME
-              value: {{ int $.Values.memoryKiller.graceTime | quote }}
+              value: {{ int .graceTime | quote }}
             - name: SIDEKIQ_MEMORY_KILLER_SHUTDOWN_WAIT
-              value: {{ int $.Values.memoryKiller.shutdownWait | quote }}
+              value: {{ int .shutdownWait | quote }}
+            {{- end }}
             {{- if $.Values.global.rails.bootsnap.enabled }}
             - name: ENABLE_BOOTSNAP
               value: "1"
@@ -309,11 +322,7 @@ spec:
                 - key: {{ $gitalyKey }}
                   path: gitaly/gitaly_token
           {{- include "gitlab.redis.secrets" $ | nindent 10 }}
-          - secret:
-              name: {{ template "gitlab.psql.password.secret" $ }}
-              items:
-                - key: {{ template "gitlab.psql.password.key" $ }}
-                  path: postgres/psql-password
+          {{- include "gitlab.psql.secret" $ | nindent 10 }}
           {{- if include "gitlab.geo.secondary" $ }}
           - secret:
               name: {{ template "gitlab.geo.psql.password.secret" $ }}
@@ -326,13 +335,18 @@ spec:
               items:
                 - key: registry-auth.key
                   path: registry/gitlab-registry.key
+          {{- include "gitlab.pages.mountSecrets" $ | nindent 10 }}
+          {{- include "gitlab.kas.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.minio.mountSecrets" $ | nindent 10 }}
+          {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "object_store" "config" $.Values.global.appConfig.object_store) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "lfs" "config" $.Values.global.appConfig.lfs) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "artifacts" "config" $.Values.global.appConfig.artifacts) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "uploads" "config" $.Values.global.appConfig.uploads) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "packages" "config" $.Values.global.appConfig.packages) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "external_diffs" "config" $.Values.global.appConfig.externalDiffs) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "terraform_state" "config" $.Values.global.appConfig.terraformState) | nindent 10 }}
+          {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "dependency_proxy" "config" $.Values.global.appConfig.dependencyProxy) | nindent 10 }}
+          {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 10 }}
           {{- include "gitlab.appConfig.pseudonymizer.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.appConfig.ldap.servers.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.appConfig.omniauth.mountSecrets" $ | nindent 10 }}

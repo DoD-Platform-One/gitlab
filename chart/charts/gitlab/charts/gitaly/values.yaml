@@ -9,6 +9,7 @@ global:
       names: ["default"]
     external: []
     authToken: {}
+    hooks: {}
   # serviceName:
   # imagePullPolicy: IfNotPresent
   redis:
@@ -22,16 +23,12 @@ image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitaly
   pullSecrets: []
   # pullPolicy: IfNotPresent
-  # tag: latest
+  # tag: master
 service:
-  name: gitaly
-  type: ClusterIP
-  externalPort: 8075
-  internalPort: 8075
-  tls:
-    externalPort: 8076
-    internalPort: 8076
+  tls: {}
 annotations: {}
+podLabels: {}
+serviceLabels: {}
 
 init:
   image: {}
@@ -63,9 +60,9 @@ ruby: {}
 prometheus: {}
   # grpcLatencyBuckets: "[1.0, 1.5, 2.0, 2.5]"
 
-workhorse:
+workhorse: {}
   # by default, Workhorse is a part of the Webservice Pods / Service
-  serviceName: webservice
+  # scheme: 'http'
   # host: '0.0.0.0'
   # serviceName: 'webservice'
   # port: 8181
@@ -140,4 +137,4 @@ serviceAccount:
   create: false
   annotations: {}
   ## Name to be used for serviceAccount, otherwise defaults to chart fullname
-  # name: 
+  # name:

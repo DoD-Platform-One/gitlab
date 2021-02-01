@@ -5,7 +5,7 @@ image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter
   pullSecrets: []
   # pullPolicy: IfNotPresent
-  # tag: latest
+  # tag: master
 
 service:
   name: gitlab-exporter
@@ -17,14 +17,19 @@ metrics:
   enabled: true
   port: 9168
   annotations:
+    gitlab.com/prometheus_scrape: "true"
+    gitlab.com/prometheus_port: "9168"
+    gitlab.com/prometheus_path: "/metrics"
     prometheus.io/scrape: "true"
     prometheus.io/port: "9168"
     prometheus.io/path: "/metrics"
-
 enabled: true
 
 # Tolerations for pod scheduling
 tolerations: []
+
+podLabels: {}
+serviceLabels: {}
 
 init:
   image: {}
@@ -43,7 +48,7 @@ redis:
   password: {}
 
 psql: {}
-  # port: 5432 
+  # port: 5432
 
 resources:
   # limits:
@@ -64,5 +69,5 @@ serviceAccount:
   create: false
   annotations: {}
   ## Name to be used for serviceAccount, otherwise defaults to chart fullname
-  # name: 
-  
+  # name:
+
