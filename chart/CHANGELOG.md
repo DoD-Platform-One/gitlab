@@ -2,6 +2,41 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 4.8.0 (2021-01-22)
+
+### Fixed (2 changes, 1 of them is from the community)
+
+- Add --subnetwork flag to the GKE bootstrap script. !1737 (rhassanein)
+- Fix spelling and logic for Gitaly hook volumes. !1747
+
+### Changed (6 changes)
+
+- Support multiple virtual_storages in Praefect. !1618
+- Update gitlab-container-registry to v2.13.0-gitlab. !1723
+- Adds common labels for GitLab Sidekiq Chart. !1727
+- Adds common labels for GitLab Exporter. !1743
+- Bump gitlab-exporter to v8.0.0. !1745
+- Bump Container Registry to v2.13.1-gitlab. !1755
+
+### Added (7 changes, 2 of them are from the community)
+
+- Support override of exposed hostname for grafana and webservice Ingress. !1621 (Louis Baumann)
+- Add GitLab Pages chart. !1677
+- Adds common labels across all objects for GitLab Shell's chart. !1707
+- Allow configurable service type for webservice. !1726
+- Add support for custom domains in GitLab Pages. !1728
+- Add tolerations for minio create bucket job. !1744 (David ALEXANDRE)
+- Add upgrade survey link to upgrade output. !1762
+
+
+## 4.7.4 (2021-01-13)
+
+- No changes.
+
+## 4.7.3 (2021-01-08)
+
+- No changes.
+
 ## 4.7.2 (2021-01-07)
 
 ### Fixed (1 change)
@@ -53,6 +88,14 @@ entry.
 - Changes the default loglevel for registry to info. !1703
 
 
+## 4.6.5 (2021-01-13)
+
+- No changes.
+
+## 4.6.4 (2021-01-07)
+
+- No changes.
+
 ## 4.6.3 (2020-12-10)
 
 ### Changed (1 change, 1 of them is from the community)
@@ -102,6 +145,14 @@ entry.
 - Update resource specifications for Webservice and Sidekiq. !1634
 - Set release_package to run manually. !1641
 
+
+## 4.5.7 (2021-01-13)
+
+- No changes.
+
+## 4.5.6 (2021-01-07)
+
+- No changes.
 
 ## 4.5.5 (2020-12-07)
 
@@ -208,6 +259,7 @@ entry.
 ### Fixed (1 change)
 
 - Moves GITLAB_WORKHORSE_SENTRY_DSN to the workhorse container. !1543
+- Fix dependency proxy object storage config. !1531 (Maikel Vlasman)
 
 ### Changed (7 changes, 1 of them is from the community)
 
@@ -337,6 +389,7 @@ entry.
 - Support consolidated object storage configuration. !1479
 - Adds NetworkPolicy object for the Webservice. !1491
 - Workhorse: support configuring logFormat, default JSON. !1497
+- Support custom labels for Pods of GitLab components !1457 (Maxence Laude)
 
 ### Other (1 change)
 
@@ -836,6 +889,7 @@ entry.
 - Add option for using Sidekiq Cluster to start Sidekiq. !1247
 - Add optional `priorityClassName` configuration value to Gitaly chart. !1282 (Theo Meneau)
 - Support configuration of multiple Redis instances. !1287
+- Minio: Adds podLabels and podAnnotations to chart. !1264 (Kavanaugh Latiolais)
 
 ### Other (1 change)
 

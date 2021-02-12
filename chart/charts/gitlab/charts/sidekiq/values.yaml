@@ -24,6 +24,8 @@ queueSelector: false
 
 annotations: {}
 podLabels: {}
+common:
+  labels: {}
 
 logging:
   # set to "json" for json

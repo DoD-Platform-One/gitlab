@@ -43,4 +43,3 @@ dependencies:
   condition: nginx-ingress.enabled
   version: '*.*.*'
   repository: file://./charts/nginx-ingress
-

@@ -1,5 +1,0 @@
----
-title: "Fix dependency proxy object storage config."
-merge_request: 1531
-author: Maikel Vlasman
-type: fixed

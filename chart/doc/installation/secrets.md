@@ -13,6 +13,7 @@ GitLab Components:
 - Registry authentication certificates
 - SSH Host Keys and Certificates for GitLab Shell
 - Passwords for individual GitLab services
+- TLS certificate for GitLab Pages
 
 Optional External Services:
 

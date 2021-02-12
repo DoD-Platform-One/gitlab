@@ -35,7 +35,7 @@ This means in order to make changes, we need to delete the [PersistentVolumeClai
 and create a new one with our changes. But due to the default [reclaimPolicy](https://kubernetes.io/docs/concepts/storage/storage-classes/#reclaim-policy),
 deleting the [PersistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) may delete the [PersistentVolumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes)
 and underlying disk. And unless configured with appropriate volumeNames and/or
-labelSelectors, the chart won't know the volume to attach to.
+labelSelectors, the chart doesn't know the volume to attach to.
 
 We will continue to look into making this process easier, but for now a manual
 process needs to be followed to make changes to your storage.
@@ -51,7 +51,7 @@ kubectl --namespace <namespace> get PersistentVolumeClaims -l release=<chart rel
 - `<namespace>` should be replaced with the namespace where you installed the GitLab chart.
 - `<chart release name>` should be replaced with the name you used to install the GitLab chart.
 
-The command will print a list of the volume names, followed by the name of the
+The command prints a list of the volume names, followed by the name of the
 service they are for.
 
 For example:

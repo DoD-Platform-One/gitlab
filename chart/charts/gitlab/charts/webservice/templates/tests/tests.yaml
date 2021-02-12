@@ -14,12 +14,12 @@ data:
 
     signin_url="$endpoint/users/sign_in"
     echo "Login to create a session: $signin_url"
-    csrf=$(curl $signin_url --fail -s $cookie_read | grep -Po '<meta.*name="csrf-token".*content="\K[a-zA-Z0-9\+=\-\/]*')
-    curl --fail -X POST $signin_url -s $cookie_readwrite -F "authenticity_token=$csrf" -F 'user[login]=root' -F "user[password]=$(cat /initial_root_password)"
+    csrf=$(curl -L $signin_url --fail -s $cookie_read | grep -Po '<meta.*name="csrf-token".*content="\K[a-zA-Z0-9\+=\-\/]*')
+    curl -X POST $signin_url -s $cookie_readwrite -F "authenticity_token=$csrf" -F 'user[login]=root' -F "user[password]=$(cat /initial_root_password)"
 
     profile_url="$endpoint/profile"
     echo "Confirm session valid: $profile_url"
-    profile_status=$(curl -s -o /tmp/profile_output -w "%{http_code}" $cookie_readwrite $profile_url)
+    profile_status=$(curl -L -s -o /tmp/profile_output -w "%{http_code}" $cookie_readwrite $profile_url)
 
     if [ "$profile_status" != "200" ]; then
       echo "Error: Session Invalid"

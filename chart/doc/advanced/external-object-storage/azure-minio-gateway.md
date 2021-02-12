@@ -74,8 +74,8 @@ Lastly, we need to set up the startup command and create environment variables t
 ```shell
 az webapp config appsettings set \
     --settings "MINIO_ACCESS_KEY=gitlab-azure-minio-storage" "MINIO_SECRET_KEY=h0tSyeTebs+..." "PORT=9000" \
-    --name "aleminio" \
-    --resource-group "Minio"
+    --name "gitlab-minio-app" \
+    --resource-group "gitlab-azure-minio"
 
 # Startup command
 az webapp config set \

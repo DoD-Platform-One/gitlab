@@ -2,7 +2,7 @@
 
 {{- define "gitlab.certificates.initContainer" -}}
 {{- $customCAsEnabled := .Values.global.certificates.customCAs }}
-{{- $internalGitalyTLSEnabled := and $.Values.global.gitaly.tls.enabled $.Values.global.gitaly.tls.secretName }}
+{{- $internalGitalyTLSEnabled := $.Values.global.gitaly.tls.enabled }}
 {{- $internalPraefectTLSEnabled := and $.Values.global.praefect.tls.enabled $.Values.global.praefect.tls.secretName }}
 {{- $certmanagerDisabled := not (or $.Values.global.ingress.configureCertmanager $.Values.global.ingress.tls) }}
 - name: certificates
@@ -25,7 +25,7 @@
 
 {{- define "gitlab.certificates.volumes" -}}
 {{- $customCAsEnabled := .Values.global.certificates.customCAs }}
-{{- $internalGitalyTLSEnabled := and $.Values.global.gitaly.tls.enabled $.Values.global.gitaly.tls.secretName }}
+{{- $internalGitalyTLSEnabled := $.Values.global.gitaly.tls.enabled }}
 {{- $internalPraefectTLSEnabled := and $.Values.global.praefect.tls.enabled $.Values.global.praefect.tls.secretName }}
 {{- $certmanagerDisabled := not (or $.Values.global.ingress.configureCertmanager $.Values.global.ingress.tls) }}
 - name: etc-ssl-certs
@@ -46,11 +46,21 @@
         name: {{ template "gitlab.wildcard-self-signed-cert-name" $ }}-ca
     {{- end }}
     {{- if $internalGitalyTLSEnabled }}
+    {{-   if $.Values.global.praefect.enabled }}
+    {{-     range $vs := $.Values.global.praefect.virtualStorages }}
+    - secret:
+        name: {{ $vs.tlsSecretName }}
+        items:
+        - key: "tls.crt"
+          path: "gitaly-{{ $vs.name }}-tls.crt"
+    {{-     end }}
+    {{-   else }}
     - secret:
         name: {{ template "gitlab.gitaly.tls.secret" $ }}
         items:
           - key: "tls.crt"
             path: "gitaly-internal-tls.crt"
+    {{-   end }}
     {{- end }}
     {{- if $internalPraefectTLSEnabled }}
     - secret:

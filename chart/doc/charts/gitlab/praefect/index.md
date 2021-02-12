@@ -10,7 +10,6 @@ The Praefect chart is used to manage a [Gitaly cluster](https://docs.gitlab.com/
 
 ## Known Limitations
 
-1. Only a managed, `default` [virtual storage](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2307) is supported.
 1. The database has to be [manually created](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2310).
 1. [Migrating from an existing Gitaly setup](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2311) to Praefect is not supported.
 
@@ -26,7 +25,67 @@ By default, this chart will create 3 Gitaly Replicas.
 
 The chart is disabled by default. To enable it as part of a chart deploy set `global.praefect.enabled=true`.
 
-The default number of replicas to deploy is 3. This can be changed by setting `global.praefect.gitalyReplicas` to the desired number of replicas.
+### Replicas
+
+The default number of replicas to deploy is 3. This can be changed by setting `global.praefect.virtualStorages[].gitalyReplicas` with the desired number of replicas. For example:
+
+```yaml
+global:
+  praefect:
+    enabled: true
+    virtualStorages:
+    - name: default
+      gitalyReplicas: 4
+      maxUnavailable: 1
+```
+
+### Multiple virtual storages
+
+Multiple virtual storages can be configured (see [Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) documentation). For example:
+
+```yaml
+global:
+  praefect:
+    enabled: true
+    virtualStorages:
+    - name: default
+      gitalyReplicas: 4
+      maxUnavailable: 1
+    - name: vs2
+      gitalyReplicas: 5
+      maxUnavailable: 2
+```
+
+This will create two sets of resources for Gitaly. This includes two Gitaly StatefulSets (one per virtual storage).
+
+Administrators can then [choose where new repositories are stored](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-repositories-are-stored).
+
+### Persistence
+
+It is possible to provide persistence configuration per virtual storage.
+
+```yaml
+global:
+  praefect:
+    enabled: true
+    virtualStorages:
+    - name: default
+      gitalyReplicas: 4
+      maxUnavailable: 1
+      persistence:
+        enabled: true
+        size: 50Gi
+        accessMode: ReadWriteOnce
+        storageClass: storageclass1
+    - name: vs2
+      gitalyReplicas: 5
+      maxUnavailable: 2
+      persistence:
+        enabled: true
+        size: 100Gi
+        accessMode: ReadWriteOnce
+        storageClass: storageclass2
+```
 
 ### Creating the database
 
@@ -104,6 +163,29 @@ Users can use or refer that script to generate certificates with proper SAN attr
    ```
 
 1. Redeploy the Helm chart by passing the additional arguments `--set global.praefect.tls.enabled=true --set global.praefect.tls.secretName=<secret name>`
+
+When running Gitaly over TLS, a secret name must be provided for each virtual storage.
+
+```yaml
+global:
+  gitaly:
+    tls:
+      enabled: true
+  praefect:
+    enabled: true
+    tls:
+      enabled: true
+      secretName: praefect-tls
+    virtualStorages:
+    - name: default
+      gitalyReplicas: 4
+      maxUnavailable: 1
+      tlsSecretName: default-tls
+    - name: vs2
+      gitalyReplicas: 5
+      maxUnavailable: 2
+      tlsSecretName: vs2-tls
+```
 
 ### Installation command line options
 

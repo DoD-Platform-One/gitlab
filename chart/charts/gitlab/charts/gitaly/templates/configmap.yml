@@ -42,14 +42,30 @@ data:
     {{- end }}
 
     <% @storages = [ {{ include "gitlab.gitaly.storageNames" . }}  ] %>
+
+    {{- if $.Values.global.praefect.enabled }}
+
+    <% @hostname=ENV['HOSTNAME'].strip %>
+    <% if @storages.any? { |s| s.include?(@hostname) } %>
+    [[storage]]
+    name = "<%= @hostname %>"
+    path = "/home/git/repositories"
+    <% else %>
+    <% raise Exception, "Storage for node #{@hostname} is not present in the storageNames array. Did you use kubectl to scale up? You need to solely use helm for this purpose." %>
+    <% end %>
+
+    {{- else }}
+
     <% @index=`echo ${HOSTNAME##*-}`.to_i %>
     <% if @storages.length > @index %>
     [[storage]]
     name = "<%= @storages[@index] %>"
     path = "/home/git/repositories"
     <% else %>
-    <% raise Exception, "Storage for node #{@index} is not present in the storageNames array. Did you use kubectl to scale up ? You need to solely use helm for this purpose" %>
+    <% raise Exception, "Storage for node #{@index} is not present in the storageNames array. Did you use kubectl to scale up? You need to solely use helm for this purpose." %>
     <% end %>
+
+    {{- end }}
 
     [logging]
     {{- with .Values.logging }}

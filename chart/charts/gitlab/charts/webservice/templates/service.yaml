@@ -26,7 +26,16 @@ metadata:
     {{-   toYaml .service.annotations | nindent 4 }}
     {{- end }}
 spec:
-  type: {{ $.Values.service.type }}
+  type: {{ .service.type }}
+  {{- if (and (eq .service.type "LoadBalancer") (not (empty .service.loadBalancerIP))) }}
+  loadBalancerIP: {{ .service.loadBalancerIP }}
+  {{- end }}
+  {{- if (and (eq .service.type "LoadBalancer") (not (empty .service.loadBalancerSourceRanges))) }}
+  loadBalancerSourceRanges:
+    {{- range .service.loadBalancerSourceRanges }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
   ports:
     - port: {{ $.Values.service.externalPort }}
       targetPort: {{ $.Values.service.internalPort }}

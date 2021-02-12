@@ -11,7 +11,7 @@ versions of its images, allowing you to replace standard images with UBI-based
 images. These images use the same tag as standard images with `-ubi8` extension.
 
 The GitLab Chart uses third-party images that are not based on UBI. These images
-are mostly offer external services to GitLab, such as Redis, PostgreSQL, etc.
+are mostly offer external services to GitLab, such as Redis, PostgreSQL, and so on.
 If you wish to deploy a GitLab instance that purely based on UBI you must
 disable the internal services, and use external deployments or services.
 

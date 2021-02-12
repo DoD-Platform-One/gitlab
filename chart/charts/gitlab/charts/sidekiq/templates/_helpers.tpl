@@ -1,3 +1,5 @@
+{{/* vim: set filetype=mustache: */}}
+
 {{/*
 Returns the extraEnv keys and values to inject into containers. Allows
 pod-level values for extraEnv.

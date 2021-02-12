@@ -17,6 +17,8 @@
 ## The global properties are used to configure multiple charts at once.
 ## Extended documentation at doc/charts/globals.md
 global:
+  common:
+    labels: {}
   ## GitLab operator is Alpha. Not for production use.
   operator:
     enabled: false
@@ -49,7 +51,7 @@ global:
     https: true
     externalIP:
     ssh: ~
-    gitlab:
+    gitlab: 
       name: gitlab.bigbang.dev
     minio: {}
     registry:
@@ -57,12 +59,13 @@ global:
     tls: {}
     smartcard: {}
     kas: {}
+    pages: {}
 
   ## doc/charts/globals.md#configure-ingress-settings
   ingress:
     configureCertmanager: false
     annotations: {}
-    enabled: true
+    enabled: false
     tls: {}
     #   enabled: true
     #   secretName:
@@ -135,8 +138,11 @@ global:
     enabled: false
     authToken: {}
     autoMigrate: true
-    gitalyReplicas: 3
     dbSecret: {}
+    virtualStorages:
+      - name: default
+        gitalyReplicas: 3
+        maxUnavailable: 1
     psql:
       sslMode: 'disable'
     # serviceName:
@@ -490,12 +496,12 @@ global:
     path:
     host:
     port:
-    https: false
-    externalHttp: false
-    externalHttps: false
-    artifactsServer: false
+    https: # default true
+    externalHttp: []
+    externalHttps: []
+    artifactsServer: true
     objectStore:
-      enabled: false
+      enabled: true
       bucket: gitlab-pages
       # proxy_download: true
       connection: {}
@@ -576,8 +582,8 @@ global:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
       tag: 1.4.1
-      # pullSecrets:
-      # - name: private-registry
+      pullSecrets:
+      - name: private-registry
     customCAs: []
     # - secret: custom-CA
     # - secret: more-custom-CAs
@@ -586,9 +592,9 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
     securityContext:
       # in most base images, this is `nobody:nogroup`
       runAsUser: 65534
@@ -851,14 +857,14 @@ redis:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
       tag: 1.6.1
-      # pullSecrets: 
-      # - private-registry
+      pullSecrets: 
+      - private-registry
   image:
     registry: registry1.dso.mil/ironbank/opensource
     repository: redis/redis5
     tag: 5.0.9
-    # pullSecrets: 
-    # - private-registry
+    pullSecrets: 
+    - private-registry
   master:
     command: "redis-server"
   slave:
@@ -900,9 +906,9 @@ registry:
   host: "registry.bigbang.dev"
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 13.7.2
-    # pullSecrets:
-    # - name: private-registry 
+    tag: 13.8.0
+    pullSecrets:
+    - name: private-registry 
 
 
 ## Automatic shared secret generation
@@ -914,8 +920,8 @@ shared-secrets:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
       tag: 1.4.1
-      # pullSecrets:
-      # - name: private-registry
+      pullSecrets:
+      - name: private-registry
   rbac:
     create: true
 
@@ -993,15 +999,15 @@ gitlab:
         app: 'gitaly'
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
   gitlab-exporter:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
       metrics:
         enabled: true
         port: 9168
@@ -1013,55 +1019,62 @@ gitlab:
           prometheus.io/port: "9168"
           prometheus.io/path: "/metrics"
       enabled: true
-  gitlab-shell:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
-  sidekiq:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
-  webservice:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
-    workhorse:
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
-  gitaly:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry
+## doc/charts/gitlab/migrations
   migrations:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.7.2
-      # pullSecrets:
-      # - name: private-registry 
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry 
+## doc/charts/gitlab/webservice
+  webservice:
+    image:
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
+    workhorse:
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
+## doc/charts/gitlab/sidekiq
+  sidekiq:
+    image:
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
+## doc/charts/gitlab/gitaly
+  gitaly:
+    image:
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
+## doc/charts/gitlab/gitlab-shell
+  gitlab-shell:
+    image:
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
+      tag: 13.8.0
+      pullSecrets:
+      - name: private-registry
+## doc/charts/gitlab/gitlab-grafana
+#   gitlab-grafana:
 
 # use Ironbank hardened images for MinIO
 minio:
   image: registry1.dso.mil/ironbank/opensource/minio/minio
   imageTag: RELEASE.2020-11-19T23-48-16Z
-  # pullSecrets:
-  # - name: private-registry
+  pullSecrets:
+  - name: private-registry
   minioMc:
     # the MinIO sub-chart config script was modified to work with newer mc version in IronBank image
     #   chart/charts/minio/templates/_helper_create_buckets.sh
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET 
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2020-10-03T02-54-56Z
+    tag: RELEASE.2021-02-07T02-02-05Z
 
 # Big Bang Additions
 hostname: bigbang.dev
