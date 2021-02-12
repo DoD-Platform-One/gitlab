@@ -66,22 +66,26 @@ data:
     {{- end }}
     {{- end }}
 
-    [[virtual_storage]]
-    name = 'default'
-    {{- $serviceName := include "gitlab.gitaly.serviceName" . -}}
     {{- $scheme := "tcp" -}}
-    {{- $port := include "gitlab.gitaly.internalPort" . -}}
+    {{- $port := include "gitlab.gitaly.internalPort" $ -}}
     {{- if $.Values.global.gitaly.tls.enabled -}}
     {{-   $scheme = "tls" -}}
-    {{-   $port = include "gitlab.gitaly.tls.internalPort" . -}}
+    {{-   $port = include "gitlab.gitaly.tls.internalPort" $ -}}
     {{- end -}}
-    {{- range compact (include "gitlab.praefect.gitalyPodNames" . | splitList "," ) }}
+    {{- $globalContext := $ }}
+    {{ range $.Values.global.praefect.virtualStorages }}
+    {{- $storageName := .name }}
+    [[virtual_storage]]
+    name = '{{ $storageName }}'
+    {{- range until (.gitalyReplicas | int) }}
     [[virtual_storage.node]]
-    storage = '{{ . }}'
-    address = '{{ $scheme }}://{{ . }}.{{ $serviceName }}.{{ $.Release.Namespace }}.svc:{{ $port }}'
+    {{- $serviceName := include "gitlab.praefect.gitaly.serviceName" (dict "context" $globalContext "name" $storageName) -}}
+    {{- $podAddress := include "gitlab.praefect.gitaly.qualifiedServiceName" (dict "context" $globalContext "index" . "name" $storageName) }}
+    storage = '{{ $serviceName }}-{{ . }}'
+    address = '{{ printf "%s://%s.%s.svc:%s" $scheme $podAddress $globalContext.Release.Namespace $port }}'
     token = "<%= gitaly_token %>"
-
     {{- end }}
+    {{ end }}
 
     [database]
     host = '{{ template "gitlab.praefect.psql.host" . }}'

@@ -29,6 +29,8 @@ enabled: true
 tolerations: []
 
 podLabels: {}
+common:
+  labels: {}
 serviceLabels: {}
 
 init:

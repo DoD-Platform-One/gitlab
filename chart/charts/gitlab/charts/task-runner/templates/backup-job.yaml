@@ -180,6 +180,7 @@ spec:
                       - key: {{ default "config" .Values.backups.objectStorage.config.key }}
                         path: objectstorage/{{ default "config" .Values.backups.objectStorage.config.key }}
                 {{- end }}
+                {{- include "gitlab.pages.mountSecrets" $ | nindent 16 }}
                 {{- include "gitlab.minio.mountSecrets" $ | nindent 16 }}
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "object_store" "config" $.Values.global.appConfig.object_store) | nindent 16 }}
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "artifacts" "config" $.Values.global.appConfig.artifacts) | nindent 16 }}
@@ -189,6 +190,7 @@ spec:
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "external_diffs" "config" $.Values.global.appConfig.externalDiffs) | nindent 16 }}
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "terraform_state" "config" $.Values.global.appConfig.terraformState) | nindent 16 }}
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "dependency_proxy" "config" $.Values.global.appConfig.dependencyProxy) | nindent 16 }}
+                {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 16 }}
                 {{- include "gitlab.appConfig.pseudonymizer.mountSecrets" $ | nindent 16 }}
                 {{- include "gitlab.appConfig.ldap.servers.mountSecrets" $ | nindent 16 }}
                 {{- include "gitlab.appConfig.omniauth.mountSecrets" $ | nindent 16 }}

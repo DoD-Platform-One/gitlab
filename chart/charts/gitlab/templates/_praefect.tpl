@@ -2,15 +2,17 @@
 Return the default praefect storage line for gitlab.yml
 */}}
 {{- define "gitlab.praefect.storages" -}}
-default:
-  path: /var/opt/gitlab/repo
 {{- $scheme := "tcp" -}}
 {{- $port := include "gitlab.praefect.externalPort" $ -}}
 {{- if $.Values.global.praefect.tls.enabled -}}
 {{- $scheme = "tls" -}}
 {{- $port = include "gitlab.praefect.tls.externalPort" $ -}}
 {{- end }}
-  gitaly_address: {{ printf "%s" $scheme }}://{{ template "gitlab.praefect.serviceName" $ }}.{{.Release.Namespace}}.svc:{{ $port }}
+{{- range $.Values.global.praefect.virtualStorages }}
+{{ .name }}:
+  path: /var/opt/gitlab/repo
+  gitaly_address: {{ printf "%s" $scheme }}://{{ template "gitlab.praefect.serviceName" $ }}.{{$.Release.Namespace}}.svc:{{ $port }}
+{{- end }}
 {{- end -}}
 
 {{/*
@@ -21,8 +23,28 @@ Return the resolvable name of the praefect service
 {{- end -}}
 
 {{/*
-Return a list of Gitaly pod names
+Return the service name for Gitaly when Praefect is enabled
+
+Call:
+
+```
+include "gitlab.praefect.gitaly.serviceName" (dict "context" $ "name" .name)
+```
 */}}
-{{- define "gitlab.praefect.gitalyPodNames" -}}
-{{ range until ($.Values.global.praefect.gitalyReplicas | int) }}{{ printf "%s-gitaly-%d" $.Release.Name . }},{{- end}}
+{{- define "gitlab.praefect.gitaly.serviceName" -}}
+{{ include "gitlab.gitaly.serviceName" .context }}-{{ .name }}
+{{- end -}}
+
+{{/*
+Return the qualified service name for a given Gitaly pod.
+
+Call:
+
+```
+include "gitlab.praefect.gitaly.qualifiedServiceName" (dict "context" $ "index" $i "name" .name)
+```
+*/}}
+{{- define "gitlab.praefect.gitaly.qualifiedServiceName" -}}
+{{- $name := include "gitlab.praefect.gitaly.serviceName" (dict "context" .context "name" .name) -}}
+{{ $name }}-{{ .index }}.{{ $name }}
 {{- end -}}

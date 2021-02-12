@@ -1,4 +1,4 @@
-{{- if .Values.global.gitaly.enabled -}}
+{{- if and .Values.global.gitaly.enabled (not .Values.global.praefect.enabled) -}}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
@@ -6,10 +6,5 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
-spec:
-  maxUnavailable: {{ .Values.maxUnavailable }}
-  selector:
-    matchLabels:
-      app: {{ template "name" . }}
-      release: {{ .Release.Name }}
+{{ include (print $.Template.BasePath "/_pdb_spec.yaml") . }}
 {{- end -}}

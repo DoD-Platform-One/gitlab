@@ -58,6 +58,7 @@ The table below describes all variables.
 | PREEMPTIBLE     | Cheaper, clusters live at *most* 24 hrs. No SLA on nodes/disks              | false                            |
 | USE_STATIC_IP   | Create a static IP for GitLab instead of an ephemeral IP with managed DNS   | false                            |
 | INT_NETWORK     | The IP space to use within this cluster                                     | default                          |
+| SUBNETWORK      | The subnetwork to use within this cluster                                   | default                          |
 
 Run the script, by passing in your desired parameters. It can work with the
 default parameters except for `PROJECT` which is required:

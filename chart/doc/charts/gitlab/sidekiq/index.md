@@ -41,6 +41,7 @@ to the `helm install` command using the `--set` flags:
 | ------------------------------------ | ----------------- | ---------------------------------------- |
 | `annotations`                        |                   | Pod annotations                          |
 | `podLabels`                          |                   | Supplemental Pod labels. Will not be used for selectors. |
+| `common.labels`                      |                   | Supplemental labels that are applied to all objects created by this chart. |
 | `concurrency`                        | `25`              | Sidekiq default concurrency              |
 | `cluster`                            | `true`            | [See below](#cluster).                   |
 | `enabled`                            | `true`            | Sidekiq enabled flag                     |

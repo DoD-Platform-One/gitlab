@@ -1,0 +1,8 @@
+config.yaml
+.DS_Store
+tags
+requirements.lock
+.markdownlintrc
+gems
+.bundle
+build

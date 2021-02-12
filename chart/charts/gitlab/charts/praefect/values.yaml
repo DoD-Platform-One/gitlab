@@ -47,3 +47,8 @@ tolerations: []
 
 ## The Gitaly StatefulSet's priorityClassName
 # priorityClassName:
+
+gitaly:
+  service:
+    tls: {}
+  # serviceName:

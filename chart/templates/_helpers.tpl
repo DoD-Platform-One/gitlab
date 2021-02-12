@@ -280,7 +280,7 @@ Returns the nginx ingress class
 Overrides the ingress-nginx template to make sure gitlab-shell name matches
 */}}
 {{- define "ingress-nginx.tcp-configmap" -}}
-{{ .Release.Name}}-ingress-nginx-tcp
+{{ .Release.Name}}-nginx-ingress-tcp
 {{- end -}}
 
 {{/*

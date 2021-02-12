@@ -5,7 +5,8 @@ metadata:
   name: {{ template "fullname" . }}-test-runner-{{ randAlphaNum 5 | lower }}
   namespace: {{ $.Release.Namespace }}
   annotations:
-    "helm.sh/hook": test-success
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
 spec:
   containers:
   - name: test-runner

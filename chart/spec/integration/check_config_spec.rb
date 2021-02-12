@@ -51,7 +51,7 @@ describe 'checkConfig template' do
                      error_description: 'when unset'
   end
 
-  describe 'gitaly.tls' do
+  describe 'gitaly.tls without Praefect' do
     let(:success_values) do
       {
         'global' => {
@@ -74,7 +74,55 @@ describe 'checkConfig template' do
       }.merge(default_required_values)
     end
 
-    let(:error_output) { 'no certificate was specified' }
+    let(:error_output) { 'global.gitaly.tls.secretName not specified' }
+
+    include_examples 'config validation',
+                     success_description: 'when TLS is enabled correctly',
+                     error_description: 'when TLS is enabled but there is no certificate'
+  end
+
+  describe 'gitaly.tls with Praefect' do
+    let(:success_values) do
+      {
+        'global' => {
+          'praefect' => {
+            'enabled' => true,
+            'virtualStorages' => [
+              { 'name' => 'default', 'gitalyReplicas' => 3,
+                'maxUnavailable' => 2, 'tlsSecretName' => 'gitaly-default-tls' },
+              { 'name' => 'vs1', 'gitalyReplicas' => 2,
+                'maxUnavailable' => 1, 'tlsSecretName' => 'gitaly-vs2-tls' }
+            ]
+          },
+          'gitaly' => {
+            'enabled' => 'true',
+            'tls' => { 'enabled' => true }
+          }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_values) do
+      {
+        'global' => {
+          'praefect' => {
+            'enabled' => 'true',
+            'virtualStorages' => [
+              { 'name' => 'default', 'gitalyReplicas' => 3,
+                'maxUnavailable' => 2, 'tlsSecretName' => 'gitaly-default-tls' },
+              { 'name' => 'vs2', 'gitalyReplicas' => 2,
+                'maxUnavailable' => 1 }
+            ]
+          },
+          'gitaly' => {
+            'enabled' => 'true',
+            'tls' => { 'enabled' => true }
+          }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_output) { 'global.praefect.virtualStorages[1].tlsSecretName not specified (\'vs2\')' }
 
     include_examples 'config validation',
                      success_description: 'when TLS is enabled correctly',

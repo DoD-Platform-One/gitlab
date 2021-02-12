@@ -111,3 +111,21 @@ The `shared-secrets` chart will then produce a CA certificate and wildcard certi
 accessible services. The secrets containing these will be `RELEASE-wildcard-tls` and `RELEASE-wildcard-tls-ca`.
 The `RELEASE-wildcard-tls-ca` contains the public CA certificate that can be distributed to users and systems that
 will access the deployed GitLab instance.
+
+## TLS requirement for GitLab Pages
+
+For [GitLab Pages with TLS support](https://docs.gitlab.com/ee/administration/pages/#wildcard-domains-with-tls-support),
+a wildcard certificate applicable for `*.<pages domain>` (default value of
+`<pages domain>` is `pages.<base domain>`) is required. Because a wild card
+certificate is required, it can not be automatically created by cert-manager and
+Let's Encrypt, and users will have to bring one on their own.
+
+By default, name of this secret is `<RELEASE>-pages-tls`. A different name can
+be specified using the `gitlab.gitlab-pages.ingress.tls.secretName` setting as
+shown below.
+
+```shell
+helm install gitlab gitlab/gitlab \
+  --set global.pages.enabled=true \
+  --set gitlab.gitlab-pages.ingress.tls.secretName=<secret name>
+```

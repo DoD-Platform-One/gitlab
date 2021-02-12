@@ -1,5 +1,8 @@
 {{- if .Values.global.grafana.enabled -}}
 {{- $gitlabHostname := include "gitlab.gitlab.hostname" . -}}
+{{- if .Values.global.hosts.gitlab.hostnameOverride -}}
+{{-   $gitlabHostname = .Values.global.hosts.gitlab.hostnameOverride -}}
+{{- end -}}
 {{- $tlsSecret := include "webservice.tlsSecret" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress

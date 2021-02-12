@@ -12,6 +12,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
+    {{- include "gitlab.commonLabels" $ | nindent 4 }}
 spec:
   maxUnavailable: {{ default $.Values.maxUnavailable .maxUnavailable }}
   selector:

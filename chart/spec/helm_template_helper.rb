@@ -19,6 +19,8 @@ class HelmTemplate
     end
   end
 
+  attr_reader :mapped
+
   def initialize(values)
     template(values)
   end

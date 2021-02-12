@@ -7,6 +7,7 @@ require 'selenium-webdriver'
 require 'rspec/retry'
 require 'gitlab_test_helper'
 require 'rspec-parameterized'
+require 'pry'
 
 include Gitlab::TestHelper
 

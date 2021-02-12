@@ -85,7 +85,7 @@ spec:
             - --ingress-class={{ template "ingress-nginx.controller.ingress-class" . }}
             - --configmap={{ .Release.Namespace }}/{{ include "ingress-nginx.controller.fullname" . }}
           {{- if or .Values.tcp (include "gitlab.shell.port" $ ) }}
-            - --tcp-services-configmap={{ .Release.Namespace }}/{{ template "ingress-nginx.fullname" . }}-tcp
+            - --tcp-services-configmap={{ .Release.Namespace }}/{{ template "ingress-nginx.tcp-configmap" . }}
           {{- end }}
           {{- if .Values.udp }}
             - --udp-services-configmap={{ .Release.Namespace }}/{{ include "ingress-nginx.fullname" . }}-udp

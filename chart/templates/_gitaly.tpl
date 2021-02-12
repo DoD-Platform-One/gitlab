@@ -73,7 +73,7 @@ Return a qualified gitaly service name, for direct access to the gitaly headless
 Call:
 
 ```
-{{- include "gitlab.gitaly.qualifiedServiceName" (dict "context" . "index" $i)-}}
+{{- include "gitlab.gitaly.qualifiedServiceName" (dict "context" . "index" $i) -}}
 ```
 */}}
 {{- define "gitlab.gitaly.qualifiedServiceName" -}}

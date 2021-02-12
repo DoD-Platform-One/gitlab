@@ -60,11 +60,15 @@ NOTICE: The GitLab task-runner is scaled to 0.
     `kubectl scale --replicas=1 deployment/{{ .Release.Name }}-task-runner`
 
 {{ end }}
-{{/* print install survey link */}}
+{{/* print survey link */}}
 {{- $appVersion := coalesce .Values.global.gitlabVersion .Chart.AppVersion -}}
-{{- if and .Release.IsInstall (regexMatch "^\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-pre)?$" $appVersion) }}
-Help us improve the installation experience, let us know how we did with a 1 minute survey:
-{{ printf "https://gitlab.fra1.qualtrics.com/jfe/form/SV_6kVqZANThUQ1bZb?installation=helm&release=%s" (regexReplaceAll "^(\\d+)\\.(\\d+)\\..+" $appVersion "${1}-${2}") }}
+{{- if regexMatch "^\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-pre)?$" $appVersion -}}
+{{-   $surveyInfo := dict "type" "install" "id" "SV_6kVqZANThUQ1bZb" -}}
+{{-   if .Release.IsUpgrade -}}
+{{-     $surveyInfo = dict "type" "upgrade" "id" "SV_0Hwcx9ncPfygMfj" -}}
+{{-   end }}
+Help us improve the {{ $surveyInfo.type }} experience, let us know how we did with a 1 minute survey:
+{{ printf "https://gitlab.fra1.qualtrics.com/jfe/form/%s?installation=helm&release=%s" $surveyInfo.id (regexReplaceAll "^(\\d+)\\.(\\d+)\\..+" $appVersion "${1}-${2}") }}
 {{- end }}
 {{/* run deprecations */}}
 {{ include "gitlab.deprecations" . }}

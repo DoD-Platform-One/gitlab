@@ -17,7 +17,13 @@ AllCops:
   # behavior by overriding DisplayStyleGuide, or by giving the
   # -S/--display-style-guide option.
   DisplayStyleGuide: false
-  Exclude: []
+  Exclude:
+    - 'bin/*'
+    - 'gems/**/*'
+    - '.bundle/**/*'
+    - 'cache/**/*'
+    - 'node_modules/**/*'
+    - 'vendor/bundle/**/*'
 
 # No rails in charts
 Rails:
