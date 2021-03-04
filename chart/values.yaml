@@ -580,8 +580,8 @@ global:
   # configuration of certificates container & custom CA injection
   certificates:
     image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
-      tag: 1.4.1
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
+      tag: 13.8.0
       pullSecrets:
       - name: private-registry
     customCAs: []
