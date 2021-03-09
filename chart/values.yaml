@@ -584,9 +584,42 @@ global:
       tag: 13.8.0
       pullSecrets:
       - name: private-registry
-    customCAs: []
-    # - secret: custom-CA
-    # - secret: more-custom-CAs
+    customCAs:
+      # DoD approved certificates from https://public.cyber.mil/unclass-dod_approved_external_pkis_trust_chains_v7/
+      - secret: ca-certs-dod-trust-anchors
+      - secret: ca-certs-dod-intermediate-dod-email-ca
+      - secret: ca-certs-dod-intermediate-dod-id-ca
+      - secret: ca-certs-dod-intermediate-dod-id-sw-ca
+      - secret: ca-certs-dod-intermediate-dod-sw-ca
+      - secret: ca-certs-eca-sha-1
+      - secret: ca-certs-eca-sha-256
+      - secret: ca-certs-ado-sha-256-cc-chain
+      - secret: ca-certs-ado-sha-256-dt-chain
+      - secret: ca-certs-boeing-sha-1
+      - secret: ca-certs-carillon-federal-services
+      - secret: ca-certs-department-of-state-trust-chain-1
+      - secret: ca-certs-department-of-state-trust-chain-2
+      - secret: ca-certs-entrust-nfi-trust-chain-1
+      - secret: ca-certs-entrust-nfi-trust-chain-2
+      - secret: ca-certs-entrust-ssp
+      - secret: ca-certs-exostar-llc
+      - secret: ca-certs-identrust-nfi
+      - secret: ca-certs-lockheed-martin-sha-256
+      - secret: ca-certs-nl-mod
+      - secret: ca-certs-northrop-grumman-sha-256
+      - secret: ca-certs-orc-nfi
+      - secret: ca-certs-orc-ssp
+      - secret: ca-certs-raytheon-sha-1
+      - secret: ca-certs-raytheon-sha-256
+      - secret: ca-certs-symantec-nfi-trust-chain-1
+      - secret: ca-certs-symantec-nfi-trust-chain-2
+      - secret: ca-certs-symantec-ssp-trust-chain-1
+      - secret: ca-certs-symantec-ssp-trust-chain-2
+      - secret: ca-certs-treasury-ssp-trust-chain-1
+      - secret: ca-certs-treasury-ssp-trust-chain-2
+      - secret: ca-certs-verizon-business-nfi
+      - secret: ca-certs-verizon-business-ssp-trust-chain-1
+      - secret: ca-certs-verizon-business-ssp-trust-chain-2
 
   ## kubectl image used by hooks to carry out specific jobs
   kubectl:
