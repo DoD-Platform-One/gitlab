@@ -3,7 +3,7 @@
 The integration assumes that keycloak is deployed with a realm other than master (eg: baby-yoda) and a client within named gitlab. The secret is used in the gitlab keycloak configuration.
 
 If the client gitlab doesn't exist in keycloak, please create the client gitlab with the following settings:
-1.  Create a gitlab OIDC client scope with the following mappings:
+1.  Create a gitlab OIDC client scope. The scope name is case sensitive and must match the oidc settings that Gitlab was deployed with. Bigbang Gitlab settings are expecting scope name "Gitlab" with a capital G. Use the following mappings:
     
     | Name        | Mapper Type      | Mapper Selection Sub | Token Claim Name   | Claim JSON Type |
     |-------------|------------------|----------------------|--------------------|-----------------|
@@ -18,7 +18,7 @@ If the client gitlab doesn't exist in keycloak, please create the client gitlab 
       - Valid Redirect URIs: https://code.${DOMAIN}/users/auth/openid_connect/callback
       - Base URL: https://code.${DOMAIN}
     - Set Client Scopes
-      - Default Client Scopes: gitlab (the client scope you created in the previous step)
+      - Default Client Scopes: Gitlab (the client scope you created in the previous step. This is case sensitive.)
       - optional client scopes: N/A
     - Take note of the client secret in the credential tab
 
