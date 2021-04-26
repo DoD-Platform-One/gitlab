@@ -56,7 +56,7 @@ gitlab:
 | `antiAffinityLabels.matchLabels`            | Labels for setting anti-affinity options     |                              |
 | `backups.cron.concurrencyPolicy`            | Kubernetes Job concurrency policy            | `Replace`                    |
 | `backups.cron.enabled`                      | Backup CronJob enabled flag                  | false                        |
-| `backups.cron.extraArgs`                    | String of args to pass to the backup utility |                              |
+| `backups.cron.extraArgs`                    | String of arguments to pass to the backup utility |                              |
 | `backups.cron.failedJobsHistoryLimit`       | Number of failed backup jobs list in history | `1`                          |
 | `backups.cron.persistence.accessMode`       | Backup cron persistence access mode          | `ReadWriteOnce`              |
 | `backups.cron.persistence.enabled`          | Backup cron enable persistence flag          | false                        |
@@ -66,7 +66,7 @@ gitlab:
 | `backups.cron.persistence.storageClass`     | StorageClass name for provisioning           |                              |
 | `backups.cron.persistence.subPath`          | Backup cron persistence volume mount path    |                              |
 | `backups.cron.persistence.volumeName`       | Existing persistent volume name              |                              |
-| `backups.cron.resources.requests.cpu`       | Backup cron minimum needed cpu               | `50m`                        |
+| `backups.cron.resources.requests.cpu`       | Backup cron minimum needed CPU               | `50m`                        |
 | `backups.cron.resources.requests.memory`    | Backup cron minimum needed memory            | `350M`                       |
 | `backups.cron.schedule`                     | Cron style schedule string                   | `0 1 * * *`                  |
 | `backups.cron.successfulJobsHistoryLimit`   | Number of successful backup jobs list in history | `3`                      |
@@ -74,6 +74,7 @@ gitlab:
 | `backups.objectStorage.config.gcpProject`   | GCP Project to use when backend is `gcs`     | ""                           |
 | `backups.objectStorage.config.key`          | Key containing credentials in secret         | ""                           |
 | `backups.objectStorage.config.secret`       | Object storage credentials secret            | ""                           |
+| `common.labels`                             | Supplemental labels that are applied to all objects created by this chart. | `{}` |
 | `enabled`                                   | Task Runner enablement flag                  | true                         |
 | `extra`                                     | YAML block for [extra `gitlab.yml` configuration](https://gitlab.com/gitlab-org/gitlab/-/blob/8d2b59dbf232f17159d63f0359fa4793921896d5/config/gitlab.yml.example#L1193-1199) | {}                          |
 | `image.pullPolicy`                          | Task Runner image pull policy                | `IfNotPresent`               |

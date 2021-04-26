@@ -82,3 +82,18 @@ Global values will override any chart-specific values.
   value: {{ $value | quote }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Detect whether to include internal Gitaly resources.
+Returns `true` when:
+  - Internal Gitaly is on
+  AND
+  - Either:
+    - Praefect is off, or
+    - Praefect is on, but replaceInternalGitaly is off
+*/}}
+{{- define "gitlab.gitaly.includeInternalResources" -}}
+{{- if and .Values.global.gitaly.enabled (or (not .Values.global.praefect.enabled) (and .Values.global.praefect.enabled (not .Values.global.praefect.replaceInternalGitaly))) -}}
+{{-   true }}
+{{- end -}}
+{{- end -}}

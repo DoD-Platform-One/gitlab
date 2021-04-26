@@ -24,7 +24,7 @@ While much of the underlying work has been completed, there are a few changes th
 
 In order to maximize our testing opportunity in alpha, the chart and containers will be rebuilt off `master` as changes are merged. This means that fixes and improvements will be available immediately, instead of waiting for a specific release.
 
-Along with the issues and merge requests in this repo, a [changelog](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/289) is being made available to more easily follow along with updates throughout the alpha period.
+Along with the issues and merge requests in this repository, a [changelog](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/289) is being made available to more easily follow along with updates throughout the alpha period.
 
 ## Kubernetes deployment support
 

@@ -4,14 +4,19 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Using the Praefect chart
+# Using the Praefect chart (alpha)
+
+WARNING:
+The Praefect chart is still under development. The alpha version is not yet suitable for production use. Upgrades may require significant manual intervention.
 
 The Praefect chart is used to manage a [Gitaly cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) inside a GitLab installment deployed with the Helm charts.
 
-## Known Limitations
+## Known limitations and issues
 
 1. The database has to be [manually created](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2310).
 1. [Migrating from an existing Gitaly setup](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2311) to Praefect is not supported.
+1. The cluster size is fixed: [Gitaly Cluster does not currently support autoscaling](https://gitlab.com/gitlab-org/gitaly/-/issues/2997).
+1. Upgrades to version 4.8 of the chart (GitLab 13.8) [will encounter an issue that makes it _appear_ that repository data is lost](../../../installation/upgrade.md#48-repository-data-appears-to-be-lost-upgrading-praefect). Data is not lost, but requires manual intervention.
 
 ## Requirements
 
@@ -58,7 +63,7 @@ global:
 
 This will create two sets of resources for Gitaly. This includes two Gitaly StatefulSets (one per virtual storage).
 
-Administrators can then [choose where new repositories are stored](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-repositories-are-stored).
+Administrators can then [configure where new repositories are stored](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#configure-where-new-repositories-are-stored).
 
 ### Persistence
 
@@ -87,6 +92,57 @@ global:
         storageClass: storageclass2
 ```
 
+### Migrating to Praefect
+
+NOTE:
+Group-level wikis [cannot be moved using the API](https://docs.gitlab.com/ee/api/project_repository_storage_moves.html#limitations) at this time.
+
+When migrating from standalone Gitaly instances to a Praefect setup, `global.praefect.replaceInternalGitaly` can be set to `false`.
+This ensures that the existing Gitaly instances are preserved while the new Praefect-managed Gitaly instances are created.
+
+```yaml
+global:
+  praefect:
+    enabled: true
+    replaceInternalGitaly: false
+    virtualStorages:
+    - name: virtualStorage2
+      gitalyReplicas: 5
+      maxUnavailable: 2
+```
+
+NOTE:
+When migrating to Praefect, none of Praefect's virtual storages can be named `default`.
+This is because there must be at least one storage named `default` at all times,
+therefore the name is already taken by the non-Praefect configuration.
+
+The instructions to [migrate existing repositories to Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#migrate-existing-repositories-to-gitaly-cluster)
+can then be followed to move data from the `default` storage to `virtualStorage2`. If additional storages
+were defined under `global.gitaly.internal.names`, be sure to migrate repositories from those storages as well.
+
+After the repositories have been migrated to `virtualStorage2`, `replaceInternalGitaly` can be set back to `true` if a storage named
+`default` is added in the Praefect configuration.
+
+```yaml
+global:
+  praefect:
+    enabled: true
+    replaceInternalGitaly: true
+    virtualStorages:
+    - name: default
+      gitalyReplicas: 4
+      maxUnavailable: 1
+    - name: virtualStorage2
+      gitalyReplicas: 5
+      maxUnavailable: 2
+```
+
+The instructions to [migrate existing repositories to Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#migrate-existing-repositories-to-gitaly-cluster)
+can be followed again to move data from `virtualStorage2` to the newly-added `default` storage if desired.
+
+Finally, see the [repository storage paths documentation](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-repositories-are-stored)
+to configure where new repositories are stored.
+
 ### Creating the database
 
 Praefect uses its own database to track its state. This has to be manually created in order for Praefect to be functional.
@@ -99,13 +155,16 @@ there will be some variation in how you connect.
 
    ```shell
    kubectl exec -it $(kubectl get pods -l app=postgresql -o custom-columns=NAME:.metadata.name --no-headers) -- bash
+   ```
+
+   ```shell
    PGPASSWORD=$(cat $POSTGRES_POSTGRES_PASSWORD_FILE) psql -U postgres -d template1
    ```
 
 1. Create the database user:
 
    ```sql
-   template1=# CREATE ROLE praefect WITH LOGIN;
+   CREATE ROLE praefect WITH LOGIN;
    ```
 
 1. Set the database user password.
@@ -121,9 +180,7 @@ there will be some variation in how you connect.
    1. Set the password in the `psql` prompt:
 
       ```sql
-      template1=# \password praefect
-      Enter new password:
-      Enter it again:
+      \password praefect
       ```
 
 1. Create the database:
@@ -153,7 +210,7 @@ To run Praefect over TLS follow these steps:
 
 NOTE:
 A basic script for generating custom signed certificates for internal Praefect Pods
-[can be found in this repo](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/generate_certificates.sh).
+[can be found in this repository](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/generate_certificates.sh).
 Users can use or refer that script to generate certificates with proper SAN attributes.
 
 1. Create a TLS Secret using the certificate created.
@@ -194,11 +251,13 @@ the `helm install` command using the `--set` flags.
 
 | Parameter                      | Default                                           | Description                                                                                             |
 | ------------------------------ | ------------------------------------------        | ----------------------------------------                                                                |
+| common.labels                  | `{}`                                              | Supplemental labels that are applied to all objects created by this chart.                              |
 | failover.enabled               | true                                              | Whether Praefect should perform failover on node failure                                                |
 | failover.readonlyAfter         | false                                             | Whether the nodes should be in read-only mode after failover                                            |
 | autoMigrate                    | true                                              | Automatically run migrations on startup                                                                 |
-| electionStrategy               | sql                                               | See [election strategy](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#automatic-failover-and-leader-election) |
+| electionStrategy               | `sql`                                               | See [election strategy](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#automatic-failover-and-leader-election) |
 | image.repository               | `registry.gitlab.com/gitlab-org/build/cng/gitaly` | The default image repository to use. Praefect is bundled as part of the Gitaly image                    |
+| podLabels                      | `{}`                                              | Supplemental Pod labels. Will not be used for selectors.                                                |
 | service.name                   | `praefect`                                        | The name of the service to create                                                                       |
 | service.type                   | ClusterIP                                         | The type of service to create                                                                           |
 | service.internalPort           | 8075                                              | The internal port number that the Praefect pod will be listening on                                     |
@@ -214,3 +273,4 @@ the `helm install` command using the `--set` flags.
 | metrics.port                   | 9236                                              |                                                                                                         |
 | securityContext.runAsUser      | 1000                                              |                                                                                                         |
 | securityContext.fsGroup        | 1000                                              |                                                                                                         |
+| serviceLabels                  | `{}`                                              | Supplemental service labels                                                                             |

@@ -20,8 +20,8 @@ from the `ConfigMap`. The `ConfigMap` overrides the upstream defaults, but is
 [based on them](https://github.com/docker/distribution-library-image/blob/master/config-example.yml).
 See below for more details:
 
-- [distribution/cmd/registry/config-example.yml](https://github.com/docker/distribution/blob/master/cmd/registry/config-example.yml)
-- [distribution-library-image/config-example.yml](https://github.com/docker/distribution-library-image/blob/master/config-example.yml)
+- [`distribution/cmd/registry/config-example.yml`](https://github.com/docker/distribution/blob/master/cmd/registry/config-example.yml)
+- [`distribution-library-image/config-example.yml`](https://github.com/docker/distribution-library-image/blob/master/config-example.yml)
 
 ## Design Choices
 
@@ -42,7 +42,7 @@ This chart makes use of two required secrets and one optional:
 
 ### Optional
 
-- `profiling.stackdriver.credentials.secret`: If stackdriver profiling is enabled and
+- `profiling.stackdriver.credentials.secret`: If Stackdriver profiling is enabled and
   you need to provide explicit service account credentials, then the value in this secret
   (in the `credentials` key by default) is the GCP service account JSON credentials.
   If you are using GKE and are providing service accounts to your workloads using
@@ -63,7 +63,7 @@ registry:
     readOnly:
       enabled: false
   image:
-    tag: 'v2.13.1-gitlab'
+    tag: 'v3.1.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -123,6 +123,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 |--------------------------------------------|----------------------------------------------|------------------------------------------------------------------------------------------------------|
 | `annotations`                              |                                              | Pod annotations                                                                                      |
 | `podLabels`                                |                                              | Supplemental Pod labels. Will not be used for selectors.                                             |
+| `common.labels`                            |                                              | Supplemental labels that are applied to all objects created by this chart.                           |
 | `authAutoRedirect`                         | `true`                                       | Auth auto-redirect (must be true for Windows clients to work)                                        |
 | `authEndpoint`                             | `global.hosts.gitlab.name`                   | Auth endpoint (only host and port)                                                                   |
 | `certificate.secret`                       | `gitlab-registry`                            | JWT certificate                                                                                      |
@@ -140,7 +141,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                         |                                              | Pull policy for the registry image                                                                   |
 | `image.pullSecrets`                        |                                              | Secrets to use for image repository                                                                  |
 | `image.repository`                         | `registry`                                   | Registry image                                                                                       |
-| `image.tag`                                | `v2.13.1-gitlab`                              | Version of the image to use                                                                          |
+| `image.tag`                                | `v3.2.1-gitlab`                              | Version of the image to use                                                                          |
 | `init.image.repository`                    |                                              | initContainer image                                                                                  |
 | `init.image.tag`                           |                                              | initContainer image tag                                                                              |
 | `log`                                      | `{level: info, fields: {service: registry}}` | Configure the logging options                                                                        |
@@ -149,13 +150,33 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `reporting.sentry.enabled`                 | `false`                                      | Enable reporting using Sentry                                                                        |
 | `reporting.sentry.dsn`                     |                                              | The Sentry DSN (Data Source Name)                                                                    |
 | `reporting.sentry.environment`             |                                              | The Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/)                 |
-| `profiling.stackdriver.enabled`            | `false`                                      | Enable continuous profiling using stackdriver                                                        |
-| `profiling.stackdriver.credentials.secret` | `gitlab-registry-profiling-creds`            | Name of the secret containing creds                                                                  |
-| `profiling.stackdriver.credentials.key`    | `credentials`                                | Secret key in which the creds are stored                                                             |
-| `profiling.stackdriver.service`            | `RELEASE-registry` (templated Service name)| Name of the stackdriver service to record profiles under                                             |
+| `profiling.stackdriver.enabled`            | `false`                                      | Enable continuous profiling using Stackdriver                                                        |
+| `profiling.stackdriver.credentials.secret` | `gitlab-registry-profiling-creds`            | Name of the secret containing credentials                                                                  |
+| `profiling.stackdriver.credentials.key`    | `credentials`                                | Secret key in which the credentials are stored                                                             |
+| `profiling.stackdriver.service`            | `RELEASE-registry` (templated Service name)| Name of the Stackdriver service to record profiles under                                             |
 | `profiling.stackdriver.projectid`          | GCP project where running                    | GCP project to report profiles to                                                                    |
+| `database.enabled`                         | `false`                                      | Enable metadata database. This is an experimental feature and must not be used in production environments. |
+| `database.host`                            | `global.psql.host`                           | The database server hostname. |
+| `database.port`                            | `global.psql.port`                           | The database server port. |
+| `database.user`                            |                                              | The database username. |
+| `database.password.secret`                 | `gitlab-postgresql-password`                 | Name of the secret containing the database password. Defaults to the main PostgreSQL password secret. |
+| `database.password.key`                    | `postgresql-registry-password`               | Secret key in which the database password is stored. |
+| `database.name`                            |                                              | The database name. |
+| `database.sslmode`                         |                                              | The SSL mode. Can be one of `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`. |
+| `database.ssl.secret`                      | `global.psql.ssl.secret`                     | A secret containing client certificate, key and certificate authority. Defaults to the main PostgreSQL SSL secret. |
+| `database.ssl.clientCertificate`           | `global.psql.ssl.clientCertificate`          | The key inside the secret referring the client certificate. |
+| `database.ssl.clientKey`                   | `global.psql.ssl.clientKey`                  | The key inside the secret referring the client key.
+| `database.ssl.serverCA`                    | `global.psql.ssl.serverCA`                   | The key inside the secret referring the certificate authority (CA). |
+| `database.connecttimeout`                  | `0`                                          | Maximum time to wait for a connection. Zero or not specified means waiting indefinitely. |
+| `database.draintimeout`                    | `0`                                          | Maximum time to wait to drain all connections on shutdown. Zero or not specified means waiting indefinitely. |
+| `database.preparedstatements`              | `false`                                      | Enable prepared statements. Disabled by default for compatibility with PgBouncer. |
+| `database.pool.maxidle`                    | `0`                                          | The maximum number of connections in the idle connection pool. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means no idle connections. |
+| `database.pool.maxopen`                    | `0`                                          | The maximum number of open connections to the database. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means unlimited open connections. |
+| `database.pool.maxlifetime`                | `0`                                          | The maximum amount of time a connection may be reused. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited reuse. |
+| `migration.disablemirrorfs`                | `false`                                      | When set to `true`, the registry does not write metadata to the filesystem. Must be used in combination with the metadata database. This is an experimental feature and must not be used in production environments. |
 | `securityContext.fsGroup`                  | `1000`                                       | Group ID under which the pod should be started                                                       |
 | `securityContext.runAsUser`                | `1000`                                       | User ID under which the pod should be started                                                        |
+| `serviceLabels`                            | `{}`                                         | Supplemental service labels                                                                          |
 | `tokenService`                             | `container_registry`                         | JWT token service                                                                                    |
 | `tokenIssuer`                              | `gitlab-issuer`                              | JWT token issuer                                                                                     |
 | `tolerations`                              | `[]`                                         | Toleration labels for pod assignment                                                                 |
@@ -227,7 +248,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v2.13.1-gitlab'`
+- `tag: 'v3.2.1-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -266,7 +287,7 @@ and Ingress to specific endpoints.
 
 | Name              | Type    | Default | Description |
 |:----------------- |:-------:|:------- |:----------- |
-| `enabled`         | Boolean | `false` | This setting enables the networkpolicy for registry |
+| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy` for registry |
 | `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified. |
 | `ingress.rules`   | Array   | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
 | `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified. |
@@ -332,6 +353,38 @@ To create this secret manually:
 kubectl create secret generic gitlab-registry-httpsecret --from-literal=secret=strongrandomstring
 ```
 
+### Notification Secret
+
+Notification Secret is utilized for Geo to help manage syncing Container
+Registry data between primary and secondary sites.
+
+The content of the key this references correlates to the `http.secret` value of
+[registry](https://hub.docker.com/_/registry/). This value should be populated with
+a cryptographically generated random string.
+
+The `notificationSecret` secret object will automatically create this secret if
+not provided.
+
+To create this secret manually:
+
+```shell
+kubectl create secret generic gitlab-registry-notification --from-literal=secret=[\"strongrandomstring\"]
+```
+
+Then proceed to set
+
+```yaml
+global:
+  geo:
+    registry:
+      syncEnabled: true
+      syncSecret:
+        secret: gitlab-registry-notification
+        key: secret
+```
+
+Ensuring the `secret` value is set to the name of the secret created above
+
 ### authEndpoint
 
 The `authEndpoint` field is a string, providing the URL to the GitLab instance(s) that
@@ -366,7 +419,7 @@ certificate:
 ### compatibility
 
 The `compatibility` field is a map relating directly to the configuration file's
-[compatiblity](https://github.com/docker/distribution/blob/master/docs/configuration.md#compatibility)
+[compatibility](https://github.com/docker/distribution/blob/master/docs/configuration.md#compatibility)
 section.
 
 Default contents:
@@ -388,7 +441,7 @@ The `schema1` section controls the compatibility of the service with version 1
 of the Docker manifest schema. This setting is provide as a means of supporting
 Docker clients earlier than `1.10`, after which schema v2 is used by default.
 
-If you _must_ support older verions of Docker clients, you can do so by setting
+If you _must_ support older versions of Docker clients, you can do so by setting
 `registry.compatbility.schema1.enabled: true`.
 
 ### validation
@@ -430,7 +483,11 @@ notifications:
     includereferences: true
 ```
 
+<!-- vale gitlab.Spelling = NO -->
+
 ### hpa
+
+<!-- vale gitlab.Spelling = YES -->
 
 The `hpa` field is an object, controlling the number of [registry](https://hub.docker.com/_/registry/)
 instances to create as a part of the set. This defaults to a `minReplicas` value
@@ -452,7 +509,7 @@ Please refer to that documentation for more details.
 
 Examples for [AWS s3](https://docs.docker.com/registry/storage-drivers/s3/) and
 [Google GCS](https://docs.docker.com/registry/storage-drivers/gcs/) drivers can be
-found in [examples/objectstorage](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage):
+found in [`examples/objectstorage`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage):
 
 - [`registry.s3.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/registry.s3.yaml)
 - [`registry.gcs.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/registry.gcs.yaml)
@@ -485,8 +542,8 @@ kubectl create secret generic registry-storage \
 If you chose to use the `filesystem` driver:
 
 - You will need to provide persistent volumes for this data.
-- [hpa.minReplicas](#hpa) should be set to `1`
-- [hpa.maxReplicas](#hpa) should be set to `1`
+- [`hpa.minReplicas`](#hpa) should be set to `1`
+- [`hpa.maxReplicas`](#hpa) should be set to `1`
 
 For the sake of resiliency and simplicity, it is recommended to make use of an
 external service, such as `s3`, `gcs`, `azure` or other compatible Object Storage.
@@ -549,6 +606,58 @@ profiling:
       secret: gitlab-registry-profiling-creds
       key: credentials
     service: gitlab-registry
+```
+
+### database
+
+The `database` property is optional and enables the [metadata database](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database).
+
+NOTE:
+The metadata database is an experimental feature and _must not_ be used in production.
+
+NOTE:
+This feature requires PostgreSQL 12 or newer.
+
+```yaml
+database:
+  enabled: true
+  host: registry.db.example.com
+  port: 5432
+  user: registry
+  password:
+    secret: gitlab-postgresql-password
+    key: postgresql-registry-password
+  dbname: registry
+  sslmode: verify-full
+  ssl:
+    secret: gitlab-registry-postgresql-ssl
+    clientKey: client-key.pem
+    clientCertificate: client-cert.pem
+    serverCA: server-ca.pem
+  connecttimeout: 5s
+  draintimeout: 2m
+  preparedstatements: false
+  pool:
+    maxidle: 25
+    maxopen: 25
+    maxlifetime: 5m
+```
+
+### migration
+
+The `migration` property is optional and provides options related to the
+[migration](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#migration)
+of metadata from the filesystem to the metadata database.
+
+WARNING:
+This is an experimental feature and _must not_ be used in production.
+
+NOTE:
+This feature requires the [metadata database](#database) to be enabled.
+
+```yaml
+migration:
+  disablemirrorfs: true
 ```
 
 ## Garbage Collection

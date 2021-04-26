@@ -35,6 +35,7 @@ Table below contains all the possible charts configurations that can be supplied
 
 | Parameter                   | Description                              | Default           |
 | --------------------------- | ---------------------------------------- | ----------------  |
+| `common.labels`             | Supplemental labels that are applied to all objects created by this chart.  | `{}` |
 | `image.repository`          | Migrations image repository              | `registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee` |
 | `image.tag`                 | Migrations image tag                     |                   |
 | `image.pullPolicy`          | Migrations pull policy                   | `Always`          |
@@ -50,7 +51,7 @@ Table below contains all the possible charts configurations that can be supplied
 | `psql.password.secret`      | psql secret                              | `gitlab-postgres` |
 | `psql.password.key`         | key to psql password in psql secret      | `psql-password`   |
 | `psql.port`                 | Set PostgreSQL server port. Takes precedence over `global.psql.port` |   |
-| `resources.requests.cpu`    | `250m`                                   | GitLab Migrations minimum cpu |
+| `resources.requests.cpu`    | `250m`                                   | GitLab Migrations minimum CPU |
 | `resources.requests.memory` | `200Mi`                                  | GitLab Migrations minimum memory |
 | `securityContext.fsGroup`   | `1000`                                   | Group ID under which the pod should be started |
 | `securityContext.runAsUser` | `1000`                                   | User ID under which the pod should be started |

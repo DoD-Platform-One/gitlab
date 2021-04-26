@@ -25,7 +25,7 @@ spec:
     - host: {{ $minioHostname }}
       http:
         paths:
-          - path: /
+          - path: {{ coalesce $.Values.ingress.path $.Values.global.ingress.path }}
             backend:
               serviceName: {{ template "minio.fullname" . }}-svc
               servicePort: {{ .Values.servicePort }}

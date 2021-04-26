@@ -8,15 +8,9 @@
 {{- $concurrency := .Values.concurrency -}}
 {{- $timeout := .Values.timeout -}}
 {{- $resources := .Values.resources -}}
-{{- $nodeSelector := .Values.nodeSelector -}}
+{{- $nodeSelector := default .Values.global.nodeSelector .Values.nodeSelector -}}
 {{- $minioEnabled := .Values.global.minio.enabled -}}
 {{- $minioSecret := include "gitlab.minio.credentials.secret" . -}}
-{{- $gitalySecret := include "gitlab.gitaly.authToken.secret" . -}}
-{{- $gitalyKey := include "gitlab.gitaly.authToken.key" . -}}
-{{- if $.Values.global.praefect.enabled -}}
-{{- $gitalySecret = include "gitlab.praefect.authToken.secret" . -}}
-{{- $gitalyKey = include "gitlab.praefect.authToken.key" . -}}
-{{- end -}}
 {{- $railsSecretName := include "gitlab.rails-secrets.secret" . -}}
 {{- $metricsEnabled := .Values.metrics.enabled -}}
 {{- $metricsPort := .Values.metrics.port -}}
@@ -32,8 +26,10 @@
 {{- end }}
 {{- $configMapChecksum := include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
 {{- range .Values.pods -}}
-{{- $queueName := printf "%s-%s" $fullname .name | trunc 63}}
-{{- $podNodeSelector := default $nodeSelector .nodeSelector -}}
+{{-   $queueName := printf "%s-%s" $fullname .name | trunc 63 }}
+{{-   $podNodeSelector := default $nodeSelector .nodeSelector -}}
+{{-   include "sidekiq.pod.common.labels" . }}
+{{-   $_ := set . "podLabels" (merge (default (dict) .podLabels) (default (dict) $.Values.podLabels) (default (dict) $.Values.global.pod.labels)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,7 +37,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
-    {{- include "gitlab.commonLabels" $ | nindent 4 }}
+    {{- include "sidekiq.commonLabels" (dict "pod" .common.labels "global" $.Values.common.labels) | nindent 4 }}
     queue-pod-name: {{ .name }}
   annotations:
     {{- include "gitlab.deploymentAnnotations" $ | nindent 4 }}
@@ -60,12 +56,10 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ $name }}
-        release: {{ $releaseName }}
-        queue-pod-name: {{ .name }}
         {{- include "gitlab.standardLabels" $ | nindent 8 }}
-        {{- include "gitlab.commonLabels" $ | nindent 8 }}
-        {{- include "gitlab.podLabels" $ | nindent 8 }}
+        {{- include "sidekiq.commonLabels" (dict "pod" .common.labels "global" $.Values.common.labels) | nindent 8 }}
+        {{- include "sidekiq.podLabels" (dict "pod" .podLabels ) | nindent 8 }}
+        queue-pod-name: {{ .name }}
       annotations:
         checksum/configmap: {{ $configMapChecksum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
@@ -316,11 +310,7 @@ spec:
               items:
                 - key: secrets.yml
                   path: rails-secrets/secrets.yml
-          - secret:
-              name: {{ $gitalySecret }}
-              items:
-                - key: {{ $gitalyKey }}
-                  path: gitaly/gitaly_token
+          {{- include "gitlab.gitaly.clientSecrets" $ | nindent 10 }}
           {{- include "gitlab.redis.secrets" $ | nindent 10 }}
           {{- include "gitlab.psql.secret" $ | nindent 10 }}
           {{- if include "gitlab.geo.secondary" $ }}
@@ -335,6 +325,7 @@ spec:
               items:
                 - key: registry-auth.key
                   path: registry/gitlab-registry.key
+          {{- include "gitlab.registry.notificationSecret.mount" $ | nindent 10 -}}
           {{- include "gitlab.pages.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.kas.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.minio.mountSecrets" $ | nindent 10 }}

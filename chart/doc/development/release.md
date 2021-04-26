@@ -25,7 +25,7 @@ Minor releases will iterate with GitLab image minor releases, and at our own dis
 We will bump it for:
 
 - all minor version updates of GitLab
-- changes to our default values in the charts that may increase resource usage (addition of subcharts/pods, additional services or ingresses added)
+- changes to our default values in the charts that may increase resource usage (addition of subcharts or pods, additional services or ingresses added)
 - Other functionality changes that we feel warrants more visibility.
 
 ### Patch Releases
@@ -100,11 +100,11 @@ Related to releasing using the proposed branching strategy
 
 ## Releasing the chart
 
-Releasing a new version of the chart is handled by the Helm release tasks in the [release tools repo](https://gitlab.com/gitlab-org/release-tools)
+Releasing a new version of the chart is handled by the Helm release tasks in the [release tools repository](https://gitlab.com/gitlab-org/release-tools)
 
-By default, this task will be automatically run from CI when a new release image is tagged in the [CNG image repo](https://gitlab.com/gitlab-org/build/CNG)
+By default, this task will be automatically run from CI when a new release image is tagged in the [CNG image repository](https://gitlab.com/gitlab-org/build/CNG)
 
-> Currently the `helm-release-tools` branch from the release tools repo is used to release the chart
+> Currently the `helm-release-tools` branch from the release tools repository is used to release the chart
 
 ### Manually releasing the chart
 
@@ -113,16 +113,16 @@ stable branch for the version you will release.
 
 For example, if you want to release version `0.2.1` of the charts, the changes will need to be in `0-2-stable`
 
-A chatops command exists to tag a release. Run the following command in the
-relevant release Slack channel (eg: `#f_release_12_4`)
+A ChatOps command exists to tag a release. Run the following command in the
+relevant release Slack channel (such as `#f_release_12_4`)
 
 ```plaintext
 /chatops run helm tag <charts version> <GitLab version>
 ```
 
-You can also do it manually, without using the chatops command as follows:
+You can also do it manually, without using the ChatOps command as follows:
 
-1. checkout and setup the [release tools repo](https://gitlab.com/gitlab-org/release-tools).
+1. checkout and setup the [release tools repository](https://gitlab.com/gitlab-org/release-tools).
 
    ```shell
    git clone git@gitlab.com:gitlab-org/release-tools.git
@@ -131,10 +131,10 @@ You can also do it manually, without using the chatops command as follows:
 
 1. Then run the appropriate Helm release task:
 
-   - When you want to release without changing the GitLab app version, call the release task with the new chart version (eg `0.2.1`)
+   - When you want to release without changing the GitLab app version, call the release task with the new chart version (such as `0.2.1`)
      - `bundle exec rake release:helm:tag[0.2.1]`
 
-   - When you want to release and change both the chart version and the app version (eg `0.2.1` with GitLab `11.0.1`)
+   - When you want to release and change both the chart version and the app version (such as `0.2.1` with GitLab `11.0.1`)
      - `bundle exec rake release:helm:tag[0.2.1,11.0.1]`
 
-    > You can run the script in dry-run mode which prevents pushes by setting TEST=true in your environment
+    > You can run the script in dry-run mode which prevents pushes by setting `TEST=true` in your environment

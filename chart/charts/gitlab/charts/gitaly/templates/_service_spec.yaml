@@ -1,4 +1,3 @@
-{{- $praefect := .Values.global.praefect.enabled -}}
 spec:
   type: {{ coalesce .Values.service.type .Values.global.gitaly.service.type }}
   clusterIP: "None"
@@ -18,6 +17,6 @@ spec:
   selector:
     app: {{ template "name" . }}
     release: {{ .Release.Name }}
-    {{- if $praefect }}
+    {{- if .storage }}
     storage: {{ .storage.name }}
     {{- end }}

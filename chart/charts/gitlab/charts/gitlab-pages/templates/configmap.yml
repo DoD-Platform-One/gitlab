@@ -5,6 +5,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
   annotations:
 data:
   config.erb: |
@@ -62,6 +63,12 @@ data:
     {{- end }}
     {{- if .Values.tls.maxVersion }}
     tls-max-version={{ .Values.tls.maxVersion }}
+    {{- end }}
+    {{- if eq $.Values.global.pages.accessControl true }}
+    auth-redirect-uri={{ template "oauth.gitlab-pages.authRedirectUri" . }}
+    auth-client-id=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appid').strip.dump[1..-2] %>
+    auth-client-secret=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appsecret').strip.dump[1..-2] %>
+    auth-secret=<%= File.read('/etc/gitlab-secrets/pages/auth_secret').strip.dump[1..-2] %>
     {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}

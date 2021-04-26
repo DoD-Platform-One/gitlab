@@ -25,6 +25,7 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages := list -}}
 {{/* add templates here */}}
 {{- $messages = append $messages (include "gitlab.checkConfig.contentSecurityPolicy" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.praefect.storageNames" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.gitaly.tls" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.queues.mixed" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.queues.cluster" .) -}}
@@ -43,12 +44,15 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.sentry" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.sentry.dsn" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.notifications" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.registry.database" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.registry.migration" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.dependencyProxy.puma" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.gracePeriod" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.objectStorage.consolidatedConfig" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.objectStorage.typeSpecificConfig" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.nginx.controller.extraArgs" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.loadBalancer" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.smtp.openssl_verify_mode" .) -}}
 {{- /* prepare output */}}
 {{- $messages = without $messages "" -}}
 {{- $message := join "\n" $messages -}}
@@ -73,6 +77,24 @@ contentSecurityPolicy:
 {{- end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.contentSecurityPolicy */}}
+
+{{/*
+Ensure that if a user is migrating to Praefect, none of the Praefect virtual storage
+names are 'default', as it should already be used by the non-Praefect storage configuration.
+*/}}
+{{- define "gitlab.checkConfig.praefect.storageNames" -}}
+{{- if and $.Values.global.gitaly.enabled $.Values.global.praefect.enabled (not $.Values.global.praefect.replaceInternalGitaly) -}}
+{{-   range $i, $vs := $.Values.global.praefect.virtualStorages -}}
+{{-     if eq $vs.name "default" -}}
+praefect:
+    Praefect is enabled, but `global.praefect.replaceInternalGitaly=false`. In this scenario,
+    none of the Praefect virtual storage names can be 'default'. Please modify
+    `global.praefect.virtualStorages[{{ $i }}].name`.
+{{-     end }}
+{{-   end }}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.praefect.storageNames" -}}
 
 {{/*
 Ensure a certificate is provided when Gitaly is enabled and is instructed to
@@ -406,6 +428,42 @@ Registry: Notifications should be defined in the global scope. Use `global.regis
 {{/* END gitlab.checkConfig.registry.notifications */}}
 
 {{/*
+Ensure Registry database is configured properly and dependencies are met
+*/}}
+{{- define "gitlab.checkConfig.registry.database" -}}
+{{-   if $.Values.registry.database.enabled }}
+{{-     $validSSLModes := list "require" "disable" "allow" "prefer" "require" "verify-ca" "verify-full" -}}
+{{-     if not (has $.Values.registry.database.sslmode $validSSLModes) }}
+registry:
+    Invalid SSL mode "{{ .Values.registry.database.sslmode }}".
+    Valid values are: {{ join ", " $validSSLModes }}.
+    See https://docs.gitlab.com/charts/charts/registry#database
+{{-     end -}}
+{{-     $pgImageTag := .Values.postgresql.image.tag -}}
+{{-     $pgMajorVersion := (split "." (split "-" ($pgImageTag | toString))._0)._0 | int -}}
+{{-     if lt $pgMajorVersion 12 -}}
+registry:
+    Invalid PostgreSQL version "{{ $pgImageTag }}".
+    PostgreSQL 12 is the minimum required version for the registry database.
+    See https://docs.gitlab.com/charts/charts/registry#database
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.registry.database */}}
+
+{{/*
+Ensure Registry migration is configured properly and dependencies are met
+*/}}
+{{- define "gitlab.checkConfig.registry.migration" -}}
+{{-   if and $.Values.registry.migration.disablemirrorfs (not $.Values.registry.database.enabled) }}
+registry:
+    Disabling filesystem metadata requires the metadata database to be enabled.
+    See https://docs.gitlab.com/charts/charts/registry#migration
+{{-   end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.registry.migration */}}
+
+{{/*
 Ensure Puma is used when the dependency proxy is enabled
 */}}
 {{- define "gitlab.checkConfig.dependencyProxy.puma" -}}
@@ -501,3 +559,19 @@ webservice:
 {{-   end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.webservice.loadBalancer */}}
+
+{{/*
+Ensure that a correct value is provided for
+`global.smtp.openssl_verify_mode`.
+*/}}
+{{- define "gitlab.checkConfig.smtp.openssl_verify_mode" -}}
+{{-   $opensslVerifyModes := list "none" "peer" "client_once" "fail_if_no_peer_cert" -}}
+{{-   if .Values.global.smtp.openssl_verify_mode -}}
+{{-     if not (has .Values.global.smtp.openssl_verify_mode $opensslVerifyModes) }}
+smtp:
+    "{{ .Values.global.smtp.openssl_verify_mode }}" is not a valid value for `global.smtp.openssl_verify_mode`.
+    Valid values are: {{ join ", " $opensslVerifyModes }}.
+{{-     end }}
+{{-   end }}
+{{- end -}}
+{{/* END gitlab.checkConfig.smtp.openssl_verify_mode */}}

@@ -7,8 +7,11 @@ gitaly:
 {{- define "gitlab.appConfig.repositories" -}}
 repositories:
   storages: # You must have at least a `default` storage path.
-    {{- if $.Values.global.praefect.enabled }}
-    {{- include "gitlab.praefect.storages" . | nindent 4 }}
+    {{- if .Values.global.praefect.enabled }}
+    {{-   include "gitlab.praefect.storages" . | nindent 4 }}
+    {{-   if not $.Values.global.praefect.replaceInternalGitaly }}
+    {{-     include "gitlab.gitaly.storages" . | nindent 4 }}
+    {{-   end }}
     {{- else }}
     {{- include "gitlab.gitaly.storages" . | nindent 4 }}
     {{- end }}
@@ -28,9 +31,12 @@ service_desk_email:
 {{- end -}}
 
 {{- define "gitlab.appConfig.kas" -}}
-{{- if .Values.global.kas.enabled -}}
+{{- if (or .Values.global.kas.enabled .Values.global.appConfig.gitlab_kas.enabled) -}}
 gitlab_kas:
+  enabled: true
   secret_file: /etc/gitlab/kas/.gitlab_kas_secret
+  external_url: {{ include "gitlab.appConfig.kas.externalUrl" . | quote }}
+  internal_url: {{ include "gitlab.appConfig.kas.internalUrl" . | quote }}
 {{- end -}}
 {{- end -}}
 
@@ -60,6 +66,9 @@ extra:
   {{- end }}
   {{ if .extra.matomoSiteId }}
   matomo_site_id: {{ .extra.matomoSiteId | quote }}
+  {{- end }}
+  {{- if .extra.matomoDisableCookies }}
+  matomo_disable_cookies: {{ eq true .extra.matomoDisableCookies }}
   {{- end }}
 {{- end -}}
 

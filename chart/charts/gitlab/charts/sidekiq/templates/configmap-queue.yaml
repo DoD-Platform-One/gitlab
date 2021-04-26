@@ -6,6 +6,7 @@
 {{- $releaseService := .Release.Service -}}
 {{- $fullname := printf "%s-%s" $releaseName $name | trunc 63 | trimSuffix "-" -}}
 {{-   range .Values.pods -}}
+{{-     include "sidekiq.pod.common.labels" . }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -13,7 +14,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
-    {{- include "gitlab.commonLabels" $ | nindent 4 }}
+    {{- include "sidekiq.commonLabels" (dict "pod" .common.labels "global" $.Values.common.labels) | nindent 4 }}
     queue_pod_name: {{ .name }}
 data:
   sidekiq_queues.yml.erb: |

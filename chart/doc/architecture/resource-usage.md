@@ -24,7 +24,7 @@ We will measure:
   isn't useful, so typically we will not set a default based on this value.
 
 - **Minimal Load** - The values required to do the most basic useful amount of work.
-  Typically, for cpu, this will be used as the default, but memory requests come with
+  Typically, for CPU, this will be used as the default, but memory requests come with
   the risk of the Kernel reaping processes, so we will avoid using this as a memory default.
 
 - **Average Loads** - What is considered *average* is highly dependent on the installation,
@@ -66,11 +66,11 @@ In future tests we will try to include sustained concurrent load, to better matc
     - memory: 6M
 
 - **Stressful Task**
-  - SSH clone the linux kernel (17MB/s)
-    - cpu: 0.28
+  - SSH clone the Linux kernel (17MB/s)
+    - CPU: 0.28
     - memory: 17M
-  - SSH push the linux kernel (2MB/s)
-    - cpu: 0.14
+  - SSH push the Linux kernel (2MB/s)
+    - CPU: 0.14
     - memory: 13M
     - *Upload connection speed was likely a factor during our tests*
 
@@ -80,12 +80,12 @@ In future tests we will try to include sustained concurrent load, to better matc
     - memory: 7M
 
 - **Default Requests**
-  - cpu: 0 (from minimal load)
+  - CPU: 0 (from minimal load)
   - memory: 6M (from average load)
-  - target cpu average: 0.1 (from average loads)
+  - target CPU average: 0.1 (from average loads)
 
 - **Recommended Limits**
-  - cpu: > 0.3 (greater than stress task)
+  - CPU: > 0.3 (greater than stress task)
   - memory: > 20M (greater than stress task)
 
 ### Webservice

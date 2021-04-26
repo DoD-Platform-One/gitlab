@@ -70,15 +70,18 @@ Returns the nginx ingress class
 Populate registry notifications
 */}}
 {{- define "registry.notifications.config" -}}
-{{- if $.Values.global.registry.notifications }}
+{{- $geoNotifier := include "global.geo.registry.syncNotifier" . | fromYaml -}}
+{{- $notifications := merge $.Values.global.registry.notifications $geoNotifier -}}
+{{- if $notifications }}
 notifications:
-  {{- if $.Values.global.registry.notifications.events }}
+  {{- if $notifications.events }}
   events:
     {{- toYaml $.Values.global.registry.notifications.events | nindent 4 }}
   {{- end -}}
-  {{- if $.Values.global.registry.notifications.endpoints }}
+  {{- $endpoints := concat (list) $notifications.endpoints $geoNotifier.endpoints | uniq -}}
+  {{- if $endpoints }}
   endpoints:
-    {{- range $endpoint := $.Values.global.registry.notifications.endpoints -}}
+    {{- range $endpoint := $endpoints -}}
       {{- if $endpoint.name -}}
         {{- $headers := pluck "headers" $endpoint | first -}}
         {{- $endpoint = omit $endpoint "headers" }}
@@ -122,9 +125,12 @@ Usage:
 Sensitive registry notification headers mounted as secrets
 */}}
 {{- define "registry.notifications.secrets" -}}
-{{- if $.Values.global.registry.notifications }}
+{{- $geoNotifier := include "global.geo.registry.syncNotifier" . | fromYaml -}}
+{{- $notifications := merge $.Values.global.registry.notifications $geoNotifier -}}
+{{- if $notifications }}
   {{- $uniqSecrets := list -}}
-  {{- range $endpoint := $.Values.global.registry.notifications.endpoints -}}
+  {{- $endpoints := concat (list) $notifications.endpoints $geoNotifier.endpoints | uniq -}}
+  {{- range $endpoint := $endpoints -}}
     {{- if and $endpoint.name $endpoint.headers -}}
       {{- range $header, $value := $endpoint.headers -}}
         {{- if kindIs "map" $value -}}

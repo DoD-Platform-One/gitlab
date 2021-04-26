@@ -35,7 +35,7 @@ controlled by `global.shell.port`.
 | `annotations`            |                | Pod annotations                          |
 | `podLabels`              |                | Supplemental Pod labels. Will not be used for selectors. |
 | `common.labels`          |                | Supplemental labels that are applied to all objects created by this chart. |
-| `config.loginGraceTime`  | `120`          | Specifies amount of time athat the server will disconnect after if the user has not successfully logged in |
+| `config.loginGraceTime`  | `120`          | Specifies amount of time that the server will disconnect after if the user has not successfully logged in |
 | `config.maxStartups.full`  | `100`     | SSHd refuse probability will increase linearly and all unauthenticated connection attempts would be refused when unauthenticated connections number will reach specified number |
 | `config.maxStartups.rate`  | `30`      | SSHd will refuse connections with specified probability when there would be too many unauthenticated connections (optional) |
 | `config.maxStartups.start` | `10`      | SSHd will refuse connection attempts with some probability if there are currently more than the specified number of unauthenticated connections (optional) |
@@ -64,6 +64,7 @@ controlled by `global.shell.port`.
 | `init.image.repository`  |                | initContainer image                      |
 | `init.image.tag`         |                | initContainer image tag                  |
 | `logging.format`         | `text`      | Set to `json` for JSON-structured logs   |
+| `logging.sshdLogLevel`   | `ERROR`     | Log level for underlying SSH daemon |
 | `replicaCount`           | `1`            | Shell replicas                           |
 | `serviceLabels`          | `{}`           | Supplemental service labels |
 | `service.externalTrafficPolicy` | `Cluster` | Shell service external traffic policy (Cluster or Local)  |
@@ -92,7 +93,7 @@ extraEnv:
   SOME_OTHER_KEY: some_other_value
 ```
 
-When the container is started, you can confirm that the enviornment variables are exposed:
+When the container is started, you can confirm that the environment variables are exposed:
 
 ```shell
 env | grep SOME
@@ -255,7 +256,7 @@ Pods to specific endpoints.
 
 | Name              | Type    | Default | Description |
 |:----------------- |:-------:|:------- |:----------- |
-| `enabled`         | Boolean | `false` | This setting enables the networkpolicy |
+| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy` |
 | `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified. |
 | `ingress.rules`   | Array   | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
 | `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified. |

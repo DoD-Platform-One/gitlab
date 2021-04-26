@@ -49,11 +49,11 @@ Backups are made using the following steps, in order:
 
 - `-t <timestamp-override-value>`
 
-  This gives you partial control over the name of the backup: when you specify this flag the created backup will be named `<timestamp-override-value>_gitlab_backup.tar`. The default value is the current unix timestamp, postfixed with the current date formatted to `YYYY_mm_dd`.
+  This gives you partial control over the name of the backup: when you specify this flag the created backup will be named `<timestamp-override-value>_gitlab_backup.tar`. The default value is the current UNIX timestamp, postfixed with the current date formatted to `YYYY_mm_dd`.
 
 - `--backend <backend>`
 
-  Configures the object storage backend to use for backups. Can be either 's3' or 'gcs'. Default is 's3'
+  Configures the object storage backend to use for backups. Can be either `s3` or `gcs`. Default is `s3`.
 
 - `--storage-class <storage-class-name>`
 
@@ -70,7 +70,7 @@ using the `BACKUP_BUCKET_NAME` environment variable.
 #### Backing up to Google Cloud Storage
 
 By default, the backup utility uses `s3cmd` to upload and download artifacts from object storage. While this can work with Google Cloud Storage (GCS),
-it requires using the Interoperability API which makes undesireable compromises to authentication and authorization. When using Google Cloud Storage
+it requires using the Interoperability API which makes undesirable compromises to authentication and authorization. When using Google Cloud Storage
 for backups you can configure the backup utility script to use the Cloud Storage native CLI, `gsutil`, to do the upload and download
 of your artifacts by setting the `BACKUP_BACKEND` environment variable to `gcs`.
 
@@ -81,7 +81,7 @@ backup can be from either an Omnibus GitLab or a CNG Helm chart installation giv
 backed up and the running instance runs the same version of GitLab. The restore expects a file in backup bucket using `-t <backup-name>` or a remote URL using `-f <url>`.
 
 When given a `-t` parameter it looks into backup bucket in object storage for a backup tar with such name. When
-given a `-f` parameter it expects that the given URL is a valid uri of a backup tar in a location accessible from the container.
+given a `-f` parameter it expects that the given URL is a valid URI of a backup tar in a location accessible from the container.
 
 After fetching the backup tar the sequence of execution is:
 

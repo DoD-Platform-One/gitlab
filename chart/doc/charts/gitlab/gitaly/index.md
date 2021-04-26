@@ -17,7 +17,7 @@ cluster this chart is deployed onto.
 ## Design Choices
 
 The Gitaly container used in this chart also contains the GitLab Shell codebase in
-order to perform the actions on the Git repos that have not yet been ported into Gitaly.
+order to perform the actions on the Git repositories that have not yet been ported into Gitaly.
 The Gitaly container includes a copy of the GitLab Shell container within it, and
 as a result we also need to configure GitLab Shell within this chart.
 
@@ -39,13 +39,14 @@ the `helm install` command using the `--set` flags.
 | Parameter                       | Default                                    | Description                                                                                                                                                          |
 | ------------------------------  | ------------------------------------------ | ----------------------------------------                                                                                                                             |
 | `annotations`                   |                                            | Pod annotations                                                                                                                                                      |
+| `common.labels`                 | `{}`                                       | Supplemental labels that are applied to all objects created by this chart.                                                                                           |
 | `podLabels`                     |                                            | Supplemental Pod labels. Will not be used for selectors.                                                                                                             |
 | `external[].hostname`           | `- ""`                                     | hostname of external node                                                                                                                                            |
 | `external[].name`               | `- ""`                                     | name of external node storage                                                                                                                                        |
 | `external[].port`               | `- ""`                                     | port of external node                                                                                                                                                |
 | `extraContainers`               |                                            | List of extra containers to include                                                                                                                                  |
 | `extraInitContainers`           |                                            | List of extra init containers to include                                                                                                                             |
-| `extraVolumeMounts`             |                                            | List of extra volumes mountes to do                                                                                                                                  |
+| `extraVolumeMounts`             |                                            | List of extra volumes mounts to do                                                                                                                                  |
 | `extraVolumes`                  |                                            | List of extra volumes to create                                                                                                                                      |
 | `extraEnv`                      |                                            | List of extra environment variables to expose                                                                                                                        |
 | `gitaly.serviceName`            |                                            | The name of the generated Gitaly service. Overrides `global.gitaly.serviceName`, and defaults to `<RELEASE-NAME>-gitaly`                                             |
@@ -55,7 +56,7 @@ the `helm install` command using the `--set` flags.
 | `image.tag`                     | `master`                                   | Gitaly image tag                                                                                                                                                     |
 | `init.image.repository`         |                                            | initContainer image                                                                                                                                                  |
 | `init.image.tag`                |                                            | initContainer image tag                                                                                                                                              |
-| `internal.names[]`              | `- default`                                | Ordered names of statfulset storages                                                                                                                                 |
+| `internal.names[]`              | `- default`                                | Ordered names of StatefulSet storages                                                                                                                                 |
 | `serviceLabels`                 | `{}`                                       | Supplemental service labels                                                                                                                                          |
 | `service.externalPort`          | `8075`                                     | Gitaly service exposed port                                                                                                                                          |
 | `service.internalPort`          | `8075`                                     | Gitaly internal port                                                                                                                                                 |
@@ -100,7 +101,7 @@ extraEnv:
   SOME_OTHER_KEY: some_other_value
 ```
 
-When the container is started, you can confirm that the enviornment variables are exposed:
+When the container is started, you can confirm that the environment variables are exposed:
 
 ```shell
 env | grep SOME
@@ -227,7 +228,7 @@ with: `persistence.enabled: false`.
 NOTE:
 The persistence settings for Gitaly are used in a volumeClaimTemplate
 that should be valid for all your Gitaly pods. You should *not* include settings
-that are meant to reference a single specific volume (ie volumeName). If you want
+that are meant to reference a single specific volume (such as `volumeName`). If you want
 to reference a specific volume, you need to manually create the PersistentVolumeClaim.
 
 NOTE:
@@ -249,7 +250,7 @@ persistence:
 | Name               | Type    | Default         | Description |
 |:------------------ |:-------:|:--------------- |:----------- |
 | `accessMode`       | String  | `ReadWriteOnce` | Sets the accessMode requested in the PersistentVolumeClaim. See [Kubernetes Access Modes Documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) for details. |
-| `enabled`          | Boolean | `true`          | Sets whether or not to use a PersistentVolumeClaims for the repo data. If `false`, an emptyDir volume is used. |
+| `enabled`          | Boolean | `true`          | Sets whether or not to use a PersistentVolumeClaims for the repository data. If `false`, an emptyDir volume is used. |
 | `matchExpressions` | Array   |                 | Accepts an array of label condition objects to match against when choosing a volume to bind. This is used in the `PersistentVolumeClaim` `selector` section. See the [volumes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector). |
 | `matchLabels`      | Map     |                 | Accepts a Map of label names and label values to match against when choosing a volume to bind. This is used in the `PersistentVolumeClaim` `selector` section. See the [volumes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector). |
 | `size`             | String  | `50Gi`          | The minimum volume size to request for the data persistence. |
@@ -283,7 +284,7 @@ Follow the steps to run Gitaly over TLS:
 
 NOTE:
 A basic script for generating custom signed certificates for
-internal Gitaly pods [can be found in this repo](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/generate_certificates.sh).
+internal Gitaly pods [can be found in this repository](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/generate_certificates.sh).
 Users can use or refer that script to generate certificates with proper
 SAN attributes.
 

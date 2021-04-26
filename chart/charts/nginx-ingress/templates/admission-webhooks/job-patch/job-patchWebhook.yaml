@@ -52,6 +52,8 @@ spec:
       serviceAccountName: {{ include "ingress-nginx.fullname" . }}-admission
     {{- if .Values.controller.admissionWebhooks.patch.nodeSelector }}
       nodeSelector: {{ toYaml .Values.controller.admissionWebhooks.patch.nodeSelector | nindent 8 }}
+    {{- else }}
+    {{- include "gitlab.nodeSelector" . | nindent 6 }}
     {{- end }}
     {{- if .Values.controller.admissionWebhooks.patch.tolerations }}
       tolerations: {{ toYaml .Values.controller.admissionWebhooks.patch.tolerations | nindent 8 }}

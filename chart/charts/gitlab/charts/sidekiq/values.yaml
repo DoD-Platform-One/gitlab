@@ -276,6 +276,8 @@ pods:
     # priorityClassName: ""
     # hpa:
     #   targetAverageValue:
+    # common:
+    #   labels: {}
     # podLabels: {}
 
 ## Allow to overwrite under which User and Group we're running.

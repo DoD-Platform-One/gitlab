@@ -44,6 +44,7 @@ deployment:
 ingress:
   annotations: {}
   tls: {}
+  path: # /
 
 # Tolerations for pod scheduling
 tolerations: []
@@ -53,7 +54,10 @@ queueSelector: false
 
 annotations: {}
 podLabels: {}
+common:
+  labels: {}
 
+serviceLabels: {}
 ## Additional environment variables to set
 extraEnv: {}
 # extraEnv:

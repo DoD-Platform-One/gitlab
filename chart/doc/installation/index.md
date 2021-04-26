@@ -6,10 +6,6 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Installing GitLab using Helm
 
-NOTE:
-There are currently [known limitations](../index.md#limitations)
-when using this chart, and not all features of GitLab are available.
-
 Install GitLab on Kubernetes with the cloud native GitLab Helm chart.
 
 ## Requirements

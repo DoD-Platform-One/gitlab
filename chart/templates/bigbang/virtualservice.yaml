@@ -1,12 +1,23 @@
-{{- if .Values.istio.enabled -}}
+{{- if and .Values.istio.enabled .Values.istio.gitlab.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- if .Values.istio.gitlab.labels }}
+      {{ toYaml .Values.istio.gitlab.labels | indent 4 }}
+    {{- end }}
+    app.kubernetes.io/component: "gitlab"
+  {{- if .Values.istio.gitlab.annotations }}
+  annotations:
+    {{ toYaml .Values.istio.gitlab.annotations | indent 4 }}
+  {{- end }}
 spec:
   gateways:
-    - main.istio-system.svc.cluster.local
+  {{- range .Values.istio.gitlab.gateways }}
+    - {{ . }}
+  {{- end }}
   hosts:
     - "{{ .Values.global.hosts.gitlab.name }}"
   http:
@@ -26,15 +37,28 @@ spec:
           host: {{ .Release.Name }}-webservice-default.{{ .Release.Namespace }}.svc.cluster.local
           port:
             number: 8080
+{{- end }}
+{{- if and .Values.istio.enabled .Values.istio.registry.enabled }}
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: {{ .Release.Name }}-registry
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- if .Values.istio.registry.labels }}
+      {{ toYaml .Values.istio.registry.labels | indent 4 }}
+    {{- end }}
+    app.kubernetes.io/component: "gitlab"
+  {{- if .Values.istio.registry.annotations }}
+  annotations:
+    {{ toYaml .Values.istio.registry.annotations | indent 4 }}
+  {{- end }}
 spec:
   gateways:
-    - main.istio-system.svc.cluster.local
+  {{- range .Values.istio.registry.gateways }}
+    - {{ . }}
+  {{- end }}
   hosts:
     - "{{ .Values.global.hosts.registry.name }}"
   http:

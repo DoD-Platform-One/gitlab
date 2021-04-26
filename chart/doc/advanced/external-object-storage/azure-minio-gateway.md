@@ -86,8 +86,12 @@ az webapp config set \
 
 ## Conclusion
 
-You can proceed to use this gateway with any client with s3-compability. Your webapp URL will be the `s3 endpoint`, storage account name will be your `accesskey`, and storage account key will be your `secretkey`.
+You can proceed to use this gateway with any client with s3-compability. Your web application URL will be the `s3 endpoint`, storage account name will be your `accesskey`, and storage account key will be your `secretkey`.
 
 ## Reference
 
+<!-- vale gitlab.Spelling = NO -->
+
 This guide was adapted for posterity from [Alessandro Segala's blog post on same topic.](https://withblue.ink/2017/10/29/how-to-use-s3cmd-and-any-other-amazon-s3-compatible-app-with-azure-blob-storage.html)
+
+<!-- vale gitlab.Spelling = YES -->

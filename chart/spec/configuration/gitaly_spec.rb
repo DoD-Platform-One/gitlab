@@ -164,4 +164,117 @@ describe 'Gitaly configuration' do
       end
     end
   end
+
+  context 'When customer provides additional labels' do
+    let(:labeled_values) do
+      {
+        'global' => {
+          'common' => {
+            'labels' => {
+              'global' => 'global',
+              'foo' => 'global'
+            }
+          },
+          'operator' => {
+            'enabled' => true
+          },
+          'pod' => {
+            'labels' => {
+              'global_pod' => true
+            }
+          },
+          'service' => {
+            'labels' => {
+              'global_service' => true
+            }
+          }
+        },
+        'gitlab' => {
+          'gitaly' => {
+            'common' => {
+              'labels' => {
+                'global' => 'gitaly',
+                'gitaly' => 'gitaly'
+              }
+            },
+            'podLabels' => {
+              'pod' => true,
+              'global' => 'pod'
+            },
+            'serviceAccount' => {
+              'create' => true,
+              'enabled' => true
+            },
+            'serviceLabels' => {
+              'service' => true,
+              'global' => 'service'
+            }
+          }
+        }
+      }.deep_merge(default_values)
+    end
+
+    context 'with only gitaly' do
+      it 'Populates the additional labels in the expected manner' do
+        t = HelmTemplate.new(labeled_values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        expect(t.dig('ConfigMap/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).to include('foo' => 'global')
+        expect(t.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
+        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('pod' => true)
+        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => true)
+        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).not_to include('global' => 'gitaly')
+        expect(t.dig('PodDisruptionBudget/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('global' => 'service')
+        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('gitaly' => 'gitaly')
+        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('global_service' => true)
+        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('service' => true)
+        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(t.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('ServiceAccount/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('Role/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('RoleBinding/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('Job/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('Job/test-gitaly-pause', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
+      end
+    end
+
+    context 'with praefect enabled' do
+      let(:praefect_labeled_values) do
+        {
+          'global' => {
+            'praefect' => {
+              'enabled' => true,
+              'virtualStorages' => [{
+                'name' => 'foo'
+              }]
+            }
+          }
+        }.deep_merge(default_values).deep_merge(labeled_values)
+      end
+
+      it 'Populates the additional labels in the expected manner' do
+        t = HelmTemplate.new(praefect_labeled_values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        expect(t.dig('ConfigMap/test-gitaly-praefect', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'metadata', 'labels')).to include('foo' => 'global')
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'spec', 'template', 'metadata', 'labels')).to include('pod' => true)
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => true)
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).to include('storage' => 'foo')
+        expect(t.dig('StatefulSet/test-gitaly-foo', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).not_to include('global' => 'gitaly')
+        expect(t.dig('PodDisruptionBudget/test-gitaly-foo', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(t.dig('Service/test-gitaly-foo', 'metadata', 'labels')).to include('gitaly' => 'gitaly')
+        expect(t.dig('Service/test-gitaly-foo', 'metadata', 'labels')).to include('global' => 'service')
+        expect(t.dig('Service/test-gitaly-foo', 'metadata', 'labels')).to include('global_service' => true)
+        expect(t.dig('Service/test-gitaly-foo', 'metadata', 'labels')).to include('service' => true)
+        expect(t.dig('Service/test-gitaly-foo', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(t.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+      end
+    end
+  end
 end

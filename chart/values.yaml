@@ -19,14 +19,10 @@
 global:
   common:
     labels: {}
-  ## GitLab operator is Alpha. Not for production use.
+  ## GitLab operator is DEPRECATED. DO NOT USE.
   operator:
     enabled: false
     rollout:
-      # Enables automatic pause for deployment rollout. This must be set to `true` to fix
-      # Helm's issue with 3-way merge. See:
-      #   https://gitlab.com/gitlab-org/charts/gitlab/issues/1262
-      #   https://github.com/helm/helm/issues/3805
       autoPause: true
 
   ## Supplemental Pod labels. Will not be used for selectors.
@@ -34,7 +30,7 @@ global:
     labels: {}
 
   ## doc/installation/deployment.md#deploy-the-community-edition
-  edition: ce
+  edition: ee
 
   ## doc/charts/globals.md#gitlab-version
   # gitlabVersion: master
@@ -69,6 +65,7 @@ global:
     tls: {}
     #   enabled: true
     #   secretName:
+    path: /
 
   gitlab:
     ## Enterprise license for this GitLab installation
@@ -102,6 +99,8 @@ global:
 
   ## doc/charts/globals.md#configure-redis-settings
   redis:
+    image:
+      tag: 6.0
     password:
       enabled: true
       # secret:
@@ -136,6 +135,7 @@ global:
 
   praefect:
     enabled: false
+    replaceInternalGitaly: true
     authToken: {}
     autoMigrate: true
     dbSecret: {}
@@ -175,6 +175,7 @@ global:
     enableUsagePing: true
     enableSeatLink: true
     enableImpersonation:
+    applicationSettingsCacheSeconds: 60
     defaultCanCreateGroup: true
     usernameChangingEnabled: true
     issueClosingPattern:
@@ -260,6 +261,7 @@ global:
       googleAnalyticsId:
       matomoUrl:
       matomoSiteId:
+      matomoDisableCookies:
 
     ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
     object_store:
@@ -383,6 +385,9 @@ global:
     gitlab_kas: {}
       # secret:
       # key:
+      # enabled:
+      # externalUrl:
+      # internalUrl:
 
     ## doc/charts/globals.md#omniauth
     omniauth:
@@ -419,6 +424,13 @@ global:
       # signupEnabled:
   ## End of global.appConfig
 
+  oauth:
+    gitlab-pages: {}
+      # secret:
+      # appIdKey:
+      # appSecretKey:
+      # redirectUri:
+
   ## doc/charts/geo.md
   geo:
     enabled: false
@@ -441,6 +453,11 @@ global:
         # clientKey:
         # clientCertificate:
         # serverCA:
+    registry:
+      syncEnabled: false
+      syncSecret: {}
+        # secret: <release-name>-registry-notification
+        # key: secret
 
   ## doc/charts/gitlab/kas/index.md
   kas:
@@ -453,6 +470,9 @@ global:
       # key:
     hostKeys: {}
       # secret:
+    ## doc/charts/globals.md#tcp-proxy-protocol
+    tcp:
+      proxyProtocol: false
 
   ## Rails application secrets
   ## Secret created according to doc/installation/secrets.md#gitlab-rails-secret
@@ -508,6 +528,9 @@ global:
         # secret:
         # key:
     apiSecret: {}
+      # secret:
+      # key:
+    authSecret: {}
       # secret:
       # key:
 
@@ -581,7 +604,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -625,7 +648,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -638,8 +661,10 @@ global:
       # tag: latest
       # Busybox can not be hardened with no STIGS. Replacing with UBI-8 container
       repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-      tag: "8.2"
-
+      tag: "8.3"
+      pullSecrets:
+      - name: private-registry
+      
   ## docs/charts/globals.md#service-accounts
   serviceAccount:
     enabled: false
@@ -663,9 +688,11 @@ global:
 
 upgradeCheck:
   enabled: true
-  image: {}
-    # repository:
-    # tag:
+  image:
+    repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
+    tag: "8.3"
+    pullSecrets:
+    - name: private-registry
   securityContext:
     # in alpine/debian/busybox based images, this is `nobody:nogroup`
     runAsUser: 65534
@@ -684,7 +711,7 @@ upgradeCheck:
 ## Installation & configuration of jetstack/cert-manager
 ## See requirements.yaml for current version
 certmanager:
-  createCustomResource: true
+  createCustomResource: false
   nameOverride: cert-manager
   # Install cert-manager chart. Set to false if you already have cert-manager
   # installed or if you are not using cert-manager.
@@ -889,7 +916,7 @@ redis:
     image:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
-      tag: 1.6.1
+      tag: 1.18.0
       pullSecrets: 
       - private-registry
   image:
@@ -939,7 +966,7 @@ registry:
   host: "registry.bigbang.dev"
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 13.8.0
+    tag: 13.10.3
     pullSecrets:
     - name: private-registry 
 
@@ -1032,13 +1059,13 @@ gitlab:
         app: 'gitaly'
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
   gitlab-exporter:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1051,45 +1078,45 @@ gitlab:
           prometheus.io/scrape: "true"
           prometheus.io/port: "9168"
           prometheus.io/path: "/metrics"
-      enabled: true
+      enabled: false
 ## doc/charts/gitlab/migrations
   migrations:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry 
 ## doc/charts/gitlab/webservice
   webservice:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
     workhorse:
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
 ## doc/charts/gitlab/sidekiq
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
 ## doc/charts/gitlab/gitaly
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
 ## doc/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 13.8.0
+      tag: 13.10.3
       pullSecrets:
       - name: private-registry
 ## doc/charts/gitlab/gitlab-grafana
@@ -1098,7 +1125,7 @@ gitlab:
 # use Ironbank hardened images for MinIO
 minio:
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2020-11-19T23-48-16Z
+  imageTag: RELEASE.2021-04-06T23-11-00Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1107,9 +1134,28 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET 
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2021-02-07T02-02-05Z
-
+    tag: RELEASE.2021-03-23T05-46-11Z
+    pullSecrets:
+    - name: private-registry
+    
 # Big Bang Additions
 hostname: bigbang.dev
 istio:
-  enabled: true
+  # Toggle istio integration
+  enabled: false
+  gitlab:
+    # Toggle vs creation
+    enabled: true
+    annotations: {}
+    labels: {}
+    gateways:
+      - istio-system/main
+    # hosts:  no hosts key supported here because the upstream chart has global.hosts
+  registry:
+    # Toggle vs creation
+    enabled: true
+    annotations: {}
+    labels: {}
+    gateways:
+      - istio-system/main
+    # hosts:  no hosts key supported here because the upstream chart has global.hosts

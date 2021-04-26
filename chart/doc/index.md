@@ -40,18 +40,10 @@ can be installed separately.
 - Optional additions:
   - [Prometheus](https://artifacthub.io/packages/helm/prometheus-community/prometheus)
   - [Grafana](https://artifacthub.io/packages/helm/grafana/grafana)
-  - [_Unprivileged_](https://docs.gitlab.com/runner/install/kubernetes.html#running-docker-in-docker-containers-with-gitlab-runners) [GitLab Runner](https://docs.gitlab.com/runner/) using the Kubernetes executor
+  - [_Unprivileged_](https://docs.gitlab.com/runner/install/kubernetes.html#running-docker-in-docker-containers-with-gitlab-runner) [GitLab Runner](https://docs.gitlab.com/runner/) using the Kubernetes executor
   - Automatically provisioned SSL via [Let's Encrypt](https://letsencrypt.org/), using [Jetstack](https://www.jetstack.io/)'s [cert-manager](https://cert-manager.io/docs/)
   - GitLab/[Praefect](charts/gitlab/praefect/index.md)
   - GitLab/[Kubernetes Agent Server (KAS)](charts/gitlab/kas/index.md)
-
-## Limitations
-
-GitLab Pages [can be deployed](https://gitlab.com/groups/gitlab-org/-/epics/4283) using the Helm chart, but are [missing some functionality](https://gitlab.com/groups/gitlab-org/charts/-/epics/21).
-
-Database limitations:
-
-- GitLab Geo functionality [requires the use of external database service(s)](installation/deployment.md#postgresql).
 
 ## GitLab Helm chart quick start guide
 
@@ -113,6 +105,11 @@ helm upgrade gitlab gitlab/gitlab -f gitlab.yaml
 ```
 
 For more detailed information see [Upgrading](installation/upgrade.md).
+
+NOTE:
+**Zero-downtime upgrades** are not available with the GitLab charts.
+Ongoing work to support this feature can be tracked via
+[GitLab Epic 3444](https://gitlab.com/groups/gitlab-org/-/epics/3444).
 
 ## Uninstall
 

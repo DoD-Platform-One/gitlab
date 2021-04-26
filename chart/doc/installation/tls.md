@@ -27,7 +27,7 @@ helm install gitlab gitlab/gitlab \
   --set certmanager-issuer.email=you@example.com
 ```
 
-Installing certmanager is controlled by the `certmanager.install` setting, and using it in the charts is controlled by the
+Installing `cert-manager` is controlled by the `certmanager.install` setting, and using it in the charts is controlled by the
 `global.ingress.configureCertmanager` setting. Both of these are `true` by default, so only the issuer email needs to be
 provided by default.
 
@@ -107,10 +107,12 @@ helm install gitlab gitlab/gitlab \
   --set gitlab-runner.install=false
 ```
 
-The `shared-secrets` chart will then produce a CA certificate and wildcard certificate for use by all externally
-accessible services. The secrets containing these will be `RELEASE-wildcard-tls` and `RELEASE-wildcard-tls-ca`.
-The `RELEASE-wildcard-tls-ca` contains the public CA certificate that can be distributed to users and systems that
-will access the deployed GitLab instance.
+The `shared-secrets` chart will then produce a CA certificate, wildcard certificate, and a certificate chain
+for use by all externally accessible services. The secrets containing these will be `RELEASE-wildcard-tls`,
+`RELEASE-wildcard-tls-ca`, and `RELEASE-wildcard-tls-chain`. The `RELEASE-wildcard-tls-ca` contains the public
+CA certificate that can be distributed to users and systems that will access the deployed GitLab instance.
+The `RELEASE-wildcard-tls-chain` contains both the CA certificate and the wildcard certificate which you can
+also use directly for GitLab Runner via `gitlab-runner.certsSecretName=RELEASE-wildcard-tls-chain`.
 
 ## TLS requirement for GitLab Pages
 

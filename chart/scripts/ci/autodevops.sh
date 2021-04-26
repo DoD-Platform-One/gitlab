@@ -2,21 +2,33 @@
 
 # Auto DevOps variables and functions
 [[ "$TRACE" ]] && set -x
-auto_database_url=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${CI_ENVIRONMENT_SLUG}-postgres:5432/${POSTGRES_DB}
-export DATABASE_URL=${DATABASE_URL-$auto_database_url}
 export CI_APPLICATION_REPOSITORY=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
 export CI_APPLICATION_TAG=$CI_COMMIT_SHA
 export CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}
 
+# Derive the Helm RELEASE argument from CI_ENVIRONMENT_SLUG
+if [[ $CI_ENVIRONMENT_SLUG =~ ^.{3}-review ]]; then
+  # if a "review", use CI_COMMIT_REF_SLUG
+  RELEASE_NAME=rvw-${CI_COMMIT_REF_SLUG}
+  # Trim release name to leave room for prefixes/suffixes
+  RELEASE_NAME=${RELEASE_NAME:0:30}
+  # Trim any hyphens in the suffix
+  RELEASE_NAME=${RELEASE_NAME%-}
+else
+  # otherwise, use CI_ENVIRONMENT_SLUG
+  RELEASE_NAME=$CI_ENVIRONMENT_SLUG
+fi
+export RELEASE_NAME
+
 function previousDeployFailed() {
   set +e
-  echo "Checking for previous deployment of $CI_ENVIRONMENT_SLUG"
-  deployment_status=$(helm status $CI_ENVIRONMENT_SLUG >/dev/null 2>&1)
+  echo "Checking for previous deployment of $RELEASE_NAME"
+  deployment_status=$(helm status $RELEASE_NAME >/dev/null 2>&1)
   status=$?
   # if `status` is `0`, deployment exists, has a status
   if [ $status -eq 0 ]; then
     echo "Previous deployment found, checking status"
-    deployment_status=$(helm status $CI_ENVIRONMENT_SLUG | grep ^STATUS | cut -d' ' -f2)
+    deployment_status=$(helm status $RELEASE_NAME | grep ^STATUS | cut -d' ' -f2)
     echo "Previous deployment state: $deployment_status"
     if [[ "$deployment_status" == "FAILED" || "$deployment_status" == "PENDING_UPGRADE" || "$deployment_status" == "PENDING_INSTALL" ]]; then
       status=0;
@@ -32,7 +44,7 @@ function previousDeployFailed() {
 
 function crdExists() {
   echo "Checking for existing GitLab Operator CRD"
-  kubectl get crd/gitlabs.${CI_ENVIRONMENT_SLUG}.gitlab.com >/dev/null 2>&1
+  kubectl get crd/gitlabs.${RELEASE_NAME}.gitlab.com >/dev/null 2>&1
   status=$?
   if [ $status -eq 0 ]; then
     echo "GitLab Operator CRD exists."
@@ -43,37 +55,10 @@ function crdExists() {
 }
 
 function deploy() {
-  track="${1-stable}"
-  name="$CI_ENVIRONMENT_SLUG"
-
+  # Enable / disable KAS based on environment
   local enable_kas=()
   if [[ -n "$KAS_ENABLED" ]]; then
     enable_kas=("--set" "global.kas.enabled=true")
-  fi
-
-  if [[ "$track" != "stable" ]]; then
-    name="$name-$track"
-  fi
-
-  replicas="1"
-  service_enabled="false"
-  postgres_enabled="$POSTGRES_ENABLED"
-  # canary uses stable db
-  [[ "$track" == "canary" ]] && postgres_enabled="false"
-
-  env_track=$( echo $track | tr -s  '[:lower:]'  '[:upper:]' )
-  env_slug=$( echo ${CI_ENVIRONMENT_SLUG//-/_} | tr -s  '[:lower:]'  '[:upper:]' )
-
-  if [[ "$track" == "stable" ]]; then
-    # for stable track get number of replicas from `PRODUCTION_REPLICAS`
-    eval new_replicas=\$${env_slug}_REPLICAS
-    service_enabled="true"
-  else
-    # for all tracks get number of replicas from `CANARY_PRODUCTION_REPLICAS`
-    eval new_replicas=\$${env_track}_${env_slug}_REPLICAS
-  fi
-  if [[ -n "$new_replicas" ]]; then
-    replicas="$new_replicas"
   fi
 
   # Use stable images when on the stable branch
@@ -93,22 +78,22 @@ function deploy() {
   fi
 
   # Cleanup and previous installs, as FAILED and PENDING_UPGRADE will cause errors with `upgrade`
-  if [ "$CI_ENVIRONMENT_SLUG" != "production" ] && previousDeployFailed ; then
-    echo "Deployment in bad state, cleaning up $CI_ENVIRONMENT_SLUG"
+  if [ "$RELEASE_NAME" != "production" ] && previousDeployFailed ; then
+    echo "Deployment in bad state, cleaning up $RELEASE_NAME"
     delete
     cleanup
   fi
 
   #ROOT_PASSWORD=$(cat /dev/urandom | LC_TYPE=C tr -dc "[:alpha:]" | head -c 16)
   #echo "Generated root login: $ROOT_PASSWORD"
-  kubectl create secret generic "${CI_ENVIRONMENT_SLUG}-gitlab-initial-root-password" --from-literal=password=$ROOT_PASSWORD -o yaml --dry-run | kubectl replace --force -f -
+  kubectl create secret generic "${RELEASE_NAME}-gitlab-initial-root-password" --from-literal=password=$ROOT_PASSWORD -o yaml --dry-run | kubectl replace --force -f -
 
   echo "${REVIEW_APPS_EE_LICENSE}" > /tmp/license.gitlab
-  kubectl create secret generic "${CI_ENVIRONMENT_SLUG}-gitlab-license" --from-file=license=/tmp/license.gitlab -o yaml --dry-run | kubectl replace --force -f -
+  kubectl create secret generic "${RELEASE_NAME}-gitlab-license" --from-file=license=/tmp/license.gitlab -o yaml --dry-run | kubectl replace --force -f -
 
   # YAML_FILE=""${KUBE_INGRESS_BASE_DOMAIN//\./-}.yaml"
 
-  if ! crdExists ; then scripts/crdctl create "${CI_ENVIRONMENT_SLUG}" ; fi
+  if ! crdExists ; then scripts/crdctl create "${RELEASE_NAME}" ; fi
 
   helm repo add gitlab https://charts.gitlab.io/
   helm repo add jetstack https://charts.jetstack.io
@@ -133,12 +118,49 @@ function deploy() {
       url: "${CI_JOB_URL}"
     pipeline:
       url: "${CI_PIPELINE_URL}"
+    environment: "${CI_ENVIRONMENT_SLUG}"
+CIYAML
+
+  # configure CI resources, intentionally trimmed.
+  cat << CIYAML > ci.scale.yaml
+  gitlab:
+    webservice:
+      minReplicas: 1    # 2
+      maxReplicas: 3    # 10
+      resources:
+        requests:
+          cpu: 500m     # 900m
+          memory: 1500M # 2.5G
+    sidekiq:
+      minReplicas: 1    # 1
+      maxReplicas: 2    # 10
+      resources:
+        requests:
+          cpu: 500m     # 900m
+          memory: 1000M # 2G
+    gitlab-shell:
+      minReplicas: 1    # 2
+      maxReplicas: 2    # 10
+    task-runner:
+      enabled: true
+  nginx-ingress:
+    controller:
+      replicaCount: 1   # 2
+  redis:
+    resources:
+      requests:
+        cpu: 100m
+  minio:
+    resources:
+      requests:
+        cpu: 100m
 CIYAML
 
   helm upgrade --install \
     $WAIT \
     -f ci.details.yaml \
-    --set releaseOverride="$CI_ENVIRONMENT_SLUG" \
+    -f ci.scale.yaml \
+    --set releaseOverride="$RELEASE_NAME" \
     --set global.imagePullPolicy="Always" \
     --set global.hosts.hostSuffix="$HOST_SUFFIX" \
     --set global.hosts.domain="$KUBE_INGRESS_BASE_DOMAIN" \
@@ -148,25 +170,15 @@ CIYAML
     --set global.appConfig.initialDefaults.signupEnabled=false \
     --set certmanager.install=false \
     --set prometheus.install=$PROMETHEUS_INSTALL \
-    --set gitlab.webservice.maxReplicas=3 \
-    --set gitlab.webservice.resources.requests.cpu=500m \
-    --set gitlab.webservice.resources.requests.memory=2000M \
-    --set gitlab.sidekiq.maxReplicas=2 \
-    --set gitlab.sidekiq.resources.requests.cpu=300m \
-    --set gitlab.sidekiq.resources.requests.memory=1500M \
-    --set gitlab.task-runner.enabled=true \
-    --set gitlab.gitlab-shell.maxReplicas=2 \
-    --set redis.resources.requests.cpu=100m \
-    --set minio.resources.requests.cpu=100m \
     --set global.operator.enabled=true \
-    --set gitlab.operator.crdPrefix="$CI_ENVIRONMENT_SLUG" \
-    --set global.gitlab.license.secret="$CI_ENVIRONMENT_SLUG-gitlab-license" \
+    --set gitlab.operator.crdPrefix="$RELEASE_NAME" \
+    --set global.gitlab.license.secret="$RELEASE_NAME-gitlab-license" \
     "${enable_kas[@]}" \
     --namespace="$NAMESPACE" \
     "${gitlab_version_args[@]}" \
     --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
     $HELM_EXTRA_ARGS \
-    "$name" \
+    "$RELEASE_NAME" \
     .
 }
 
@@ -183,7 +195,7 @@ function check_kas_status() {
     fi
 
     iteration=$((iteration+1))
-    kasState=($(kubectl get pods -n "$NAMESPACE" | grep "\-kas" | awk '{print $3}'))
+    kasState=($(kubectl get pods -n "$NAMESPACE" -lrelease=${RELEASE_NAME},app=kas | awk '{print $3}'))
     sleep 5;
   done
 }
@@ -194,7 +206,7 @@ function wait_for_deploy {
   iteration=0
   while [ "$observedRevision" != "$revision" ]; do
     IFS=$','
-    status=($(kubectl get gitlabs.${CI_ENVIRONMENT_SLUG}.gitlab.com "${CI_ENVIRONMENT_SLUG}-operator" -n ${NAMESPACE} -o jsonpath='{.status.deployedRevision}{","}{.spec.revision}'))
+    status=($(kubectl get gitlabs.${RELEASE_NAME}.gitlab.com "${RELEASE_NAME}-operator" -n ${NAMESPACE} -o jsonpath='{.status.deployedRevision}{","}{.spec.revision}'))
     unset IFS
     observedRevision=${status[0]}
     revision=${status[1]}
@@ -220,7 +232,7 @@ function restart_task_runner() {
   # this ensure we run up-to-date on tags like `master` when there
   # have been no changes to the configuration to warrant a restart
   # via metadata checksum annotations
-  kubectl -n ${NAMESPACE} delete pods -lapp=task-runner,release=${CI_ENVIRONMENT_SLUG}
+  kubectl -n ${NAMESPACE} delete pods -lapp=task-runner,release=${RELEASE_NAME}
   # always "succeed" so not to block.
   return 0
 }
@@ -311,13 +323,7 @@ function create_secret() {
 }
 
 function delete() {
-  track="${1-stable}"
-  name="$CI_ENVIRONMENT_SLUG"
-
-  if [[ "$track" != "stable" ]]; then
-    name="$name-$track"
-  fi
-  helm uninstall "$name" || true
+  helm uninstall "$RELEASE_NAME" || true
 }
 
 function cleanup() {
@@ -327,7 +333,7 @@ function cleanup() {
   fi
 
   kubectl -n "$NAMESPACE" get ingress,svc,pdb,hpa,deploy,statefulset,job,pod,secret,configmap,pvc,secret,clusterrole,clusterrolebinding,role,rolebinding,sa,crd${gitlabs} 2>&1 \
-    | grep "$CI_ENVIRONMENT_SLUG" \
+    | grep "$RELEASE_NAME" \
     | awk '{print $1}' \
     | xargs kubectl -n "$NAMESPACE" delete \
     || true

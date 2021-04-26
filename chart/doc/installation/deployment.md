@@ -52,7 +52,7 @@ longer work for the Pages domain (`pages.<global.hosts.domain>` by default), and
 you will have to manually configure DNS entry to point the domain to the
 external IP dedicated to Pages.
 
-If you provisioned a GKE cluster using the scripts in this repo, [external-dns](https://github.com/kubernetes-sigs/external-dns)
+If you provisioned a GKE cluster using the scripts in this repository, [external-dns](https://github.com/kubernetes-sigs/external-dns)
 is already installed in your cluster.
 
 #### Static IP
@@ -103,7 +103,7 @@ purposes only.
 
 > **NOTE: This configuration is not recommended for use in production.**
 >
-> - A single StatefulSet is provided by [bitnami/PostgreSQL](https://artifacthub.io/packages/helm/bitnami/postgresql) by default.
+> - A single StatefulSet is provided by [`bitnami/PostgreSQL`](https://artifacthub.io/packages/helm/bitnami/postgresql) by default.
 > - As of 4.0.0 of these charts, replication is available internally, but _not enabled by default_. Such functionality has not been load tested by GitLab.
 
 You can read more about setting up your production-ready database in the [advanced database docs](../advanced/external-db/index.md).
@@ -127,7 +127,7 @@ All Redis configuration settings have been moved and consolidated on the
 
 > **NOTE: This configuration is not recommended for use in production.**
 >
-> - A single StatefulSet is provided by [bitnami/Redis](https://artifacthub.io/packages/helm/bitnami/redis) by default.
+> - A single StatefulSet is provided by [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/redis) by default.
 > - As of 4.0.0 of these charts, replication is available internally, but _not enabled by default_. Such functionality has not been load tested by GitLab.
 
 You can read more about setting up a production-ready Redis instance in the [advanced Redis docs](../advanced/external-redis/index.md).
@@ -274,7 +274,10 @@ Instructions for installing a development branch rather than a tagged release ca
 
 ### GitLab Operator (experimental)
 
-If you would like to use GitLab Operator to achieve zero downtime upgrades, please follow the [documentation for using the operator](operator.md).
+WARNING:
+This functionality was Alpha and marked experimental. It is now
+[**deprecated**](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2210), and will be removed in
+the future. Do not use in production.
 
 ## Monitoring the Deployment
 
@@ -286,7 +289,7 @@ the deployment is taking place if you run the command in another terminal.
 ## Initial login
 
 You can access the GitLab instance by visiting the domain specified during
-installation. The deafult domain would be `gitlab.example.com`, unless the
+installation. The default domain would be `gitlab.example.com`, unless the
 [global host settings](../charts/globals.md#configure-host-settings) were changed.
 If you manually created the secret for initial root password, you
 can use that to sign in as `root` user. If not, GitLab would've automatically

@@ -14,7 +14,7 @@ item, ensuring presence of all keys.
 {{/* make sure we always have at least one */}}
 {{- if not $.Values.deployments -}}
 {{-   $blank := fromYaml (include "webservice.datamodel.blank" $) -}}
-{{-   $_ := set $blank.ingress "path" "/" -}}
+{{-   $_ := set $blank.ingress "path" (coalesce $.Values.ingress.path $.Values.global.ingress.path) -}}
 {{-   $_ := set $.Values "deployments" (dict "default" (dict)) -}}
 {{-   $_ := set $.Values.deployments "default" $blank -}}
 {{- end -}}
@@ -28,12 +28,12 @@ item, ensuring presence of all keys.
 {{-   $_ := set $filledValues "name" $deployment -}}
 {{-   $_ := set $filledValues "fullname" $fullname -}}
 {{-   $_ := set $.Values.deployments $deployment $filledValues -}}
-{{-   if eq ($filledValues.ingress.path | toString ) "/" -}}
+{{-   if has ($filledValues.ingress.path | toString ) (list "/" "/*") -}}
 {{-     $_ := set $checks "hasBasePath" true -}}
 {{-   end -}}
 {{- end -}}
 {{- if and (not $.Values.ingress.requireBaseBath) (not $checks.hasBasePath) -}}
-{{-   fail "FATAL: Webservice: no deployment with ingress.path '/' specified." -}}
+{{-   fail "FATAL: Webservice: no deployment with ingress.path '/' or '/*' specified." -}}
 {{- end -}}
 {{- end -}}
 
@@ -54,6 +54,8 @@ ingress:
   proxyConnectTimeout: {{ .Values.ingress.proxyConnectTimeout }}
   proxyReadTimeout: {{ .Values.ingress.proxyReadTimeout }}
   proxyBodySize: {{ .Values.ingress.proxyBodySize | quote }}
+common:
+  labels: {}
 deployment:
   annotations:
     {{- if .Values.deployment.annotations }}
@@ -70,10 +72,10 @@ pod:
 service:
   labels: # additional labels to .serviceLabels
   type: {{ .Values.service.type }}
-  {{- if .Values.service.loadBalancerIP -}}
+  {{- if .Values.service.loadBalancerIP }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   {{- end }}
-  {{- if .Values.service.loadBalancerSourceRanges -}}
+  {{- if .Values.service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
     {{- range .Values.service.loadBalancerSourceRanges }}
     - {{ . | quote }}

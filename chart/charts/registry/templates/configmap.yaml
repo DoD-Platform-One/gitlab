@@ -6,6 +6,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
   configure: |-
     {{- .Values.init.script | nindent 4 }}
@@ -105,4 +106,6 @@ data:
       {{- else }}
       {{- include (print $.Template.BasePath "/_storage_default.yaml") . | nindent 6}}
       {{- end }}
+    {{- include "registry.database.config" $ | nindent 4 }}
+    {{- include "registry.migration.config" $ | nindent 4 }}
 {{- end -}}

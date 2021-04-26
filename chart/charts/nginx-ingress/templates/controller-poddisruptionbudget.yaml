@@ -12,6 +12,6 @@ spec:
   selector:
     matchLabels:
       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: controller
+      component: "{{ .Values.controller.name }}"
   minAvailable: {{ .Values.controller.minAvailable }}
 {{- end }}

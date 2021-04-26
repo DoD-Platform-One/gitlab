@@ -33,11 +33,6 @@ variables:
   GOOGLE_APPLICATION_CREDENTIALS: ${CI_PROJECT_DIR}/.google_keyfile.json
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
   # AUTO_DEVOPS_DOMAIN: domain.example.com
-
-  POSTGRES_USER: user
-  POSTGRES_PASSWORD: testing-password
-  POSTGRES_ENABLED: "false"
-  POSTGRES_DB: $CI_ENVIRONMENT_SLUG
   GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab
   HELM_MAX_HISTORY: 20
   TEST_BACKUP_PREFIX: 13.5.0-pre
@@ -293,32 +288,6 @@ stop_review_eks:
     variables:
       - $KUBECONFIG
 
-# Canaries are disabled by default, but if you want them,
-# and know what the downsides are, enable this job by removing the dot (.),
-# and uncomment the `when: manual` line in the `production` job.
-
-.canary:
-  stage: canary
-  script:
-    - check_kube_domain
-    - check_domain_ip
-#    - download_chart
-    - ensure_namespace
-    - create_secret
-    - deploy canary
-  environment:
-    name: production
-    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
-  variables:
-    DOMAIN: ".$KUBE_INGRESS_BASE_DOMAIN"
-  when: manual
-  <<: *except_deps_update
-  only:
-    refs:
-      - master
-    variables:
-      - $KUBECONFIG
-
 # This job continuously deploys to production on every push to `master`.
 # To make this a manual process, either because you're enabling `staging`
 # or `canary` deploys, or you simply want more control over when you deploy
@@ -377,7 +346,7 @@ review_helm_test:
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke
   script:
-    - helm test "$CI_ENVIRONMENT_SLUG"
+    - helm test "$RELEASE_NAME"
   only:
     refs:
       - branches
@@ -397,7 +366,7 @@ production_helm_test:
     name: gke_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   script:
-    - helm test "$CI_ENVIRONMENT_SLUG"
+    - helm test "$RELEASE_NAME"
   <<: *except_deps_update
   only:
     refs:
@@ -573,7 +542,6 @@ review-docs-cleanup:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375
     GITLAB_PASSWORD: $ROOT_PASSWORD
-    RELEASE_NAME: $CI_ENVIRONMENT_SLUG
     S3_CONFIG_PATH: /etc/gitlab/minio
   script:
     - if [[ -n "${VARIABLES_FILE}" ]]; then source "${VARIABLES_FILE}"; ./scripts/ci/feature_spec_setup; else ./scripts/ci/integration_spec_setup; fi

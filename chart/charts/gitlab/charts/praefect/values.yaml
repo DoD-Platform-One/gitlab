@@ -52,3 +52,8 @@ gitaly:
   service:
     tls: {}
   # serviceName:
+
+common:
+  labels: {}
+podLabels: {}
+serviceLabels: {}

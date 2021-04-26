@@ -68,6 +68,9 @@ function bootstrap(){
 
   gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --project $PROJECT;
 
+  echo "Wait for APIs to be responding"
+  kubectl --namespace=kube-system wait --for=condition=Available --timeout=5m apiservices/v1.
+
   # Create roles for RBAC Helm
   if $RBAC_ENABLED; then
     kubectl config set-credentials ${CLUSTER_NAME}-admin-user --username=admin --password=$(cluster_admin_password_gke)

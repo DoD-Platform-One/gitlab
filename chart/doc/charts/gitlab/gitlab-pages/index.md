@@ -36,6 +36,7 @@ configurations that can be supplied to the `helm install` command using the
 | Parameter                                 | Default           | Description                                              |
 | ----------------------------------------- | ----------------- | -------------------------------------------------------- |
 | `annotations`                             |                   | Pod annotations                                          |
+| `common.labels`                           | `{}`              | Supplemental labels that are applied to all objects created by this chart. |
 | `extraEnv`                                |                   | List of extra environment variables to expose            |
 | `image.pullPolicy`                        | `IfNotPresent`    | GitLab image pull policy                                 |
 | `image.pullSecrets`                       |                   | Secrets for the image repository                         |
@@ -46,7 +47,7 @@ configurations that can be supplied to the `helm install` command using the
 | `metrics.enabled`                         | `true`            | Toggle Prometheus metrics exporter                       |
 | `metrics.port`                            | `9235`            | Listen port for the Prometheus metrics exporter          |
 | `podLabels`                               |                   | Supplemental Pod labels. Will not be used for selectors. |
-| `resources.requests.cpu`                  | `75m`             | GitLab Pages minimum cpu                                 |
+| `resources.requests.cpu`                  | `75m`             | GitLab Pages minimum CPU                                 |
 | `resources.requests.memory`               | `100M`            | GitLab Pages minimum memory                              |
 | `securityContext.fsGroup`                 | `1000`            | Group ID under which the pod should be started           |
 | `securityContext.runAsUser`               | `1000`            | User ID under which the pod should be started            |
@@ -54,7 +55,7 @@ configurations that can be supplied to the `helm install` command using the
 | `service.internalPort`                    | `8090`            | GitLab Pages internal port                               |
 | `service.name`                            | `gitlab-pages`    | GitLab Pages service name                                |
 | `service.customDomains.type`              | `LoadBalancer`    | Type of service created for handling custom domains      |
-| `service.customDomains.internalHTTPSPort` | `8091`            | Port where Pages daemon listsns for HTTPS requests       |
+| `service.customDomains.internalHTTPSPort` | `8091`            | Port where Pages daemon listens for HTTPS requests       |
 | `service.customDomains.nodePort.http`     |                   | Node Port to be opened for HTTP connections. Valid only if `service.customDomains.type` is `NodePort` |
 | `service.customDomains.nodePort.https`    |                   | Node Port to be opened for HTTPS connections. Valid only if `service.customDomains.type` is `NodePort` |
 | `serviceLabels`                           | `{}`              | Supplemental service labels                              |

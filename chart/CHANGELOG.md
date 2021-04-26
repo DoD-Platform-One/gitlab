@@ -2,6 +2,163 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 4.10.3 (2021-04-13)
+
+- No changes.
+
+## 4.10.2 (2021-04-01)
+
+### Fixed (1 change)
+
+- Fix for Rancher/RKE: Remove extra space before -}} in _kas.tpl. !1925
+
+
+## 4.10.1 (2021-03-31)
+
+### Fixed (1 change)
+
+- Fixes Container Registry notification when Geo syncing is disabled. !1899
+
+### Changed (1 change)
+
+- GitLab Exporter to 10.1.0. !1915
+
+
+## 4.10.0 (2021-03-22)
+
+### Fixed (6 changes, 2 of them are from the community)
+
+- Skip kas redis.password_file when password disabled. !1853
+- Add missing hostnameOverride logic. !1861
+- Use template for label selectors on NGINX objects. !1877 (Antony Perigault)
+- Webervice: Fix template loadBalancerSourceRanges in Service object. !1882 (Rafed Ramzi)
+- Fix Registry ingress' serviceName value. !1887
+- Update GKE bootstrap script to wait for the api to be available. !1894
+
+### Changed (9 changes, 1 of them is from the community)
+
+- Fixes podLabels for sidekiq deployments. !1842
+- Adds common labels for all webservice deployment objects. !1856
+- Bump Container Registry to v3.1.0-gitlab. !1866
+- Adds Geo Notification Event for Container Registry. !1868
+- honour existing health check script shipped with gitlab-mailroom container. !1875 (Dmitry Makovey)
+- Add internal and external URL config for KAS. !1879
+- Use HTTP liveness check for mailroom. !1891
+- Bump Container Registry to v3.2.0-gitlab. !1893
+- Bump Container Registry to v3.2.1-gitlab. !1896
+
+### Added (6 changes, 1 of them is from the community)
+
+- Add optional networkpolicy for KAS. !1837
+- Support specifying `nodeSelector` globally. !1839 (Marshall Cottrell)
+- Add global.ingress.path to address #2563. !1846
+- Add database configurations to registry chart. !1854
+- Webservice: enable per-deployment blackoutSeconds. !1867
+- Add migration configurations to registry chart. !1888
+
+
+## 4.9.4 (2021-03-17)
+
+### Changed (1 change)
+
+- GitLab Runner to 0.26.0. !1858
+
+
+## 4.9.3 (2021-03-08)
+
+- No changes.
+
+## 4.9.2 (2021-03-04)
+
+- No changes.
+
+## 4.9.1 (2021-02-23)
+
+- No changes.
+
+## 4.9.0 (2021-02-22)
+
+### Fixed (8 changes, 1 of them is from the community)
+
+- Add custom annotations for shared-secrets job. !1774
+- Prevent all Gitaly pods from restarting when replicas are changed. !1806
+- Fix Praefect spec test and warning typo. !1812
+- Allow the use of TCP ProxyProtocol in ELB AWS. !1814 (Cristhian Roa)
+- CI: Shorten RELEASE_NAME to 48 characters. !1819
+- Fixes podLabels for sidekiq deployments. !1826
+- Fix SMTP openssl_verify_mode implementation. !1831
+- Fix redis service templating when Helm release includes 'redis'. !1832
+
+### Changed (14 changes)
+
+- Support migration from Gitaly to Praefect. !1757
+- Bump Redis chart to Redis 6.0.10. !1772
+- Adds common labels for Container Registry Chart. !1778
+- Fix pod labels for GitLab ShellChart. !1779
+- Bump Container Registry to v3.0.0-gitlab. !1780
+- Add common pod labels for Webservices. !1785
+- Add common pod labels for kas. !1791
+- Add common pod labels for mailroom. !1792
+- Modify logic to check if Praefect is enabled. !1797
+- Add common pod labels for task-runner. !1798
+- Add common pod labels for praefect. !1799
+- Add common pod labels for Pages. !1805
+- Add common pod labels for Gitaly. !1829
+- Webservice: accept / or /* for default ingress.path. !1841
+
+### Performance (2 changes)
+
+- Bump gitlab-exporter to v10.0.0, tune malloc to release memory earlier. !1777
+- Tune Ruby GC for gitlab-exporter. !1820
+
+### Added (7 changes)
+
+- Expose settings to control GitLab Shell logging. !1767
+- Add application settings cache expiry support. !1768
+- Automatically enable OAuth for GitLab Pages. !1782
+- Add matomo_disable_cookies setting. !1813
+- Adds common labels across all objects for GitLab Geo-Logcursor chart. !1822
+- Add support for specifying a nodeSelector for Kas. !1836
+- KAS: Add ability to disable Redis. !1838
+
+### Other (3 changes)
+
+- Emit Ruby Prometheus metrics for gitlab-exporter. !1790
+- Clarify EKS installation instructions. !1801
+- Add outgoing email section to 'globals' docs. !1821
+
+
+## 4.8.6 (2021-03-17)
+
+- No changes.
+
+## 4.8.5 (2021-03-04)
+
+- No changes.
+
+## 4.8.4 (2021-02-11)
+
+- No changes.
+
+## 4.8.3 (2021-02-05)
+
+- No changes.
+
+## 4.8.2 (2021-02-01)
+
+### Fixed (2 changes)
+
+- Fixes backups when GitLab KAS is enabled. !1765
+- Fix Gitaly persistence configuration. !1796
+
+
+## 4.8.1 (2021-01-26)
+
+### Changed (1 change)
+
+- Update GitLab Runner chart to 0.25.0. !1775
+
+
 ## 4.8.0 (2021-01-22)
 
 ### Fixed (2 changes, 1 of them is from the community)
@@ -27,6 +184,40 @@ entry.
 - Add support for custom domains in GitLab Pages. !1728
 - Add tolerations for minio create bucket job. !1744 (David ALEXANDRE)
 - Add upgrade survey link to upgrade output. !1762
+
+
+## 4.7.9 (2021-03-17)
+
+- No changes.
+
+## 4.7.8 (2021-03-04)
+
+- No changes.
+
+## 4.7.7 (2021-02-11)
+
+- No changes.
+
+## 4.7.6 (2021-02-01)
+
+- No changes.
+
+## 4.7.5 (2021-01-25)
+
+### Fixed (2 changes, 1 of them is from the community)
+
+- Fix dependency proxy object storage config. !1531 (Maikel Vlasman)
+- Fix spelling and logic for Gitaly hook volumes (backport 4.7.x). !1761
+
+### Changed (2 changes)
+
+- GitLab Runner chart to 0.15.0. !1224
+- GitLab Runner chart to 0.16.0, v12.10.1. !1299
+
+### Added (2 changes, 2 of them are from the community)
+
+- Minio: Adds podLabels and podAnnotations to chart. !1264 (Kavanaugh Latiolais)
+- Support custom labels for Pods of GitLab components. !1457 (Maxence Laude)
 
 
 ## 4.7.4 (2021-01-13)
@@ -86,6 +277,27 @@ entry.
 
 - Update NGINX from v0.20.0 to 0.41.2. !1690
 - Changes the default loglevel for registry to info. !1703
+
+
+## 4.6.7 (2021-02-11)
+
+- No changes.
+
+## 4.6.6 (2021-02-01)
+
+### Fixed (1 change, 1 of them is from the community)
+
+- Fix dependency proxy object storage config. !1531 (Maikel Vlasman)
+
+### Changed (2 changes)
+
+- GitLab Runner chart to 0.15.0. !1224
+- GitLab Runner chart to 0.16.0, v12.10.1. !1299
+
+### Added (2 changes, 2 of them are from the community)
+
+- Minio: Adds podLabels and podAnnotations to chart. !1264 (Kavanaugh Latiolais)
+- Support custom labels for Pods of GitLab components. !1457 (Maxence Laude)
 
 
 ## 4.6.5 (2021-01-13)

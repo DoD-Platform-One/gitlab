@@ -75,10 +75,16 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 
 {{/*
 Selector labels
+Previous values from the upstream chart:
+  app.kubernetes.io/name: {{ include "ingress-nginx.name" . }}
+  app.kubernetes.io/instance: {{ .Release.Name }}
+
+Per-component label:
+  component: "{{ .Values.{controller,defaultBackend}.name }}"
 */}}
 {{- define "ingress-nginx.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "ingress-nginx.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ include "ingress-nginx.name" . }}
+release: {{ .Release.Name }}
 {{- end -}}
 
 {{/*

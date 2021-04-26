@@ -33,6 +33,7 @@ to the `helm install` command using the `--set` flags.
 | -------------------------------- | --------------------- | ---------------------------------------------- |
 | `annotations`                    |                       | Pod annotations                                |
 | `podLabels`                      |                       | Supplemental Pod labels. Will not be used for selectors. |
+| `common.labels`                  |                       | Supplemental labels that are applied to all objects created by this chart. |
 | `deployment.terminationGracePeriodSeconds`      | 30     | Seconds that Kubernetes will wait for a pod to exit, note this must be longer than `shutdown.blackoutSeconds` |
 | `deployment.livenessProbe.initialDelaySeconds`  | 20     | Delay before liveness probe is initiated       |
 | `deployment.livenessProbe.periodSeconds`        | 60     | How often to perform the liveness probe        |
@@ -49,7 +50,7 @@ to the `helm install` command using the `--set` flags.
 | `extraContainers`                |                       | List of extra containers to include            |
 | `extraInitContainers`            |                       | List of extra init containers to include       |
 | `extras.google_analytics_id`     | `nil`                 | Google Analytics ID for frontend               |
-| `extraVolumeMounts`              |                       | List of extra volumes mountes to do            |
+| `extraVolumeMounts`              |                       | List of extra volumes mounts to do            |
 | `extraVolumes`                   |                       | List of extra volumes to create                |
 | `extraEnv`                       |                       | List of extra environment variables to expose  |
 | `gitlab.webservice.workhorse.image` | `registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee` | Workhorse image repository |
@@ -85,7 +86,7 @@ to the `helm install` command using the `--set` flags.
 | `registry.enabled`               | `true`                | Add/Remove registry link in all projects menu  |
 | `registry.tokenIssuer`           | `gitlab-issuer`       | Registry token issuer                          |
 | `replicaCount`                   | `1`                   | Webservice number of replicas                     |
-| `resources.requests.cpu`         | `300m`                | Webservice minimum cpu                            |
+| `resources.requests.cpu`         | `300m`                | Webservice minimum CPU                            |
 | `resources.requests.memory`      | `1.5G`                | Webservice minimum memory                         |
 | `service.externalPort`           | `8080`                | Webservice exposed port                           |
 | `securityContext.fsGroup`        | `1000`                | Group ID under which the pod should be started |
@@ -302,7 +303,7 @@ webservice:
 ```
 
 The `path` property is directly populated into the Ingress's `path` property, and allows one to control URI paths which are directed to each service. In the example above,
-`default` acts as the catch-all path, and `api` recevied all traffic under `/api`
+`default` acts as the catch-all path, and `api` received all traffic under `/api`
 
 You can disable a given Deployment from having an associated Ingress resource created by setting `path` to empty. See below, where `internal-api` will never receive external traffic.
 
@@ -353,7 +354,10 @@ gitlab:
 ### proxyBodySize
 
 `proxyBodySize` is used to set the NGINX proxy maximum body size. This is commonly
-required to allow a larger Docker image than the default. As an alternative option,
+required to allow a larger Docker image than the default.
+It is equivalent to the `nginx['client_max_body_size']` configuration in an
+[Omnibus installation](https://omnibus/settings/nginx.html#request-entity-too-large).
+As an alternative option,
 you can set the body size with either of the following two parameters too:
 
 - `gitlab.webservice.ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"`
@@ -521,7 +525,7 @@ Pods to specific endpoints.
 
 | Name              | Type    | Default | Description |
 |:----------------- |:-------:|:------- |:----------- |
-| `enabled`         | Boolean | `false` | This setting enables the networkpolicy |
+| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy` |
 | `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified. |
 | `ingress.rules`   | Array   | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
 | `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified. |

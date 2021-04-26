@@ -1,4 +1,5 @@
 config.yaml
+#charts/*.tgz
 .DS_Store
 tags
 requirements.lock

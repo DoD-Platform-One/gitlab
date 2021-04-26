@@ -24,6 +24,7 @@ spec:
         {{- include "gitlab.immutableLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
     spec:
+      {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}

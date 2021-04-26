@@ -11,6 +11,10 @@ module Gitlab
       "kubectl exec -it #{pod_name} -- #{cmd}"
     end
 
+    def gitaly_full_command(cmd)
+      "kubectl exec -it #{gitaly_pod_name} -- #{cmd}"
+    end
+
     def wait_until_app_ready(retries:30, interval: 10)
       begin
         URI.parse(gitlab_url).read
@@ -81,6 +85,13 @@ module Gitlab
       ENV['REGISTRY_URL'] || "registry.#{ENV['GITLAB_ROOT_DOMAIN']}"
     end
 
+    def gitaly_purge_storage
+      cmd = gitaly_full_command("find /home/git/repositories/ -mindepth 1 -maxdepth 1 -exec rm -rf {} \\;")
+      stdout, status = Open3.capture2e(cmd)
+
+      return [stdout, status]
+    end
+
     def restore_from_backup
       cmd = full_command("backup-utility --restore -t original")
       stdout, status = Open3.capture2e(cmd)
@@ -140,14 +151,24 @@ module Gitlab
       return [stdout, status]
     end
 
-    def pod_name
-      filters = 'app=task-runner'
-
+    def find_pod_name(filters)
       if ENV['RELEASE_NAME']
         filters="#{filters},release=#{ENV['RELEASE_NAME']}"
       end
 
-      @pod ||= `kubectl get pod -l #{filters} --field-selector=status.phase=Running -o jsonpath="{.items[0].metadata.name}"`
+      `kubectl get pod -l #{filters} --field-selector=status.phase=Running -o jsonpath="{.items[0].metadata.name}"`
+    end
+
+    def pod_name
+      filters = 'app=task-runner'
+
+      @pod ||= find_pod_name(filters)
+    end
+
+    def gitaly_pod_name
+      filters = 'app=gitaly'
+
+      @gitaly_pod ||= find_pod_name(filters)
     end
 
     def runner_registration_token

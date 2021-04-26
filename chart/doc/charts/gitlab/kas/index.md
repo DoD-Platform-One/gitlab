@@ -53,39 +53,30 @@ the `helm install` command using the `--set` flags.
 | `maxReplicas`               | `10`           | HPA `maxReplicas`                |
 | `maxUnavailable`            | `1`            | HPA `maxUnavailable`             |
 | `minReplicas`               | `2`            | HPA `maxReplicas`                |
+| `nodeSelector`              |                | Define a [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) for the `Pod`s of this `Deployment`, if present. |
 | `serviceAccount.annotations`| `{}`       | Service account annotations      |
 | `podLabels`                 | `{}`           | Supplemental Pod labels. Not used for selectors. |
+| `serviceLabels`             | `{}`           | Supplemental service labels |
+| `common.labels`             |                | Supplemental labels that are applied to all objects created by this chart. |
+| `redis.enabled`             | `true`         | Allows opting-out of using Redis for KAS features. Warnings: Redis will become a hard dependency soon, so this key is already deprecated. |
 | `resources.requests.cpu`    | `75m`                 | GitLab Exporter minimum CPU                    |
 | `resources.requests.memory` | `100M`                | GitLab Exporter minimum memory                 |
-| `service.externalPort`      | `8150`         | External port                    |
-| `service.internalPort`      | `8150`         | Internal port                    |
+| `service.externalPort`      | `8150`         | External port (for agentk connections) |
+| `service.internalPort`      | `8150`         | Internal port (for agentk connections) |
+| `service.apiInternalPort`   | `8153`         | Internal port for the internal API (for GitLab backend) |
+| `global.kas.service.apiExternalPort` | `8153` | External port for the internal API (for GitLab backend) |
 | `service.type`              | `ClusterIP`    | Service type                     |
 | `tolerations`               | `[]`           | Toleration labels for pod assignment     |
-| `customConfig`              | `{}`           | When given, fully overwrites the `kas` configuration with these values. |
+| `customConfig`              | `{}`           | When given, merges the default `kas` configuration with these values giving precedence to those defined here. |
 
 ## Development (how to manual QA)
 
-1. Install the chart
+To install the chart:
 
-   Choose the **Short Path** if you have access to `gitlab-paas` GCP project (internal), which enables you
-   to skip almost all the steps since cluster, project and agents are already setup.
-   Choose the **Long Path** if you don't have access to `gitlab-paas` GCP project (internal).
-
-   - **Short Path:** setup your local configuration to talk to this cluster:
-   `gcloud container clusters get-credentials kas-chart-qa --zone us-west1-b --project gitlab-paas`. Then checkout the MR working branch and install/upgrade GitLab with `kas` enabled from your local chart branch using `--set global.kas.enabled=true`. For example, using Helm v3:
-
-   ```shell
-   helm upgrade --force --install gitlab . \
-     --timeout 600s \
-     --set global.hosts.domain=qa.joaocunha.eu \
-     --set global.hosts.externalIP=35.227.184.50 \
-     --set certmanager-issuer.email=fake.email@gitlab.com \
-     --set global.kas.enabled=true
-   ```
-
-   Check that the deploy was successful and skip to step 6.
-
-   - **Long Path:** create your own GKE cluster. Then checkout the MR working branch and install/upgrade GitLab with `kas` enabled from your local chart branch using `--set global.kas.enabled=true`, for example:
+1. Create your own Kubernetes cluster.
+1. Check out the merge request's working branch.
+1. Install (or upgrade) GitLab with `kas` enabled from your local chart branch,
+   using `--set global.kas.enabled=true`, for example:
 
    ```shell
    helm upgrade --force --install gitlab . \
@@ -96,48 +87,19 @@ the `helm install` command using the `--set` flags.
      --set global.kas.enabled=true
    ```
 
-1. Create a project on your GitLab instance to manage your cluster by either importing or copying the contents of [this template project](https://gitlab.qa.joaocunha.eu/root/kas-qa):
+1. Use the GDK to run the process to configure and use the
+   [GitLab Kubernetes Agent](https://docs.gitlab.com/ee/user/clusters/agent/):
+   (You can also follow the steps to configure and use the Agent manually.)
 
-1. Create a `Clusters::Agent` and a `Clusters::AgentToken`. **Take note of the generated token, since you need it in the next step**.
+   1. From your GDK GitLab repository, move into the QA folder: `cd qa`.
+   1. Run the following command to run the QA test:
 
-   To do this you could either run `rails c` or via GraphQL. From `rails c`:
+      ```shell
+      GITLAB_USERNAME=$ROOT_USER
+      GITLAB_PASSWORD=$ROOT_PASSWORD
+      GITLAB_ADMIN_USERNAME=$ROOT_USER
+      GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD
+      bundle exec bin/qa Test::Instance::All https://your.gitlab.domain/ -- --tag orchestrated --tag quarantine qa/specs/features/ee/api/7_configure/kubernetes/kubernetes_agent_spec.rb
+      ```
 
-   ```ruby
-   project = ::Project.find_by_full_path("root/kas-qa")
-   agent = ::Clusters::Agent.create(name: "my-agent", project: project)
-   token = ::Clusters::AgentToken.create(agent: agent)
-   token.token # this will print out the token you need to use on the next step
-   ```
-
-   or using GraphQL:
-
-   with this approach, you need a Premium license to use this feature.
-
-   ```json
-   mutation createAgent {
-     createClusterAgent(input: { projectPath: "root/kas-qa", name: "my-agent" }) {
-       clusterAgent {
-         id
-         name
-       }
-       errors
-     }
-   }
-
-   mutation createToken {
-     clusterAgentTokenCreate(input: { clusterAgentId: <cluster-agent-id-taken-from-the-previous-mutation> }) {
-       secret
-       token {
-         createdAt
-         id
-       }
-       errors
-     }
-   }
-   ```
-
-   Note that GraphQL only shows you the token once, after you've created it. It's the `secret` field.
-
-1. Follow these instructions on installing the [GitLab Kubernetes Agent](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent/-/tree/master/build/deployment/gitlab-agent) with the token generated on the previous step.
-
-1. Login with the root user, edit the `manifest.yaml` ConfigMap in the root of your project. If you're using `gitlab-paas`, here is your [`manifest.yaml`](https://gitlab.qa.joaocunha.eu/root/kas-qa/-/blob/master/manifest.yaml). Change one of the configurations to whatever value you like, for instance increment the `data.game.properties.lives` attribute. Wait 30 seconds and check if this configuration map was correctly updated on your cluster: `kubectl get cm -n agentk game-config -oyaml`
+      You can also customize the `agentk` version to install with an environment variable: `GITLAB_AGENTK_VERSION=v13.7.1`

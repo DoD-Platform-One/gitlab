@@ -305,4 +305,32 @@ describe 'Redis configuration' do
       end
     end
   end
+
+  describe 'Generated Kubernetes object names' do
+    context 'Helm release name does not include "redis"' do
+      it 'Objects are suffixed with "-redis", references match' do
+        # run template, default release name is 'test'
+        t = HelmTemplate.new(default_values)
+        expect(t.exit_code).to eq(0)
+        # check that Services are -redis-master
+        expect(t.dig('Service/test-master')).to be_falsey
+        expect(t.dig('Service/test-redis-master')).to be_truthy
+        # check resque.yml
+        expect(t.dig('ConfigMap/test-task-runner','data','resque.yml.erb')).to include('test-redis-master')
+      end
+    end
+
+    context 'Helm release name includes "redis"' do
+      it 'Objects are suffixed without "-redis", references match' do
+        # run template, pass release name with "redis" in it
+        t = HelmTemplate.new(default_values,'redis-test')
+        expect(t.exit_code).to eq(0)
+        # check that Services are -master
+        expect(t.dig('Service/redis-test-master')).to be_truthy
+        expect(t.dig('Service/redis-test-redis-master')).to be_falsey
+        # check resque.yml is pointing to the right service.
+        expect(t.dig('ConfigMap/redis-test-task-runner','data','resque.yml.erb')).to include('redis-test-master')
+      end
+    end
+  end
 end

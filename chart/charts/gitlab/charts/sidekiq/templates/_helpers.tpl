@@ -17,3 +17,34 @@ values.
   value: {{ $value | quote }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Returns a list of _common_ labels to be shared across all
+Sidekiq deployments and other shared objects, otherwise
+known as pods currently.
+*/}}
+{{- define "sidekiq.commonLabels" -}}
+{{- $commonPodLabels := merge (default (dict) .pod) (default (dict) .global) -}}
+{{- range $key, $value := $commonPodLabels }}
+{{ $key }}: {{ $value }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Returns a list of _pod_ labels to be shared across all
+Sidekiq deployments, otherwise known as pods currently.
+*/}}
+{{- define "sidekiq.podLabels" -}}
+{{- $commonPodLabels := default (dict) .pod -}}
+{{- range $key, $value := $commonPodLabels }}
+{{ $key }}: {{ $value }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Create a datamodel for our common labels
+*/}}
+{{- define "sidekiq.pod.common.labels" -}}
+{{- $default := dict "labels" (dict) -}}
+{{- $_ := set . "common" (merge (default (dict) .common) $default) -}}
+{{- end -}}

@@ -88,6 +88,8 @@ tolerations: []
 affinity: {}
 
 podLabels: {}
+common:
+  labels: {}
 
 ## Allow to overwrite under which User and Group we're running.
 securityContext:

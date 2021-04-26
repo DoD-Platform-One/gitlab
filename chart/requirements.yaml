@@ -1,19 +1,14 @@
 dependencies:
 - name: gitlab
   version: '*.*.*'
-  repository: file://./charts/gitlab
 - name: shared-secrets
   version: '*.*.*'
-  repository: file://./charts/shared-secrets
 - name: certmanager-issuer
   version: '*.*.*'
-  repository: file://./charts/certmanager-issuer
 - name: minio
   version: '*.*.*'
-  repository: file://./charts/minio
 - name: registry
   version: '*.*.*'
-  repository: file://./charts/registry
 - name: cert-manager
   version: 0.10.1
   repository: file://./charts/cert-manager-v0.10.1.tgz
@@ -28,18 +23,17 @@ dependencies:
   repository: file://./charts/postgresql-8.9.4.tgz
   condition: postgresql.install
 - name: gitlab-runner
-  version: 0.24.0
-  repository: file://./charts/gitlab-runner-0.24.0.tgz
+  version: 0.26.0
+  repository: file://./charts/gitlab-runner-0.26.0.tgz
   condition: gitlab-runner.install
 - name: grafana
   version: 4.0.1
   repository: file://./charts/grafana-4.0.1.tgz
   condition: global.grafana.enabled
 - name: redis
-  version: 10.3.4
-  repository: file://./charts/redis-10.3.4.tgz
+  version: 11.3.4
+  repository: file://./charts/redis-11.3.4.tgz
   condition: redis.install
 - name: nginx-ingress
   condition: nginx-ingress.enabled
   version: '*.*.*'
-  repository: file://./charts/nginx-ingress

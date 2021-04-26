@@ -45,8 +45,16 @@ data:
           redis_url: {{ template "gitlab.redis.url" . }}
           redis_enable_client: false
 
+      ruby: &ruby
+        methods:
+          - probe_gc
+        opts:
+          quantiles: false
+
       metrics:
         multiple: true
+        ruby:
+          <<: *ruby
         sidekiq:
           <<: *sidekiq
         ci_builds:

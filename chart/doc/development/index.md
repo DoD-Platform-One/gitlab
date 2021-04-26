@@ -37,7 +37,7 @@ functionality of the chart.
 
 ### Running GitLab QA
 
-[GitLab QA](https://gitlab.com/gitlab-org/gitlab-qa) can be used to run integrationa and functional tests against a deployed cloud native GitLab installation.
+[GitLab QA](https://gitlab.com/gitlab-org/gitlab-qa) can be used to run integrations and functional tests against a deployed cloud native GitLab installation.
 
 [Read more in the GitLab QA chart docs](gitlab-qa/index.md).
 

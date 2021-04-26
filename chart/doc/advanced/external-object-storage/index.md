@@ -45,7 +45,7 @@ for more details.
 > [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/25877) in GitLab 13.4.
 
 Direct support for Azure Blob storage is available for
-[uploaded attachments, CI job artifacts, LFS, and other object types supported via the consolidated settngs](https://docs.gitlab.com/ee/administration/object_storage.html#storage-specific-configuration). In previous GitLab versions, an [Azure MinIO gateway](azure-minio-gateway.md) was needed.
+[uploaded attachments, CI job artifacts, LFS, and other object types supported via the consolidated settings](https://docs.gitlab.com/ee/administration/object_storage.html#storage-specific-configuration). In previous GitLab versions, an [Azure MinIO gateway](azure-minio-gateway.md) was needed.
 
 The Azure MinIO gateway is still needed for backups. Follow [this issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2298)
 for more details.
@@ -98,7 +98,7 @@ the global is used by GitLab backups.
 Create the secret per [registry chart documentation on storage](../../charts/registry/index.md#storage), then configure the chart to make use of this secret.
 
 Examples for [S3](https://docs.docker.com/registry/storage-drivers/s3/)(S3 compatible storages, but Azure MinIO gateway not supported, see [Azure Blob Storage](#azure-blob-storage)), [Azure](https://docs.docker.com/registry/storage-drivers/azure/) and [GCS](https://docs.docker.com/registry/storage-drivers/gcs/) drivers can be found in
-[examples/objectstorage](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage).
+[`examples/objectstorage`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage).
 
 - [`registry.s3.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/registry.s3.yaml)
 - [`registry.gcs.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/registry.gcs.yaml)
@@ -169,7 +169,7 @@ See the [charts/globals documentation on appConfig](../../charts/globals.md#conf
 Create the secret(s) per the [connection details documentation](../../charts/globals.md#connection), and then configure the chart to use the provided secrets. Note, the same secret can be used for all of them.
 
 Examples for [AWS](https://fog.io/storage/#using-amazon-s3-and-fog) (any S3 compatible like [Azure using MinIO](azure-minio-gateway.md)) and [Google](https://fog.io/storage/#google-cloud-storage) providers can be found in
-[examples/objectstorage](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage).
+[`examples/objectstorage`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage).
 
 - [`rails.s3.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.s3.yaml)
 - [`rails.gcs.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.gcs.yaml)
@@ -189,7 +189,7 @@ Examples for [AWS](https://fog.io/storage/#using-amazon-s3-and-fog) (any S3 comp
 Backups are also stored in object storage, and need to be configured to point
 externally rather than the included MinIO service. The backup/restore procedure makes
 use of two separate buckets. A bucket for storing backups (`global.appConfig.backups.bucket`)
-and a tmp bucket for preserving existing data during the restore process (`global.appConfig.backups.tmpBucket`).
+and a temporary bucket for preserving existing data during the restore process (`global.appConfig.backups.tmpBucket`).
 Currently AWS S3-compatible object storage systems and Google Cloud Storage are supported backends
 The backend type is configurable by setting `global.appConfig.backups.objectStorage.backend` to `s3` and `gcs` respectively.
 A connection configuration through the `gitlab.task-runner.backups.objectStorage.config` key must also be provided.
@@ -217,14 +217,14 @@ For Google Cloud Storage (GCS):
 
 See the [backup/restore object storage documentation](../../backup-restore/index.md#object-storage) for full details.
 
-> **Note**: In order to backup/restore files from the other object storage locations, the config file needs to be
+> **Note**: In order to backup/restore files from the other object storage locations, the configuration file needs to be
 > configured to authenticate as a user with sufficient access to read/write to all GitLab buckets.
 
 ### Backups storage example
 
 1. Create the `storage.config` file:
 
-   - On Amazon S3, the contents should be in the [s3cmd config file format](https://s3tools.org/kb/item14.htm)
+   - On Amazon S3, the contents should be in the [s3cmd configuration file format](https://s3tools.org/kb/item14.htm)
 
      ```ini
      [default]
