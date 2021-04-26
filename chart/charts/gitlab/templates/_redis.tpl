@@ -11,7 +11,13 @@ to the service name
 {{-   .redisMergedConfig.host -}}
 {{- else -}}
 {{-   $name := default "redis" .Values.redis.serviceName -}}
-{{-   printf "%s-%s-master.%s.svc" .Release.Name $name .Release.Namespace -}}
+{{-   $redisRelease := .Release.Name -}}
+{{-   if contains $name $redisRelease -}}
+{{-     $redisRelease = .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{-   else -}}
+{{-     $redisRelease = printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{-   end -}}
+{{-   printf "%s-master.%s.svc" $redisRelease .Release.Namespace -}}
 {{- end -}}
 {{- end -}}
 
@@ -58,17 +64,22 @@ Return the password section of the Redis URI, if needed.
 Build the structure describing sentinels
 */}}
 {{- define "gitlab.redis.sentinels" -}}
-{{- if .redisConfigName }}
-{{-   $_ := set . "redisMergedConfig" ( index .Values.global.redis .redisConfigName ) -}}
-{{- else -}}
-{{-   $_ := set . "redisMergedConfig" .Values.global.redis -}}
-{{- end -}}
+{{- include "gitlab.redis.selectedMergedConfig" . -}}
 {{- if .redisMergedConfig.sentinels -}}
 sentinels:
 {{- range $i, $entry := .redisMergedConfig.sentinels }}
   - host: {{ $entry.host }}
     port: {{ default 26379 $entry.port }}
 {{- end }}
+{{- end -}}
+{{- end -}}
+
+{{/*Set redisMergedConfig*/}}
+{{- define "gitlab.redis.selectedMergedConfig" -}}
+{{- if .redisConfigName }}
+{{-   $_ := set . "redisMergedConfig" ( index .Values.global.redis .redisConfigName ) -}}
+{{- else -}}
+{{-   $_ := set . "redisMergedConfig" .Values.global.redis -}}
 {{- end -}}
 {{- end -}}
 

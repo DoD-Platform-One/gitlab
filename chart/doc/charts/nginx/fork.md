@@ -13,11 +13,11 @@ Our [fork](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/nginx-
 The following adjustments were made to the NGINX fork:
 
 - `tcp-configmap.yaml`: is optional depending on new `tcpExternalConfig` setting
-- Ability to use a templated tcp configmap name from another chart
+- Ability to use a templated TCP ConfigMap name from another chart
   - `controller-configmap-tcp.yaml`: `.metadata.name` is a template `ingress-nginx.tcp-configmap`
-  - `controller-deployment.yaml`: `.spec.template.spec.containers[0].args` uses `ingress-nginx.tcp-configmap` template for configmap name
-  - GitLab chart overrides `ingress-nginx.tcp-configmap` so that `gitlab/gitlab-org/charts/gitlab-shell` can configure its tcp service
+  - `controller-deployment.yaml`: `.spec.template.spec.containers[0].args` uses `ingress-nginx.tcp-configmap` template for ConfigMap name
+  - GitLab chart overrides `ingress-nginx.tcp-configmap` so that `gitlab/gitlab-org/charts/gitlab-shell` can configure its TCP service
 - Ability to use a templated Ingress name based on the release name
   - `controller-deployment.yaml`: `.spec.template.spec.containers[0].args` uses `ingress-nginx.controller.ingress-class`
-  - `role.yaml`: rule for editing leader configmap uses `ingress-nginx.controller.ingress-class`
+  - `role.yaml`: rule for editing leader ConfigMap uses `ingress-nginx.controller.ingress-class`
 - Replace `controller.service.loadBalancerIP` with `global.hosts.externalIP`

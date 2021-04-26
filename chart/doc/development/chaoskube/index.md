@@ -18,22 +18,22 @@ of our deployments.
 
 ## How
 
-Using chaoskube is a manual step we do after our weekly demos. The intended
-use case of chaoskube is to kill pods randomly at random times during a
+Using ChaosKube is a manual step we do after our weekly demos. The intended
+use case of ChaosKube is to kill pods randomly at random times during a
 working day to test the ability to recover. The way we use it is a bit different,
-we manually launch chaoskube in debug mode and manually identify the weak
+we manually launch ChaosKube in debug mode and manually identify the weak
 points of our deployment.
 
 Later, we intend to integrate it into our CI pipeline, so whenever new changes
-are rolled out we have a chaoskube run for that release.
+are rolled out we have a ChaosKube run for that release.
 
 ## Usage
 
-The [deploy_chaoskube.sh](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/deploy_chaoskube.sh)
-installs and unleashes chaoskube by scheduling a run 10m after installing chaoskube by default. It also sets up
+The [`deploy_chaoskube.sh`](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/deploy_chaoskube.sh)
+installs and unleashes ChaosKube by scheduling a run 10m after installing ChaosKube by default. It also sets up
 the needed service account and role if RBAC is enabled.
 
-After you clone the charts repository, to install and unleash chaoskube, run:
+After you clone the charts repository, to install and unleash ChaosKube, run:
 
 ```shell
 scripts/deploy_chaoskube.sh up
@@ -42,7 +42,7 @@ scripts/deploy_chaoskube.sh up
 ## Configuration
 
 ChaosKube can be configured by editing the `scripts/chaoskube-resources/values.yaml`
-file. For more info read the official [chaoskube docs](https://github.com/linki/chaoskube).
+file. For more info read the official [ChaosKube docs](https://github.com/linki/chaoskube).
 
 You can also configure the deployment with flags on the script. To find all available options, run:
 

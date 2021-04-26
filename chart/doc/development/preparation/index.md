@@ -52,7 +52,7 @@ We usually use `cloud-native-win` or `k8s-ftw`.
 
 ## ChaosKube
 
-Follow our [chaoskube](../chaoskube/index.md) guide for running ChaosKube,
+Follow our [ChaosKube](../chaoskube/index.md) guide for running ChaosKube,
 this is usually done after the demo.
 
 ## Git LFS

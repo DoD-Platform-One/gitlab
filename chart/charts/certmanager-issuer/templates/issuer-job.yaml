@@ -14,6 +14,7 @@ spec:
         app: {{ template "name" . }}
         release: {{ .Release.Name }}
     spec:
+      {{- include "gitlab.nodeSelector" . | nindent 6 }}
       securityContext:
         runAsUser: {{ .Values.global.kubectl.securityContext.runAsUser }}
         fsGroup: {{ .Values.global.kubectl.securityContext.fsGroup }}

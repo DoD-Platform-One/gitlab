@@ -28,12 +28,8 @@ ActionMailer::Base.smtp_settings = {
   {{- if has .Values.global.smtp.tls (list true false) }}
   tls: {{ .Values.global.smtp.tls }},
   {{- end }}
-  {{- if eq .Values.global.smtp.openssl_verify_mode "peer" }}
-  openssl_verify_mode: 'peer'
-  {{- else if eq .Values.global.smtp.openssl_verify_mode "none" }}
-  openssl_verify_mode: 'none'
-  {{- else if eq .Values.global.smtp.openssl_verify_mode "ssl/tls" }}
-  openssl_verify_mode: :ssl/:tls
+  {{- if .Values.global.smtp.openssl_verify_mode }}
+  openssl_verify_mode: {{ .Values.global.smtp.openssl_verify_mode | quote }}
   {{- end }}
 }
 {{- end -}}

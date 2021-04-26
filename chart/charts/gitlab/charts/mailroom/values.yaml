@@ -18,6 +18,8 @@ init:
 tolerations: []
 
 podLabels: {}
+common:
+  labels: {}
 
 global:
   # imagePullPolicy: IfNotPresent

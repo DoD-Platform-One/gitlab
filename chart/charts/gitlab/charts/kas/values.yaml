@@ -4,11 +4,18 @@
 
 annotations: {}
 global:
+  ingress: {}
   kas:
     enabled: false
+    service:
+      apiExternalPort: 8153 # port for connections from the GitLab backend
+  redis:
+    # host: '0.0.0.0'
+    password: {}
   # hosts:
     # kas:
       # name: kas.example.com
+      # https: true
   # imagePullPolicy: IfNotPresent
 hpa:
   targetAverageValue: 100m
@@ -18,10 +25,14 @@ image:
 ingress:
   annotations: {}
   tls: {}
+  path: # /
 maxReplicas: 10
 maxUnavailable: 1
 minReplicas: 2
 podLabels: {}
+common:
+  labels: {}
+serviceLabels: {}
 resources:
   requests:
     cpu: 100m
@@ -29,6 +40,7 @@ resources:
 service:
   externalPort: 8150
   internalPort: 8150
+  apiInternalPort: 8153
   type: ClusterIP
 metrics:
   enabled: true
@@ -46,7 +58,7 @@ workhorse: {}
   # host: '0.0.0.0'
   # serviceName: 'webservice'
   # port: 8181
-# overwrites the default kas config
+# merged with the default kas config
 customConfig: {}
 
 ## Allow to overwrite under which User and Group we're running.
@@ -54,3 +66,15 @@ securityContext:
   runAsUser: 65532
   runAsGroup: 65532
   fsGroup: 65532
+redis:
+  enabled: true
+
+networkpolicy:
+  enabled: false
+  egress:
+    enabled: false
+    rules: []
+  ingress:
+    enabled: false
+    rules: []
+  annotations: {}

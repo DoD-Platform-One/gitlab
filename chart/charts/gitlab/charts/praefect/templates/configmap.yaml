@@ -5,6 +5,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
   configure: |
     set -e
@@ -102,6 +103,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
   praefect-start: |
     set -e

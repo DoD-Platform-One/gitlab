@@ -1,3 +1,18 @@
+{{/* If the Container Registry metadata database is enabled, note it is not production ready */}}
+{{- if eq .Values.registry.database.enabled true }}
+WARNING: The Container Registry metadata database has been enabled. Please note that it is an experimental feature and must not be used in production.
+{{- end }}
+
+{{/* If the Container Registry filesystem metadata is disabled, note it is not production ready */}}
+{{- if eq true .Values.registry.migration.disablemirrorfs }}
+WARNING: The Container Registry filesystem metadata has been disabled. Please note that it is an experimental feature and must not be used in production.
+{{- end }}
+
+{{/* If Praefect enabled, note it is not production ready */}}
+{{- if eq .Values.global.praefect.enabled true }}
+WARNING: The Praefect chart has been enabled. Please note that it is still under development and not ready for production use. Usage may require significant manual intervention during upgrades.
+{{- end }}
+
 {{/* Resource request changes */}}
 NOTICE: The resource requests have increased for the Webservice and Sidekiq charts.
     For more information on Webservice resources, see https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#resources
@@ -60,15 +75,17 @@ NOTICE: The GitLab task-runner is scaled to 0.
     `kubectl scale --replicas=1 deployment/{{ .Release.Name }}-task-runner`
 
 {{ end }}
-{{/* print survey link */}}
+
+{{/* WARN: global.operator DEPRECATED */}}
+{{- if .Values.global.operator.enabled -}}
+WARNING: global.operator.enabled is set.
+    The gitlab/gitlab-operator chart houses "gitlab-operator". This functionality was Alpha, and marked experimental. This is now DEPRECATED and will be removed in the future.
+{{- end }}
+{{/* print install survey link */}}
 {{- $appVersion := coalesce .Values.global.gitlabVersion .Chart.AppVersion -}}
-{{- if regexMatch "^\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-pre)?$" $appVersion -}}
-{{-   $surveyInfo := dict "type" "install" "id" "SV_6kVqZANThUQ1bZb" -}}
-{{-   if .Release.IsUpgrade -}}
-{{-     $surveyInfo = dict "type" "upgrade" "id" "SV_0Hwcx9ncPfygMfj" -}}
-{{-   end }}
-Help us improve the {{ $surveyInfo.type }} experience, let us know how we did with a 1 minute survey:
-{{ printf "https://gitlab.fra1.qualtrics.com/jfe/form/%s?installation=helm&release=%s" $surveyInfo.id (regexReplaceAll "^(\\d+)\\.(\\d+)\\..+" $appVersion "${1}-${2}") }}
+{{- if and .Release.IsInstall (regexMatch "^\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-pre)?$" $appVersion) }}
+Help us improve the installation experience, let us know how we did with a 1 minute survey:
+{{ printf "https://gitlab.fra1.qualtrics.com/jfe/form/SV_6kVqZANThUQ1bZb?installation=helm&release=%s" (regexReplaceAll "^(\\d+)\\.(\\d+)\\..+" $appVersion "${1}-${2}") }}
 {{- end }}
 {{/* run deprecations */}}
 {{ include "gitlab.deprecations" . }}

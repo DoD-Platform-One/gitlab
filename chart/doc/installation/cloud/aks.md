@@ -18,7 +18,7 @@ Alternatively, a cluster can be created manually as well.
 
 A [bootstrap script](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/aks_bootstrap_script.sh) has been created to automate much of the setup process for users on Azure.
 
-The script uses [az](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) to initialize the cluster. This is a prerequisite
+The script uses [`az`](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) to initialize the cluster. This is a prerequisite
 and should be installed before hand and [configured to your account](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli).
 
 It reads an argument of `up`, `down` or `creds`, with additional optional parameters
@@ -70,7 +70,7 @@ The table below describes all available variables.
 | `--create-resource-group` | Create a new resource group to hold all created resources.                          | `false`            | `up`     |
 | `--create-public-ip`      | Create a public IP to use with the new cluster.                                     | `false`            | `up`     |
 | `--delete-resource-group` | Delete the resource group when using the down command.                              | `false`            | `down`   |
-| `-f --kubctl-config-file` | Kubernetes configuration file to update. Use `-` to print YAML to stdout instead.   | `~/.kube/config`   | `creds`  |
+| `-f --kubctl-config-file` | Kubernetes configuration file to update. Use `-` to print YAML to `stdout` instead.   | `~/.kube/config`   | `creds`  |
 
 ### Manual cluster creation
 

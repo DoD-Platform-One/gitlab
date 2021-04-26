@@ -31,7 +31,6 @@ spec:
       protocol: TCP
       targetPort: http
   selector:
-    app: {{ template "ingress-nginx.name" . }}
+    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
     component: "{{ .Values.defaultBackend.name }}"
-    release: {{ .Release.Name }}
 {{- end }}

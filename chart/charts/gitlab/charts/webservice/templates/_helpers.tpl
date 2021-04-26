@@ -183,6 +183,29 @@ gitlab.com/webservice-name: {{ .name }}
 {{- end -}}
 
 {{/*
+Returns a list of _common_ labels to be shared across all
+Webservice deployments and other shared objects.
+*/}}
+{{- define "webservice.commonLabels" -}}
+{{- $commonLabels := merge (default (dict) .deployment) (default (dict) .webservice) -}}
+{{- if $commonLabels }}
+{{-   range $key, $value := $commonLabels }}
+{{ $key }}: {{ $value }}
+{{-   end }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns a list of _pod_ labels to be shared across all
+Webservice deployments.
+*/}}
+{{- define "webservice.podLabels" -}}
+{{- range $key, $value := .pod.labels }}
+{{ $key }}: {{ $value }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Returns the extraEnv keys and values to inject into containers.
 
 Global values will override any chart-specific values.

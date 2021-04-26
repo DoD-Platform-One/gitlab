@@ -58,7 +58,7 @@ NOTE:
 If using Helm v2, please see notes about the `--timeout` option
 in the [Deployment documentation](../../installation/deployment.md#deploy-using-helm).
 
-- `<your-domain>`: your desired domain, eg. ``gitlab.example.com``.
+- `<your-domain>`: your desired domain, such as `gitlab.example.com`.
 - `<external-ip>`: the external IP pointing to your Kubernetes cluster.
 - `<email>`: email to register in Let's Encrypt to retrieve TLS certificates.
 

@@ -6,13 +6,13 @@ class HelmTemplate
     `helm version -c`.match('Ver(sion)?:"v(\d)\.')[2]
   end
 
-  def self.helm_template_call(name: 'test', path: '-', namespace: nil)
+  def self.helm_template_call(release_name: 'test', path: '-', namespace: nil)
     namespace_arg = namespace.nil? ? '' : "--namespace #{namespace}"
     case helm_version
     when "2" then
-      "helm template -n #{name} -f #{path} #{namespace_arg} ."
+      "helm template -n #{release_name} -f #{path} #{namespace_arg} ."
     when "3" then
-      "helm template #{name} . -f #{path} #{namespace_arg}"
+      "helm template #{release_name} . -f #{path} #{namespace_arg}"
     else
       # If we don't know the version of Helm, use `false` command
       "false"
@@ -21,8 +21,8 @@ class HelmTemplate
 
   attr_reader :mapped
 
-  def initialize(values)
-    template(values)
+  def initialize(values, release_name = 'test')
+    template(values, release_name)
   end
 
   def namespace
@@ -33,9 +33,9 @@ class HelmTemplate
     stdout.strip
   end
 
-  def template(values)
+  def template(values, release_name = 'test')
     @values  = values
-    result = Open3.capture3(self.class.helm_template_call(namespace: 'default'),
+    result = Open3.capture3(self.class.helm_template_call(namespace: 'default', release_name: release_name),
                             chdir: File.join(__dir__,  '..'),
                             stdin_data: YAML.dump(values))
     @stdout, @stderr, @exit_code = result
@@ -62,10 +62,27 @@ class HelmTemplate
     @mapped.dig(item,'spec','template','spec','volumes')
   end
 
+  def labels(item)
+    @mapped.dig(item,'metadata','labels')
+  end
+
+  def template_labels(item)
+    @mapped.dig(item,'spec','template','metadata','labels')
+  end
+
   def find_volume(item, volume_name)
     volumes = volumes(item)
     volumes.keep_if { |volume| volume['name'] == volume_name }
     volumes[0]
+  end
+
+  def find_projected_secret(item, mount, secret)
+    secrets = find_volume(item,mount)
+    secrets['projected']['sources'].keep_if do |s|
+      s['secret']['name'] == secret
+    end
+
+    secrets['projected']['sources'].length == 1
   end
 
   def find_volume_mount(item, container_name, volume_name, init = false)

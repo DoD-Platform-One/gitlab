@@ -75,6 +75,7 @@ spec:
         fsGroup: {{ .Values.global.kubectl.securityContext.fsGroup }}
       serviceAccountName: {{ template "fullname" . }}-pause
       {{- include "pullsecrets" .Values.global.kubectl.image | indent 6 }}
+      {{- include "gitlab.nodeSelector" . | nindent 6 }}
       containers:
       - name: pause-task
         image: {{ include "gitlab.kubectl.image" . | quote }}

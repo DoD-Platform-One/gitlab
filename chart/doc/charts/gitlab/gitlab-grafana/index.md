@@ -68,7 +68,7 @@ There are currently no dashboards created when the chart is installed. Any
 user created dashboards can be imported by creating a ConfigMap using the
 `gitlab_grafana_dashboard` label and managing the ConfigMap themselves.
 
-## Datasource Support
+## Datasource support
 
 Datasources may be created in the same manner as the dashboards by adding
 the `gitlab_grafana_datasource` label. This chart will add a ConfigMap

@@ -51,7 +51,7 @@ The following are the steps to upgrade GitLab to a newer version:
    ```
 
 1. Decide on all the values you need to set
-1. If you would like to use the GitLab Operator go through the steps outlined in [Operator installation](operator.md)
+1. If you were using the GitLab Operator, it is [**deprecated**](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2210), and will be removed in the future.
 1. Perform the upgrade, with all `--set` arguments extracted in step 4
 
    ```shell
@@ -173,7 +173,7 @@ Note the following:
    1. Set replicas to 0 for the `webservice`, `sidekiq`, and `gitlab-exporter` deployments. This will prevent any other application from altering the database while the backup is being restored.
    1. Restore the database from the backup created in the pre stage.
    1. Run database migrations for the new version.
-   1. Unpause the deployments from the first step.
+   1. Resume the deployments from the first step.
 
    ```shell
    # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v4.0.0
@@ -188,6 +188,51 @@ Note the following:
   kubectl get pods -lrelease=RELEASE,app=gitlab
   kubectl describe pod <gitlab-upgrade-check-pod-full-name>
   ```
+
+#### 4.8: Repository data appears to be lost upgrading Praefect
+
+The Praefect chart is not yet considered suitable for production use.
+
+If you have enabled Praefect before upgrading to version 4.8 of the chart (GitLab 13.8),
+note that the StatefulSet name for Gitaly will now include the virtual storage name.
+
+In version 4.8 of the Praefect chart, the ability to specify multiple virtual storages
+was added, making it necessary to change the StatefulSet name.
+
+Any existing Praefect-managed Gitaly StatefulSet names (and, therefore, their
+associated PersistentVolumeClaims) will change as well, leading to repository data
+appearing to be lost.
+
+Prior to upgrading, ensure that:
+
+- All your repositories are in sync across the Gitaly Cluster, and GitLab
+is not in use during the upgrade.
+- You have a complete and tested backup.
+
+Repository data can be restored by following the
+[managing persistent volumes documentation](../advanced/persistent-volumes/),
+which provides guidance on reconnecting existing PersistentVolumeClaims to previous
+PersistentVolumes.
+
+A key step of the process is setting the old persistent volumes' `persistentVolumeReclaimPolicy`
+to `Retain`. If this step is missed, actual data loss will likely occur.
+
+After reviewing the documentation, there is a scripted summary of the procedure
+[in a comment on one of a related issues](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2532#note_506467539).
+
+Having reconnected the PersistentVolumes, it is likely that all your repositories
+will be set `read-only` by Praefect, as shown by running the following in a
+Praefect container:
+
+```plaintext
+praefect -config /etc/gitaly/config.toml dataloss
+```
+
+If all your Git repositories are in sync across the old persistent volumes, use the
+`accept-dataloss` procedure for each repository to fix the Gitaly Cluster in Praefect.
+
+[We have an issue open](https://gitlab.com/gitlab-org/gitaly/-/issues/3448) to verify
+that this is the best approach to fixing Praefect.
 
 ## Upgrade steps for 3.0 release
 
@@ -300,7 +345,7 @@ Note the following:
    1. Set replicas to 0 for the `webservice`, `sidekiq`, and `gitlab-exporter` deployments. This will prevent any other application from altering the database while the backup is being restored.
    1. Restore the database from the backup created in the pre stage.
    1. Run database migrations for the new version.
-   1. Unpause the deployments from the first step.
+   1. Resume the deployments from the first step.
 
    ```shell
    # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v3.0.0

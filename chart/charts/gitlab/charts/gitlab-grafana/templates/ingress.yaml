@@ -30,7 +30,7 @@ spec:
           - backend:
               serviceName: {{ .Release.Name }}-grafana
               servicePort: 80
-            path: /-/grafana
+            path: /-/grafana{{ coalesce $.Values.ingress.path $.Values.global.ingress.path }}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:
     - hosts:

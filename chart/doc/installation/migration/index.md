@@ -31,7 +31,7 @@ JUnit test report artifact (`junit.xml.gz`) migration
 [was not supported until GitLab 12.8](https://gitlab.com/gitlab-org/gitlab/-/issues/27698#note_317190991)
 by the `gitlab:artifacts:migrate` script below.
 
-1. Migrate existing files (uploads, artifacts, lfs objects) from package based
+1. Migrate existing files (uploads, artifacts, LFS objects) from package based
    installation to object storage.
 
    1. Modify `/etc/gitlab/gitlab.rb` file and configure object storage for

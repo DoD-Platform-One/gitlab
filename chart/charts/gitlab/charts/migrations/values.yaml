@@ -23,6 +23,8 @@ annotations: {}
 
 # Labels for the job
 podLabels: {}
+common:
+  labels: {}
 
 enabled: true
 initialRootPassword: {}

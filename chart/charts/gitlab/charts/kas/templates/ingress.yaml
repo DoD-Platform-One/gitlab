@@ -9,6 +9,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" . }}"
     kubernetes.io/ingress.provider: nginx
@@ -21,9 +22,9 @@ spec:
     - host: {{ $hostname }}
       http:
         paths:
-          - path: /
+          - path: {{ coalesce $.Values.ingress.path $.Values.global.ingress.path }}
             backend:
-              serviceName: {{ .Release.Name }}-{{ template "name" . }}
+              serviceName: {{ template "gitlab.kas.serviceName" . }}
               servicePort: {{ .Values.service.externalPort }}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:

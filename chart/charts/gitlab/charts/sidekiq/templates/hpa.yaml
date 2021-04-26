@@ -3,8 +3,9 @@
 {{- $releaseName := .Release.Name -}}
 {{- $fullname := printf "%s-%s" $releaseName $name | trunc 63 | trimSuffix "-" -}}
 {{- range .Values.pods -}}
-{{- $queueName := printf "%s-%s" $fullname .name | trunc 63 }}
-{{- $hpa := default dict .hpa }}
+{{-   $queueName := printf "%s-%s" $fullname .name | trunc 63 }}
+{{-   $hpa := default dict .hpa }}
+{{-   include "sidekiq.pod.common.labels" . }}
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
@@ -13,7 +14,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
-    {{- include "gitlab.commonLabels" $ | nindent 4 }}
+    {{- include "sidekiq.commonLabels" (dict "pod" .common.labels "global" $.Values.common.labels) | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

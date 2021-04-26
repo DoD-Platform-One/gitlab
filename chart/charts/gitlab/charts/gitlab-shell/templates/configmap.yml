@@ -32,9 +32,6 @@ data:
     # Default is gitlab-shell.log in the root directory.
     log_file: "/var/log/gitlab-shell/gitlab-shell.log"
 
-    # Log level. INFO by default
-    log_level: INFO
-
     log_format: {{ .Values.logging.format }}
 
     # Audit usernames.

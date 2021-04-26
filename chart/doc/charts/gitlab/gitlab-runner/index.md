@@ -43,9 +43,9 @@ Privileged containers have extended capabilities, for example they can mount arb
 | `gitlab-runner.unregisterRunners`              | Unregister all runners before termination  | `true`                                |
 | `gitlab-runner.concurrent`                     | Number of concurrent jobs                  | `20`                                  |
 | `gitlab-runner.checkInterval`                  | Polling interval                           | `30s`                                 |
-| `gitlab-runner.rbac.create`                    | Whether to create rbac service account     | `true`                                |
+| `gitlab-runner.rbac.create`                    | Whether to create RBAC service account     | `true`                                |
 | `gitlab-runner.rbac.clusterWideAccess`         | Deploy containers of jobs cluster-wide     | `false`                               |
-| `gitlab-runner.rbac.serviceAccountName`        | Name of the rbac service account to create | `default`                             |
+| `gitlab-runner.rbac.serviceAccountName`        | Name of the RBAC service account to create | `default`                             |
 | `gitlab-runner.runners.image`                  | Default container image to use in builds   | `ubuntu:16.04`                        |
 | `gitlab-runner.runners.imagePullSecrets`       | `imagePullSecrets`                         | `[]`                                  |
 | `gitlab-runner.runners.privileged`             | Run in privileged mode, needed for `dind`  | `false`                               |
@@ -54,24 +54,24 @@ Privileged containers have extended capabilities, for example they can mount arb
 | `gitlab-runner.runners.cache.s3BucketName`     | Name of the bucket                         | `runner-cache`                        |
 | `gitlab-runner.runners.cache.cacheShared`      | Share the cache between runners            | `true`                                |
 | `gitlab-runner.runners.cache.s3BucketLocation` | Bucket region                              | `us-east-1`                           |
-| `gitlab-runner.runners.cache.secretName`       | Secret to access key and secretkey from    | `gitlab-minio`                        |
+| `gitlab-runner.runners.cache.secretName`       | Secret to access key and secret key from    | `gitlab-minio`                        |
 | `gitlab-runner.runners.cache.s3CachePath`      | Path in the bucket                         | `gitlab-runner`                       |
 | `gitlab-runner.runners.cache.s3CacheInsecure`  | Use http                                   | `false`                               |
-| `gitlab-runner.runners.builds.cpuLimit`        | Build container cpu limit                  |                                       |
+| `gitlab-runner.runners.builds.cpuLimit`        | Build container CPU limit                  |                                       |
 | `gitlab-runner.runners.builds.memoryLimit`     | Build container memory limit               |                                       |
-| `gitlab-runner.runners.builds.cpuRequests`     | Build container requested cpu              |                                       |
+| `gitlab-runner.runners.builds.cpuRequests`     | Build container requested CPU              |                                       |
 | `gitlab-runner.runners.builds.memoryRequests`  | Build container requested memory           |                                       |
-| `gitlab-runner.runners.services.cpuLimit`      | Service container cpu limit                |                                       |
+| `gitlab-runner.runners.services.cpuLimit`      | Service container CPU limit                |                                       |
 | `gitlab-runner.runners.services.memoryLimit`   | Service container memory limit             |                                       |
-| `gitlab-runner.runners.services.cpuRequests`   | Service container requested cpu            |                                       |
+| `gitlab-runner.runners.services.cpuRequests`   | Service container requested CPU            |                                       |
 | `gitlab-runner.runners.services.memoryRequests`| Service container requested memory         |                                       |
-| `gitlab-runner.runners.helpers.cpuLimit`       | Helper container cpu limit                 |                                       |
+| `gitlab-runner.runners.helpers.cpuLimit`       | Helper container CPU limit                 |                                       |
 | `gitlab-runner.runners.helpers.memoryLimit`    | Helper container memory limit              |                                       |
-| `gitlab-runner.runners.helpers.cpuRequests`    | Helper container requested cpu             |                                       |
+| `gitlab-runner.runners.helpers.cpuRequests`    | Helper container requested CPU             |                                       |
 | `gitlab-runner.runners.helpers.memoryRequests` | Helper container requested memory          |                                       |
-| `gitlab-runner.resources.limits.cpu`           | Runner cpu limit                           |                                       |
+| `gitlab-runner.resources.limits.cpu`           | Runner CPU limit                           |                                       |
 | `gitlab-runner.resources.limits.memory`        | Runner memory limit                        |                                       |
-| `gitlab-runner.resources.requests.cpu`         | Runner requested cpu                       |                                       |
+| `gitlab-runner.resources.requests.cpu`         | Runner requested CPU                       |                                       |
 | `gitlab-runner.resources.requests.memory`      | Runner requested memory                    |                                       |
 
 ## Chart configuration examples

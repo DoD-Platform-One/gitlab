@@ -68,7 +68,7 @@ to the `helm install` command using the `--set` flags:
 | `minioConfig.region`           | `us-east-1`                   | MinIO region                            |
 | `minioMc.image`                | `minio/mc`                    | MinIO mc image                          |
 | `minioMc.tag`                  | `latest`                      | MinIO mc image tag                      |
-| `mountPath`                    | `/export`                     | MinIO config file mount path            |
+| `mountPath`                    | `/export`                     | MinIO configuration file mount path     |
 | `persistence.accessMode`       | `ReadWriteOnce`               | MinIO persistence access mode           |
 | `persistence.enabled`          | `true`                        | MinIO enable persistence flag           |
 | `persistence.matchExpressions` |                               | MinIO label-expression matches to bind  |
@@ -79,7 +79,7 @@ to the `helm install` command using the `--set` flags:
 | `persistence.volumeName`       |                               | MinIO existing persistent volume name   |
 | `pullSecrets`                  |                               | Secrets for the image repository        |
 | `replicas`                     | `4`                           | MinIO number of replicas                |
-| `resources.requests.cpu`       | `250m`                        | MinIO minimum cpu requested             |
+| `resources.requests.cpu`       | `250m`                        | MinIO minimum CPU requested             |
 | `resources.requests.memory`    | `256Mi`                       | MinIO minimum memory requested          |
 | `securityContext.fsGroup`      | `1000`                        | Group ID to start the pod with          |
 | `securityContext.runAsUser`    | `1000`                        | User ID to start the pod with           |

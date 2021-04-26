@@ -8,7 +8,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 This guide is meant to serve as a cross-plaform resource for setting up a local
 Kubernetes development environment. In this guide, we'll be using
-[Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/) as it is the de facto standard.
+[Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/) as it is the accepted standard.
 
 ## Getting Started with Minikube
 
@@ -133,7 +133,7 @@ boots into a `tmpfs`, most directories will not persist across reboots via `mini
 Further details and listings of directories that do persist, can be found
 in the [Minikube getting started guide](https://kubernetes.io/docs/setup/learning-environment/minikube/#persistent-volumes).
 
-### Enable Addons
+### Enable Add-ons
 
 Minikube handles some features apart from the base configuration. For the
 development of this project, we'll need access to `Ingress`:

@@ -55,9 +55,9 @@ Most container ecosystems provide a simple method to inspect the state of a runn
 container, which usually includes the environment. Using [Docker](https://www.docker.com/)
 as an example, any process capable of communicating with the daemon can query the
 state of all running containers. This means that if you have a privileged container
-such as [dind](https://hub.docker.com/r/gitlab/dind/), that container can then inspect the environment of _any_ container
+such as [`dind`](https://hub.docker.com/r/gitlab/dind/), that container can then inspect the environment of _any_ container
 on a given node, and expose _all_ secrets contained within.
-As a part of the [complete DevOps lifecycle](https://about.gitlab.com/blog/2017/10/11/from-dev-to-devops/), [dind](https://hub.docker.com/r/gitlab/dind/) is regularly
+As a part of the [complete DevOps lifecycle](https://about.gitlab.com/blog/2017/10/11/from-dev-to-devops/), [`dind`](https://hub.docker.com/r/gitlab/dind/) is regularly
 used for building containers that will be pushed to a registry and subsequently
 deployed.
 
@@ -136,7 +136,7 @@ Our [registry chart](../charts/registry/index.md) was altered from the upstream 
 
 Our [NGINX Ingress chart](../charts/nginx/index.md) was altered from the upstream [NGINX Ingress](https://github.com/kubernetes/ingress-nginx).
 
-- Add feature to allow for the tcp configmap to be external to the chart
+- Add feature to allow for the TCP ConfigMap to be external to the chart
 - Add feature to allow Ingress class to be templated based on release name
 
 ## Kubernetes version used throughout Chart

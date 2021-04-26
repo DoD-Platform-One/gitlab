@@ -73,4 +73,61 @@ describe 'gitlab.yml.erb configuration' do
       )
     end
   end
+
+  context 'matomoDisableCookies' do
+    let(:required_values) do
+      {
+        'global' => {
+          'appConfig' => {
+            'extra' => {
+              'matomoDisableCookies' => value
+            }
+          }
+        }
+      }.merge(default_values)
+    end
+
+    context 'when true' do
+      let(:value) { true }
+
+      it 'populates the gitlab.yml.erb with true' do
+        t = HelmTemplate.new(required_values)
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).to include('matomo_disable_cookies: true')
+      end
+    end
+
+    context 'when false' do
+      let(:value) { false }
+
+      it 'does not populate the gitlab.yml.erb' do
+        t = HelmTemplate.new(required_values)
+
+        expect(t.exit_code).to eq(0)
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).not_to include('matomo_disable_cookies')
+      end
+    end
+
+    context 'when nil' do
+      let(:value) { nil }
+
+      it 'does not populate the gitlab.yml.erb' do
+        t = HelmTemplate.new(required_values)
+
+        expect(t.exit_code).to eq(0)
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).not_to include('matomo_disable_cookies')
+      end
+    end
+  end
 end

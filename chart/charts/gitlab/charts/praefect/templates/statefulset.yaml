@@ -6,6 +6,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -17,8 +18,8 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "name" . }}
-        release: {{ $.Release.Name }}
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
@@ -47,6 +48,7 @@ spec:
                   app: {{ template "name" . }}
                   release: {{ .Release.Name }}
       {{- end }}
+      {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}

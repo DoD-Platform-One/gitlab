@@ -13,7 +13,7 @@ Kubernetes cluster are required.
 
 The minimum tools required for charts development are documented on the [Required tools page](../installation/tools.md).
 
-We recommend using [asdf](https://github.com/asdf-vm/asdf) to install these tools.
+We recommend using [`asdf`](https://github.com/asdf-vm/asdf) to install these tools.
 This allows us to easily switch between versions, Helm 2 and 3 for example.
 
 ### Additional developer tools

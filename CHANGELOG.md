@@ -1,26 +1,33 @@
 # Modifications made to upstream chart
-## chart/values.yaml
-- disable all internal services other than postgres, minio, and redis
-- add BigBang additional values at bottom of values.yaml
-- add IronBank hardened images
-- add pullSecrets for each IronBank image
-- add customCAs
 
 ##  chart/charts/*.tgz
 - run ```helm dependency update``` and commit the downloaded archives
+- comment the *.tgz from the .gitignore file
+- commit the tar archives that were downloaded from the helm dependency update command
+
 ## chart/requirements.yaml
 - change all external dependency links to point to the local file system
 
-## chart/templates/bigbang/*
-- add istio virtual service
-- add Secrets for DoD certificate authorities
+## chart/values.yaml
+- disable all internal services other than postgres, minio, and redis
+- add BigBang additional values at bottom of values.yaml
+- add prometheus exporter:  gitlab.gitlab-exporter
+- add default bigbang.dev hostnames for global.hosts
+- add IronBank hardened images
+- add pullSecrets for each IronBank image
+- add default bigbag.dev hostnames at global.hosts
+- add customCAs (the cert files and secrets need to be added in the next 2 steps for this to work)
 
 ## chart/bigbang/*
-- add DoD approved CA certificates
+- add DoD approved CA certificates (recursive copy directory from previous release)
+
+## chart/templates/bigbang/*
+- add istio virtual service  (temporarily disable istio in values.yaml to test)
+- add Secrets for DoD certificate authorities
 
 ## chart/templates/_certificates.tpl
 - hack to support pki certificate location within the RedHat UBI image. Is different than Debian based images. Add to definition of ```gitlab.certificates.volumeMount```  
-    lines 81-87
+    the volumeMount definition is at the end of the file
     ```
     - name: etc-ssl-certs
       mountPath: /etc/pki/tls/certs/
@@ -42,6 +49,8 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.10.3-bb.0] - 2021-04-21
+- upgrade Gitlab to application version 13.10.3 chart version 4.13.3 
 ## [4.8.0-bb.3] - 2021-03-09
 - add support for CAC signed commits with DoD certificate authorities
 - update changelog

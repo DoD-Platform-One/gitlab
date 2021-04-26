@@ -36,7 +36,7 @@ to the `helm install` command using the `--set` flags.
 | `enabled`                        | `true`                | GitLab Exporter enabled flag                   |
 | `extraContainers`                |                       | List of extra containers to include            |
 | `extraInitContainers`            |                       | List of extra init containers to include       |
-| `extraVolumeMounts`              |                       | List of extra volumes mountes to do            |
+| `extraVolumeMounts`              |                       | List of extra volumes mounts to do            |
 | `extraVolumes`                   |                       | List of extra volumes to create                |
 | `extraEnv`                       |                       | List of extra environment variables to expose  |
 | `image.pullPolicy`               | `IfNotPresent`        | GitLab image pull policy                       |
@@ -47,7 +47,7 @@ to the `helm install` command using the `--set` flags.
 | `init.image.tag`                 |                       | initContainer image tag                        |
 | `metrics.enabled`                | `true`                | Toggle Prometheus metrics exporter             |
 | `metrics.port`                   | `9168`                | Listen port for the Prometheus metrics exporter |
-| `resources.requests.cpu`         | `75m`                 | GitLab Exporter minimum cpu                    |
+| `resources.requests.cpu`         | `75m`                 | GitLab Exporter minimum CPU                    |
 | `resources.requests.memory`      | `100M`                | GitLab Exporter minimum memory                 |
 | `serviceLabels`                  | `{}`                  | Supplemental service labels                    |
 | `service.externalPort`           | `9168`                | GitLab Exporter exposed port                   |
@@ -75,7 +75,7 @@ extraEnv:
   SOME_OTHER_KEY: some_other_value
 ```
 
-When the container is started, you can confirm that the enviornment variables are exposed:
+When the container is started, you can confirm that the environment variables are exposed:
 
 ```shell
 env | grep SOME

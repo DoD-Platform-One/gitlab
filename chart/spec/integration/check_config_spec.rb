@@ -4,7 +4,7 @@ require 'yaml'
 
 describe 'checkConfig template' do
   let(:check) do
-    Open3.capture3(HelmTemplate.helm_template_call(name: 'gitlab-checkconfig-test'),
+    Open3.capture3(HelmTemplate.helm_template_call(release_name: 'gitlab-checkconfig-test'),
                    chdir: File.join(__dir__, '..', '..'),
                    stdin_data: YAML.dump(values))
   end
@@ -106,7 +106,7 @@ describe 'checkConfig template' do
       {
         'global' => {
           'praefect' => {
-            'enabled' => 'true',
+            'enabled' => true,
             'virtualStorages' => [
               { 'name' => 'default', 'gitalyReplicas' => 3,
                 'maxUnavailable' => 2, 'tlsSecretName' => 'gitaly-default-tls' },
@@ -632,5 +632,105 @@ describe 'checkConfig template' do
     include_examples 'config validation',
                      success_description: 'when terminationGracePeriodSeconds is >= blackoutSeconds',
                      error_description: 'when terminationGracePeriodSeconds is < blackoutSeconds'
+  end
+
+  describe 'registry.database (PG version)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 11
+
+        registry:
+          database:
+            enabled: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'PostgreSQL 12 is the minimum required version' }
+
+    include_examples 'config validation',
+                     success_description: 'when postgresql.image.tag is >= 12',
+                     error_description: 'when postgresql.image.tag is < 12'
+  end
+
+  describe 'registry.database (sslmode)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+            sslmode: disable
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+            sslmode: testing
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Invalid SSL mode' }
+
+    include_examples 'config validation',
+                     success_description: 'when database.sslmode is valid',
+                     error_description: 'when when database.sslmode is not valid'
+  end
+
+  describe 'registry.migration (disablemirrorfs)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          migration:
+            disablemirrorfs: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          migration:
+            disablemirrorfs: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Disabling filesystem metadata requires the metadata database to be enabled' }
+
+    include_examples 'config validation',
+                     success_description: 'when migration disablemirrorfs is true, with database enabled',
+                     error_description: 'when migration disablemirrorfs is true, with database disabled'
   end
 end

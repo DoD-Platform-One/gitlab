@@ -18,6 +18,9 @@ tolerations: []
 antiAffinityLabels:
   matchLabels: {}
 
+common:
+  labels: {}
+
 enabled: true
 replicas: 1
 annotations: {}

@@ -27,6 +27,7 @@ to the `helm install` command using the `--set` flag:
 | `enabled`                  | `true`              | [See Below](#disable-functionality) |
 | `env`                      | `production`        | Rails environment                   |
 | `podLabels`                |                     | Supplemental Pod labels. Will not be used for selectors. |
+| `annotations`              |                     | Supplemental Pod annotations.       |
 | `image.pullPolicy`         | `Always`            | Gitaly image pull policy            |
 | `image.pullSecrets`        |                     | Secrets for the image repository    |
 | `image.repository`         | `registry.gitlab.com/gitlab-org/build/cng/kubectl` | Gitaly image repository |
@@ -36,10 +37,11 @@ to the `helm install` command using the `--set` flag:
 | `securitContext.fsGroup`   | `65534`             | User ID to mount filesystems as     |
 | `securitContext.runAsUser` | `65534`             | User ID to run the container as     |
 | `selfsign.caSubject`       | `GitLab Helm Chart` | selfsign CA Subject                 |
-| `selfsign.image`           | `registry.gitlab.com/gitlab-org/build/cnf/cfssl-self-sign` | selfsign image repository |
+| `selfsign.image.repository` | `registry.gitlab.com/gitlab-org/build/cnf/cfssl-self-sign` | selfsign image repository |
+| `selfsign.image.pullsecrets` |                   | Secrets for the image repository    |
+| `selfsign.image.tag`       |                     | selfsign image tag                  |
 | `selfsign.keyAlgorithm`    | `rsa`               | selfsign cert key algorithm         |
 | `selfsign.keySize`         | `4096`              | selfsign cert key size              |
-| `selfsign.tag`             |                     | selfsign image tag                  |
 | `tolerations`              | `[]`                | Toleration labels for pod assignment|
 
 ## Chart configuration examples

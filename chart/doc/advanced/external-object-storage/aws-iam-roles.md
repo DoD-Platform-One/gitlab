@@ -7,7 +7,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 # IAM roles for AWS
 
 The default configuration for external object storage in the charts is to use access and secret keys.
-It is also possible to use IAM roles in combination with [kube2iam](https://github.com/jtblin/kube2iam) or [kiam](https://github.com/uswitch/kiam).
+It is also possible to use IAM roles in combination with [`kube2iam`](https://github.com/jtblin/kube2iam) or [`kiam`](https://github.com/uswitch/kiam).
 
 ## IAM role
 
@@ -34,7 +34,7 @@ s3:
   region: us-east-1
 ```
 
-*Note*: If you provide the keypair, IAM role will be ignored. See [AWS documentation](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html#credentials-default) for more details.
+*Note*: If you provide the key pair, IAM role will be ignored. See [AWS documentation](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html#credentials-default) for more details.
 
 ### LFS, Artifacts, Uploads, Packages, Pseudonymizer
 
@@ -47,7 +47,7 @@ For LFS, artifacts, uploads, packages and pseudonymizer an IAM role can be speci
 
 For the [`object-storage.yaml`](../../charts/globals.md#connection) secret, omit
 the access and secret key. Because the GitLab Rails codebase uses Fog for S3
-storage, the [use_iam_profile](https://docs.gitlab.com/ee/administration/job_artifacts.html#s3-compatible-connection-settings)
+storage, the [`use_iam_profile`](https://docs.gitlab.com/ee/administration/job_artifacts.html#s3-compatible-connection-settings)
 key should be added for Fog to use the role:
 
 ```yaml
@@ -64,7 +64,7 @@ The Task Runner configuration allows for annotations to be set to upload backups
 --set gitlab.task-runner.annotations."iam\.amazonaws\.com/role"=<role name>
 ```
 
-The [s3cmd.config](index.md#backups-storage-example) secret is to be created without the access and secret keys:
+The [`s3cmd.config`](index.md#backups-storage-example) secret is to be created without the access and secret keys:
 
 ```ini
 [default]

@@ -15,7 +15,7 @@ for secret in {{ default "shell gitaly registry rails-secrets gitlab-workhorse" 
   mkdir -p "${secret_dir}/${secret}"
   cp -v -r -L "${config_dir}/${secret}/." "${secret_dir}/${secret}/"
 done
-for secret in {{ default "redis minio objectstorage postgres ldap omniauth smtp kas pages" $.optional }} ; do
+for secret in {{ default "redis minio objectstorage postgres ldap omniauth smtp kas pages oauth-secrets" $.optional }} ; do
   if [ -e "${config_dir}/${secret}" ]; then
     mkdir -p "${secret_dir}/${secret}"
     cp -v -r -L "${config_dir}/${secret}/." "${secret_dir}/${secret}/"

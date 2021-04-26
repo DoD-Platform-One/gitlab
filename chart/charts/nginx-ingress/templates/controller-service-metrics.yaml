@@ -40,7 +40,6 @@ spec:
       nodePort: {{ .Values.controller.metrics.service.nodePort }}
     {{- end }}
   selector:
-    app: {{ template "ingress-nginx.name" . }}
+    {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
     component: "{{ .Values.controller.name }}"
-    release: {{ .Release.Name }}
 {{- end }}

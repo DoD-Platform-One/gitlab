@@ -230,8 +230,7 @@ controller:
   ## Node labels for controller pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector:
-    kubernetes.io/os: linux
+  nodeSelector: {}
 
   ## Liveness and readiness probe values
   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes

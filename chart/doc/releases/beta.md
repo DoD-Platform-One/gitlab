@@ -24,7 +24,7 @@ In order to maximize our testing opportunity in beta, there will be additional r
 
 More information on how we are versioning the chart can be found in the [release documentation](../development/release.md).
 
-Along with the issues and merge requests in this repo, a [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md) is available to more easily follow along with updates.
+Along with the issues and merge requests in this repository, a [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md) is available to more easily follow along with updates.
 
 ## Kubernetes deployment support
 

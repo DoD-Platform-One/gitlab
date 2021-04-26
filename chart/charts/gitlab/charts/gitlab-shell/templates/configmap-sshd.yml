@@ -36,7 +36,7 @@ data:
 
     # Logging
     #SyslogFacility AUTH
-    #LogLevel INFO
+    LogLevel {{ .Values.logging.sshdLogLevel | upper }}
 
     # Authentication:
 

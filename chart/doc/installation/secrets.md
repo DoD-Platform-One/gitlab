@@ -24,6 +24,7 @@ Optional External Services:
 - IMAP for service desk emails (via mail_room service)
 - S/MIME certificate
 - Smartcard authentication
+- OAuth integration
 
 Any secret not provided manually will be automatically generated with a random value. Automatic generation of HTTPS certificates is provided by Let's Encrypt.
 
@@ -419,6 +420,23 @@ kubectl create secret generic <secret name> --from-file=ca.crt=<path to CA certi
 
 The key name inside the secret where the certificate is stored MUST BE
 `ca.crt`.
+
+### OAuth integration
+
+For configuring OAuth integration of various services like GitLab Pages and
+Grafana with GitLab, secrets containing OAuth credentials are required. The
+secret should contain an App ID (by default, stored under the `appid` key),
+and an App Secret (by default, stored under the `appsecret` key), both of which are
+recommended to be alphanumeric strings, at least 64 characters long.
+
+```shell
+kubectl create secret generic oauth-gitlab-pages-secret --from-literal=appid=<app id> --from-literal=appsecret=<app secret>
+```
+
+This secret can be specified using the `global.oauth.<service name>.secret`
+setting. If keys other than `appid` and `appsecret` are used, they can be
+specified using `global.oauth.<service name>.appIdKey` and
+`global.oauth.<service name>.appSecretKey` settings.
 
 ## Next steps
 

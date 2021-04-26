@@ -11,8 +11,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ template "ingress-nginx.name" . }}
-      release: {{ .Release.Name }}
+      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
       component: "{{ .Values.defaultBackend.name }}"
   minAvailable: {{ .Values.defaultBackend.minAvailable }}
 {{- end }}

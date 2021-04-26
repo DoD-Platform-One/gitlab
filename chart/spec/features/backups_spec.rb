@@ -7,6 +7,10 @@ describe "Restoring a backup" do
 
     wait_until_app_ready
     ensure_backups_on_object_storage
+
+    stdout, status = gitaly_purge_storage
+    fail stdout unless status.success?
+
     stdout, status = restore_from_backup
     fail stdout unless status.success?
 

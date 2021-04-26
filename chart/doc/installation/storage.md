@@ -146,10 +146,10 @@ The correct name for the Gitaly PersistentVolumeClaim is: `repo-data-gitlab-gita
 Modify the [example YAML configuration](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/storage/gitaly_persistent_volume_claim.yml) for your environment and reference it when invoking `helm`.
 
 > The other services that do not use a [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) allow administrators to provide the `volumeName`
-> to the config. This chart will still take care of creating the [volume claim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) and attempt to bind
+> to the configuration. This chart will still take care of creating the [volume claim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) and attempt to bind
 > to the manually created volume. Check the chart documentation for each included application.
 >
-> For most cases, just modify the [example YAML config](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/storage/use_manual_volumes.yml) keeping only those services which
+> For most cases, just modify the [example YAML configuration](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/storage/use_manual_volumes.yml) keeping only those services which
 > will use the manually created disk volumes.
 
 ## Making changes to storage after installation

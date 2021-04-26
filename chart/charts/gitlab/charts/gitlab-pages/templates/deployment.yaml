@@ -5,6 +5,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
   annotations:
     {{- include "gitlab.deploymentAnnotations" . | nindent 4 }}
 spec:
@@ -19,8 +20,8 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "name" . }}
-        release: {{ .Release.Name }}
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yml") . | sha256sum }}
@@ -32,6 +33,7 @@ spec:
         {{- include "gitlab.pages.metricsAnnotations" . | nindent 8 }}
       {{- end }}
     spec:
+      {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
@@ -49,6 +51,7 @@ spec:
           command: ['sh', '/config/configure']
           image: {{ include "gitlab.busybox.image" (dict "local" $.Values.init "global" $.Values.global.busybox) | quote }}
           env:
+          {{- include "gitlab.extraEnv" $ | nindent 12 }}
           volumeMounts:
           - name: pages-config
             mountPath: /config
@@ -59,7 +62,6 @@ spec:
           - name: pages-secrets
             mountPath: /init-secrets
             readOnly: false
-          {{- include "gitlab.extraEnv" $ | nindent 10 }}
           resources:
             {{- toYaml $.Values.init.resources | nindent 12 }}
       {{- include "pullsecrets" .Values.image | nindent 6 }}
@@ -110,6 +112,20 @@ spec:
                   path: pages/{{ template "gitlab.pages.hostname" $ }}.crt
                 - key: tls.key
                   path: pages/{{ template "gitlab.pages.hostname" $ }}.key
+          {{- end }}
+          {{- if eq $.Values.global.pages.accessControl true }}
+          - secret:
+              name: {{ template "oauth.gitlab-pages.secret" . }}
+              items:
+                - key: {{ template "oauth.gitlab-pages.appIdKey" . }}
+                  path: pages/gitlab_appid
+                - key: {{ template "oauth.gitlab-pages.appSecretKey" . }}
+                  path: pages/gitlab_appsecret
+          - secret:
+              name: {{ template "gitlab.pages.authSecret.secret" . }}
+              items:
+                - key: {{ template "gitlab.pages.authSecret.key" . }}
+                  path: pages/auth_secret
           {{- end }}
       - name: pages-secrets
         emptyDir:

@@ -1,4 +1,4 @@
-{{- if and .Values.global.gitaly.enabled (not .Values.global.praefect.enabled) -}}
+{{- if eq (include "gitlab.gitaly.includeInternalResources" $) "true" -}}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
@@ -6,5 +6,6 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 {{ include (print $.Template.BasePath "/_pdb_spec.yaml") . }}
 {{- end -}}

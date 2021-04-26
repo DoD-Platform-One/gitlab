@@ -19,6 +19,7 @@ ingress:
     # secretName:
     # enabled: true
   annotations: {}
+  path: # /
 
 ## Support for tolerations for pod scheduling
 tolerations: []

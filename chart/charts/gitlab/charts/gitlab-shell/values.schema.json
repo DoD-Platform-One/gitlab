@@ -5,6 +5,27 @@
       "title": "Pod annotations",
       "type": "object"
     },
+    "logging": {
+      "properties": {
+        "format": {
+          "title": "Format to be used for gitlab-shell logs",
+          "enum": [
+            "text",
+            "json"
+          ]
+        },
+        "sshdLogLevel": {
+          "title": "Log level for underlying SSH daemon",
+          "enum": [
+            "QUIET",
+            "FATAL",
+            "ERROR",
+            "INFO",
+            "VERBOSE"
+          ]
+        }
+      }
+    },
     "config": {
       "properties": {
         "loginGraceTime": {

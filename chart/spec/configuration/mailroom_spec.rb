@@ -134,4 +134,59 @@ describe 'Mailroom configuration' do
       expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).not_to include("s1.resque.redis")
     end
   end
+
+  context 'When customer provides additional labels' do
+    let(:values) do
+      {
+        'global' => {
+          'common' => {
+            'labels' => {
+              'global' => 'global',
+              'foo' => 'global'
+            }
+          },
+          'pod' => {
+            'labels' => {
+              'global_pod' => true
+            }
+          }
+        },
+        'gitlab' => {
+          'mailroom' => {
+            'common' => {
+              'labels' => {
+                'global' => 'mailroom',
+                'mailroom' => 'mailroom'
+              }
+            },
+            'networkpolicy' => {
+              'enabled' => true
+            },
+            'podLabels' => {
+              'pod' => true,
+              'global' => 'pod'
+            },
+            'serviceAccount' => {
+              'create' => true,
+              'enabled' => true
+            }
+          }
+        }
+      }.deep_merge(default_values)
+    end
+    it 'Populates the additional labels in the expected manner' do
+      t = HelmTemplate.new(values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+      expect(t.dig('ConfigMap/test-mailroom', 'metadata', 'labels')).to include('global' => 'mailroom')
+      expect(t.dig('Deployment/test-mailroom', 'metadata', 'labels')).to include('foo' => 'global')
+      expect(t.dig('Deployment/test-mailroom', 'metadata', 'labels')).to include('global' => 'mailroom')
+      expect(t.dig('Deployment/test-mailroom', 'metadata', 'labels')).not_to include('global' => 'global')
+      expect(t.dig('Deployment/test-mailroom', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
+      expect(t.dig('Deployment/test-mailroom', 'spec', 'template', 'metadata', 'labels')).to include('pod' => true)
+      expect(t.dig('Deployment/test-mailroom', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => true)
+      expect(t.dig('HorizontalPodAutoscaler/test-mailroom', 'metadata', 'labels')).to include('global' => 'mailroom')
+      expect(t.dig('NetworkPolicy/test-mailroom-v1', 'metadata', 'labels')).to include('global' => 'mailroom')
+      expect(t.dig('ServiceAccount/test-mailroom', 'metadata', 'labels')).to include('global' => 'mailroom')
+    end
+  end
 end

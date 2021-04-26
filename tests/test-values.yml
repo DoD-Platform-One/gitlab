@@ -68,5 +68,4 @@ minio:
 
 istio:
   enabled: true
-monitoring:
-  enabled: false
+

@@ -19,9 +19,8 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ template "ingress-nginx.name" . }}
+      {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
       component: "{{ .Values.controller.name }}"
-      release: {{ .Release.Name }}
   {{- if not .Values.controller.autoscaling.enabled }}
   replicas: {{ .Values.controller.replicaCount }}
   {{- end }}
@@ -34,15 +33,14 @@ spec:
   template:
     metadata:
     {{- if .Values.controller.podAnnotations }}
-      annotations: 
+      annotations:
       {{- range $key, $value := .Values.controller.podAnnotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
     {{- end }}
       labels:
-        app: {{ template "ingress-nginx.name" . }}
+        {{- include "ingress-nginx.selectorLabels" . | nindent 8 }}
         component: "{{ .Values.controller.name }}"
-        release: {{ .Release.Name }}
       {{- if .Values.controller.podLabels }}
         {{- toYaml .Values.controller.podLabels | nindent 8 }}
       {{- end }}
@@ -233,6 +231,8 @@ spec:
     {{- end }}
     {{- if .Values.controller.nodeSelector }}
       nodeSelector: {{ toYaml .Values.controller.nodeSelector | nindent 8 }}
+    {{- else }}
+    {{- include "gitlab.nodeSelector" . | nindent 6 }}
     {{- end }}
     {{- if .Values.controller.tolerations }}
       tolerations: {{ toYaml .Values.controller.tolerations | nindent 8 }}

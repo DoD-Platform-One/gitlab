@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 spec:
   activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
   backoffLimit: {{ .Values.backoffLimit }}
@@ -18,8 +19,8 @@ spec:
       {{- end }}
       {{- end }}
       labels:
-        app: {{ template "name" . }}
-        release: {{ .Release.Name }}
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
     spec:
       {{- if .Values.tolerations }}
@@ -122,14 +123,26 @@ spec:
         projected:
           defaultMode: 0400
           sources:
+          {{- if eq $.Values.global.pages.accessControl true }}
+          - secret:
+              name: {{ template "oauth.gitlab-pages.secret" . }}
+              items:
+                - key: {{ template "oauth.gitlab-pages.appIdKey" . }}
+                  path: oauth-secrets/gitlab-pages/appid
+                - key: {{ template "oauth.gitlab-pages.appSecretKey" . }}
+                  path: oauth-secrets/gitlab-pages/appsecret
+          - configMap:
+              name: {{ template "fullname" . }}
+              items:
+                - key: pages_redirect_uri
+                  path: oauth-secrets/gitlab-pages/redirecturi
+          {{- end }}
           - secret:
               name: {{ template "gitlab.rails-secrets.secret" . }}
               items:
                 - key: secrets.yml
                   path: rails-secrets/secrets.yml
-          - secret:
-              {{ include "gitlab.gitaly.clientSecret" . | nindent 14 }}
-                  path: gitaly/gitaly_token
+          {{- include "gitlab.gitaly.clientSecrets" . | nindent 10 }}
           {{- include "gitlab.redis.secrets" . | nindent 10 }}
           {{- include "gitlab.psql.secret" . | nindent 10 }}
           {{- if include "gitlab.geo.secondary" $ }}
@@ -155,8 +168,5 @@ spec:
         emptyDir:
           medium: "Memory"
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
-    {{- if .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml .Values.nodeSelector | nindent 8 }}
-    {{- end }}
+      {{- include "gitlab.nodeSelector" . | nindent 6 }}
 {{- end }}

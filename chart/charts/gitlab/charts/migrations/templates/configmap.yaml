@@ -6,7 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
+  pages_redirect_uri: {{ template "oauth.gitlab-pages.authRedirectUri" . }}
   installation_type: |
     gitlab-helm-chart
   database.yml.erb: |
