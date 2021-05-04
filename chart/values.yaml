@@ -1068,17 +1068,11 @@ gitlab:
       tag: 13.10.3
       pullSecrets:
       - name: private-registry
-      metrics:
-        enabled: true
-        port: 9168
-        annotations:
-          gitlab.com/prometheus_scrape: "true"
-          gitlab.com/prometheus_port: "9168"
-          gitlab.com/prometheus_path: "/metrics"
-          prometheus.io/scrape: "true"
-          prometheus.io/port: "9168"
-          prometheus.io/path: "/metrics"
-      enabled: false
+    metrics:
+      enabled: true
+      port: 9168
+    enabled: false
+
 ## doc/charts/gitlab/migrations
   migrations:
     image:

@@ -43,14 +43,19 @@
     ```
     /usr/bin/mc policy set $POLICY myminio/$BUCKET
     ```
-
-
+## chart/charts/gitlab/charts/gitlab-exporter/templates/bigbang/service-monitor.yaml
+- add ServiceMonitor to Gitlab sub-chart ```gitlab-exporterr``` to enable prometheus monitoring
+  
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.10.3-bb.1] - 2021-05-03
+- add ServiceMonitor to fix prometheus monitoring
+
 ## [4.10.3-bb.0] - 2021-04-21
-- upgrade Gitlab to application version 13.10.3 chart version 4.13.3 
+- upgrade Gitlab to application version 13.10.3 chart version 4.10.3
+
 ## [4.8.0-bb.3] - 2021-03-09
 - add support for CAC signed commits with DoD certificate authorities
 - update changelog
