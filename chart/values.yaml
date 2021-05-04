@@ -963,7 +963,6 @@ postgresql:
 ## doc/charts/registry/
 registry:
   enabled: true
-  host: "registry.bigbang.dev"
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
     tag: 13.10.3
