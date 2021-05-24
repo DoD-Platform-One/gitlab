@@ -1,71 +1,85 @@
 global:
   hosts:
-    domain: code.bigbang.dev
+    domain: gitlab.svc.cluster.local
+    https: false
     gitlab:
-      name: code.bigbang.dev
+      name: gitlab-webservice-test-svc.gitlab.svc.cluster.local
     registry:
-      name: registry.bigbang.dev
+      name: gitlab-registry-test-svc.gitlab.svc.cluster.local
   certificates:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
   kubectl:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
 redis:
   metrics:
     image:
       pullSecrets:
-      - private-registry-mil
+      - private-registry
   image:
     pullSecrets:
-    - private-registry-mil
+    - private-registry
 registry:
   image:
     pullSecrets:
-    - name: private-registry-mil
+    - name: private-registry
 shared-secrets:
   selfsign:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
 gitlab:
   task-runner:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
   migrations:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry 
   webservice:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
     workhorse:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
+    helmTests:
+      enabled: false
   sidekiq:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
   gitaly:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
   gitlab-shell:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
   gitlab-exporter:
     image:
       pullSecrets:
-      - name: private-registry-mil
+      - name: private-registry
 minio:
   pullSecrets:
-  - name: private-registry-mil
+  - name: private-registry
 
 istio:
   enabled: true
 
+bbtests:
+  cypress:
+    artifacts: true
+    secretEnvs:
+      - name: cypress_adminpassword
+        valueFrom:
+          secretKeyRef:
+            name: gitlab-gitlab-initial-root-password
+            key: password
+  scripts:
+    image: "registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.3"
