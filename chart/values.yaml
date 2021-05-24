@@ -1112,6 +1112,13 @@ gitlab:
       tag: 13.10.3
       pullSecrets:
       - name: private-registry
+
+## doc/charts/gitlab/praefect  # added by BigBang
+  praefect:
+    image:
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
+      tag: 13.10.3
+
 ## doc/charts/gitlab/gitlab-grafana
 #   gitlab-grafana:
 
