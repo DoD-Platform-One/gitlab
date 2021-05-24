@@ -26,4 +26,23 @@ kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.d
 
 ##  Deployment
 
-For production deployments you must externalize the postgres and MinIO services. See docs/README.md.
+For production deployments you must externalize the postgres and MinIO services. See docs/README.md.  
+
+WARNING FOR OPERATIONAL ENVIRONMENTS:  
+If the gitlab-rails-secret happens to get overwritten, Gitlab will no longer be able to access the encrypted data in the database. You will get errors like this in the logs.
+```
+OpenSSL::Cipher::CipherError ()
+```
+Many things break when this happens and the recovery is ugly with serious user impacts.  
+
+At a minimum an operational deployment of Gitlab should export and save the gitlab-rails-secret somewhere safe outside the cluster.
+```
+kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
+```
+Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). The helm chart values ```global.railsSecrets.secret``` can be overridden to point to the secret.
+```
+global:
+  railsSecrets:
+    secret:  my-gitlab-rails-secret
+```
+This secret should be backed up somewhere safe outside the cluster.
