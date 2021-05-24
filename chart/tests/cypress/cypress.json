@@ -1,0 +1,6 @@
+{
+  "pluginsFile": false,
+  "supportFile": false,
+  "fixturesFolder": false,
+  "baseUrl": "http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"
+}

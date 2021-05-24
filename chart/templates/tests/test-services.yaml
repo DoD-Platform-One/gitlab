@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-failed,hook-succeeded
+  labels:
+    helm-test: enabled
+  name: {{ .Release.Name }}-registry-test-svc
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: registry
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: registry
+    release: {{ .Release.Name }}
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-failed,hook-succeeded
+  labels:
+    helm-test: enabled
+  name: {{ .Release.Name }}-webservice-test-svc
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: http-workhorse
+    port: 80
+    protocol: TCP
+    targetPort: 8181
+  selector:
+    app: webservice
+    gitlab.com/webservice-name: default
+    release: {{ .Release.Name }}
+  type: ClusterIP
