@@ -46,13 +46,28 @@
 ## chart/charts/gitlab/charts/gitlab-exporter/templates/bigbang/service-monitor.yaml
 - add ServiceMonitor to Gitlab sub-chart ```gitlab-exporterr``` to enable prometheus monitoring
   
+## chart/tests/*
+- add helm test scripts
+
+## chart/templates/tests/*
+- add templates for helm tests
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.10.3-bb.2] - 2021-05-10
-- add helm test library for implementing cypress and bash tests in CI
+## [4.10.3-bb.5] - 2021-05-26
+- add optional network policies
 
+## [4.10.3-bb.4] - 2021-05-26
+- limit default user permissions
+
+## [4.10.3-bb.3] - 2021-05-25
+- no code changes
+## [4.10.3-bb.2] - 2021-05-10
+- add helm tests for CI pipelines
+- remove unneeded registry.host key in values.yaml
+- documentation about backing up the gitlab-rails secret
+- ironbank image for praefect (praefect is disabled by default)
 ## [4.10.3-bb.1] - 2021-05-03
 - add ServiceMonitor to fix prometheus monitoring
 
