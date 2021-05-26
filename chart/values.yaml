@@ -176,7 +176,7 @@ global:
     enableSeatLink: true
     enableImpersonation:
     applicationSettingsCacheSeconds: 60
-    defaultCanCreateGroup: true
+    defaultCanCreateGroup: false
     usernameChangingEnabled: true
     issueClosingPattern:
     defaultTheme:
