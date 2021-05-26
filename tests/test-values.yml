@@ -72,6 +72,12 @@ minio:
 istio:
   enabled: true
 
+networkPolicies:
+  enabled: true
+  ingressLabels:
+    app: istio-ingressgateway
+    istio: ingressgateway
+
 bbtests:
   cypress:
     artifacts: true
