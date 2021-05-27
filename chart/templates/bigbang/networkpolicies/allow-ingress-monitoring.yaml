@@ -1,10 +1,14 @@
-{{- if and .Values.networkPolicies.enabled }}
+{{- $gitlabexporterenabled := index .Values "gitlab" "gitlab-exporter" "enabled" }}
+{{- if and .Values.networkPolicies.enabled $gitlabexporterenabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: monitoring
+  name: allow-monitoring-ingress
   namespace: {{ .Release.Namespace }}
 spec:
+  podSelector:
+    matchLabels:
+      app: gitlab-exporter
   policyTypes:
   - Ingress
   ingress:
@@ -12,8 +16,7 @@ spec:
     - namespaceSelector:
         matchLabels:
           app.kubernetes.io/name: monitoring
-      podSelector:
-        matchLabels:
-          app: prometheus
-  podSelector: {}
+    ports:
+    - port: 9168
+      protocol: TCP
 {{- end }}
