@@ -39,4 +39,4 @@ dependencies:
   version: '*.*.*'
 - name: bb-test-lib
   version: 0.4.0
-  repository: file://./charts/bb-test-lib-0.4.0.tgz
+  repository: file://./charts/bb-test-lib-0.5.2.tgz
