@@ -41,6 +41,8 @@ gitlab:
       pullSecrets:
       - name: private-registry 
   webservice:
+    minReplicas: 1
+    maxReplicas: 1
     image:
       pullSecrets:
       - name: private-registry
@@ -79,6 +81,7 @@ networkPolicies:
     istio: ingressgateway
 
 bbtests:
+  enabled: true
   cypress:
     artifacts: true
     secretEnvs:
