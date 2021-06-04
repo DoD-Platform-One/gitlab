@@ -47,7 +47,7 @@ global:
     https: true
     externalIP:
     ssh: ~
-    gitlab: 
+    gitlab:
       name: gitlab.bigbang.dev
     minio: {}
     registry:
@@ -664,7 +664,7 @@ global:
       tag: "8.3"
       pullSecrets:
       - name: private-registry
-      
+
   ## docs/charts/globals.md#service-accounts
   serviceAccount:
     enabled: false
@@ -917,13 +917,13 @@ redis:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
       tag: 1.18.0
-      pullSecrets: 
+      pullSecrets:
       - private-registry
   image:
     registry: registry1.dso.mil/ironbank/opensource
     repository: redis/redis5
     tag: 5.0.9
-    pullSecrets: 
+    pullSecrets:
     - private-registry
   master:
     command: "redis-server"
@@ -967,7 +967,9 @@ registry:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
     tag: 13.10.3
     pullSecrets:
-    - name: private-registry 
+    - name: private-registry
+  ingress:
+    enabled: false # Local setting in subchart must be overridden
 
 
 ## Automatic shared secret generation
@@ -1078,7 +1080,7 @@ gitlab:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
       tag: 13.10.3
       pullSecrets:
-      - name: private-registry 
+      - name: private-registry
 ## doc/charts/gitlab/webservice
   webservice:
     image:
@@ -1091,6 +1093,9 @@ gitlab:
       tag: 13.10.3
       pullSecrets:
       - name: private-registry
+    ingress:
+      enabled: false  # Local setting in subchart must be overridden
+
 ## doc/charts/gitlab/sidekiq
   sidekiq:
     image:
@@ -1132,12 +1137,12 @@ minio:
     # the MinIO sub-chart config script was modified to work with newer mc version in IronBank image
     #   chart/charts/minio/templates/_helper_create_buckets.sh
     #       line 65
-    #        /usr/bin/mc policy set $POLICY myminio/$BUCKET 
+    #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
     tag: RELEASE.2021-03-23T05-46-11Z
     pullSecrets:
     - name: private-registry
-    
+
 # Big Bang Additions
 hostname: bigbang.dev
 istio:
