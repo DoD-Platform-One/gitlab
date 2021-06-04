@@ -57,6 +57,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [4.10.3-bb.8] - 2021-06-04
 - network policy to allow sso egress
+- turn off ingress in subcharts by default
 
 ## [4.10.3-bb.7] - 2021-06-01
 - more network policy updates
