@@ -46,3 +46,14 @@ global:
     secret:  my-gitlab-rails-secret
 ```
 This secret should be backed up somewhere safe outside the cluster.
+
+## Configuring Gitlab with custom certificate authorities
+
+Create a k8s secret in the Gitlab namespace. The secret can have multiple keys but each key must be a single pem encoded certificate, not a bundle of multiple secrets. Each key in the secret must be unique. Reference the [Gitlab documentation](https://docs.gitlab.com/charts/charts/globals.html#custom-certificate-authorities).  
+Then in your values overrides add the name of the secret
+```
+global:
+  certificates:
+    customCAs:
+      - secret: my-custom-ca-secret-name
+```
