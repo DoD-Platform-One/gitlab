@@ -661,7 +661,7 @@ global:
       # tag: latest
       # Busybox can not be hardened with no STIGS. Replacing with UBI-8 container
       repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-      tag: "8.3"
+      tag: "8.4"
       pullSecrets:
       - name: private-registry
 
@@ -690,7 +690,7 @@ upgradeCheck:
   enabled: true
   image:
     repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-    tag: "8.3"
+    tag: "8.4"
     pullSecrets:
     - name: private-registry
   securityContext:
