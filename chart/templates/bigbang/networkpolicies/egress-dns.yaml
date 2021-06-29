@@ -1,0 +1,16 @@
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-dns
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  podSelector: {} # all pods in Release namespace
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      ports:
+        - port: 53
+          protocol: UDP
+{{- end }}
