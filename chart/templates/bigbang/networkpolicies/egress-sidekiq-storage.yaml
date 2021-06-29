@@ -3,14 +3,17 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-egress-except-aws
+  name: egress-sidekiq-storage
   namespace: {{ .Release.Namespace }}
 spec:
-  podSelector: {}
+  podSelector: 
+    matchLabels:
+      app: sidekiq   # for database and objectStorage egress
   policyTypes:
   - Egress
   egress:
   - to:
+    - namespaceSelector: {}  # for in-cluster db or minio
     - ipBlock:
         cidr: 0.0.0.0/0
         # ONLY Block requests to AWS metadata IP

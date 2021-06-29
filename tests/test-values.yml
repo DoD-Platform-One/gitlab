@@ -23,6 +23,9 @@ redis:
     pullSecrets:
     - private-registry
 registry:
+  hpa:
+    minReplicas: 1
+    maxReplicas: 1
   image:
     pullSecrets:
     - name: private-registry
@@ -60,6 +63,8 @@ gitlab:
       pullSecrets:
       - name: private-registry
   gitlab-shell:
+    minReplicas: 1
+    maxReplicas: 1
     image:
       pullSecrets:
       - name: private-registry
@@ -76,9 +81,7 @@ istio:
 
 networkPolicies:
   enabled: true
-  ingressLabels:
-    app: istio-ingressgateway
-    istio: ingressgateway
+  controlPlaneCidr: 172.16.0.0/12
 
 bbtests:
   enabled: true

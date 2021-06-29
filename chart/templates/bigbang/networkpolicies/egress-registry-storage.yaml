@@ -1,0 +1,23 @@
+{{- if .Values.networkPolicies.enabled }}
+{{- if or (not .Values.global.minio.enabled) (not .Values.postgresql.install) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-registry-storage
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: 
+    matchLabels:
+      app: registry   # for objectStorage egress
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}  # for in-cluster db or minio
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        # ONLY Block requests to AWS metadata IP
+        except:
+        - 169.254.169.254/32
+{{- end }}
+{{- end }}
