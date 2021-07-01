@@ -51,9 +51,23 @@
 
 ## chart/templates/tests/*
 - add templates for helm tests
+
+## fixes for flux helmrelease errors
+- chart/charts/gitlab/charts/geo-logcursor/templates/deployment.yaml #24-25  
+  remove duplicate hard coded ```app:``` and ```realm:``` labels
+- chart/charts/gitlab/charts/gitaly/templates/statefulset.yml #10  
+  remove duplicate immutable labels
+- chart/charts/gitlab/charts/gitlab-exporter/templates/deployment.yaml  #21-22  
+  remove duplicate hard codded ```app:``` and ```release:``` labels
+- chart/charts/gitlab/charts/gitlab-shell/templates/nginx-tcp-configmap.yml #14  
+  quote port --> ```{{ $port | quote }}```
+
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [4.10.3-bb.11] - 2021-07-01
+- fix flux helmrelease errors because gitlab chart duplicates lables
 
 ## [4.10.3-bb.10] - 2021-06-18
 - more restrictive network policies to limit by podSelector
