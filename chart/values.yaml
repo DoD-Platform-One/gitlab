@@ -1165,6 +1165,9 @@ istio:
       - istio-system/main
     # hosts:  no hosts key supported here because the upstream chart has global.hosts
 
+monitoring:
+  enabled: false
+
 networkPolicies:
   enabled: false
   ingressLabels:
