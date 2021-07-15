@@ -66,6 +66,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [4.10.3-bb.14] - 2021-07-15
+- add openshift toggle. conditionally modify networkpolicy for dns
+
 ## [4.10.3-bb.13] - 2021-07-15
 - fix networkPolicies to allow egress to kube api server
 
