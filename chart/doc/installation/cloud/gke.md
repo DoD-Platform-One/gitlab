@@ -12,7 +12,7 @@ and tested within GitLab.
 
 NOTE:
 Google provides a whitepaper for [deploying production-ready GitLab on
-Google Kubernetes Engine](https://cloud.google.com/solutions/deploying-production-ready-gitlab-on-gke), including all steps and external
+Google Kubernetes Engine](https://cloud.google.com/architecture/deploying-production-ready-gitlab-on-gke), including all steps and external
 resource configuration. These are alternative to this document, and the
 deployed chart will behave slightly differently. For example, the default
 domain is configured with [nip.io](https://nip.io), which may experience issues due to [rate limiting](https://letsencrypt.org/docs/rate-limits/) with

@@ -35,7 +35,7 @@ This chart makes use of two required secrets and one optional:
 
 - `global.registry.certificate.secret`: A global secret that will contain the public
   certificate bundle to verify the authentication tokens provided by the associated
-  GitLab instance(s). See [documentation](https://docs.gitlab.com/ee/administration/container_registry.html#disable-container-registry-but-use-gitlab-as-an-auth-endpoint)
+  GitLab instance(s). See [documentation](https://docs.gitlab.com/ee/administration/packages/container_registry.html#use-an-external-container-registry-with-gitlab-as-an-auth-endpoint)
   on using GitLab as an auth endpoint.
 - `global.registry.httpSecret.secret`: A global secret that will contain the
   [shared secret](https://docs.docker.com/registry/configuration/#http) between registry pods.
@@ -63,7 +63,7 @@ registry:
     readOnly:
       enabled: false
   image:
-    tag: 'v3.1.0-gitlab'
+    tag: 'v3.4.1-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -130,6 +130,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `compatiblity`                             |                                              | Configuration of compatibility settings                                                              |
 | `debug`                                    |                                              | Debug port and Prometheus metrics                                                                    |
 | `deployment.terminationGracePeriodSeconds` | `30`                                         | Optional duration in seconds the pod needs to terminate gracefully.                                  |
+| `deployment.strategy`                      | `{}`                                         | Allows one to configure the update strategy utilized by the deployment                               |
 | `draintimeout`                             | `'0'`                                        | Amount of time to wait for HTTP connections to drain after receiving a SIGTERM signal (e.g. `'10s'`) |
 | `relativeurls`                             | `false`                                      | Enable the registry to return relative URLs in Location headers. |
 | `enabled`                                  | `true`                                       | Enable registry flag                                                                                 |
@@ -141,7 +142,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                         |                                              | Pull policy for the registry image                                                                   |
 | `image.pullSecrets`                        |                                              | Secrets to use for image repository                                                                  |
 | `image.repository`                         | `registry`                                   | Registry image                                                                                       |
-| `image.tag`                                | `v3.2.1-gitlab`                              | Version of the image to use                                                                          |
+| `image.tag`                                | `v3.4.1-gitlab`                              | Version of the image to use                                                                          |
 | `init.image.repository`                    |                                              | initContainer image                                                                                  |
 | `init.image.tag`                           |                                              | initContainer image tag                                                                              |
 | `log`                                      | `{level: info, fields: {service: registry}}` | Configure the logging options                                                                        |
@@ -159,8 +160,8 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `database.host`                            | `global.psql.host`                           | The database server hostname. |
 | `database.port`                            | `global.psql.port`                           | The database server port. |
 | `database.user`                            |                                              | The database username. |
-| `database.password.secret`                 | `gitlab-postgresql-password`                 | Name of the secret containing the database password. Defaults to the main PostgreSQL password secret. |
-| `database.password.key`                    | `postgresql-registry-password`               | Secret key in which the database password is stored. |
+| `database.password.secret`                 | `RELEASE-registry-database-password`         | Name of the secret containing the database password. |
+| `database.password.key`                    | `password`                                   | Secret key in which the database password is stored. |
 | `database.name`                            |                                              | The database name. |
 | `database.sslmode`                         |                                              | The SSL mode. Can be one of `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`. |
 | `database.ssl.secret`                      | `global.psql.ssl.secret`                     | A secret containing client certificate, key and certificate authority. Defaults to the main PostgreSQL SSL secret. |
@@ -173,6 +174,19 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `database.pool.maxidle`                    | `0`                                          | The maximum number of connections in the idle connection pool. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means no idle connections. |
 | `database.pool.maxopen`                    | `0`                                          | The maximum number of open connections to the database. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means unlimited open connections. |
 | `database.pool.maxlifetime`                | `0`                                          | The maximum amount of time a connection may be reused. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited reuse. |
+| `database.migrations.enabled`              | `true`                                       | Enable the migrations job to automatically run migrations upon initial deployment and upgrades of the Chart. Note that migrations can also be run manually from within any running Registry pods. |
+| `database.migrations.activeDeadlineSeconds` | `3600`                                      | Set the [activeDeadlineSeconds](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job. |
+| `database.migrations.backoffLimit`         | `6`                                          | Set the [backoffLimit](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job. |
+| `gc.disabled`                              | `true`                                      | When set to `true`, the online GC workers are disabled. |
+| `gc.maxbackoff`                            | `24h`                                        | The maximum exponential backoff duration used to sleep between worker runs when an error occurs. Also applied when there are no tasks to be processed unless `gc.noidlebackoff` is `true`. Please note that this is not the absolute maximum, as a randomized jitter factor of up to 33% is always added. |
+| `gc.noidlebackoff`                         | `false`                                      | When set to `true`, disables exponential backoffs between worker runs when there are no tasks to be processed. |
+| `gc.transactiontimeout`                    | `10s`                                        | The database transaction timeout for each worker run. Each worker starts a database transaction at the start. The worker run is canceled if this timeout is exceeded to avoid stalled or long-running transactions. |
+| `gc.blobs.disabled`                        | `false`                                      | When set to `true`, the GC worker for blobs is disabled. |
+| `gc.blobs.interval`                        | `5s`                                         | The initial sleep interval between each worker run. |
+| `gc.blobs.storagetimeout`                  | `5s`                                         | The timeout for storage operations. Used to limit the duration of requests to delete dangling blobs on the storage backend. |
+| `gc.manifests.disabled`                    | `false`                                      | When set to `true`, the GC worker for manifests is disabled. |
+| `gc.manifests.interval`                    | `5s`                                         | The initial sleep interval between each worker run. |
+| `gc.reviewafter`                           | `24h`                                        | The minimum amount of time after which the garbage collector should pick up a record for review. `-1` means no wait. |
 | `migration.disablemirrorfs`                | `false`                                      | When set to `true`, the registry does not write metadata to the filesystem. Must be used in combination with the metadata database. This is an experimental feature and must not be used in production environments. |
 | `securityContext.fsGroup`                  | `1000`                                       | Group ID under which the pod should be started                                                       |
 | `securityContext.runAsUser`                | `1000`                                       | User ID under which the pod should be started                                                        |
@@ -180,7 +194,6 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `tokenService`                             | `container_registry`                         | JWT token service                                                                                    |
 | `tokenIssuer`                              | `gitlab-issuer`                              | JWT token issuer                                                                                     |
 | `tolerations`                              | `[]`                                         | Toleration labels for pod assignment                                                                 |
-| `updateStrategy`                           | `{}`                                         | Allows one to configure the update strategy utilized by the deployment                                |
 
 ## Chart configuration examples
 
@@ -248,7 +261,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.2.1-gitlab'`
+- `tag: 'v3.4.1-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -355,15 +368,11 @@ kubectl create secret generic gitlab-registry-httpsecret --from-literal=secret=s
 
 ### Notification Secret
 
-Notification Secret is utilized for Geo to help manage syncing Container
-Registry data between primary and secondary sites.
+Notification Secret is utilized for calling back to the GitLab application in various ways,
+such as for Geo to help manage syncing Container Registry data between primary and secondary sites.
 
-The content of the key this references correlates to the `http.secret` value of
-[registry](https://hub.docker.com/_/registry/). This value should be populated with
-a cryptographically generated random string.
-
-The `notificationSecret` secret object will automatically create this secret if
-not provided.
+The `notificationSecret` secret object will be automatically created if
+not provided, when the `shared-secrets` feature is enabled.
 
 To create this secret manually:
 
@@ -375,12 +384,16 @@ Then proceed to set
 
 ```yaml
 global:
+  # To provide your own secret
+  registry:
+    notificationSecret:
+        secret: gitlab-registry-notification
+        key: secret
+
+  # If utilising Geo, and wishing to sync the container registry
   geo:
     registry:
       syncEnabled: true
-      syncSecret:
-        secret: gitlab-registry-notification
-        key: secret
 ```
 
 Ensuring the `secret` value is set to the name of the secret created above
@@ -641,7 +654,70 @@ database:
     maxidle: 25
     maxopen: 25
     maxlifetime: 5m
+  migrations:
+    enabled: true
+    activeDeadlineSeconds: 3600
+    backoffLimit: 6
 ```
+
+#### Creating the database
+
+If the Registry database is enabled, Registry will use its own database to track its state.
+
+Follow the steps below to manually create the database and role.
+
+NOTE:
+These instructions assume you are using the bundled PostgreSQL server. If you are using your own server,
+there will be some variation in how you connect.
+
+1. Create the secret with the database password:
+
+   ```shell
+   kubectl create secret generic RELEASE_NAME-registry-database-password --from-literal=password=randomstring
+   ```
+
+1. Log into your database instance:
+
+   ```shell
+   kubectl exec -it $(kubectl get pods -l app=postgresql -o custom-columns=NAME:.metadata.name --no-headers) -- bash
+   ```
+
+   ```shell
+   PGPASSWORD=$(cat $POSTGRES_POSTGRES_PASSWORD_FILE) psql -U postgres -d template1
+   ```
+
+1. Create the database user:
+
+   ```sql
+   CREATE ROLE registry WITH LOGIN;
+   ```
+
+1. Set the database user password.
+
+   1. Fetch the password:
+
+      ```shell
+      kubectl get secret RELEASE_NAME-registry-database-password -o jsonpath="{.data.password}" | base64 --decode
+      ```
+
+   1. Set the password in the `psql` prompt:
+
+      ```sql
+      \password registry
+      ```
+
+1. Create the database:
+
+   ```sql
+   CREATE DATABASE registry WITH OWNER registry;
+   ```
+
+1. Safely exit from the PostgreSQL command line and then from the container using `exit`:
+
+   ```shell
+   template1=# exit
+   ...@gitlab-postgresql-0/$ exit
+   ```
 
 ### migration
 
@@ -658,6 +734,33 @@ This feature requires the [metadata database](#database) to be enabled.
 ```yaml
 migration:
   disablemirrorfs: true
+```
+
+### gc
+
+The `gc` property is optional and provides options related to
+[online garbage collection](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc).
+
+WARNING:
+This is an experimental feature and _must not_ be used in production.
+
+NOTE:
+This feature requires the [metadata database](#database) to be enabled.
+
+```yaml
+gc:
+  disabled: false
+  maxbackoff: 24h
+  noidlebackoff: false
+  transactiontimeout: 10s
+  reviewafter: 24h
+  manifests:
+    disabled: false
+    interval: 5s
+  blobs:
+    disabled: false
+    interval: 5s
+    storagetimeout: 5s
 ```
 
 ## Garbage Collection
@@ -689,3 +792,33 @@ kubectl exec -n gitlabns <registry-pod> -- /bin/registry garbage-collect -m /etc
 helm upgrade mygitlab gitlab/gitlab -f mygitlab.yml --wait
 # All done :)
 ```
+
+### Running administrative commands against the Container Registry
+
+The administrative commands can be run against the Container Registry
+only from a Registry pod, where both the `registry` binary as well as necessary
+configuration is available. [Issue #2629](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2629)
+is open to discuss how to provide this functionality from the task-runner pod.
+
+To run administrative commands:
+
+1. Connect to a Registry pod:
+
+   ```shell
+   kubectl exec -it <registry-pod> -- bash
+   ```
+
+1. Once inside the Registry pod, the `registry` binary is available in `PATH` and
+   can be used directly. The configuration file is available at
+   `/etc/docker/registry/config.yml`. The following example checks the status
+   of the database migration:
+
+   ```shell
+   registry database migrate status /etc/docker/registry/config.yml
+   ```
+
+For further details and other available commands, refer to the relevant
+documentation:
+
+- [General Registry documentation](https://docs.docker.com/registry/)
+- [GitLab-specific Registry documentation](https://gitlab.com/gitlab-org/container-registry/-/tree/master/docs-gitlab)

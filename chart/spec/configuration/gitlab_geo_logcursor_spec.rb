@@ -5,70 +5,52 @@ require 'hash_deep_merge'
 
 describe 'geo-logcursor configuration' do
   let(:default_values) do
-    {
-      'certmanager-issuer' => { 'email' => 'test@example.com' },
-      'global' => {
-        'geo' => {
-          'enabled' => true,
-          'role' => 'secondary',
-          'psql' => {
-            'host' => 'localhost',
-            'password' => {
-              'secret' => 'foobar'
-            }
-          }
-        },
-        'hosts' => {
-          'domain' => 'example.com'
-        },
-        'psql' => {
-          'host' => 'localhost',
-          'password' => {
-            'secret' => 'foobar'
-          }
-        },
-        'serviceAccount' => {
-          'create' => true,
-          'enabled' => true
-        }
-      },
-      'postgres' => {
-        'install' => false
-      }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+      global:
+        geo:
+          enabled: true
+          role: secondary
+          psql:
+            host: localhost
+            password:
+              secret: foobar
+        hosts:
+          domain: example.com
+        psql:
+          host: localhost
+          password:
+            secret: foobar
+        serviceAccount:
+          create: true
+          enabled: true
+      postgres:
+        install: false
+    ))
   end
 
   context 'When customer provides additional labels' do
     let(:values) do
-      {
-        'global' => {
-          'common' => {
-            'labels' => {
-              'global' => "global",
-              'foo' => "global"
-            }
-          },
-          'pod' => {
-            'labels' => {
-              'global_pod' => true
-            }
-          }
-        },
-        'gitlab' => {
-          'geo-logcursor' => {
-            'common' => {
-              'labels' => {
-                'global' => 'geo-logcursor',
-                'geo-logcursor' => 'geo-logcursor'
-              }
-            },
-            'podLabels' => {
-              'pod' => true,
-              'global' => 'pod'
-            }
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        global:
+          common:
+            labels:
+              global: global
+              foo: global
+          pod:
+            labels:
+              global_pod: true
+        gitlab:
+          geo-logcursor:
+            common:
+              labels:
+                global: geo-logcursor
+                geo-logcursor: geo-logcursor
+            podLabels:
+              pod: true
+              global: pod
+      )).deep_merge(default_values)
     end
     it 'Populates the additional labels in the expected manner' do
       t = HelmTemplate.new(values)

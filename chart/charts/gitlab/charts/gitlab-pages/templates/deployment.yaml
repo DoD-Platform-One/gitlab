@@ -53,6 +53,7 @@ spec:
           env:
           {{- include "gitlab.extraEnv" $ | nindent 12 }}
           volumeMounts:
+          {{- include "gitlab.extraVolumeMounts" $ | nindent 10 }}
           - name: pages-config
             mountPath: /config
             readOnly: true
@@ -80,6 +81,7 @@ spec:
             - name: GITLAB_PAGES_LOG_FORMAT
               value: {{ .Values.logFormat | quote }}
           volumeMounts:
+            {{- include "gitlab.extraVolumeMounts" $ | nindent 12 }}
             - name: pages-config
               mountPath: '/etc/gitlab-pages/templates'
             - name: pages-secrets
@@ -94,6 +96,7 @@ spec:
               name: metrics
           {{- end }}
       volumes:
+      {{- include "gitlab.extraVolumes" $ | nindent 6 }}
       - name: pages-config
         configMap:
           name: {{ template "fullname" . }}

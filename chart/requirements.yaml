@@ -1,8 +1,6 @@
 dependencies:
 - name: gitlab
   version: '*.*.*'
-- name: shared-secrets
-  version: '*.*.*'
 - name: certmanager-issuer
   version: '*.*.*'
 - name: minio
@@ -11,32 +9,33 @@ dependencies:
   version: '*.*.*'
 - name: cert-manager
   version: 0.10.1
-  repository: file://./charts/cert-manager-v0.10.1.tgz
+  repository: https://charts.jetstack.io/
   condition: certmanager.install
   alias: certmanager
 - name: prometheus
-  version: 10.0.0
-  repository: file://./charts/prometheus-10.0.0.tgz
+  version: 11.16.9
+  repository: https://prometheus-community.github.io/helm-charts
   condition: prometheus.install
 - name: postgresql
   version: 8.9.4
-  repository: file://./charts/postgresql-8.9.4.tgz
+  repository: https://charts.bitnami.com/bitnami
   condition: postgresql.install
 - name: gitlab-runner
-  version: 0.26.0
-  repository: file://./charts/gitlab-runner-0.26.0.tgz
+  version: 0.29.0
+  repository: https://charts.gitlab.io/
   condition: gitlab-runner.install
 - name: grafana
   version: 4.0.1
-  repository: file://./charts/grafana-4.0.1.tgz
+  repository: https://grafana.github.io/helm-charts
   condition: global.grafana.enabled
 - name: redis
   version: 11.3.4
-  repository: file://./charts/redis-11.3.4.tgz
+  repository: https://charts.bitnami.com/bitnami
   condition: redis.install
 - name: nginx-ingress
   condition: nginx-ingress.enabled
   version: '*.*.*'
-- name: bb-test-lib
-  version: 0.4.0
-  repository: file://./charts/bb-test-lib-0.5.2.tgz
+- name: gluon
+  version: "0.2.2"
+  repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
+

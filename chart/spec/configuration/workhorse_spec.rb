@@ -5,10 +5,10 @@ require 'hash_deep_merge'
 
 describe 'Workhorse configuration' do
   let(:default_values) do
-    {
-      # provide required setting
-      'certmanager-issuer' => { 'email' => 'test@example.com' }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   it 'disabled archive cache' do

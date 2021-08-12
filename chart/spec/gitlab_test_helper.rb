@@ -203,7 +203,7 @@ module Gitlab
       storage_url = 'https://storage.googleapis.com/gitlab-charts-ci/test-backups'
       backup_file_names = ["#{ENV['TEST_BACKUP_PREFIX']}_gitlab_backup.tar"]
       backup_file_names.each do |file_name|
-        file = open("#{storage_url}/#{file_name}").read
+        file = URI.open("#{storage_url}/#{file_name}").read
         object_storage.put_object(
           bucket: 'gitlab-backups',
           key: 'original_gitlab_backup.tar',

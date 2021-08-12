@@ -17,7 +17,9 @@ spec:
   replicas: {{ include "gitlab.gitaly.replicas" . }}
   {{- end }}
   podManagementPolicy: Parallel
-  {{- if .Values.global.operator.enabled }}
+  {{- if .Values.statefulset.strategy }}
+  updateStrategy: {{ .Values.statefulset.strategy | toYaml | nindent 4 }}
+  {{- else if .Values.global.operator.enabled }}
   updateStrategy:
     rollingUpdate:
       {{- if .storage }}
@@ -43,6 +45,12 @@ spec:
         checksum/config: {{ include (print .Template.BasePath $cm) (merge (dict) . (dict "skipStorages" true)) | sha256sum }}
       {{- range $key, $value := .Values.annotations }}
         {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      {{- if $.Values.metrics.enabled }}
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_port: "{{ $.Values.metrics.metricsPort }}"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ $.Values.metrics.metricsPort }}"
       {{- end }}
     spec:
       {{- if .Values.tolerations }}

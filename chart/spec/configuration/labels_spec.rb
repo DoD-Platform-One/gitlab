@@ -5,10 +5,14 @@ require 'hash_deep_merge'
 
 describe 'Labels configuration' do
   let(:default_values) do
-    {
-      'certmanager-issuer' => { 'email' => 'test@example.com' },
-      'global' => { 'pod' => { 'labels' => { 'environment' => 'development' } } }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+      global:
+        pod:
+          labels:
+            environment: development
+    ))
   end
 
   let(:ignored_charts) do
@@ -29,16 +33,13 @@ describe 'Labels configuration' do
   end
 
   let(:chart_values) do
-    {
-      'gitlab' => {
-        'webservice' => {
-          'podLabels' => {
-            'spec/test' => 'local',
-            'environment' => 'local'
-          }
-        }
-      }
-    }
+    YAML.safe_load(%(
+      gitlab:
+        webservice:
+          podLabels:
+            spec/test: local
+            environment: local
+    ))
   end
 
   context 'When setting global pod labels' do
@@ -63,18 +64,18 @@ describe 'Labels configuration' do
 
         resources_by_kind = local_template.resources_by_kind('Deployment').reject{ |key, _| ignored_charts.include? key }
         resources_by_kind.reject!{ |key, _| target_chart.eql? key }
-        
+
         resources_by_kind.each do |key, _|
           expect(local_template.dig(key, 'spec', 'template', 'metadata', 'labels')).to include(default_values['global']['pod']['labels'])
         end
-        
+
         expect(local_template.dig(target_chart, 'spec', 'template', 'metadata', 'labels')).to include(chart_values['gitlab']['webservice']['podLabels'])
       end
 
       it 'Are only present on configured chart' do
         resources_by_kind = local_template.resources_by_kind('Deployment').reject{ |key, _| ignored_charts.include? key }
         resources_by_kind.reject!{ |key, _| target_chart.eql? key }
-        
+
         resources_by_kind.each do |key, _|
           expect(local_template.dig(key, 'spec', 'template', 'metadata', 'labels')).not_to include(chart_values['gitlab']['webservice']['podLabels'])
         end

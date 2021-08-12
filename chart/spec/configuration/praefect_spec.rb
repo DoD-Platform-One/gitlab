@@ -5,7 +5,10 @@ require 'hash_deep_merge'
 
 describe 'Praefect configuration' do
   let(:default_values) do
-    { 'certmanager-issuer' => { 'email' => 'test@example.com' } }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   let(:praefect_resources) do
@@ -38,13 +41,11 @@ describe 'Praefect configuration' do
 
   context 'with Praefect disabled' do
     let(:values_praefect_disabled) do
-      {
-        'global' => {
-          'praefect' => {
-            'enabled' => false
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        global:
+          praefect:
+            enabled: false
+      )).deep_merge(default_values)
     end
 
     let(:template) { HelmTemplate.new(values_praefect_disabled) }
@@ -62,13 +63,11 @@ describe 'Praefect configuration' do
 
   context 'with Praefect enabled' do
     let(:values_praefect_enabled) do
-      {
-        'global' => {
-          'praefect' => {
-            'enabled' => true
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        global:
+          praefect:
+            enabled: true
+      )).deep_merge(default_values)
     end
 
     let(:template) { HelmTemplate.new(values_praefect_enabled) }
@@ -97,16 +96,13 @@ describe 'Praefect configuration' do
 
     context 'without replacing Gitaly' do
       let(:values_with_internal_gitaly) do
-        {
-          'global' => {
-            'praefect' => {
-              'replaceInternalGitaly' => false,
-              'virtualStorages' => [
-                { 'name' => 'default-praefect' }
-              ]
-            }
-          }
-        }.deep_merge(values_praefect_enabled)
+        YAML.safe_load(%(
+          global:
+            praefect:
+              replaceInternalGitaly: false
+              virtualStorages:
+              - name: default-praefect
+        )).deep_merge(values_praefect_enabled)
       end
 
       let(:template) { HelmTemplate.new(values_with_internal_gitaly) }
@@ -120,22 +116,15 @@ describe 'Praefect configuration' do
 
     context 'with multiple virtual storages' do
       let(:values_multiple_virtual_storages) do
-        {
-          'global' => {
-            'praefect' => {
-              'virtualStorages' => [
-                {
-                  'name' => 'default',
-                  'gitalyReplicas' => 3
-                },
-                {
-                  'name' => 'vs2',
-                  'gitalyReplicas' => 3
-                }
-              ]
-            }
-          }
-        }.deep_merge(values_praefect_enabled)
+        YAML.safe_load(%(
+          global:
+            praefect:
+              virtualStorages:
+              - name: default
+                gitalyReplicas: 3
+              - name: vs2
+                gitalyReplicas: 3
+        )).deep_merge(values_praefect_enabled)
       end
 
       let(:gitaly_resources_with_multiple_storages) do
@@ -160,11 +149,11 @@ describe 'Praefect configuration' do
 
       context 'with operator enabled' do
         let(:values_operator_enabled) do
-          {
-            'global' => {
-              'operator' => { 'enabled' => true }
-            }
-          }.deep_merge(values_multiple_virtual_storages)
+          YAML.safe_load(%(
+            global:
+              operator:
+                enabled: true
+          )).deep_merge(values_multiple_virtual_storages)
         end
 
         let(:operator_resources) do
@@ -192,45 +181,33 @@ describe 'Praefect configuration' do
 
     context 'When customer provides additional labels' do
       let(:values) do
-        {
-          'global' => {
-            'common' => {
-              'labels' => {
-                'global' => "global",
-                'foo' => "global"
-              }
-            },
-            'pod' => {
-              'labels' => {
-                'global_pod' => true
-              }
-            },
-            'service' => {
-              'labels' => {
-                'global_service' => true
-              }
-            }
-          },
-          'gitlab' => {
-            'praefect' => {
-              'common' => {
-                'labels' => {
-                  'global' => 'praefect',
-                  'praefect' => 'praefect'
-                }
-              },
-              'podLabels' => {
-                'pod' => true,
-                'global' => 'pod'
-              },
-              'serviceLabels' => {
-                'service' => true,
-                'global' => 'service'
-              }
-            }
-          }
-        }.deep_merge(values_praefect_enabled)
+        YAML.safe_load(%(
+          global:
+            common:
+              labels:
+                global: global
+                foo: global
+            pod:
+              labels:
+                global_pod: true
+            service:
+              labels:
+                global_service: true
+          gitlab:
+            praefect:
+              common:
+                labels:
+                  global: praefect
+                  praefect: praefect
+              podLabels:
+                pod: true
+                global: pod
+              serviceLabels:
+                service: true
+                global: service
+        )).deep_merge(values_praefect_enabled)
       end
+
       it 'Populates the additional labels in the expected manner' do
         t = HelmTemplate.new(values)
         expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"

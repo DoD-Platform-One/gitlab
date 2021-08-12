@@ -5,19 +5,19 @@ require 'hash_deep_merge'
 
 describe 'Sidekiq configuration' do
   let(:default_values) do
-    {
-      # provide required setting
-      'certmanager-issuer' => { 'email' => 'test@example.com' },
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+
       # required to activate mailroom
-      'gitlab' => {
-        'sidekiq' => {
-          'pods' => [
-            { 'name' => 'pod-1', 'queues' => 'merge' },
-            { 'name' => 'pod-2', 'negateQueues' => 'merge' },
-          ]
-        }
-      }
-    }
+      gitlab:
+        sidekiq:
+          pods:
+          - name: pod-1
+            queues: merge
+          - name: pod-2
+            negateQueues: merge
+    ))
   end
 
   context 'when setting extraEnv' do
@@ -27,14 +27,12 @@ describe 'Sidekiq configuration' do
 
     context 'when the global value is set' do
       let(:global_values) do
-        {
-          'global' => {
-            'extraEnv' => {
-              'EXTRA_ENV_VAR_A' => 'global-a',
-              'EXTRA_ENV_VAR_B' => 'global-b'
-            }
-          }
-        }.deep_merge(default_values)
+        YAML.safe_load(%(
+          global:
+            extraEnv:
+              EXTRA_ENV_VAR_A: global-a
+              EXTRA_ENV_VAR_B: global-b
+        )).deep_merge(default_values)
       end
 
       it 'sets those environment variables on each pod' do
@@ -57,17 +55,14 @@ describe 'Sidekiq configuration' do
 
       context 'when the chart-level value is set' do
         let(:chart_values) do
-          {
-            'gitlab' => {
-              'sidekiq' => {
-                'extraEnv' => {
-                  'EXTRA_ENV_VAR_A' => 'chart-a',
-                  'EXTRA_ENV_VAR_C' => 'chart-c',
-                  'EXTRA_ENV_VAR_D' => 'chart-d'
-                }
-              }
-            }
-          }
+          YAML.safe_load(%(
+            gitlab:
+              sidekiq:
+                extraEnv:
+                  EXTRA_ENV_VAR_A: chart-a
+                  EXTRA_ENV_VAR_C: chart-c
+                  EXTRA_ENV_VAR_D: chart-d
+          ))
         end
 
         let(:chart_template) { HelmTemplate.new(global_values.deep_merge(chart_values)) }
@@ -98,32 +93,23 @@ describe 'Sidekiq configuration' do
 
         context 'when the pod-level value is set' do
           let(:pod_values) do
-            {
-              'gitlab' => {
-                'sidekiq' => {
-                  'pods' => [
-                    {
-                      'name' => 'pod-1',
-                      'queues' => 'merge',
-                      'extraEnv' => {
-                        'EXTRA_ENV_VAR_B' => 'pod-b',
-                        'EXTRA_ENV_VAR_C' => 'pod-c',
-                        'EXTRA_ENV_VAR_E' => 'pod-e'
-                      }
-                    },
-                    {
-                      'name' => 'pod-2',
-                      'negateQueues' => 'merge',
-                      'extraEnv' => {
-                        'EXTRA_ENV_VAR_B' => 'pod-b',
-                        'EXTRA_ENV_VAR_C' => 'pod-c',
-                        'EXTRA_ENV_VAR_F' => 'pod-f'
-                      }
-                    },
-                  ]
-                }
-              }
-            }
+            YAML.safe_load(%(
+              gitlab:
+                sidekiq:
+                  pods:
+                  - name: pod-1
+                    queues: merge
+                    extraEnv:
+                      EXTRA_ENV_VAR_B: pod-b
+                      EXTRA_ENV_VAR_C: pod-c
+                      EXTRA_ENV_VAR_E: pod-e
+                  - name: pod-2
+                    negateQueues: merge
+                    extraEnv:
+                      EXTRA_ENV_VAR_B: pod-b
+                      EXTRA_ENV_VAR_C: pod-c
+                      EXTRA_ENV_VAR_F: pod-f
+            ))
           end
 
           let(:pod_template) do
@@ -166,21 +152,19 @@ describe 'Sidekiq configuration' do
 
   context 'when configuring memoryKiller' do
     let(:default_values) do
-      {
-        'certmanager-issuer' => { 'email' => 'test@example.com' }
-      }
+      YAML.safe_load(%(
+        certmanager-issuer:
+          email: test@example.com
+      ))
     end
 
     let(:hard_limit) do
-      {
-        'gitlab' => {
-          'sidekiq' => {
-            'memoryKiller' => {
-              'hardLimitRss' => 9_000_000
-            }
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        gitlab:
+          sidekiq:
+            memoryKiller:
+              hardLimitRss: 9000000
+      )).deep_merge(default_values)
     end
 
     it 'uses defaults or uses chart global values' do
@@ -217,47 +201,35 @@ describe 'Sidekiq configuration' do
 
     context 'uses pod level configurations' do
       let(:pod_zero) do
-        {
-          'name' => 's0',
-          'queues' => 'zero'
-        }
+        YAML.safe_load(%(
+          name: s0
+          queues: zero
+        ))
       end
 
       let(:pod_one) do
-        {
-          'name' => 's1',
-          'queues' => 'one',
-          'memoryKiller' => {
-            'maxRss' => 9
-          }
-        }
+        YAML.safe_load(%(
+          name: s1
+          queues: one
+          memoryKiller:
+            maxRss: 9
+        ))
       end
 
       let(:minimum_multi_pod_values) do
-        {
-          'certmanager-issuer' => { 'email' => 'test@example.com' },
-          'gitlab' => {
-            'sidekiq' => {
-              'pods' => [
-                pod_zero
-              ]
-            }
-          }
-        }
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              pods: [#{pod_zero.to_json}]
+        )).deep_merge!(default_values)
       end
 
       let(:override_multi_pod_values) do
-        {
-          'certmanager-issuer' => { 'email' => 'test@example.com' },
-          'gitlab' => {
-            'sidekiq' => {
-              'pods' => [
-                pod_zero,
-                pod_one
-              ]
-            }
-          }
-        }
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              pods: [#{pod_zero.to_json}, #{pod_one.to_json}]
+        )).deep_merge!(default_values)
       end
 
       it 'with the chart defaults' do
@@ -302,57 +274,43 @@ describe 'Sidekiq configuration' do
 
   context 'When customer provides additional labels' do
     let(:labels) do
-      {
-        'global' => {
-          'common' => {
-            'labels' => {
-              'global' => 'global',
-              'foo' => 'global'
-            }
-          },
-          'pod' => {
-            'labels' => {
-              'global_pod' => true
-            }
-          }
-        },
-        'gitlab' => {
-          'sidekiq' => {
-            'common' => {
-              'labels' => {
-                'global' => 'sidekiq',
-                'sidekiq' => 'sidekiq'
-              }
-            },
-            'networkpolicy' => {
-              'enabled' => true
-            },
-            'podLabels' => {
-              'pod' => true,
-              'global' => 'pod'
-            },
-            'serviceAccount' => {
-              'create' => true,
-              'enabled' => true
-            }
-          }
-        }
-      }
+      YAML.safe_load(%(
+        global:
+          common:
+            labels:
+              global: global
+              foo: global
+          pod:
+            labels:
+              global_pod: true
+        gitlab:
+          sidekiq:
+            common:
+              labels:
+                global: sidekiq
+                sidekiq: sidekiq
+            networkpolicy:
+              enabled: true
+            podLabels:
+              pod: true
+              global: pod
+            serviceAccount:
+              create: true
+              enabled: true
+      ))
     end
 
     context 'using the all-in-one' do
       let(:default_values) do
-        {
-          'certmanager-issuer' => { 'email' => 'test@example.com' },
-          'global' => {
-            'operator' => {
-              'enabled' => true,
-              'rollout' => {
-                'autoPause' => true
-              }
-            }
-          }
-        }.deep_merge(labels)
+        YAML.safe_load(%(
+          certmanager-issuer:
+            email: test@example.com
+          global:
+            operator:
+              enabled: true
+              rollout:
+                autoPause: true
+        )).deep_merge(labels)
       end
 
       it 'Populates the additional labels in the expected manner' do
@@ -378,45 +336,33 @@ describe 'Sidekiq configuration' do
 
     context 'using the multiple deployments' do
       let(:default_values) do
-        {
-          'certmanager-issuer' => { 'email' => 'test@example.com' },
-          'global' => {
-            'operator' => {
-              'enabled' => true,
-              'rollout' => {
-                'autoPause' => true
-              }
-            }
-          },
-          'gitlab' => {
-            'sidekiq' => {
-              'pods' => [
-                { 'name' => 'pod-1', 'queues' => 'merge' },
-                {
-                  'name' => 'pod-2',
-                  'negateQueues' => 'merge',
-                  'podLabels' => {
-                    'deployment' => 'negateQueues',
-                    'sidekiq' => 'pod-2'
-                  }
-                },
-                {
-                  'name' => 'pod-3',
-                  'fooQueue' => 'merge',
-                  'common' => {
-                    'labels' => {
-                      'deployment' => 'fooQueue',
-                      'sidekiq' => 'pod-common-3'
-                    }
-                  },
-                  'podLabels' => {
-                    'sidekiq' => 'pod-label-3'
-                  }
-                }
-              ]
-            }
-          }
-        }.deep_merge(labels)
+        YAML.safe_load(%(
+          certmanager-issuer:
+            email: test@example.com
+          global:
+            operator:
+              enabled: true
+              rollout:
+                autoPause: true
+          gitlab:
+            sidekiq:
+              pods:
+              - name: pod-1
+                queues: merge
+              - name: pod-2
+                negateQueues: merge
+                podLabels:
+                  deployment: negateQueues
+                  sidekiq: pod-2
+              - name: pod-3
+                fooQueue: merge
+                podLabels:
+                  sidekiq: pod-label-3
+                common:
+                  labels:
+                    deployment: fooQueue
+                    sidekiq: pod-common-3
+        )).deep_merge(labels)
       end
 
       it 'Populates the additional labels in the expected manner' do
@@ -454,6 +400,83 @@ describe 'Sidekiq configuration' do
         expect(t.dig('Role/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('RoleBinding/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('Job/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
+      end
+    end
+  end
+
+  describe 'terminationGracePeriodSeconds' do
+    let(:default_values) do
+      YAML.safe_load(%(
+        certmanager-issuer:
+          email: 'test@example.com'
+      ))
+    end
+
+    context 'with default deployment-global value and no pod-local value' do
+      it 'sets default deployment-global value for terminationGracePeriodSeconds in the Pod spec' do
+        t = HelmTemplate.new(default_values)
+        expect(t.dig('Deployment/test-sidekiq-all-in-1-v1', 'spec', 'template', 'spec', 'terminationGracePeriodSeconds')).to eq(30)
+      end
+    end
+
+    context 'with user specified deployment-global value' do
+      let(:chart_values) do
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              deployment:
+                terminationGracePeriodSeconds: 60
+        ))
+      end
+
+      it 'sets user specified deployment-global value for terminationGracePeriodSeconds in the Pod spec' do
+        t = HelmTemplate.new(default_values.deep_merge(chart_values))
+        expect(t.dig('Deployment/test-sidekiq-all-in-1-v1', 'spec', 'template', 'spec', 'terminationGracePeriodSeconds')).to eq(60)
+      end
+    end
+
+    context 'with user specified pod-local value' do
+      let(:chart_values) do
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              pods:
+                - name: 'pod-1'
+                  queues: 'merge'
+                  terminationGracePeriodSeconds: 55
+             ))
+      end
+
+      it 'sets user specified pod-local value for terminationGracePeriodSeconds in the Pod spec' do
+        t = HelmTemplate.new(default_values.deep_merge(chart_values))
+        expect(t.dig('Deployment/test-sidekiq-pod-1-v1', 'spec', 'template', 'spec', 'terminationGracePeriodSeconds')).to eq(55)
+      end
+    end
+
+    context 'with user specified deployment-global and pod-local values' do
+      let(:chart_values) do
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              deployment:
+                terminationGracePeriodSeconds: 77
+              pods:
+                - name: 'pod-1'
+                  queues: 'merge'
+                  terminationGracePeriodSeconds: 66
+                - name: 'pod-2'
+                  queues: 'zero'
+        ))
+      end
+
+      it 'sets user specified pod-local value for terminationGracePeriodSeconds in the Pod spec' do
+        t = HelmTemplate.new(default_values.deep_merge(chart_values))
+        expect(t.dig('Deployment/test-sidekiq-pod-1-v1', 'spec', 'template', 'spec', 'terminationGracePeriodSeconds')).to eq(66)
+      end
+
+      it 'sets user specified deployment-global value for terminationGracePeriodSeconds in the Pod spec where pod-local value is not set' do
+        t = HelmTemplate.new(default_values.deep_merge(chart_values))
+        expect(t.dig('Deployment/test-sidekiq-pod-2-v1', 'spec', 'template', 'spec', 'terminationGracePeriodSeconds')).to eq(77)
       end
     end
   end

@@ -29,7 +29,7 @@ data:
     {{- end }}
 
     {{- if .Values.metrics.enabled }}
-    prometheus_listen_addr = 'localhost:{{ .Values.metrics.port  }}'
+    prometheus_listen_addr = '0.0.0.0:{{ .Values.metrics.port  }}'
     {{- end }}
 
     {{- if $.Values.global.praefect.tls.enabled }}

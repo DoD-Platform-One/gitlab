@@ -12,7 +12,7 @@ describe('Gitlab Login', () => {
     // cy.get('li.home a[href="/admin"]').first().click()
     // cy.get('a[title="Users"]').click()
     cy.get('a[data-qa-selector="pending_approval_tab"]').click()
-    cy.get('div.table-action-buttons button').click()
+    cy.get('button[id="__BVID__30__BV_toggle_"]').click()
     cy.get('a[href="/admin/users/testuser/approve"]').click()
   })
 })

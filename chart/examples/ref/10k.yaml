@@ -1,9 +1,30 @@
 gitlab:
+  # n1-highcpu-32 in GKE is
+  # - cpu:    31850m
+  # - memory: 26041340Ki
+  webservice:
+    # Min pods recommended to be set to 75% of max to start
+    maxReplicas: 20
+    maxUnavailable: 10
+    minReplicas: 15
+    hpa:
+      targetAverageValue: 1600m
+    ingress:
+      proxyBodySize: 0 # To allow large file uploads like imports
+    nodeSelector:
+      workload: webservice
+    resources:
+      limits:
+        memory: 5.25G # roughly, 1.3GB/worker
+      requests:
+        cpu: 4 # requests.cpu <= workerProcesses
+        memory: 5G # roughly, 1.25GB/worker
+    workerProcesses: 4
   sidekiq:
+    maxReplicas: 14
+    minReplicas: 10
     hpa:
       targetAverageValue: 700m
-    maxReplicas: 16
-    minReplicas: 12
     nodeSelector:
       workload: sidekiq
     resources:
@@ -19,7 +40,7 @@ gitlab:
       # - memory: 12698332Ki
       # Notice that there is actually only <4 vCPU and <13GB memory allocatable.
       limits:
-        memory: 5G
+        memory: 4G
       requests:
         cpu: 900m # Assume single-process, 1 CPU
         memory: 2G
@@ -34,42 +55,14 @@ gitlab:
           gcpProject: example-gcp-projectname
           key: gcs.json
           secret: example-connection-secret
-  # n1-highcpu-32 in GKE is
-  # - cpu:    31850m
-  # - memory: 26041340Ki
-  webservice:
-    hpa:
-      targetAverageValue: 1.5
-    ingress:
-      proxyBodySize: 2048m # GPT uses large imports
-    maxReplicas: 28
-    maxUnavailable: 14
-    minReplicas: 28
-    nodeSelector:
-      workload: webservice
-    puma:
-      disableWorkerKiller: false
-      threads:
-        max: 10
-        min: 10
-      # `workerMaxMemory` below is configured based on .com:
-      # https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/8760#note_262243793
-      workerMaxMemory: 1324
-    resources:
-      limits:
-        memory: 3000M # roughly, 1.5GB/worker
-      requests:
-        cpu: 2 # requests.cpu <= workerProcesses
-        memory: 2500M # roughly, 1.25GB/worker
-    workerProcesses: 2
-    workhorse:
-      # The arguments below are documented in the gitlab-workhorse project:
-      # https://gitlab.com/gitlab-org/gitlab-workhorse/-/blob/master/doc/operations/configuration.md
-      extraArgs: -apiLimit 11 -apiQueueLimit 200 -apiQueueDuration 60s
-
-# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
-gitlab-runner:
-  install: false
+  migrations:
+    # Migrations pod must point directly to PostgreSQL primary
+    psql:
+      host: example-postgresql-primary-ip
+      password:
+        secret: example-postgresql-secret
+        key: password
+      port: example-postgresql-primary-port
 
 global:
   appConfig:
@@ -79,17 +72,38 @@ global:
       enabled: true
       connection:
         secret: example-storage-secret
+        key: password
+    artifacts:
+      bucket: example-artifacts-bucket-name
+    backups:
+      bucket: example-backups-bucket-name
+    dependencyProxy:
+      bucket: example-dependency-proxy-bucket-name
+    externalDiffs:
+      bucket: example-external-diffs-bucket-name
+      # Recommend to only store older External Diffs in Object Storage for performance reasons
+      when: outdated
+    lfs:
+      bucket: example-lfs-bucket-name
+    packages:
+      bucket: example-packages-bucket-name
+    terraformState:
+      bucket: example-terraform-state-bucket-name
+    uploads:
+      bucket: example-uploads-bucket-name
+  shell:
+    authToken:
+      secret: example-shell-secret
+      key: password
   gitaly:
     authToken:
-      secret: example-gitaly-authtoken
+      secret: example-gitaly-praefect-external-token
+      key: password
     enabled: false # Run Gitaly outside of cluster
     external:
-    - hostname: default.gitaly.com
-      name: default
-    - hostname: storage1.gitaly.com
-      name: storage1
-    - hostname: storage2.gitaly.com
-      name: storage2
+    - name: default
+      hostname: default.praefect.gitaly.com
+      port: example-praefect-port
   gitlab:
     license:
       secret: example-gitlab-license
@@ -103,7 +117,8 @@ global:
     host: db.example.com
     password:
       secret: example-postgresql-secret
-    port: 6432
+      key: password
+    port:  example-postgresql-port
   redis:
     cache:
       host: example-redis-cache-1
@@ -124,9 +139,10 @@ global:
     - host: sentinel3.example.com
   registry:
     bucket: example-registry-storage
-  shell:
-    authToken:
-      secret: example-shell-secret
+
+# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
+gitlab-runner:
+  install: false
 
 # Below, we use nodeSelectors to send certain
 # workloads to a node separate from the nodes

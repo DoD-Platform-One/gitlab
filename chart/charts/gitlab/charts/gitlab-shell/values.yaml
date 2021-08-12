@@ -76,6 +76,7 @@ deployment:
     timeoutSeconds: 3
     successThreshold: 1
     failureThreshold: 2
+  strategy: {}
 
 logging:
   format: "text"

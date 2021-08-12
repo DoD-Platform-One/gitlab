@@ -324,6 +324,7 @@ this example configuration.
 ### Geo Secondary
 external_url 'http://gitlab-secondary.example.com'
 roles ['geo_secondary_role']
+gitlab_rails['enable'] = true
 # The unique identifier for the Geo node.
 gitlab_rails['geo_node_name'] = 'gitlab-secondary.example.com'
 gitlab_rails['auto_migrate'] = false

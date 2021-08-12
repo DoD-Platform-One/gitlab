@@ -13,9 +13,9 @@ must have installed locally.
 
 kubectl is the tool that talks to the Kubernetes API. kubectl 1.13 or higher is
 required and it needs to be compatible with your cluster
-([+/- 1 minor release from your cluster](https://kubernetes.io/docs/tasks/tools/install-kubectl/#before-you-begin)).
+([+/- 1 minor release from your cluster](https://kubernetes.io/docs/tasks/tools/)).
 
-[> Install kubectl locally by following the Kubernetes documentation.](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
+[> Install kubectl locally by following the Kubernetes documentation.](https://kubernetes.io/docs/tasks/tools/)
 
 The server version of kubectl cannot be obtained until we connect to a
 cluster. Proceed with setting up Helm.

@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.2.1-gitlab'
+  tag: 'v3.4.1-gitlab'
   pullPolicy: 'IfNotPresent'
   pullSecrets: []
 
@@ -26,6 +26,12 @@ deployment:
     timeoutSeconds: 1
     successThreshold: 1
     failureThreshold: 3
+
+  # strategy is utilized to configure the desired upgrade approach and
+  # configuration for the deployment.  See the Kubernetes documentation
+  # related to this subject.
+  # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  strategy: {}
 
 podLabels: {}
 common:
@@ -66,7 +72,7 @@ networkpolicy:
   annotations: {}
 
 ingress:
-  enabled: true
+  enabled: 
   proxyReadTimeout: 900
   proxyBodySize: "0"
   proxyBuffering: "off"
@@ -78,7 +84,7 @@ ingress:
 
 global:
   ingress:
-    enabled: true
+    enabled: 
     annotations: {}
     tls: {}
       # secretName:
@@ -192,12 +198,6 @@ authAutoRedirect: false
 
 maxUnavailable: 1
 
-# updateStrategy is utilized to configure the desired upgrade approach and
-# configuration for the deployment.  See the Kubernetes documentation
-# related to this subject.
-# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-updateStrategy: {}
-
 # if minReplicas is >1, shared storage MUST be used.
 hpa:
   minReplicas: 2
@@ -284,15 +284,25 @@ serviceAccount:
 database:
   enabled: false
   user: registry
-  password:
-    secret: gitlab-postgresql-password
-    key: postgresql-registry-password
+  password: {}
+    # secret: RELEASE_NAME-registry-database-password
+    # key: password
   name: registry
   sslmode: disable
   ssl: {}
+  migrations:
+    enabled: true
+    activeDeadlineSeconds: 3600
+    backoffLimit: 6
 
 # Configuration settings to support the migration of large registries to the metadata database.
 # NOTE: This is an experimental feature and must not be used in production.
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#migration
 migration:
   disablemirrorfs: false
+
+# Disable online garbage collection by default.
+# NOTE: This is an experimental feature and must not be used in production.
+# https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc
+gc:
+  disabled: true

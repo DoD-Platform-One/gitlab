@@ -106,6 +106,7 @@ to the `helm install` command using the `--set` flags.
 | `trusted_proxies`                | `[]`                  | See [GitLab documentation](https://docs.gitlab.com/ee/install/installation.html#adding-your-trusted-proxies) for details |
 | `workhorse.logFormat`            | `json`                | Logging format. Valid formats: `json`, `structured`, `text` |
 | `workerProcesses`                | `2`                   | Webservice number of workers                      |
+| `workhorse.keywatcher`           | `true`                | Subscribe workhorse to Redis. This is **required** by any deployment servicing request to `/api/*`, but can be safely disabled for other deployments |
 | `workhorse.livenessProbe.initialDelaySeconds`  | 20      | Delay before liveness probe is initiated       |
 | `workhorse.livenessProbe.periodSeconds`        | 60      | How often to perform the liveness probe        |
 | `workhorse.livenessProbe.timeoutSeconds`       | 30      | When the liveness probe times out              |
@@ -356,7 +357,7 @@ gitlab:
 `proxyBodySize` is used to set the NGINX proxy maximum body size. This is commonly
 required to allow a larger Docker image than the default.
 It is equivalent to the `nginx['client_max_body_size']` configuration in an
-[Omnibus installation](https://omnibus/settings/nginx.html#request-entity-too-large).
+[Omnibus installation](https://docs.gitlab.com/omnibus/settings/nginx.html#request-entity-too-large).
 As an alternative option,
 you can set the body size with either of the following two parameters too:
 

@@ -5,62 +5,48 @@ require 'hash_deep_merge'
 
 describe 'task-runner configuration' do
   let(:default_values) do
-    {
-      'certmanager-issuer' => { 'email' => 'test@example.com' },
-      'gitlab' => {
-        'task-runner' => {
-          'backups' => {
-            'cron' => {
-              'enabled' => true,
-              'persistence' => {
-                'enabled' => true
-              }
-            }
-          },
-          'enabled' => true,
-          'persistence' => {
-            'enabled' => true
-          },
-          'serviceAccount' => {
-            'enabled' => true,
-            'create' => true
-          }
-        }
-      }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+      gitlab:
+        task-runner:
+          backups:
+            cron:
+              enabled: true
+              persistence:
+                enabled: true
+          enabled: true
+          persistence:
+            enabled: true
+          serviceAccount:
+            enabled: true
+            create: true
+    ))
   end
 
   context 'When customer provides additional labels' do
     let(:values) do
-      {
-        'global' => {
-          'common' => {
-            'labels' => {
-              'global' => 'global',
-              'foo' => 'global'
-            }
-          },
-          'pod' => {
-            'labels' => {
-              'global_pod' => true
-            }
-          }
-        },
-        'gitlab' => {
-          'task-runner' => {
-            'common' => {
-              'labels' => {
-                'global' => 'task-runner',
-                'task-runner' => 'task-runner'
-              }
-            },
-            'podLabels' => {
-              'pod' => true,
-              'global' => 'pod'
-            }
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        global:
+          common:
+            labels:
+              global: global
+              foo: global
+          pod:
+            labels:
+              global_pod: true
+        gitlab:
+          task-runner:
+            common:
+              labels:
+                global: task-runner
+                task-runner: task-runner
+            networkpolicy:
+              enabled: true
+            podLabels:
+              pod: true
+              global: pod
+      )).deep_merge(default_values)
     end
     it 'Populates the additional labels in the expected manner' do
       t = HelmTemplate.new(values)

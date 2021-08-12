@@ -7,9 +7,10 @@ require 'yaml'
 
 describe 'GitLab Pages' do
   let(:values) do
-    {
-      'certmanager-issuer' => { 'email' => 'test@example.com' }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   let(:required_resources) do
@@ -30,13 +31,11 @@ describe 'GitLab Pages' do
 
   context 'when pages is enabled' do
     let(:pages_enabled_values) do
-      {
-        'global' => {
-          'pages' => {
-            'enabled' => true
-          }
-        }
-      }
+      YAML.safe_load(%(
+        global:
+          pages:
+            enabled: true
+      ))
     end
 
     let(:pages_enabled_template) do
@@ -53,49 +52,36 @@ describe 'GitLab Pages' do
 
     context 'When customer provides additional labels' do
       let(:labels) do
-        {
-          'global' => {
-            'common' => {
-              'labels' => {
-                'global' => "global",
-                'foo' => "global"
-              }
-            },
-            'pod' => {
-              'labels' => {
-                'global_pod' => true
-              }
-            },
-            'service' => {
-              'labels' => {
-                'global_service' => true
-              }
-            }
-          },
-          'gitlab' => {
-            'gitlab-pages' => {
-              'common' => {
-                'labels' => {
-                  'global' => 'pages',
-                  'pages' => 'pages'
-                }
-              },
-              'podLabels' => {
-                'pod' => true,
-                'global' => 'pod'
-              },
-              'serviceAccount' => {
-                'create' => true,
-                'enabled' => true
-              },
-              'serviceLabels' => {
-                'service' => true,
-                'global' => 'service'
-              }
-            }
-          }
-        }.deep_merge(pages_enabled_values.deep_merge(values))
+        YAML.safe_load(%(
+          global:
+            common:
+              labels:
+                global: global
+                foo: global
+            pod:
+              labels:
+                global_pod: true
+            service:
+              labels:
+                global_service: true
+          gitlab:
+            gitlab-pages:
+              common:
+                labels:
+                  global: pages
+                  pages: pages
+              podLabels:
+                pod: true
+                global: pod
+              serviceAccount:
+                create: true
+                enabled: true
+              serviceLabels:
+                service: true
+                global: service
+        )).deep_merge(pages_enabled_values.deep_merge(values))
       end
+
       it 'Populates the additional labels in the expected manner' do
         t = HelmTemplate.new(labels)
         expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
@@ -151,17 +137,14 @@ describe 'GitLab Pages' do
         let(:custom_secret_name) { 'pages_custom_secret_name' }
 
         let(:pages_enabled_values) do
-          {
-            'global' => {
-              'pages' => {
-                'enabled' => true,
-                'apiSecret' => {
-                  'secret' => custom_secret_name,
-                  'key' => custom_secret_key
-                }
-              }
-            }
-          }
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                apiSecret:
+                  secret: #{custom_secret_name}
+                  key: #{custom_secret_key}
+          ))
         end
 
         it 'mounts shared secret on webservice deployment' do
@@ -229,29 +212,25 @@ describe 'GitLab Pages' do
 
       context 'with user specified values' do
         let(:pages_enabled_values) do
-          {
-            'global' => {
-              'pages' => {
-                'enabled' => true,
-                'accessControl' => true,
-                'path' => '/srv/foobar',
-                'host' => 'mycustompages.com',
-                'port' => 123,
-                'https' => false,
-                'externalHttp' => %w[1.2.3.4],
-                'externalHttps' => %w[1.2.3.4],
-                'artifactsServer' => false,
-                'objectStore' => {
-                  'enabled' => true,
-                  'bucket' => 'random-bucket',
-                  'connection' => {
-                    'secret' => 'custom-secret',
-                    'key' => 'custom-key'
-                  }
-                }
-              }
-            }
-          }
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                accessControl: true
+                path: /srv/foobar
+                host: mycustompages.com
+                port: 123
+                https: false
+                externalHttp: ['1.2.3.4']
+                externalHttps: ['1.2.3.4']
+                artifactsServer: false
+                objectStore:
+                  enabled: true
+                  bucket: random-bucket
+                  connection:
+                    secret: custom-secret
+                    key: custom-key
+          ))
         end
 
         it 'populates Pages configuration' do
@@ -273,6 +252,7 @@ describe 'GitLab Pages' do
             }
           )
         end
+
         describe 'access control' do
           it 'creates necessary secrets and configmaps and mounts them on migration job' do
             migrations_secret_mounts = pages_enabled_template.projected_volume_sources(
@@ -322,13 +302,11 @@ describe 'GitLab Pages' do
       describe 'https' do
         context 'by default' do
           let(:pages_enabled_values) do
-            {
-              'global' => {
-                'pages' => {
-                  'enabled' => true
-                }
-              }
-            }
+            YAML.safe_load(%(
+              global:
+                pages:
+                  enabled: true
+            ))
           end
 
           it 'sets value for https setting in config file correctly' do
@@ -338,14 +316,12 @@ describe 'GitLab Pages' do
 
         context 'when global.pages.https is set' do
           let(:pages_enabled_values) do
-            {
-              'global' => {
-                'pages' => {
-                  'enabled' => true,
-                  'https' => false
-                }
-              }
-            }
+            YAML.safe_load(%(
+              global:
+                pages:
+                  enabled: true
+                  https: false
+            ))
           end
 
           it 'sets value for https setting in config file correctly' do
@@ -355,18 +331,14 @@ describe 'GitLab Pages' do
 
         context 'when global.hosts.pages.https is set' do
           let(:pages_enabled_values) do
-            {
-              'global' => {
-                'hosts' => {
-                  'pages' => {
-                    'https' => false
-                  }
-                },
-                'pages' => {
-                  'enabled' => true
-                }
-              }
-            }
+            YAML.safe_load(%(
+              global:
+                hosts:
+                  pages:
+                    https: false
+                pages:
+                  enabled: true
+            ))
           end
 
           it 'sets value for https setting in config file correctly' do
@@ -376,16 +348,13 @@ describe 'GitLab Pages' do
 
         context 'when global.hosts.https is set' do
           let(:pages_enabled_values) do
-            {
-              'global' => {
-                'hosts' => {
-                  'https' => false
-                },
-                'pages' => {
-                  'enabled' => true
-                }
-              }
-            }
+            YAML.safe_load(%(
+              global:
+                hosts:
+                  https: false
+                pages:
+                  enabled: true
+            ))
           end
 
           it 'sets value for https setting in config file correctly' do
@@ -395,17 +364,14 @@ describe 'GitLab Pages' do
 
         context 'when global.pages.https and global.hosts.https are set' do
           let(:pages_enabled_values) do
-            {
-              'global' => {
-                'hosts' => {
-                  'https' => true
-                },
-                'pages' => {
-                  'enabled' => true,
-                  'https' => false
-                }
-              }
-            }
+            YAML.safe_load(%(
+              global:
+                hosts:
+                  https: true
+                pages:
+                  enabled: true
+                  https: false
+            ))
           end
 
           it 'value from global.pages.https is used in config file' do
@@ -422,13 +388,11 @@ describe 'GitLab Pages' do
 
       context 'default values with Pages enabled' do
         let(:pages_enabled_values) do
-          {
-            'global' => {
-              'pages' => {
-                'enabled' => true
-              }
-            }
-          }
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+          ))
         end
 
         it 'populates Pages config file' do
@@ -456,45 +420,37 @@ describe 'GitLab Pages' do
 
       context 'with custom values' do
         let(:pages_enabled_values) do
-          {
-            'global' => {
-              'pages' => {
-                'enabled' => true,
-                'accessControl' => true
-              }
-            },
-            'gitlab' => {
-              'gitlab-pages' => {
-                'artifactsServerTimeout' => 50,
-                'artifactsServerUrl' => 'https://randomwebsite.com',
-                'domainConfigSource' => 'disk',
-                'gitlabClientHttpTimeout' => 25,
-                'gitlabClientJwtExpiry' => 35,
-                'gitlabServer' => 'https://randomgitlabserver.com',
-                'headers' => ['FOO: ABC'],
-                'insecureCiphers' => true,
-                'internalGitlabServer' => 'https://int.randomgitlabserver.com',
-                'logFormat' => 'text',
-                'logVerbose' => true,
-                'maxConnections' => 45,
-                'redirectHttp' => true,
-                'sentry' => {
-                  'enabled' => true,
-                  'dsn' => 'foobar',
-                  'environment' => 'qwerty'
-                },
-                'statusUri': '/@customstatusURI',
-                'tls' => {
-                  'minVersion' => 'tls1.0',
-                  'maxVersion' => 'tls1.2'
-                },
-                'useHttp2' => false,
-                'metrics' => {
-                  'port' => 9999
-                }
-              }
-            }
-          }
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                accessControl: true
+            gitlab:
+              gitlab-pages:
+                artifactsServerTimeout: 50
+                artifactsServerUrl: https://randomwebsite.com
+                domainConfigSource: disk
+                gitlabClientHttpTimeout: 25
+                gitlabClientJwtExpiry: 35
+                gitlabServer: https://randomgitlabserver.com
+                headers: ['FOO: ABC']
+                insecureCiphers: true
+                internalGitlabServer: https://int.randomgitlabserver.com
+                logFormat: text
+                logVerbose: true
+                maxConnections: 45
+                redirectHttp: true
+                sentry:
+                  enabled: true
+                  dsn: foobar
+                  environment: qwerty
+                tls:
+                  minVersion: tls1.0
+                  maxVersion: tls1.2
+                useHttp2: false
+                metrics:
+                  port: 9999
+          ))
         end
 
         it 'populates Pages configuration' do
@@ -584,14 +540,12 @@ describe 'GitLab Pages' do
 
       context 'when only HTTP custom domains are enabled' do
         let(:pages_enabled_values) do
-          {
-            'global' => {
-              'pages' => {
-                'enabled' => true,
-                'externalHttp' => %w[1.2.3.4]
-              }
-            }
-          }
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                externalHttp: ['1.2.3.4']
+          ))
         end
 
         describe 'gitlab.yml file' do
@@ -648,14 +602,12 @@ describe 'GitLab Pages' do
 
       context 'when only HTTPS custom domains are enabled' do
         let(:pages_enabled_values) do
-          {
-            'global' => {
-              'pages' => {
-                'enabled' => true,
-                'externalHttps' => %w[1.2.3.4]
-              }
-            }
-          }
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                externalHttps: ['1.2.3.4']
+          ))
         end
 
         describe 'gitlab.yml file' do
@@ -712,15 +664,13 @@ describe 'GitLab Pages' do
 
       context 'when both HTTP and HTTPS custom domains are enabled' do
         let(:pages_enabled_values) do
-          {
-            'global' => {
-              'pages' => {
-                'enabled' => true,
-                'externalHttp' => %w[1.2.3.4],
-                'externalHttps' => %w[1.2.3.4]
-              }
-            }
-          }
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                externalHttp: ['1.2.3.4']
+                externalHttps: ['1.2.3.4']
+          ))
         end
 
         describe 'gitlab.yml file' do
@@ -782,15 +732,13 @@ describe 'GitLab Pages' do
         context 'when using LoadBalancer' do
           context 'when only one unique IP address exists combined for both http and https' do
             let(:pages_enabled_values) do
-              {
-                'global' => {
-                  'pages' => {
-                    'enabled' => true,
-                    'externalHttp' => %w[1.2.3.4],
-                    'externalHttps' => %w[1.2.3.4]
-                  }
-                }
-              }
+              YAML.safe_load(%(
+                global:
+                  pages:
+                    enabled: true
+                    externalHttp: ['1.2.3.4']
+                    externalHttps: ['1.2.3.4']
+              ))
             end
 
             it 'sets loadBalancerIP' do
@@ -800,15 +748,13 @@ describe 'GitLab Pages' do
 
           context 'when more than one unique IP address exists combined for both http and https' do
             let(:pages_enabled_values) do
-              {
-                'global' => {
-                  'pages' => {
-                    'enabled' => true,
-                    'externalHttp' => %w[1.2.3.4 1.2.3.5],
-                    'externalHttps' => %w[1.2.3.4 1.2.3.6]
-                  }
-                }
-              }
+              YAML.safe_load(%(
+                global:
+                  pages:
+                    enabled: true
+                    externalHttp: ['1.2.3.4', '1.2.3.5']
+                    externalHttps: ['1.2.3.4', '1.2.3.6']
+              ))
             end
 
             it 'sets externalIPs' do
@@ -820,28 +766,21 @@ describe 'GitLab Pages' do
 
         context 'when using NodePort' do
           let(:pages_enabled_values) do
-            {
-              'global' => {
-                'pages' => {
-                  'enabled' => true,
-                  'externalHttp' => %w[1.2.3.4],
-                  'externalHttps' => %w[1.2.3.4]
-                }
-              },
-              'gitlab' => {
-                'gitlab-pages' => {
-                  'service' => {
-                    'customDomains' => {
-                      'type' => 'NodePort',
-                      'nodePort' => {
-                        'http' => 30010,
-                        'https' => 30011
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            YAML.safe_load(%(
+              global:
+                pages:
+                  enabled: true
+                  externalHttp: ['1.2.3.4']
+                  externalHttps: ['1.2.3.4']
+              gitlab:
+                gitlab-pages:
+                  service:
+                    customDomains:
+                      type: NodePort
+                      nodePort:
+                        http: 30010
+                        https: 30011
+            ))
           end
 
           it 'sets NodePort as service type' do

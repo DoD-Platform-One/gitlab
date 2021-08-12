@@ -15,34 +15,30 @@ describe 'ObjectStorage configuration' do
   end
 
   let(:default_values) do
-    { 'certmanager-issuer' => { 'email' => 'test@example.com' } }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   let(:values_dependencyProxy_connection) do
-    {
-      'global' => {
-        'appConfig' => {
-          'dependencyProxy' => {
-            'connection' => {
-              'secret' => 'gitlab-object-storage',
-              'key' => 'connection'
-            }
-          }
-        }
-      }
-    }.deep_merge(default_values)
+    YAML.safe_load(%(
+      global:
+        appConfig:
+          dependencyProxy:
+            connection:
+              secret: gitlab-object-storage
+              key: connection
+    )).deep_merge(default_values)
   end
 
   let(:values_dependencyProxy_enabled) do
-    {
-      'global' => {
-        'appConfig' => {
-          'dependencyProxy' => {
-            'enabled' => true
-          }
-        }
-      }
-    }.deep_merge(default_values)
+    YAML.safe_load(%(
+      global:
+        appConfig:
+          dependencyProxy:
+            enabled: true
+    )).deep_merge(default_values)
   end
 
   describe 'global.appConfig.dependencyProxy.enabled' do

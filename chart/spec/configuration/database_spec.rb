@@ -9,24 +9,25 @@ describe 'Database configuration' do
   end
 
   let(:default_values) do
-    {
-      'certmanager-issuer' => { 'email' => 'test@example.com' },
-      'global' => {
-        'psql' => {
-          'host' => '',
-          'serviceName' => '',
-          'port' => nil,
-          'username' => '',
-          'database' => '',
-          'applicationName' => nil,
-          'preparedStatements' => '',
-          'password' => { 'secret' => '', 'key' => '' },
-          'load_balancing' => {},
-          'connectTimeout' => nil
-        }
-      },
-      'postgresql' => { 'install' => true }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+      global:
+        psql:
+          host: ''
+          serviceName: ''
+          username: ''
+          database: ''
+          applicationName: nil
+          preparedStatements: ''
+          password:
+            secret: ''
+            key: ''
+          load_balancing: {}
+          connectTimeout: nil
+      postgresql:
+        install: true
+    ))
   end
 
   describe 'in-chart postgresql' do
@@ -38,20 +39,18 @@ describe 'Database configuration' do
 
     context 'custom serviceName' do
       let(:global_values) do
-        default_values.deep_merge({
-          'global' => {
-            'psql' => {
-              'serviceName' => 'my-postgresql'
-            }
-          }
-        })
+        default_values.deep_merge(YAML.safe_load(%(
+          global:
+            psql:
+              serviceName: my-postgresql
+        )))
       end
 
       it 'uses the in-chart postgresql service' do
         t = HelmTemplate.new(global_values)
         expect(t.exit_code).to eq(0)
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include("host: \"my-postgresql.default.svc\"")
-      end  
+      end
     end
   end
 
@@ -60,13 +59,11 @@ describe 'Database configuration' do
   describe 'global.psql settings' do
     context 'when psql.database set globally' do
       let(:global_values) do
-        default_values.deep_merge({
-          'global' => {
-            'psql' => {
-              'database' => 'testing'
-            }
-          }
-        })
+        default_values.deep_merge(YAML.safe_load(%(
+          global:
+            psql:
+              database: testing
+        )))
       end
 
       it 'populates global database to all charts' do
@@ -78,15 +75,12 @@ describe 'Database configuration' do
 
       context 'when locally overridden in gitlab.webservice' do
         let(:local_values) do
-          global_values.deep_merge({
-            'gitlab' => {
-              'webservice' => {
-                'psql' => {
-                  'database' => 'local'
-                }
-              }
-            }
-          })
+          global_values.merge(YAML.safe_load(%(
+            gitlab:
+              webservice:
+                psql:
+                  database: local
+          )))
         end
 
         it 'populates local database to webservice, and global to others' do
@@ -103,16 +97,15 @@ describe 'Database configuration' do
     context 'when PostgreSQL is installed' do
       let(:values) do
         # merging in this order, so the local overrides win.
-        default_values.merge({
-          'global' => {
-            'psql' => {
-              'host' => 'primary',
-              'load_balancing' => {
-                'hosts' => [ 'secondary-1', 'secondary-2']
-              }
-            }
-          },
-        })
+        default_values.merge(YAML.safe_load(%(
+          global:
+            psql:
+              host: primary
+              load_balancing:
+                hosts:
+                - secondary-1
+                - secondary-2
+        )))
       end
 
       it 'fail due to checkConfig' do
@@ -124,17 +117,17 @@ describe 'Database configuration' do
 
     describe 'global.psql.load_balancing.hosts' do
       let(:values) do
-        default_values.merge({
-          'global' => {
-            'psql' => {
-              'host' => 'primary',
-              'load_balancing' => {
-                'hosts' => [ 'secondary-1', 'secondary-2']
-              }
-            }
-          },
-          'postgresql' => { 'install' => false }
-        })
+        default_values.merge(YAML.safe_load(%(
+          global:
+            psql:
+              host: primary
+              load_balancing:
+                hosts:
+                - secondary-1
+                - secondary-2
+          postgresql:
+            install: false
+        )))
       end
 
       context 'when configured' do
@@ -151,20 +144,16 @@ describe 'Database configuration' do
 
     describe 'global.psql.load_balancing.discover' do
       let(:values) do
-        default_values.merge({
-          'global' => {
-            'psql' => {
-              'host' => 'primary',
-              'load_balancing' => {
-                'discover' => {
-                  # this is the only required setting
-                  'record' => 'secondary.db.service'
-                }
-              }
-            }
-          },
-          'postgresql' => { 'install' => false }
-        })
+        default_values.merge(YAML.safe_load(%(
+          global:
+            psql:
+              host: primary
+              load_balancing:
+                discover:
+                  record: secondary.db.service
+          postgresql:
+            install: false
+        )))
       end
 
       context 'when configured' do
@@ -184,26 +173,21 @@ describe 'Database configuration' do
     context 'when separate configuration is provided for Sidekiq' do
       let(:values) do
         # merging in this order, so the local overrides win.
-        default_values.merge({
-          'global' => {
-            'psql' => {
-              'host' => 'psql.global',
-            },
-          },
-          'gitlab' => {
-            'sidekiq' => {
-              'psql' => {
-                'host' => 'psql.other',
-                'port' => 5431,
-                'database' => 'sidekiq',
-                'username' => 'sidekiq',
-                'applicationName' => 'test',
-                'preparedStatements' => true,
-                'connectTimeout' => 55,
-              },
-            },
-          },
-        })
+        default_values.merge(YAML.safe_load(%(
+          global:
+            psql:
+              host: psql.global
+          gitlab:
+            sidekiq:
+              psql:
+                host: psql.other
+                port: 5431
+                database: sidekiq
+                username: sidekiq
+                applicationName: test
+                preparedStatements: true
+                connectTimeout: 55
+        )))
       end
 
       it 'configure webservice with "global", sidekiq with "other"' do
@@ -226,30 +210,24 @@ describe 'Database configuration' do
     context 'when separate configuration is provided for Webservice' do
       let(:values) do
         # merging in this order, so the local overrides win.
-        default_values.merge({
-          'global' => {
-            'psql' => {
-              'host' => 'psql.global',
-            },
-          },
-          'gitlab' => {
-            'webservice' => {
-              'psql' => {
-                'host' => 'psql.other',
-                'port' => 5431,
-                'database' => 'webservice',
-                'username' => 'webservice',
-                'applicationName' => '',
-                'preparedStatements' => true,
-                'password' => {
-                  'secret' => 'other-postgresql-password',
-                  'key' => 'other-password',
-                },
-                'connectTimeout' => 55
-              },
-            },
-          },
-        })
+        default_values.merge(YAML.safe_load(%(
+          global:
+            psql:
+              host: psql.global
+          gitlab:
+            webservice:
+              psql:
+                host: psql.other
+                port: 5431
+                database: webservice
+                username: webservice
+                applicationName: ''
+                preparedStatements: true
+                password:
+                  secret: other-postgresql-password
+                  key: other-password
+                connectTimeout: 55
+        )))
       end
 
       it 'configure sidekiq with "global", webservice with "other"' do
@@ -280,20 +258,15 @@ describe 'Database configuration' do
     context 'when overriding only host for Webservice' do
       let(:values) do
         # merging in this order, so the local overrides win.
-        default_values.merge({
-          'global' => {
-            'psql' => {
-              'host' => 'psql.global',
-            },
-          },
-          'gitlab' => {
-            'webservice' => {
-              'psql' => {
-                'host' => 'psql.other',
-              },
-            },
-          },
-        })
+        default_values.merge(YAML.safe_load(%(
+          global:
+            psql:
+              host: psql.global
+          gitlab:
+            webservice:
+              psql:
+                host: psql.other
+        )))
       end
 
       it 'only host is overridden' do
@@ -329,24 +302,18 @@ describe 'Database configuration' do
     context 'when setting global password, it is inherited when not overridden' do
       let(:values) do
         # merging in this order, so the local overrides win.
-        default_values.merge({
-          'global' => {
-            'psql' => {
-              'host' => 'psql.global',
-              'password' => {
-                'secret' => 'global-postgresql-password',
-                'key' => 'global-password'
-              }
-            },
-          },
-          'gitlab' => {
-            'webservice' => {
-              'psql' => {
-                'host' => 'psql.other',
-              },
-            },
-          },
-        })
+        default_values.merge(YAML.safe_load(%(
+          global:
+            psql:
+              host: psql.global
+              password:
+                secret: global-postgresql-password
+                key: global-password
+          gitlab:
+            webservice:
+              psql:
+                host: psql.other
+        )))
       end
 
       it 'password is inherited, if not specified' do
@@ -371,26 +338,21 @@ describe 'Database configuration' do
       context 'load_balancing is configured globally, not by Webservice' do
         let(:values) do
           # merging in this order, so the local overrides win.
-          default_values.merge({
-            'postgresql'=> {
-              'install' => false
-            },
-            'global' => {
-              'psql' => {
-                'host' => 'global.primary',
-                'load_balancing' => {
-                  'hosts' => [ 'global.secondary-1', 'global.secondary-2']
-                }
-              },
-            },
-            'gitlab' => {
-              'webservice' => {
-                'psql' => {
-                  'host' => 'psql.other',
-                },
-              },
-            },
-          })
+          default_values.merge(YAML.safe_load(%(
+            postgresql:
+              install: false
+            global:
+              psql:
+                host: global.primary
+                load_balancing:
+                  hosts:
+                  - global.secondary-1
+                  - global.secondary-2
+            gitlab:
+              webservice:
+                psql:
+                  host: psql.other
+          )))
         end
 
         it 'load_balancing is not inherited by Webservice, but used by Sidekiq' do
@@ -410,29 +372,23 @@ describe 'Database configuration' do
       context 'load_balancing is configured globally, and for Webservice' do
         let(:values) do
           # merging in this order, so the local overrides win.
-          default_values.merge({
-            'postgresql'=> {
-              'install' => false
-            },
-            'global' => {
-              'psql' => {
-                'host' => 'global.primary',
-                'load_balancing' => {
-                  'hosts' => [ 'global.secondary-1']
-                }
-              },
-            },
-            'gitlab' => {
-              'webservice' => {
-                'psql' => {
-                  'host' => 'webservice.primary',
-                  'load_balancing' => {
-                    'hosts' => [ 'webservice.secondary-1']
-                  }
-                },
-              },
-            },
-          })
+          default_values.merge(YAML.safe_load(%(
+            postgresql:
+              install: false
+            global:
+              psql:
+                host: global.primary
+                load_balancing:
+                  hosts:
+                  - global.secondary-1
+            gitlab:
+              webservice:
+                psql:
+                  host: webservice.primary
+                  load_balancing:
+                    hosts:
+                    - webservice.secondary-1
+          )))
         end
 
         it 'separate load_balancing is used by Webservice and Sidekiq' do
@@ -454,26 +410,20 @@ describe 'Database configuration' do
       context 'load_balancing is configured only for Webservice' do
         let(:values) do
           # merging in this order, so the local overrides win.
-          default_values.merge({
-            'postgresql'=> {
-              'install' => false
-            },
-            'global' => {
-              'psql' => {
-                'host' => 'psql.global',
-              },
-            },
-            'gitlab' => {
-              'webservice' => {
-                'psql' => {
-                  'host' => 'webservice.primary',
-                  'load_balancing' => {
-                    'hosts' => [ 'webservice.secondary-1']
-                  }
-                },
-              },
-            },
-          })
+          default_values.merge(YAML.safe_load(%(
+            postgresql:
+              install: false
+            global:
+              psql:
+                host: psql.global
+            gitlab:
+              webservice:
+                psql:
+                  host: webservice.primary
+                  load_balancing:
+                    hosts:
+                    - webservice.secondary-1
+          )))
         end
 
         it 'load_balancing is only used by Webservice' do

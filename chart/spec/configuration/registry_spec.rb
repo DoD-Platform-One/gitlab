@@ -5,57 +5,45 @@ require 'hash_deep_merge'
 
 describe 'registry configuration' do
   let(:default_values) do
-    {
-      'certmanager-issuer' => { 'email' => 'test@example.com' }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   context 'When customer provides additional labels' do
     let(:values) do
-      {
-        'global' => {
-          'common' => {
-            'labels' => {
-              'global' => 'global',
-              'foo' => 'global'
-            }
-          },
-          'pod' => {
-            'labels' => {
-              'global_pod' => true
-            }
-          },
-          'service' => {
-            'labels' => {
-              'global_service' => true
-            }
-          }
-        },
-        'registry' => {
-          'common' => {
-            'labels' => {
-              'global' => 'registry',
-              'registry' => 'registry'
-            }
-          },
-          'networkpolicy' => {
-            'enabled' => true
-          },
-          'podLabels' => {
-            'pod' => true,
-            'global' => 'pod'
-          },
-          'serviceAccount' => {
-            'enabled' => true,
-            'create' => true
-          },
-          'serviceLabels' => {
-            'service' => true,
-            'global' => 'service'
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        global:
+          common:
+            labels:
+              global: global
+              foo: global
+          pod:
+            labels:
+              global_pod: true
+          service:
+            labels:
+              global_service: true
+        registry:
+          common:
+            labels:
+              global: registry
+              registry: registry
+          networkpolicy:
+            enabled: true
+          podLabels:
+            pod: true
+            global: pod
+          serviceAccount:
+            create: true
+            enabled: true
+          serviceLabels:
+            service: true
+            global: service
+      )).deep_merge(default_values)
     end
+
     it 'Populates the additional labels in the expected manner' do
       t = HelmTemplate.new(values)
       expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"

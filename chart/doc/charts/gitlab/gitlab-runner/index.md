@@ -10,7 +10,7 @@ The GitLab Runner subchart provides a GitLab Runner for running CI jobs. It is e
 
 ## Requirements
 
-This chart depends on the shared-secrets subchart to populate its `registrationToken` for automatic registration. If you intend to run this chart as a stand-alone chart with an existing GitLab instance then you will need to manually set the `registrationToken` in the `gitlab-runner` secret to be equal to that displayed by the running GitLab instance.
+This chart depends on the shared-secrets Job to populate its `registrationToken` for automatic registration. If you intend to run this chart as a stand-alone chart with an existing GitLab instance then you will need to manually set the `registrationToken` in the `gitlab-runner` secret to be equal to that displayed by the running GitLab instance.
 
 ## Configuration
 
@@ -35,6 +35,7 @@ Privileged containers have extended capabilities, for example they can mount arb
 | Parameter                                      | Description                                | Default                               |
 | ---------------------------------------------- | ------------------------------------------ | ------------------------------------- |
 | `gitlab-runner.image`                          | Runner image                               | `gitlab/gitlab-runner:alpine-v10.5.0` |
+| `gitlab-runner.gitlabUrl`                      | URL that the Runner uses to register to GitLab Server                | GitLab external URL                   |
 | `gitlab-runner.install`                        | Install the `gitlab-runner` chart          | `true`                                |
 | `gitlab-runner.imagePullPolicy`                | Image pull policy                          | `IfNotPresent`                        |
 | `gitlab-runner.init.image.repository`          | `initContainer` image                      |                                       |
@@ -46,48 +47,52 @@ Privileged containers have extended capabilities, for example they can mount arb
 | `gitlab-runner.rbac.create`                    | Whether to create RBAC service account     | `true`                                |
 | `gitlab-runner.rbac.clusterWideAccess`         | Deploy containers of jobs cluster-wide     | `false`                               |
 | `gitlab-runner.rbac.serviceAccountName`        | Name of the RBAC service account to create | `default`                             |
-| `gitlab-runner.runners.image`                  | Default container image to use in builds   | `ubuntu:16.04`                        |
-| `gitlab-runner.runners.imagePullSecrets`       | `imagePullSecrets`                         | `[]`                                  |
 | `gitlab-runner.runners.privileged`             | Run in privileged mode, needed for `dind`  | `false`                               |
-| `gitlab-runner.runners.namespace`              | Namespace to run jobs in                   | `default`                             |
-| `gitlab-runner.runners.cache.cacheType`        | Cache type                                 | `s3`                                  |
-| `gitlab-runner.runners.cache.s3BucketName`     | Name of the bucket                         | `runner-cache`                        |
-| `gitlab-runner.runners.cache.cacheShared`      | Share the cache between runners            | `true`                                |
-| `gitlab-runner.runners.cache.s3BucketLocation` | Bucket region                              | `us-east-1`                           |
-| `gitlab-runner.runners.cache.secretName`       | Secret to access key and secret key from    | `gitlab-minio`                        |
-| `gitlab-runner.runners.cache.s3CachePath`      | Path in the bucket                         | `gitlab-runner`                       |
-| `gitlab-runner.runners.cache.s3CacheInsecure`  | Use http                                   | `false`                               |
-| `gitlab-runner.runners.builds.cpuLimit`        | Build container CPU limit                  |                                       |
-| `gitlab-runner.runners.builds.memoryLimit`     | Build container memory limit               |                                       |
-| `gitlab-runner.runners.builds.cpuRequests`     | Build container requested CPU              |                                       |
-| `gitlab-runner.runners.builds.memoryRequests`  | Build container requested memory           |                                       |
-| `gitlab-runner.runners.services.cpuLimit`      | Service container CPU limit                |                                       |
-| `gitlab-runner.runners.services.memoryLimit`   | Service container memory limit             |                                       |
-| `gitlab-runner.runners.services.cpuRequests`   | Service container requested CPU            |                                       |
-| `gitlab-runner.runners.services.memoryRequests`| Service container requested memory         |                                       |
-| `gitlab-runner.runners.helpers.cpuLimit`       | Helper container CPU limit                 |                                       |
-| `gitlab-runner.runners.helpers.memoryLimit`    | Helper container memory limit              |                                       |
-| `gitlab-runner.runners.helpers.cpuRequests`    | Helper container requested CPU             |                                       |
-| `gitlab-runner.runners.helpers.memoryRequests` | Helper container requested memory          |                                       |
+| `gitlab-runner.runners.cache.secretName`       | Secret to access key and secret key from   | `gitlab-minio`                        |
+| `gitlab-runner.runners.config`                 | Runner configuration as string             | See [below](#default-runner-configuration)|
 | `gitlab-runner.resources.limits.cpu`           | Runner CPU limit                           |                                       |
 | `gitlab-runner.resources.limits.memory`        | Runner memory limit                        |                                       |
 | `gitlab-runner.resources.requests.cpu`         | Runner requested CPU                       |                                       |
 | `gitlab-runner.resources.requests.memory`      | Runner requested memory                    |                                       |
 
-## Chart configuration examples
+## Default runner configuration
 
-### `gitlab-runner.pullSecrets`
-
-`pullSecrets` allow you to authenticate to a private registry to pull images for a pod.
-
-Additional details about private registries and their authentication methods can be found in [the Kubernetes documentation](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod).
-
-Below is an example use of `pullSecrets`
+The default runner configuration used in the GitLab chart has been customized to use the included MinIO for cache by default. If you are setting the runner `config` value, you will need to also configure your own cache configuration.
 
 ```yaml
-image: my.runner.repository
-imagePullPolicy: Always
-pullSecrets:
-- name: my-secret-name
-- name: my-secondary-secret-name
+gitlab-runner:
+  runners:
+    config: |
+      [[runners]]
+        [runners.kubernetes]
+        image = "ubuntu:18.04"
+        {{- if .Values.global.minio.enabled }}
+        [runners.cache]
+          Type = "s3"
+          Path = "gitlab-runner"
+          Shared = true
+          [runners.cache.s3]
+            ServerAddress = {{ include "gitlab-runner.cache-tpl.s3ServerAddress" . }}
+            BucketName = "runner-cache"
+            BucketLocation = "us-east-1"
+            Insecure = false
+        {{ end }}
 ```
+
+## Chart configuration examples
+
+Runners configuration to use only custom nameservers (exclude any cluster or host nameservers):
+
+```yaml
+gitlab-runner:
+  runners:
+    config: |
+      [[runners]]
+        [runners.kubernetes]
+          image = "ubuntu:18.04"
+          dns_policy = "none"
+        [runners.kubernetes.dns_config]
+          nameservers = ["8.8.8.8"]
+```
+
+See the [Runner Chart additional configuration](https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration).

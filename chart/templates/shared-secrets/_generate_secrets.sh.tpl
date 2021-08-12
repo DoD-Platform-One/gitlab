@@ -1,6 +1,8 @@
+# vim: set filetype=sh:
+
 namespace={{ .Release.Namespace }}
 release={{ .Release.Name }}
-env={{ .Values.env }}
+env={{ index .Values "shared-secrets" "env" }}
 
 pushd $(mktemp -d)
 
@@ -33,11 +35,33 @@ function label_secret(){
 function generate_secret_if_needed(){
   local secret_args=( "${@:2}")
   local secret_name=$1
+
   if ! $(kubectl --namespace=$namespace get secret $secret_name > /dev/null 2>&1); then
     kubectl --namespace=$namespace create secret generic $secret_name ${secret_args[@]}
   else
-    echo "secret \"$secret_name\" already exists"
-  fi;
+    echo "secret \"$secret_name\" already exists."
+
+    for arg in "${secret_args[@]}"; do
+      local from=$(echo -n ${arg} | cut -d '=' -f1)
+
+      if [ -z "${from##*literal*}" ]; then
+        local key=$(echo -n ${arg} | cut -d '=' -f2)
+        local desiredValue=$(echo -n ${arg} | cut -d '=' -f3-)
+        local flags="--namespace=$namespace --allow-missing-template-keys=false"
+
+        if ! $(kubectl $flags get secret $secret_name -ojsonpath="{.data.${key}}" > /dev/null 2>&1); then
+          echo "key \"${key}\" does not exist. patching it in."
+
+          if [ "${desiredValue}" != "" ]; then
+            desiredValue=$(echo -n "${desiredValue}" | base64 -w 0)
+          fi
+
+          kubectl --namespace=$namespace patch secret ${secret_name} -p "{\"data\":{\"$key\":\"${desiredValue}\"}}"
+        fi
+      fi
+    done
+  fi
+
   label_secret $secret_name
 }
 
@@ -152,9 +176,7 @@ generate_secret_if_needed {{ template "gitlab.workhorse.secret" . }} --from-lite
 generate_secret_if_needed {{ template "gitlab.registry.httpSecret.secret" . }} --from-literal={{ template "gitlab.registry.httpSecret.key" . }}=$(gen_random 'a-z0-9' 128 | base64 -w 0)
 
 # Container Registry notification_secret
-{{ if and .Values.global.geo.enabled .Values.global.geo.registry.syncEnabled }}
 generate_secret_if_needed {{ template "gitlab.registry.notificationSecret.secret" . }} --from-literal={{ template "gitlab.registry.notificationSecret.key" . }}=[\"$(gen_random 'a-zA-Z0-9' 32)\"]
-{{ end }}
 
 {{ if .Values.global.grafana.enabled -}}
 # Grafana password

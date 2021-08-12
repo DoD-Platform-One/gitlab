@@ -15,6 +15,9 @@ spec:
     matchLabels:
       app: {{ template "name" . }}
       release: {{ .Release.Name }}
+  {{- if .Values.deployment.strategy }}
+  strategy: {{ .Values.deployment.strategy | toYaml | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:
@@ -118,17 +121,33 @@ spec:
           defaultMode: 0400
           sources:
           {{- include "gitlab.redis.secret" . | nindent 10 }}
+          {{- if eq .Values.global.appConfig.incomingEmail.inboxMethod "microsoft_graph" }}
+          - secret:
+              name: {{ .Values.global.appConfig.incomingEmail.clientSecret.secret | required "Missing required secret containing the OAuth2 Client ID for incoming email. Make sure to set `.Values.global.appConfig.incomingEmail.clientSecret.secret`" }}
+              items:
+                - key: {{ .Values.global.appConfig.incomingEmail.clientSecret.key }}
+                  path: mailroom/client_id_incoming_email
+          {{- else }}
           - secret:
               name: {{ .Values.global.appConfig.incomingEmail.password.secret | required "Missing required secret containing the IMAP password for incoming email. Make sure to set `global.appConfig.incomingEmail.password.secret`" }}
               items:
                 - key: {{ .Values.global.appConfig.incomingEmail.password.key }}
                   path: mailroom/password_incoming_email
+          {{ end }}
           {{- if .Values.global.appConfig.serviceDeskEmail.enabled }}
+          {{- if eq .Values.global.appConfig.serviceDeskEmail.inboxMethod "microsoft_graph" }}
+          - secret:
+              name: {{ .Values.global.appConfig.serviceDeskEmail.clientSecret.secret | required "Missing required secret containing the OAuth2 Client ID for service desk email. Make sure to set `.Values.global.appConfig.serviceDeskEmail.clientSecret.secret`" }}
+              items:
+                - key: {{ .Values.global.appConfig.serviceDeskEmail.clientSecret.key }}
+                  path: mailroom/client_id_service_desk
+          {{- else }}
           - secret:
               name: {{ .Values.global.appConfig.serviceDeskEmail.password.secret | required "Missing required secret containing the IMAP password for service desk email. Make sure to set `global.appConfig.serviceDeskEmail.password.secret`"}}
               items:
                 - key: {{ .Values.global.appConfig.serviceDeskEmail.password.key }}
                   path: mailroom/password_service_desk
+          {{- end }}
           {{- end }}
       - name: mailroom-secrets
         emptyDir:

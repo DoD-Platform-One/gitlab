@@ -1,21 +1,28 @@
-# Default values for gitlab/gitlab chart
-
 ## NOTICE
+#
 # Due to the scope and complexity of this chart, all possible values are
-# not documented in this file. Extensive documentation for these values
-# and more can be found at https://gitlab.com/gitlab-org/charts/gitlab/
+# not documented in this file. Extensive documentation is available.
+#
+# Please read the docs: https://docs.gitlab.com/charts/
+#
+# Because properties are regularly added, updated, or relocated, it is
+# _strongly suggest_ to not "copy and paste" this YAML. Please provide
+# Helm only those properties you need, and allow the defaults to be
+# provided by the version of this chart at the time of deployment.
 
 ## Advanced Configuration
-# Documentation for advanced configuration can be found under doc/advanced
-# - external PostgreSQL
-# - external Gitaly
-# - external Redis
-# - external NGINX
+## https://docs.gitlab.com/charts/advanced
+#
+# Documentation for advanced configuration, such as
+# - External PostgreSQL
+# - External Gitaly
+# - External Redis
+# - External NGINX
+# - External Object Storage providers
 # - PersistentVolume configuration
-# - external Object Storage providers
 
 ## The global properties are used to configure multiple charts at once.
-## Extended documentation at doc/charts/globals.md
+## https://docs.gitlab.com/charts/charts/globals
 global:
   common:
     labels: {}
@@ -29,18 +36,18 @@ global:
   pod:
     labels: {}
 
-  ## doc/installation/deployment.md#deploy-the-community-edition
+  ## https://docs.gitlab.com/charts/installation/deployment#deploy-the-community-edition
   edition: ee
 
-  ## doc/charts/globals.md#gitlab-version
+  ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
   # gitlabVersion: master
 
-  ## doc/charts/globals.md#application-resource
+  ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
     create: false
     links: []
     allowClusterRoles: true
-  ## doc/charts/globals.md#configure-host-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-host-settings
   hosts:
     domain: bigbang.dev
     hostSuffix:
@@ -57,7 +64,7 @@ global:
     kas: {}
     pages: {}
 
-  ## doc/charts/globals.md#configure-ingress-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
   ingress:
     configureCertmanager: false
     annotations: {}
@@ -66,23 +73,24 @@ global:
     #   enabled: true
     #   secretName:
     path: /
+    pathType: Prefix
 
   gitlab:
     ## Enterprise license for this GitLab installation
-    ## Secret created according to doc/installation/secrets.md#initial-enterprise-license
+    ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#initial-enterprise-license
     ## If allowing shared-secrets generation, this is OPTIONAL.
     license: {}
       # secret: RELEASE-gitlab-license
       # key: license
 
   ## Initial root password for this GitLab installation
-  ## Secret created according to doc/installation/secrets.md#initial-root-password
+  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#initial-root-password
   ## If allowing shared-secrets generation, this is OPTIONAL.
   initialRootPassword: {}
     # secret: RELEASE-gitlab-initial-root-password
     # key: password
 
-  ## doc/charts/globals.md#configure-postgresql-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-postgresql-settings
   psql:
     connectTimeout:
     password: {}
@@ -97,10 +105,8 @@ global:
     # applicationName:
     # preparedStatements: false
 
-  ## doc/charts/globals.md#configure-redis-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-redis-settings
   redis:
-    image:
-      tag: 6.0
     password:
       enabled: true
       # secret:
@@ -111,7 +117,7 @@ global:
     #   - host:
     #     port:
 
-  ## doc/charts/globals.md#configure-gitaly-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-gitaly-settings
   gitaly:
     enabled: true
     authToken: {}
@@ -158,20 +164,20 @@ global:
       enabled: false
       # secretName:
 
-  ## doc/charts/globals.md#configure-minio-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-minio-settings
   minio:
     enabled: true
     credentials: {}
       # secret:
 
-  ## doc/charts/globals.md#configure-grafana-integration
+  ## https://docs.gitlab.com/charts/charts/globals#configure-grafana-integration
   grafana:
     enabled: false
 
-  ## doc/charts/globals.md#configure-appconfig-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-appconfig-settings
   ## Rails based portions of this chart share many settings
   appConfig:
-    ## doc/charts/globals.md#general-application-settings
+    ## https://docs.gitlab.com/charts/charts/globals#general-application-settings
     enableUsagePing: true
     enableSeatLink: true
     enableImpersonation:
@@ -189,7 +195,7 @@ global:
     webhookTimeout:
     maxRequestDurationSeconds:
 
-    ## doc/charts/globals.md#cron-jobs-related-settings
+    ## https://docs.gitlab.com/charts/charts/globals#cron-jobs-related-settings
     cron_jobs: {}
       ## Flag stuck CI builds as failed
       # stuck_ci_jobs_worker:
@@ -245,25 +251,25 @@ global:
       # historical_data_worker:
       #   cron: "0 12 * * *"
 
-    ## doc/charts/globals.md#content-security-policy
+    ## https://docs.gitlab.com/charts/charts/globals#content-security-policy
     contentSecurityPolicy:
       enabled: false
       report_only: true
       # directives: {}
 
-    ## doc/charts/globals.md#gravatarlibravatar-settings
+    ## https://docs.gitlab.com/charts/charts/globals#gravatarlibravatar-settings
     gravatar:
       plainUrl:
       sslUrl:
 
-    ## doc/charts/globals.md#hooking-analytics-services-to-the-gitlab-instance
+    ## https://docs.gitlab.com/charts/charts/globals#hooking-analytics-services-to-the-gitlab-instance
     extra:
       googleAnalyticsId:
       matomoUrl:
       matomoSiteId:
       matomoDisableCookies:
 
-    ## doc/charts/globals.md#lfs-artifacts-uploads-packages-external-mr-diffs
+    ## https://docs.gitlab.com/charts/charts/globals#lfs-artifacts-uploads-packages-external-mr-diffs
     object_store:
       enabled: false
       proxy_download: true
@@ -315,7 +321,7 @@ global:
       bucket: gitlab-dependency-proxy
       connection: {}
 
-    ## doc/charts/globals.md#pseudonymizer-settings
+    ## https://docs.gitlab.com/charts/charts/globals#pseudonymizer-settings
     pseudonymizer:
       configMap:
       bucket: gitlab-pseudo
@@ -326,8 +332,8 @@ global:
       bucket: gitlab-backups
       tmpBucket: tmp
 
-    ## doc/charts/globals.md#incoming-email-settings
-    ## doc/installation/deployment.md#incoming-email
+    ## https://docs.gitlab.com/charts/charts/globals#incoming-email-settings
+    ## https://docs.gitlab.com/charts/installation/deployment#incoming-email
     incomingEmail:
       enabled: false
       address: ""
@@ -344,9 +350,13 @@ global:
         logPath: "/dev/stdout"
       mailbox: inbox
       idleTimeout: 60
+      inboxMethod: "imap"
+      clientSecret:
+        key: secret
+      pollInterval: 60
 
-    ## doc/charts/globals.md#service-desk-email-settings
-    ## doc/installation/deployment.md#service-desk-email
+    ## https://docs.gitlab.com/charts/charts/globals#service-desk-email-settings
+    ## https://docs.gitlab.com/charts/installation/deployment#service-desk-email
     serviceDeskEmail:
       enabled: false
       address: ""
@@ -363,8 +373,12 @@ global:
         logPath: "/dev/stdout"
       mailbox: inbox
       idleTimeout: 60
+      inboxMethod: "imap"
+      clientSecret:
+        key: secret
+      pollInterval: 60
 
-    ## doc/charts/globals.md#ldap
+    ## https://docs.gitlab.com/charts/charts/globals#ldap
     ldap:
       # prevent the use of LDAP for sign-in via web.
       preventSignin: false
@@ -381,7 +395,7 @@ global:
       #     key: _the_key_which_holds_your_ldap_password
       #   encryption: 'plain'
 
-    ## doc/charts/globals.md#kas
+    ## https://docs.gitlab.com/charts/charts/globals#kas
     gitlab_kas: {}
       # secret:
       # key:
@@ -389,7 +403,7 @@ global:
       # externalUrl:
       # internalUrl:
 
-    ## doc/charts/globals.md#omniauth
+    ## https://docs.gitlab.com/charts/charts/globals#omniauth
     omniauth:
       enabled: false
       autoSignInWithProvider:
@@ -405,7 +419,7 @@ global:
       providers: []
       # - secret: gitlab-google-oauth2
       #   key: provider
-    ## doc/charts/globals.md#configure-appconfig-settings
+    ## https://docs.gitlab.com/charts/charts/globals#configure-appconfig-settings
     sentry:
       enabled: false
       dsn:
@@ -419,6 +433,9 @@ global:
       sanExtensions: false
       requiredForGitAccess: false
 
+    sidekiq:
+      routingRules: []
+
     # Config that only applies to the defaults on initial install
     initialDefaults: {}
       # signupEnabled:
@@ -431,7 +448,7 @@ global:
       # appSecretKey:
       # redirectUri:
 
-  ## doc/charts/geo.md
+  ## https://docs.gitlab.com/charts/advanced/geo/
   geo:
     enabled: false
     # Valid values: primary, secondary
@@ -455,27 +472,25 @@ global:
         # serverCA:
     registry:
       syncEnabled: false
-      syncSecret: {}
-        # secret: <release-name>-registry-notification
-        # key: secret
+      ## Consumes global.registry.notificationSecret
 
-  ## doc/charts/gitlab/kas/index.md
+  ## https://docs.gitlab.com/charts/charts/gitlab/kas/
   kas:
     enabled: false
 
-  ## doc/charts/globals.md#configure-gitlab-shell-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-gitlab-shell-settings
   shell:
     authToken: {}
       # secret:
       # key:
     hostKeys: {}
       # secret:
-    ## doc/charts/globals.md#tcp-proxy-protocol
+    ## https://docs.gitlab.com/charts/charts/globals#tcp-proxy-protocol
     tcp:
       proxyProtocol: false
 
   ## Rails application secrets
-  ## Secret created according to doc/installation/secrets.md#gitlab-rails-secret
+  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#gitlab-rails-secret
   ## If allowing shared-secrets generation, this is OPTIONAL.
   railsSecrets: {}
     # secret:
@@ -485,12 +500,15 @@ global:
     bootsnap: # Enable / disable Shopify/Bootsnap cache
       enabled: true
 
-  ## doc/charts/globals.md#configure-registry-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-registry-settings
   registry:
     bucket: registry
     certificate: {}
       # secret:
     httpSecret: {}
+      # secret:
+      # key:
+    notificationSecret: {}
       # secret:
       # key:
     # https://docs.docker.com/registry/notifications/#configuration
@@ -535,20 +553,20 @@ global:
       # key:
 
   ## GitLab Runner
-  ## Secret created according to doc/installation/secrets.md#gitlab-runner-secret
+  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#gitlab-runner-secret
   ## If allowing shared-secrets generation, this is OPTIONAL.
   runner:
     registrationToken: {}
       # secret:
 
-  ## doc/installation/deployment.md#outgoing-email
+  ## https://docs.gitlab.com/charts/installation/deployment#outgoing-email
   ## Outgoing email server settings
   smtp:
     enabled: false
     address: smtp.mailgun.org
     port: 2525
     user_name: ""
-    ## doc/installation/secrets.md#smtp-password
+    ## https://docs.gitlab.com/charts/installation/secrets#smtp-password
     password:
       secret: ""
       key: password
@@ -556,8 +574,9 @@ global:
     authentication: "plain"
     starttls_auto: false
     openssl_verify_mode: "peer"
+    pool: false
 
-  ## doc/installation/deployment.md#outgoing-email
+  ## https://docs.gitlab.com/charts/installation/deployment#outgoing-email
   ## Email persona used in email sent by GitLab
   email:
     from: ''
@@ -584,27 +603,27 @@ global:
 
   antiAffinity: soft
 
-  ## doc/charts/globals.md#workhorse
+  ## https://docs.gitlab.com/charts/charts/globals#workhorse
   ## Global settings related to Workhorse
   workhorse:
     serviceName: webservice-default
     # scheme:
     # host:
     # port:
-    ## doc/installation/secrets.md#gitlab-workhorse-secret
+    ## https://docs.gitlab.com/charts/installation/secrets#gitlab-workhorse-secret
     # secret:
     # key:
 
-  ## doc/charts/globals.md#configure-webservice
+  ## https://docs.gitlab.com/charts/charts/globals#configure-webservice
   webservice:
     workerTimeout: 60
 
-  ## doc/charts/globals.md#custom-certificate-authorities
+  ## https://docs.gitlab.com/charts/charts/globals#custom-certificate-authorities
   # configuration of certificates container & custom CA injection
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -648,7 +667,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -665,7 +684,7 @@ global:
       pullSecrets:
       - name: private-registry
 
-  ## docs/charts/globals.md#service-accounts
+  ## https://docs.gitlab.com/charts/charts/globals#service-accounts
   serviceAccount:
     enabled: false
     create: true
@@ -673,16 +692,20 @@ global:
     ## Name to be used for serviceAccount, otherwise defaults to chart fullname
     # name:
 
-  ## docs/charts/globals/tracing.md#tracing
+  ## https://docs.gitlab.com/charts/charts/globals/tracing#tracing
   tracing:
     connection:
       string: ""
     urlTemplate: ""
 
-  ## docs/charts/globals.md
+  ## https://docs.gitlab.com/charts/charts/globals
   extraEnv: {}
    # SOME_KEY: some_value
    # SOME_OTHER_KEY: some_other_value
+
+  ## https://docs.gitlab.com/charts/charts/globals
+  platform:
+    eksRoleArn:
 
 ## End of global
 
@@ -717,14 +740,14 @@ certmanager:
   # installed or if you are not using cert-manager.
   install: false
   # Other cert-manager configurations from upstream
-  # See https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/README.md#configuration
+  # See https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/README#configuration
   rbac:
     create: true
   webhook:
     enabled: false
 
-## doc/charts/nginx/index.md
-## doc/architecture/decisions.md#nginx-ingress
+## https://docs.gitlab.com/charts/charts/nginx/
+## https://docs.gitlab.com/charts/architecture/decisions#nginx-ingress
 ## Installation & configuration of charts/ingress-nginx:
 nginx-ingress:
   enabled: false
@@ -795,6 +818,8 @@ prometheus:
   server:
     enabled: false
     retention: 15d
+    strategy:
+      type: Recreate
   #
   serverFiles:
     prometheus.yml:
@@ -902,8 +927,8 @@ prometheus:
               target_label: kubernetes_name
 
 ## Configuration of Redis
-## doc/architecture/decisions.md#redis
-## doc/charts/redis
+## https://docs.gitlab.com/charts/architecture/decisions#redis
+## https://docs.gitlab.com/charts/installation/deployment.html#redis
 redis:
   install: true
   existingSecret: gitlab-redis-secret
@@ -959,13 +984,13 @@ postgresql:
     ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
 
 ## Installation & configuration charts/registry
-## doc/architecture/decisions.md#registry
-## doc/charts/registry/
+## https://docs.gitlab.com/charts/architecture/decisions#registry
+## https://docs.gitlab.com/charts/charts/registry/
 registry:
   enabled: true
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 13.10.3
+    tag: 13.12.9
     pullSecrets:
     - name: private-registry
   ingress:
@@ -973,18 +998,37 @@ registry:
 
 
 ## Automatic shared secret generation
-## doc/installation/secrets.md
-## doc/charts/shared-secrets
+## https://docs.gitlab.com/charts/installation/secrets
+## https://docs.gitlab.com/charts/charts/shared-secrets
 shared-secrets:
   enabled: true
+  rbac:
+    create: true
   selfsign:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
       tag: 1.4.1
       pullSecrets:
       - name: private-registry
-  rbac:
+    keyAlgorithm: "rsa"
+    keySize: "4096"
+    expiry: "365d"
+    caSubject: "GitLab Helm Chart"
+    pullSecrets: []
+  env: production
+  serviceAccount:
     create: true
+    name: # Specify a pre-existing ServiceAccount name
+  resources:
+    requests:
+      cpu: 50m
+  securityContext:
+    # in debian/alpine based images, this is `nobody:nogroup`
+    runAsUser: 65534
+    fsGroup: 65534
+  tolerations: []
+  podLabels: {}
+  annotations: {}
 
 ## Installation & configuration of gitlab/gitlab-runner
 ## See requirements.yaml for current version
@@ -994,13 +1038,21 @@ gitlab-runner:
     create: true
   runners:
     locked: false
-    cache:
-      cacheType: s3
-      s3BucketName: runner-cache
-      cacheShared: true
-      s3BucketLocation: us-east-1
-      s3CachePath: gitlab-runner
-      s3CacheInsecure: false
+    config: |
+      [[runners]]
+        [runners.kubernetes]
+        image = "ubuntu:18.04"
+        {{- if .Values.global.minio.enabled }}
+        [runners.cache]
+          Type = "s3"
+          Path = "gitlab-runner"
+          Shared = true
+          [runners.cache.s3]
+            ServerAddress = {{ include "gitlab-runner.cache-tpl.s3ServerAddress" . }}
+            BucketName = "runner-cache"
+            BucketLocation = "us-east-1"
+            Insecure = false
+        {{ end }}
   podAnnotations:
     gitlab.com/prometheus_scrape: "true"
     gitlab.com/prometheus_port: 9252
@@ -1021,7 +1073,7 @@ grafana:
   command: [ "sh", "-x", "/tmp/scripts/import-secret.sh" ]
   ## The following settings allow Grafana to dynamically create
   ## dashboards and datasources from configmaps. See
-  ## https://github.com/helm/charts/tree/master/stable/grafana#sidecar-for-dashboards
+  ## https://artifacthub.io/packages/helm/grafana/grafana#sidecar-for-dashboards
   sidecar:
     dashboards:
       enabled: true
@@ -1032,6 +1084,7 @@ grafana:
   ## We host Grafana as a sub-url of GitLab
   grafana.ini:
     server:
+      serve_from_sub_path: true
       root_url: http://localhost/-/grafana/
   ## We generate and provide random passwords
   ## NOTE: the Secret & ConfigMap names are hard coded!
@@ -1052,7 +1105,7 @@ grafana:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
-  ## doc/charts/gitlab/task-runner
+  ## https://docs.gitlab.com/charts/charts/gitlab/task-runner
   task-runner:
     replicas: 1
     antiAffinityLabels:
@@ -1060,13 +1113,13 @@ gitlab:
         app: 'gitaly'
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
   gitlab-exporter:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1074,47 +1127,47 @@ gitlab:
       port: 9168
     enabled: false
 
-## doc/charts/gitlab/migrations
+## https://docs.gitlab.com/charts/charts/gitlab/migrations
   migrations:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
-## doc/charts/gitlab/webservice
+## https://docs.gitlab.com/charts/charts/gitlab/webservice
   webservice:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
     workhorse:
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
     ingress:
       enabled: false  # Local setting in subchart must be overridden
 
-## doc/charts/gitlab/sidekiq
+## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
-## doc/charts/gitlab/gitaly
+## https://docs.gitlab.com/charts/charts/gitlab/gitaly
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
-## doc/charts/gitlab/gitlab-shell
+## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 13.10.3
+      tag: 13.12.9
       pullSecrets:
       - name: private-registry
 
@@ -1122,9 +1175,9 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 13.10.3
+      tag: 13.12.9
 
-## doc/charts/gitlab/gitlab-grafana
+## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
 #   gitlab-grafana:
 
 # use Ironbank hardened images for MinIO

@@ -71,11 +71,6 @@ spec:
           {{- end}}
           {{ template "gitlab.imagePullPolicy" . }}
           env:
-            - name: GITLAB_SHARED_RUNNERS_REGISTRATION_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "gitlab.gitlab-runner.registrationToken.secret" . }}
-                  key: runner-registration-token
             - name: CONFIG_TEMPLATE_DIRECTORY
               value: '/var/opt/gitlab/templates'
             - name: CONFIG_DIRECTORY
@@ -103,6 +98,9 @@ spec:
             - name: migrations-secrets
               mountPath: /srv/gitlab/config/initial_root_password
               subPath: migrations/initial_root_password
+            - name: migrations-secrets
+              mountPath: /srv/gitlab/config/gitlab_shared_runners_registration_token
+              subPath: migrations/gitlab_shared_runners_registration_token
             {{- if .Values.global.gitlab.license.secret }}
             - name: migrations-secrets
               mountPath: /srv/gitlab/config/Gitlab.gitlab-license
@@ -157,6 +155,11 @@ spec:
               items:
                 - key: {{ template "gitlab.migrations.initialRootPassword.key" . }}
                   path: migrations/initial_root_password
+          - secret:
+              name: {{ template "gitlab.gitlab-runner.registrationToken.secret" . }}
+              items: 
+                - key: runner-registration-token
+                  path: migrations/gitlab_shared_runners_registration_token
           {{- if .Values.global.gitlab.license.secret }}
           - secret:
               name: {{ .Values.global.gitlab.license.secret }}

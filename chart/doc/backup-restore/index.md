@@ -121,3 +121,36 @@ The command depends on the cloud service provider:
   ```
 
 You should see a list of available buckets.
+
+### "AccessDeniedException: 403" errors in GCP
+
+An error like `[Error] AccessDeniedException: 403 <GCP Account> does not have storage.objects.list access to the Google Cloud Storage bucket.`
+usually happens during a backup or restore of a GitLab instance, because of missing permissions.
+
+The backup and restore operations use all buckets in the environment,so
+confirm that all buckets in your environment have been created, and that the GCP account can access (list, read, and write) all buckets:
+
+1. Find your task-runner pod:
+
+   ```shell
+   kubectl get pods -lrelease=RELEASE_NAME,app=task-runner
+   ```
+
+1. Get all buckets in the pod's environment. Replace `<task-runner-pod-name>` with your actual task-runner pod name, but leave `"BUCKET_NAME"` as it is:
+
+   ```shell
+   kubectl describe pod <task-runner-pod-name> | grep "BUCKET_NAME"
+   ```
+
+1. Confirm that you have access to every bucket in the environment:
+
+   ```shell
+   # List
+   gsutil ls gs://<bucket-to-validate>/
+
+   # Read
+   gsutil cp gs://<bucket-to-validate>/<object-to-get> <save-to-location>
+
+   # Write
+   gsutil cp -n <local-file> gs://<bucket-to-validate>/
+   ```

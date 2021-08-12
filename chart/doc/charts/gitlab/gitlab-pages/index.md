@@ -37,6 +37,7 @@ configurations that can be supplied to the `helm install` command using the
 | ----------------------------------------- | ----------------- | -------------------------------------------------------- |
 | `annotations`                             |                   | Pod annotations                                          |
 | `common.labels`                           | `{}`              | Supplemental labels that are applied to all objects created by this chart. |
+| `deployment.strategy`                     | `{}`              | Allows one to configure the update strategy used by the deployment. When not provided, the cluster default is used. |
 | `extraEnv`                                |                   | List of extra environment variables to expose            |
 | `image.pullPolicy`                        | `IfNotPresent`    | GitLab image pull policy                                 |
 | `image.pullSecrets`                       |                   | Secrets for the image repository                         |
@@ -68,6 +69,8 @@ configurations that can be supplied to the `helm install` command using the
 | `artifactsServerTimeout`         | `10`                  | Timeout (in seconds) for a proxied request to the artifacts server |
 | `artifactsServerUrl`             |                       | API URL to proxy artifact requests to                |
 | `domainConfigSource`             | `gitlab`              | Domain configuration source                          |
+| `extraVolumeMounts`              |                       | List of extra volumes mounts to add                  |
+| `extraVolumes`                   |                       | List of extra volumes to create                      |
 | `gitlabClientHttpTimeout`        |                       | GitLab API HTTP client connection timeout in seconds |
 | `gitlabClientJwtExpiry`          |                       | JWT Token expiry time in seconds                     |
 | `gitlabServer`                   |                       | GitLab server FQDN                                   |
@@ -85,3 +88,30 @@ configurations that can be supplied to the `helm install` command using the
 | `tls.minVersion`                 |                       | Specifies the minimum SSL/TLS version                |
 | `tls.maxVersion`                 |                       | Specifies the maximum SSL/TLS version                |
 | `useHttp2`                       | `true`                | Enable HTTP2 support                                 |
+
+## Chart configuration examples
+
+### extraVolumes
+
+`extraVolumes` allows you to configure extra volumes chart-wide.
+
+Below is an example use of `extraVolumes`:
+
+```yaml
+extraVolumes: |
+  - name: example-volume
+    persistentVolumeClaim:
+      claimName: example-pvc
+```
+
+### extraVolumeMounts
+
+`extraVolumeMounts` allows you to configure extra volumeMounts on all containers chart-wide.
+
+Below is an example use of `extraVolumeMounts`:
+
+```yaml
+extraVolumeMounts: |
+  - name: example-volume
+    mountPath: /etc/example
+```

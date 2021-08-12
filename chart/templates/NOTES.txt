@@ -8,6 +8,11 @@ WARNING: The Container Registry metadata database has been enabled. Please note 
 WARNING: The Container Registry filesystem metadata has been disabled. Please note that it is an experimental feature and must not be used in production.
 {{- end }}
 
+{{/* If the Container Registry online garbage collection is enabled, note it is not production ready */}}
+{{- if eq false .Values.registry.gc.disabled }}
+WARNING: The Container Registry online garbage collection has been enabled. Please note that it is an experimental feature and must not be used in production.
+{{- end }}
+
 {{/* If Praefect enabled, note it is not production ready */}}
 {{- if eq .Values.global.praefect.enabled true }}
 WARNING: The Praefect chart has been enabled. Please note that it is still under development and not ready for production use. Usage may require significant manual intervention during upgrades.
@@ -81,12 +86,42 @@ NOTICE: The GitLab task-runner is scaled to 0.
 WARNING: global.operator.enabled is set.
     The gitlab/gitlab-operator chart houses "gitlab-operator". This functionality was Alpha, and marked experimental. This is now DEPRECATED and will be removed in the future.
 {{- end }}
+
+{{/* WARN: global.registry.notificationSecret */}}
+{{- if and (not (index .Values "shared-secrets" "enabled")) (not .Values.global.registry.notificationSecret) -}}
+WARNING: shared-secrets.enabled is false, no global.registry.notificationSecret provided.
+  The shared-secrets chart has been disabled, and `global.registry.notificationSecret` has not been provided.
+  Starting in 4.11.x of this chart, this secret must be present, but shared-secrets will not be run to generated it.
+  Please see https://docs.gitlab.com/charts/charts/globals#configure-registry-settings
+{{- end }}
 {{/* print install survey link */}}
 {{- $appVersion := coalesce .Values.global.gitlabVersion .Chart.AppVersion -}}
 {{- if and .Release.IsInstall (regexMatch "^\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-pre)?$" $appVersion) }}
 Help us improve the installation experience, let us know how we did with a 1 minute survey:
 {{ printf "https://gitlab.fra1.qualtrics.com/jfe/form/SV_6kVqZANThUQ1bZb?installation=helm&release=%s" (regexReplaceAll "^(\\d+)\\.(\\d+)\\..+" $appVersion "${1}-${2}") }}
 {{- end }}
+
+{{/* WARN: Usage of PAGES_UPDATE_LEGACY_STORAGE with bundled Pages discouraged.*/}}
+{{- if .Values.global.pages.enabled -}}
+{{-   $envValues := dict }}
+{{-   $_ := set $envValues "gitlab.webservice" (default false .Values.gitlab.webservice.extraEnv.PAGES_UPDATE_LEGACY_STORAGE) }}
+{{-   $_ := set $envValues "gitlab.sidekiq" (default false .Values.gitlab.sidekiq.extraEnv.PAGES_UPDATE_LEGACY_STORAGE) }}
+{{-   $_ := set $envValues "global" (default false .Values.global.extraEnv.PAGES_UPDATE_LEGACY_STORAGE) }}
+{{-   $taskrunnerExtraEnv := index .Values.gitlab "task-runner" "extraEnv" }}
+{{-   $_ := set $envValues "gitlab.task-runner" (default false $taskrunnerExtraEnv.PAGES_UPDATE_LEGACY_STORAGE) }}
+{{-   range $component, $value := $envValues }}
+{{-     if eq $value true }}
+WARNING: GitLab Pages configured to use disk storage via `{{ $component }}.extraEnv.PAGES_UPDATE_LEGACY_STORAGE`.
+    Using `PAGES_UPDATE_LEGACY_STORAGE` environment variable with bundled Pages service is not recommended. This setting is specifically used when using an external GitLab Pages deployment.
+{{-     end }}
+{{-   end }}
+{{- end }}
+
+{{/* WARN: Unicorn is deprecated and will be removed in 14.0 */}}
+{{- if eq .Values.gitlab.webservice.webServer "unicorn" -}}
+WARNING: Starting with GitLab 14.0, Unicorn is no longer supported and users must switch to Puma by setting `gitlab.webservice.webServer` value to `puma`. Check https://docs.gitlab.com/ee/administration/operations/puma.html for details.
+{{- end }}
+
 {{/* run deprecations */}}
 {{ include "gitlab.deprecations" . }}
 {{/* run checkConfig */}}

@@ -6,47 +6,48 @@ require 'yaml'
 
 describe 'Node Selector configuration' do
   let(:default_values) do
-    {
-      'global' => {
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+
+      global:
         # the values we test for presence of NodeSelectors across components
-        'nodeSelector' => { 'region' => 'us-central-1a' },
+        nodeSelector:
+          region: us-central-1a
 
         # PLEASE UPDATE AS NEW COMPONENTS ARE ADDED (unless they are enabled by default)
-        'gitlab' => {
-          'kas' => { 'enabled' => 'true' }, # DELETE THIS WHEN KAS BECOMES ENABLED BY DEFAULT
-          'pages' => { 'enabled' => 'true' },
-          'praefect' => { 'enabled' => 'true' }
-        },
+        gitlab:
+          kas:
+            enabled: true  # DELETE THIS WHEN KAS BECOMES ENABLED BY DEFAULT
+          pages:
+            enabled: true
+          praefect:
+            enabled: true
 
-        # ensures inclusion of:
-        # - shared-secrets/templates/_self-signed-cert-job.yml
-        'ingress' => {
-          'configureCertmanager' => 'false'
-        },
+        # ensures inclusion of shared-secrets/templates/_self-signed-cert-job.yml
+        ingress:
+          configureCertmanager: false
 
         # ensures inclusion of:
         # - gitlab/charts/webservice/templates/pause_job.yaml
         # - gitlab/charts/sidekiq/templates/pause_job.yaml
         # - gitlab/charts/gitaly/templates/pause_job.yaml
         # - gitlab/charts/operator/templates/deployment.yaml
-        'operator' => {
-          'enabled' => 'true',
-          'rollout' => { 'autoPause' => 'true' }
-        }
-      },
+        operator:
+          enabled: true
+          rollout:
+            autoPause: true
 
       # ensures inclusion of:
       # - nginx-ingress/templates/admission-webhooks/job-patch/job-createSecret.yaml
       # - nginx-ingress/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
-      'nginx-ingress' => {
-        'admissionWebhooks' => {
-          'enabled' => 'true',
-          'patch' => { 'enabled' => 'true' }
-        }
-      },
+      nginx-ingress:
+        admissionWebhooks:
+          enabled: true
+          patch:
+            enabled: true
 
-      'certmanager-issuer' => { 'email' => 'test@example.com' }
-    }
+    ))
   end
 
   let(:ignored_charts) do

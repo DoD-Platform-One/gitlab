@@ -35,15 +35,14 @@ can do one of three things:
   sudo gcloud components update
   ```
 
-- Install directly from the [Google Storage APIs](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-binary-via-curl).
-- Install with the appropriate package management system:
-  - Linux: your package manager of choice, or Snap.
-  - [macOS](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-with-homebrew-on-macos)
-  - [Windows](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-with-chocolatey-on-windows)
+- Install with cURL or with the appropriate package management system for each OS:
+  - [Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
+  - [macOS](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-with-homebrew-on-macos)
+  - [Windows](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/#install-on-windows-using-chocolatey-or-scoop)
 
 ### Installing Minikube
 
-See the [Kubernetes documentation](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+See the [Kubernetes documentation](https://minikube.sigs.k8s.io/docs/start/)
 where they suggest directly installing from the [releases on GitHub](https://github.com/kubernetes/minikube/releases).
 
 ### Choosing a VM driver

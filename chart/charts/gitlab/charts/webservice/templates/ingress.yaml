@@ -15,7 +15,7 @@ From here on:
 - `.name` is the key (xyz)
 */}}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: {{ template "ingress.apiVersion" $}}
 kind: Ingress
 metadata:
   name: {{ template "webservice.fullname.withSuffix" . }}
@@ -41,14 +41,32 @@ spec:
       http:
         paths:
           - path: {{ .ingress.path }}
+            {{ if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+            pathType: {{ default .ingress.pathType $.Values.global.ingress.pathType }}
+            backend:
+              service:
+                  name: {{ template "webservice.fullname.withSuffix" . }}
+                  port:
+                    number: {{ $.Values.service.workhorseExternalPort }}
+            {{- else -}}
             backend:
               serviceName: {{ template "webservice.fullname.withSuffix" . }}
-              servicePort: {{ $.Values.service.workhorseExternalPort }}
+              servicePort: {{ $.Values.service.workhorseExternalPort }} 
+            {{- end -}}
           {{- if has .ingress.path (list "/" "/*") }}
           - path: /admin/sidekiq{{ .ingress.path }}
+            {{ if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+            pathType: {{ default .ingress.pathType $.Values.global.ingress.pathType }}
+            backend:
+              service:
+                name: {{ template "webservice.fullname.withSuffix" . }}
+                port:
+                  number: {{ $.Values.service.externalPort }}
+            {{- else -}}
             backend:
               serviceName: {{ template "webservice.fullname.withSuffix" . }}
               servicePort: {{ $.Values.service.externalPort }}
+            {{- end -}}
           {{- end }}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:

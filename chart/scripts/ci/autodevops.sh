@@ -61,6 +61,15 @@ function deploy() {
     enable_kas=("--set" "global.kas.enabled=true")
   fi
 
+  # Enable / disable gitlab-operator (old) based on environment
+  local enable_operator=()
+  if [[ -n "$OPERATOR_ENABLED" ]]; then
+    enable_operator=(
+      "--set" "global.operator.enabled=true"
+      "--set" "gitlab.operator.crdPrefix=${RELEASE_NAME}"
+    )
+  fi
+
   # Use stable images when on the stable branch
   gitlab_version=$(grep 'appVersion:' Chart.yaml | awk '{ print $2}')
   gitlab_version_args=()
@@ -93,7 +102,10 @@ function deploy() {
 
   # YAML_FILE=""${KUBE_INGRESS_BASE_DOMAIN//\./-}.yaml"
 
-  if ! crdExists ; then scripts/crdctl create "${RELEASE_NAME}" ; fi
+  # Ensure the CRD if OPERATOR_ENABLED
+  if [[ -n "$OPERATOR_ENABLED" ]]; then
+    if ! crdExists ; then scripts/crdctl create "${RELEASE_NAME}" ; fi
+  fi
 
   helm repo add gitlab https://charts.gitlab.io/
   helm repo add jetstack https://charts.jetstack.io
@@ -170,9 +182,8 @@ CIYAML
     --set global.appConfig.initialDefaults.signupEnabled=false \
     --set certmanager.install=false \
     --set prometheus.install=$PROMETHEUS_INSTALL \
-    --set global.operator.enabled=true \
-    --set gitlab.operator.crdPrefix="$RELEASE_NAME" \
     --set global.gitlab.license.secret="$RELEASE_NAME-gitlab-license" \
+    "${enable_operator[@]}" \
     "${enable_kas[@]}" \
     --namespace="$NAMESPACE" \
     "${gitlab_version_args[@]}" \
@@ -201,23 +212,38 @@ function check_kas_status() {
 }
 
 function wait_for_deploy {
-  revision=0
-  observedRevision=-1
   iteration=0
-  while [ "$observedRevision" != "$revision" ]; do
-    IFS=$','
-    status=($(kubectl get gitlabs.${RELEASE_NAME}.gitlab.com "${RELEASE_NAME}-operator" -n ${NAMESPACE} -o jsonpath='{.status.deployedRevision}{","}{.spec.revision}'))
-    unset IFS
-    observedRevision=${status[0]}
-    revision=${status[1]}
-    if [ $iteration -eq 0 ]; then
-      echo -n "Waiting for deploy revision ${revision} to complete.";
-    else
-      echo -n "."
-    fi
-    iteration=$((iteration+1))
-    sleep 5;
-  done
+
+  if [[ -n "$OPERATOR_ENABLED" ]]; then
+    # Watch the status according to the operator
+    revision=0
+    observedRevision=-1
+    while [ "$observedRevision" != "$revision" ]; do
+      IFS=$','
+      status=($(kubectl get gitlabs.${RELEASE_NAME}.gitlab.com "${RELEASE_NAME}-operator" -n ${NAMESPACE} -o jsonpath='{.status.deployedRevision}{","}{.spec.revision}'))
+      unset IFS
+      observedRevision=${status[0]}
+      revision=${status[1]}
+      if [ $iteration -eq 0 ]; then
+        echo -n "Waiting for deploy revision ${revision} to complete.";
+      else
+        echo -n "."
+     fi
+    done
+  else
+    # Watch for a `webservice` Pod to come online.
+    webserviceState=0
+    while [ "$webserviceState" -lt 2 ]; do
+      # This will always return at least one line, `NAME`
+      webserviceState=($(kubectl get pods -n "$NAMESPACE" -lrelease=${RELEASE_NAME},app=webservice --field-selector status.phase=Running -o=custom-columns=NAME:.metadata.name | wc -l))
+      if [ $iteration -eq 0 ]; then
+        echo -n "Waiting for deploy to complete.";
+      else
+        echo -n "."
+      fi
+      sleep 5;
+    done
+  fi
 
   if [[ -n "$KAS_ENABLED" ]]; then
     check_kas_status

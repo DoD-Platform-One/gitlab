@@ -2,7 +2,8 @@
 {{- if eq (include "gitlab.ingress.enabled" $) "true" -}}
 {{- $minioHostname := include "gitlab.minio.hostname" . -}}
 {{- $tlsSecret := include "minio.tlsSecret" . -}}
-apiVersion: extensions/v1beta1
+
+apiVersion: {{ template "ingress.apiVersion" $}}
 kind: Ingress
 metadata:
   name: {{ template "minio.fullname" . }}
@@ -26,9 +27,18 @@ spec:
       http:
         paths:
           - path: {{ coalesce $.Values.ingress.path $.Values.global.ingress.path }}
+            {{ if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+            pathType: {{ default "Prefix" $.Values.global.ingress.pathType }}
+            backend:
+              service:
+                  name: {{ template "minio.fullname" . }}-svc
+                  port:
+                    number: {{ .Values.servicePort }}
+           {{- else -}}
             backend:
               serviceName: {{ template "minio.fullname" . }}-svc
               servicePort: {{ .Values.servicePort }}
+            {{- end -}}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:
     - hosts:

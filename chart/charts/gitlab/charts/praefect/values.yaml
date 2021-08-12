@@ -57,3 +57,6 @@ common:
   labels: {}
 podLabels: {}
 serviceLabels: {}
+
+statefulset:
+  strategy: {}

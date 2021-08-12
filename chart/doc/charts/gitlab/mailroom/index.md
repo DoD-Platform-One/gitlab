@@ -75,7 +75,8 @@ serviceAccount:
 
 | Parameter                            | Description                                      | Default                     |
 |--------------------------------------|--------------------------------------------------|-----------------------------|
-| `enabled`                            | Mailroom enablement flag                         | `true`                        |
+| `deployment.strategy`                | Allows one to configure the update strategy utilized by the deployment | `{}`  |
+| `enabled`                            | Mailroom enablement flag                         | `true`                      |
 | `hpa.minReplicas`                    | Minimum number of replicas                       | `1`                         |
 | `hpa.maxReplicas`                    | Maximum number of replicas                       | `2`                         |
 | `hpa.cpu.targetAverageUtilization`   | Target value of the average of the resource metric | `75`                      |
@@ -106,9 +107,26 @@ serviceAccount:
 
 ## Incoming email
 
-By default, incoming email is disabled. To enable it, provide details of your
-IMAP server and access credentials using the `global.appConfig.incomingEmail`
-settings. You can find details for these settings in the [command line options](../../../installation/command-line-options.md#incoming-email-configuration).
+By default, incoming email is disabled. There are two methods for
+reading incoming email:
+
+- [IMAP](#imap)
+- [Microsoft Graph](#microsoft-graph)
+
+First, enable it by setting the [common settings](../../../installation/command-line-options.md#common-settings).
+Then configure the [IMAP settings](../../../installation/command-line-options.md#imap-settings) or
+[Microsoft Graph settings](../../../installation/command-line-options.md#microsoft-graph-settings).
+
+These methods can be configured in `values.yaml`. See the following examples:
+
+- [Incoming email with IMAP](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/email/values-incoming-email.yaml)
+- [Incoming email with Microsoft Graph](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/email/values-msgraph.yaml)
+
+### IMAP
+
+To enable incoming e-mail for IMAP, provide details of your IMAP server
+and access credentials using the `global.appConfig.incomingEmail`
+settings.
 
 In addition, the [requirements for the IMAP email account](https://docs.gitlab.com/ee/administration/incoming_email.html)
 should be reviewed to ensure that the targeted IMAP account can be used
@@ -118,16 +136,50 @@ documented on the same page to aid in setting up incoming email.
 The IMAP password will still need to be created as a Kubernetes Secret as
 described in the [secrets guide](../../../installation/secrets.md#imap-password-for-incoming-emails).
 
+### Microsoft Graph
+
+See the [GitLab documentation on creating an Azure Active Directory application](https://docs.gitlab.com/ee/administration/incoming_email.html#microsoft-graph).
+
+Provide the tenant ID, client ID, and client secret. You can find details for these settings in the [command line options](../../../installation/command-line-options.md#incoming-email-configuration).
+
+Create a Kubernetes secret containing the client secret as described in the [secrets guide](../../../installation/secrets.md#microsoft-graph-client-secret-for-incoming-emails).
+
+### Reply-by-email
+
 To use the reply-by-email feature, where users can reply to notification emails to
 comment on issues and MRs, you need to configure both [outgoing email](../../../installation/command-line-options.md#outgoing-email-configuration)
 and incoming email settings.
 
 ### Service desk email
 
-By default, the service desk email is disabled. To enable it, provide details of your
-IMAP server and access credentials using the `global.appConfig.serviceDeskEmail`
-settings. You can find details for these settings in the [command line options](../../../installation/command-line-options.md#service-desk-email-configuration).
-You will also have to create a Kubernetes secret containing IMAP password as
-described in the [secrets guide](../../../installation/secrets.md#imap-password-for-service-desk-emails).
+By default, the service desk email is disabled.
+
+As with incoming e-mail, enable it by setting the [common settings](../../../installation/command-line-options.md#common-settings-1).
+Then configure the [IMAP settings](../../../installation/command-line-options.md#imap-settings-1) or
+[Microsoft Graph settings](../../../installation/command-line-options.md#microsoft-graph-settings-1).
+
+These options can also be configured in `values.yaml`. See the following examples:
+
+- [Service desk with IMAP](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/email/values-service-desk-email.yaml)
+- [Service desk with Microsoft Graph](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/email/values-msgraph.yaml)
 
 Service desk email _requires_ that [Incoming email](#incoming-email) be configured.
+
+#### IMAP
+
+Provide details of your IMAP server and access credentials using the
+`global.appConfig.serviceDeskEmail` settings. You can find details for
+these settings in the [command line options](../../../installation/command-line-options.md#service-desk-email-configuration).
+
+Create a Kubernetes secret containing IMAP password as described in the [secrets guide](../../../installation/secrets.md#imap-password-for-service-desk-emails).
+
+#### Microsoft Graph
+
+See the [GitLab documentation on creating an Azure Active Directory application](https://docs.gitlab.com/ee/administration/incoming_email.html#microsoft-graph).
+
+Provide the tenant ID, client ID, and client secret using the
+`global.appConfig.serviceDeskEmail` settings. You can find details for
+these settings in the [command line options](../../../installation/command-line-options.md#service-desk-email-configuration).
+
+You will also have to create a Kubernetes secret containing the client secret
+as described in the [secrets guide](../../../installation/secrets.md#imap-password-for-service-desk-emails).

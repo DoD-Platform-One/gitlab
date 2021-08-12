@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'open-uri'
 
 describe "Restoring a backup" do
   before(:all) do
@@ -69,7 +70,7 @@ describe "Restoring a backup" do
 
       expect(page).to have_selector(image_selector)
       image_src = page.all(image_selector)[0][:src]
-      open(image_src) do |f|
+      URI.open(image_src) do |f|
         expect(f.status[0]).to eq '200'
       end
     end
