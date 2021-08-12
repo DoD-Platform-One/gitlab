@@ -4,7 +4,7 @@
 {{-   $gitlabHostname = .Values.global.hosts.gitlab.hostnameOverride -}}
 {{- end -}}
 {{- $tlsSecret := include "webservice.tlsSecret" . -}}
-apiVersion: extensions/v1beta1
+apiVersion: {{ template "ingress.apiVersion" $}}
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-grafana
@@ -17,7 +17,6 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.proxyBodySize | quote }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .Values.ingress.proxyReadTimeout | quote }}
     nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .Values.ingress.proxyConnectTimeout | quote }}
-    nginx.ingress.kubernetes.io/rewrite-target: /
     {{ include "gitlab.certmanager_annotations" . }}
   {{- range $key, $value := merge .Values.ingress.annotations .Values.global.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
@@ -27,10 +26,19 @@ spec:
     - host: {{ $gitlabHostname }}
       http:
         paths:
-          - backend:
+          - path: /-/grafana{{ coalesce $.Values.ingress.path $.Values.global.ingress.path }}
+            {{ if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+            pathType: {{ default "Prefix" $.Values.global.ingress.pathType }}
+            backend:
+              service:
+                  name: {{ .Release.Name }}-grafana
+                  port:
+                    number: 80
+            {{- else -}}
+            backend:
               serviceName: {{ .Release.Name }}-grafana
               servicePort: 80
-            path: /-/grafana{{ coalesce $.Values.ingress.path $.Values.global.ingress.path }}
+            {{- end -}}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:
     - hosts:

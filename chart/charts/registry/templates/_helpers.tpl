@@ -169,3 +169,13 @@ Failing that a serviceAccount will be generated automatically
 {{- define "registry.serviceAccount.name" -}}
 {{- coalesce .Values.serviceAccount.name .Values.global.serviceAccount.name ( include "registry.fullname" . ) -}}
 {{- end -}}
+
+{{/*
+Create a default fully qualified job name.
+Due to the job only being allowed to run once, we add the chart revision so Helm
+upgrades don't cause errors trying to create the already ran job.
+*/}}
+{{- define "registry.migrations.jobname" -}}
+{{- $name := include "registry.fullname" . | trunc 55 | trimSuffix "-" -}}
+{{- printf "%s-migrations-%d" $name .Release.Revision | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

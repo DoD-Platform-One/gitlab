@@ -5,55 +5,41 @@ require 'hash_deep_merge'
 
 describe 'migrations configuration' do
   let(:default_values) do
-    {
-      # provide required setting
-      'certmanager-issuer' => { 'email' => 'test@example.com' },
-      'global' => {},
-      'gitlab' => {
-        'migrations' => {
-          'networkpolicy' => {
-            'enabled' => true
-          },
-          'serviceAccount' => {
-            'enabled' => true,
-            'create' => true
-          }
-        }
-      }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+      global: {}
+      gitlab:
+        migrations:
+          networkpolicy:
+            enabled: true
+          serviceAccount:
+            enabled: true
+            create: true
+    ))
   end
 
   context 'When customer provides additional labels' do
     let(:values) do
-      {
-        'global' => {
-          'common' => {
-            'labels' => {
-              'global' => 'global',
-              'foo' => 'global'
-            }
-          },
-          'pod' => {
-            'labels' => {
-              'global_pod' => true
-            }
-          }
-        },
-        'gitlab' => {
-          'migrations' => {
-            'common' => {
-              'labels' => {
-                'global' => 'migrations',
-                'migrations' => 'migrations'
-              }
-            },
-            'podLabels' => {
-              'pod' => true,
-              'global' => 'pod'
-            }
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        global:
+          common:
+            labels:
+              global: global
+              foo: global
+          pod:
+            labels:
+              global_pod: true
+        gitlab:
+          migrations:
+            common:
+              labels:
+                global: migrations
+                migrations: migrations
+            podLabels:
+              pod: true
+              global: pod
+      )).deep_merge(default_values)
     end
     it 'Populates the additional labels in the expected manner' do
       t = HelmTemplate.new(values)

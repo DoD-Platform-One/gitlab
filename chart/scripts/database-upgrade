@@ -2,11 +2,11 @@
 set -e
 
 # Set the timestamp to something predictable so we can use it between backup and restore
-fake_timestamp="database_upgrade_4"
+fake_timestamp="database_upgrade_5"
 script_name="database-upgrade"
 
 usage() {
-    echo "USAGE: ${script_name} [-r RELEASE] [-n NAMESPACE] pre|post"
+    echo "USAGE: ${script_name} [-r RELEASE] [-n NAMESPACE] [-b BACKUP_NAME] pre|post"
 }
 
 selector() {
@@ -36,12 +36,12 @@ patch_replicas() {
 }
 
 pre() {
-    in_task_runner backup-utility -t "${fake_timestamp}" --skip repository,registry,uploads,artifacts,lfs,packages,repositories
+    in_task_runner backup-utility -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
 }
 
 post() {
     # The services that connect to the database, they need to be shutdown before we can restore
-    database_connectors="webservice sidekiq gitlab-exporter"
+    database_connectors="webservice sidekiq gitlab-exporter registry"
 
     # This will store the original number of replicas, so we can restore the deployments when we're done
     declare -A replicas
@@ -76,7 +76,7 @@ post() {
     done
 
     # Restore the database
-    in_task_runner backup-utility --restore -t "${fake_timestamp}" --skip repository,registry,uploads,artifacts,lfs,packages,repositories
+    in_task_runner backup-utility --restore -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
     in_task_runner gitlab-rake db:migrate
 
     # Start the deployments back up
@@ -91,7 +91,7 @@ post() {
     kubectl ${namespace} delete configmap "${script_name}"
 }
 
-while getopts :r:n: opt
+while getopts :r:n:b: opt
 do
     case "${opt}" in
           r)
@@ -99,6 +99,9 @@ do
               ;;
           n)
               namespace="-n ${OPTARG}"
+              ;;
+          b)
+              fake_timestamp=${OPTARG}
               ;;
           *)
               usage

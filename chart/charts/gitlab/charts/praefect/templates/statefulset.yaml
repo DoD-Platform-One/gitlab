@@ -15,6 +15,9 @@ spec:
   serviceName: {{ template "gitlab.praefect.serviceName" $ }}
   replicas: {{ $.Values.replicas }}
   podManagementPolicy: Parallel
+  {{- if .Values.statefulset.strategy }}
+  updateStrategy: {{ .Values.statefulset.strategy | toYaml | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:

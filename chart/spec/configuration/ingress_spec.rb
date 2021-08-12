@@ -9,7 +9,10 @@ describe 'GitLab Ingress configuration(s)' do
   end
 
   let(:default_values) do
-    { 'certmanager-issuer' => { 'email' => 'test@example.com' } }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   let(:ingress_names) do
@@ -25,26 +28,22 @@ describe 'GitLab Ingress configuration(s)' do
   end
 
   let(:enable_all_ingress) do
-    default_values.deep_merge(
-      YAML.safe_load(
-        <<~CONFIG
-          global:
-            appConfig:
-              smartcard:
-                enabled: true
-            minio:
-              enabled: true
-            pages:
-              enabled: true
-            grafana:
-              enabled: true
-            kas:
-              enabled: true
-          registry:
+    default_values.deep_merge(YAML.safe_load(%(
+      global:
+        appConfig:
+          smartcard:
             enabled: true
-        CONFIG
-      )
-    )
+        minio:
+          enabled: true
+        pages:
+          enabled: true
+        grafana:
+          enabled: true
+        kas:
+          enabled: true
+      registry:
+        enabled: true
+    )))
   end
 
   it 'All Ingress are tested' do
@@ -73,15 +72,11 @@ describe 'GitLab Ingress configuration(s)' do
 
     context 'asterisk (/*)' do
       let(:asterisk) do
-        enable_all_ingress.deep_merge(
-          YAML.safe_load(
-            <<~CONFIG
-              global:
-                ingress:
-                  path: /*
-            CONFIG
-          )
-        )
+        enable_all_ingress.deep_merge(YAML.safe_load(%(
+          global:
+            ingress:
+              path: /*
+        )))
       end
 
       it 'populates /*' do
@@ -99,15 +94,11 @@ describe 'GitLab Ingress configuration(s)' do
 
     context 'invalid (/bogus)' do
       let(:bogus) do
-        enable_all_ingress.deep_merge(
-          YAML.safe_load(
-            <<~CONFIG
-              global:
-                ingress:
-                  path: /bogus
-            CONFIG
-          )
-        )
+        enable_all_ingress.deep_merge(YAML.safe_load(%(
+          global:
+            ingress:
+              path: /bogus
+        )))
       end
 
       it 'fails due to gitlab.webservice.ingress.requireBasePath' do

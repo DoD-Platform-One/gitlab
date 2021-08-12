@@ -2,6 +2,125 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 4.12.9 (2021-08-03)
+
+No changes.
+
+## 4.12.8 (2021-07-07)
+
+No changes.
+
+## 4.12.7 (2021-07-05)
+
+No changes.
+
+## 4.12.6 (2021-07-01)
+
+No changes.
+
+## 4.12.5 (2021-06-21)
+
+No changes.
+
+## 4.12.4 (2021-06-14)
+
+No changes.
+
+## 4.12.3 (2021-06-07)
+
+No changes.
+
+## 4.12.2 (2021-06-01)
+
+No changes.
+
+## 4.12.1 (2021-05-25)
+
+No changes.
+
+## 4.12.0 (2021-05-21)
+
+### Added (2 changes)
+
+- [Add support for SMTP connection pooling](gitlab-org/charts/gitlab@9db6d3baca1efae954130cf34a030e1d38907d97) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1963))
+- [Add Sidekiq routing rules configuration](gitlab-org/charts/gitlab@7538f58c173881d2221098007306ef4b84a191e1) ([merge request](gitlab-org/charts/gitlab!1968))
+
+### Fixed (2 changes)
+
+- [Shared-secrets: add annotations to self-signed job](gitlab-org/charts/gitlab@165e685da49147c584e0f1dc5403787dc669adf4) ([merge request](gitlab-org/charts/gitlab!1998))
+- [Fix grafana ingress misconfiguration](gitlab-org/charts/gitlab@81277b932410b41d468371492e59f4aafcf64eff) ([merge request](gitlab-org/charts/gitlab!1955))
+
+### Changed (8 changes)
+
+- [Remove shared-secrets chart and move templates to root](gitlab-org/charts/gitlab@9dc08d0e2158abbccafe550b9059da0187e2d6e2) ([merge request](gitlab-org/charts/gitlab!1982))
+- [Switch to using the new runner config for cache](gitlab-org/charts/gitlab@ffd6c5e48462d8230eb6948267c6952882812de9) ([merge request](gitlab-org/charts/gitlab!1989))
+- [Update Ingress Api version to `networking.k8s.io/v1/Ingress`](gitlab-org/charts/gitlab@ffdfd9af150f2254fbbd754814d10495328670d2) ([merge request](gitlab-org/charts/gitlab!1984))
+- [Registry to v3.4.0-gitlab](gitlab-org/charts/gitlab@bf0be4e577293310622436ba13bb4700298ff180) ([merge request](gitlab-org/charts/gitlab!1975))
+- [Resolve registry and webservice ingress enabled bug](gitlab-org/charts/gitlab@ee1e3f90a386e50984410307e386569a95d28892) ([merge request](gitlab-org/charts/gitlab!1972))
+- [Pass GITLAB_SHARED_RUNNERS_REGISTRATION_TOKEN as file instead of ENV](gitlab-org/charts/gitlab@7a049f4dba9f41bc72308bbaa2618e954e590b10) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1920))
+- [Update Ingress API version from 'extensions/v1beta1' to 'networking.k8s.io/v1'](gitlab-org/charts/gitlab@d883ad9c149e36ff67f4080f520711f0c76de2f4) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1951))
+- [Enables the ability to configure the notification_secret](gitlab-org/charts/gitlab@80f49f27e8070580afb808d0fec6f3ad0cb89dd8) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1948))
+
+### Deprecated (1 change)
+
+- [Add deprecation warning for Unicorn](gitlab-org/charts/gitlab@214fb34a7d64df9506d66b3f1b2d4b21aa5bddb2) ([merge request](gitlab-org/charts/gitlab!1987))
+
+### Other (2 changes)
+
+- [Refactor a yaml indentation inconsistency](gitlab-org/charts/gitlab@e43cbb7f3b75ef88ef6a478ef809826b7e51bfbe) ([merge request](gitlab-org/charts/gitlab!1978))
+- [Support using PAGES_UPDATE_LEGACY_STORAGE env variable to enable Pages disk access](gitlab-org/charts/gitlab@ba72fead4cc4af5268a258b7a4bdbac85665f15c) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1938))
+
+## 4.11.4 (2021-05-14)
+
+No changes.
+
+## 4.11.3 (2021-04-30)
+
+No changes.
+
+## 4.11.2 (2021-04-27)
+
+No changes.
+
+## 4.11.1 (2021-04-22)
+
+- No changes.
+
+## 4.11.0 (2021-04-22)
+
+### Removed (1 change)
+
+- Gitaly - move metrics port from service to pod. !1947
+
+### Fixed (5 changes, 1 of them is from the community)
+
+- Fixes incorrect set hostname for geo syncing Container Registry. !1913
+- Allow separate external Gitaly when Praefect is enabled. !1928
+- Registry: use separate, minimal config for migration. !1939
+- Configure the metrics endpoint of praefect to be reachable from all interfaces not just localhost. !1946 (Tim Neumann)
+- Bump gitlab-exporter to 10.2.0 to fix Puma related crash. !1954
+
+### Changed (3 changes)
+
+- GitLab Runner to 0.27.0 / 13.10.0. !1904
+- Registry to 3.3.0-gitlab. !1942
+- GitLab Runner chart to 0.28.0. !1956
+
+### Added (7 changes)
+
+- Add Registry migrations job. !1857
+- Add checkConfig to validate Gitaly storage names. !1873
+- [shared-secrets chart] If Secret key does not exist, patch it in. !1883
+- Allow configuring terminationGracePeriodSeconds for Sidekiq pod. !1905
+- Add online GC configurations to registry chart. !1908
+- Add Microsoft Graph config support for MailRoom. !1929
+- Added support for IAM roles in EKS. !1940
+
+
+## 4.10.4 (2021-04-27)
+
+No changes.
+
 ## 4.10.3 (2021-04-13)
 
 - No changes.
@@ -56,6 +175,18 @@ entry.
 - Webservice: enable per-deployment blackoutSeconds. !1867
 - Add migration configurations to registry chart. !1888
 
+
+## 4.9.7 (2021-04-27)
+
+No changes.
+
+## 4.9.6 (2021-04-13)
+
+- No changes.
+
+## 4.9.5 (2021-03-31)
+
+- No changes.
 
 ## 4.9.4 (2021-03-17)
 
@@ -127,6 +258,14 @@ entry.
 - Clarify EKS installation instructions. !1801
 - Add outgoing email section to 'globals' docs. !1821
 
+
+## 4.8.8 (2021-04-13)
+
+- No changes.
+
+## 4.8.7 (2021-03-31)
+
+- No changes.
 
 ## 4.8.6 (2021-03-17)
 

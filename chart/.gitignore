@@ -2,8 +2,9 @@ config.yaml
 #charts/*.tgz
 .DS_Store
 tags
-requirements.lock
+#requirements.lock
 .markdownlintrc
 gems
 .bundle
 build
+spec/examples.txt

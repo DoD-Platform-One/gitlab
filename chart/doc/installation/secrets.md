@@ -22,6 +22,8 @@ Optional External Services:
 - OmniAuth
 - IMAP for incoming emails (via mail_room service)
 - IMAP for service desk emails (via mail_room service)
+- Microsoft Graph with OAuth2 for incoming emails (via mail_room service)
+- Microsoft Graph with OAuth2 for service desk email (via mail_room service)
 - S/MIME certificate
 - Smartcard authentication
 - OAuth integration
@@ -54,6 +56,7 @@ documentation.
   - [Praefect DB password](#praefect-db-password)
   - [MinIO secret](#minio-secret)
   - [Registry HTTP secret](#registry-http-secret)
+  - [Registry notification secret](#registry-notification-secret)
   - [Grafana password](#grafana-password)
   - [GitLab Pages secret](#gitlab-pages-secret)
 - [External Services](#external-services)
@@ -62,6 +65,8 @@ documentation.
   - [SMTP Password](#smtp-password)
   - [IMAP Password for incoming email](#imap-password-for-incoming-emails)
   - [IMAP Password for service desk](#imap-password-for-service-desk-emails)
+  - [Microsoft Graph client secret for incoming emails](#microsoft-graph-client-secret-for-incoming-emails)
+  - [Microsoft Graph client secret for service desk](#microsoft-graph-client-secret-for-service-desk-emails)
   - [S/MIME Certificate](#smime-certificate)
   - [Smartcard Authentication](#smartcard-authentication)
 
@@ -309,6 +314,15 @@ Replace `<name>` with the name of the release.
 kubectl create secret generic <name>-registry-httpsecret --from-literal=secret=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64 | base64)
 ```
 
+### Registry notification secret
+
+Generate a random 32 character alpha-numeric key shared by all registry pods, and the GitLab webservice pods.
+Replace `<name>` with the name of the release.
+
+```shell
+kubectl create secret generic <name>-registry-notification --from-literal=secret=[\"$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32)\"]
+```
+
 ### Praefect DB password
 
 Generate a random 64 character alpha-numeric password. Replace `<name>` with
@@ -382,6 +396,36 @@ kubectl create secret generic service-desk-email-password --from-literal=passwor
 ```
 
 Then use `--set global.appConfig.serviceDeskEmail.password.secret=service-desk-email-password`
+in your Helm command along with other required settings as specified [in the docs](command-line-options.md#service-desk-email-configuration).
+
+NOTE:
+Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+### Microsoft Graph client secret for incoming emails
+
+To let GitLab have access to [incoming emails](https://docs.gitlab.com/ee/administration/incoming_email.html)
+store the password of the IMAP account in a Kubernetes secret:
+
+```shell
+kubectl create secret generic incoming-email-client-secret --from-literal=secret=your-secret-here
+```
+
+Then, use `--set global.appConfig.incomingEmail.clientSecret.secret=incoming-email-client-secret`
+in your Helm command along with other required settings as specified [in the docs](command-line-options.md#incoming-email-configuration).
+
+NOTE:
+Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+### Microsoft Graph client secret for service desk emails
+
+To let GitLab have access to [service_desk emails](https://docs.gitlab.com/ee/user/project/service_desk.html#using-custom-email-address)
+store the password of the IMAP account in a Kubernetes secret:
+
+```shell
+kubectl create secret generic service-desk-email-client-secret --from-literal=secret=your-secret-here
+```
+
+Then, use `--set global.appConfig.serviceDeskEmail.clientSecret.secret=service-desk-email-client-secret`
 in your Helm command along with other required settings as specified [in the docs](command-line-options.md#service-desk-email-configuration).
 
 NOTE:

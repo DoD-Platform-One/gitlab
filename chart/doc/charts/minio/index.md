@@ -60,6 +60,7 @@ to the `helm install` command using the `--set` flags:
 | Parameter                      | Default                       | Description                             |
 | ------------------------------ | ----------------------------- | --------------------------------------- |
 | `defaultBuckets`               | `[{"name": "registry"}]`      | MinIO default buckets                   |
+| `deployment.strategy`          | { `type`: `Recreate` }      | Allows one to configure the update strategy utilized by the deployment |
 | `image`                        | `minio/minio`                 | MinIO image                             |
 | `imagePullPolicy`              | `Always`                      | MinIO image pull policy                 |
 | `imageTag`                     | `RELEASE.2017-12-28T01-21-00Z` | MinIO image tag                         |

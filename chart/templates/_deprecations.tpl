@@ -29,12 +29,15 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.registryStorage" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.registryHttpSecret" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.registry.replicas" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.registry.updateStrategy" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.unicorn" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.unicornWorkhorse.image" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.omniauth" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.ldap" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.global.appConfig.ldap.password" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.cronJobs" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.updateStrategy" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.pods.updateStrategy" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.local.kubectl" .) -}}
 
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.gitaly.enabled" .) -}}
@@ -389,3 +392,31 @@ global.appConfig.extra.piwikUrl:
 {{- end -}}
 {{- end -}}
 {{/* END gitlab.deprecate.global.appConfig.extra.piwik */}}
+
+{{/* Migration from `updateStrategy` to `deployment.strategy` for Deployment Kubernetes type */}}
+{{- define "gitlab.deprecate.registry.updateStrategy" -}}
+{{- if .Values.registry.updateStrategy }}
+registry:
+    The configuration of `registry.updateStrategy` has moved. Please use
+`registry.deployment.strategy` instead.
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.deprecate.registry.updateStrategy */}}
+
+{{- define "gitlab.deprecate.sidekiq.updateStrategy" -}}
+{{- if hasKey .Values.gitlab.sidekiq "updateStrategy" -}}
+sidekiq:
+    The configuration of 'gitlab.sidekiq.updateStrategy' has moved. Please use 'gitlab.sidekiq.deployment.strategy' instead.
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.deprecate.sidekiq.updateStrategy */}}
+
+{{- define "gitlab.deprecate.sidekiq.pods.updateStrategy" -}}
+{{- range $index, $pod := .Values.gitlab.sidekiq.pods -}}
+{{-   if hasKey $pod "updateStrategy" -}}
+{{ $pod.name }}:
+    The configuration of 'gitlab.sidekiq.pods[{{ $index }}].updateStrategy' has moved. Please use 'gitlab.sidekiq.pods[{{ $index }}].deployment.strategy' instead.
+{{-   end -}}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.deprecate.sidekiq.pods.updateStrategy */}}

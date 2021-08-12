@@ -7,32 +7,56 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 # Changelog entries
 
 This guide contains instructions for when and how to generate a changelog entry
-file, as well as information and history about our changelog process. These entries
-are later integrated by [changelog_manager](changelog-manager.md)
+file, as well as information and history about our changelog process.
 
 ## Overview
 
-Each bullet point, or **entry**, in our [`CHANGELOG.md`](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md) file is
-generated from a single data file in the [`changelogs/unreleased/`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/changelogs/)
-folder. The file is expected to be a [YAML](https://en.wikipedia.org/wiki/YAML) file in the
-following format:
+Each bullet point, or **entry**, in our
+[`CHANGELOG.md`](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md)
+file is generated from the subject line of a Git commit. Commits are included
+when they contain the `Changelog` [Git trailer](https://git-scm.com/docs/git-interpret-trailers).
+When generating the changelog, author and merge request details are added
+automatically.
 
-```yaml
----
-title: "Change[log]s"
-merge_request: 1972
-author: Black Sabbath
-type: added
+The `Changelog` trailer accepts the following values:
+
+- added
+- fixed
+- changed
+- deprecated
+- removed
+- security
+- performance
+- other
+
+An example of a Git commit to include in the changelog is the following:
+
+```plaintext
+Update git vendor to gitlab
+
+Now that we are using gitaly to compile git, the git version isn't known
+from the manifest, instead we are getting the gitaly version. Update our
+vendor field to be `gitlab` to avoid cve matching old versions.
+
+Changelog: changed
 ```
 
-The `merge_request` value is a reference to a merge request that adds this
-entry, and the `author` key is used to give attribution to community
-contributors. **Both are optional**.
-The `type` field maps the category of the change,
-valid options are: added, fixed, changed, deprecated, removed, security, other. **Type field is mandatory**.
+GitLab automatically links the merge request to the commit when generating the
+changelog. If you want to override the merge request to link to, you can specify
+an alternative merge request using the `MR` trailer:
 
-Community contributors and core team members are encouraged to add their name to
-the `author` field. GitLab team members **should not**.
+```plaintext
+Update git vendor to gitlab
+
+Now that we are using gitaly to compile git, the git version isn't known
+from the manifest, instead we are getting the gitaly version. Update our
+vendor field to be `gitlab` to avoid cve matching old versions.
+
+Changelog: changed
+MR: https://gitlab.com/foo/bar/-/merge_requests/123
+```
+
+The value must be the full URL of the merge request.
 
 ## What warrants a changelog entry?
 
@@ -91,162 +115,53 @@ about _where_ and _why_ the change was made?
 
 ## How to generate a changelog entry
 
-A `bin/changelog` script is available to generate the changelog entry file
-automatically.
+Git trailers are added when committing your changes. This can be done using your
+text editor of choice. Adding the trailer to an existing commit requires either
+amending to the commit (if it's the most recent one), or an interactive rebase
+using `git rebase -i`.
 
-Its simplest usage is to provide the value for `title`:
+To update the last commit, run the following:
 
 ```shell
-bin/changelog 'Hey DZ, I added a feature to GitLab!'
+git commit --amend
 ```
 
-At this point the script would ask you to select the category of the change (mapped to the `type` field in the entry):
+You can then add the `Changelog` trailer to the commit message. If you had
+already pushed prior commits to your remote branch, you have to force push
+the new commit:
+
+```shell
+git push -f origin your-branch-name
+```
+
+To edit older (or multiple commits), use `git rebase -i HEAD~N` where `N` is the
+last N number of commits to rebase. Let's say you have 3 commits on your branch:
+A, B, and C. If you want to update commit B, you need to run:
+
+```shell
+git rebase -i HEAD~2
+```
+
+This starts an interactive rebase session for the last two commits. When
+started, Git presents you with a text editor with contents along the lines of
+the following:
 
 ```plaintext
->> Please specify the category of your change:
-1. New feature
-2. Bug fix
-3. Feature change
-4. New deprecation
-5. Feature removal
-6. Security fix
-7. Other
+pick B Subject of commit B
+pick C Subject of commit C
 ```
 
-The entry filename is based on the name of the current Git branch. If you run
-the command above on a branch called `feature/hey-dz`, it will generate a
-`changelogs/unreleased/feature-hey-dz.yml` file.
+To update commit B, change the word `pick` to `reword`, then save and quit the
+editor. Once closed, Git presents you with a new text editor instance to edit
+the commit message of commit B. Add the trailer, then save and quit the editor.
+If all went well, commit B is now updated.
 
-The command will output the path of the generated file and its contents:
-
-```plaintext
-create changelogs/unreleased/my-feature.yml
----
-title: Hey DZ, I added a feature to GitLab!
-merge_request:
-author:
-type:
-```
-
-### Arguments
-
-| Argument                                    | Shorthand | Purpose                                       |
-| ------------------------------------------- | --------- | --------------------------------------------- |
-| [`--amend`](#--amend)                       |           | Amend the previous commit                     |
-| [`--force`](#--force-or--f)                 | `-f`      | Overwrite an existing entry                   |
-| [`--merge-request`](#--merge-request-or--m) | `-m`      | Set merge request ID                          |
-| [`--dry-run`](#--dry-run-or--n)             | `-n`      | Don't actually write anything, just print     |
-| [`--git-username`](#--git-username-or--u)   | `-u`      | Use Git user.name configuration as the author |
-| [`--type`](#--type-or--t)                   | `-t`      | The category of the change, valid options are: added, fixed, changed, deprecated, removed, security, other |
-| `--help`                                    | `-h`      | Print help message                            |
-
-#### `--amend`
-
-You can pass the **`--amend`** argument to automatically stage the generated
-file and amend it to the previous commit.
-
-If you use **`--amend`** and don't provide a title, it will automatically use
-the "subject" of the previous commit, which is the first line of the commit
-message:
-
-```shell
-$ git show --oneline
-ab88683 Added an awesome new feature to GitLab
-
-$ bin/changelog --amend
-create changelogs/unreleased/feature-hey-dz.yml
----
-title: Added an awesome new feature to GitLab
-merge_request:
-author:
-type:
-```
-
-#### `--force` or `-f`
-
-Use **`--force`** or **`-f`** to overwrite an existing changelog entry if it
-already exists.
-
-```shell
-$ bin/changelog 'Hey DZ, I added a feature to GitLab!'
-error changelogs/unreleased/feature-hey-dz.yml already exists! Use `--force` to overwrite.
-
-$ bin/changelog 'Hey DZ, I added a feature to GitLab!' --force
-create changelogs/unreleased/feature-hey-dz.yml
----
-title: Hey DZ, I added a feature to GitLab!
-merge_request: 1983
-author:
-type:
-```
-
-#### `--merge-request` or `-m`
-
-Use the **`--merge-request`** or **`-m`** argument to provide the
-`merge_request` value:
-
-```shell
-$ bin/changelog 'Hey DZ, I added a feature to GitLab!' -m 1983
-create changelogs/unreleased/feature-hey-dz.yml
----
-title: Hey DZ, I added a feature to GitLab!
-merge_request: 1983
-author:
-type:
-```
-
-#### `--dry-run` or `-n`
-
-Use the **`--dry-run`** or **`-n`** argument to prevent actually writing or
-committing anything:
-
-```shell
-$ bin/changelog --amend --dry-run
-create changelogs/unreleased/feature-hey-dz.yml
----
-title: Added an awesome new feature to GitLab
-merge_request:
-author:
-type:
-
-$ ls changelogs/unreleased/
-```
-
-#### `--git-username` or `-u`
-
-Use the **`--git-username`** or **`-u`** argument to automatically fill in the
-`author` value with your configured Git `user.name` value:
-
-```shell
-$ git config user.name
-Jane Doe
-
-$ bin/changelog -u 'Hey DZ, I added a feature to GitLab!'
-create changelogs/unreleased/feature-hey-dz.yml
----
-title: Hey DZ, I added a feature to GitLab!
-merge_request:
-author: Jane Doe
-type:
-```
-
-#### `--type` or `-t`
-
-Use the **`--type`** or **`-t`** argument to provide the `type` value:
-
-```shell
-$ bin/changelog 'Hey DZ, I added a feature to GitLab!' -t added
-create changelogs/unreleased/feature-hey-dz.yml
----
-title: Hey DZ, I added a feature to GitLab!
-merge_request:
-author:
-type: added
-```
+For more information about interactive rebases, take a look at [the Git
+documentation](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History).
 
 ### History and Reasoning
 
-This method was adopted from the primary [GitLab codebase](https://gitlab.com/gitlab-org/gitlab-foss/blob/master/doc/development/changelog.md), as we
+This method was adopted from the primary [GitLab codebase](https://gitlab.com/gitlab-org/gitlab/blob/master/doc/development/changelog.md), as we
 found the workflow to be appealing and familiar.
 
 ---

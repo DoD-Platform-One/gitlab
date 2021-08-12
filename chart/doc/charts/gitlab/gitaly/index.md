@@ -86,6 +86,7 @@ the `helm install` command using the `--set` flags.
 | `shell.concurrency[]`           |                                            | Concurrency of each RPC endpoint Specified using keys `rpc` and `maxPerRepo`                                                                                         |
 | `git.catFileCacheSize`          |                                            | Cache size used by Git cat-file process                                                                                                                              |
 | `prometheus.grpcLatencyBuckets` |                                            | Buckets corresponding to histogram latencies on GRPC method calls to be recorded by Gitaly. A string form of the array (for example, `"[1.0, 1.5, 2.0]"`) is required as input |
+| `statefulset.strategy`          | `{}`                                       | Allows one to configure the update strategy utilized by the statefulset                                                                                              |
 
 ## Chart configuration examples
 
@@ -159,7 +160,7 @@ annotations:
 
 ### priorityClassName
 
-`priorityClassName` allows you to assign a [PriorityClass](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/)
+`priorityClassName` allows you to assign a [PriorityClass](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/)
 to the Gitaly pods.
 
 Below is an example use of `priorityClassName`:

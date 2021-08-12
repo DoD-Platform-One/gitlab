@@ -5,61 +5,45 @@ require 'hash_deep_merge'
 
 describe 'gitlab-exporter configuration' do
   let(:default_values) do
-    {
-      # provide required setting
-      'certmanager-issuer' => { 'email' => 'test@example.com' },
-      'global' => {},
-      'gitlab' => {
-        'gitlab-exporter' => {
-          'serviceAccount' => {
-            'enabled' => true,
-            'create' => true
-          }
-        }
-      }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+      global: {}
+      gitlab:
+        gitlab-exporter:
+          serviceAccount:
+            enabled: true
+            create: true
+    ))
   end
 
   context 'When customer provides additional labels' do
     let(:values) do
-      {
-        'global' => {
-          'common' => {
-            'labels' => {
-              'global' => "global",
-              'foo' => "global"
-            }
-          },
-          'pod' => {
-            'labels' => {
-              'global_pod' => true
-            }
-          },
-          'service' => {
-            'labels' => {
-              'global_service' => true
-            }
-          }
-        },
-        'gitlab' => {
-          'gitlab-exporter' => {
-            'common' => {
-              'labels' => {
-                'global' => 'exporter',
-                'exporter' => 'exporter'
-              }
-            },
-            'podLabels' => {
-              'pod' => true,
-              'global' => 'pod'
-            },
-            'serviceLabels' => {
-              'service' => true,
-              'global' => 'service'
-            }
-          }
-        }
-      }.deep_merge(default_values)
+      YAML.safe_load(%(
+        global:
+          common:
+            labels:
+              global: global
+              foo: global
+          pod:
+            labels:
+              global_pod: true
+          service:
+            labels:
+              global_service: true
+        gitlab:
+          gitlab-exporter:
+            common:
+              labels:
+                global: exporter
+                exporter: exporter
+            podLabels:
+              pod: true
+              global: pod
+            serviceLabels:
+              service: true
+              global: service
+      )).deep_merge(default_values)
     end
     it 'Populates the additional labels in the expected manner' do
       t = HelmTemplate.new(values)

@@ -244,3 +244,8 @@ maxUnavailable: 1
 securityContext:
   runAsUser: 1000
   fsGroup: 1000
+
+deployment:
+  strategy:
+    type: Recreate
+    rollingUpdate: null

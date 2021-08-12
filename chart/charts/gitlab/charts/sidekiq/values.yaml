@@ -241,11 +241,13 @@ minReplicas: 1
 maxReplicas: 10
 concurrency: 25
 
-# updateStrategy is utilized to configure the desired upgrade approach and
+# `deployment.strategy` is utilized to configure the desired upgrade approach and
 # configuration for the deployment.  See the Kubernetes documentation
 # related to this subject.
 # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-updateStrategy: {}
+deployment:
+  strategy: {}
+  terminationGracePeriodSeconds: 30
 
 hpa:
   targetAverageValue: 350m
@@ -269,7 +271,7 @@ pods:
     #   checkInterval: 3
     # minReplicas: 1
     # maxReplicas: 10
-    # updateStrategy: {}
+    # strategy: {}
     # queues: ''
     # extraVolumes
     # extraVolumeMounts
@@ -279,6 +281,7 @@ pods:
     # common:
     #   labels: {}
     # podLabels: {}
+    # terminationGracePeriodSeconds: 30
 
 ## Allow to overwrite under which User and Group we're running.
 securityContext:

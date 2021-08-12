@@ -59,18 +59,20 @@ line. This dictionary mirrors the YAML structure of the `values.yaml` file.
 ```ruby
 describe 'some feature' do
   let(:default_values) do
-    { 'certmanager-issuer' => { 'email' => 'test@example.com' } }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email:
+          test@example.com
+    ))
   end
 
   describe 'global.feature.enabled' do
     let(:values) do
-      {
-        'global' => {
-          'feature' => {
-            'enabled' => true
-          }
-        }
-      }.merge(default_values)
+      YAML.safe_load(%(
+        global:
+          feature:
+            enabled: true
+      )).merge(default_values)
     end
 
     ...
@@ -99,6 +101,26 @@ successful completion of the `helm template` will return an exit code of 0.
 Walk down the YAML document returned by the `HelmTemplate` instance and
 return the value residing at the last key. If no value is found, then `nil`
 is returned.
+
+- `.labels(item)`
+
+Return a hash of the labels for the specified object.
+
+- `.template_labels(item)`
+
+Return a hash of the labels used in the template structure for the specified
+object. The specified object should be a Deployment, StatefulSet or a CronJob
+object.
+
+- `.annotations(item)`
+
+Return a has of the annotations for the specified object.
+
+- `.template_annotations(item)`
+
+Return a hash of the annotations used in the template structure for the
+specified object. The specified object should be a Deployment, StatefulSet
+or a CronJob object.
 
 - `.volumes(item)`
 

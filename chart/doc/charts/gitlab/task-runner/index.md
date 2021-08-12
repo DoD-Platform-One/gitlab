@@ -25,7 +25,7 @@ gitlab:
       cron:
         enabled: false
         concurrencyPolicy: Replace
-        persistance:
+        persistence:
           enabled: false
           accessMode: 'ReadWriteOnce'
           size: '10Gi'
@@ -75,6 +75,7 @@ gitlab:
 | `backups.objectStorage.config.key`          | Key containing credentials in secret         | ""                           |
 | `backups.objectStorage.config.secret`       | Object storage credentials secret            | ""                           |
 | `common.labels`                             | Supplemental labels that are applied to all objects created by this chart. | `{}` |
+| `deployment.strategy`                       | Allows one to configure the update strategy utilized by the deployment | { `type`: `Recreate` } |
 | `enabled`                                   | Task Runner enablement flag                  | true                         |
 | `extra`                                     | YAML block for [extra `gitlab.yml` configuration](https://gitlab.com/gitlab-org/gitlab/-/blob/8d2b59dbf232f17159d63f0359fa4793921896d5/config/gitlab.yml.example#L1193-1199) | {}                          |
 | `image.pullPolicy`                          | Task Runner image pull policy                | `IfNotPresent`               |
@@ -119,7 +120,7 @@ Please review the following considerations when configuring GitLab for
 backup and restore operations.
 
 Backups use the `backup.cron.persistence.*` properties and restorations
-use the `persistance.*` properties. Further descriptions concerning the
+use the `persistence.*` properties. Further descriptions concerning the
 configuration of a persistence store will use just the final property key
 (e.g. `.enabled` or `.size`) and the appropriate prefix will need to be
 added.
@@ -151,14 +152,14 @@ object store. The amount of disk space depends on the following factors:
 - Size of the PostgresSQL database (issues, MRs, etc.)
 - Size of each object store backend
 
-Once the rough size has been determined, the `backup.cron.persistance.size`
+Once the rough size has been determined, the `backup.cron.persistence.size`
 property can be set so that backups can commence.
 
 ### Restore considerations
 
 During the restoration of a backup, the backup needs to be extracted to disk
 before the files are replaced on the running instance. The size of this
-restoration disk space is controlled by the `persistance.size` property. Be
+restoration disk space is controlled by the `persistence.size` property. Be
 mindful that as the size of the GitLab installation grows the size of the
 restoration disk space also needs to grow accordingly. In most cases the
 size of the restoration disk space should be the same size as the backup

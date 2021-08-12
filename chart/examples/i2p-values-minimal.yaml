@@ -87,8 +87,8 @@ prometheus:
         cpu: 10m
 certmanager:
   resources:
-      requests:
-        cpu: 10m
+    requests:
+      cpu: 10m
 minio:
   resources:
     requests:

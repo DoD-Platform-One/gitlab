@@ -5,10 +5,7 @@
 */}}
 {{- define "gitlab.smtp_settings" -}}
 {{- if .Values.global.smtp.enabled -}}
-Rails.application.config.action_mailer.delivery_method = :smtp
-
-ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.smtp_settings = {
+smtp_settings = {
   address: {{ .Values.global.smtp.address | quote }},
   port: {{ .Values.global.smtp.port | int }},
   ca_file: "/etc/ssl/certs/ca-certificates.crt",
@@ -32,6 +29,26 @@ ActionMailer::Base.smtp_settings = {
   openssl_verify_mode: {{ .Values.global.smtp.openssl_verify_mode | quote }}
   {{- end }}
 }
+
+{{ if eq .Values.global.smtp.pool true -}}
+require 'mail/smtp_pool'
+
+ActionMailer::Base.add_delivery_method :smtp_pool, Mail::SMTPPool
+
+Gitlab::Application.config.action_mailer.delivery_method = :smtp_pool
+ActionMailer::Base.delivery_method = :smtp_pool
+
+ActionMailer::Base.smtp_pool_settings = {
+  pool: Mail::SMTPPool.create_pool(
+    smtp_settings.merge(pool_size: Gitlab::Runtime.max_threads)
+  )
+}
+{{- else -}}
+Rails.application.config.action_mailer.delivery_method = :smtp
+ActionMailer::Base.delivery_method = :smtp
+
+ActionMailer::Base.smtp_settings = smtp_settings
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

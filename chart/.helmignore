@@ -33,7 +33,7 @@ doc/
 examples/
 images/
 certs/
-/scripts/
+scripts/
 spec/
 build/
 changelogs/

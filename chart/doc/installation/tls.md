@@ -91,11 +91,14 @@ helm install gitlab gitlab/gitlab \
   --set minio.ingress.tls.secretName=RELEASE-minio-tls
 ```
 
+NOTE:
+If you are configuring your GitLab instance to talk with other services, it may be necessary to [provide the certificate chains](../charts/globals.md#custom-certificate-authorities) for those services to GitLab through the Helm chart as well.
+
 ## Option 4: Use auto-generated self-signed wildcard certificate
 
 These charts also provide the capability to provide a auto-generated self-signed wildcard certificate.
 This can be useful in environments where Let's Encrypt is not an option, but security via SSL is still
-desired. This functionality is provided by the [shared-secrets](../charts/shared-secrets/index.md) chart.
+desired. This functionality is provided by the [shared-secrets](../charts/shared-secrets.md) job.
 
 > **Note**: The `gitlab-runner` chart does not function properly with self-signed certificates. We recommend
 disabling it, as shown below.
@@ -107,7 +110,7 @@ helm install gitlab gitlab/gitlab \
   --set gitlab-runner.install=false
 ```
 
-The `shared-secrets` chart will then produce a CA certificate, wildcard certificate, and a certificate chain
+The `shared-secrets` job will then produce a CA certificate, wildcard certificate, and a certificate chain
 for use by all externally accessible services. The secrets containing these will be `RELEASE-wildcard-tls`,
 `RELEASE-wildcard-tls-ca`, and `RELEASE-wildcard-tls-chain`. The `RELEASE-wildcard-tls-ca` contains the public
 CA certificate that can be distributed to users and systems that will access the deployed GitLab instance.

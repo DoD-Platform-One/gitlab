@@ -15,13 +15,7 @@ data:
     :mailboxes:
       -
         {{- with .Values.global.appConfig.incomingEmail }}
-        :host: {{ .host }}
-        :port: {{ .port }}
-        :ssl: {{ .ssl }}
-        :start_tls: {{ .startTls }}
         :email: {{ .user }}
-        :password: "<%= File.read("/etc/gitlab/mailroom/password_incoming_email").strip.dump[1..-2] %>"
-        :idle_timeout: {{ .idleTimeout }}
         :name: {{ .mailbox }}
         :delete_after_delivery: true
         :delivery_method: sidekiq
@@ -29,6 +23,21 @@ data:
         {{- if ne .logger.logPath "" }}
         :logger:
           :log_path: "{{ .logger.logPath }}"
+        {{- end }}
+        :inbox_method: {{ .inboxMethod }}
+        {{- if eq .inboxMethod "microsoft_graph" }}
+        :inbox_options:
+          :tenant_id: "{{ .tenantId }}"
+          :client_id: "{{ .clientId }}"
+          :client_secret: "<%= File.read("/etc/gitlab/mailroom/client_id_incoming_email").strip.dump[1..-2] %>"
+          :poll_interval: {{ .pollInterval }}
+        {{- else }}
+        :host: {{ .host }}
+        :port: {{ .port }}
+        :ssl: {{ .ssl }}
+        :start_tls: {{ .startTls }}
+        :password: "<%= File.read("/etc/gitlab/mailroom/password_incoming_email").strip.dump[1..-2] %>"
+        :idle_timeout: {{ .idleTimeout }}
         {{- end }}
         {{- end }}
         :delivery_options:
@@ -45,13 +54,7 @@ data:
       {{- if .Values.global.appConfig.serviceDeskEmail.enabled }}
       -
         {{- with .Values.global.appConfig.serviceDeskEmail }}
-        :host: {{ .host }}
-        :port: {{ .port }}
-        :ssl: {{ .ssl }}
-        :start_tls: {{ .startTls }}
         :email: {{ .user }}
-        :password: "<%= File.read("/etc/gitlab/mailroom/password_service_desk").strip.dump[1..-2] %>"
-        :idle_timeout: {{ .idleTimeout }}
         :name: {{ .mailbox }}
         :delete_after_delivery: true
         :delivery_method: sidekiq
@@ -59,6 +62,21 @@ data:
         {{- if ne .logger.logPath "" }}
         :logger:
           :log_path: "{{ .logger.logPath }}"
+        {{- end }}
+        :inbox_method: {{ .inboxMethod }}
+        {{- if eq .inboxMethod "microsoft_graph" }}
+        :inbox_options:
+          :tenant_id: "{{ .tenantId }}"
+          :client_id: "{{ .clientId }}"
+          :client_secret: "<%= File.read("/etc/gitlab/mailroom/client_id_service_desk").strip.dump[1..-2] %>"
+          :poll_interval: {{ .pollInterval }}
+        {{- else }}
+        :host: {{ .host }}
+        :port: {{ .port }}
+        :ssl: {{ .ssl }}
+        :start_tls: {{ .startTls }}
+        :password: "<%= File.read("/etc/gitlab/mailroom/password_service_desk").strip.dump[1..-2] %>"
+        :idle_timeout: {{ .idleTimeout }}
         {{- end }}
         {{- end }}
         :delivery_options:

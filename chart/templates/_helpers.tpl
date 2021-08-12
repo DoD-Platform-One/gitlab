@@ -338,13 +338,6 @@ Handles merging a set of labels for services
 {{- end -}}
 {{- end -}}
 
-{{/*
-Returns gitlabUrl needed for gitlab-runner
-*/}}
-{{- define "gitlab-runner.gitlabUrl" -}}
-{{- template "gitlab.gitlab.url" . -}}
-{{- end -}}
-
 {{/* selfsigned cert for when other options aren't provided */}}
 {{- define "gitlab.wildcard-self-signed-cert-name" -}}
 {{- default (printf "%s-wildcard-tls" .Release.Name) .Values.global.ingress.tls.secretName -}}
@@ -460,4 +453,57 @@ Override upstream redis secret key name
 */}}
 {{- define "redis.secretPasswordKey" -}}
 {{ template "gitlab.redis.password.key" . }}
+{{- end -}}
+
+{{/*
+Return the appropriate apiVersion for Ingress.
+*/}}
+{{- define "ingress.apiVersion" -}}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+{{- print "networking.k8s.io/v1" -}}
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
+{{- print "networking.k8s.io/v1beta1" -}}
+{{- else -}}
+{{- print "extensions/v1beta1" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the fullname template for shared-secrets job.
+*/}}
+{{- define "shared-secrets.fullname" -}}
+{{- printf "%s-shared-secrets" .Release.Name -}}
+{{- end -}}
+
+{{/*
+Return the name template for shared-secrets job.
+*/}}
+{{- define "shared-secrets.name" -}}
+{{- $sharedSecretValues := index .Values "shared-secrets" -}}
+{{- default "shared-secrets" $sharedSecretValues.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create a default fully qualified job name for shared-secrets.
+Due to the job only being allowed to run once, we add the chart revision so helm
+upgrades don't cause errors trying to create the already ran job.
+Due to the helm delete not cleaning up these jobs, we add a randome value to
+reduce collision
+*/}}
+{{- define "shared-secrets.jobname" -}}
+{{- $name := include "shared-secrets.fullname" . | trunc 55 | trimSuffix "-" -}}
+{{- $rand := randAlphaNum 3 | lower }}
+{{- printf "%s-%d-%s" $name .Release.Revision $rand | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create the name of the service account to use for shared-secrets job
+*/}}
+{{- define "shared-secrets.serviceAccountName" -}}
+{{- $sharedSecretValues := index .Values "shared-secrets" -}}
+{{- if $sharedSecretValues.serviceAccount.create -}}
+    {{ default (include "shared-secrets.fullname" .) $sharedSecretValues.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" $sharedSecretValues.serviceAccount.name }}
+{{- end -}}
 {{- end -}}

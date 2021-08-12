@@ -7,56 +7,19 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 # GitLab Operator
 
 GitLab Operator is an implementation of the [Operator pattern](https://www.openshift.com/blog)
-for management of deployment lifecycle. This component provides a method of synchronizing and controlling various
+for managing the lifecycle and upgrades of a GitLab instance. The GitLab Operator strengthens the support of OpenShift from GitLab, but is intended to be as native to Kubernetes as for OpenShift. The GitLab Operator provides a method of synchronizing and controlling various
 stages of cloud-native GitLab installation/upgrade procedures. Using the Operator provides the ability to perform
-rolling upgrades without down time.
+rolling upgrades with minmal down time. The first goal is to support OpenShift, the subsequent goal will be for automation of day 2 operations like upgrades as noted.
 
-WARNING:
-This functionality was Alpha and marked experimental. It is now [**deprecated**](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2210), and will be removed in the future. Do not use in production.
+A GitLab Operator is now available in Beta. More information can be found in [this epic](https://gitlab.com/groups/gitlab-org/-/epics/3444), and the documentation can be found in the [GitLab Operator](https://gitlab.com/gitlab-org/gl-openshift/gitlab-operator/-/tree/master/doc) project. 
 
-## Operator Chart
+The GitLab Operator aims to manage the full lifecycle of GitLab instances in your Kubernetes or OpenShift container platforms.
+While new and still actively being developed, the operator aims to:
 
-We provide an [Operator Chart](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/operator)
-for installing the Operator. When enabled, the Operator will assume control of the upgrade process that was previously
-managed via [Helm hooks](https://helm.sh/docs/topics/charts_hooks/).
+- Ease installation and configuration of GitLab instances.
+- Offer seamless upgrades from version to version.
+- Ease backup and restore of GitLab and its components.
+- Aggregate and visualize metrics using Prometheus and Grafana.
+- Set up auto-scaling.
 
-### Installing the CRD
-
-The Operator makes use of [Kubernetes Custom Resource Definitions (CRD)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#customresourcedefinitions).
-Since Helm handles the installation, we need to ensure that the GitLab CRD is in place prior to attempting to use it.
-In order to do this, we have to install the CRD with a separate command:
-
-```shell
-GITLAB_CHART_VERSION=v3.0.0
-kubectl apply -f https://gitlab.com/gitlab-org/charts/gitlab/raw/${GITLAB_CHART_VERSION}/support/crd.yaml
-```
-
-NOTE:
-This needs to done only for the first time before installing the Operator or _when the CRD is changed_.
-Further upgrades will follow the normal [upgrade procedures](upgrade.md).
-
-### Enabling the Operator
-
-We provide the flag `global.operator.enabled`, when set to true it enables the Operator and allows it to manage
-resources.
-
-Once the GitLab CRD is in place, you can install GitLab with the following command, where `...` must be replaced by
-the rest of the values you would like to set:
-
-```shell
-helm upgrade --install <release-name> . --set global.operator.enabled=true ...
-```
-
-GitLab Chart does not manage the lifecycle of the CRD and it needs to be done outside the Chart. For more details see
-[`crdctl`](crdctl.md) utility.
-
-Note the following:
-
-- The Operator is transitioning from a ClusterRole to a regular Role that operates within a
-  Namespace. Operator containers after version `0.4` will have this new behavior by default.
-- Test new versions of the Operator by setting `gitlab.operator.image.tag` to either the branch name
-  of a GitLab Operator container build or a specific tagged release number.
-- The versions prior to 1.9.0 use the release name as a prefix for CRD name. This feature has been
-  removed and the CRD does not have a prefix. This can cause Helm complain about missing `GitLab`
-  type while upgrading from an older version. To solve this issue you can use
-  `gitlab.operator.crdPrefix` value and pass the release name for upgrade.
+Additionally, a [GitLab Runner-specific Operator](https://docs.gitlab.com/runner/install/openshift.html) is generally available, allowing users to easily run GitLab CI jobs in OpenShift.

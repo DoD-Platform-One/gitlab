@@ -76,24 +76,45 @@ helm inspect values gitlab/gitlab
 | `global.smtp.starttls_auto`       | Use STARTTLS if enabled on the mail server                                              | false                 |
 | `global.smtp.tls`                 | Enables SMTP/TLS (SMTPS: SMTP over direct TLS connection)                               | _none_                |
 | `global.smtp.user_name`           | Username for SMTP authentication https                                                  | ""                    |
+| `global.smtp.pool`                | Enables SMTP connection pooling                                                         | false                 |
 
 ## Incoming Email configuration
 
-| Parameter                                        | Description                                                                                            | Default    |
-|--------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------|
-| `global.appConfig.incomingEmail.address`         | The email address to reference the item being replied to (example: `gitlab-incoming+%{key}@gmail.com`) | empty      |
-| `global.appConfig.incomingEmail.enabled`         | Enable incoming email                                                                                  | false      |
-| `global.appConfig.incomingEmail.host`            | Host for IMAP                                                                                          | empty      |
-| `global.appConfig.incomingEmail.idleTimeout`     | The IDLE command timeout                                                                               | `60`       |
-| `global.appConfig.incomingEmail.mailbox`         | Mailbox where incoming mail will end up.                                                               | `inbox`    |
-| `global.appConfig.incomingEmail.password.key`    | Key in `global.appConfig.incomingEmail.password.secret` that contains the IMAP password                | `password` |
-| `global.appConfig.incomingEmail.password.secret` | Name of a `Secret` containing the IMAP password                                                        | empty      |
-| `global.appConfig.incomingEmail.port`            | Port for IMAP                                                                                          | `993`      |
-| `global.appConfig.incomingEmail.ssl`             | Whether IMAP server uses SSL                                                                           | true       |
-| `global.appConfig.incomingEmail.startTls`        | Whether IMAP server uses StartTLS                                                                      | false      |
-| `global.appConfig.incomingEmail.user`            | Username for IMAP authentication                                                                       | empty      |
-| `global.appConfig.incomingEmail.expungeDeleted`  | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false      |
+### Common settings
+
+| Parameter                                        | Description                                                                                            | Default       |
+|--------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
+| `global.appConfig.incomingEmail.address`         | The email address to reference the item being replied to (example: `gitlab-incoming+%{key}@gmail.com`) | empty         |
+| `global.appConfig.incomingEmail.enabled`         | Enable incoming email                                                                                  | false         |
+| `global.appConfig.incomingEmail.expungeDeleted`  | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false         |
 | `global.appConfig.incomingEmail.logger.logPath`  | Path to write JSON structured logs to; set to "" to disable this logging                               | `/dev/stdout` |
+| `global.appConfig.incomingEmail.inboxMethod`     | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                    | `imap`        |
+
+### IMAP settings
+
+| Parameter                                                     | Description                                                                                            | Default    |
+|---------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------|
+| `global.appConfig.incomingEmail.host`                         | Host for IMAP                                                                                          | empty      |
+| `global.appConfig.incomingEmail.idleTimeout`                  | The IDLE command timeout                                                                               | `60`       |
+| `global.appConfig.incomingEmail.mailbox`                      | Mailbox where incoming mail will end up.                                                               | `inbox`    |
+| `global.appConfig.incomingEmail.password.key`                 | Key in `global.appConfig.incomingEmail.password.secret` that contains the IMAP password                | `password` |
+| `global.appConfig.incomingEmail.password.secret`              | Name of a `Secret` containing the IMAP password                                                        | empty      |
+| `global.appConfig.incomingEmail.port`                         | Port for IMAP                                                                                          | `993`      |
+| `global.appConfig.incomingEmail.ssl`                          | Whether IMAP server uses SSL                                                                           | true       |
+| `global.appConfig.incomingEmail.startTls`                     | Whether IMAP server uses StartTLS                                                                      | false      |
+| `global.appConfig.incomingEmail.user`                         | Username for IMAP authentication                                                                       | empty      |
+
+### Microsoft Graph settings
+
+| Parameter                                            | Description                                                                                              | Default    |
+|------------------------------------------------------|----------------------------------------------------------------------------------------------------------|------------|
+| `global.appConfig.incomingEmail.tenantId`            | The tenant ID for your Microsoft Azure Active Directory                                                  | empty      |
+| `global.appConfig.incomingEmail.clientId`            | The client ID for your OAuth2 app                                                                        | empty      |
+| `global.appConfig.incomingEmail.clientSecret.key`    | Key in `appConfig.incomingEmail.clientSecret.secret` that contains the OAuth2 client secret              | empty      |
+| `global.appConfig.incomingEmail.clientSecret.secret` | Name of a `Secret` containing the OAuth2 client secret                                                   | secret     |
+| `global.appConfig.incomingEmail.pollInterval`        | The interval in seconds how often to poll for new mail                                                   | 60         |
+
+See the [instructions for creating secrets](secrets.md).
 
 ## Service Desk Email configuration
 
@@ -103,10 +124,20 @@ Note that the email address for both Incoming Mail and Service Desk must use
 When setting the email addresses in each section the tag added to the username
 must be `+%{key}`.
 
-| Parameter                                        | Description                                                                                               | Default    |
-|--------------------------------------------------|-----------------------------------------------------------------------------------------------------------|------------|
-| `global.appConfig.serviceDeskEmail.address`         | The email address to reference the item being replied to (example: `project_contact+%{key}@gmail.com`) | empty      |
-| `global.appConfig.serviceDeskEmail.enabled`         | Enable service desk email                                                                              | false      |
+### Common settings
+
+| Parameter                                           | Description                                                                                            | Default       |
+|-----------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
+| `global.appConfig.serviceDeskEmail.address`         | The email address to reference the item being replied to (example: `project_contact+%{key}@gmail.com`) | empty         |
+| `global.appConfig.serviceDeskEmail.enabled`         | Enable service desk email                                                                              | false         |
+| `global.appConfig.serviceDeskEmail.expungeDeleted`  | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false         |
+| `global.appConfig.serviceDeskEmail.logger.logPath`  | Path to write JSON structured logs to; set to "" to disable this logging                               | `/dev/stdout` |
+| `global.appConfig.serviceDeskEmail.inboxMethod`     | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                    | `imap`        |
+
+### IMAP settings
+
+| Parameter                                           | Description                                                                                            | Default       |
+|-----------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
 | `global.appConfig.serviceDeskEmail.host`            | Host for IMAP                                                                                          | empty      |
 | `global.appConfig.serviceDeskEmail.idleTimeout`     | The IDLE command timeout                                                                               | `60`       |
 | `global.appConfig.serviceDeskEmail.mailbox`         | Mailbox where service desk mail will end up.                                                           | `inbox`    |
@@ -116,8 +147,18 @@ must be `+%{key}`.
 | `global.appConfig.serviceDeskEmail.ssl`             | Whether IMAP server uses SSL                                                                           | true       |
 | `global.appConfig.serviceDeskEmail.startTls`        | Whether IMAP server uses StartTLS                                                                      | false      |
 | `global.appConfig.serviceDeskEmail.user`            | Username for IMAP authentication                                                                       | empty      |
-| `global.appConfig.serviceDeskEmail.expungeDeleted`  | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false      |
-| `global.appConfig.serviceDeskEmail.logger.logPath`  | Path to write JSON structured logs to; set to "" to disable this logging                               | `/dev/stdout` |
+
+### Microsoft Graph settings
+
+| Parameter                                               | Description                                                                                                 | Default    |
+|---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|------------|
+| `global.appConfig.serviceDeskEmail.tenantId`            | The tenant ID for your Microsoft Azure Active Directory                                                     | empty      |
+| `global.appConfig.serviceDeskEmail.clientId`            | The client ID for your OAuth2 app                                                                           | empty      |
+| `global.appConfig.serviceDeskEmail.clientSecret.key`    | Key in `appConfig.serviceDeskEmail.clientSecret.secret` that contains the OAuth2 client secret              | empty      |
+| `global.appConfig.serviceDeskEmail.clientSecret.secret` | Name of a `Secret` containing the OAuth2 client secret                                                      | secret     |
+| `global.appConfig.serviceDeskEmail.pollInterval`        | The interval in seconds how often to poll for new mail                                                      | 60         |
+
+See the [instructions for creating secrets](secrets.md).
 
 ## Default Project Features configuration
 
@@ -221,6 +262,8 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 | `gitlab-runner.concurrent`                                     | number of concurrent jobs                                            | `20`                                                             |
 | `gitlab-runner.imagePullPolicy`                                | image pull policy                                                    | `IfNotPresent`                                                   |
 | `gitlab-runner.image`                                          | runner image                                                         | `gitlab/gitlab-runner:alpine-v10.5.0`                            |
+| `gitlab-runner.gitlabUrl`                                      | URL that the Runner uses to register to GitLab Server                                         |
+GitLab external URL                                              |
 | `gitlab-runner.install`                                        | install the `gitlab-runner` chart                                    | true                                                             |
 | `gitlab-runner.rbac.clusterWideAccess`                         | deploy containers of jobs cluster-wide                               | false                                                            |
 | `gitlab-runner.rbac.create`                                    | whether to create RBAC service account                               | true                                                             |
@@ -229,29 +272,9 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 | `gitlab-runner.resources.limits.memory`                        | runner resources                                                     |                                                                  |
 | `gitlab-runner.resources.requests.cpu`                         | runner resources                                                     |                                                                  |
 | `gitlab-runner.resources.requests.memory`                      | runner resources                                                     |                                                                  |
-| `gitlab-runner.runners.builds.cpuLimit`                        | build container limit                                                |                                                                  |
-| `gitlab-runner.runners.builds.cpuRequests`                     | build container limit                                                |                                                                  |
-| `gitlab-runner.runners.builds.memoryLimit`                     | build container limit                                                |                                                                  |
-| `gitlab-runner.runners.builds.memoryRequests`                  | build container limit                                                |                                                                  |
-| `gitlab-runner.runners.cache.cacheShared`                      | share the cache between runners                                      | true                                                             |
-| `gitlab-runner.runners.cache.cacheType`                        | cache type                                                           | `s3`                                                             |
-| `gitlab-runner.runners.cache.s3BucketLocation`                 | bucket region                                                        | `us-east-1`                                                      |
-| `gitlab-runner.runners.cache.s3BucketName`                     | name of the bucket                                                   | `runner-cache`                                                   |
-| `gitlab-runner.runners.cache.s3CacheInsecure`                  | use http                                                             | false                                                            |
-| `gitlab-runner.runners.cache.s3CachePath`                      | path in the bucket                                                   | `gitlab-runner`                                                  |
-| `gitlab-runner.runners.cache.secretName`                       | secret to get `accesskey` and `secretkey` from                       | `gitlab-minio`                                                   |
-| `gitlab-runner.runners.helpers.cpuLimit`                       | helper container limit                                               |                                                                  |
-| `gitlab-runner.runners.helpers.cpuRequests`                    | helper container limit                                               |                                                                  |
-| `gitlab-runner.runners.helpers.memoryLimit`                    | helper container limit                                               |                                                                  |
-| `gitlab-runner.runners.helpers.memoryRequests`                 | helper container limit                                               |                                                                  |
-| `gitlab-runner.runners.imagePullSecrets`                       | imagePullSecrets                                                     | `[]`                                                             |
-| `gitlab-runner.runners.image`                                  | default container image to use in builds                             | `ubuntu:16.04`                                                   |
-| `gitlab-runner.runners.namespace`                              | namespace to run jobs in                                             | `default`                                                        |
 | `gitlab-runner.runners.privileged`                             | run in privileged mode,needed for `dind`                            | false                                                            |
-| `gitlab-runner.runners.services.cpuLimit`                      | service container limit                                              |                                                                  |
-| `gitlab-runner.runners.services.cpuRequests`                   | service container limit                                              |                                                                  |
-| `gitlab-runner.runners.services.memoryLimit`                   | service container limit                                              |                                                                  |
-| `gitlab-runner.runners.services.memoryRequests`                | service container limit                                              |                                                                  |
+| `gitlab-runner.runners.cache.secretName`                       | secret to get `accesskey` and `secretkey` from                       | `gitlab-minio`                                                   |
+| `gitlab-runner.runners.config`                                 | Runner configuration as string                                      | See [Chart documentation](../charts/gitlab/gitlab-runner/index.md#default-runner-configuration)|
 | `gitlab-runner.unregisterRunners`                              | unregister all runners before termination                            | true                                                             |
 | `gitlab.geo-logcursor.securityContext.fsGroup`                 | Group ID under which the pod should be started                       | `1000`                                                           |
 | `gitlab.geo-logcursor.securityContext.runAsUser`               | User ID under which the pod should be started                        | `1000`                                                           |

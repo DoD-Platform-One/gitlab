@@ -11,13 +11,13 @@ metadata:
     {{- include "gitlab.deploymentAnnotations" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas | int }}
-  strategy:
-    rollingUpdate: null
-    type: Recreate
   selector:
     matchLabels:
       app: {{ template "name" . }}
       release: {{ .Release.Name }}
+  {{- if .Values.deployment.strategy }}
+  strategy: {{ .Values.deployment.strategy | toYaml | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:
@@ -27,6 +27,9 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      {{- if .Values.global.platform.eksRoleArn }}
+        eks.amazonaws.com/role-arn: {{ .Values.global.platform.eksRoleArn | quote }}
+      {{- end }}
       {{- range $key, $value := .Values.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}

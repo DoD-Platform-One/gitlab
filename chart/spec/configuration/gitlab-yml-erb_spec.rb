@@ -5,9 +5,10 @@ require 'hash_deep_merge'
 
 describe 'gitlab.yml.erb configuration' do
   let(:default_values) do
-    {
-      'certmanager-issuer' => { 'email' => 'test@example.com' }
-    }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   context 'when CSP is disabled' do
@@ -23,37 +24,30 @@ describe 'gitlab.yml.erb configuration' do
 
   context 'when CSP is enabled' do
     let(:required_values) do
-      {
-        'global' => {
-          'appConfig' => {
-            'contentSecurityPolicy' => {
-              'enabled' => true,
-              'report_only' => false,
-              'directives' => {
-                'connect_src' => "'self'",
-                'frame_acestors' => "'self'",
-                'frame_src' => "'self'",
-                'img_src' => "* data: blob:",
-                'object_src' => "'none'",
-                'script_src' => "'self' 'unsafe-inline' 'unsafe-eval'",
-                'style_src' => "'self'"
-              }
-            }
-          }
-        }
-      }.merge(default_values)
+      YAML.safe_load(%(
+        global:
+          appConfig:
+            contentSecurityPolicy:
+              enabled: true
+              report_only: false
+              directives:
+                connect_src: "'self'"
+                frame_ancestor: "'self'"
+                frame_src: "'self'"
+                img_src: "* data: blob:"
+                object_src: "'none'"
+                script_src: "'self' 'unsafe-inline' 'unsafe-eval'"
+                style_src: "'self'"
+      )).merge(default_values)
     end
 
     let(:missing_values) do
-      {
-        'global' => {
-          'appConfig' => {
-            'contentSecurityPolicy' => {
-              'enabled' => true
-            }
-          }
-        }
-      }.merge(default_values)
+      YAML.safe_load(%(
+        global:
+          appConfig:
+            contentSecurityPolicy:
+              enabled: true
+      )).merge(default_values)
     end
 
     it 'populates the gitlab.yml.erb' do
@@ -76,15 +70,12 @@ describe 'gitlab.yml.erb configuration' do
 
   context 'matomoDisableCookies' do
     let(:required_values) do
-      {
-        'global' => {
-          'appConfig' => {
-            'extra' => {
-              'matomoDisableCookies' => value
-            }
-          }
-        }
-      }.merge(default_values)
+      YAML.safe_load(%(
+        global:
+          appConfig:
+            extra:
+              matomoDisableCookies: #{value}
+      )).merge(default_values)
     end
 
     context 'when true' do
@@ -127,6 +118,74 @@ describe 'gitlab.yml.erb configuration' do
           'data',
           'gitlab.yml.erb'
         )).not_to include('matomo_disable_cookies')
+      end
+    end
+  end
+
+  context 'sidekiq.routingRules' do
+    let(:required_values) do
+      value.merge(default_values)
+    end
+
+    context 'when empty array' do
+      let(:value) do
+        YAML.safe_load(%(
+          global:
+            appConfig:
+              sidekiq:
+                routingRules: []
+        ))
+      end
+
+      it 'does not populate the gitlab.yml.erb' do
+        t = HelmTemplate.new(required_values)
+
+        expect(t.stderr).to eq("")
+        expect(t.exit_code).to eq(0)
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to have_key('sidekiq')
+      end
+    end
+
+    context 'when an array of tuples' do
+      let(:value) do
+        YAML.safe_load(%(
+          global:
+            appConfig:
+              sidekiq:
+                routingRules:
+                  - ["resource_boundary=cpu", "cpu_boundary"]
+                  - ["feature_category=pages", null]
+                  - ["feature_category=search", '']
+                  - ["feature_category=memory|resource_boundary=memory", 'memory']
+                  - ["*", "default"]
+        ))
+      end
+
+      it 'populates the gitlab.yml.erb with corresponding array' do
+        t = HelmTemplate.new(required_values)
+
+        expect(t.exit_code).to eq(0)
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(YAML.safe_load(%(
+          sidekiq:
+            routing_rules:
+              - ["resource_boundary=cpu","cpu_boundary"]
+              - ["feature_category=pages",null]
+              - ["feature_category=search",""]
+              - ["feature_category=memory|resource_boundary=memory","memory"]
+              - ["*","default"]
+        )))
       end
     end
   end

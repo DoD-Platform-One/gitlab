@@ -49,6 +49,7 @@ This is output as YAML, it can be read back in as a dict via `toYaml`.
 {{- define "webservice.datamodel.blank" -}}
 ingress:
   path: # intentionally not setting a value. User must set.
+  pathType: Prefix
   annotations:
     {{- .Values.ingress.annotations | toYaml | nindent 4 }}
   proxyConnectTimeout: {{ .Values.ingress.proxyConnectTimeout }}

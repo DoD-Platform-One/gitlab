@@ -15,9 +15,9 @@ spec:
     matchLabels:
       app: {{ template "name" . }}
       release: {{ .Release.Name }}
-{{- if .Values.updateStrategy }}
-  strategy: {{ toYaml .Values.updateStrategy | nindent 4 }}
-{{- end }}
+  {{- if .Values.deployment.strategy }}
+  strategy: {{ .Values.deployment.strategy | toYaml | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:
@@ -84,11 +84,29 @@ spec:
               mountPath: /registry
           resources:
             {{- toYaml .Values.init.resources | nindent 12 }}
+          env:
+          {{- include "gitlab.extraEnv" . | nindent 10 }}
+        {{- if .Values.database.enabled }}
+        - name: dependencies
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ default "" .Values.image.pullPolicy | quote }}
+          command: ["/scripts/wait-for-deps"]
+          volumeMounts:
+            - name: registry-server-config
+              mountPath: /etc/docker/registry/
+              readOnly: true
+          resources:
+            {{- toYaml .Values.init.resources | nindent 12 }}
+          env:
+          {{- include "gitlab.extraEnv" . | nindent 10 }}
+        {{- end }}
       {{- include "pullsecrets" .Values.image | indent 6 }}
       containers:
         - name: registry
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ default "" .Values.image.pullPolicy | quote }}
+          env:
+          {{- include "gitlab.extraEnv" . | nindent 10 }}
           volumeMounts:
           - name: registry-server-config
             mountPath: /etc/docker/registry/
@@ -164,7 +182,7 @@ spec:
           {{- end }}
           {{- include "registry.notifications.secrets" $ | nindent 10 }}
           {{- if .Values.database.enabled -}}
-          {{-   include "gitlab.registry.psql.secret" . | nindent 10 }}
+          {{-   include "gitlab.registry.database.password.projectedVolume" . | nindent 10 }}
           {{-   include "gitlab.registry.psql.ssl" . | nindent 10 }}
           {{- end -}}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}

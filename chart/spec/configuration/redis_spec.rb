@@ -4,20 +4,20 @@ require 'yaml'
 
 describe 'Redis configuration' do
   let(:default_values) do
-    { 'certmanager-issuer' => { 'email' => 'test@example.com' } }
+    YAML.safe_load(%(
+      certmanager-issuer:
+        email: test@example.com
+    ))
   end
 
   describe 'global.redis.password.enabled' do
     let(:values) do
-      {
-        'global' => {
-          'redis' => {
-            'password' => {
-              'enabled' => true
-            }
-          }
-        }
-      }.merge(default_values)
+      YAML.safe_load(%(
+        global:
+          redis:
+            password:
+              enabled: true
+      )).merge(default_values)
     end
 
     context 'when true' do
@@ -30,15 +30,12 @@ describe 'Redis configuration' do
 
     context 'when false' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'password' => {
-                'enabled' => false
-              }
-            }
-          }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              password:
+                enabled: false
+        )).merge(default_values)
       end
 
       it 'do not populate password' do
@@ -52,17 +49,15 @@ describe 'Redis configuration' do
   describe 'Split Redis queues' do
     context 'When redis.install is true' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'cache' => {
-                'host' => 'cache.redis'
-              }
-            }
-          },
-          'redis' => { 'install' => true }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              cache:
+                host: cache.redis
+          redis:
+            install: true
+        )).merge(default_values)
       end
 
       it 'fails to template (checkConfig)' do
@@ -73,20 +68,17 @@ describe 'Redis configuration' do
 
     context 'When sub-queue does not define password' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'password' => {
-                'secret' => 'rspec-resque'
-              },
-              'cache' => {
-                'host' => 'cache.redis'
-              }
-            }
-          },
-          'redis' => { 'install' => false }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              password:
+                secret: rspec-resque
+              cache:
+                host: cache.redis
+          redis:
+            install: false
+        )).merge(default_values)
       end
 
       it 'sub-queue inherits all of password from global.redis' do
@@ -105,23 +97,19 @@ describe 'Redis configuration' do
 
     context 'When sub-queue defines password.secret, but not password.enabled' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'password' => {
-                'secret' => 'rspec-resque'
-              },
-              'cache' => {
-                'host' => 'cache.redis',
-                'password' => {
-                  'secret' => 'rspec-cache'
-                }
-              }
-            }
-          },
-          'redis' => { 'install' => false }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              password:
+                secret: rspec-resque
+              cache:
+                host: cache.redis
+                password:
+                  secret: rspec-cache
+          redis:
+            install: false
+        )).merge(default_values)
       end
 
       it 'sub-queue inherits from global' do
@@ -141,25 +129,21 @@ describe 'Redis configuration' do
 
     context 'When sub-queue defines password.enabled true, and redis.password.enabled is false' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'password' => {
-                'enabled' => false,
-                'secret' => 'rspec-resque'
-              },
-              'cache' => {
-                'host' => 'cache.redis',
-                'password' => {
-                  'enabled' => true,
-                  'secret' => 'rspec-cache'
-                }
-              }
-            }
-          },
-          'redis' => { 'install' => false }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              password:
+                enabled: false
+                secret: rspec-resque
+              cache:
+                host: cache.redis
+                password:
+                  enabled: true
+                  secret: rspec-cache
+          redis:
+            install: false
+        )).merge(default_values)
       end
 
       it 'sub-queue uses password, global does not' do
@@ -179,25 +163,21 @@ describe 'Redis configuration' do
 
     context 'When sub-queue defines password.enabled false, and redis.password.enabled is true' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'password' => {
-                'enabled' => true,
-                'secret' => 'rspec-resque'
-              },
-              'cache' => {
-                'host' => 'cache.redis',
-                'password' => {
-                  'enabled' => false,
-                  'secret' => 'rspec-cache'
-                }
-              }
-            }
-          },
-          'redis' => { 'install' => false }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              password:
+                enabled: true
+                secret: rspec-resque
+              cache:
+                host: cache.redis
+                password:
+                  enabled: false
+                  secret: rspec-cache
+          redis:
+            install: false
+        )).merge(default_values)
       end
 
       it 'sub-queue does not use password, global does' do
@@ -217,18 +197,16 @@ describe 'Redis configuration' do
 
     context 'When sub-queue defines port, but not host' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'port' => 6379,
-              'cache' => {
-                'port' => 9999,
-              }
-            }
-          },
-          'redis' => { 'install' => false }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              port: 6379
+              cache:
+                port: 9999
+          redis:
+            install: false
+        )).merge(default_values)
       end
 
       it 'sub-queue uses port, global host' do
@@ -242,26 +220,26 @@ describe 'Redis configuration' do
 
     context 'When global and sub-queue defines Sentinels' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'port' => 6379,
-              'sentinels' => [
-                {'host' => 's1.resque.redis', 'port' => 26379},
-                {'host' => 's2.resque.redis', 'port' => 26379}
-              ],
-              'cache' => {
-                'host' => 'cache.redis',
-                'sentinels' => [
-                  {'host' => 's1.cache.redis', 'port' => 26379},
-                  {'host' => 's2.cache.redis', 'port' => 26379}
-                ]
-              }
-            }
-          },
-          'redis' => { 'install' => false }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              port: 6379
+              sentinels:
+              - host: s1.resque.redis
+                port: 26379
+              - host: s2.resque.redis
+                port: 26379
+              cache:
+                host: cache.redis
+                sentinels:
+                - host: s1.cache.redis
+                  port: 26379
+                - host: s2.cache.redis
+                  port: 26379
+          redis:
+            install: false
+        )).merge(default_values)
       end
 
       it 'separate sentinels are populated' do
@@ -277,22 +255,21 @@ describe 'Redis configuration' do
 
     context 'When only sub-queue defines Sentinels' do
       let(:values) do
-        {
-          'global' => {
-            'redis' => {
-              'host' => 'resque.redis',
-              'port' => 6379,
-              'cache' => {
-                'host' => 'cache.redis',
-                'sentinels' => [
-                  {'host' => 's1.cache.redis', 'port' => 26379},
-                  {'host' => 's2.cache.redis', 'port' => 26379}
-                ]
-              }
-            }
-          },
-          'redis' => { 'install' => false }
-        }.merge(default_values)
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              port: 6379
+              cache:
+                host: cache.redis
+                sentinels:
+                - host: s1.cache.redis
+                  port: 26379
+                - host: s2.cache.redis
+                  port: 26379
+          redis:
+            install: false
+        )).merge(default_values)
       end
 
       it 'sub-queue sentinels are populated' do

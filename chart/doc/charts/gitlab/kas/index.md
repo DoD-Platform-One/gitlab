@@ -68,6 +68,7 @@ the `helm install` command using the `--set` flags.
 | `service.type`              | `ClusterIP`    | Service type                     |
 | `tolerations`               | `[]`           | Toleration labels for pod assignment     |
 | `customConfig`              | `{}`           | When given, merges the default `kas` configuration with these values giving precedence to those defined here. |
+| `deployment.strategy`       | `{}`           | Allows one to configure the update strategy utilized by the deployment |
 
 ## Development (how to manual QA)
 

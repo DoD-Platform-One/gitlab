@@ -31,6 +31,7 @@ data:
         {{- end }}
       {{- include "gitlab.appConfig.gitaly" . | nindent 6 }}
       {{- include "gitlab.appConfig.repositories" . | nindent 6 }}
+      {{- include "gitlab.appConfig.sidekiq.configuration" $ | nindent 6 }}
       {{- include "gitlab.geo.config" $ | nindent 6 }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "rails-secrets migrations gitaly") | nindent 4 -}}

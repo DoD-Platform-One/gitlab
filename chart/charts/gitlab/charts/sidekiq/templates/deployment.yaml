@@ -50,9 +50,9 @@ spec:
       app: {{ $name }}
       release: {{ $releaseName }}
       queue-pod-name: {{ .name }}
-{{- if or $.Values.updateStrategy .updateStrategy }}
-  strategy: {{ default $.Values.updateStrategy .updateStrategy | toYaml | nindent 4 }}
-{{- end }}
+  {{- if or $.Values.deployment.strategy .strategy}}
+  strategy: {{ default $.Values.deployment.strategy .strategy | toYaml | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:
@@ -64,6 +64,9 @@ spec:
         checksum/configmap: {{ $configMapChecksum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
         checksum/configmap-pod: {{ pluck ( .name | quote ) $queues | last | sha256sum }}
+      {{- if $.Values.global.platform.eksRoleArn }}
+        eks.amazonaws.com/role-arn: {{ $.Values.global.platform.eksRoleArn | quote }}
+      {{- end }}
       {{- range $key, $value := $.Values.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
@@ -105,6 +108,7 @@ spec:
       {{- if or $.Values.serviceAccount.enabled $.Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ include "gitlab.serviceAccount.name" $ }}
       {{- end }}
+      terminationGracePeriodSeconds: {{ int (default $.Values.deployment.terminationGracePeriodSeconds .terminationGracePeriodSeconds) }}
       initContainers:
         {{- include "gitlab.extraInitContainers" $ | nindent 8 }}
         {{- include "gitlab.certificates.initContainer" $ | nindent 8 }}

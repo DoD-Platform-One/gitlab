@@ -25,11 +25,14 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages := list -}}
 {{/* add templates here */}}
 {{- $messages = append $messages (include "gitlab.checkConfig.contentSecurityPolicy" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.gitaly.storageNames" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.praefect.storageNames" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.gitaly.tls" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.queues.mixed" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.queues.cluster" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.queueSelector" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.timeout" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.routingRules" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.appConfig.maxRequestDurationSeconds" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.gitaly.extern.repos" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.geo.database" .) -}}
@@ -40,11 +43,14 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.postgresql.deprecatedVersion" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.postgresql.noPasswordFile" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.database.externalLoadBalancing" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.incomingEmail.microsoftGraph" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.serviceDesk" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.serviceDesk.microsoftGraph" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sentry" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.sentry.dsn" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.notifications" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.database" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.registry.gc" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.migration" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.dependencyProxy.puma" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.gracePeriod" .) -}}
@@ -77,6 +83,38 @@ contentSecurityPolicy:
 {{- end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.contentSecurityPolicy */}}
+
+{{/*
+Protect against problems in storage names within repositories configuration.
+- Ensure that one (and only one) storage is named 'default'.
+- Ensure no duplicates
+
+Collects the list of storage names by rendering the 'gitlab.appConfig.repositories'
+template, and grabbing any lines that start with exactly 4 spaces.
+*/}}
+{{- define "gitlab.checkConfig.gitaly.storageNames" -}}
+{{- $errorMsg := list -}}
+{{- $config := include "gitlab.appConfig.repositories" $ -}}
+{{- $storages := list }}
+{{- range (splitList "\n" $config) -}}
+{{-   if (regexMatch "^    [^ ]" . ) -}}
+{{-     $storages = append $storages (trim . | trimSuffix ":") -}}
+{{-   end }}
+{{- end }}
+{{- if gt (len $storages) (len (uniq $storages)) -}}
+{{-   $errorMsg = append $errorMsg (printf "Each storage name must be unique. Current storage names: %s" $storages | sortAlpha | join ", ") -}}
+{{- end -}}
+{{- if not (has "default" $storages) -}}
+{{-   $errorMsg = append $errorMsg ("There must be one (and only one) storage named 'default'.") -}}
+{{- end }}
+{{- if not (empty $errorMsg) }}
+gitaly:
+{{- range $msg := $errorMsg }}
+    {{ $msg }}
+{{- end }}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.gitaly.storageNames -}}
 
 {{/*
 Ensure that if a user is migrating to Praefect, none of the Praefect virtual storage
@@ -182,6 +220,53 @@ sidekiq: queueSelector
 {{- end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.sidekiq.queueSelector */}}
+
+{{/*
+Ensure that Sidekiq timeout is less than terminationGracePeriodSeconds
+*/}}
+{{- define "gitlab.checkConfig.sidekiq.timeout" -}}
+{{-   range $i, $pod := $.Values.gitlab.sidekiq.pods -}}
+{{-     $activeTimeout := int (default $.Values.gitlab.sidekiq.timeout $pod.timeout) }}
+{{-     $activeTerminationGracePeriodSeconds := int (default $.Values.gitlab.sidekiq.deployment.terminationGracePeriodSeconds $pod.terminationGracePeriodSeconds) }}
+{{-     if gt $activeTimeout $activeTerminationGracePeriodSeconds }}
+sidekiq:
+  You must set `terminationGracePeriodSeconds` ({{ $activeTerminationGracePeriodSeconds }}) longer than `timeout` ({{ $activeTimeout }}) for pod `{{ $pod.name }}`.
+{{-     end }}
+{{-   end }}
+{{- end -}}
+{{/* END gitlab.checkConfig.sidekiq.timeout */}}
+
+{{/*
+Ensure that Sidekiq routingRules configuration is in a valid format
+*/}}
+{{- define "gitlab.checkConfig.sidekiq.routingRules" -}}
+{{- $validRoutingRules := true -}}
+{{- with $.Values.global.appConfig.sidekiq.routingRules }}
+{{-   if not (kindIs "slice" .) }}
+{{-     $validRoutingRules = false }}
+{{-   else -}}
+{{-     range $rule := . }}
+{{-       if (not (kindIs "slice" $rule)) }}
+{{-         $validRoutingRules = false }}
+{{-       else if (ne (len $rule) 2) }}
+{{-         $validRoutingRules = false }}
+{{/*      The first item (routing query) must be a string */}}
+{{-       else if not (kindIs "string" (index $rule 0)) }}
+{{-         $validRoutingRules = false }}
+{{/*      The second item (queue name) must be either a string or null */}}
+{{-       else if not (or (kindIs "invalid" (index $rule 1)) (kindIs "string" (index $rule 1))) -}}
+{{-         $validRoutingRules = false }}
+{{-       end -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+{{- if eq false $validRoutingRules }}
+sidekiq:
+    The Sidekiq's routing rules list must be an ordered array of tuples of query and corresponding queue.
+    See https://docs.gitlab.com/charts/charts/globals.html#sidekiq-routing-rules-settings
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.sidekiq.routingRules */}}
 
 {{/*
 Ensure a database is configured when using Geo
@@ -371,6 +456,27 @@ postgresql:
 {{/* END gitlab.checkConfig.database.externalLoadBalancing */}}
 
 {{/*
+Ensure that tenantId and clientId are set if Microsoft Graph settings are used in incomingEmail
+*/}}
+{{- define "gitlab.checkConfig.incomingEmail.microsoftGraph" -}}
+{{- with $.Values.global.appConfig.incomingEmail }}
+{{-   if (and .enabled (eq .inboxMethod "microsoft_graph")) }}
+{{-     if not .tenantId }}
+incomingEmail:
+    When configuring incoming email with Microsoft Graph, be sure to specify the tenant ID.
+    See https://docs.gitlab.com/ee/administration/incoming_email.html#microsoft-graph
+{{-     end -}}
+{{-     if not .clientId }}
+incomingEmail:
+    When configuring incoming email with Microsoft Graph, be sure to specify the client ID.
+    See https://docs.gitlab.com/ee/administration/incoming_email.html#microsoft-graph
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.incomingEmail.microsoftGraph */}}
+
+{{/*
 Ensure that incomingEmail is enabled too if serviceDesk is enabled
 */}}
 {{- define "gitlab.checkConfig.serviceDesk" -}}
@@ -388,6 +494,27 @@ serviceDesk:
 {{-   end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.serviceDesk */}}
+
+{{/*
+Ensure that tenantId and clientId are set if Microsoft Graph settings are used in serviceDesk
+*/}}
+{{- define "gitlab.checkConfig.serviceDesk.microsoftGraph" -}}
+{{- with $.Values.global.appConfig.serviceDesk }}
+{{-   if (and .enabled (eq .inboxMethod "microsoft_graph")) }}
+{{-     if not .tenantId }}
+incomingEmail:
+    When configuring Service Desk with Microsoft Graph, be sure to specify the tenant ID.
+    See https://docs.gitlab.com/ee/user/project/service_desk.html#microsoft-graph
+{{-     end -}}
+{{-     if not .clientId }}
+incomingEmail:
+    When configuring Service Desk with Microsoft Graph, be sure to specify the client ID.
+    See https://docs.gitlab.com/ee/user/project/service_desk.html#microsoft-graph
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.serviceDesk.microsoftGraph */}}
 
 {{/*
 Ensure that sentry has a DSN configured if enabled
@@ -462,6 +589,18 @@ registry:
 {{-   end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.registry.migration */}}
+
+{{/*
+Ensure Registry online garbage collection is configured properly and dependencies are met
+*/}}
+{{- define "gitlab.checkConfig.registry.gc" -}}
+{{-   if not (or $.Values.registry.gc.disabled $.Values.registry.database.enabled) }}
+registry:
+    Enabling online garbage collection requires the metadata database to be enabled.
+    See https://docs.gitlab.com/charts/charts/registry#gc
+{{-   end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.registry.gc */}}
 
 {{/*
 Ensure Puma is used when the dependency proxy is enabled

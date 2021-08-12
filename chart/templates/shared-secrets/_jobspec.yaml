@@ -1,3 +1,4 @@
+{{- $sharedSecretValues := index .Values "shared-secrets" -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -5,7 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
-{{- if and .Values.enabled (not .Values.global.operator.enabled) }}
+{{- if and $sharedSecretValues.enabled (not .Values.global.operator.enabled) }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
@@ -18,19 +19,19 @@ spec:
         release: {{ .Release.Name }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
-      {{- range $key, $value := .Values.annotations }}
+      {{- range $key, $value := $sharedSecretValues.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
     spec:
       {{- include "gitlab.nodeSelector" . | nindent 6 }}
-      {{- if .Values.tolerations }}
+      {{- if $sharedSecretValues.tolerations }}
       tolerations:
-        {{- toYaml .Values.tolerations | nindent 8 }}
+        {{- toYaml $sharedSecretValues.tolerations | nindent 8 }}
       {{- end }}
       securityContext:
-        runAsUser: {{ .Values.securityContext.runAsUser }}
-        fsGroup: {{ .Values.securityContext.fsGroup }}
-      {{- if .Values.rbac.create }}
+        runAsUser: {{ $sharedSecretValues.securityContext.runAsUser }}
+        fsGroup: {{ $sharedSecretValues.securityContext.fsGroup }}
+      {{- if $sharedSecretValues.rbac.create }}
       serviceAccountName: {{ template "shared-secrets.serviceAccountName" . }}
       {{- end }}
       restartPolicy: Never
@@ -46,10 +47,10 @@ spec:
             - name: ssh
               mountPath: /etc/ssh
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml $sharedSecretValues.resources | nindent 12 }}
       volumes:
       - name: scripts
         configMap:
-          name: {{ template "fullname" . }}
+          name: {{ template "shared-secrets.fullname" . }}
       - name: ssh
         emptyDir: {}

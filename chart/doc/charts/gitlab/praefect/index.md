@@ -169,7 +169,7 @@ there will be some variation in how you connect.
 
 1. Set the database user password.
 
-   By default, the `shared-secrets` chart will generate a secret for you.
+   By default, the `shared-secrets` Job will generate a secret for you.
 
    1. Fetch the password:
 
@@ -274,3 +274,4 @@ the `helm install` command using the `--set` flags.
 | securityContext.runAsUser      | 1000                                              |                                                                                                         |
 | securityContext.fsGroup        | 1000                                              |                                                                                                         |
 | serviceLabels                  | `{}`                                              | Supplemental service labels                                                                             |
+| statefulset.strategy           | `{}`                                              | Allows one to configure the update strategy utilized by the statefulset                                 |

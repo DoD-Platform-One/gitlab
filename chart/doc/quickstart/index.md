@@ -42,7 +42,7 @@ A cluster with a total of 8vCPU and 30GB of RAM, or more is recommended.
 ### Installing kubectl
 
 We'll point right to the official Kubernetes documentation for
-[installing kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+[installing kubectl](https://kubernetes.io/docs/tasks/tools/).
 It is simple, covers most operating systems and also covers Google
 Cloud SDK, which you may have installed during the previous step.
 
@@ -145,5 +145,24 @@ be sure are working:
 1. The `gitlab.my.domain.tld` resolves to the IP address of the Ingress you retrieved.
 1. If you get a certificate warning, there has been a problem with Let's Encrypt,
 usually related to DNS, or the need to retry.
+
+### Helm install returns `roles.rbac.authorization.k8s.io "gitlab-shared-secrets" is forbidden`
+
+After running:
+
+```shell
+helm install gitlab gitlab/gitlab  \
+  --set global.hosts.domain=DOMAIN \
+  --set certmanager-issuer.email=user@example.com
+```
+
+You might see an error similar to:
+
+```shell
+Error: failed pre-install: warning: Hook pre-install templates/shared-secrets-rbac-config.yaml failed: roles.rbac.authorization.k8s.io "gitlab-shared-secrets" is forbidden: user "some-user@some-domain.com" (groups=["system:authenticated"]) is attempting to grant RBAC permissions not currently held:
+{APIGroups:[""], Resources:["secrets"], Verbs:["get" "list" "create" "patch"]}
+```
+
+You need to [prepare for Helm with RBAC](../installation/tools.md#preparing-for-helm-with-rbac).
 
 For further troubleshooting tips, see our [troubleshooting](../troubleshooting/index.md) guide.

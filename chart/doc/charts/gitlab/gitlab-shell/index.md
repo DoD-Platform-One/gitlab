@@ -49,6 +49,7 @@ controlled by `global.shell.port`.
 | `deployment.readinessProbe.timeoutSeconds`      | 3  | When the readiness probe times out             |
 | `deployment.readinessProbe.successThreshold`    | 1  | Minimum consecutive successes for the readiness probe to be considered successful after having failed |
 | `deployment.readinessProbe.failureThreshold`    | 2  | Minimum consecutive failures for the readiness probe to be considered failed after having succeeded |
+| `deployment.strategy`                       | `{}` | Allows one to configure the update strategy utilized by the deployment |
 | `deployment.terminationGracePeriodSeconds`  | 30 | Seconds that Kubernetes will wait for a pod to forcibly exit |
 | `enabled`                | `true`         | Shell enable flag                        |
 | `extraContainers`        |                | List of extra containers to include      |

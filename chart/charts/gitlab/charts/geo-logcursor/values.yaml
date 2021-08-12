@@ -82,6 +82,7 @@ deployment:
     timeoutSeconds: 2
     successThreshold: 1
     failureThreshold: 3
+  strategy: {}
 
 nodeSelector: {}
 tolerations: []

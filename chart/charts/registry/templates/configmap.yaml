@@ -107,5 +107,13 @@ data:
       {{- include (print $.Template.BasePath "/_storage_default.yaml") . | nindent 6}}
       {{- end }}
     {{- include "registry.database.config" $ | nindent 4 }}
+    {{- include "registry.gc.config" $ | nindent 4 }}
     {{- include "registry.migration.config" $ | nindent 4 }}
+
+  # minimal configuration, in order to do database migrations
+  migrations-config.yml: |
+    version: 0.1
+    log:
+      {{ toYaml .Values.log | nindent 6 | trim }}
+    {{- include "registry.database.config" $ | nindent 4 }}
 {{- end -}}

@@ -206,7 +206,13 @@ appearing to be lost.
 Prior to upgrading, ensure that:
 
 - All your repositories are in sync across the Gitaly Cluster, and GitLab
-is not in use during the upgrade.
+is not in use during the upgrade. To check whether the repositories are in sync,
+run the following command in one of your Praefect pods:
+
+  ```shell
+  /usr/local/bin/praefect -config /etc/gitaly/config.toml dataloss
+  ```
+
 - You have a complete and tested backup.
 
 Repository data can be restored by following the

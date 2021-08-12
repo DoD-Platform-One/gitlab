@@ -27,6 +27,7 @@ service_account="${SERVICE_ACCOUNT-tiller}"
 kubeconfig="${KUBECONFIG:-$HOME/.kube/config}"
 iam_role=
 auto_kubeconfig=0
+eksctl_min_version="0.24.0"
 
 function print_help(){
   cat <<EOF
@@ -96,7 +97,7 @@ function do_creds() {
     options+=(--auto-kubeconfig)
   fi
 
-  eksctl utils write-kubeconfig -r "${region}" -n "${cluster_name}" ${options[*]}
+  eksctl utils write-kubeconfig -r "${region}" -c "${cluster_name}" ${options[*]}
 }
 
 while getopts c:n:k:r:m:s:K:R:A opt
@@ -137,7 +138,14 @@ do
 done
 shift $((OPTIND -1))
 
+# validate that all the tools are installed and eksctl meets min version
 validate_tools eksctl kubectl helm
+eksctl_version=$(eksctl version)
+if [ $(semver_compare "$eksctl_version" "$eksctl_min_version") -eq -1 ]; then
+  echo "eksctl version needs to be at least $eksctl_min_version"
+  echo "Your version is $eksctl_version, please upgrade your version of eksctl"
+  exit 1
+fi
 
 # Ensure we can connect to aws
 if ! eksctl get cluster -v 0 > /dev/null

@@ -41,21 +41,14 @@ database:
 {{- end -}}
 
 {{/*
-Returns the K8s Secret definition for the PostgreSQL password.
+Return Registry's database secret entry as a projected volume
 */}}
-{{- define "gitlab.registry.psql.secret" -}}
+{{- define "gitlab.registry.database.password.projectedVolume" -}}
 - secret:
-    name: {{ default (include "gitlab.psql.password.secret" . ) .Values.database.password.secret }}
+    name: {{ default (printf "%s-registry-database-password" .Release.Name) .Values.database.password.secret }}
     items:
-      - key: {{ .Values.database.password.key }}
+      - key: {{ default "password" .Values.database.password.key }}
         path: database_password
-{{- end -}}
-
-{{/*
-Return PostgreSQL SSL secret name
-*/}}
-{{- define "gitlab.registry.psql.ssl.secret" -}}
-{{ default .Values.global.psql.ssl.secret .Values.database.ssl.secret | required "Missing required secret containing SQL SSL certificates and keys. Make sure to set `registry.database.ssl.secret`" }}
 {{- end -}}
 
 {{/*
@@ -77,6 +70,13 @@ Return PostgreSQL SSL server CA secret key
 */}}
 {{- define "gitlab.registry.psql.ssl.serverCA" -}}
 {{ default .Values.global.psql.ssl.serverCA .Values.database.ssl.serverCA | required "Missing required key name of SQL server certificate. Make sure to set `registry.database.ssl.serverCA`" }}
+{{- end -}}
+
+{{/*
+Return PostgreSQL SSL secret name
+*/}}
+{{- define "gitlab.registry.psql.ssl.secret" -}}
+{{ default .Values.global.psql.ssl.secret .Values.database.ssl.secret | required "Missing required secret containing SQL SSL certificates and keys. Make sure to set `registry.database.ssl.secret`" }}
 {{- end -}}
 
 {{/*

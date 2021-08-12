@@ -12,7 +12,7 @@ gem 'rake'
 gem 'hash-deep-merge'
 
 group :rubocop do
-  gem 'gitlab-styles', '~> 4.3', require: false
+  gem 'gitlab-styles', '~> 6.1', require: false
 end
 
 group :development, :test do

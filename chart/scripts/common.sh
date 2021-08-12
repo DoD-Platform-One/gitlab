@@ -90,3 +90,22 @@ function set_helm_purge_flag(){
 function cluster_admin_password_gke(){
   gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --project $PROJECT --format='value(masterAuth.password)';
 }
+
+# Function to compare versions in a semver compatible way
+# given args A and B, return 0 if A=B, -1 if A<B and 1 if A>B
+function semver_compare() {
+  if [ "$1" = "$2" ]; then
+    # A = B
+    echo 0
+  else
+    ordered=$(printf '%s\n' "$@" | sort -V | head -n 1)
+
+    if [ "$ordered" = "$1" ]; then
+      # A < B
+      echo -1
+    else
+      # A > B
+      echo 1
+    fi
+  fi
+}
