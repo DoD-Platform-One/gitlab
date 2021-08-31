@@ -35,6 +35,8 @@ and customize the values.yaml for your RDS credentials
     # preparedStatements: false
 ```
 
+## Kubernetes resource configuration
+The BigBang Gitlab Package has a default resource configuration for a minimal installation which is sufficient for development, demos, and CI pipelines. For larger operational deployments you must increase the CPU and memory as needed. Consult Gitlab documentation and Gitlab Support for appropriate settings. See the [k8s-resources.md](k8s-resources.md) for a list of possible configurations. 
 
 ## Keycloak SSO integration
 

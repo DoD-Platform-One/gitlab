@@ -723,7 +723,11 @@ upgradeCheck:
   tolerations: []
   resources:
     requests:
-      cpu: 50m
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 500m
+      memory: 500Mi
 
 ## Settings to for the Let's Encrypt ACME Issuer
 # certmanager-issuer:
@@ -944,6 +948,13 @@ redis:
       tag: 1.18.0
       pullSecrets:
       - private-registry
+    resources:
+      limits: 
+        cpu: 250m
+        memory: 256Mi
+      requests: 
+        cpu: 250m
+        memory: 256Mi
   image:
     registry: registry1.dso.mil/ironbank/opensource
     repository: redis/redis5
@@ -952,8 +963,46 @@ redis:
     - private-registry
   master:
     command: "redis-server"
+    resources: 
+      limits: 
+        cpu: 250m
+        memory: 256Mi
+      requests: 
+        cpu: 250m
+        memory: 256Mi
   slave:
     command: "redis-server"
+    resources: 
+      limits: 
+        cpu: 250m
+        memory: 256Mi
+      requests: 
+        cpu: 250m
+        memory: 256Mi
+  sentinel:
+    resources: 
+      limits: 
+        cpu: 250m
+        memory: 256Mi
+      requests: 
+        cpu: 250m
+        memory: 256Mi
+  volumePermissions:
+    resources: 
+      limits: 
+        cpu: 250m
+        memory: 256Mi
+      requests: 
+        cpu: 250m
+        memory: 256Mi
+  sysctlImage:
+    resources: 
+      limits: 
+        cpu: 250m
+        memory: 256Mi
+      requests: 
+        cpu: 250m
+        memory: 256Mi
 
 ## Installation & configuration of stable/prostgresql
 ## See requirements.yaml for current version
@@ -963,6 +1012,13 @@ postgresql:
   postgresqlPostgresPassword: bogus
   install: true
   postgresqlDatabase: gitlabhq_production
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 500m
+      memory: 500Mi
   image:
     ## could not get IronBank hardened image to work with the bitnami postgres sub-chart
     registry: registry.dso.mil
@@ -988,6 +1044,21 @@ postgresql:
 ## https://docs.gitlab.com/charts/charts/registry/
 registry:
   enabled: true
+  init:
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 200m
+        memory: 200Mi
+  resources:
+    limits:
+      cpu: 200m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
     tag: 13.12.9
@@ -1021,7 +1092,11 @@ shared-secrets:
     name: # Specify a pre-existing ServiceAccount name
   resources:
     requests:
-      cpu: 50m
+      cpu: 300m
+      memory: 200Mi
+    limits:
+      cpu: 300m
+      memory: 200Mi
   securityContext:
     # in debian/alpine based images, this is `nobody:nogroup`
     runAsUser: 65534
@@ -1116,7 +1191,48 @@ gitlab:
       tag: 13.12.9
       pullSecrets:
       - name: private-registry
+    init:
+      resources:
+        requests:
+          cpu: 200m
+          memory: 200Mi
+        limits:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      requests:
+        cpu: 2
+        memory: 3.5Gi
+      limits:
+        cpu: 2
+        memory: 3.5Gi
+    backups:
+      cron:
+        resources:
+          requests:
+            cpu: 350m
+            memory: 350Mi
+          limits:
+            cpu: 350m
+            memory: 350Mi
+
   gitlab-exporter:
+    enabled: false
+    init:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      limits:
+        cpu: 150m
+        memory: 200Mi
+      requests:
+        cpu: 150m
+        memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
       tag: 13.12.9
@@ -1125,10 +1241,23 @@ gitlab:
     metrics:
       enabled: true
       port: 9168
-    enabled: false
-
 ## https://docs.gitlab.com/charts/charts/gitlab/migrations
   migrations:
+    init:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1G
+      requests:
+        cpu: 500m
+        memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
       tag: 13.12.9
@@ -1136,19 +1265,43 @@ gitlab:
       - name: private-registry
 ## https://docs.gitlab.com/charts/charts/gitlab/webservice
   webservice:
+    init:
+      resources:
+        # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
+      limits:
+        cpu: 600m # double the default
+        memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
+      requests:
+        cpu: 600m # double the default
+        memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
       tag: 13.12.9
       pullSecrets:
       - name: private-registry
     workhorse:
+      resources:
+        # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
+        limits:
+          cpu: 600m
+          memory: 2.5G
+        requests:
+          cpu: 600m
+          memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
       tag: 13.12.9
       pullSecrets:
       - name: private-registry
     ingress:
       enabled: false  # Local setting in subchart must be overridden
-
 ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
   sidekiq:
     image:
@@ -1156,6 +1309,22 @@ gitlab:
       tag: 13.12.9
       pullSecrets:
       - name: private-registry
+    init:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      requests:
+        memory: 3G
+        cpu: 1500m
+      limits:
+        memory: 3G
+        cpu: 1500m
+
 ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
   gitaly:
     image:
@@ -1163,6 +1332,21 @@ gitlab:
       tag: 13.12.9
       pullSecrets:
       - name: private-registry
+    init:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 300Mi
+      limits:
+        cpu: 200m
+        memory: 300Mi
 ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
@@ -1170,18 +1354,65 @@ gitlab:
       tag: 13.12.9
       pullSecrets:
       - name: private-registry
+    init:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      limits:
+        cpu: 300m
+        memory: 300Mi
+      requests:
+        cpu: 300m
+        memory: 300Mi
 
 ## doc/charts/gitlab/praefect  # added by BigBang
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
       tag: 13.12.9
+    init:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+    resources:
+      requests:
+        cpu: 1
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 1Gi
 
 ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
 #   gitlab-grafana:
 
-# use Ironbank hardened images for MinIO
+## Override minio sub-chart values
 minio:
+  # set resource QoS
+  init:
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 200m
+        memory: 200Mi
+  resources:
+    limits:
+      cpu: 200m
+      memory: 300Mi
+    requests:
+      cpu: 200m
+      memory: 300Mi
+  # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
   imageTag: RELEASE.2021-04-06T23-11-00Z
   pullSecrets:
