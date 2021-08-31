@@ -17,6 +17,8 @@ And it can be deleted with this helm command
 helm delete gitlab -n gitlab
 ```
 
+For additional documentation see the files in the [docs directory and the docs/README.md](docs/README.md).
+
 ## Initial admin login
 
 The initial admin login is user ```root```.  The password can be obtained with the following command.
