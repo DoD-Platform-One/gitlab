@@ -1439,7 +1439,8 @@ istio:
     labels: {}
     gateways:
       - istio-system/main
-    # hosts:  no hosts key supported here because the upstream chart has global.hosts
+    # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
+    hosts: null
   registry:
     # Toggle vs creation
     enabled: true
@@ -1447,7 +1448,8 @@ istio:
     labels: {}
     gateways:
       - istio-system/main
-    # hosts:  no hosts key supported here because the upstream chart has global.hosts
+    # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
+    hosts: null
 
 monitoring:
   enabled: false
