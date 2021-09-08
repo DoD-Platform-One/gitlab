@@ -52,6 +52,9 @@
 ## chart/templates/tests/*
 - add templates for helm tests
 
+## chart/.helmignore
+- change `scripts/` to `/scripts/` so that the helm test scripts are not ignored
+
 ## fixes for flux helmrelease errors
 - chart/charts/gitlab/charts/geo-logcursor/templates/deployment.yaml #24-25  
   remove duplicate hard coded ```app:``` and ```realm:``` labels
@@ -65,6 +68,9 @@
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [4.12.9-bb.4] - 2021-09-08
+- Fix helmignore issue with scripts/ folder
 
 ## [4.12.9-bb.3] - 2021-08-31
 - VirtualService modifications to optionally allow use of multiple hosts
