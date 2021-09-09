@@ -1,3 +1,13 @@
-{{- include "gluon.tests.script-configmap.base" . }}
+{{- include "gluon.tests.script-configmap.overrides" (list . "gitlab.script-configmap") }}
+{{- define "gitlab.script-configmap" }}
+metadata:
+  labels:
+    app: gitlab
+{{- end }}
 ---
-{{- include "gluon.tests.script-runner.base" . }}
+{{- include "gluon.tests.script-runner.overrides" (list . "gitlab.script-runner") -}}
+{{- define "gitlab.script-runner" -}}
+metadata:
+  labels:
+    app: gitlab
+{{- end }}

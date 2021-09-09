@@ -36,6 +36,6 @@ dependencies:
   condition: nginx-ingress.enabled
   version: '*.*.*'
 - name: gluon
-  version: "0.2.2"
+  version: "0.2.3"
   repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
 
