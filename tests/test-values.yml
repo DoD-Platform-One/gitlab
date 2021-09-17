@@ -87,6 +87,14 @@ bbtests:
   enabled: true
   cypress:
     artifacts: true
+    envs:
+      cypress_baseUrl: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      cypress_gitlab_first_name: "test"
+      cypress_gitlab_last_name: "user"
+      cypress_gitlab_username: "testuser"
+      cypress_gitlab_password: "12345678"
+      cypress_gitlab_email: "testuser@example.com"
+      cypress_gitlab_project: "my-awesome-project"
     secretEnvs:
       - name: cypress_adminpassword
         valueFrom:
@@ -95,3 +103,11 @@ bbtests:
             key: password
   scripts:
     image: "registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.3"
+    envs:
+      GITLAB_USER: "testuser"
+      GITLAB_PASS: "12345678"
+      GITLAB_EMAIL: "testuser@example.com"
+      GITLAB_PROJECT: "my-awesome-project"
+      GITLAB_REPOSITORY: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      GITLAB_ORIGIN: http://testuser:12345678@gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      GITLAB_REGISTRY: gitlab-registry-test-svc.gitlab.svc.cluster.local:80
