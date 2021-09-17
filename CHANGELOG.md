@@ -69,6 +69,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.12.9-bb.6] - 2021-09-16
+- Updated test.sh with ENV variables from test-values
+- Updated Cypress tests with ENV variables from test-values
+- Added bbtest conditional for test-services
+
 ## [4.12.9-bb.5] - 2021-09-09
 - Updated tests to add labels for `app: gitlab`, workaround for a bug (likely) in gluon
 - Updated to latest gluon

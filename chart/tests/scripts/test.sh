@@ -2,16 +2,16 @@
 set -ex
 
 # set credentials
-git config --global user.email "testuser@example.com"
-git config --global user.name "testuser"
-git config --global user.password "12345678"
-crane auth login gitlab-registry-test-svc.gitlab.svc.cluster.local:80 -u "testuser" -p "12345678"
+git config --global user.email ${GITLAB_EMAIL}
+git config --global user.name ${GITLAB_USER}
+git config --global user.password ${GITLAB_PASS}
+crane auth login ${GITLAB_REGISTRY} -u ${GITLAB_USER} -p ${GITLAB_PASS}
 
 echo "cloning repo..."
-git clone http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/testuser/my-awesome-project.git
+git clone ${GITLAB_REPOSITORY}/${GITLAB_USER}/${GITLAB_PROJECT}.git
 
 echo "changing into repo directory..."
-cd my-awesome-project
+cd ${GITLAB_PROJECT}
 
 echo "modifying repo..."
 touch Dockerfile
@@ -21,13 +21,13 @@ echo "pushing changes to repo..."
 git add Dockerfile
 git commit -m 'initial commit'
 git remote rm origin
-git remote add origin http://testuser:12345678@gitlab-webservice-default.gitlab.svc.cluster.local:8181/testuser/my-awesome-project.git
+git remote add origin ${GITLAB_ORIGIN}/${GITLAB_USER}/${GITLAB_PROJECT}.git
 git push -u origin master
 
 echo "pulling image..."
 crane pull alpine:latest alpine-latest.tar
 
 echo "pushing image to gitlab registry..."
-crane push alpine-latest.tar gitlab-registry-test-svc.gitlab.svc.cluster.local:80/testuser/my-awesome-project/alpine:latest
+crane push alpine-latest.tar ${GITLAB_REGISTRY}/${GITLAB_USER}/${GITLAB_PROJECT}/alpine:latest
 
 echo "All tests complete!"
