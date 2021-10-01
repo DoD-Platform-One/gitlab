@@ -19,7 +19,7 @@ Our [fork](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/nginx-
 
 ## Configuring NGINX
 
-See [NGINX chart documentation](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/nginx/index.md)
+See [NGINX chart documentation](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/nginx-ingress/README.md#configuration)
 for configuration details.
 
 ### Global Settings

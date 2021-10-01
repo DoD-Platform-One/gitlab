@@ -96,7 +96,7 @@ data:
     #UseLogin no
     #PermitUserEnvironment no
     #Compression delayed
-    #ClientAliveInterval 0
+    ClientAliveInterval {{ .Values.config.clientAliveInterval }} 
     #ClientAliveCountMax 3
     #UseDNS no
     PidFile /srv/sshd/sshd.pid

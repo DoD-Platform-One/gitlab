@@ -5,15 +5,17 @@ metadata:
   name: {{ template "minio.createBucketsJobName" . }}
   namespace: {{ $.Release.Namespace }}
   labels:
-{{ include "gitlab.standardLabels" . | indent 4 }}
+{{- include "gitlab.standardLabels" . | nindent 4 }}
+{{- include "gitlab.commonLabels" . | nindent 4 }}
 spec:
   activeDeadlineSeconds: 600
   template:
     metadata:
       labels:
-        app: {{ template "minio.name" . }}
-        release: {{ .Release.Name }}
         component: create-buckets
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
     spec:
       restartPolicy: OnFailure
       {{- include "gitlab.nodeSelector" . | nindent 6 }}

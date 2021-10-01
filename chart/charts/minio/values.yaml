@@ -19,6 +19,7 @@ ingress:
     # secretName:
     # enabled: true
   annotations: {}
+  configureCertmanager:
   path: # /
 
 ## Support for tolerations for pod scheduling
@@ -43,6 +44,9 @@ global:
   minio:
     enabled: true
 
+common:
+  labels: {}
+  
 ## Control the InitContainer behaviors.
 init:
   image:

@@ -38,6 +38,13 @@ Input: dict "context" $ "name" string
 {{- end -}}
 {{- end -}}
 
+{{- define "gitlab.rails.redis.traceChunks" -}}
+{{- if .Values.global.redis.traceChunks -}}
+{{- $_ := set $ "redisConfigName" "traceChunks" }}
+{{- include "gitlab.rails.redis.yaml" (dict "context" $ "name" "redis.trace_chunks") -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "gitlab.rails.redis.queues" -}}
 {{- if .Values.global.redis.queues -}}
 {{- $_ := set $ "redisConfigName" "queues" }}

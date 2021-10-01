@@ -34,7 +34,9 @@ describe 'global configuration' do
             enabled: true
             role: primary
             registry:
-              syncEnabled: true
+              replication:
+                enabled: true
+                primaryApiUrl: 'http://registry.foobar.com'
           postgresql:
             install: false
           psql:
@@ -71,7 +73,9 @@ describe 'global configuration' do
             enabled: true
             role: primary
             registry:
-              syncEnabled: true
+              replication:
+                enabled: true
+                primaryApiUrl: 'http://registry.foobar.com'
           postgresql:
             install: false
           psql:

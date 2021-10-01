@@ -52,7 +52,8 @@ gitlab:
 
 | Parameter                                   | Description                                  | Default                      |
 |---------------------------------------------|----------------------------------------------|------------------------------|
-| `annotations`                               | Annotations to add to the Task Runner Pods and Jobs | {}                      |
+| `annotations`                               | Annotations to add to the Task Runner Pods and Jobs | `{}`                      |
+| `common.labels`                             | Supplemental labels that are applied to all objects created by this chart.  | `{}` |
 | `antiAffinityLabels.matchLabels`            | Labels for setting anti-affinity options     |                              |
 | `backups.cron.concurrencyPolicy`            | Kubernetes Job concurrency policy            | `Replace`                    |
 | `backups.cron.enabled`                      | Backup CronJob enabled flag                  | false                        |

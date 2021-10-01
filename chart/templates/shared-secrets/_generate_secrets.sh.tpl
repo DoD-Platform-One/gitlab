@@ -28,7 +28,7 @@ function label_secret(){
 {{ end }}
   kubectl --namespace=$namespace label \
     --overwrite \
-    secret $secret_name {{ include "gitlab.standardLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }}
+    secret $secret_name {{ include "gitlab.standardLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }} {{ include "gitlab.commonLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }}
 }
 
 # Args: secretname, args
@@ -110,6 +110,9 @@ generate_secret_if_needed {{ template "oauth.gitlab-pages.secret" . }} --from-li
 {{ if .Values.global.kas.enabled -}}
 # Gitlab-kas secret
 generate_secret_if_needed {{ template "gitlab.kas.secret" . }} --from-literal={{ template "gitlab.kas.key" . }}=$(gen_random 'a-zA-Z0-9' 32 | base64)
+
+# Gitlab-kas private API secret
+generate_secret_if_needed {{ template "gitlab.kas.privateApi.secret" . }} --from-literal={{ template "gitlab.kas.privateApi.key" . }}=$(gen_random 'a-zA-Z0-9' 32 | base64)
 {{ end }}
 
 # Registry certificates

@@ -7,16 +7,21 @@
 apiVersion: {{ template "ingress.apiVersion" $}}
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-grafana
+  name: {{ .Release.Name }}-grafana-app
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" . }}"
-    kubernetes.io/ingress.provider: nginx
+    {{- if .Values.global.ingress.provider }}
+    kubernetes.io/ingress.provider: {{ .Values.global.ingress.provider }}
+    {{- end }}
+    {{- if eq "nginx" .Values.global.ingress.provider }}
     nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.proxyBodySize | quote }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .Values.ingress.proxyReadTimeout | quote }}
     nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .Values.ingress.proxyConnectTimeout | quote }}
+    {{- end }}
     {{ include "gitlab.certmanager_annotations" . }}
   {{- range $key, $value := merge .Values.ingress.annotations .Values.global.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
@@ -31,12 +36,12 @@ spec:
             pathType: {{ default "Prefix" $.Values.global.ingress.pathType }}
             backend:
               service:
-                  name: {{ .Release.Name }}-grafana
+                  name: {{ .Release.Name }}-grafana-app
                   port:
                     number: 80
             {{- else -}}
             backend:
-              serviceName: {{ .Release.Name }}-grafana
+              serviceName: {{ .Release.Name }}-grafana-app
               servicePort: 80
             {{- end -}}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}

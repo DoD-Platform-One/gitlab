@@ -77,7 +77,7 @@ postgresql:
   image:
     registry: custom-registry
     repository: custom-image
-    tag: 11-custom-tag # start with number to make checkConfig happy
+    tag: 12-custom-tag # start with number to make checkConfig happy
   metrics:
     image:
       registry: custom-registry

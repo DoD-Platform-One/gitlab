@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 {{- if and $sharedSecretValues.enabled (not .Values.global.operator.enabled) }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
@@ -15,8 +16,8 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "name" . }}
-        release: {{ .Release.Name }}
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
       {{- range $key, $value := $sharedSecretValues.annotations }}
@@ -31,7 +32,7 @@ spec:
       securityContext:
         runAsUser: {{ $sharedSecretValues.securityContext.runAsUser }}
         fsGroup: {{ $sharedSecretValues.securityContext.fsGroup }}
-      {{- if $sharedSecretValues.rbac.create }}
+      {{- if or $sharedSecretValues.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ template "shared-secrets.serviceAccountName" . }}
       {{- end }}
       restartPolicy: Never

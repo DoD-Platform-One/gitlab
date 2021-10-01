@@ -141,7 +141,6 @@ gitlab_rails['geo_node_name'] = 'gitlab-primary.example.com'
 gitlab_rails['auto_migrate'] = false
 ## turn off everything but the DB
 sidekiq['enable']=false
-unicorn['enable']=false
 puma['enable']=false
 gitlab_workhorse['enable']=false
 nginx['enable']=false
@@ -331,7 +330,6 @@ gitlab_rails['auto_migrate'] = false
 geo_secondary['auto_migrate'] = false
 ## turn off everything but the DB
 sidekiq['enable']=false
-unicorn['enable']=false
 puma['enable']=false
 gitlab_workhorse['enable']=false
 nginx['enable']=false
@@ -468,6 +466,7 @@ Secondary Kubernetes deployment.
 
 - `gitlab-geo-gitlab-shell-host-keys`
 - `gitlab-geo-rails-secret`
+- `gitlab-registry-secret`, if Registry replication is enabled.
 
 1. Change your `kubectl` context to that of your Primary.
 1. Collect these secrets from the Primary deployment
@@ -475,6 +474,7 @@ Secondary Kubernetes deployment.
   ```shell
   kubectl get --namespace gitlab -o yaml secret gitlab-geo-gitlab-shell-host-keys > ssh-host-keys.yaml
   kubectl get --namespace gitlab -o yaml secret gitlab-geo-rails-secret > rails-secrets.yaml
+  kubectl get --namespace gitlab -o yaml secret gitlab-registry-secret > registry-secrets.yaml
   ```
 
 1. Change your `kubectl` context to that of your Secondary.
@@ -483,6 +483,7 @@ Secondary Kubernetes deployment.
    ```shell
    kubectl --namespace gitlab apply -f ssh-host-keys.yaml
    kubectl --namespace gitlab apply -f rails-secrets.yaml
+   kubectl --namespace gitlab apply -f registry-secrets.yaml
    ```
 
 We'll now need to create a secret containing the database passwords. Replace the
@@ -548,10 +549,6 @@ In order to deploy this chart as a Geo Secondary, we'll start [from this example
    ```shell
    helm upgrade --install gitlab-geo gitlab/gitlab --namespace gitlab -f secondary.yaml
    ```
-
-   NOTE:
-   With Helm v2, one may need to specify the namespace that the release was
-   deployed to with the `--namespace <namespace>` option.
 
 1. Wait for the deployment to complete, and the application to come online.
 

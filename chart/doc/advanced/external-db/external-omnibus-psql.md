@@ -53,7 +53,6 @@ gitlab_rails['db_password'] = "DB_PASSSWORD"
 
 ## Disable everything else
 sidekiq['enable'] = false
-unicorn['enable'] = false
 puma['enable'] = false
 registry['enable'] = false
 gitaly['enable'] = false

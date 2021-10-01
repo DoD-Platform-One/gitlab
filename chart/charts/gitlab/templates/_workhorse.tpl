@@ -28,3 +28,9 @@ to the service name
 {{- define "gitlab.workhorse.port" -}}
 {{- coalesce .Values.workhorse.port .Values.global.workhorse.port "8181" -}}
 {{- end -}}
+
+{{- define "gitlab.workhorse.shutdownTimeout" -}}
+{{- $timeout := add 1 $.Values.global.webservice.workerTimeout -}}
+{{- $shutdownTimeout := printf "%ss" ($timeout | toString) -}}
+{{- coalesce $.Values.workhorse.shutdownTimeout $shutdownTimeout -}}
+{{- end -}}

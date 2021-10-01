@@ -30,28 +30,29 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.registryHttpSecret" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.registry.replicas" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.registry.updateStrategy" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.unicorn" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.unicornWorkhorse.image" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.omniauth" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.ldap" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.webServer.unicorn" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.global.appConfig.ldap.password" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.cronJobs" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.updateStrategy" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.pods.updateStrategy" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.cluster" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.pods.cluster" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.local.kubectl" .) -}}
 
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.gitaly.enabled" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.initContainerImage" .) -}}
 {{- $deprecated := append $deprecated (include "external.deprecate.initContainerImage" .) -}}
 {{- $deprecated := append $deprecated (include "external.deprecate.initContainerPullPolicy" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.workerTimeout" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.redis-ha.enabled" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.redis.enabled" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.service.name" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.webservice.service.configuration" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.gitaly.serviceName" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.global.psql.pool" .) -}}
 {{- $deprecated := append $deprecated (include "gitlab.deprecate.global.appConfig.extra.piwik" .) -}}
+{{- $deprecated := append $deprecated (include "gitlab.deprecate.global.geo.registry.syncEnabled" .) -}}
+{{- $deprecated := append $deprecated (include "certmanager.createCustomResource" .) -}}
 
 {{- /* prepare output */}}
 {{- $deprecated := without $deprecated "" -}}
@@ -150,46 +151,6 @@ registry:
 {{- end -}}
 {{- end -}}
 {{/* END deprecate.registry.replicas */}}
-
-{{/* Migration from unicorn subchart to webservice */}}
-{{- define "gitlab.deprecate.unicorn" -}}
-{{- if hasKey .Values.gitlab "unicorn" -}}
-unicorn:
-    Unicorn chart was deprecated in favour of Webservice. Please remove `gitlab.unicorn.*` settings from your properties, and set `gitlab.webservice.*` instead.
-{{- end -}}
-{{- if hasKey .Values.global "unicorn" -}}
-unicorn:
-    Unicorn chart was deprecated in favour of Webservice. Please remove `global.unicorn.*` settings from your properties, and set `global.webservice.*` instead.
-{{- end -}}
-{{- if hasKey .Values.gitlab.webservice "memory" -}}
-webservice:
-    The `gitlab.webservice.memory.*` properties have been moved under the unicorn specific section.
-    You can move the configuration to `gitlab.webservice.unicorn.memory.*` when you've set the `gitlab.webservice.webServer` to `unicorn`, or remove the `gitlab.webservice.memory` configuration and instead use `gitlab.webservice.puma.workerMaxMemory` to configure Puma's worker memory limits.
-{{- end -}}
-{{- end -}}
-{{/* END gitlab.deprecate.unicorn */}}
-
-{{/* Migration from `global.enterpriseImages.unicorn.workhorse` to global.enterpriseImages.workhorse` */}}
-{{- define "gitlab.deprecate.unicornWorkhorse.image" -}}
-{{- if hasKey .Values.global "enterpriseImages" -}}
-{{-   if hasKey .Values.global.enterpriseImages "unicorn" -}}
-{{-     if hasKey .Values.global.enterpriseImages.unicorn "workhorse" -}}
-workhorse:
-   The `global.enterpriseImages.unicorn.workhorse.*` properties has been moved from the unicorn specific section. Please create a configuration with the new path: `global.enterpriseImages.workhorse.*`.
-{{-     end -}}
-{{-   end -}}
-{{- end -}}
-
-{{- if hasKey .Values.global "communityImages" -}}
-{{-   if hasKey .Values.global.communityImages "unicorn" -}}
-{{-     if hasKey .Values.global.communityImages.unicorn "workhorse" -}}
-workhorse:
-   The `global.communityImages.unicorn.workhorse.*` properties has been moved from the unicorn specific section. Please create a configuration with the new path: `global.communityImages.workhorse.*`.
-{{-     end -}}
-{{-   end -}}
-{{- end -}}
-{{- end -}}
-{{/* END gitlab.deprecate.unicornWorkhorse.image */}}
 
 {{/* Deprecation behaviors for configuration of Omniauth */}}
 {{- define "gitlab.deprecate.webservice.omniauth" -}}
@@ -301,15 +262,6 @@ gitlab.{{ $chart }}:
 {{- end -}}
 {{/* END external.deprecate.initContainerPullPolicy*/}}
 
-{{/* Deprecation behaviors for configuration of webservice worker timeout*/}}
-{{- define "gitlab.deprecate.webservice.workerTimeout" -}}
-{{- if hasKey .Values.gitlab.webservice "workerTimeout" -}}
-webservice:
-    Chart-local configuration of Unicorn's worker timeout has been moved to global. Please remove `webservice.workerTimeout` setting from your properties, and set `global.webservice.workerTimeout` instead.
-{{- end -}}
-{{- end -}}
-{{/* END deprecate.webservice.workerTimeout */}}
-
 {{/* Deprecation behaviors for redis-ha.enabled */}}
 {{- define "gitlab.deprecate.redis-ha.enabled" -}}
 {{-   if hasKey (index .Values "redis-ha") "enabled" -}}
@@ -324,15 +276,6 @@ redis-ha:
 {{-   if hasKey .Values.redis "enabled" -}}
 redis:
     The `redis.enabled` has been deprecated. Please use `redis.install` to install the Redis service.
-{{-   end -}}
-{{- end -}}
-{{/* END gitlab.deprecate.redis.enabled */}}
-
-{{/* Deprecation behaviors for webservice.service.name */}}
-{{- define "gitlab.deprecate.webservice.service.name" -}}
-{{-   if hasKey .Values.gitlab.webservice.service "name" -}}
-webservice:
-    Chart-local configuration of Unicorn's service name has been deprecated.
 {{-   end -}}
 {{- end -}}
 {{/* END gitlab.deprecate.redis.enabled */}}
@@ -420,3 +363,44 @@ sidekiq:
 {{- end -}}
 {{- end -}}
 {{/* END gitlab.deprecate.sidekiq.pods.updateStrategy */}}
+
+{{- define "gitlab.deprecate.global.geo.registry.syncEnabled" -}}
+{{- if and (eq true .Values.global.geo.enabled) (hasKey .Values.global.geo.registry "syncEnabled") -}}
+geo:
+  The configuration of `global.geo.registry.syncEnabled` has moved. Please use `global.geo.registry.replication.enabled` instead.
+{{- end -}}
+{{- end -}}
+
+{{- define "gitlab.deprecate.webservice.webServer.unicorn" -}}
+{{/* WARN: Unicorn is deprecated and is removed in 14.0 */}}
+{{- if eq .Values.gitlab.webservice.webServer "unicorn" -}}
+webservice:
+   Starting with GitLab 14.0, Unicorn is no longer supported and users must switch to Puma by either setting `gitlab.webservice.webServer` value to `puma` or removing the setting reverting it to default (`puma`). Check https://docs.gitlab.com/ee/administration/operations/puma.html for details.
+{{- end }}
+{{- end }}
+
+{{- define "gitlab.deprecate.sidekiq.cluster" -}}
+{{- if hasKey .Values.gitlab.sidekiq "cluster" -}}
+sidekiq:
+    The configuration of 'gitlab.sidekiq.cluster' should be removed. Sidekiq is now always in cluster mode.
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.deprecate.sidekiq.cluster */}}
+
+{{- define "gitlab.deprecate.sidekiq.pods.cluster" -}}
+{{- range $index, $pod := .Values.gitlab.sidekiq.pods -}}
+{{-   if hasKey $pod "cluster" -}}
+{{ $pod.name }}:
+    The configuration of 'gitlab.sidekiq.pods[{{ $index }}].cluster' should be removed. Sidekiq is now always in cluster mode.
+{{-   end -}}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.deprecate.sidekiq.pods.cluster */}}
+
+{{- define "certmanager.createCustomResource" -}}
+{{- if hasKey .Values.certmanager "createCustomResource" -}}
+certmanager:
+    The configuration of 'certmanager.createCustomResource' has been renamed. Please use `certmanager.installCRDs` instead.
+{{- end -}}
+{{- end -}}
+{{/* END certmanager.createCustomResource */}}

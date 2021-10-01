@@ -37,8 +37,8 @@ chart:
 ```
 
 - The `if` statement preceding the message _should not_ trim the newline after it. (`}}` not `-}}`) This ensures the formatting and readability for the user.
-- The message should declare which chart, relative to the global chart, that is affected. This helps the user understand where the property came from in the charts, and configuration properties. Example: `gitlab.unicorn`, `minio`, `registry`.
-- The message should inform the user of the properties that cause the failure, and what action should be taken. Name the property relative to the affected chart(s). For example, `gitlab.unicorn.minio.enabled` would be referenced as `minio.enabled` because the chart affected by the deprecation is `gitlab.unicorn`. If more than one chart are affected, use complete property names.
+- The message should declare which chart, relative to the global chart, that is affected. This helps the user understand where the property came from in the charts, and configuration properties. Example: `gitlab.puma`, `minio`, `registry`.
+- The message should inform the user of the properties that cause the failure, and what action should be taken. Name the property relative to the affected chart(s). For example, `gitlab.puma.minio.enabled` would be referenced as `minio.enabled` because the chart affected by the deprecation is `gitlab.puma`. If more than one chart are affected, use complete property names.
 - The message _should not_ contain hard line breaks to wrap paragraphs. This is because the message may interpolate configuration values, and those will break the hard wrapping.
 
 Example message:

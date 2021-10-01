@@ -1,11 +1,12 @@
 {{ if (pluck "configureCertmanager" .Values.global.ingress (dict "configureCertmanager" false) | first) }}
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: {{ .Release.Name }}-issuer
   namespace: {{ $.Release.Namespace }}
   labels:
-{{ include "gitlab.standardLabels" . | indent 4 }}
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 spec:
   acme:
     # The ACME server URL

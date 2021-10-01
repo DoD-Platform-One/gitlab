@@ -83,6 +83,7 @@ logging:
   sshdLogLevel: "ERROR"
 
 config:
+  clientAliveInterval: 0
   loginGraceTime: 120
   maxStartups:
     start: 10

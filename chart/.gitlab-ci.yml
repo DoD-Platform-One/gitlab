@@ -28,7 +28,7 @@ image: registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-ba
 
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
-  KUBECTL_VERSION: "v1.14.10"
+  KUBECTL_VERSION: "v1.16.15"
   STABLE_REPO_URL: "https://charts.helm.sh/stable"
   GOOGLE_APPLICATION_CREDENTIALS: ${CI_PROJECT_DIR}/.google_keyfile.json
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
@@ -40,6 +40,7 @@ variables:
 
 stages:
   - prepare
+  - preflight
   - review
   - staging
   - canary
@@ -85,7 +86,7 @@ dependency_update:
     <<: *deps_pipeline
 
 lint_package:
-  stage: package
+  stage: preflight
   when: always
   script:
     - helm repo add gitlab https://charts.gitlab.io
@@ -107,7 +108,7 @@ lint_package:
       - *com_auto_deploy_branch_ref
 
 .kubeval:
-  stage: package
+  stage: preflight
   when: always
   script:
     - helm repo add gitlab https://charts.gitlab.io
@@ -122,15 +123,17 @@ lint_package:
       - /(^docs[\/-].+|.+-docs$)/
       - *com_auto_deploy_branch_ref
 
-"Validate 1.13.11":
+"Validate 1.16.15":
   extends: .kubeval
   variables:
-    KUBE_VERSION: "1.13.11"
+    KUBE_VERSION: "1.16.15"
+    KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
 
-"Validate 1.18.1":
+"Validate 1.20.7":
   extends: .kubeval
   variables:
-    KUBE_VERSION: "1.18.1"
+    KUBE_VERSION: "1.20.7"
+    KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
 
 .review_template:
   stage: review
@@ -213,6 +216,7 @@ review_eks:
   variables:
     GIT_CHECKOUT: "false"
   before_script: []
+  dependencies: []
   script:
     - git checkout master
     - source scripts/ci/autodevops.sh
@@ -458,7 +462,6 @@ check_docs_markdown:
     - vale --minAlertLevel error doc
     # Lint Markdown
     - markdownlint --config .markdownlint.json 'doc/**/*.md'
-  retry: 2
   except:
     variables:
       - $DEPS_PIPELINE
@@ -482,7 +485,6 @@ check_docs_links:
     - bundle exec nanoc check internal_links
     # Check the internal anchor links
     - bundle exec nanoc check internal_anchors
-  retry: 2
   except:
     variables:
       - $DEPS_PIPELINE
@@ -507,8 +509,8 @@ check_docs_links:
     GIT_STRATEGY: none
     DOCS_REVIEW_APPS_DOMAIN: 178.62.207.141.nip.io
     DOCS_GITLAB_REPO_SUFFIX: charts
-    # By default, deploy the Review App using the `master` branch of the `gitlab-org/gitlab-docs` project
-    DOCS_BRANCH: master
+    # By default, deploy the Review App using the `main` branch of the `gitlab-org/gitlab-docs` project
+    DOCS_BRANCH: main
   when: manual
   except:
     - triggers

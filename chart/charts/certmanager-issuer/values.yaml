@@ -10,3 +10,6 @@ rbac:
 resources:
   requests:
     cpu: 50m
+
+common:
+  labels: {}

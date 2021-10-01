@@ -11,7 +11,7 @@ for managing the lifecycle and upgrades of a GitLab instance. The GitLab Operato
 stages of cloud-native GitLab installation/upgrade procedures. Using the Operator provides the ability to perform
 rolling upgrades with minmal down time. The first goal is to support OpenShift, the subsequent goal will be for automation of day 2 operations like upgrades as noted.
 
-A GitLab Operator is now available in Beta. More information can be found in [this epic](https://gitlab.com/groups/gitlab-org/-/epics/3444), and the documentation can be found in the [GitLab Operator](https://gitlab.com/gitlab-org/gl-openshift/gitlab-operator/-/tree/master/doc) project. 
+A GitLab Operator is now available in Beta. More information can be found in [this epic](https://gitlab.com/groups/gitlab-org/-/epics/5486), and the documentation can be found in the [GitLab Operator](https://gitlab.com/gitlab-org/gl-openshift/gitlab-operator/-/tree/master/doc) project. 
 
 The GitLab Operator aims to manage the full lifecycle of GitLab instances in your Kubernetes or OpenShift container platforms.
 While new and still actively being developed, the operator aims to:

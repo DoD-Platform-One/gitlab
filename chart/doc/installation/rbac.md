@@ -10,7 +10,7 @@ Until Kubernetes 1.7, there were no permissions within a cluster. With the launc
 
 RBAC affects a few different aspects of GitLab:
 
-- [Installation of GitLab using Helm](tools.md#preparing-for-helm-with-rbac)
+- Installation of GitLab using Helm
 - Prometheus monitoring
 - GitLab Runner
 - In-cluster PostgreSQL database (when RBAC is enabled for it)

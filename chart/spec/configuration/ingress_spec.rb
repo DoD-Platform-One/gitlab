@@ -17,7 +17,7 @@ describe 'GitLab Ingress configuration(s)' do
 
   let(:ingress_names) do
     %w[
-      test-grafana
+      test-grafana-app
       test-gitlab-pages
       test-kas
       test-webservice-default

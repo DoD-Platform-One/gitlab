@@ -31,6 +31,7 @@ to the `helm install` command using the `--set` flags.
 | Parameter                        | Default               | Description                                    |
 | -------------------------------- | --------------------- | ---------------------------------------------- |
 | `annotations`                    |                       | Pod annotations                                |
+| `common.labels`                  | `{}`                  | Supplemental labels that are applied to all objects created by this chart.  |
 | `podLabels`                      |                       | Supplemental Pod labels. Will not be used for selectors. |
 | `common.labels`                  |                       | Supplemental labels that are applied to all objects created by this chart. |
 | `deployment.strategy`            | `{}`                  | Allows one to configure the update strategy utilized by the deployment |

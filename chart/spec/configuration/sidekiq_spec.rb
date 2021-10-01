@@ -317,7 +317,6 @@ describe 'Sidekiq configuration' do
         t = HelmTemplate.new(default_values)
         expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
         expect(t.dig('ConfigMap/test-sidekiq', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('ConfigMap/test-sidekiq-all-in-1', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('Deployment/test-sidekiq-all-in-1-v1', 'metadata', 'labels')).not_to include('global' => 'global')
         expect(t.dig('Deployment/test-sidekiq-all-in-1-v1', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('Deployment/test-sidekiq-all-in-1-v1', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
@@ -369,7 +368,6 @@ describe 'Sidekiq configuration' do
         t = HelmTemplate.new(default_values)
         expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
         expect(t.dig('ConfigMap/test-sidekiq', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('ConfigMap/test-sidekiq-pod-1', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('Deployment/test-sidekiq-pod-1-v1', 'metadata', 'labels')).to include('foo' => 'global')
         expect(t.dig('Deployment/test-sidekiq-pod-1-v1', 'metadata', 'labels')).to include('sidekiq' => 'sidekiq')
         expect(t.dig('Deployment/test-sidekiq-pod-1-v1', 'metadata', 'labels')).not_to include('global' => 'global')

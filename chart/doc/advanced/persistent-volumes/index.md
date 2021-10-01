@@ -459,7 +459,3 @@ helm upgrade --install review-update-app-h8qogp gitlab/gitlab \
   --set gitlab.gitaly.persistence.size=100Gi \
   <your other config settings>
 ```
-
-NOTE:
-With Helm v2, one may need to specify the namespace that the release was
-deployed to with the `--namespace <namespace>` option.

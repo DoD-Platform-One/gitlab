@@ -16,3 +16,5 @@ ingress:
   proxyReadTimeout: 180
   proxyConnectTimeout: 15
 
+common:
+  labels: {}

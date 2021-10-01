@@ -119,9 +119,6 @@ To uninstall the GitLab Chart, run the following:
 helm uninstall gitlab
 ```
 
-NOTE:
-With Helm v2, you need to use the command `helm delete --purge gitlab`.
-
 For the purposes of continuity, these charts have some Kubernetes objects that
 are not removed when performing `helm uninstall`. These are items we require you to
 _consciously_ remove them, as they affect re-deployment should you choose to.
@@ -199,9 +196,6 @@ they map to, issue the following command with [Helm](installation/tools.md#helm)
 helm repo add gitlab https://charts.gitlab.io/
 helm search repo -l gitlab/gitlab
 ```
-
-NOTE:
-With Helm v2, the search command would be `helm search -l gitlab/gitlab`
 
 For more information, visit the [version mappings docs](installation/version_mappings.md).
 

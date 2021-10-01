@@ -327,6 +327,48 @@ describe 'kas configuration' do
         end
       end
     end
+
+    describe 'templates/service.yaml' do
+      context 'when type is LoadBalancer' do
+        subject(:service) { kas_enabled_template.resources_by_kind('Service')['Service/test-kas'] }
+
+        let(:service_values) { {} }
+
+        let(:kas_values) do
+          default_kas_values.deep_merge!(
+            'gitlab' => {
+              'kas' => {
+                'service' => {
+                  'type' => 'LoadBalancer'
+                }.merge!(service_values)
+              }
+            }
+          )
+        end
+
+        it 'has LoadBalancer type and no customizations by default' do
+          expect(service['spec']).to include('type' => 'LoadBalancer')
+          expect(service['spec']).not_to have_key('loadBalancerIP')
+          expect(service['spec']).not_to have_key('loadBalancerSourceRanges')
+        end
+
+        context 'when service.loadBalancerIP is given' do
+          let(:service_values) { { 'loadBalancerIP' => 'the ip' } }
+
+          it 'contains the loadBalancerIP customization' do
+            expect(service['spec']).to include('loadBalancerIP' => 'the ip')
+          end
+        end
+
+        context 'when service.loadBalancerSourceRanges is given' do
+          let(:service_values) { { 'loadBalancerSourceRanges' => ['a', 'b', 'c'] } }
+
+          it 'contains the loadBalancerSourceRanges customization' do
+            expect(service['spec']).to include('loadBalancerSourceRanges' => ['a', 'b', 'c'])
+          end
+        end
+      end
+    end
   end
 
   describe 'gitlab.yml.erb/gitlab_kas' do

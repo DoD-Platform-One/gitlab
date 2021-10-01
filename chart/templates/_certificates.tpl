@@ -72,17 +72,8 @@
 {{- end -}}
 {{- end -}}
 
-{{/* lines 81-87 added by BigBang to fix upsteam because of IronBank hardened images */}}
-{{/* https://gitlab.com/gitlab-org/gitlab/-/issues/293697 */}}
 {{- define "gitlab.certificates.volumeMount" -}}
 - name: etc-ssl-certs
   mountPath: /etc/ssl/certs/
-  readOnly: true
-- name: etc-ssl-certs
-  mountPath: /etc/pki/tls/certs/
-  readOnly: true
-- name: etc-ssl-certs
-  mountPath: /etc/pki/tls/cert.pem
-  subPath: ca-bundle.crt
   readOnly: true
 {{- end -}}

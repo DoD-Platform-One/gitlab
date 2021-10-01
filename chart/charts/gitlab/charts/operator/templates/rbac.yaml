@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 {{- if (include "gitlab.operator.namespaced" .) }}
@@ -17,6 +18,7 @@ metadata:
   name: {{ template "fullname" . }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 rules:
 - apiGroups:
   - apps
@@ -94,6 +96,7 @@ metadata:
   name: {{ template "fullname" . }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
 {{- if (include "gitlab.operator.namespaced" .) }}

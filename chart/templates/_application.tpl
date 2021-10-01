@@ -25,7 +25,7 @@ heritage: {{ .Release.Service }}
 {{- end -}}
 
 {{- define "gitlab.commonLabels" -}}
-{{- $commonLabels := (merge .Values.common.labels .Values.global.common.labels) }}
+{{- $commonLabels := merge (pluck "labels" (default (dict) .Values.common) | first) .Values.global.common.labels}}
 {{- if $commonLabels }}
 {{-   range $key, $value := $commonLabels }}
 {{ $key }}: {{ $value }}

@@ -40,7 +40,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  # gitlabVersion: master
+  # gitlabVersion:
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -471,8 +471,10 @@ global:
         # clientCertificate:
         # serverCA:
     registry:
-      syncEnabled: false
-      ## Consumes global.registry.notificationSecret
+      replication:
+        enabled: false
+        primaryApiUrl:
+        ## Consumes global.registry.notificationSecret
 
   ## https://docs.gitlab.com/charts/charts/gitlab/kas/
   kas:
@@ -623,7 +625,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -667,7 +669,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -703,10 +705,6 @@ global:
    # SOME_KEY: some_value
    # SOME_OTHER_KEY: some_other_value
 
-  ## https://docs.gitlab.com/charts/charts/globals
-  platform:
-    eksRoleArn:
-
 ## End of global
 
 upgradeCheck:
@@ -738,8 +736,8 @@ upgradeCheck:
 ## Installation & configuration of jetstack/cert-manager
 ## See requirements.yaml for current version
 certmanager:
-  createCustomResource: false
-  nameOverride: cert-manager
+  installCRDs: false
+  nameOverride: certmanager
   # Install cert-manager chart. Set to false if you already have cert-manager
   # installed or if you are not using cert-manager.
   install: false
@@ -747,8 +745,6 @@ certmanager:
   # See https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/README#configuration
   rbac:
     create: true
-  webhook:
-    enabled: false
 
 ## https://docs.gitlab.com/charts/charts/nginx/
 ## https://docs.gitlab.com/charts/architecture/decisions#nginx-ingress
@@ -1023,7 +1019,7 @@ postgresql:
     ## could not get IronBank hardened image to work with the bitnami postgres sub-chart
     registry: registry.dso.mil
     repository: platform-one/big-bang/apps/developer-tools/gitlab/postgresql
-    tag: 11.9.0
+    tag: 12.7.0
   usePasswordFile: true
   existingSecret: 'bogus'
   initdbScriptsConfigMap: 'bogus'
@@ -1061,7 +1057,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 13.12.9
+    tag: 14.0.5
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1083,11 +1079,12 @@ shared-secrets:
       - name: private-registry
     keyAlgorithm: "rsa"
     keySize: "4096"
-    expiry: "365d"
+    expiry: "3650d"
     caSubject: "GitLab Helm Chart"
     pullSecrets: []
   env: production
   serviceAccount:
+    enabled: true
     create: true
     name: # Specify a pre-existing ServiceAccount name
   resources:
@@ -1138,6 +1135,7 @@ gitlab-runner:
 grafana:
   ## Override and provide "bogus" administation secrets
   ## gitlab/gitlab-grafana provides overrides via shared-secrets
+  nameOverride: grafana-app
   admin:
     existingSecret: bogus
   env:
@@ -1161,6 +1159,8 @@ grafana:
     server:
       serve_from_sub_path: true
       root_url: http://localhost/-/grafana/
+    auth:
+      login_cookie_name: gitlab_grafana_session
   ## We generate and provide random passwords
   ## NOTE: the Secret & ConfigMap names are hard coded!
   extraSecretMounts:
@@ -1188,7 +1188,7 @@ gitlab:
         app: 'gitaly'
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     init:
@@ -1235,7 +1235,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1260,7 +1260,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
 ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1284,7 +1284,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1297,7 +1297,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     ingress:
@@ -1306,7 +1306,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     init:
@@ -1329,7 +1329,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     init:
@@ -1351,7 +1351,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 13.12.9
+      tag: 14.0.5
       pullSecrets:
       - name: private-registry
     init:
@@ -1374,7 +1374,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 13.12.9
+      tag: 14.0.5
     init:
       resources:
         limits:

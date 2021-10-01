@@ -5,9 +5,6 @@
 - comment the *.tgz from the .gitignore file
 - commit the tar archives that were downloaded from the helm dependency update command
 
-## chart/requirements.yaml
-- change all external dependency links to point to the local file system
-
 ## chart/values.yaml
 - disable all internal services other than postgres, minio, and redis
 - add BigBang additional values at bottom of values.yaml
@@ -57,17 +54,25 @@
 
 ## fixes for flux helmrelease errors
 - chart/charts/gitlab/charts/geo-logcursor/templates/deployment.yaml #24-25  
-  remove duplicate hard coded ```app:``` and ```realm:``` labels
+  remove duplicate labels: ```app:``` and ```release:```
 - chart/charts/gitlab/charts/gitaly/templates/statefulset.yml #10  
   remove duplicate immutable labels
 - chart/charts/gitlab/charts/gitlab-exporter/templates/deployment.yaml  #21-22  
-  remove duplicate hard codded ```app:``` and ```release:``` labels
-- chart/charts/gitlab/charts/gitlab-shell/templates/nginx-tcp-configmap.yml #14  
-  quote port --> ```{{ $port | quote }}```
+  remove duplicate labels: ```app:``` and ```release:```
+- chart/charts/minio/templates/minio_deployment.yaml #25-28
+  remove duplicate labels: ```app:```, ```chart:```, ```release:```, and ```heritage:```
+- chart/templates/shared-secrets/_jobspec.yaml #19-20  
+  remove duplicate labels: ```app:``` and ```release:```
+- chart/charts/minio/templates/create-buckets-job.yaml #15-16  
+  remove duplicate labels: ```app:``` and ```release:```
 
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [4.0.5-bb.0] - 2021-09-21
+- upgrade Gitlab to application version 14.0.5 helm chart version 5.0.5
+- notice: this upgrade requires postgresql 12 or higher
 
 ## [4.12.9-bb.6] - 2021-09-16
 - Updated test.sh with ENV variables from test-values

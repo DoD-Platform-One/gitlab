@@ -94,8 +94,9 @@ describe 'Strategy configuration' do
 
   let(:ignored_charts) do
     [
-      'Deployment/test-cainjector',
-      'Deployment/test-cert-manager',
+      'Deployment/test-certmanager-cainjector',
+      'Deployment/test-certmanager-webhook',
+      'Deployment/test-certmanager',
       'Deployment/test-prometheus-server',
       'Deployment/test-nginx-ingress-controller',
       'Deployment/test-nginx-ingress-default-backend',

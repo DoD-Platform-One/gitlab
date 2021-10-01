@@ -80,15 +80,11 @@ ingress:
     # enabled: true
   annotations:
     nginx.ingress.kubernetes.io/service-upstream: "true"
+  configureCertmanager:
   # Use this in combination of .deployments below
   requireBasePath: true
 
 workerProcesses: 2
-
-unicorn:
-  memory: # in MB units
-    min: 1024
-    max: 1280
 
 puma:
   workerMaxMemory: 1024 # in MB units
@@ -131,6 +127,7 @@ workhorse:
     requests:
       cpu: 100m
       memory: 100M
+  # shutdownTimeout:
   # image: registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee
   livenessProbe:
     initialDelaySeconds: 20

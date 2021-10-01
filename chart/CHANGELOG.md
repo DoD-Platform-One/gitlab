@@ -2,21 +2,66 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
-## 4.12.9 (2021-08-03)
+## 5.0.5 (2021-07-08)
 
 No changes.
 
-## 4.12.8 (2021-07-07)
+## 5.0.4 (2021-07-07)
 
 No changes.
 
-## 4.12.7 (2021-07-05)
+## 5.0.3 (2021-07-06)
 
 No changes.
 
-## 4.12.6 (2021-07-01)
+## 5.0.2 (2021-07-01)
 
 No changes.
+
+## 5.0.1 (2021-06-24)
+
+No changes.
+
+## 5.0.0 (2021-06-21)
+
+### Added (7 changes)
+
+- [Make ClientAliveInterval configurable for openssh](gitlab-org/charts/gitlab@6b244f199eb03f3a19eab6b33d6a74aef44c9563) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2049))
+- [Add GKE load balancer options for KAS service](gitlab-org/charts/gitlab@a67751788fc952a0280333e5646f37e1106554f1) ([merge request](gitlab-org/charts/gitlab!1911))
+- [Add initial upgrade docs for version 5 of the chart](gitlab-org/charts/gitlab@4fa460e639f7e6ee4b1dc2cad50272b6d483c7d7) ([merge request](gitlab-org/charts/gitlab!2027))
+- [Add global.ingress.provider and checks to allow changing the ingress provider](gitlab-org/charts/gitlab@b5522e7edb61be66cb31223afe57f95c386ea4b5) ([merge request](gitlab-org/charts/gitlab!2033))
+- [Set Workhorse shutdown to workerTimeout + 1 by default](gitlab-org/charts/gitlab@e0b57b779b0a432ae669ba10a583b3ab255f1b59) ([merge request](gitlab-org/charts/gitlab!2037))
+- [Allow configuring redis instance for trace chunks](gitlab-org/charts/gitlab@db72918ec278de8984dab7a111fc4f2e958662ff) ([merge request](gitlab-org/charts/gitlab!2031))
+- [gitlab/kas: add image pullSecrets to chart](gitlab-org/charts/gitlab@517b3c6ffdd49d594084135371f63f2a78c5791e) ([merge request](gitlab-org/charts/gitlab!2006))
+
+### Fixed (5 changes)
+
+- [Fix support for an existing ServiceAccount](gitlab-org/charts/gitlab@62636629a9663fa4c5f673fea8ce6023932fa065) ([merge request](gitlab-org/charts/gitlab!2045))
+- [gitlab-shell: quote tcp configmap port](gitlab-org/charts/gitlab@f7af9592fdf52bcdcbb93bf3c82ade97f1fc881f) ([merge request](gitlab-org/charts/gitlab!2047))
+- [Fix link to NGINX configuration docs](gitlab-org/charts/gitlab@5b225a7c843d54a1634473c6dc0aeededa0ffb01) ([merge request](gitlab-org/charts/gitlab!2046))
+- [Move Sidekiq's logging.format to _sidekiq.tpl](gitlab-org/charts/gitlab@db79ec4c066882ff01eb5d57ee8b85439455c295) ([merge request](gitlab-org/charts/gitlab!2021))
+- [Fix ingress.configureCertmanager to have higher priority than global](gitlab-org/charts/gitlab@f6dcdb7a0ccbc972313135a4499cb968ad16dd45) ([merge request](gitlab-org/charts/gitlab!1980))
+
+### Changed (12 changes)
+
+- [GitLab Runner to 0.30.0](gitlab-org/charts/gitlab@d9b0310f1a700ed806f50ff373b5745ade06511b) ([merge request](gitlab-org/charts/gitlab!2060))
+- [Update certmanager to 1.2.0 and min k8s version to 1.16](gitlab-org/charts/gitlab@171be67fd3a16ebeb92b4abafd63caa867419e0a) ([merge request](gitlab-org/charts/gitlab!2041))
+- [Update the min k8s and helm versions](gitlab-org/charts/gitlab@352a9cfb3a9c20faa29c0d32cfeab2a515a3970e) ([merge request](gitlab-org/charts/gitlab!2050))
+- [Remove Helm 2 related tasks from cloud installation scripts](gitlab-org/charts/gitlab@24f7ec7b6839d2220db4d229df478390a0b2ac9c) ([merge request](gitlab-org/charts/gitlab!2040))
+- [Remove spaces from sidekiq queues and negateQueues](gitlab-org/charts/gitlab@978f109daff26a70b3562deab800f60c21b0ddb6) ([merge request](gitlab-org/charts/gitlab!1387))
+- [Bump Container Registry to v3.5.0-gitlab](gitlab-org/charts/gitlab@d95bd8302460ab0884b463e5b2efc8d9662d8ff6) ([merge request](gitlab-org/charts/gitlab!2042))
+- [Update helm test to test updated endpoint](gitlab-org/charts/gitlab@90f165255326f8f98251f9f46c46611546f91813) ([merge request](gitlab-org/charts/gitlab!2044))
+- [bump default self-signed cert expiry to 10yr](gitlab-org/charts/gitlab@0bf962ac30535fb0ce58a5da7384c9ba2b12ecfc) ([merge request](gitlab-org/charts/gitlab!2034))
+- [Update minimum required version of PostgreSQL from 11 to 12](gitlab-org/charts/gitlab@9729a60d24fa11602da347ba1c49abb168a5d740) ([merge request](gitlab-org/charts/gitlab!2012))
+- [Only permit upgrades from 4.12](gitlab-org/charts/gitlab@a8facddb582dccf6b97a634370abd34e9bdb3b4c) ([merge request](gitlab-org/charts/gitlab!2029))
+- [add changes suggested by @WarheadsSE in gitlab-org/charts/gitlab!2000](gitlab-org/charts/gitlab@6380ee8b1a2eeebefc1258e08bd7a9a981a8bb04) ([merge request](gitlab-org/charts/gitlab!2019))
+- [Update gitlab-org/charts/gitlab-runner from 0.28.0 to 0.29.0](gitlab-org/charts/gitlab@32447b667c8fd39f4fde45c0fe4b12b9d85c245f) ([merge request](gitlab-org/charts/gitlab!2008))
+
+### Removed (3 changes)
+
+- [Remove deprecated `experimentalQueueSelector` option for Sidekiq](gitlab-org/charts/gitlab@007788f0ba373f7d3fc51623ea5b70021b62ca5b) ([merge request](gitlab-org/charts/gitlab!2023))
+- [Remove the old resouce changes notices](gitlab-org/charts/gitlab@1755275b75dfe669c038e44dd2d218e3aa62c2e6) ([merge request](gitlab-org/charts/gitlab!2028))
+- [Remove ability to disable cluster from sidekiq values](gitlab-org/charts/gitlab@0de93fe181cd8c514aec013bf7e1541e1b41660b) ([merge request](gitlab-org/charts/gitlab!2024))
 
 ## 4.12.5 (2021-06-21)
 
@@ -70,6 +115,10 @@ No changes.
 - [Refactor a yaml indentation inconsistency](gitlab-org/charts/gitlab@e43cbb7f3b75ef88ef6a478ef809826b7e51bfbe) ([merge request](gitlab-org/charts/gitlab!1978))
 - [Support using PAGES_UPDATE_LEGACY_STORAGE env variable to enable Pages disk access](gitlab-org/charts/gitlab@ba72fead4cc4af5268a258b7a4bdbac85665f15c) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1938))
 
+## 4.11.5 (2021-06-01)
+
+No changes.
+
 ## 4.11.4 (2021-05-14)
 
 No changes.
@@ -116,6 +165,10 @@ No changes.
 - Add Microsoft Graph config support for MailRoom. !1929
 - Added support for IAM roles in EKS. !1940
 
+
+## 4.10.5 (2021-06-01)
+
+No changes.
 
 ## 4.10.4 (2021-04-27)
 

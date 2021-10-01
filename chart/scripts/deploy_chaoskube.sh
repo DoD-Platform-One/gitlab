@@ -42,9 +42,7 @@ function do_up() {
 
   validate_tools kubectl helm;
 
-  name_flag=$(set_helm_name_flag)
-
-  helm install $name_flag chaoskube \
+  helm install chaoskube \
     stable/chaoskube \
     --version ${version} \
     --namespace ${namespace} \
@@ -56,9 +54,7 @@ function do_up() {
 function do_down() {
   validate_tools kubectl helm;
 
-  purge_flag=$(set_helm_purge_flag)
-
-  helm delete $purge_flag chaoskube
+  helm delete chaoskube
 }
 
 # Set defaults before getting user input

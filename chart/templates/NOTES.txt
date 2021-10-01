@@ -1,3 +1,6 @@
+{{/* PostgreSQL minimum version change */}}
+NOTICE: The minimum required version of PostgreSQL is now 12. See https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/doc/installation/upgrade.md for more details.
+
 {{/* If the Container Registry metadata database is enabled, note it is not production ready */}}
 {{- if eq .Values.registry.database.enabled true }}
 WARNING: The Container Registry metadata database has been enabled. Please note that it is an experimental feature and must not be used in production.
@@ -17,17 +20,6 @@ WARNING: The Container Registry online garbage collection has been enabled. Plea
 {{- if eq .Values.global.praefect.enabled true }}
 WARNING: The Praefect chart has been enabled. Please note that it is still under development and not ready for production use. Usage may require significant manual intervention during upgrades.
 {{- end }}
-
-{{/* Resource request changes */}}
-NOTICE: The resource requests have increased for the Webservice and Sidekiq charts.
-    For more information on Webservice resources, see https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#resources
-    For more information on Sidekiq resources, see https://docs.gitlab.com/charts/charts/gitlab/sidekiq/index.html#resource
-    Related merge request: https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1634
-
-    To restore the original resource specifications:
-    --set gitlab.sidekiq.resources.requests.cpu=50m
-    --set gitlab.sidekiq.resources.requests.memory=650M
-    --set gitlab.webservice.resources.requests.memory=1.5G
 
 {{/* If shared-secrets is disable, manual secret creation will be needed */}}
 {{- if not (index .Values "shared-secrets").enabled }}
@@ -115,11 +107,6 @@ WARNING: GitLab Pages configured to use disk storage via `{{ $component }}.extra
     Using `PAGES_UPDATE_LEGACY_STORAGE` environment variable with bundled Pages service is not recommended. This setting is specifically used when using an external GitLab Pages deployment.
 {{-     end }}
 {{-   end }}
-{{- end }}
-
-{{/* WARN: Unicorn is deprecated and will be removed in 14.0 */}}
-{{- if eq .Values.gitlab.webservice.webServer "unicorn" -}}
-WARNING: Starting with GitLab 14.0, Unicorn is no longer supported and users must switch to Puma by setting `gitlab.webservice.webServer` value to `puma`. Check https://docs.gitlab.com/ee/administration/operations/puma.html for details.
 {{- end }}
 
 {{/* run deprecations */}}

@@ -23,6 +23,7 @@ data:
   {{- include "gitlab.rails.redis.sharedState" . | nindent 2 }}
   {{- include "gitlab.rails.redis.queues" . | nindent 2 }}
   {{- include "gitlab.rails.redis.cable" . | nindent 2 }}
+  {{- include "gitlab.rails.redis.traceChunks" . | nindent 2 }}
   gitlab.yml.erb: |
     production: &base
       gitlab:
@@ -122,8 +123,6 @@ data:
           address: 0.0.0.0
           port: {{ .Values.metrics.port }}
 {{- end }}
-      sidekiq:
-        log_format: {{ .Values.logging.format }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "gitaly registry rails-secrets") | nindent 4 -}}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}

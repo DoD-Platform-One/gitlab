@@ -33,8 +33,6 @@ function bootstrap(){
   set -e
   validate_tools helm gcloud kubectl;
 
-  IS_HELM_3=$(check_helm_3)
-
   # Use the default cluster version for the specified zone if not provided
   if [ -z "${CLUSTER_VERSION}" ]; then
     CLUSTER_VERSION=$(gcloud container get-server-config --zone $ZONE --project $PROJECT --format='value(defaultClusterVersion)');
@@ -51,7 +49,7 @@ function bootstrap(){
     --enable-ip-alias \
     --network $INT_NETWORK \
     --subnetwork $SUBNETWORK \
-    --project $PROJECT --enable-basic-auth $EXTRA_CREATE_ARGS;
+    --project $PROJECT $EXTRA_CREATE_ARGS;
 
   if ${USE_STATIC_IP}; then
     gcloud compute addresses create $external_ip_name --region $REGION --project $PROJECT;
@@ -73,40 +71,22 @@ function bootstrap(){
 
   # Create roles for RBAC Helm
   if $RBAC_ENABLED; then
-    kubectl config set-credentials ${CLUSTER_NAME}-admin-user --username=admin --password=$(cluster_admin_password_gke)
     if [ -z "${ADMIN_USER}" ]; then
       ADMIN_USER=$(gcloud config list account --format "value(core.account)" 2> /dev/null)
     fi
 
-    kubectl --dry-run --output=yaml create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $ADMIN_USER 2> /dev/null | kubectl --user=${CLUSTER_NAME}-admin-user apply -f -
+    kubectl --dry-run --output=yaml create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $ADMIN_USER 2> /dev/null | kubectl apply -f -
 
-    if [ ! $IS_HELM_3 -eq 0 ]; then
-      status_code=$(curl -L -w '%{http_code}' -o rbac-config.yaml -s "https://gitlab.com/gitlab-org/charts/gitlab/raw/master/doc/installation/examples/rbac-config.yaml");
-      if [ "$status_code" != 200 ]; then
-        echo "Failed to download rbac-config.yaml, status code: $status_code";
-        exit 1;
-      fi
-
-      kubectl --user=${CLUSTER_NAME}-admin-user create -f rbac-config.yaml;
-    fi
   fi
 
   echo "Wait for metrics API service"
   # Helm 2.15 and 3.0 bug https://github.com/helm/helm/issues/6361#issuecomment-550503455
   kubectl --namespace=kube-system wait --for=condition=Available --timeout=5m apiservices/v1beta1.metrics.k8s.io
 
-  echo "Installing helm..."
-
-  if [ ! $IS_HELM_3 -eq 0 ]; then
-    helm init --wait --service-account tiller
-  fi
-
   helm repo add bitnami https://charts.bitnami.com/bitnami
 
   if ! ${USE_STATIC_IP}; then
-    name_flag=$(set_helm_name_flag)
-
-    helm install $name_flag dns --namespace kube-system bitnami/external-dns \
+    helm install dns --namespace kube-system bitnami/external-dns \
       --version '^3.3.1' \
       --set provider=google \
       --set google.project=$PROJECT \

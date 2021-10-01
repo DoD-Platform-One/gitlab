@@ -53,7 +53,7 @@ Google's documentation:
 
 ### Installing Helm v3
 
-For this guide, we'll make use of the latest release of Helm v3 (v3.0.2 or newer).
+For this guide, we'll make use of the latest release of Helm v3 (v3.3.1 or newer).
 [Official installation instructions](https://helm.sh/docs/intro/install/)
 exist, and are sound, so we'll let you follow those.
 
@@ -146,6 +146,8 @@ be sure are working:
 1. If you get a certificate warning, there has been a problem with Let's Encrypt,
 usually related to DNS, or the need to retry.
 
+For further troubleshooting tips, see our [troubleshooting](../troubleshooting/index.md) guide.
+
 ### Helm install returns `roles.rbac.authorization.k8s.io "gitlab-shared-secrets" is forbidden`
 
 After running:
@@ -163,6 +165,5 @@ Error: failed pre-install: warning: Hook pre-install templates/shared-secrets-rb
 {APIGroups:[""], Resources:["secrets"], Verbs:["get" "list" "create" "patch"]}
 ```
 
-You need to [prepare for Helm with RBAC](../installation/tools.md#preparing-for-helm-with-rbac).
-
-For further troubleshooting tips, see our [troubleshooting](../troubleshooting/index.md) guide.
+This means that the `kubectl` context that you are using to connect to the cluster
+does not have the permissions needed to create RBAC resources.
