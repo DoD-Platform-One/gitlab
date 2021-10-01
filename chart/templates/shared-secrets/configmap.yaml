@@ -7,6 +7,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 {{- if not .Values.global.operator.enabled }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
@@ -25,6 +26,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
   template: |-
     {{- include (print $.Template.BasePath "/shared-secrets/_jobspec.yaml") . | nindent 4 }}

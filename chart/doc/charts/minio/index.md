@@ -38,6 +38,7 @@ minio:
       enabled:
       secretName:
     annotations:
+    configureCertmanager:
     proxyReadTimeout:
     proxyBodySize:
     proxyBuffering:
@@ -59,6 +60,7 @@ to the `helm install` command using the `--set` flags:
 
 | Parameter                      | Default                       | Description                             |
 | ------------------------------ | ----------------------------- | --------------------------------------- |
+| `common.labels`                | `{}`                          | Supplemental labels that are applied to all objects created by this chart.  |
 | `defaultBuckets`               | `[{"name": "registry"}]`      | MinIO default buckets                   |
 | `deployment.strategy`          | { `type`: `Recreate` }      | Allows one to configure the update strategy utilized by the deployment |
 | `image`                        | `minio/minio`                 | MinIO image                             |
@@ -179,6 +181,7 @@ These settings control the MinIO Ingress.
 |:---------------- |:-------:|:------- |:----------- |
 | `annotations`    | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/). |
 | `enabled`        | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used. |
+| `configureCertmanager` | Boolean |   | Toggles Ingress annotation `cert-manager.io/issuer`. For more information see the [TLS requirement for GitLab Pages](../../installation/tls.md).  |
 | `tls.enabled`    | Boolean | `true`  | When set to `false`, you disable TLS for MinIO. This is mainly useful when you cannot use TLS termination at Ingress-level, like when you have a TLS-terminating proxy before the Ingress Controller. |
 | `tls.secretName` | String  |         | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the MinIO URL. When not set, the `global.ingress.tls.secretName` is used instead. |
 

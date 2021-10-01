@@ -7,6 +7,7 @@ metadata:
   labels:
     gitlab_grafana_datasource: "true"
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
   gitlab.yaml: |
     apiVersion: 1

@@ -14,6 +14,9 @@ secondary
 {{- if .Values.global.geo.enabled -}}
 geo:
   node_name: {{ default "" .Values.global.geo.nodeName }}
+  registry_replication:
+    enabled: {{ eq true (default false .Values.global.geo.registry.replication.enabled) }}
+    primary_api_url: {{ .Values.global.geo.registry.replication.primaryApiUrl | quote }}
 {{- end -}}
 {{- end -}}
 

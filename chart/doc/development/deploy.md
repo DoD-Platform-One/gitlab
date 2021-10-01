@@ -40,7 +40,3 @@ helm upgrade --install gitlab . \
   --set global.hosts.externalIP=10.10.10.10 \
   --set certmanager-issuer.email=me@example.com
 ```
-
-NOTE:
-If using Helm v2, please see notes about the `--timeout` option
-in the [Deployment documentation](../installation/deployment.md#deploy-using-helm).

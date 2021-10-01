@@ -52,9 +52,6 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yml") $ | sha256sum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-      {{- if $.Values.global.platform.eksRoleArn }}
-        eks.amazonaws.com/role-arn: {{ $.Values.global.platform.eksRoleArn | quote }}
-      {{- end }}
       {{- range $key, $value := .pod.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
@@ -212,11 +209,6 @@ spec:
               value: "{{ .puma.workerMaxMemory }}"
             - name: DISABLE_PUMA_WORKER_KILLER
               value: "{{ .puma.disableWorkerKiller }}"
-            {{- else }}
-            - name: UNICORN_MEMORY_MIN
-              value: "{{ .unicorn.memory.min }}"
-            - name: UNICORN_MEMORY_MAX
-              value: "{{ .unicorn.memory.max }}"
             {{- end }}
             - name: SHUTDOWN_BLACKOUT_SECONDS
               value: "{{ .shutdown.blackoutSeconds }}"
@@ -279,11 +271,7 @@ spec:
           lifecycle:
             preStop:
               exec:
-                {{- if eq (lower $.Values.webServer) "unicorn" }}
-                command: ["/bin/bash", "-c", "pkill -SIGQUIT -f 'unicorn master'"]
-                {{- else }}
                 command: ["/bin/bash", "-c", "pkill -SIGINT -o ruby"]
-                {{- end }}
           resources:
             {{- toYaml .resources | nindent 12 }}
         - name: gitlab-workhorse

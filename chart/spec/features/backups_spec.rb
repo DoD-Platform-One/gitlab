@@ -55,7 +55,7 @@ describe "Restoring a backup" do
 
     it 'Should have runner registered' do
       visit '/admin/runners'
-      expect(page).to have_css('#content-body div[id^=\'runner_\']', minimum: 1)
+      expect(page).to have_css('#content-body div[data-testid^=\'runner-row-\']', minimum: 1)
     end
 
     it 'Issue attachments should load correctly' do

@@ -23,7 +23,6 @@ The script will:
 
 1. Create a new EKS cluster.
 1. Setup `kubectl`, and connect it to the cluster.
-1. Initialize Helm and install Tiller.
 
 The script uses [`eksctl`](https://eksctl.io) to initialize the cluster. If it cannot locate it in your PATH, it will install it
 to a temporary location.
@@ -43,7 +42,6 @@ The table below describes all variables.
 | `CLUSTER_VERSION` | The version of your EKS cluster                  | `1.18`           |
 | `NUM_NODES`       | The number of nodes required                     | `2`              |
 | `MACHINE_TYPE`    | The type of nodes to deploy                      | `m5.xlarge`      |
-| `SERVICE_ACCOUNT` | The service account name to use for Helm/Tiller  | `tiller`         |
 
 Run the script, by passing in your desired parameters. It can work with the
 default parameters.

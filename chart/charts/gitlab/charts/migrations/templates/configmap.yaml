@@ -22,6 +22,7 @@ data:
   {{- include "gitlab.rails.redis.sharedState" . | nindent 2 }}
   {{- include "gitlab.rails.redis.queues" . | nindent 2 }}
   {{- include "gitlab.rails.redis.cable" . | nindent 2 }}
+  {{- include "gitlab.rails.redis.traceChunks" . | nindent 2 }}
   gitlab.yml.erb: |
     production: &base
       gitlab:
@@ -46,6 +47,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
   template: |-
     {{- include (print $.Template.BasePath "/_jobspec.yaml") . | nindent 4 }}

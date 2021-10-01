@@ -121,13 +121,18 @@ also use directly for GitLab Runner via `gitlab-runner.certsSecretName=RELEASE-w
 
 For [GitLab Pages with TLS support](https://docs.gitlab.com/ee/administration/pages/#wildcard-domains-with-tls-support),
 a wildcard certificate applicable for `*.<pages domain>` (default value of
-`<pages domain>` is `pages.<base domain>`) is required. Because a wild card
-certificate is required, it can not be automatically created by cert-manager and
-Let's Encrypt, and users will have to bring one on their own.
+`<pages domain>` is `pages.<base domain>`) is required.
 
-By default, name of this secret is `<RELEASE>-pages-tls`. A different name can
-be specified using the `gitlab.gitlab-pages.ingress.tls.secretName` setting as
-shown below.
+Because a wild card certificate is required, it can not be automatically created
+by cert-manager and Let's Encrypt. cert-manager is therefore by default disabled
+for GitLab Pages (via `gitlab-pages.ingress.configureCertmanager`), so you will
+have to provide your own k8s Secret containing a wild card certificate. If you
+have an external cert-manager configured using `global.ingress.annotations`, you
+probably also want to override such annotations in
+`gitlab-pages.ingress.annotations`.
+
+By default, the name of this secret is `<RELEASE>-pages-tls`. A different name
+can be specified using the `gitlab.gitlab-pages.ingress.tls.secretName` setting:
 
 ```shell
 helm install gitlab gitlab/gitlab \

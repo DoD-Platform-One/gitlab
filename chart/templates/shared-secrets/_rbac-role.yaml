@@ -9,6 +9,7 @@ metadata:
     chart: shared-secrets-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
 {{- if and $sharedSecretValues.enabled (not .Values.global.operator.enabled) }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade

@@ -15,9 +15,7 @@ refer to the [Mattermost Helm configuration guide](https://github.com/mattermost
 ## Prerequisites
 
 - A running Kubernetes cluster.
-- [Helm v3](https://helm.sh/docs/intro/install/) or [Helm v2](https://v2-14-0.helm.sh/docs/using_helm/#installing-helm).
-- [Tiller](https://rancher.com/docs/rancher/v2.x/en/installation/options/helm2/helm-init/) (the Helm server-side component)
-  installed on the cluster if using Helm v2.
+- [Helm v3](https://helm.sh/docs/intro/install/)
 
 NOTE:
 For the Team Edition you can have just one replica running.
@@ -53,10 +51,6 @@ helm upgrade --install gitlab gitlab/gitlab \
   --set global.hosts.externalIP=<external-ip> \
   --set certmanager-issuer.email=<email>
 ```
-
-NOTE:
-If using Helm v2, please see notes about the `--timeout` option
-in the [Deployment documentation](../../installation/deployment.md#deploy-using-helm).
 
 - `<your-domain>`: your desired domain, such as `gitlab.example.com`.
 - `<external-ip>`: the external IP pointing to your Kubernetes cluster.

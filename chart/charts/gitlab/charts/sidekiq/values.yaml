@@ -19,7 +19,6 @@ init:
 tolerations: []
 
 enabled: true
-cluster: true
 queueSelector: false
 
 annotations: {}

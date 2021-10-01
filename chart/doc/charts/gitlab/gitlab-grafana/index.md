@@ -52,6 +52,7 @@ kubectl get secret gitlab-grafana-initial-password -ojsonpath='{.data.password}'
 
 | Parameter             | Default | Description                                                          |
 |-----------------------|---------|----------------------------------------------------------------------|
+| `common.labels`       | `{}`    | Supplemental labels that are applied to all objects created by this chart.  |
 | `ingress.tls`         | `{}`    | Hash of Ingress TLS settings if GitLab cert manager is not installed |
 | `ingress.annotations` | `{}`    | Additional annotations to add to Grafana Ingress resource            |
 

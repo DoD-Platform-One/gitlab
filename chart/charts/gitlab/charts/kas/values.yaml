@@ -25,7 +25,8 @@ image:
 ingress:
   annotations: {}
   tls: {}
-  path: # /
+  agentPath: /
+  k8sApiPath: /k8s-proxy
 maxReplicas: 10
 maxUnavailable: 1
 minReplicas: 2
@@ -41,7 +42,11 @@ service:
   externalPort: 8150
   internalPort: 8150
   apiInternalPort: 8153
+  kubernetesApiPort: 8154
+  privateApiPort: 8155
   type: ClusterIP
+  # loadBalancerIP:
+  # loadBalancerSourceRanges:
 metrics:
   enabled: true
   port: 8151
@@ -60,6 +65,10 @@ workhorse: {}
   # port: 8181
 # merged with the default kas config
 customConfig: {}
+
+privateApi: {}
+  # secret:
+  # key:
 
 deployment:
   strategy: {}

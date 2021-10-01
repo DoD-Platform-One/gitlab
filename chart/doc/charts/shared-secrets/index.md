@@ -1,5 +1,6 @@
 ---
 redirect_to: '../shared-secrets.md'
+remove_date: '2021-06-22'
 ---
 
 This document was moved to [another location](../shared-secrets.md).

@@ -50,6 +50,7 @@ spec:
         runAsUser: {{ .Values.securityContext.runAsUser }}
         runAsGroup: {{ .Values.securityContext.runAsGroup }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- include "pullsecrets" $.Values.image | nindent 6 }}
       containers:
         {{- include "gitlab.extraContainers" . | nindent 8 }}
         - name: {{ template "name" . }}
@@ -57,11 +58,22 @@ spec:
           {{ template "gitlab.imagePullPolicy" . }}
           args:
             - "--configuration-file=/etc/kas/config.yaml"
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: OWN_PRIVATE_API_URL
+              value: "grpc://$(POD_IP):{{ .Values.service.privateApiPort }}"
           ports:
             - containerPort: {{ .Values.service.internalPort }}
               name: {{ template "name" . }}
             - containerPort: {{ .Values.metrics.port }}
               name: {{ template "name" . }}-metrics
+            - containerPort: {{ .Values.service.kubernetesApiPort }}
+              name: {{ template "name" . }}-k8s-api
+            - containerPort: {{ .Values.service.privateApiPort }}
+              name: {{ template "name" . }}-private-api
           readinessProbe:
             tcpSocket:
               port: {{ .Values.service.internalPort }}
@@ -92,6 +104,11 @@ spec:
                 items:
                   - key: {{ template "gitlab.kas.key" . }}
                     path: .gitlab_kas_secret
+            - secret:
+                name: {{ template "gitlab.kas.privateApi.secret" . }}
+                items:
+                  - key: {{ template "gitlab.kas.privateApi.key" . }}
+                    path: .gitlab_kas_private_api_secret
             {{- if .Values.redis.enabled -}}
             {{- include "gitlab.redis.secrets" . | nindent 12 }}
             {{- end }}

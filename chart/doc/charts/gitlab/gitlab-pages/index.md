@@ -89,6 +89,18 @@ configurations that can be supplied to the `helm install` command using the
 | `tls.maxVersion`                 |                       | Specifies the maximum SSL/TLS version                |
 | `useHttp2`                       | `true`                | Enable HTTP2 support                                 |
 
+### Configuring the `ingress`
+
+This section controls the GitLab Pages Ingress.
+
+| Name                   | Type    | Default | Description |
+|:---------------------- |:-------:|:------- |:----------- |
+| `annotations`          | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/). |
+| `configureCertmanager` | Boolean | `false` | Toggles Ingress annotation `cert-manager.io/issuer`. The acquisition of a TLS certificate for GitLab Pages via cert-manager is disabled because a wildcard certificate acquisition requires a cert-manager Issuer with a [DNS01 solver](https://cert-manager.io/docs/configuration/acme/dns01/), and the Issuer deployed by this chart only provides a [HTTP01 solver](https://cert-manager.io/docs/configuration/acme/http01/). For more information see the [TLS requirement for GitLab Pages](../../../installation/tls.md). |
+| `enabled`              | Boolean |         | Setting that controls whether to create Ingress objects for services that support them. When not set, the `global.ingress.enabled` setting is used. |
+| `tls.enabled`          | Boolean |         | When set to `false`, you disable TLS for the Registry subchart. This is mainly useful for cases in which you cannot use TLS termination at `ingress-level`, like when you have a TLS-terminating proxy before the Ingress Controller. |
+| `tls.secretName`       | String  |         | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry URL. When not set, the `global.ingress.tls.secretName` is used instead. Defaults to not being set. |
+
 ## Chart configuration examples
 
 ### extraVolumes

@@ -49,42 +49,15 @@ function validate_tools(){
 
       gcloud container clusters list --project $PROJECT >/dev/null 2>&1 || { echo >&2 "Gcloud seems to be configured incorrectly or authentication is unsuccessfull"; exit 1; }
     fi
+
+    # Additional check if validating Helm
+    if [ "$tool" == 'helm' ]; then
+      if ! helm version --short --client | grep -q '^v3\.[0-9]\{1,\}'; then
+        echo "Helm 3+ is required.";
+        exit 1
+      fi
+    fi
   done
-}
-
-function check_helm_3(){
-  set +e
-  helm version --short --client | grep -q '^v3\.[0-9]\{1,\}'
-  IS_HELM_3=$?
-  set -e
-
-  echo $IS_HELM_3
-}
-
-function set_helm_name_flag(){
-
-  IS_HELM_3=$(check_helm_3)
-
-  if [[ "$IS_HELM_3" -eq "0" ]]; then
-    name_flag=''
-  else
-    name_flag='--name'
-  fi
-
-  echo $name_flag
-}
-
-function set_helm_purge_flag(){
-
-  IS_HELM_3=$(check_helm_3)
-
-  if [[ "$IS_HELM_3" -eq "0" ]]; then
-    purge_flag=''
-  else
-    purge_flag='--purge'
-  fi
-
-  echo $purge_flag
 }
 
 function cluster_admin_password_gke(){

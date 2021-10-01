@@ -249,16 +249,12 @@ helm upgrade --install gitlab gitlab/gitlab \
 
 Note the following:
 
-- All Helm commands are specified using Helm v3 syntax. If the Helm v2 syntax differs every effort
-  is made to provide a note that details the difference.
-- If `helm install` is used there is a slight difference in the way that Helm v2 and Helm v3
-  operate. When using Helm v2 if a release name was not specified with the `--name` option it would
-  randomly generate the release name. Helm v3 requires that the release name be specified as a
+- All Helm commands are specified using Helm v3 syntax.
+- Helm v3 requires that the release name be specified as a
   positional argument on the command line unless the `--generate-name` option is used.
-- The timeout option above is handled differently between Helm v2 and Helm v3. With Helm v3 allows
-  one to specify a duration with a unit appended to the value (e.g. `120s` = `2m` and `210s` =
-  `3m30s`). The `--timeout` option is handled as the number of seconds _without_ the unit
-  specification.
+- Helm v3 requires one to specify a duration with a unit appended to the value
+  (e.g. `120s` = `2m` and `210s` = `3m30s`). The `--timeout` option is handled as the
+  number of seconds _without_ the unit specification.
 - The use of the `--timeout` option is deceptive in that there are multiple components that are
   deployed during an Helm install or upgrade in which the `--timeout` is applied. The `--timeout`
   value is applied to the installation of each component individually and not applied for the

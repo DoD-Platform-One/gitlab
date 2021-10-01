@@ -6,8 +6,9 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # IAM roles for AWS
 
-The default configuration for external object storage in the charts is to use access and secret keys.
-It is also possible to use IAM roles in combination with [`kube2iam`](https://github.com/jtblin/kube2iam) or [`kiam`](https://github.com/uswitch/kiam).
+The default configuration for external object storage in the charts uses access and secret keys.
+It is also possible to use IAM roles in combination with [`kube2iam`](https://github.com/jtblin/kube2iam),
+[`kiam`](https://github.com/uswitch/kiam), or [IRSA](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/).
 
 ## IAM role
 
@@ -78,70 +79,93 @@ use an AWS IAM role to authenticate to the S3 object storage without the need
 of generating or storing access tokens. More information regarding using
 IAM roles in an EKS cluster can be found in the
 [Introducing fine-grained IAM roles for service accounts](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/)
-AWS documentation.
+documentation from AWS.
 
-A number of items need to be setup in AWS in addition to enabling the IAM
-role in the GitLab configuration:
+Appropriate IRSA annotations for roles can be applied to ServiceAccounts throughout
+this Helm chart in one of two ways:
 
-1. An IAM policy needs to be constructed to access the S3 bucket.
-   This policy can be constructed to suit specific access and compliance
-   requirements. Otherwise, the `AmazonS3FullAccess` IAM policy can be used,
-   but this will allow access to **all** S3 buckets.
-1. An OIDC provider will need to be established for the EKS cluster.
-   This is best done with using the [`eksctl` command](https://eksctl.io/):
-
-   ```shell
-   eksctl utils associate-iam-oidc-provider --name <CLUSTER NAME> --approve
-   ```
-
-1. Create the Kubernetes ServiceAccount for GitLab to use with `eksctl`.
-   This will add the proper annotations to associate the ServiceAccount with
-   the IAM role:
-
-   ```shell
-   eksctl create iamserviceaccount --name <SERVICE ACCT NAME> \
-                --namespace <NAMESPACE> --cluster <CLUSTER NAME> \
-                --attach-policy-arn <AWS IAM ARN> \
-                --approve
-   ```
-
-1. Set the following options when the GitLab chart is deployed. Using
-   quotes around the AWS IAM ARN will assist the YAML parser to not be confused
-   by the multiple colons encoded into the ARN. It is important to note that
-   the ServiceAccount is enabled but not created (default is to enable and
-   create the ServiceAccount) as it was created in the previous step:
-
-   ```yaml
-   global:
-     serviceAccount:
-       enabled: true
-       create: false
-       name: <SERVICE ACCT NAME>
-     platform:
-       eksRoleArn: "<AWS IAM ARN>"
-   ```
-
-   The settings can also be added to the Helm deployment command with the
-   following command line switches:
-
-   ```shell
-   --set global.serviceAccount.enabled=true
-   --set global.serviceAccount.create=false
-   --set global.serviceAccount.name=<SERVICE ACCT NAME>
-   --set global.platform.eksRoleArn=<AWS IAM ARN>
-   ```
-
-The above procedure will create the `eks.amazonaws.com/role-arn` annotations
-on the `gitlab-sidekiq`, `taskrunner` and `webservice` pods. In addition, the
-ServiceAccount created in step 3 will also have the annotation.
+1. ServiceAccounts that have been pre-created as described in the above AWS documentation.
+This will ensure the proper annotations on the ServiceAccount and the linked OIDC provider.
+1. Chart-generated ServiceAccounts with annotations defined. We allow for the configuration
+of annotations on ServiceAccounts both globally and on a per-chart basis.
 
 WARNING:
-Using the `backup-utility` as specified in the [backup documenation](../../backup-restore/backup.md)
+Using the `backup-utility` as specified in the [backup documentation](../../backup-restore/backup.md)
 does not properly copy the backup file to the S3 bucket. The `backup-utility` uses
 the `s3cmd` to perform the copy of the backup file and it has a known
 issue of [not supporting OIDC authentication](https://github.com/s3tools/s3cmd/issues/1075).
 There is a [pull request](https://github.com/s3tools/s3cmd/pull/1112)
 to mitigate this issue, but it has yet to be accepted into the `s3cmd` code base.
+
+#### Using pre-created service accounts
+
+Set the following options when the GitLab chart is deployed. It is important
+to note that the ServiceAccount is enabled but not created.
+
+```yaml
+global:
+  serviceAccount:
+    enabled: true
+    create: false
+    name: <SERVICE ACCT NAME>
+```
+
+Fine-grained ServiceAccounts control is also available:
+
+```yaml
+registry:
+  serviceAccount:
+    create: false
+    name: gitlab-registry
+gitlab:
+  webservice:
+    serviceAccount:
+      create: false
+      name: gitlab-webservice
+  sidekiq:
+    serviceAccount:
+      create: false
+      name: gitlab-sidekiq
+  task-runner:
+    serviceAccount:
+      create: false
+      name: gitlab-task-runner
+```
+
+#### Using chart-owned service accounts
+
+The `eks.amazonaws.com/role-arn` annotation can be applied to _all_ ServiceAccounts
+created by GitLab owned charts by configuring `global.serviceAccount.annotations`.
+
+```yaml
+global:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/name
+```
+
+Annotations can also be added on a per ServiceAccount basis, but adding the matching
+definition for each chart. These can be the same role, or individual roles.
+
+```yaml
+registry:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab-registry
+gitlab:
+  webservice:
+    serviceAccount:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab
+  sidekiq:
+    serviceAccount:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab
+  task-runner:
+    serviceAccount:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab-task-runner
+```
 
 ## Troubleshooting
 

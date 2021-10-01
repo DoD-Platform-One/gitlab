@@ -11,7 +11,7 @@ describe 'Certificates configuration' do
       'gitlab-runner',
       # cert-manager Pods (2)
       'cainjector',
-      'cert-manager',
+      'cert-manager', 'certmanager',
       'prometheus'
     ]
   end

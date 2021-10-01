@@ -10,21 +10,25 @@ The table below maps some of the key previous chart versions and GitLab versions
 
 | Chart version | GitLab version |
 |---------------|----------------|
-| 4.12.9 | 13.12.9 |
-| 4.12.8 | 13.12.8 |
-| 4.12.7 | 13.12.7 |
-| 4.12.6 | 13.12.6 |
+| 5.0.5 | 14.0.5 |
+| 5.0.4 | 14.0.4 |
+| 5.0.3 | 14.0.3 |
+| 5.0.2 | 14.0.2 |
+| 5.0.1 | 14.0.1 |
+| 5.0.0 | 14.0.0 |
 | 4.12.5 | 13.12.5 |
 | 4.12.4 | 13.12.4 |
 | 4.12.3 | 13.12.3 |
 | 4.12.2 | 13.12.2 |
 | 4.12.1 | 13.12.1 |
 | 4.12.0 | 13.12.0 |
+| 4.11.5 | 13.11.5 |
 | 4.11.4 | 13.11.4 |
 | 4.11.3 | 13.11.3 |
 | 4.11.2 | 13.11.2 |
 | 4.11.1 | 13.11.1 |
 | 4.11.0 | 13.11.0 |
+| 4.10.5 | 13.10.5 |
 | 4.10.4 | 13.10.4 |
 | 4.10.3 | 13.10.3 |
 | 4.10.2 | 13.10.2 |
@@ -316,9 +320,6 @@ To see the full list, you can issue the following command with Helm:
 helm repo add gitlab https://charts.gitlab.io/
 helm search repo -l gitlab/gitlab
 ```
-
-NOTE:
-With Helm v2, the search command should be `helm search -l gitlab/gitlab`.
 
 You will receive an output similar to:
 

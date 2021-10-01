@@ -12,7 +12,9 @@ metadata:
     {{- include "gitlab.commonLabels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" . }}"
-    kubernetes.io/ingress.provider: nginx
+    {{- if .Values.global.ingress.provider }}
+    kubernetes.io/ingress.provider: {{ .Values.global.ingress.provider }}
+    {{- end }}
     {{ include "gitlab.certmanager_annotations" . }}
   {{- range $key, $value := merge .Values.ingress.annotations .Values.global.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}

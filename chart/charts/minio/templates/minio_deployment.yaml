@@ -6,6 +6,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
   annotations:
     {{- include "gitlab.deploymentAnnotations" . | nindent 4 }}
 spec:
@@ -21,14 +22,10 @@ spec:
     metadata:
       name: {{ template "minio.fullname" . }}
       labels:
-        app: {{ template "minio.name" . }}
-        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-        release: "{{ .Release.Name }}"
-        heritage: "{{ .Release.Service }}"
         component: app
-{{- if .Values.podLabels }}
-{{ toYaml .Values.podLabels | indent 8 }}
-{{- end }}
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
 {{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations | trimSuffix "\n" | indent 8 }}

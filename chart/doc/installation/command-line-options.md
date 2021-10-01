@@ -316,7 +316,7 @@ GitLab external URL                                              |
 | `gitlab.gitlab-shell.service.internalPort`                     | Shell internal port                                                  | `2222`                                                           |
 | `gitlab.gitlab-shell.service.name`                             | Shell service name                                                   | `gitlab-shell`                                                   |
 | `gitlab.gitlab-shell.service.type`                             | Shell service type                                                   | `ClusterIP`                                                      |
-| `gitlab.gitlab-shell.webservice.serviceName`                   | Webservice service name                                              | `unicorn`                                                        |
+| `gitlab.gitlab-shell.webservice.serviceName`                   | Webservice service name                                              | inherited from `global.webservice.serviceName`                                    |
 | `gitlab.mailroom.securityContext.fsGroup`                      | Group ID under which the pod should be started                       | `1000`                                                           |
 | `gitlab.mailroom.securityContext.runAsUser`                    | User ID under which the pod should be started                        | `1000`                                                           |
 | `gitlab.migrations.bootsnap.enabled`                           | Migrations Bootsnap enable flag                                      | true                                                             |

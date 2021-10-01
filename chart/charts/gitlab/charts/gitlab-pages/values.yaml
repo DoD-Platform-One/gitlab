@@ -43,6 +43,7 @@ deployment:
 
 ingress:
   annotations: {}
+  configureCertmanager: false
   tls: {}
   path: # /
 
@@ -66,7 +67,6 @@ extraEnv: {}
 
 maxUnavailable: 1
 
-podLabels: {}
 resources:
   requests:
     cpu: 900m

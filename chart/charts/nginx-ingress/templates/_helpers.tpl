@@ -66,7 +66,6 @@ Common labels
 */}}
 {{- define "ingress-nginx.labels" -}}
 helm.sh/chart: {{ include "ingress-nginx.chart" . }}
-{{ include "ingress-nginx.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}

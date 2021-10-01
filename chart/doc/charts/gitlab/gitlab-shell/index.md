@@ -35,6 +35,7 @@ controlled by `global.shell.port`.
 | `annotations`            |                | Pod annotations                          |
 | `podLabels`              |                | Supplemental Pod labels. Will not be used for selectors. |
 | `common.labels`          |                | Supplemental labels that are applied to all objects created by this chart. |
+| `config.clientAliveInterval`  | `0`          | Interval between keepalive pings on otherwise idle connections; the default value of 0 disables this ping |
 | `config.loginGraceTime`  | `120`          | Specifies amount of time that the server will disconnect after if the user has not successfully logged in |
 | `config.maxStartups.full`  | `100`     | SSHd refuse probability will increase linearly and all unauthenticated connection attempts would be refused when unauthenticated connections number will reach specified number |
 | `config.maxStartups.rate`  | `30`      | SSHd will refuse connections with specified probability when there would be too many unauthenticated connections (optional) |

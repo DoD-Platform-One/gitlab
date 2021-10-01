@@ -167,18 +167,16 @@ describe 'checkConfig template' do
                      error_description: 'when Sidekiq pods use both queues and negateQueues'
   end
 
-  describe 'sidekiq.queues.cluster' do
+  describe 'sidekiq.queues' do
     let(:success_values) do
       YAML.safe_load(%(
         gitlab:
           sidekiq:
             pods:
             - name: valid-1
-              cluster: true
               queues: merge,post_receive
             - name: valid-2
-              cluster: false
-              negateQueues: [merge, post_receive]
+              negateQueues: merge,post_receive
       )).merge(default_required_values)
     end
 
@@ -188,52 +186,17 @@ describe 'checkConfig template' do
           sidekiq:
             pods:
             - name: invalid-1
-              cluster: true
               queues: [merge]
             - name: invalid-2
-              cluster: true
               negateQueues: [merge]
       )).merge(default_required_values)
     end
 
-    let(:error_output) { '`queues` is not a string' }
+    let(:error_output) { 'not a string' }
 
     include_examples 'config validation',
                      success_description: 'when Sidekiq pods use cluster with string queues',
                      error_description: 'when Sidekiq pods use cluster with array queues'
-  end
-
-  describe 'sidekiq.queues.queueSelector' do
-    # Simplify with https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/646
-    ['queueSelector', 'experimentalQueueSelector'].each do |config|
-      let(:success_values) do
-        YAML.safe_load(%(
-          gitlab:
-            sidekiq:
-              pods:
-              - name: valid-1
-                cluster: true
-                #{config}: true
-        )).merge(default_required_values)
-      end
-
-      let(:error_values) do
-        YAML.safe_load(%(
-          gitlab:
-            sidekiq:
-              pods:
-              - name: valid-1
-                cluster: false
-                #{config}: true
-        )).merge(default_required_values)
-      end
-
-      let(:error_output) { "`#{config}` only works when `cluster` is enabled" }
-
-      include_examples 'config validation',
-                       success_description: "when Sidekiq pods use #{config} with cluster enabled",
-                       error_description: "when Sidekiq pods use #{config} without cluster enabled"
-    end
   end
 
   describe 'database.externaLoadBalancing' do
@@ -732,35 +695,6 @@ describe 'checkConfig template' do
                      error_description: 'when Redis is set to install with multiple Redis instances'
   end
 
-  describe 'dependencyProxy.puma' do
-    let(:success_values) do
-      YAML.safe_load(%(
-        global:
-          appConfig:
-            dependencyProxy:
-              enabled: true
-      )).merge(default_required_values)
-    end
-
-    let(:error_values) do
-      YAML.safe_load(%(
-        global:
-          appConfig:
-            dependencyProxy:
-              enabled: true
-        gitlab:
-          webservice:
-            webServer: unicorn
-      )).merge(default_required_values)
-    end
-
-    let(:error_output) { 'You must be using the Puma webservice in order to use Dependency Proxy.' }
-
-    include_examples 'config validation',
-                     success_description: 'when dependencyProxy is enabled with a default install',
-                     error_description: 'when dependencyProxy is enabled with the unicorn webservice'
-  end
-
   describe 'webserviceTermination' do
     let(:success_values) do
       YAML.safe_load(%(
@@ -789,6 +723,30 @@ describe 'checkConfig template' do
     include_examples 'config validation',
                      success_description: 'when terminationGracePeriodSeconds is >= blackoutSeconds',
                      error_description: 'when terminationGracePeriodSeconds is < blackoutSeconds'
+  end
+
+  describe 'PostgreSQL version' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 11
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'The minimum required version is PostgreSQL 12.' }
+
+    include_examples 'config validation',
+                     success_description: 'when postgresql.image.tag is >= 12',
+                     error_description: 'when postgresql.image.tag is < 12'
   end
 
   describe 'registry.database (PG version)' do
@@ -927,7 +885,6 @@ describe 'checkConfig template' do
             sidekiq:
               pods:
                 - name: 'valid-1'
-                  cluster: false
                   timeout: 10
         )).deep_merge(default_required_values)
       end
@@ -938,7 +895,6 @@ describe 'checkConfig template' do
             sidekiq:
               pods:
                 - name: 'valid-1'
-                  cluster: false
                   timeout: 50
         )).deep_merge(default_required_values)
       end
@@ -957,7 +913,6 @@ describe 'checkConfig template' do
             sidekiq:
               pods:
                 - name: 'valid-1'
-                  cluster: false
                   terminationGracePeriodSeconds: 50
         )).deep_merge(default_required_values)
       end
@@ -968,7 +923,6 @@ describe 'checkConfig template' do
             sidekiq:
               pods:
                 - name: 'valid-1'
-                  cluster: false
                   terminationGracePeriodSeconds: 1
         )).deep_merge(default_required_values)
       end
@@ -987,7 +941,6 @@ describe 'checkConfig template' do
             sidekiq:
               pods:
                 - name: 'valid-1'
-                  cluster: false
                   terminationGracePeriodSeconds: 50
                   timeout: 10
         )).deep_merge(default_required_values)
@@ -999,7 +952,6 @@ describe 'checkConfig template' do
             sidekiq:
               pods:
                 - name: 'valid-1'
-                  cluster: false
                   terminationGracePeriodSeconds: 50
                   timeout: 60
         )).deep_merge(default_required_values)
@@ -1301,5 +1253,47 @@ describe 'checkConfig template' do
     include_examples 'config validation',
                      success_description: 'when serviceDesk is configured with Microsoft Graph',
                      error_description: 'when serviceDesk is missing required Microsoft Graph settings'
+  end
+
+  describe 'geo.replication.primaryApiUrl' do
+    let(:success_values) do
+      {
+        'global' => {
+          'geo' => {
+            'enabled' => true,
+            'registry' => {
+              'replication' => {
+                'enabled' => true,
+                'primaryApiUrl' => 'http://registry.foobar.com'
+              }
+            }
+          },
+          'psql' => { 'host' => 'foo', 'password' => { 'secret' => 'bar' } }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_values) do
+      {
+        'global' => {
+          'geo' => {
+            'enabled' => true,
+            'role' => 'secondary',
+            'registry' => {
+              'replication' => {
+                'enabled' => true
+              }
+            }
+          },
+          'psql' => { 'host' => 'foo', 'password' => { 'secret' => 'bar' } }
+        }
+      }.merge(default_required_values)
+    end
+
+    let(:error_output) { 'Registry replication is enabled for GitLab Geo, but no primary API URL is specified.' }
+
+    include_examples 'config validation',
+                     success_description: 'when Registry replication is enabled for Geo and primary API URL is specified',
+                     error_description: 'when Registry replication is enabled for Geo but no primary API URL is specified'
   end
 end
