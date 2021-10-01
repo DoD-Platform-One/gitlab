@@ -70,7 +70,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.0.5-bb.0] - 2021-09-21
+## [5.0.5-bb.0] - 2021-10-01
 - upgrade Gitlab to application version 14.0.5 helm chart version 5.0.5
 - notice: this upgrade requires postgresql 12 or higher
 
