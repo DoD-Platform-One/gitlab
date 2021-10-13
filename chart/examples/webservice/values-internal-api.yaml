@@ -19,7 +19,7 @@ gitlab:
       internal-api:
         # this Deployment has no Ingress
         ingress:
-          path: 
+          path:
         hpa:
           minReplicas: 1
           maxReplixas: 3

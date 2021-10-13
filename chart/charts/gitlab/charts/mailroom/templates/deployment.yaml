@@ -1,4 +1,6 @@
 {{- if and .Values.enabled .Values.global.appConfig.incomingEmail.enabled }}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
+{{- $initImageCfg := dict "global" .Values.global.busybox.image "local" .Values.init.image -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,11 +12,11 @@ metadata:
   annotations:
     {{- include "gitlab.deploymentAnnotations" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.hpa.minReplicas }}
+  # Don't provide replicas when HPA are present
+  # replicas: {{ .Values.hpa.minReplicas }}
   selector:
     matchLabels:
-      app: {{ template "name" . }}
-      release: {{ .Release.Name }}
+      {{- include "gitlab.selectorLabels" . | nindent 6 }}
   {{- if .Values.deployment.strategy }}
   strategy: {{ .Values.deployment.strategy | toYaml | nindent 4 }}
   {{- end }}
@@ -41,8 +43,7 @@ spec:
             - topologyKey: "kubernetes.io/hostname"
               labelSelector:
                 matchLabels:
-                  app: {{ template "name" . }}
-                  release: {{ .Release.Name }}
+                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
       {{- else if eq (default .Values.global.antiAffinity .antiAffinity) "soft" }}
       affinity:
         podAntiAffinity:
@@ -52,8 +53,7 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app: {{ template "name" . }}
-                  release: {{ .Release.Name }}
+                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
       {{- end }}
       {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
@@ -64,6 +64,7 @@ spec:
         - name: configure
           command: ['sh', '/config/configure']
           image: {{ include "gitlab.busybox.image" (dict "local" .Values.init "global" $.Values.global.busybox) | quote }}
+          {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
           volumeMounts:
@@ -80,12 +81,12 @@ spec:
             readOnly: false
           resources:
             {{- toYaml .Values.init.resources | nindent 12 }}
-{{- include "pullsecrets" .Values.image | indent 6 }}
+      {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
       containers:
         {{- include "gitlab.extraContainers" . | nindent 8 }}
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.parseAppVersion" (dict "appVersion" .Chart.AppVersion "prepend" "false")) }}"
-          {{ template "gitlab.imagePullPolicy" . }}
+          {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
           volumeMounts:

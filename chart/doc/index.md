@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# GitLab cloud native Helm Chart
+# GitLab cloud native Helm Chart **(FREE SELF)**
 
 This is the official, recommended, and supported method to install GitLab on a cloud native environment.
 
@@ -109,7 +109,7 @@ For more detailed information see [Upgrading](installation/upgrade.md).
 NOTE:
 **Zero-downtime upgrades** are not available with the GitLab charts.
 Ongoing work to support this feature can be tracked via
-[GitLab Epic 3444](https://gitlab.com/groups/gitlab-org/-/epics/3444).
+[the GitLab Operator issue](https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/issues/59).
 
 ## Uninstall
 
@@ -185,7 +185,7 @@ under [development](development/index.md).
 ### GitLab version mappings
 
 The GitLab chart doesn't have the same version number as GitLab itself.
-Breaking changes are anticipated that may need to be introduced to the chart
+Breaking changes are anticipated that may have to be introduced to the chart
 that would warrant a major version bump, and the requirement for these changes
 could completely block other development on these charts until completed.
 

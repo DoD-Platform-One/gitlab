@@ -30,7 +30,11 @@ data:
 
     # Log file.
     # Default is gitlab-shell.log in the root directory.
+    {{- if eq .Values.sshDaemon "gitlab-sshd"}}
+    log_file: "/dev/stdout"
+    {{- else }}
     log_file: "/var/log/gitlab-shell/gitlab-shell.log"
+    {{- end }}
 
     log_format: {{ .Values.logging.format }}
 
@@ -42,5 +46,21 @@ data:
     {{ if .Values.global.tracing.connection.string }}
     gitlab_tracing: {{ .Values.global.tracing.connection.string }}
     {{ end }}
+
+    {{- if eq .Values.sshDaemon "gitlab-sshd"}}
+    # This section configures the built-in SSH server. Ignored when running on OpenSSH.
+    sshd:
+      # Address which the SSH server listens on. Defaults to [::]:2222.
+      listen: "[::]:{{ .Values.service.internalPort }}"
+      # Address which the server listens on HTTP for monitoring/health checks. Defaults to 0.0.0.0:9122.
+      web_listen: "0.0.0.0:{{ .Values.metrics.port }}"
+      # Maximum number of concurrent sessions allowed on a single SSH connection. Defaults to 100.
+      concurrent_sessions_limit: {{ .Values.config.maxStartups.full }}
+      # SSH host key files.
+      host_key_files:
+      <% Dir["/etc/ssh/ssh_host_*_key"].each do |file| %>
+      <%= "- #{file}" %>
+      <% end %>
+    {{- end }}
 # Leave this here - This line denotes end of block to the parser.
 {{- end }}

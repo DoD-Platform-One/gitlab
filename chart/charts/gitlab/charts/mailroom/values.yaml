@@ -1,8 +1,8 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-mailroom
   # tag: v0.9.1
-  pullSecrets: []
   # pullPolicy: IfNotPresent
+  # pullSecrets: []
 
 enabled: true
 
@@ -22,7 +22,6 @@ common:
   labels: {}
 
 global:
-  # imagePullPolicy: IfNotPresent
   redis:
     password: {}
   appConfig:

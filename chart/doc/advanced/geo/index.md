@@ -557,15 +557,16 @@ In order to deploy this chart as a Geo Secondary, we'll start [from this example
 Now that both databases are configured and applications are deployed, we must tell
 the Primary that the Secondary exists:
 
-1. Visit the **primary** instance's **Admin Area > Geo**
-   (`/admin/geo/nodes`) in your browser.
-1. Click the **New node** button.
+1. Visit the **primary** instance, and on the top bar, select
+   **Menu >** **{admin}** **Admin**.
+1. On the left sidebar, select **Geo**.
+1. Select **New node**.
 1. Add the **secondary** instance. Use the full URL for the URL.
-   **Do NOT** check the **This is a primary node** checkbox.
-1. Fill in Name with the `global.geo.nodeName`. These values must always match exactly, character for character.
+   **Do not** select the **This is a primary node** checkbox.
+1. Enter a Name with the `global.geo.nodeName`. These values must always match exactly, character for character.
 1. Optionally, choose which groups or storage shards should be replicated by the
    **secondary** instance. Leave blank to replicate all.
-1. Click the **Add node** button.
+1. Select **Add node**.
 
 Once added to the admin panel, the **secondary** instance will automatically start
 replicating missing data from the **primary** instance in a process known as **backfill**.

@@ -87,7 +87,7 @@ function bootstrap(){
 
   if ! ${USE_STATIC_IP}; then
     helm install dns --namespace kube-system bitnami/external-dns \
-      --version '^3.3.1' \
+      --version '^5.4.1' \
       --set provider=google \
       --set google.project=$PROJECT \
       --set txtOwnerId=$CLUSTER_NAME \

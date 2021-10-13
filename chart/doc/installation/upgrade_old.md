@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Upgrade Old Versions
+# Upgrade old versions **(FREE SELF)**
 
 If you are looking to upgrade a recent version of the Chart, see the [regular Upgrade Guide](upgrade.md).
 

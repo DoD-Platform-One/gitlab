@@ -14,9 +14,16 @@ dependencies:
       - 597578
       - 42196
     gitlab_labels:
+      - group::distribution
+      - devops::enablement
+      - feature::maintenance
       - maintenance
       - dependencies.io
     gitlab_remove_source_branch: true
+    commit_message_template: |-
+      {{.SubjectAndBody}}
+
+      Changelog: changed
     remotes:
       # Registry chart / container
       https://gitlab.com/gitlab-org/container-registry.git:

@@ -112,7 +112,7 @@ describe 'Strategy configuration' do
     let(:template) { HelmTemplate.new(default_values) }
 
     it 'Templates successfully' do
-      expect(template.exit_code).to eq(0)
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
     end
 
     it 'Check undefined strategy for Deployment templates' do
@@ -136,7 +136,7 @@ describe 'Strategy configuration' do
     let(:local_template) { HelmTemplate.new(chart_values) }
 
     it 'Templates successfully' do
-      expect(local_template.exit_code).to eq(0)
+      expect(local_template.exit_code).to eq(0), "Unexpected error code #{local_template.exit_code} -- #{local_template.stderr}"
     end
 
     it 'Check strategy type for Deployment templates' do

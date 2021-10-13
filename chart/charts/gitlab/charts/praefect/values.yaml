@@ -10,6 +10,8 @@ electionStrategy: sql
 
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitaly
+  # pullPolicy: IfNotPresent
+  # pullSecrets: []
 
 service:
   tls: {}
@@ -17,6 +19,7 @@ service:
 init:
   resources: {}
   image: {}
+    # pullPolicy: IfNotPresent
 
 metrics:
   enabled: true

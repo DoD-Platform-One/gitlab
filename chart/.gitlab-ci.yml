@@ -29,13 +29,14 @@ image: registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-ba
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
   KUBECTL_VERSION: "v1.16.15"
+  HELM_VERSION: "3.1.2"
   STABLE_REPO_URL: "https://charts.helm.sh/stable"
   GOOGLE_APPLICATION_CREDENTIALS: ${CI_PROJECT_DIR}/.google_keyfile.json
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
   # AUTO_DEVOPS_DOMAIN: domain.example.com
   GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab
   HELM_MAX_HISTORY: 20
-  TEST_BACKUP_PREFIX: 13.5.0-pre
+  TEST_BACKUP_PREFIX: "14.0.5"
   NAMESPACE: $KUBE_NAMESPACE
 
 stages:
@@ -47,6 +48,7 @@ stages:
   - stable
   - specs
   - qa
+  - staging-release
   - package
   - cleanup
 
@@ -429,7 +431,7 @@ danger-review:
     - danger --fail-on-errors=true
 
 rubocop:
-  image: ruby:2.7.2-alpine
+  image: ruby:2.7.4-alpine
   stage: prepare
   dependencies: []
   before_script:
@@ -452,7 +454,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.13-vale-2.10.2-markdownlint-0.26.0
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.14-vale-2.10.4-markdownlint-0.28.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -461,7 +463,7 @@ check_docs_markdown:
     # Lint prose
     - vale --minAlertLevel error doc
     # Lint Markdown
-    - markdownlint --config .markdownlint.json 'doc/**/*.md'
+    - markdownlint --config .markdownlint.yml 'doc/**/*.md'
   except:
     variables:
       - $DEPS_PIPELINE
@@ -471,7 +473,7 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.13-ruby-2.7.2
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.14-ruby-2.7.4-db71f027
   stage: prepare
   cache: {}
   dependencies: []
@@ -542,7 +544,7 @@ review-docs-cleanup:
 # ---------------------------------------------------------------------------
 
 .specs: &specs
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images:ruby-2.7.2.patched-golang-1.14-git-2.31-lfs-2.9-chrome-89-node-14.15-yarn-1.22-postgresql-11-graphicsmagick-1.3.36
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images:ruby-2.7.patched-golang-1.14-git-2.31-lfs-2.9-chrome-89-node-14.15-yarn-1.22-postgresql-11-graphicsmagick-1.3.36
 
   stage: specs
   services:
@@ -553,10 +555,7 @@ review-docs-cleanup:
     GITLAB_PASSWORD: $ROOT_PASSWORD
     S3_CONFIG_PATH: /etc/gitlab/minio
   script:
-    - |
-      curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
-      echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-      apt update -qq && apt install docker-ce-cli=5:20.10.5~3-0~debian-buster
+    - ./scripts/ci/install_spec_dependencies
     - if [[ -n "${VARIABLES_FILE}" ]]; then source "${VARIABLES_FILE}"; ./scripts/ci/feature_spec_setup; else ./scripts/ci/integration_spec_setup; fi
     - bundle config set path 'gems'
     - bundle install -j $(nproc)
@@ -699,7 +698,7 @@ production_specs_eks:
     - source "${VARIABLES_FILE}"
     - app_version=$(ruby -e "require 'yaml'; puts YAML.safe_load(File.read('Chart.yaml'))['appVersion']")
     - qa_version="nightly"
-    - if [ "$app_version" != "master"  ]; then
+    - if [ "$app_version" != "master" && "$app_version" != "main" ]; then
     -   qa_version="${app_version}-ee"
     - fi
     - SIGNUP_DISABLED=true QA_DEBUG=true GITLAB_USERNAME=root GITLAB_PASSWORD=$ROOT_PASSWORD GITLAB_ADMIN_USERNAME=root GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD EE_LICENSE=$REVIEW_APPS_EE_LICENSE gitlab-qa Test::Instance::Any EE:$qa_version https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
@@ -734,6 +733,20 @@ wait_for_dev_images:
   only:
     refs:
       - /.*-stable/@gitlab/charts/gitlab
+
+staging_release:
+  stage: staging-release
+  image: "registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base-helm-3"
+  variables:
+    CHANNEL: "stable"
+  script:
+    - if [[ $CI_COMMIT_REF_NAME =~ $AUTO_DEPLOY_TAG_REGEX ]]; then export CHANNEL="autodeploy"; fi
+    - helm dependency update
+    - helm package .
+    - chart_file=$(ls -l gitlab*.tgz | head -n 1 | awk '{print $NF}')
+    - curl --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --form "chart=@${chart_file}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/${CHANNEL}/charts"
+  only:
+    - tags@gitlab/charts/gitlab
 
 release_package:
   stage: package
@@ -835,3 +848,21 @@ qa_eks_manual_full_suite:
     name: eks_review/$CI_COMMIT_REF_NAME
     on_stop: stop_review_eks
   when: manual
+
+create_operator_mr:
+  stage: package
+  timeout: 2h
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker
+  allow_failure: true
+  before_script:
+    - bundle install
+  script:
+    - git fetch origin --tags
+    - bash scripts/create_operator_mr.sh
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^\d+\.\d+\.\d+\+[^ ]{7,}\.[^ ]{7,}$/'
+      when: never
+    - if: '$CI_COMMIT_TAG && $CI_PROJECT_PATH == "gitlab/charts/gitlab"'
+      when: manual
+    - when: never
+  needs: []

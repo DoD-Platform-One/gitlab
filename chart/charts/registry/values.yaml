@@ -1,8 +1,8 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.5.0-gitlab'
-  pullPolicy: 'IfNotPresent'
-  pullSecrets: []
+  tag: 'v3.11.0-gitlab'
+  # pullPolicy: IfNotPresent
+  # pullSecrets: []
 
 deployment:
   terminationGracePeriodSeconds: 30
@@ -55,9 +55,14 @@ enabled: true
 ## Registry Maintenance Settings
 ## See https://docs.docker.com/registry/configuration/#maintenance
 maintenance:
-  readOnly:
+  readonly:
     ## Enable read-only mode for Registry
     enabled: false
+  uploadpurging:
+    enabled: true
+    age: 168h
+    interval: 24h
+    dryrun: false
 
 annotations: {}
 
@@ -72,7 +77,7 @@ networkpolicy:
   annotations: {}
 
 ingress:
-  enabled: 
+  enabled:
   proxyReadTimeout: 900
   proxyBodySize: "0"
   proxyBuffering: "off"
@@ -85,7 +90,7 @@ ingress:
 
 global:
   ingress:
-    enabled: 
+    enabled:
     annotations: {}
     tls: {}
       # secretName:
@@ -116,10 +121,10 @@ global:
 
 ## Control the InitContainer behaviors.
 init:
-  image:
+  image: {}
     # repository:
     # tag:
-    pullPolicy: "IfNotPresent"
+    # pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 50m
@@ -300,7 +305,9 @@ database:
 # NOTE: This is an experimental feature and must not be used in production.
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#migration
 migration:
+  enabled: false
   disablemirrorfs: false
+  # rootdirectory:
 
 # Disable online garbage collection by default.
 # NOTE: This is an experimental feature and must not be used in production.

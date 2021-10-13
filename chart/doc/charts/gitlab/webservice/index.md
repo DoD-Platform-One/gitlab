@@ -56,6 +56,9 @@ to the `helm install` command using the `--set` flags.
 | `gitlab.webservice.workhorse.image` | `registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee` | Workhorse image repository |
 | `gitlab.webservice.workhorse.tag`   |                       | Workhorse image tag                            |
 | `hpa.targetAverageValue`         | `1`                   | Set the autoscaling target value               |
+| `sshHostKeys.mount`         | `false`                   | Whether to mount the GitLab Shell [secret] containing the public SSH keys.                |
+| `sshHostKeys.mountName`         | `ssh-host-keys`                   | Name of the mounted volume.                |
+| `sshHostKeys.types`         | `[dsa,rsa,ecdsa,ed25519]`                   | List of SSH key types to mount.               |
 | `image.pullPolicy`               | `Always`              | Webservice image pull policy                      |
 | `image.pullSecrets`              |                       | Secrets for the image repository               |
 | `image.repository`               | `registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee` | Webservice image repository |
@@ -106,6 +109,8 @@ to the `helm install` command using the `--set` flags.
 | `workerProcesses`                | `2`                   | Webservice number of workers                      |
 | `workhorse.keywatcher`           | `true`                | Subscribe workhorse to Redis. This is **required** by any deployment servicing request to `/api/*`, but can be safely disabled for other deployments |
 | `workhorse.shutdownTimeout`                    | `global.webservice.workerTimeout + 1` (seconds) | Time to wait for all Web requests to clear from Workhorse. Examples: `1min`, `65s`. |
+| `workhorse.trustedCIDRsForPropagation`         |         | A list of CIDR blocks that can be trusted for propagating a correlation ID. The `-propagateCorrelationID` option must also be used in `workhorse.extraArgs` for this to work. See the [Workhorse documentation](https://gitlab.com/gitlab-org/gitlab/-/blob/master/workhorse/doc/operations/configuration.md) for more details. |
+| `workhorse.trustedCIDRsForXForwardedFor`       |         | A list of CIDR blocks that can be used to resolve the actual client IP via the `X-Forwarded-For` HTTP header. This is used with `workhorse.trustedCIDRsForPropagation`. See the [Workhorse documentation](https://gitlab.com/gitlab-org/gitlab/-/blob/master/workhorse/doc/operations/configuration.md) for more details. |
 | `workhorse.livenessProbe.initialDelaySeconds`  | 20      | Delay before liveness probe is initiated       |
 | `workhorse.livenessProbe.periodSeconds`        | 60      | How often to perform the liveness probe        |
 | `workhorse.livenessProbe.timeoutSeconds`       | 30      | When the liveness probe times out              |

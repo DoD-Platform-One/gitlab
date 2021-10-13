@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Upgrade Guide
+# Upgrade Guide **(FREE SELF)**
 
 Before upgrading your GitLab installation, you need to check the
 [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md)
@@ -23,7 +23,7 @@ to first update to the latest `3.3.x` patch release in order for the upgrade to 
 The [4.0 release notes](../releases/4_0.md) describe the supported upgrade path.
 
 We also recommend that you take a [backup](../backup-restore/index.md) first. Also note that you
-must provide all values using `helm upgrade --set key=value` syntax or `-f values.yml` instead of
+must provide all values using `helm upgrade --set key=value` syntax or `-f values.yaml` instead of
 using `--reuse-values`, because some of the current values might be deprecated.
 
 You can retrieve your previous `--set` arguments cleanly, with

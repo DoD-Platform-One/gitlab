@@ -26,7 +26,7 @@ known as pods currently.
 {{- define "sidekiq.commonLabels" -}}
 {{- $commonPodLabels := merge (default (dict) .pod) (default (dict) .global) -}}
 {{- range $key, $value := $commonPodLabels }}
-{{ $key }}: {{ $value }}
+{{ $key }}: {{ $value | quote }}
 {{- end }}
 {{- end -}}
 
@@ -37,7 +37,7 @@ Sidekiq deployments, otherwise known as pods currently.
 {{- define "sidekiq.podLabels" -}}
 {{- $commonPodLabels := default (dict) .pod -}}
 {{- range $key, $value := $commonPodLabels }}
-{{ $key }}: {{ $value }}
+{{ $key }}: {{ $value | quote }}
 {{- end }}
 {{- end -}}
 

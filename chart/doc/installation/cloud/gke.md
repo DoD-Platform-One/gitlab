@@ -4,19 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Preparing GKE resources
+# Preparing GKE resources **(FREE SELF)**
 
 For a fully functional GitLab instance, you will need a few resources before
 deploying the `gitlab` chart. The following is how these charts are deployed
 and tested within GitLab.
-
-NOTE:
-Google provides a whitepaper for [deploying production-ready GitLab on
-Google Kubernetes Engine](https://cloud.google.com/architecture/deploying-production-ready-gitlab-on-gke), including all steps and external
-resource configuration. These are alternative to this document, and the
-deployed chart will behave slightly differently. For example, the default
-domain is configured with [nip.io](https://nip.io), which may experience issues due to [rate limiting](https://letsencrypt.org/docs/rate-limits/) with
-Let's Encrypt.
 
 ## Creating the GKE cluster
 
@@ -83,7 +75,7 @@ Two resources need to be created in GCP, a Kubernetes cluster and an external IP
 To provision the Kubernetes cluster manually, follow the
 [GKE instructions](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster).
 
-- We recommend a cluster with 8vCPU and 30GB of RAM.
+- We recommend a cluster with at least 2 nodes, each with 4vCPU and 15GB of RAM.
 - Make a note of the cluster's region, it will be needed in the following step.
 
 #### Creating the external IP

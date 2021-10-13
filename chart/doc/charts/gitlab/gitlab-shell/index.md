@@ -78,6 +78,7 @@ controlled by `global.shell.port`.
 | `service.loadBalancerSourceRanges` |      | List of IP CIDRs allowed access to LoadBalancer (if supported)  |
 | `securityContext.fsGroup` | `1000`      |Group ID under which the pod should be started |
 | `securityContext.runAsUser` | `1000`      |User ID under which the pod should be started  |
+| `sshDaemon` | `openssh` | Selects which SSH daemon would be run, possible values (`openssh`, `gitlab-sshd`) |
 | `tolerations`            | `[]`           | Toleration labels for pod assignment     |
 | `workhorse.serviceName`    | `webservice`      | Workhorse service name (by default, Workhorse is a part of the webservice Pods / Service)                   |
 

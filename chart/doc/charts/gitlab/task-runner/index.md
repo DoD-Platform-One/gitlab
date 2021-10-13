@@ -178,7 +178,7 @@ the Rails console:
 kubectl get pods -lapp=task-runner
 
 # Launch a shell inside the pod
-kubectl exec -it <Task Runner pod name> bash
+kubectl exec -it <Task Runner pod name> -- bash
 
 # open Rails console
 gitlab-rails console -e production

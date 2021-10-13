@@ -25,7 +25,7 @@ Follow these steps for backing up a GitLab Helm chart based installation
 1. Run the backup utility
 
    ```shell
-   kubectl exec <Task Runner pod name> -it backup-utility
+   kubectl exec <Task Runner pod name> -it -- backup-utility
    ```
 
 1. Visit the `gitlab-backups` bucket in the object storage service and ensure a tarball has been added. It will be named in `<timestamp>_<version>_gitlab_backup.tar` format.
@@ -47,7 +47,7 @@ You need to set the following parameters:
 The backup utility can take some extra arguments. See what those are with:
 
 ```shell
-kubectl exec <Task Runner pod name> -it backup-utility --help
+kubectl exec <Task Runner pod name> -it -- backup-utility --help
 ```
 
 ## Backup the secrets

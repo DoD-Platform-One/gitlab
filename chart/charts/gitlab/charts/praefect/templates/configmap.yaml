@@ -95,24 +95,3 @@ data:
     password = '<%= File.read("/etc/gitlab-secrets/praefect/db_password") %>'
     dbname = '{{ template "gitlab.praefect.psql.dbName" . }}'
     sslmode = '{{ $.Values.global.praefect.psql.sslMode }}'
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ template "fullname" . }}-scripts
-  namespace: {{ $.Release.Namespace }}
-  labels:
-    {{- include "gitlab.standardLabels" . | nindent 4 }}
-    {{- include "gitlab.commonLabels" . | nindent 4 }}
-data:
-  praefect-start: |
-    set -e
-
-    {{- if .Values.global.praefect.autoMigrate }}
-    # Run the migrations
-    /usr/local/bin/praefect -config /etc/gitaly/config.toml sql-migrate
-    {{- end }}
-
-    # Start praefect
-    /usr/local/bin/praefect -config /etc/gitaly/config.toml
-

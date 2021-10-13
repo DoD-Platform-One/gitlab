@@ -1,3 +1,9 @@
+---
+stage: Enablement
+group: Distribution
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+---
+
 # Writing RSpec tests for charts
 
 The following are notes and conventions used for creating RSpec tests for the
@@ -72,7 +78,7 @@ describe 'some feature' do
         global:
           feature:
             enabled: true
-      )).merge(default_values)
+      )).deep_merge(default_values)
     end
 
     ...
@@ -84,6 +90,166 @@ The above snippet demonstrates a common pattern of setting a number of default
 values that are common across multiple tests that are then merged into the
 final values that are used in the `HelmTemplate` constructor for a specific
 set of tests.
+
+## Using property merge patterns
+
+Throughout the RSpec of this project, you will find different forms of `merge`. There are a few guidelines and considerations to take into account when choosing which to make use of.
+
+Ruby's native `Hash.merge` will _replace_ keys in the destination, it will not deeply walk an object.
+This means that all properties under a tree will be removed if the source has a matching entry.
+In an attempt to address, this we've been using the [hash-deep-merge](https://rubygems.org/gems/hash-deep-merge/) gem to perform naive deep merge of YAML documents.
+When _adding_ properites, this has worked well. The drawback is that this does not provide a means to cause the overwrite of nested structures.
+
+Helm merges / coalesces configuration properties via [coalesceValues function](https://github.com/helm/helm/blob/a499b4b179307c267bdf3ec49b880e3dbd2a5591/pkg/chartutil/coalesce.go#L145-L148), which has some distinctly different behaviors to `deep_merge` as implemented here. We continue to refine how this functions within our RSpec.
+
+**General guidelines:**
+
+1. Be aware of and wary of the behavior of `Hash.merge`.
+1. Be aware of and wary of the behavior of `Hash.deep_merge` as offered by `hash-deep-merge` gem.
+1. When you need to overwrite a specific key, do so explicitly with _non-empty_ content.
+1. When you need to remove a specific key, set it to `null`.
+1. Do not use imperative forms (`merge!`) unless expressly needed. When doing so, comment why.
+
+### Breakdown of considerations for merge operations
+
+Here is a direct comparison of Ruby's `Hash.merge` versus `Hash.deep_merge` from the `hash-deep-merge` gem.
+
+```plaintext
+2.7.2 :002 > require 'yaml'
+ => true
+2.7.2 :003"> example = YAML.safe_load(%(
+2.7.2 :004">   a:
+2.7.2 :005">     b: 1
+2.7.2 :006">     c: [ 1, 2, 3]
+2.7.2 :007 >  ))
+ => {"a"=>{"b"=>1, "c"=>[1, 2, 3]}}
+2.7.2 :008"> source = YAML.safe_load(%(
+2.7.2 :009">   a:
+2.7.2 :010">     d: "whee"
+2.7.2 :011 >  ))
+ => {"a"=>{"d"=>"whee"}}
+2.7.2 :012 > example.merge(source)
+ => {"a"=>{"d"=>"whee"}}
+```
+
+```plaintext
+2.7.2 :013 > require 'hash_deep_merge'
+2.7.2 :014 > example = {"a"=>{"b"=>1, "c"=>[1, 2, 3]}}
+ => {"a"=>{"b"=>1, "c"=>[1, 2, 3]}}
+2.7.2 :015 > source = {"a"=>{"b"=> 2, "d"=>"whee"}}
+ => {"a"=>{"b"=>2, "d"=>"whee"}}
+2.7.2 :016 > example.deep_merge(source)
+ => {"a"=>{"b"=>2, "c"=>[1, 2, 3], "d"=>"whee"}}
+```
+
+Let us compare the output of Ruby's `values.deep_merge(xyz)` and that of Helm's `helm template . -f xyz.yaml`, so that we can examine the differences between `deep_merge` and `coalesceValues` within Helm. The desired behavior is the equavilent of [`merge.WithOverride`](https://github.com/imdario/mergo#usage) from `github.com/imdario/mergo` Go module as used within Helm and Sprig.
+
+The Ruby code for this is effectively:
+
+```ruby
+require 'yaml'
+require 'hash_deep_merge'
+
+values = YAML.safe_load(File.read('values.yaml'))
+xyz = YAML.safe_load(File.read('xyz.yaml'))
+
+puts values.deep_merge(xyz).to_yaml
+```
+
+```yaml
+---
+file: values.yaml
+gitlab:
+  gitaly:
+    securityContext:
+      user: 1000
+      group: 1000
+---
+file: empty.yaml     # sets `securityContext: {}`
+gitlab:
+  gitaly:
+    securityContext:
+      user: 1000
+      group: 1000
+---
+file: null.yaml      # sets `securityContext: null`
+gitlab:
+  gitaly:
+    securityContext:
+---
+file: null_user.yaml # sets `securityContext.user: null`
+gitlab:
+  gitaly:
+    securityContext:
+      user:
+      group: 1000
+```
+
+The Helm template contains only `{{ .Values | toYaml }}`
+
+```yaml
+---
+# Source: example/templates/output.yaml
+file: values.yaml
+gitlab:
+  gitaly:
+    securityContext:
+      group: 1000
+      user: 1000
+---
+# Source: example/templates/output.yaml
+file: empty.yaml     # sets `securityContext: {}`
+gitlab:
+  gitaly:
+    securityContext:
+      group: 1000
+      user: 1000
+---
+# Source: example/templates/output.yaml
+file: null.yaml      # sets `securityContext: null`
+gitlab:
+  gitaly: {}
+---
+# Source: example/templates/output.yaml
+file: null_user.yaml # sets `securityContext.user: null`
+gitlab:
+  gitaly:
+    securityContext:
+      group: 1000
+```
+
+First observation: When we set an "empty" hash (`{}`), both Ruby and Helm patterns result in no change. This is because the base value, and the "new" value are both the same type. To _remove_ a hash, you must set it to `null`.
+
+Second observation: This is a stark difference. When we set the hash to `null` in the YAML, we get slightly different results. Helm removes the entire key, but leaves the parent type intact. Ruby leaves the key present, but with `nil` value. Similar can be seen when we change an individual key. Helm removes this key while Ruby retains it in a `nil` state.
+
+Last, but not least! Do not confuse scalars with maps. The following YAML, when merged in Ruby or Helm, will result in the array being `[]`. Neither `deep_merge` or `coalesceValues` walks into arrays. Scalar data _will be overwritten_.
+
+```yaml
+---
+complex:
+  array: [1,2,3]
+  hash:
+    item: 1
+---
+complex:
+  array: []
+  hash:
+    item:
+```
+
+```yaml
+---
+# Ruby: puts values.deep_merge(xyz).to_yaml
+complex:
+  array: []
+  hash:
+    item:
+---
+# Source: example/templates/output.yaml
+complex:
+  array: []
+  hash: {}
+```
 
 ## Testing the results
 

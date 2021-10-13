@@ -95,15 +95,15 @@ describe 'Webservice Deployments configuration' do
       expect(t.labels('Deployment/test-webservice-default')).not_to include('global' => 'global')
 
       expect(t.template_labels('Deployment/test-webservice-default')).to include('global' => 'webservice')
-      expect(t.template_labels('Deployment/test-webservice-default')).to include('global_pod' => true)
-      expect(t.template_labels('Deployment/test-webservice-default')).to include('ws_pod' => true)
+      expect(t.template_labels('Deployment/test-webservice-default')).to include('global_pod' => 'true')
+      expect(t.template_labels('Deployment/test-webservice-default')).to include('ws_pod' => 'true')
 
       expect(t.labels('Ingress/test-webservice-default')).to include('global' => 'webservice')
-      expect(t.labels('Ingress/test-webservice-smartcard')).to include('global' => 'webservice')
+      expect(t.labels('Ingress/test-webservice-default-smartcard')).to include('global' => 'webservice')
 
       expect(t.labels('Service/test-webservice-default')).to include('global' => 'webservice')
-      expect(t.labels('Service/test-webservice-default')).to include('global_service' => true)
-      expect(t.labels('Service/test-webservice-default')).to include('ws_service' => true)
+      expect(t.labels('Service/test-webservice-default')).to include('global_service' => 'true')
+      expect(t.labels('Service/test-webservice-default')).to include('ws_service' => 'true')
       expect(t.labels('Service/test-webservice-default')).to include('webservice' => 'webservice')
       expect(t.labels('Service/test-webservice-default')).not_to include('global' => 'global')
 
@@ -130,42 +130,42 @@ describe 'Webservice Deployments configuration' do
       expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
 
       expect(t.labels('Deployment/test-webservice-web')).to include('foo' => 'web-common')
-      expect(t.labels('Deployment/test-webservice-web')).to include('web_common' => true)
-      expect(t.labels('Deployment/test-webservice-web')).to include('ws_common' => true)
+      expect(t.labels('Deployment/test-webservice-web')).to include('web_common' => 'true')
+      expect(t.labels('Deployment/test-webservice-web')).to include('ws_common' => 'true')
       expect(t.labels('Deployment/test-webservice-web')).to include('global' => 'webservice')
       expect(t.labels('Deployment/test-webservice-web')).to include('webservice' => 'webservice')
 
       expect(t.labels('Deployment/test-webservice-web')).not_to include('foo' => 'webservice-common')
       expect(t.labels('Deployment/test-webservice-web')).not_to include('foo' => 'global-pod')
-      expect(t.labels('Deployment/test-webservice-web')).not_to include('web_pod' => true)
+      expect(t.labels('Deployment/test-webservice-web')).not_to include('web_pod' => 'true')
       expect(t.labels('Deployment/test-webservice-web')).not_to include('foo' => 'web-pod')
       expect(t.labels('Deployment/test-webservice-web')).not_to include('foo' => 'webservice_service')
-      expect(t.labels('Deployment/test-webservice-web')).not_to include('ws_service' => true)
-      expect(t.labels('Deployment/test-webservice-web')).not_to include('ws_pod' => true)
+      expect(t.labels('Deployment/test-webservice-web')).not_to include('ws_service' => 'true')
+      expect(t.labels('Deployment/test-webservice-web')).not_to include('ws_pod' => 'true')
       expect(t.labels('Deployment/test-webservice-web')).not_to include('global' => 'service')
       expect(t.labels('Deployment/test-webservice-web')).not_to include('global' => 'pod')
-      expect(t.labels('Deployment/test-webservice-web')).not_to include('global_pod' => true)
-      expect(t.labels('Deployment/test-webservice-web')).not_to include('global_service' => true)
+      expect(t.labels('Deployment/test-webservice-web')).not_to include('global_pod' => 'true')
+      expect(t.labels('Deployment/test-webservice-web')).not_to include('global_service' => 'true')
       expect(t.labels('Deployment/test-webservice-web')).not_to include('foo' => 'global_service')
 
       expect(t.template_labels('Deployment/test-webservice-web')).to include('foo' => 'web-pod')
-      expect(t.template_labels('Deployment/test-webservice-web')).to include('web_pod' => true)
-      expect(t.template_labels('Deployment/test-webservice-web')).to include('web_common' => true)
-      expect(t.template_labels('Deployment/test-webservice-web')).to include('ws_common' => true)
+      expect(t.template_labels('Deployment/test-webservice-web')).to include('web_pod' => 'true')
+      expect(t.template_labels('Deployment/test-webservice-web')).to include('web_common' => 'true')
+      expect(t.template_labels('Deployment/test-webservice-web')).to include('ws_common' => 'true')
       expect(t.template_labels('Deployment/test-webservice-web')).to include('global' => 'webservice')
       expect(t.template_labels('Deployment/test-webservice-web')).to include('webservice' => 'webservice')
       expect(t.template_labels('Deployment/test-webservice-web')).not_to include('foo' => 'webservice_pod')
 
       expect(t.labels('Ingress/test-webservice-web')).to include('foo' => 'web-common')
-      expect(t.labels('Ingress/test-webservice-web')).to include('web_common' => true)
-      expect(t.labels('Ingress/test-webservice-web')).to include('ws_common' => true)
+      expect(t.labels('Ingress/test-webservice-web')).to include('web_common' => 'true')
+      expect(t.labels('Ingress/test-webservice-web')).to include('ws_common' => 'true')
       expect(t.labels('Ingress/test-webservice-web')).to include('global' => 'webservice')
       expect(t.labels('Ingress/test-webservice-web')).to include('webservice' => 'webservice')
 
       expect(t.labels('Service/test-webservice-web')).to include('foo' => 'web-common')
-      expect(t.labels('Service/test-webservice-web')).to include('ws_service' => true)
-      expect(t.labels('Service/test-webservice-web')).to include('web_common' => true)
-      expect(t.labels('Service/test-webservice-web')).to include('ws_common' => true)
+      expect(t.labels('Service/test-webservice-web')).to include('ws_service' => 'true')
+      expect(t.labels('Service/test-webservice-web')).to include('web_common' => 'true')
+      expect(t.labels('Service/test-webservice-web')).to include('ws_common' => 'true')
       expect(t.labels('Service/test-webservice-web')).to include('global' => 'webservice')
       expect(t.labels('Service/test-webservice-web')).to include('webservice' => 'webservice')
       expect(t.labels('Service/test-webservice-web')).not_to include('foo' => 'global-pod')
@@ -188,6 +188,13 @@ describe 'Webservice Deployments configuration' do
     it 'creates only Deployment/test-webservice-default' do
       expect(chart_defaults.dig(item_key('Deployment', 'default'))).to be_truthy
       expect(chart_defaults.dig(item_key('Deployment', 'other'))).to be_falsey
+    end
+
+    it 'creates a default set of volume mounts' do
+      volumes = chart_defaults.dig('Deployment/test-webservice-default', 'spec', 'template', 'spec', 'volumes')
+
+      expect(volumes).to include({ 'name' => 'shared-tmp', 'emptyDir' => {} })
+      expect(volumes).to include({ 'name' => 'shared-upload-directory', 'emptyDir' => {} })
     end
   end
 
@@ -325,6 +332,8 @@ describe 'Webservice Deployments configuration' do
                     thing: "one"
                 nodeSelector: # disable nodeSelector
                 tolerations: null # disable tolerations
+                sshHostKeys:
+                  mount: true
               b:
                 puma:
                   threads:
@@ -341,6 +350,11 @@ describe 'Webservice Deployments configuration' do
                     effect: "NoExecute"
                 extraEnv:
                   DEPLOYMENT: "b"
+                sshHostKeys:
+                  mount: true
+                  mountName: ssh-host-keys-b
+                  types:
+                  - dsa
               c:
                 puma:
                   threads:
@@ -449,6 +463,50 @@ describe 'Webservice Deployments configuration' do
           expect(pod_template_spec['tolerations'][0]['effect']).to eql("NoSchedule")
         end
       end
+
+      context 'sshHostKeys settings (map)' do
+        it 'adds the SSH host keys volume' do
+          volume_a = datamodel.find_volume(item_key('Deployment', 'a'), 'ssh-host-keys')
+          volume_b = datamodel.find_volume(item_key('Deployment', 'b'), 'ssh-host-keys-b')
+          volume_c = datamodel.find_volume(item_key('Deployment', 'c'), 'ssh-host-keys')
+
+          expect(volume_a).not_to be_nil
+          expect(volume_b).not_to be_nil
+          expect(volume_c).to be_nil
+        end
+
+        it 'inherits when not present' do
+          # mountName already covered in a previous case
+          volume_a = datamodel.find_volume(item_key('Deployment', 'a'), 'ssh-host-keys')
+          items_a = volume_a.dig('secret', 'items')
+
+          expect(items_a.length).to eq(4)
+        end
+
+        it 'overrides when set' do
+          # mountName override already covered in previous case
+          volume_b = datamodel.find_volume(item_key('Deployment', 'b'), 'ssh-host-keys-b')
+
+          items_b = volume_b.dig('secret', 'items')
+
+          expect(items_b.length).to eq(1)
+        end
+
+        it 'mounts the public keys for the expected deployments at the expected path' do
+          vm_a = datamodel.find_volume_mount(item_key('Deployment', 'a'), 'webservice', 'ssh-host-keys')
+          vm_b = datamodel.find_volume_mount(item_key('Deployment', 'b'), 'webservice', 'ssh-host-keys-b')
+          vm_c = datamodel.find_volume_mount(item_key('Deployment', 'c'), 'webservice', 'ssh-host-keys')
+
+          expect(vm_a).not_to be_nil
+          expect(vm_b).not_to be_nil
+          expect(vm_c).to be_nil
+
+          # the expected path is hardcoded
+          # https://gitlab.com/gitlab-org/gitlab/-/blob/81826be88622659dfa20f4ce2359660a9e51e4da/app/models/instance_configuration.rb#L7
+          expect(vm_a['mountPath']).to eq('/etc/ssh')
+          expect(vm_b['mountPath']).to eq('/etc/ssh')
+        end
+      end
     end
   end
 
@@ -543,6 +601,30 @@ describe 'Webservice Deployments configuration' do
       expect(workhorse_config['default']).not_to include("[redis]")
       expect(workhorse_config['api']).to include("[redis]")
       expect(workhorse_config['git']).not_to include("[redis]")
+    end
+  end
+
+  context 'when emptyDir is customized' do
+    let(:deployments_values) do
+      YAML.safe_load(%(
+        gitlab:
+          webservice:
+            sharedTmpDir:
+              sizeLimit: 1G
+            sharedUploadDir:
+              sizeLimit: 2G
+              medium: Memory
+      )).deep_merge(default_values)
+    end
+
+    it 'properly sets values' do
+      t = HelmTemplate.new(deployments_values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+      volumes = t.dig('Deployment/test-webservice-default', 'spec', 'template', 'spec', 'volumes')
+
+      expect(volumes).to include({ "name" => "shared-tmp", "emptyDir" => { "sizeLimit" => "1G" } })
+      expect(volumes).to include({ "name" => "shared-upload-directory", "emptyDir" => { "sizeLimit" => "2G", "medium" => "Memory" } })
     end
   end
 end

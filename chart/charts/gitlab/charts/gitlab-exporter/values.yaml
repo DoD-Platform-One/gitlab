@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter
-  pullSecrets: []
   # pullPolicy: IfNotPresent
+  # pullSecrets: []
   # tag: master
 
 service:
@@ -42,7 +42,6 @@ init:
       cpu: 50m
 
 global:
-  # imagePullPolicy: IfNotPresent
   redis:
     password: {}
 

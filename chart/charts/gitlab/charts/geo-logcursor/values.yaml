@@ -1,9 +1,9 @@
 # Default values for geo-logcursor.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-image:
-  pullSecrets: []
+image: {}
   # pullPolicy: IfNotPresent
+  # pullSecrets: []
   # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-geo-logcursor
   # tag: master
 init:
@@ -103,5 +103,4 @@ serviceAccount:
   create: false
   annotations: {}
   ## Name to be used for serviceAccount, otherwise defaults to chart fullname
-  # name: 
-  
+  # name:

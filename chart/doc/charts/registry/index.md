@@ -60,10 +60,15 @@ from the parent chart, these values will be:
 registry:
   enabled:
   maintenance:
-    readOnly:
+    readonly:
       enabled: false
+    uploadpurging:
+      enabled: true
+      age: 168h
+      interval: 24h
+      dryrun: false
   image:
-    tag: 'v3.5.0-gitlab'
+    tag: 'v3.11.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -143,12 +148,16 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                         |                                              | Pull policy for the registry image                                                                   |
 | `image.pullSecrets`                        |                                              | Secrets to use for image repository                                                                  |
 | `image.repository`                         | `registry`                                   | Registry image                                                                                       |
-| `image.tag`                                | `v3.5.0-gitlab`                              | Version of the image to use                                                                          |
+| `image.tag`                                | `v3.11.0-gitlab`                              | Version of the image to use                                                                          |
 | `init.image.repository`                    |                                              | initContainer image                                                                                  |
 | `init.image.tag`                           |                                              | initContainer image tag                                                                              |
 | `log`                                      | `{level: info, fields: {service: registry}}` | Configure the logging options                                                                        |
 | `minio.bucket`                             | `global.registry.bucket`                     | Legacy registry bucket name                                                                          |
-| `maintenance.readOnly.enabled`             | `false`                                      | Enable registry's read-only mode                                                                     |
+| `maintenance.readonly.enabled`             | `false`                                      | Enable registry's read-only mode                                                                     |
+| `maintenance.uploadpurging.enabled`        | `true`                                       | Enable upload purging
+| `maintenance.uploadpurging.age`            | `168h`                                       | Purge uploads older than the specified age
+| `maintenance.uploadpurging.interval`       | `24h`                                        | Frequency at which upload purging is performed
+| `maintenance.uploadpurging.dryrun`         | `false`                                      | Only list which uploads will be purged without deleting
 | `reporting.sentry.enabled`                 | `false`                                      | Enable reporting using Sentry                                                                        |
 | `reporting.sentry.dsn`                     |                                              | The Sentry DSN (Data Source Name)                                                                    |
 | `reporting.sentry.environment`             |                                              | The Sentry [environment](https://docs.sentry.io/product/sentry-basics/environments/)                 |
@@ -175,6 +184,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `database.pool.maxidle`                    | `0`                                          | The maximum number of connections in the idle connection pool. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means no idle connections. |
 | `database.pool.maxopen`                    | `0`                                          | The maximum number of open connections to the database. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means unlimited open connections. |
 | `database.pool.maxlifetime`                | `0`                                          | The maximum amount of time a connection may be reused. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited reuse. |
+| `database.pool.maxidletime`                | `0`                                          | The maximum amount of time a connection may be idle. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited duration. |
 | `database.migrations.enabled`              | `true`                                       | Enable the migrations job to automatically run migrations upon initial deployment and upgrades of the Chart. Note that migrations can also be run manually from within any running Registry pods. |
 | `database.migrations.activeDeadlineSeconds` | `3600`                                      | Set the [activeDeadlineSeconds](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job. |
 | `database.migrations.backoffLimit`         | `6`                                          | Set the [backoffLimit](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job. |
@@ -188,7 +198,9 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `gc.manifests.disabled`                    | `false`                                      | When set to `true`, the GC worker for manifests is disabled. |
 | `gc.manifests.interval`                    | `5s`                                         | The initial sleep interval between each worker run. |
 | `gc.reviewafter`                           | `24h`                                        | The minimum amount of time after which the garbage collector should pick up a record for review. `-1` means no wait. |
+| `migration.enabled`                | `false`                                      | When set to `true`, migration mode is enabled. New repositories will be added to the database, while existing repositories will continue to use the filesystem. This is an experimental feature and must not be used in production environments. |
 | `migration.disablemirrorfs`                | `false`                                      | When set to `true`, the registry does not write metadata to the filesystem. Must be used in combination with the metadata database. This is an experimental feature and must not be used in production environments. |
+| `migration.rootdirectory`                |                                              | Allows repositories that have been migrated to the database to use separate storage paths. Using a distinct root directory from the main storage driver configuration allows online migrations. This is an experimental feature and must not be used in production environments. |
 | `securityContext.fsGroup`                  | `1000`                                       | Group ID under which the pod should be started                                                       |
 | `securityContext.runAsUser`                | `1000`                                       | User ID under which the pod should be started                                                        |
 | `serviceLabels`                            | `{}`                                         | Supplemental service labels                                                                          |
@@ -262,7 +274,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.5.0-gitlab'`
+- `tag: 'v3.11.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -658,6 +670,7 @@ database:
     maxidle: 25
     maxopen: 25
     maxlifetime: 5m
+    maxidletime: 5m
   migrations:
     enabled: true
     activeDeadlineSeconds: 3600
@@ -737,7 +750,9 @@ This feature requires the [metadata database](#database) to be enabled.
 
 ```yaml
 migration:
+  enabled: true
   disablemirrorfs: true
+  rootdirectory: gitlab
 ```
 
 ### gc

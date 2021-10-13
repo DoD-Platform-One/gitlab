@@ -130,12 +130,12 @@ Until we learn more about our users need, we expect that our users will be using
     - memory: `315M`
 
 The KAS resources defaults set by this chart are more than enough to handle even the 50 agents scenario.
-If you are planning to reach what we consider an **Extra Heavy Load**, then you should consider tweaking the 
+If you are planning to reach what we consider an **Extra Heavy Load**, then you should consider tweaking the
 default to scale up.
 
 - **Defaults**: 2 pods, each with
   - cpu: `100m`
   - memory: `100M`
-  
-For more information on how these numbers were calculated, see the 
+
+For more information on how these numbers were calculated, see the
 [issue discussion](https://gitlab.com/gitlab-org/gitlab/-/issues/296789#note_542196438).

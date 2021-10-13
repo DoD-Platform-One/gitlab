@@ -17,17 +17,14 @@ Usage:
          "appVersion" .Chart.AppVersion  \
          "prepend" "false"               \
      ) }}
-1. If the version is 'master' we use the 'master' image tag.
-2. Else if the version is a semver version, we check the prepend flag.
+1. If the version is a semver version, we check the prepend flag.
    1. If it is true, we prepend a `v` and return `vx.y.z` image tag.
    2. If it is false, we do not prepend a `v` and just use the input version
-3. Else we just use the version passed as the image tag
+2. Else we just use the version passed as the image tag
 */}}
 {{- define "gitlab.parseAppVersion" -}}
 {{- $appVersion := coalesce .appVersion "master" -}}
-{{- if eq $appVersion "master" -}}
-master
-{{- else if regexMatch "^\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-pre)?$" $appVersion -}}
+{{- if regexMatch "^\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-pre)?$" $appVersion -}}
 {{-   if eq .prepend "true" -}}
 {{-      printf "v%s" $appVersion -}}
 {{-   else -}}

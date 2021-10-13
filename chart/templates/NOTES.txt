@@ -11,6 +11,11 @@ WARNING: The Container Registry metadata database has been enabled. Please note 
 WARNING: The Container Registry filesystem metadata has been disabled. Please note that it is an experimental feature and must not be used in production.
 {{- end }}
 
+{{/* If the Container Registry migration mode is enabled, note it is not production ready */}}
+{{- if eq .Values.registry.migration.enabled true }}
+WARNING: The Container Registry migration mode has been enabled. Please note that it is an experimental feature and must not be used in production.
+{{- end }}
+
 {{/* If the Container Registry online garbage collection is enabled, note it is not production ready */}}
 {{- if eq false .Values.registry.gc.disabled }}
 WARNING: The Container Registry online garbage collection has been enabled. Please note that it is an experimental feature and must not be used in production.

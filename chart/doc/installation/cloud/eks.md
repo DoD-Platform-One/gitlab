@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Preparing EKS resources
+# Preparing EKS resources **(FREE SELF)**
 
 For a fully functional GitLab instance, you will need a few resources before
 deploying the `gitlab` chart.
@@ -17,15 +17,14 @@ Alternatively, a cluster can be created manually as well.
 ### Scripted cluster creation
 
 A [bootstrap script](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/eks_bootstrap_script)
-has been created to automate much of the setup process for users on EKS.
+has been created to automate much of the setup process for users on EKS. You will need to clone this repository before executing the script.
 
 The script will:
 
 1. Create a new EKS cluster.
 1. Setup `kubectl`, and connect it to the cluster.
 
-The script uses [`eksctl`](https://eksctl.io) to initialize the cluster. If it cannot locate it in your PATH, it will install it
-to a temporary location.
+The script uses [`eksctl`](https://eksctl.io) to initialize the cluster. If it cannot locate it in your PATH, you will need to download and install it manually.
 
 To authenticate, `eksctl` uses the same options as the AWS command line. See the AWS documentation for how to
 use [environment variables](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html), or [configuration files](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).

@@ -37,6 +37,5 @@ spec:
     {{- toYaml .Values.service.externalIPs | nindent 4  }}
 {{- end }}
   selector:
-    app: {{ template "name" . }}
-    release: {{ .Release.Name }}
+    {{- include "gitlab.selectorLabels" . | nindent 4 }}
 {{- end }}

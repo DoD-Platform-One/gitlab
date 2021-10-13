@@ -18,6 +18,9 @@ pages:
   {{- if not $.Values.global.appConfig.object_store.enabled }}
   {{-   include "gitlab.appConfig.objectStorage.configuration" (dict "name" "pages" "config" $.Values.global.pages.objectStore "context" $ ) | nindent 2 }}
   {{- end }}
+  local_store:
+    enabled: {{ $.Values.global.pages.localStore.enabled }}
+    path: {{ $.Values.global.pages.localStore.path }}
 {{- end -}}
 
 {{- define "gitlab.pages.mountSecrets" }}

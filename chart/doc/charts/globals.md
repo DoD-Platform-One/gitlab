@@ -7,7 +7,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 # Configure Charts using Globals
 
 To reduce configuration duplication when installing our wrapper Helm chart, several
-configuration settings are available to be set in the `global` section of `values.yml`.
+configuration settings are available to be set in the `global` section of `values.yaml`.
 These global settings are used across several charts, while all other settings are scoped
 within their chart. See the [Helm documentation on globals](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values)
 for more information on how the global variables work.
@@ -127,13 +127,13 @@ The GitLab global host settings for Ingress are located under the `global.ingres
 
 ### Ingress Path
 
-This chart employs `global.ingress.path` as means to assist those users which need to alter the defintion of `path` entries for their Ingress objects.
-Many users will have no need for this setting, and _should not configure it_.
+This chart employs `global.ingress.path` as a means to assist those users that need to alter the definition of `path` entries for their Ingress objects.
+Many users have no need for this setting, and _should not configure it_.
 
 For those users who need to have their `path` definitions end in `/*` to match their load balancer / proxy behaviors, such as when using `ingress.class: gce` in GCP,
 `ingress.class: alb` in AWS, or another such provider.
 
-This setting will ensure that all `path` entries in Ingress resources throughout this chart will be rendered with this.
+This setting ensures that all `path` entries in Ingress resources throughout this chart are rendered with this.
 The only exception is when populating the [`gitlab/webservice` deployments settings](gitlab/webservice/index.md#deployments-settings), where `path` must be specified.
 
 ### Cloud provider LoadBalancers
@@ -194,6 +194,11 @@ global:
     applicationName:
     preparedStatements: false
     connectTimeout:
+    keepalives:
+    keepalivesIdle:
+    keepalivesInterval:
+    keepalivesCount:
+    tcpUserTimeout:
     password:
       useSecret: true
       secret: gitlab-postgres
@@ -214,6 +219,11 @@ global:
 | `username`           | String    | `gitlab`               | The username with which to authenticate to the database.                                                                                                                                       |
 | `preparedStatements` | Boolean      | `false`                | If prepared statements should be used when communicating with the PostgreSQL server.                                                                                                           |
 | `connectTimeout`     | Integer   |                        | The number of seconds to wait for a database connection.                                                                                                                                       |
+| `keepalives`         | Integer   |                        | Controls whether client-side TCP keepalives are used (1, meaning on, 0, meaning off).                                                                                                          |
+| `keepalivesIdle`     | Integer   |                        | The number of seconds of inactivity after which TCP should send a keepalive message to the server. A value of zero uses the system default.                                                    |
+| `keepalivesInterval` | Integer   |                        | The number of seconds after which a TCP keepalive message that is not acknowledged by the server should be retransmitted. A value of zero uses the system default.                             |
+| `keepalivesCount`    | Integer   |                        | The number of TCP keepalives that can be lost before the client's connection to the server is considered dead. A value of zero uses the system default.                                        |
+| `tcpUserTimeout`     | Integer   |                        | The number of milliseconds that transmitted data may remain unacknowledged before a connection is forcibly closed. A value of zero uses the system default.                                    |
 | `applicationName`    | String    |                        | The name of the application connecting to the database. Set to a blank string (`""`) to disable. By default, this will be set to the name of the running process (e.g. `sidekiq`, `puma`).     |
 
 ### PostgreSQL per chart
@@ -255,6 +265,16 @@ global:
 | `clientCertificate` | String  |         | Name of the key within the `Secret` containing the client certificate. |
 | `clientKey`         | String  |         | Name of the key within the `Secret` containing the client certificate's key file. |
 | `serverCA`          | String  |         | Name of the key within the `Secret` containing the certificate authority for the server. |
+
+You may also need to set ```extraEnv``` values to export environment values to point to the correct keys.
+
+```yaml
+global:
+  extraEnv:
+      PGSSLCERT: '/etc/gitlab/postgres/ssl/client-certificate.pem'
+      PGSSLKEY: '/etc/gitlab/postgres/ssl/client-key.pem'
+      PGSSLROOTCERT: '/etc/gitlab/postgres/ssl/server-ca.pem'
+```
 
 ### PostgreSQL load balancing
 
@@ -417,16 +437,16 @@ continue to apply with the Sentinel support unless re-specified in the table abo
 ### Multiple Redis support
 
 The GitLab chart includes support for running with separate Redis instances
-for different persistence classes, currently: `cache`, `queues`, `shared_state`,
-`actioncable` and `trace_chunks`.
+for different persistence classes, currently: `cache`, `queues`, `sharedState`,
+`actioncable` and `traceChunks`.
 
 | Instance     | Purpose                                             |
 |:-------------|:----------------------------------------------------|
 | `cache`        | Store cached data                                   |
 | `queues`       | Store Sidekiq background jobs                       |
-| `shared_state` | Store session-related and other persistent data     |
+| `sharedState`  | Store session-related and other persistent data     |
 | `actioncable`  | Pub/Sub queue backend for ActionCable               |
-| `trace_chunks`  | Store job traces temporarily                       |
+| `traceChunks`  | Store job traces temporarily                        |
 
 Any number of the instances may be specified. Any instances not specified
 will be handled by the primary Redis instance specified
@@ -472,13 +492,13 @@ global:
         enabled: true
         secret: cable-secret
         key: cable-password
-    trace_chunks:
-      host: trace_chunks.redis.example
+    traceChunks:
+      host: traceChunks.redis.example
       port: 6379
       password:
         enabled: true
-        secret: trace_chunks-secret
-        key: trace_chunks-password
+        secret: traceChunks-secret
+        key: traceChunks-password
 ```
 
 The following table describes the attributes for each dictionary of the
@@ -564,7 +584,7 @@ global:
 ```
 
 In this example, the header `X-Random-Config` is a regular header and its value
-can be provided in plaintext in the `values.yml` file or via `--set` flag.
+can be provided in plaintext in the `values.yaml` file or via `--set` flag.
 However, the header `Authorization` is a sensitive one, so mounting it from a
 Kubernetes secret is preferred. For details regarding the structure of the
 secret, refer the [secrets documentation](../installation/secrets.md#registry-sensitive-notification-headers)
@@ -884,7 +904,7 @@ application are described below:
 | `issueClosingPattern`               | String  | (empty) | [Pattern to close issues automatically](https://docs.gitlab.com/ee/administration/issue_closing_pattern.html). |
 | `defaultTheme`                      | Integer |         | [Numeric ID of the default theme for the GitLab instance](https://gitlab.com/gitlab-org/gitlab-foss/blob/master/lib/gitlab/themes.rb#L17-27). It takes a number, denoting the ID of the theme. |
 | `defaultProjectsFeatures.*feature*` | Boolean | `true`  | [See below](#defaultprojectsfeatures). |
-| `webHookTimeout`                    | Integer |         | Waiting time in seconds before a [hook is deemed to have failed](https://docs.gitlab.com/ce/user/project/integrations/webhooks.html#receiving-duplicate-or-multiple-web-hook-requests-triggered-by-one-event). |
+| `webHookTimeout`                    | Integer |         | Waiting time in seconds before a [hook is deemed to have failed](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html#webhook-fails-or-multiple-webhook-requests-are-triggered). |
 
 #### Content Security Policy
 
@@ -1119,7 +1139,7 @@ using Helm's `--set variable` option:
 --set global.appConfig.gitlab_kas.key=custom-secret-key \
 ```
 
-or by configuring your `values.yml`:
+or by configuring your `values.yaml`:
 
 ```yaml
 global:
@@ -1141,7 +1161,7 @@ using Helm's `--set variable` option:
 --set global.appConfig.gitlab_kas.internalUrl="grpc://custom-internal-url" \
 ```
 
-or by configuring your `values.yml`:
+or by configuring your `values.yaml`:
 
 ```yaml
 global:
@@ -1163,7 +1183,7 @@ URLs. You can do so using Helm's `--set variable` option:
 --set global.appConfig.gitlab_kas.internalUrl="grpc://custom-internal-url" \
 ```
 
-or by configuring your `values.yml`:
+or by configuring your `values.yaml`:
 
 ```yaml
 global:
@@ -1650,6 +1670,9 @@ global:
       connection: {}
         secret:
         key:
+    localStore:
+      enabled: false
+      path:
     apiSecret: {}
       secret:
       key:
@@ -1670,6 +1693,8 @@ global:
 | `objectStore.bucket`            | String    | `gitlab-pages`             | Bucket to be used to store content related to Pages |
 | `objectStore.connection.secret` | String    |                            | Secret containing connection details for object storage. |
 | `objectStore.connection.key`    | String    |                            | Key within the connection secret where connection details are stored. |
+| `localStore.enabled`            | Boolean   | False                      | Enable using local storage for content related to Pages (as opposed to objectStore) |
+| `localStore.path`               | String    | `/srv/gitlab/shared/pages` | Path where pages files will be stored; only used if localStore is set to true. |
 | `apiSecret.secret`              | String    |                            | Secret containing 32 bit API key in Base64 encoded form. |
 | `apiSecret.key`                 | String    |                            | Key within the API key secret where the API key is stored. |
 

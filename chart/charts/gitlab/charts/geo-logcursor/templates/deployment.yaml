@@ -1,4 +1,7 @@
 {{- if include "geo-logcursor.enabled" $  }}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
+{{- $initImageCfg := dict "global" .Values.global.busybox.image "local" .Values.init.image -}}
+{{- include "database.datamodel.prepare" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,15 +19,15 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "name" . }}
-      release: {{ .Release.Name }}
+      {{- include "gitlab.selectorLabels" . | nindent 6 }}
   {{- if .Values.deployment.strategy }}
   strategy: {{ .Values.deployment.strategy | toYaml | nindent 4 }}
   {{- end }}
   template:
     metadata:
       labels:
-
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
         {{- include "gitlab.standardLabels" . | nindent 8 }}
         {{- include "gitlab.commonLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
@@ -45,8 +48,7 @@ spec:
             - topologyKey: "kubernetes.io/hostname"
               labelSelector:
                 matchLabels:
-                  app: {{ template "name" . }}
-                  release: {{ .Release.Name }}
+                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
       {{- else if eq (default .Values.global.antiAffinity .Values.antiAffinity) "soft" }}
       affinity:
         podAntiAffinity:
@@ -56,8 +58,7 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app: {{ template "name" . }}
-                  release: {{ .Release.Name }}
+                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
       {{- end }}
       {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
@@ -69,6 +70,7 @@ spec:
           command: ['sh']
           args: [ '-c', 'sh -x /config-logcursor/configure']
           image: {{ include "gitlab.busybox.image" (dict "local" .Values.init "global" $.Values.global.busybox) | quote }}
+          {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
           volumeMounts:
@@ -87,7 +89,7 @@ spec:
             {{- toYaml .Values.init.resources | nindent 12 }}
         - name: dependencies
           image: "{{ coalesce .Values.image.repository (include "image.repository" .) }}:{{ coalesce .Values.image.tag (include "gitlab.versionTag" . ) }}"
-          {{ template "gitlab.imagePullPolicy" . }}
+          {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           args:
             - /scripts/wait-for-deps
           env:
@@ -117,12 +119,12 @@ spec:
               readOnly: true
           resources:
             {{- toYaml .Values.init.resources | nindent 12 }}
-{{- include "pullsecrets" .Values.image | indent 6 }}
+      {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
       containers:
         {{- include "gitlab.extraContainers" . | nindent 8 }}
         - name: {{ .Chart.Name }}
           image: "{{ coalesce .Values.image.repository (include "image.repository" .) }}:{{ coalesce .Values.image.tag (include "gitlab.versionTag" . ) }}"
-          {{ template "gitlab.imagePullPolicy" . }}
+          {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           env:
             - name: GITALY_FEATURE_DEFAULT_ON
               value: "1"
@@ -185,7 +187,9 @@ spec:
                 - key: secrets.yml
                   path: rails-secrets/secrets.yml
           {{- include "gitlab.redis.secrets" . | nindent 10 }}
-          {{- include "gitlab.psql.secret" . | nindent 10 }}
+          {{- range $.Values.local.psql }}
+          {{-   include "gitlab.psql.secret" . | nindent 10 }}
+          {{- end }}
           - secret:
               name: {{ template "gitlab.geo.psql.password.secret" . }}
               items:

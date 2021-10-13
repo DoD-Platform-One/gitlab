@@ -1,4 +1,6 @@
 {{- if .Values.enabled -}}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
+{{- $initImageCfg := dict "global" .Values.global.busybox.image "local" .Values.init.image -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,8 +14,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ template "name" . }}
-      release: {{ .Release.Name }}
+      {{- include "gitlab.selectorLabels" . | nindent 6 }}
   {{- if .Values.deployment.strategy }}
   strategy: {{ .Values.deployment.strategy | toYaml | nindent 4 }}
   {{- end }}
@@ -30,6 +31,9 @@ spec:
       {{- range $key, $value := .Values.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
+      {{- if .Values.metrics.enabled }}
+        {{- toYaml $.Values.metrics.annotations | nindent 8 }}
+      {{- end }}
     spec:
       {{- if .Values.tolerations }}
       tolerations:
@@ -41,6 +45,7 @@ spec:
         - name: configure
           command: ['sh', '/config/configure']
           image: {{ include "gitlab.busybox.image" (dict "local" .Values.init "global" $.Values.global.busybox) | quote }}
+          {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
           volumeMounts:
@@ -59,7 +64,7 @@ spec:
       securityContext:
         runAsUser: {{ .Values.securityContext.runAsUser }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
-{{- include "pullsecrets" .Values.image | indent 6 }}
+      {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
       {{- if eq (default .Values.global.antiAffinity .Values.antiAffinity) "hard" }}
       affinity:
         podAntiAffinity:
@@ -67,8 +72,7 @@ spec:
             - topologyKey: "kubernetes.io/hostname"
               labelSelector:
                 matchLabels:
-                  app: {{ template "name" . }}
-                  release: {{ .Release.Name }}
+                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
       {{- else if eq (default .Values.global.antiAffinity .Values.antiAffinity) "soft" }}
       affinity:
         podAntiAffinity:
@@ -78,17 +82,17 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app: {{ template "name" . }}
-                  release: {{ .Release.Name }}
+                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
       {{- end }}
       {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
       {{- end }}
+      automountServiceAccountToken: false
       containers:
         {{- include "gitlab.extraContainers" . | nindent 8 }}
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.parseAppVersion" (dict "appVersion" .Chart.AppVersion "prepend" "true")) }}"
-          {{ template "gitlab.imagePullPolicy" . }}
+          {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           ports:
             - containerPort: {{ .Values.service.internalPort }}
               name: ssh
@@ -101,6 +105,8 @@ spec:
               value: '/srv/gitlab-shell'
             - name: KEYS_DIRECTORY
               value: '/etc/gitlab-secrets/ssh'
+            - name: SSH_DAEMON
+              value: {{ .Values.sshDaemon | quote }}
             {{- include "gitlab.extraEnv" . | nindent 12 }}
           volumeMounts:
             - name: shell-config
@@ -108,24 +114,38 @@ spec:
             - name: shell-secrets
               mountPath: '/etc/gitlab-secrets'
               readOnly: true
+            {{- if eq .Values.sshDaemon "openssh" }}
             - name: sshd-config
               mountPath: /etc/ssh/sshd_config
               subPath: sshd_config
               readOnly: true
+            {{- end }}
             {{- include "gitlab.extraVolumeMounts" . | nindent 12 }}
             {{- include "gitlab.certificates.volumeMount" . | nindent 12 }}
           livenessProbe:
+            {{- if eq .Values.sshDaemon "gitlab-sshd" }}
+            httpGet:
+              port: {{ .Values.metrics.port }}
+              path: /health
+            {{- else }}
             exec:
               command:
               - /scripts/healthcheck
+            {{- end }}
             initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
             successThreshold: {{ .Values.deployment.livenessProbe.successThreshold }}
             failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
           readinessProbe:
+            {{- if eq .Values.sshDaemon "gitlab-sshd"}}
+            httpGet:
+              port: {{ .Values.metrics.port }}
+              path: /start
+            {{- else }}
             tcpSocket:
               port: {{ .Values.service.internalPort }}
+            {{- end }}
             initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
@@ -141,9 +161,11 @@ spec:
       - name: shell-config
         configMap:
           name: {{ template "fullname" . }}
+      {{- if eq .Values.sshDaemon "openssh" }}
       - name: sshd-config
         configMap:
           name: {{ template "fullname" . }}-sshd
+      {{- end }}
       - name: shell-init-secrets
         projected:
           defaultMode: 0440

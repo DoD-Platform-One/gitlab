@@ -173,7 +173,7 @@ CIYAML
     -f ci.details.yaml \
     -f ci.scale.yaml \
     --set releaseOverride="$RELEASE_NAME" \
-    --set global.imagePullPolicy="Always" \
+    --set global.image.pullPolicy="Always" \
     --set global.hosts.hostSuffix="$HOST_SUFFIX" \
     --set global.hosts.domain="$KUBE_INGRESS_BASE_DOMAIN" \
     --set global.ingress.annotations."external-dns\.alpha\.kubernetes\.io/ttl"="10" \

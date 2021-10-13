@@ -108,25 +108,36 @@ Returns the minio url.
 {{- end -}}
 
 {{/*
-  A helper template to collect and insert the registry pull secrets for a component.
+  A helper template for collecting and inserting the imagePullSecrets.
+
+  It expects a dictionary with two entries:
+    - `global` which contains global image settings, e.g. .Values.global.image
+    - `local` which contains local image settings, e.g. .Values.image
 */}}
-{{- define "pullsecrets" -}}
-{{- if .pullSecrets }}
+{{- define "gitlab.image.pullSecrets" -}}
+{{- $pullSecrets := default (list) .global.pullSecrets -}}
+{{- if .local.pullSecrets -}}
+{{-   $pullSecrets = concat $pullSecrets .local.pullSecrets -}}
+{{- end -}}
+{{- if $pullSecrets }}
 imagePullSecrets:
-{{-   range $index, $entry := .pullSecrets }}
-- name: {{$entry.name}}
+{{-   range $index, $entry := $pullSecrets }}
+- name: {{ $entry.name }}
 {{-   end }}
 {{- end }}
 {{- end -}}
 
 {{/*
-Global gitlab imagePullPolicy
-*/}}
+  A helper template for inserting imagePullPolicy.
 
-{{- define "gitlab.imagePullPolicy" -}}
-{{- $imageObj := default (dict) .Values.image -}}
-{{- if or $imageObj.pullPolicy .Values.global.imagePullPolicy -}}
-imagePullPolicy: {{ coalesce $imageObj.pullPolicy .Values.global.imagePullPolicy | quote }}
+  It expects a dictionary with two entries:
+    - `global` which contains global image settings, e.g. .Values.global.image
+    - `local` which contains local image settings, e.g. .Values.image
+*/}}
+{{- define "gitlab.image.pullPolicy" -}}
+{{- $pullPolicy := coalesce .local.pullPolicy .global.pullPolicy -}}
+{{- if $pullPolicy }}
+imagePullPolicy: {{ $pullPolicy | quote }}
 {{- end -}}
 {{- end -}}
 
@@ -267,6 +278,52 @@ Defaults to nil
 {{- $local := pluck "psql" $.Values | first -}}
 {{ pluck "connectTimeout" $local .Values.global.psql | first -}}
 {{- end -}}
+
+{{/*
+Return keepalives value
+Defaults to nil
+*/}}
+{{- define "gitlab.psql.keepalives" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{ pluck "keepalives" $local .Values.global.psql | first -}}
+{{- end -}}
+
+{{/*
+Return keepalives_idle value
+Defaults to nil
+*/}}
+{{- define "gitlab.psql.keepalivesIdle" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{ pluck "keepalivesIdle" $local .Values.global.psql | first -}}
+{{- end -}}
+
+{{/*
+Return keepalives_interval value
+Defaults to nil
+*/}}
+{{- define "gitlab.psql.keepalivesInterval" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{ pluck "keepalivesInterval" $local .Values.global.psql | first -}}
+{{- end -}}
+
+{{/*
+Return keepalives_count value
+Defaults to nil
+*/}}
+{{- define "gitlab.psql.keepalivesCount" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{ pluck "keepalivesCount" $local .Values.global.psql | first -}}
+{{- end -}}
+
+{{/*
+Return tcp_user_timeout value
+Defaults to nil
+*/}}
+{{- define "gitlab.psql.tcpUserTimeout" -}}
+{{- $local := pluck "psql" $.Values | first -}}
+{{ pluck "tcpUserTimeout" $local .Values.global.psql | first -}}
+{{- end -}}
+
 {{/* ######### ingress templates */}}
 
 {{/*
@@ -321,7 +378,7 @@ Handles merging a set of non-selector labels
 {{- $allLabels := merge (default (dict) .Values.podLabels) .Values.global.pod.labels -}}
 {{- if $allLabels -}}
 {{-   range $key, $value := $allLabels }}
-{{ $key }}: {{ $value }}
+{{ $key }}: {{ $value | quote }}
 {{-   end }}
 {{- end -}}
 {{- end -}}
@@ -333,7 +390,7 @@ Handles merging a set of labels for services
 {{- $allLabels := merge (default (dict) .Values.serviceLabels) .Values.global.service.labels -}}
 {{- if $allLabels -}}
 {{-   range $key, $value := $allLabels }}
-{{ $key }}: {{ $value }}
+{{ $key }}: {{ $value | quote }}
 {{-   end }}
 {{- end -}}
 {{- end -}}
@@ -505,5 +562,20 @@ Create the name of the service account to use for shared-secrets job
     {{ default (include "shared-secrets.fullname" .) $sharedSecretValues.serviceAccount.name }}
 {{- else -}}
     {{ coalesce $sharedSecretValues.serviceAccount.name .Values.global.serviceAccount.name "default" }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return a emptyDir definition for Volume declarations
+
+Scope is the configuration of that emptyDir.
+Only accepts sizeLimit and/or medium
+*/}}
+{{- define "gitlab.volume.emptyDir" -}}
+{{- $values := pick . "sizeLimit" "medium" -}}
+{{- if not $values -}}
+emptyDir: {}
+{{- else -}}
+emptyDir: {{ toYaml $values | nindent 2 }}
 {{- end -}}
 {{- end -}}

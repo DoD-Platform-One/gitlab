@@ -4,24 +4,50 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# GitLab version mappings
+# GitLab version mappings **(FREE SELF)**
 
 The table below maps some of the key previous chart versions and GitLab versions.
 
 | Chart version | GitLab version |
 |---------------|----------------|
+| 5.3.1 | 14.3.1 |
+| 5.3.0 | 14.3.0 |
+| 5.2.4 | 14.2.4 |
+| 5.2.3 | 14.2.3 |
+| 5.2.2 | 14.2.2 |
+| 5.2.1 | 14.2.1 |
+| 5.2.0 | 14.2.0 |
+| 5.1.5 | 14.1.5 |
+| 5.1.4 | 14.1.4 |
+| 5.1.3 | 14.1.3 |
+| 5.1.2 | 14.1.2 |
+| 5.1.1 | 14.1.1 |
+| 5.1.0 | 14.1.0 |
+| 5.0.10 | 14.0.10 |
+| 5.0.9 | 14.0.9 |
+| 5.0.8 | 14.0.8 |
+| 5.0.7 | 14.0.7 |
+| 5.0.6 | 14.0.6 |
 | 5.0.5 | 14.0.5 |
 | 5.0.4 | 14.0.4 |
 | 5.0.3 | 14.0.3 |
 | 5.0.2 | 14.0.2 |
 | 5.0.1 | 14.0.1 |
 | 5.0.0 | 14.0.0 |
+| 4.12.11 | 13.12.11 |
+| 4.12.10 | 13.12.10 |
+| 4.12.9 | 13.12.9 |
+| 4.12.8 | 13.12.8 |
+| 4.12.7 | 13.12.7 |
+| 4.12.6 | 13.12.6 |
 | 4.12.5 | 13.12.5 |
 | 4.12.4 | 13.12.4 |
 | 4.12.3 | 13.12.3 |
 | 4.12.2 | 13.12.2 |
 | 4.12.1 | 13.12.1 |
 | 4.12.0 | 13.12.0 |
+| 4.11.7 | 13.11.7 |
+| 4.11.6 | 13.11.6 |
 | 4.11.5 | 13.11.5 |
 | 4.11.4 | 13.11.4 |
 | 4.11.3 | 13.11.3 |

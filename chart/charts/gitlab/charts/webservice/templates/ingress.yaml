@@ -22,9 +22,8 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
-    {{- include "gitlab.commonLabels" $ | nindent 4 }}
     {{- include "webservice.labels" . | nindent 4 }}
-    {{- include "webservice.commonLabels" (dict "deployment" .common.labels "webservice" $.Values.common.labels) | nindent 4 }}
+    {{- include "webservice.commonLabels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" $ }}"
     {{- if default .ingress.provider $.Values.global.ingress.provider }}
@@ -55,23 +54,8 @@ spec:
             {{- else -}}
             backend:
               serviceName: {{ template "webservice.fullname.withSuffix" . }}
-              servicePort: {{ $.Values.service.workhorseExternalPort }} 
+              servicePort: {{ $.Values.service.workhorseExternalPort }}
             {{- end -}}
-          {{- if has .ingress.path (list "/" "/*") }}
-          - path: /admin/sidekiq{{ .ingress.path }}
-            {{ if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
-            pathType: {{ default .ingress.pathType $.Values.global.ingress.pathType }}
-            backend:
-              service:
-                name: {{ template "webservice.fullname.withSuffix" . }}
-                port:
-                  number: {{ $.Values.service.externalPort }}
-            {{- else -}}
-            backend:
-              serviceName: {{ template "webservice.fullname.withSuffix" . }}
-              servicePort: {{ $.Values.service.externalPort }}
-            {{- end -}}
-          {{- end }}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:
     - hosts:

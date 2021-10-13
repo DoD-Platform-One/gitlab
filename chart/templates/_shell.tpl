@@ -38,7 +38,7 @@ NOTE: All templates return _strings_, use as:
 Return the string 'PROXY'
 
 The string 'PROXY' ensures the use of ProxyProtocol decoding in a TCP service.
-This string is exactly compared with the string 'PROXY' when using nginx-ingress (in capital letters).  
+This string is exactly compared with the string 'PROXY' when using nginx-ingress (in capital letters).
 */}}
 {{- define "gitlab.shell.tcp.proxyProtocol" -}}
 {{- if .Values.global.shell.tcp.proxyProtocol -}}:PROXY{{ end }}

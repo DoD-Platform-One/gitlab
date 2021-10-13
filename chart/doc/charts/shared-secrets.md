@@ -38,7 +38,7 @@ the `helm install` command using the `--set` flag:
 | `securitContext.runAsUser` | `65534`             | User ID to run the container as     |
 | `selfsign.caSubject`       | `GitLab Helm Chart` | selfsign CA Subject                 |
 | `selfsign.image.repository` | `registry.gitlab.com/gitlab-org/build/cnf/cfssl-self-sign` | selfsign image repository |
-| `selfsign.image.pullsecrets` |                   | Secrets for the image repository    |
+| `selfsign.image.pullSecrets` |                   | Secrets for the image repository    |
 | `selfsign.image.tag`       |                     | selfsign image tag                  |
 | `selfsign.keyAlgorithm`    | `rsa`               | selfsign cert key algorithm         |
 | `selfsign.keySize`         | `4096`              | selfsign cert key size              |

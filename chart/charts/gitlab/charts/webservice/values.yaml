@@ -1,15 +1,17 @@
 # Default values for webservice.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-image:
-  pullSecrets: []
+image: {}
   # pullPolicy: IfNotPresent
+  # pullSecrets: []
   # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee
   # tag: master
+
 init:
   image: {}
     # repository:
     # tag:
+    # pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 50m
@@ -39,6 +41,19 @@ podLabels: {}
 common:
   labels: {}
 serviceLabels: {}
+
+sshHostKeys:
+  # backwards compatibility - do not automount by default as the default behavior
+  # assumes all four key types (specified below), provided by `shared-secrets`
+  mount: false
+  mountName: ssh-host-keys
+  # defines which types of public SSH host keys to mount so that their fingerprints
+  # are available under /help/instance_configuration
+  types:
+  - dsa
+  - rsa
+  - ecdsa
+  - ed25519
 
 metrics:
   enabled: true
@@ -70,7 +85,7 @@ service:
   # loadBalancerSourceRanges:
 enabled: true
 ingress:
-  enabled: 
+  enabled:
   proxyConnectTimeout: 15
   proxyReadTimeout: 600
   proxyBodySize: "512m"
@@ -120,6 +135,8 @@ deployment:
 
 workhorse:
   keywatcher: true
+  # trustedCIDRsForPropagation: ["127.0.0.1/32"]
+  # trustedCIDRsForXForwardedFor: ["127.0.0.1/32"]
   sentryDSN: ""
   extraArgs: ""
   logFormat: json # valid: (json, structured, text)
@@ -153,9 +170,8 @@ psql: {}
   # port: 5432
 
 global:
-  # imagePullPolicy: IfNotPresent
   ingress:
-    enabled: 
+    enabled:
     annotations: {}
     tls: {}
       # secretName:
@@ -333,6 +349,19 @@ helmTests:
   enabled: true
 
 webServer: puma
+
+## Configuration of shared emptyDir(s) between Webservice and Workhorse
+#  NOTICE:
+#    Be very wary of these settings.
+#    DO NOT alter these unless you have explicit reason.
+## mount: /tmp
+sharedTmpDir: {}
+#  sizeLimit:
+#  medium:
+## mount: `/srv/gitlab/public/uploads/tmp`
+sharedUploadDir: {}
+#  sizeLimit:
+#  medium:
 
 ## Allow to overwrite under which User and Group we're running.
 securityContext:

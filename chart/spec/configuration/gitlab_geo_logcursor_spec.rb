@@ -60,8 +60,8 @@ describe 'geo-logcursor configuration' do
       expect(t.dig('Deployment/test-geo-logcursor', 'metadata', 'labels')).to include('global' => 'geo-logcursor')
       expect(t.dig('Deployment/test-geo-logcursor', 'metadata', 'labels')).not_to include('global' => 'global')
       expect(t.dig('Deployment/test-geo-logcursor', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
-      expect(t.dig('Deployment/test-geo-logcursor', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => true)
-      expect(t.dig('Deployment/test-geo-logcursor', 'spec', 'template', 'metadata', 'labels')).to include('pod' => true)
+      expect(t.dig('Deployment/test-geo-logcursor', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
+      expect(t.dig('Deployment/test-geo-logcursor', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
       expect(t.dig('ServiceAccount/test-geo-logcursor', 'metadata', 'labels')).to include('global' => 'geo-logcursor')
     end
   end

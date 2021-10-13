@@ -21,8 +21,8 @@ is_autodeploy() {
 CNG_REGISTRY=${CNG_REGISTRY:-"registry.gitlab.com/gitlab-org/build/cng"}
 
 GITLAB_VERSION=$(awk '/^appVersion:/ {print $2}' Chart.yaml)
-if [ "${GITLAB_VERSION}" == "master" ]; then
-  echo "Chart specifies master as GitLab version. Hence not waiting for images."
+if [ "${GITLAB_VERSION}" == "master" || "${GITLAB_VERSION}" == "main" ]; then
+  echo "Chart specifies master or main as GitLab version. Hence not waiting for images."
   exit 0
 elif is_autodeploy "${GITLAB_VERSION}"; then
   # if it's auto-deploy tag, we use the slug of the tag because auto-deploy tag
@@ -39,7 +39,7 @@ else
 fi
 
 #TODO: Get all the components and their corresponding versions
-components=(gitlab-rails-ee gitlab-webservice-ee gitlab-workhorse-ee gitlab-sidekiq-ee gitlab-task-runner-ee)
+components=(gitlab-rails-ee gitlab-webservice-ee gitlab-workhorse-ee gitlab-sidekiq-ee gitlab-toolbox-ee)
 
 # ${CNG_REGISTRY%%/*} will get registry domain from the entire path. It
 # essentially says "delete the longest substring starting with a forward slash

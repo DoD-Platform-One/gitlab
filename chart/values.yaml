@@ -26,6 +26,11 @@
 global:
   common:
     labels: {}
+
+  image: {}
+    # pullPolicy: IfNotPresent
+    # pullSecrets: []
+
   ## GitLab operator is DEPRECATED. DO NOT USE.
   operator:
     enabled: false
@@ -93,6 +98,11 @@ global:
   ## https://docs.gitlab.com/charts/charts/globals#configure-postgresql-settings
   psql:
     connectTimeout:
+    keepalives:
+    keepalivesIdle:
+    keepalivesInterval:
+    keepalivesCount:
+    tcpUserTimeout:
     password: {}
       # useSecret:
       # secret:
@@ -269,7 +279,7 @@ global:
       matomoSiteId:
       matomoDisableCookies:
 
-    ## https://docs.gitlab.com/charts/charts/globals#lfs-artifacts-uploads-packages-external-mr-diffs
+    ## https://docs.gitlab.com/charts/charts/globals#lfs-artifacts-uploads-packages-external-mr-diffs-and-dependency-proxy
     object_store:
       enabled: false
       proxy_download: true
@@ -332,8 +342,8 @@ global:
       bucket: gitlab-backups
       tmpBucket: tmp
 
-    ## https://docs.gitlab.com/charts/charts/globals#incoming-email-settings
-    ## https://docs.gitlab.com/charts/installation/deployment#incoming-email
+    ## https://docs.gitlab.com/charts/installation/command-line-options.html#incoming-email-configuration
+    ## https://docs.gitlab.com/charts/charts/gitlab/mailroom/index.html#incoming-email
     incomingEmail:
       enabled: false
       address: ""
@@ -355,8 +365,7 @@ global:
         key: secret
       pollInterval: 60
 
-    ## https://docs.gitlab.com/charts/charts/globals#service-desk-email-settings
-    ## https://docs.gitlab.com/charts/installation/deployment#service-desk-email
+    ## https://docs.gitlab.com/charts/charts/gitlab/mailroom/index.html#service-desk-email
     serviceDeskEmail:
       enabled: false
       address: ""
@@ -395,7 +404,7 @@ global:
       #     key: _the_key_which_holds_your_ldap_password
       #   encryption: 'plain'
 
-    ## https://docs.gitlab.com/charts/charts/globals#kas
+    ## https://docs.gitlab.com/charts/charts/globals#kas-settings
     gitlab_kas: {}
       # secret:
       # key:
@@ -480,7 +489,7 @@ global:
   kas:
     enabled: false
 
-  ## https://docs.gitlab.com/charts/charts/globals#configure-gitlab-shell-settings
+  ## https://docs.gitlab.com/charts/charts/globals#configure-gitlab-shell
   shell:
     authToken: {}
       # secret:
@@ -540,6 +549,9 @@ global:
     externalHttp: []
     externalHttps: []
     artifactsServer: true
+    localStore:
+      enabled: false
+      # path: /srv/gitlab/shared/pages
     objectStore:
       enabled: true
       bucket: gitlab-pages
@@ -605,7 +617,7 @@ global:
 
   antiAffinity: soft
 
-  ## https://docs.gitlab.com/charts/charts/globals#workhorse
+  ## https://docs.gitlab.com/charts/charts/globals#configure-workhorse-settings
   ## Global settings related to Workhorse
   workhorse:
     serviceName: webservice-default
@@ -625,7 +637,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -669,7 +681,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -694,7 +706,7 @@ global:
     ## Name to be used for serviceAccount, otherwise defaults to chart fullname
     # name:
 
-  ## https://docs.gitlab.com/charts/charts/globals/tracing#tracing
+  ## https://docs.gitlab.com/charts/charts/globals/#tracing
   tracing:
     connection:
       string: ""
@@ -758,6 +770,7 @@ nginx-ingress:
     config:
       hsts: "false"
       hsts-include-subdomains: "false"
+      hsts-max-age: "63072000"
       server-name-hash-bucket-size: "256"
       use-http2: "true"
       ssl-ciphers: "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"
@@ -1057,7 +1070,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 14.0.5
+    tag: 14.3.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1066,7 +1079,7 @@ registry:
 
 ## Automatic shared secret generation
 ## https://docs.gitlab.com/charts/installation/secrets
-## https://docs.gitlab.com/charts/charts/shared-secrets
+## https://docs.gitlab.com/charts/charts/shared-secrets.html
 shared-secrets:
   enabled: true
   rbac:
@@ -1081,7 +1094,6 @@ shared-secrets:
     keySize: "4096"
     expiry: "3650d"
     caSubject: "GitLab Helm Chart"
-    pullSecrets: []
   env: production
   serviceAccount:
     enabled: true
@@ -1187,8 +1199,8 @@ gitlab:
       matchLabels:
         app: 'gitaly'
     image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 14.0.5
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1235,7 +1247,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1259,8 +1271,8 @@ gitlab:
         cpu: 500m
         memory: 1G
     image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-task-runner
-      tag: 14.0.5
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
 ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1284,7 +1296,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1297,7 +1309,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     ingress:
@@ -1306,7 +1318,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1329,7 +1341,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1351,7 +1363,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 14.0.5
+      tag: 14.3.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1374,7 +1386,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.0.5
+      tag: 14.3.1
     init:
       resources:
         limits:

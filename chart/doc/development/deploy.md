@@ -35,7 +35,7 @@ From within your Git checkout of the repository, run the following Helm commands
 helm dependency update
 helm upgrade --install gitlab . \
   --timeout 600s \
-  --set global.imagePullPolicy=Always \
+  --set global.image.pullPolicy=Always \
   --set global.hosts.domain=example.com \
   --set global.hosts.externalIP=10.10.10.10 \
   --set certmanager-issuer.email=me@example.com

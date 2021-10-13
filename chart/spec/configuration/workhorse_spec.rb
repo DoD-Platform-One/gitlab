@@ -16,6 +16,8 @@ describe 'Workhorse configuration' do
     raw_toml = template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.erb')
 
     expect(raw_toml).to match /^shutdown_timeout = "61s"/
+    expect(raw_toml).not_to include('trusted_cidrs_for_propagation')
+    expect(raw_toml).not_to include('trusted_cidrs_for_x_forwarded_for')
   end
 
   it 'disabled archive cache' do
@@ -44,6 +46,8 @@ describe 'Workhorse configuration' do
           webservice:
             workhorse:
               shutdownTimeout: "30s"
+              trustedCIDRsForPropagation: ["127.0.0.1/32", "192.168.0.1/32"]
+              trustedCIDRsForXForwardedFor: ["1.2.3.4/32", "5.6.7.8/32"]
         certmanager-issuer:
           email: test@example.com
      ))
@@ -55,6 +59,8 @@ describe 'Workhorse configuration' do
       raw_toml = template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.erb')
 
       expect(raw_toml).to match /^shutdown_timeout = "30s"/
+      expect(raw_toml).to include(%(trusted_cidrs_for_propagation = ["127.0.0.1/32","192.168.0.1/32"]\n))
+      expect(raw_toml).to include(%(trusted_cidrs_for_x_forwarded_for = ["1.2.3.4/32","5.6.7.8/32"]\n))
     end
   end
 end

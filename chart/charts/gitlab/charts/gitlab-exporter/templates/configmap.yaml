@@ -1,4 +1,5 @@
 {{- if .Values.enabled -}}
+{{- include "database.datamodel.prepare" . -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -19,7 +20,9 @@ data:
         methods:
           - probe_db
         opts:
+          {{- with $.Values.local.psql.main }}
           connection_string: dbname={{ template "gitlab.psql.database" . }} user={{ template "gitlab.psql.username" . }} host={{ template "gitlab.psql.host" .  }} port={{ template "gitlab.psql.port" . }} password='<%= File.read({{ template "gitlab.psql.password.file" . }}).strip.gsub(/[\'\\]/) { |esc| '\\' + esc } %>'
+          {{- end }}
       database:
         multiple: true
         ci_builds:

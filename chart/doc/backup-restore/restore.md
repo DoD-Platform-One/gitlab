@@ -123,7 +123,7 @@ If the restored backup was not from an existing installation of the chart, you w
 1. Run the instance setup script to enable the necessary features
 
    ```shell
-   kubectl exec <Task Runner pod name> -it -- /scripts/custom-instance-setup
+   kubectl exec <Task Runner pod name> -it -- gitlab-rails runner -e production /scripts/custom-instance-setup
    ```
 
 ## Restart the pods
@@ -142,7 +142,7 @@ The restoration process does not update the `gitlab-initial-root-password` secre
 1. Attach to the Webservice pod by executing the command
 
    ```shell
-   kubectl exec <Webservice pod name> -it bash
+   kubectl exec <Webservice pod name> -it -- bash
    ```
 
 1. Run the following command to reset the password of `root` user. Replace `#{password}` with a password of your choice

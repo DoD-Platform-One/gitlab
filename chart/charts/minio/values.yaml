@@ -4,7 +4,7 @@
 image: "minio/minio"
 imageTag: "RELEASE.2017-12-28T01-21-00Z"
 # imagePullPolicy: IfNotPresent
-pullSecrets: []
+# pullSecrets: []
 
 minioMc:
   image: minio/mc
@@ -46,13 +46,13 @@ global:
 
 common:
   labels: {}
-  
+
 ## Control the InitContainer behaviors.
 init:
-  image:
+  image: {}
     # repository:
     # tag:
-    pullPolicy: "IfNotPresent"
+    # pullPolicy: IfNotPresent
   script: |-
     sed -e 's@ACCESS_KEY@'"$(cat /config/accesskey)"'@' -e 's@SECRET_KEY@'"$(cat /config/secretkey)"'@' /config/config.json > /minio/config.json
   resources:
