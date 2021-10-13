@@ -28,7 +28,7 @@ gitlab:
     nodeSelector:
       workload: sidekiq
     resources:
-      # Running up to 16 pods with a ratio of roughly 1 vCPU to 2 GB RAM as a starting point for requests.
+      # Running up to 14 pods with a ratio of roughly 1 vCPU to 2 GB RAM as a starting point for requests.
       # Per the 10k reference architecture (https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html),
       # consider the resource limitations in play:
       # For an n1-standard-4 node in GKE: 4 vCPU, 15 GB memory

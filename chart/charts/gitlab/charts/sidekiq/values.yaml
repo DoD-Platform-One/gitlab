@@ -1,9 +1,9 @@
 # Default values for sidekiq.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-image:
-  pullSecrets: []
+image: {}
   # pullPolicy: IfNotPresent
+  # pullSecrets: []
   # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee
   # tag: master
 
@@ -11,6 +11,7 @@ init:
   image: {}
     # repository:
     # tag:
+    # pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 50m
@@ -78,7 +79,6 @@ readinessProbe:
   failureThreshold: 3
 
 global:
-  # imagePullPolicy: IfNotPresent
   hosts:
     domain: example.com
     hostSuffix:

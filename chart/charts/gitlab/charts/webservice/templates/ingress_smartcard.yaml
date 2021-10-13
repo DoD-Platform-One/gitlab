@@ -2,32 +2,40 @@
 {{- if eq (include "gitlab.ingress.enabled" $) "true" -}}
 {{- $smartcardHostname := include "gitlab.smartcard.hostname" . -}}
 {{- $tlsSecret := include "smartcard.tlsSecret" . -}}
-
+{{/* BEGIN range deployments */}}
+{{- range $.Values.deployments -}}
+{{- if has .ingress.path (list "/" "/*") }}
+{{/*
+From here on:
+- `.` is `.deployments.xyz` value
+- `.name` is the key (xyz)
+*/}}
+---
 apiVersion: {{ template "ingress.apiVersion" $}}
 kind: Ingress
 metadata:
-  name: {{ template "fullname" . }}-smartcard
+  name: {{ template "webservice.fullname.withSuffix" . }}-smartcard
   namespace: {{ $.Release.Namespace }}
   labels:
-    {{- include "gitlab.standardLabels" . | nindent 4 }}
-    {{- include "gitlab.commonLabels" . | nindent 4 }}
+    {{- include "gitlab.standardLabels" $ | nindent 4 }}
+    {{- include "gitlab.commonLabels" $ | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" . }}"
+    kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" $ }}"
     {{- if $.Values.global.ingress.provider }}
     kubernetes.io/ingress.provider: {{ $.Values.global.ingress.provider }}
     {{- end }}
     {{- if eq "nginx" $.Values.global.ingress.provider }}
-    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.proxyBodySize | quote }}
-    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .Values.ingress.proxyReadTimeout | quote }}
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .Values.ingress.proxyConnectTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ $.Values.ingress.proxyBodySize | quote }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ $.Values.ingress.proxyReadTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ $.Values.ingress.proxyConnectTimeout | quote }}
     nginx.ingress.kubernetes.io/auth-tls-verify-client: 'on'
     nginx.ingress.kubernetes.io/auth-tls-verify-depth: '2'
     nginx.ingress.kubernetes.io/auth-tls-secret: '{{ $.Release.Namespace }}/{{ $.Values.global.appConfig.smartcard.CASecret }}'
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header X-SSL-Client-Certificate $ssl_client_escaped_cert;
     {{- end }}
-    {{ include "gitlab.certmanager_annotations" . }}
-  {{- range $key, $value := merge .Values.ingress.annotations .Values.global.ingress.annotations }}
+    {{ include "gitlab.certmanager_annotations" $ }}
+  {{- range $key, $value := merge $.Values.ingress.annotations $.Values.global.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
 spec:
@@ -35,18 +43,18 @@ spec:
     - host: {{ $smartcardHostname }}
       http:
         paths:
-          - path: {{ coalesce $.Values.ingress.path $.Values.global.ingress.path }}
+          - path: {{ .ingress.path }}
             {{ if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
-            pathType: {{ default "Prefix" $.Values.global.ingress.pathType }}
+            pathType: {{ default $.Values.global.ingress.pathType .ingress.pathType }}
             backend:
               service:
-                  name: {{ template "fullname" . }}
+                  name: {{ template "webservice.fullname.withSuffix" . }}
                   port:
-                    number: {{ .Values.service.workhorseExternalPort }}
+                    number: {{ $.Values.service.workhorseExternalPort }}
             {{- else -}}
             backend:
-              serviceName: {{ template "fullname" . }}
-              servicePort: {{ .Values.service.workhorseExternalPort }}
+              serviceName: {{ template "webservice.fullname.withSuffix" . }}
+              servicePort: {{ $.Values.service.workhorseExternalPort }}
             {{- end -}}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:
@@ -57,4 +65,6 @@ spec:
   tls: []
   {{- end }}
 {{- end -}}
+{{- end -}}
+{{- end -}}{{/* SET .ingress.path */}}
 {{- end -}}

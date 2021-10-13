@@ -56,7 +56,8 @@ configurations that can be supplied to the `helm install` command using the
 | `service.internalPort`                    | `8090`            | GitLab Pages internal port                               |
 | `service.name`                            | `gitlab-pages`    | GitLab Pages service name                                |
 | `service.customDomains.type`              | `LoadBalancer`    | Type of service created for handling custom domains      |
-| `service.customDomains.internalHTTPSPort` | `8091`            | Port where Pages daemon listens for HTTPS requests       |
+| `service.customDomains.internalHttpsPort` | `8091`            | Port where Pages daemon listens for HTTPS requests       |
+| `service.customDomains.internalHttpsPort` | `8091`            | Port where Pages daemon listens for HTTPS requests       |
 | `service.customDomains.nodePort.http`     |                   | Node Port to be opened for HTTP connections. Valid only if `service.customDomains.type` is `NodePort` |
 | `service.customDomains.nodePort.https`    |                   | Node Port to be opened for HTTPS connections. Valid only if `service.customDomains.type` is `NodePort` |
 | `serviceLabels`                           | `{}`              | Supplemental service labels                              |
@@ -71,15 +72,22 @@ configurations that can be supplied to the `helm install` command using the
 | `domainConfigSource`             | `gitlab`              | Domain configuration source                          |
 | `extraVolumeMounts`              |                       | List of extra volumes mounts to add                  |
 | `extraVolumes`                   |                       | List of extra volumes to create                      |
+| `gitlabCache.cleanup`            | int                   | See: [Pages Global Settings](https://docs.gitlab.com/ee/administration/pages/index.html#global-settings) |
+| `gitlabCache.expiry`             | int                   | See: [Pages Global Settings](https://docs.gitlab.com/ee/administration/pages/index.html#global-settings) |
+| `gitlabCache.refresh`            | int                   | See: [Pages Global Settings](https://docs.gitlab.com/ee/administration/pages/index.html#global-settings) |
 | `gitlabClientHttpTimeout`        |                       | GitLab API HTTP client connection timeout in seconds |
 | `gitlabClientJwtExpiry`          |                       | JWT Token expiry time in seconds                     |
+| `gitlabRetrieval.interval`       | int                   | See: [Pages Global Settings](https://docs.gitlab.com/ee/administration/pages/index.html#global-settings) |
+| `gitlabRetrieval.retries`        | int                   | See: [Pages Global Settings](https://docs.gitlab.com/ee/administration/pages/index.html#global-settings) |
+| `gitlabRetrieval.timeout`        | int                   | See: [Pages Global Settings](https://docs.gitlab.com/ee/administration/pages/index.html#global-settings) |
 | `gitlabServer`                   |                       | GitLab server FQDN                                   |
-| `headers`                        | `[]`                  | The additional http header(s) that should be send to the client |
+| `headers`                        | `[]`                  | Specify any additional http headers that should be sent to the client with each response. Multiple headers can be given as an array, header and value as one string, for example `['my-header: myvalue', 'my-other-header: my-other-value']` |
 | `insecureCiphers`                | `false`               | Use default list of cipher suites, may contain insecure ones like 3DES and RC4 |
 | `internalGitlabServer`           |                       | Internal GitLab server used for API requests         |
 | `logFormat`                      | `json`                | Log output format                                    |
 | `logVerbose`                     | `false`               | Verbose logging                                      |
 | `maxConnections`                 |                       | Limit on the number of concurrent connections to the HTTP, HTTPS or proxy listeners |
+| `propagateCorrelationId`         |                       | Reuse existing Correlation-ID from the incoming request header `X-Request-ID` if present |
 | `redirectHttp`                   | `false`               | Redirect pages from HTTP to HTTPS                    |
 | `sentry.enabled`                 | `false`               | Enable Sentry reporting                              |
 | `sentry.dsn`                     |                       | The address for sending Sentry crash reporting to    |
@@ -88,6 +96,11 @@ configurations that can be supplied to the `helm install` command using the
 | `tls.minVersion`                 |                       | Specifies the minimum SSL/TLS version                |
 | `tls.maxVersion`                 |                       | Specifies the maximum SSL/TLS version                |
 | `useHttp2`                       | `true`                | Enable HTTP2 support                                 |
+| `useProxyV2`                     | `false`               | Force HTTPS request to utilize the PROXYv2 protocol. |
+| `zipCache.cleanup`               | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
+| `zipCache.expiration`            | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
+| `zipCache.refresh`               | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
+| `zipOpenTimeout`                 | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
 
 ### Configuring the `ingress`
 
@@ -126,4 +139,58 @@ Below is an example use of `extraVolumeMounts`:
 extraVolumeMounts: |
   - name: example-volume
     mountPath: /etc/example
+```
+
+### Configuring the `networkpolicy`
+
+This section controls the
+[NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+This configuration is optional and is used to limit Egress and Ingress of the
+Pods to specific endpoints.
+
+| Name              | Type    | Default | Description |
+|:----------------- |:-------:|:------- |:----------- |
+| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy` |
+| `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified. |
+| `ingress.rules`   | Array   | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
+| `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified. |
+| `egress.rules`    | Array   | `[]`    | Rules for the egress policy, these for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
+
+### Example Network Policy
+
+The `gitlab-pages` service requires Ingress connections for port 80 and 443 and
+Egress connections to various to default workhorse port 8181. This examples adds
+the following network policy:
+
+- All Ingress requests from the network on TCP `0.0.0.0/0` port 80 and 443 are allowed
+- All Egress requests to the network on UDP `10.0.0.0/8` port 53 are allowed for DNS
+- All Egress requests to the network on TCP `10.0.0.0/8` port 8181 are allowed for Workhorse
+
+_Note the example provided is only an example and may not be complete_
+
+```yaml
+networkpolicy:
+  enabled: true
+  ingress:
+    enabled: true
+    rules:
+      - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+        ports:
+          - port: 80
+            protocol: TCP
+          - port: 443
+            protocol: TCP
+  egress:
+    enabled: true
+    rules:
+      - to:
+        - ipBlock:
+            cidr: 10.0.0.0/8
+        ports:
+          - port: 8181
+            protocol: TCP
+          - port: 53
+            protocol: UDP
 ```

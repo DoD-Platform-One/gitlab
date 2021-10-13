@@ -1,5 +1,5 @@
 # Configure the use of AWS ELB LoadBalancer, in Layer 4 mode
-# 
+#
 # !! ONLY for 'service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp' !!
 #
 # - Configures NLB to use ProxyProtocol to pass real client IP
@@ -21,7 +21,7 @@ nginx-ingress:
         # Configure NLB, Layer 4 with 'tcp'
         service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
         # Configure NLB to use ProxyProtocol
-        service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*" 
+        service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
       config:
         proxy-real-ip-cidr: 10.2.0.0/16  # The VPC CIDR, to be trusted
         use-proxy-protocol: "true"       # Tell NGINX to Expect ProxyProtocol headers

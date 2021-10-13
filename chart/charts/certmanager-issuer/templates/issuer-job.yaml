@@ -1,4 +1,5 @@
 {{ if (pluck "configureCertmanager" .Values.global.ingress (dict "configureCertmanager" false) | first) }}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.global.kubectl.image -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -23,12 +24,12 @@ spec:
       serviceAccountName: {{ template "fullname" . }}
       {{- end }}
       restartPolicy: OnFailure
-{{- include "pullsecrets" .Values.global.kubectl.image | indent 6}}
+      {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6}}
       containers:
         - name: create-issuer
           image: {{ include "gitlab.kubectl.image" . | quote }}
           command: ['/bin/bash', '/scripts/create-issuer', '/scripts/issuer.yml']
-          {{ template "gitlab.imagePullPolicy" . }}
+          {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           volumeMounts:
             - name: scripts
               mountPath: /scripts

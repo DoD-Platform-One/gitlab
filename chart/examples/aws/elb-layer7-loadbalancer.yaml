@@ -2,7 +2,7 @@
 #
 # !! ONLY for 'aws-load-balancer-backend-protocol: http' !!
 #
-# - Configures ELB to be layer 7, terminating SSL with ACM 
+# - Configures ELB to be layer 7, terminating SSL with ACM
 # - Configures NGINX to trust X-Forwarded-* headers from ELB
 # - Route incoming HTTP traffic from ELB to port 80 (http) of NGINX
 #
@@ -20,7 +20,7 @@ nginx-ingress:
   controller:
     config:
       # pass the X-Forwarded-* headers directly from the upstream
-      use-forwarded-headers: "true" 
+      use-forwarded-headers: "true"
     service:
       annotations:
         # Layer 7, injects X-Forwarded-* headers

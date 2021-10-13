@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Upgrade the bundled PostgreSQL version
+# Upgrade the bundled PostgreSQL version **(FREE SELF)**
 
 NOTE:
 These steps are if you are using the bundled PostgreSQL chart (`postgresql.install` is not false), and not for external
@@ -104,3 +104,4 @@ Note the following:
   ```shell
   kubectl get pods -lrelease=RELEASE,app=gitlab
   kubectl describe pod <gitlab-upgrade-check-pod-full-name>
+  ```

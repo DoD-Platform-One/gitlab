@@ -15,7 +15,7 @@ consider using our [Omnibus GitLab package](external-omnibus-redis.md).
 
 Disable the `redis` chart and the Redis service it provides, and point the other services to the external service.
 
-You need to set the following parameters:
+You must set the following parameters:
 
 - `redis.install`: Set to `false` to disable including the Redis chart.
 - `global.redis.host`: Set to the hostname of the external Redis, can be a domain or an IP address.
@@ -48,7 +48,7 @@ values for the `--set` flag. The index is zero based.
 
 GitLab supports splitting several of the resource intensive
 Redis operations across multiple Redis instances. This chart supports distributing
-those persistence classes to other Redis instances: `cache`, `queues`, `shared_state` and `actioncable`.
+those persistence classes to other Redis instances: `cache`, `queues`, `sharedState`, `actioncable`, and `traceChunks`.
 
 More detailed information on configuring the chart for using multiple Redis
 instances can be found in the [globals](../../charts/globals.md#multiple-redis-support)

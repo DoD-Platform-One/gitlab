@@ -25,7 +25,7 @@ Follow the installation instructions for [Omnibus GitLab](https://about.gitlab.c
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be
 *very* explicit about what's enabled on this node, using the following contents
 based on the documentation for
-[running Gitaly on its own server](https://docs.gitlab.com/ce/administration/gitaly/#run-gitaly-on-its-own-server).
+[running Gitaly on its own server](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#run-gitaly-on-its-own-server).
 
 _**NOTE**: The values below should be replaced_
 
@@ -63,7 +63,6 @@ prometheus['enable'] = false
 # node_exporter['enable'] = false
 
 # Prevent database connections during 'gitlab-ctl reconfigure'
-gitlab_rails['rake_cache_clear'] = false
 gitlab_rails['auto_migrate'] = false
 
 # Configure the gitlab-shell API callback URL. Without this, `git push` will

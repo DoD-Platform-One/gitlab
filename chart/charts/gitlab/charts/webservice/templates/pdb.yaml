@@ -15,15 +15,13 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
-    {{- include "gitlab.commonLabels" $ | nindent 4 }}
     {{- include "webservice.labels" . | nindent 4 }}
-    {{- include "webservice.commonLabels" (dict "deployment" .common.labels "webservice" $.Values.common.labels) | nindent 4 }}
+    {{- include "webservice.commonLabels" . | nindent 4 }}
 spec:
   maxUnavailable: {{ .pdb.maxUnavailable }}
   selector:
     matchLabels:
-      app: {{ template "name" $ }}
-      release: {{ $.Release.Name }}
+      {{- include "gitlab.selectorLabels" $ | nindent 6 }}
       {{ include "webservice.labels" . | nindent 6 }}
 {{- end }}
 {{/* END range deployments */}}

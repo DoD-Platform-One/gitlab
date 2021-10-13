@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-shell
-  pullSecrets: []
   # pullPolicy: IfNotPresent
+  # pullSecrets: []
   # tag: master
 service:
   name: gitlab-shell
@@ -31,7 +31,6 @@ init:
 tolerations: []
 
 global: {}
-  # imagePullPolicy: IfNotPresent
 
 enabled: true
 annotations: {}
@@ -103,6 +102,17 @@ serviceAccount:
   ## Name to be used for serviceAccount, otherwise defaults to chart fullname
   # name:
 
+metrics:
+  enabled: false
+  port: 9122
+  annotations:
+    gitlab.com/prometheus_scrape: "true"
+    gitlab.com/prometheus_port: "9122"
+    gitlab.com/prometheus_path: "/metrics"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9122"
+    prometheus.io/path: "/metrics"
+
 networkpolicy:
   enabled: false
   egress:
@@ -113,3 +123,6 @@ networkpolicy:
     rules: []
   annotations: {}
 
+## Allow to select ssh daemon that would be executed inside container
+## Possible values: openssh, gitlab-sshd
+sshDaemon: openssh

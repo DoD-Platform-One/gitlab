@@ -1,4 +1,5 @@
 {{- if .Values.global.operator.enabled }}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,6 +32,7 @@ spec:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ template "fullname" . }}
+      {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.operator.parseVersion" .Values.version ) }}"
@@ -41,7 +43,7 @@ spec:
           - name: CRD_PREFIX
             value: {{ .Values.crdPrefix }}
           {{- end }}
-          {{ template "gitlab.imagePullPolicy" . }}
+          {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 {{- end }}

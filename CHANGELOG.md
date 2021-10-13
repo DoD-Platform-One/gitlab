@@ -52,26 +52,17 @@
 ## chart/.helmignore
 - change `scripts/` to `/scripts/` so that the helm test scripts are not ignored
 
-## fixes for flux helmrelease errors
-- chart/charts/gitlab/charts/geo-logcursor/templates/deployment.yaml #24-25  
-  remove duplicate labels: ```app:``` and ```release:```
-- chart/charts/gitlab/charts/gitaly/templates/statefulset.yml #10  
-  remove duplicate immutable labels
-- chart/charts/gitlab/charts/gitlab-exporter/templates/deployment.yaml  #21-22  
-  remove duplicate labels: ```app:``` and ```release:```
-- chart/charts/minio/templates/minio_deployment.yaml #25-28
-  remove duplicate labels: ```app:```, ```chart:```, ```release:```, and ```heritage:```
-- chart/templates/shared-secrets/_jobspec.yaml #19-20  
-  remove duplicate labels: ```app:``` and ```release:```
-- chart/charts/minio/templates/create-buckets-job.yaml #15-16  
-  remove duplicate labels: ```app:``` and ```release:```
-
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.1-bb.0] - 2021-10-08
+- upgrade Gitlab to application version 14.3.1 helm chart version v5.3.1
+- If upgrading from 13.12.9 to 14.3.1 must first upgrade to 14.0.5 see Gitlab documentation
+   https://docs.gitlab.com/ee/update/#upgrade-paths
+
 ## [5.0.5-bb.0] - 2021-10-01
-- upgrade Gitlab to application version 14.0.5 helm chart version 5.0.5
+- upgrade Gitlab to application version 14.0.5 helm chart version v5.0.5
 - notice: this upgrade requires postgresql 12 or higher
 
 ## [4.12.9-bb.6] - 2021-09-16

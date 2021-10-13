@@ -36,6 +36,9 @@ database:
     {{- if .Values.database.pool.maxlifetime }}
     maxlifetime: {{ .Values.database.pool.maxlifetime }}
     {{- end }}
+    {{- if .Values.database.pool.maxidletime }}
+    maxidletime: {{ .Values.database.pool.maxidletime }}
+    {{- end }}
   {{- end }}
 {{- end }}
 {{- end -}}

@@ -8,16 +8,28 @@ global:
   # hosts:
     # pages:
       # name: pages.example.com
-  # imagePullPolicy: IfNotPresent
+
 hpa:
   maxReplicas: 10
   minReplicas: 1
   targetAverageValue: 100m
   customMetrics: []
 
+networkpolicy:
+  enabled: false
+  egress:
+    enabled: false
+    rules: []
+  ingress:
+    enabled: false
+    rules: []
+  annotations: {}
+
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-pages
   # tag: master
+  # pullPolicy: IfNotPresent
+  # pullSecrets: []
 
 service:
   type: ClusterIP
@@ -92,15 +104,30 @@ priorityClassName: ""
 artifactsServerTimeout: 10
 artifactsServerUrl:
 domainConfigSource: 'gitlab'
+
+#  gitlabCache:
+#    cleanup:
+#    expiry:
+#    refresh:
+
+#  gitlabRetrieval
+#    interval:
+#    retries:
+#    timeout:
+
 gitlabClientHttpTimeout:
 gitlabClientJwtExpiry:
 gitlabServer:
+# Headers is to be a list of strings, Example:
+# headers:
+#   - "Permissions-Policy: interest-cohort=()"
 headers: []
 insecureCiphers: false
 internalGitlabServer:
 logFormat: 'json'
 logVerbose: false
 maxConnections:
+#  propagateCorrelationId:
 redirectHttp: false
 sentry:
   enabled: false
@@ -110,7 +137,13 @@ statusUri:
 tls:
   minVersion:
   maxVersion:
+useProxyV2: false
 useHttp2: true
+
+# zipCache:
+#   cleanup:
+#   expiration:
+#   refresh:
 
 metrics:
   enabled: true

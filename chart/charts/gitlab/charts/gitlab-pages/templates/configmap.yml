@@ -9,6 +9,32 @@ metadata:
   annotations:
 data:
   config.erb: |
+    {{- with .Values.gitlabCache }}
+    {{- if .cleanup }}
+    gitlab-cache-cleanup={{ .cleanup }}
+    {{- end }}
+    {{- if .expiry }}
+    gitlab-cache-expiry={{ .expiry }}
+    {{- end }}
+    {{- if .refresh }}
+    gitlab-cache-refresh={{ .refresh }}
+    {{- end }}
+    {{- end }}
+    {{- with .Values.gitlabRetrieval }}
+    {{- if .interval }}
+    gitlab-retrieval-interval={{ .interval }}
+    {{- end }}
+    {{- if .retries }}
+    gitlab-retrieval-retries={{ .retries }}
+    {{- end }}
+    {{- if .timeout }}
+    gitlab-retrieval-timeout={{ .timeout }}
+    {{- end }}
+    {{- end }}
+    {{- if not (empty .Values.headers) }}
+    {{- $headers := .Values.headers | join ";;" }}
+    header={{ $headers }}
+    {{- end }}
     {{- $externalAddresses := concat $.Values.global.pages.externalHttp $.Values.global.pages.externalHttps | uniq }}
     {{- if (empty ($externalAddresses)) }}
     listen-proxy=0.0.0.0:{{ .Values.service.internalPort }}
@@ -17,10 +43,13 @@ data:
     listen-http=0.0.0.0:{{ .Values.service.internalPort }}
       {{- end }}
       {{- if not (empty $.Values.global.pages.externalHttps) }}
-    listen-https=0.0.0.0:{{ .Values.service.customDomains.internalHttpsPort }}
+    listen-https{{ if .Values.useProxyV2 }}-proxyv2{{ end }}=0.0.0.0:{{ .Values.service.customDomains.internalHttpsPort | int }}
     root-cert=/etc/gitlab-secrets/pages/{{ template "gitlab.pages.hostname" $ }}.crt
     root-key=/etc/gitlab-secrets/pages/{{ template "gitlab.pages.hostname" $ }}.key
       {{- end }}
+    {{- end }}
+    {{- if .Values.propagateCorrelationId }}
+    propagate-correlation-id={{ .Values.propagateCorrelationId }}
     {{- end }}
     pages-domain={{ template "gitlab.pages.hostname" . }}
     pages-root=/srv/gitlab-pages
@@ -69,6 +98,20 @@ data:
     auth-client-id=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appid').strip.dump[1..-2] %>
     auth-client-secret=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appsecret').strip.dump[1..-2] %>
     auth-secret=<%= File.read('/etc/gitlab-secrets/pages/auth_secret').strip.dump[1..-2] %>
+    {{- end }}
+    {{- with .Values.zipCache }}
+    {{- if .cleanup }}
+    zip-cache-cleanup={{ .cleanup }}
+    {{- end }}
+    {{- if .expiration }}
+    zip-cache-expiration={{ .expiration }}
+    {{- end }}
+    {{- if .refresh }}
+    zip-cache-refresh={{ .refresh }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.zipOpenTimeout }}
+    zip-open-timeout={{ .Values.zipOpenTimeout }}
     {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}

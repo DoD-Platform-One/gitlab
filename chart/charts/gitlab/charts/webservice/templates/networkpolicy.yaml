@@ -13,8 +13,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: {{ template "name" . }}
-      release: {{ .Release.Name }}
+      {{- include "gitlab.selectorLabels" $ | nindent 6 }}
   policyTypes:
     {{- if .Values.networkpolicy.egress.enabled }}
     - Egress

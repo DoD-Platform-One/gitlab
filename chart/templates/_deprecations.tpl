@@ -24,38 +24,38 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- define "gitlab.deprecations" -}}
 {{- $deprecated := list -}}
 {{/* add templates here */}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.rails.appConfig" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.minio" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.registryStorage" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.registryHttpSecret" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.registry.replicas" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.registry.updateStrategy" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.omniauth" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.ldap" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.webservice.webServer.unicorn" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.global.appConfig.ldap.password" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.cronJobs" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.updateStrategy" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.pods.updateStrategy" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.cluster" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.sidekiq.pods.cluster" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.local.kubectl" .) -}}
-
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.gitaly.enabled" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.initContainerImage" .) -}}
-{{- $deprecated := append $deprecated (include "external.deprecate.initContainerImage" .) -}}
-{{- $deprecated := append $deprecated (include "external.deprecate.initContainerPullPolicy" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.redis-ha.enabled" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.redis.enabled" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.webservice.service.configuration" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.gitlab.gitaly.serviceName" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.global.psql.pool" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.global.appConfig.extra.piwik" .) -}}
-{{- $deprecated := append $deprecated (include "gitlab.deprecate.global.geo.registry.syncEnabled" .) -}}
-{{- $deprecated := append $deprecated (include "certmanager.createCustomResource" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.rails.appConfig" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.minio" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.registryStorage" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.registryHttpSecret" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.registry.replicas" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.registry.updateStrategy" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.webservice.omniauth" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.webservice.ldap" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.webservice.webServer.unicorn" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.global.appConfig.ldap.password" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.sidekiq.cronJobs" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.sidekiq.updateStrategy" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.sidekiq.pods.updateStrategy" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.sidekiq.cluster" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.sidekiq.pods.cluster" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.local.kubectl" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.gitlab.gitaly.enabled" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.initContainerImage" .) -}}
+{{- $deprecated = append $deprecated (include "external.deprecate.initContainerImage" .) -}}
+{{- $deprecated = append $deprecated (include "external.deprecate.initContainerPullPolicy" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.redis-ha.enabled" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.redis.enabled" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.gitlab.webservice.service.configuration" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.gitlab.gitaly.serviceName" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.global.psql.pool" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.global.appConfig.extra.piwik" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.global.geo.registry.syncEnabled" .) -}}
+{{- $deprecated = append $deprecated (include "certmanager.createCustomResource" .) -}}
+{{- $deprecated = append $deprecated (include "gitlab.deprecate.global.imagePullPolicy" .) -}}
 
 {{- /* prepare output */}}
-{{- $deprecated := without $deprecated "" -}}
+{{- $deprecated = without $deprecated "" -}}
 {{- $message := join "\n" $deprecated -}}
 
 {{- /* print output */}}
@@ -404,3 +404,13 @@ certmanager:
 {{- end -}}
 {{- end -}}
 {{/* END certmanager.createCustomResource */}}
+
+{{/* Deprecation behaviors for configuration of global imagePullPolicy */}}
+{{- define "gitlab.deprecate.global.imagePullPolicy" -}}
+{{- if .Values.global.imagePullPolicy }}
+global.imagePullPolicy:
+    The configuration of `global.imagePullPolicy` has moved. Please use `global.image.pullPolicy` instead.
+{{- end -}}
+
+{{- end -}}
+{{/* END gitlab.deprecate.local.kubectl */}}

@@ -5,9 +5,10 @@
 {{- $internalGitalyTLSEnabled := $.Values.global.gitaly.tls.enabled }}
 {{- $internalPraefectTLSEnabled := and $.Values.global.praefect.tls.enabled $.Values.global.praefect.tls.secretName }}
 {{- $certmanagerDisabled := not (or $.Values.global.ingress.configureCertmanager $.Values.global.ingress.tls) }}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.global.certificates.image -}}
 - name: certificates
   image: "{{ .Values.global.certificates.image.repository }}:{{ .Values.global.certificates.image.tag }}"
-  {{ template "gitlab.imagePullPolicy" . }}
+  {{- include "gitlab.image.pullPolicy" $imageCfg | indent 2 }}
   env:
   {{- include "gitlab.extraEnv" . | nindent 2 }}
   volumeMounts:

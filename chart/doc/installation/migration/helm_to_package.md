@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Migrate from the Helm Chart to the Linux package
+# Migrate from the Helm Chart to the Linux package **(FREE SELF)**
 
 To migrate from a Helm installation to a Linux package (Omnibus) installation:
 

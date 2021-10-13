@@ -49,8 +49,8 @@ describe 'migrations configuration' do
       expect(t.dig('Job/test-migrations-1', 'metadata', 'labels')).to include('global' => 'migrations')
       expect(t.dig('Job/test-migrations-1', 'metadata', 'labels')).not_to include('global' => 'global')
       expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
-      expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'labels')).to include('pod' => true)
-      expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => true)
+      expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
+      expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
       expect(t.dig('ServiceAccount/test-migrations', 'metadata', 'labels')).to include('global' => 'migrations')
     end
   end

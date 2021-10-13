@@ -18,8 +18,7 @@ spec:
   maxUnavailable: {{ default $.Values.maxUnavailable .maxUnavailable }}
   selector:
     matchLabels:
-      app: {{ $name }}
-      release: {{ $.Release.Name }}
+      {{- include "gitlab.selectorLabels" $ | nindent 6 }}
       queue-pod-name: {{ .name }}
 {{- end -}}
 {{- end -}}

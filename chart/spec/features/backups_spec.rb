@@ -55,7 +55,7 @@ describe "Restoring a backup" do
 
     it 'Should have runner registered' do
       visit '/admin/runners'
-      expect(page).to have_css('#content-body div[data-testid^=\'runner-row-\']', minimum: 1)
+      expect(page).to have_css('#content-body [data-testid^=\'runner-row-\']', minimum: 1)
     end
 
     it 'Issue attachments should load correctly' do
@@ -132,7 +132,17 @@ describe "Restoring a backup" do
         test_counterpart = file.gsub('original_backup', 'test_backup')
 
         expect(File.exist?(test_counterpart)).to be_truthy, "Expected #{test_counterpart} to exist"
-        expect(Digest::MD5.hexdigest(File.read(file))).to eq(Digest::MD5.hexdigest(File.read(test_counterpart))),
+
+        original_content = File.read(file)
+        test_content = File.read(test_counterpart)
+
+        # Strip the ref list header from bundle as its sort order may not be guaranteed
+        if File.extname(file) == '.bundle'
+          original_content = original_content.slice(original_content.index("PACK\u0000")..-1)
+          test_content = test_content.slice(test_content.index("PACK\u0000")..-1)
+        end
+
+        expect(Digest::MD5.hexdigest(original_content)).to eq(Digest::MD5.hexdigest(test_content)),
           "Expected #{file} to equal #{test_counterpart}"
       end
     end

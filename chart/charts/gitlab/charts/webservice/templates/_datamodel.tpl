@@ -57,7 +57,7 @@ ingress:
   proxyReadTimeout: {{ .Values.ingress.proxyReadTimeout }}
   proxyBodySize: {{ .Values.ingress.proxyBodySize | quote }}
 common:
-  labels: {}
+  labels: {{ mergeOverwrite (deepCopy .Values.global.common.labels) (deepCopy .Values.common.labels) | toYaml | nindent 4 }}
 deployment:
   annotations:
     {{- if .Values.deployment.annotations }}
@@ -95,6 +95,8 @@ pdb:
   maxUnavailable: {{ .Values.maxUnavailable }} # defaults to .maxUnavailable
 resources: # resources for `webservice` container
   {{- .Values.resources | toYaml | nindent 2 }}
+sharedTmpDir: {{ .Values.sharedTmpDir | toYaml | nindent 2 }}
+sharedUploadDir: {{ .Values.sharedUploadDir | toYaml | nindent 2 }}
 workhorse:
   {{- .Values.workhorse | toYaml | nindent 2 }}
 extraEnv:
@@ -112,6 +114,8 @@ tolerations: # array
   {{- if .Values.tolerations }}
   {{- .Values.tolerations | toYaml | nindent 2 }}
   {{- end }}
+sshHostKeys: # map
+  {{- .Values.sshHostKeys | toYaml | nindent 2 }}
 {{- end -}}
 
 {{/*

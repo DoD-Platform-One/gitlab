@@ -25,6 +25,11 @@ describe 'Database configuration' do
             key: ''
           load_balancing: {}
           connectTimeout: nil
+          keepalives: nil
+          keepalivesIdle: nil
+          keepalivesInterval: nil
+          keepalivesCount: nil
+          tcpUserTimeout: nil
       postgresql:
         install: true
     ))
@@ -187,6 +192,11 @@ describe 'Database configuration' do
                 applicationName: test
                 preparedStatements: true
                 connectTimeout: 55
+                keepalives: 1
+                keepalivesIdle: 5
+                keepalivesInterval: 3
+                keepalivesCount: 3
+                tcpUserTimeout: 13000
         )))
       end
 
@@ -196,6 +206,11 @@ describe 'Database configuration' do
         # webservice gets "global"
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('host: "psql.global"')
           .and match(/connect_timeout: $/)
+          .and match(/keepalives: $/)
+          .and match(/keepalives_idle: $/)
+          .and match(/keepalives_interval: $/)
+          .and match(/keepalives_count: $/)
+          .and match(/tcp_user_timeout: $/)
         # sidekiq gets "other", with non-defaults
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('host: "psql.other"')
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('port: 5431')
@@ -204,6 +219,11 @@ describe 'Database configuration' do
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('application_name: "test"')
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('prepared_statements: true')
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('connect_timeout: 55')
+        expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('keepalives: 1')
+        expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('keepalives_idle: 5')
+        expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('keepalives_interval: 3')
+        expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('keepalives_count: 3')
+        expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('tcp_user_timeout: 13000')
       end
     end
 
@@ -227,6 +247,11 @@ describe 'Database configuration' do
                   secret: other-postgresql-password
                   key: other-password
                 connectTimeout: 55
+                keepalives: 1
+                keepalivesIdle: 5
+                keepalivesInterval: 3
+                keepalivesCount: 3
+                tcpUserTimeout: 13000
         )))
       end
 
@@ -236,6 +261,11 @@ describe 'Database configuration' do
         # sidekiq gets "global"
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('host: "psql.global"')
           .and match(/connect_timeout: $/)
+          .and match(/keepalives: $/)
+          .and match(/keepalives_idle: $/)
+          .and match(/keepalives_interval: $/)
+          .and match(/keepalives_count: $/)
+          .and match(/tcp_user_timeout: $/)
         sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v1','init-sidekiq-secrets').select { |item|
           item['secret']['name'] == 'test-postgresql-password'
         }
@@ -248,6 +278,11 @@ describe 'Database configuration' do
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('application_name: ""')
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('prepared_statements: true')
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('connect_timeout: 55')
+        expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('keepalives: 1')
+        expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('keepalives_idle: 5')
+        expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('keepalives_interval: 3')
+        expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('keepalives_count: 3')
+        expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('tcp_user_timeout: 13000')
         webservice_secret_mounts =  t.projected_volume_sources('Deployment/test-webservice-default','init-webservice-secrets').select { |item|
           item['secret']['name'] == 'other-postgresql-password' && item['secret']['items'][0]['key'] == 'other-password'
         }
@@ -280,6 +315,11 @@ describe 'Database configuration' do
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include("application_name: \n")
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('prepared_statements: false')
           .and match(/connect_timeout: $/)
+          .and match(/keepalives: $/)
+          .and match(/keepalives_idle: $/)
+          .and match(/keepalives_interval: $/)
+          .and match(/keepalives_count: $/)
+          .and match(/tcp_user_timeout: $/)
         sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v1','init-sidekiq-secrets').select { |item|
           item['secret']['name'] == 'test-postgresql-password' && item['secret']['items'][0]['key'] == 'postgresql-password'
         }
@@ -292,6 +332,11 @@ describe 'Database configuration' do
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include("application_name: \n")
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('prepared_statements: false')
           .and match(/connect_timeout: $/)
+          .and match(/keepalives: $/)
+          .and match(/keepalives_idle: $/)
+          .and match(/keepalives_interval: $/)
+          .and match(/keepalives_count: $/)
+          .and match(/tcp_user_timeout: $/)
         webservice_secret_mounts =  t.projected_volume_sources('Deployment/test-webservice-default','init-webservice-secrets').select { |item|
           item['secret']['name'] == 'test-postgresql-password' && item['secret']['items'][0]['key'] == 'postgresql-password'
         }

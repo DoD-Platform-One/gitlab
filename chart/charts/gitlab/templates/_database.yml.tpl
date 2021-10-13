@@ -3,19 +3,34 @@
 Returns the contents of the `database.yml` blob for Rails pods
 */}}
 {{- define "gitlab.database.yml" -}}
+{{- include "database.datamodel.prepare" . -}}
+{{- if .Values.global.debugDatabaseDatamodel }}
+# global.debugDatabaseDatamodel=true
+# helm template . -f test_values.yml | yq -r '.data."database.yml.erb" | select(. != null)'
+datamodel: {{ .Values.local | toYaml | nindent 4 }}
+{{- end }}
 production:
-  adapter: postgresql
-  encoding: unicode
-  database: {{ template "gitlab.psql.database" . }}
-  username: {{ template "gitlab.psql.username" . }}
-  password: "<%= File.read({{ template "gitlab.psql.password.file" . }}).strip.dump[1..-2] %>"
-  host: {{ include "gitlab.psql.host" . | quote }}
-  port: {{ template "gitlab.psql.port" . }}
-  connect_timeout: {{ template "gitlab.psql.connectTimeout" . }}
-  application_name: {{ template "gitlab.psql.applicationName" . }}
-  prepared_statements: {{ template "gitlab.psql.preparedStatements" . }}
-  {{- include "gitlab.database.loadBalancing" . | nindent 2 }}
-  {{- include "gitlab.psql.ssl.config" . | nindent 2 }}
+{{- range $database := without (keys .Values.local.psql) "main" | concat (list "main") }}
+{{-   $context := get $.Values.local.psql $database }}
+  {{ $database }}:
+    adapter: postgresql
+    encoding: unicode
+    database: {{ template "gitlab.psql.database" $context }}
+    username: {{ template "gitlab.psql.username" $context }}
+    password: "<%= File.read({{ template "gitlab.psql.password.file" $context }}).strip.dump[1..-2] %>"
+    host: {{ include "gitlab.psql.host" $context | quote }}
+    port: {{ template "gitlab.psql.port" $context }}
+    connect_timeout: {{ template "gitlab.psql.connectTimeout" $context }}
+    keepalives: {{ template "gitlab.psql.keepalives" $context }}
+    keepalives_idle: {{ template "gitlab.psql.keepalivesIdle" $context }}
+    keepalives_interval: {{ template "gitlab.psql.keepalivesInterval" $context }}
+    keepalives_count: {{ template "gitlab.psql.keepalivesCount" $context }}
+    tcp_user_timeout: {{ template "gitlab.psql.tcpUserTimeout" $context }}
+    application_name: {{ template "gitlab.psql.applicationName" $context }}
+    prepared_statements: {{ template "gitlab.psql.preparedStatements" $context }}
+    {{- include "gitlab.database.loadBalancing" $context | nindent 4 }}
+    {{- include "gitlab.psql.ssl.config" $context | nindent 4 }}
+{{- end }}
 {{- end -}}
 
 {{/*

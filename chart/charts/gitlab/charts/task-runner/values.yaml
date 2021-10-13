@@ -1,13 +1,14 @@
-image:
-  pullSecrets: []
+image: {}
   # pullPolicy: IfNotPresent
-  # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ee
+  # pullSecrets: []
+  # repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ee
   # tag: master
 
 init:
   image: {}
     # repository:
     # tag:
+    # pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 50m
@@ -32,7 +33,6 @@ psql: {}
   # port: 5432
 
 global:
-  # imagePullPolicy: IfNotPresent
   hosts:
     domain: example.com
     hostSuffix:

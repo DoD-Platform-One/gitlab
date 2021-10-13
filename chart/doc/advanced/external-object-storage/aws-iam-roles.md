@@ -174,7 +174,7 @@ S3 using the IAM role by logging into the `taskrunner` pod and installing the
 `awscli` Python package:
 
 ```shell
-kubectl exec -it <TASK RUNNER POD> bash
+kubectl exec -it <TASK RUNNER POD> -- bash
 pip install awscli
 ```
 

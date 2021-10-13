@@ -18,6 +18,5 @@ spec:
       protocol: TCP
       name: gitlab-exporter
   selector:
-    app: {{ template "name" . }}
-    release: {{ .Release.Name }}
+    {{- include "gitlab.selectorLabels" . | nindent 4 }}
 {{- end }}

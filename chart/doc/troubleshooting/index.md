@@ -123,7 +123,7 @@ This can happen when you have TLS termination before the NGINX Ingress, and the 
    Via a values file:
 
    ```yaml
-   # values.yml
+   # values.yaml
    global:
      ingress:
        annotations:
@@ -265,7 +265,10 @@ gitlab-postgresql FATAL:  database files are incompatible with server
 gitlab-postgresql DETAIL:  The data directory was initialized by PostgreSQL version 11, which is not compatible with this version 12.7.
 ```
 
-To address this, perform a [Helm rollback](https://helm.sh/docs/helm/helm_rollback) to the previous version of the chart and then follow the steps in the [upgrade guide](../installation/upgrade.md) to upgrade the bundled PostgreSQL version. Once PostgreSQL is properly upgraded, try the GitLab Helm chart upgrade again.
+To address this, perform a [Helm rollback](https://helm.sh/docs/helm/helm_rollback/) to the previous
+version of the chart and then follow the steps in the [upgrade guide](../installation/upgrade.md) to
+upgrade the bundled PostgreSQL version. Once PostgreSQL is properly upgraded, try the GitLab Helm
+chart upgrade again.
 
 ## Increased load on `/api/v4/jobs/requests` endpoint
 

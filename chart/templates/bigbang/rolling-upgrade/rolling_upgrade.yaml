@@ -1,0 +1,160 @@
+{{- if .Values.upgradeCheck.enabled }}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.upgradeCheck.image -}}
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-rolling-upgrade-job
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-21"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+spec:
+  egress:
+  - to:
+    - ipBlock:
+        cidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+        {{- if eq .Values.networkPolicies.controlPlaneCidr "0.0.0.0/0" }}
+        # ONLY Block requests to AWS metadata IP
+        except:
+        - 169.254.169.254/32
+        {{- end }}
+  podSelector:
+    matchLabels:
+      job-name: {{ template "fullname" . }}-rolling-upgrade
+  policyTypes:
+  - Egress
+{{- end }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "fullname" . }}-rolling-upgrade
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-21"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "fullname" . }}-rolling-upgrade
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-22"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+rules:
+- apiGroups: ["helm.toolkit.fluxcd.io"]
+  resources: ["helmreleases"]
+  verbs: ["get", "list", "patch", "update"]
+- apiGroups: ["source.toolkit.fluxcd.io"]
+  resources: ["gitrepositories"]
+  verbs: ["get", "list", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "fullname" . }}-rolling-upgrade
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-21"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "fullname" . }}-rolling-upgrade
+subjects:
+- kind: ServiceAccount
+  name: {{ template "fullname" . }}-rolling-upgrade
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-rolling-upgrade
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-21"
+    "helm.sh/hook-delete-policy": before-hook-creation
+data:
+  runcheck: |
+    {{- include (print $.Template.BasePath "/bigbang/rolling-upgrade/_rolling-upgrade-script.tpl") . | nindent 4 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "fullname" . }}-rolling-upgrade
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-20"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ template "fullname" . }}-rolling-upgrade
+      {{- if .Values.upgradeCheck.nodeSelector }}
+        nodeSelector: {{ toYaml .Values.upgradeCheck.nodeSelector | nindent 8 }}
+      {{- else }}
+      {{- include "gitlab.nodeSelector" . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.upgradeCheck.tolerations }}
+      tolerations:
+        {{- toYaml .Values.upgradeCheck.tolerations | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsUser: {{ .Values.upgradeCheck.securityContext.runAsUser }}
+        fsGroup: {{ .Values.upgradeCheck.securityContext.fsGroup }}
+      restartPolicy: Never
+      {{- include "gitlab.image.pullSecrets" $imageCfg | nindent 6}}
+      containers:
+        - name: rolling-upgrade-check
+          image: {{ include "gitlab.kubectl.image" . | quote }}
+          command: ['/bin/sh', '/scripts/runcheck']
+          {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
+          env:
+            - name: GITLAB_VERSION
+              value: '{{ coalesce .Values.global.gitlabVersion .Chart.AppVersion }}'
+            - name: CHART_VERSION
+              value: '{{ .Chart.Version }}'
+          volumeMounts:
+            - name: chart-info
+              mountPath: /chart-info
+            - name: scripts
+              mountPath: /scripts
+{{- if .Values.postgresql.install }}
+            - name: postgresql-secret
+              mountPath: /etc/secrets/postgresql
+{{- end }}
+          resources:
+            {{- toYaml .Values.upgradeCheck.resources | nindent 12 }}
+      volumes:
+      - name: chart-info
+        configMap:
+          name: {{ template "fullname" . }}-chart-info
+          optional: true
+      - name: scripts
+        configMap:
+          name: {{ template "fullname" . }}-rolling-upgrade
+{{- if .Values.postgresql.install }}
+      - name: postgresql-secret
+        secret:
+          secretName: {{ template "gitlab.psql.password.secret" . }}
+          optional: true
+{{- end }}
+{{- end }}

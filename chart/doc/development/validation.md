@@ -13,7 +13,7 @@ of this feature by defining `values.schema.json` file for each sub-chart.
 
 Guidelines for developers regarding usage of schema files:
 
-- If you are adding a new entry to or modifying an existing entry in the `values.yml`
+- If you are adding a new entry to or modifying an existing entry in the `values.yaml`
   file of a subchart, you must update the respective `values.schema.json` file to match
   this change.
 - The first iteration of this task is expected to be completed when all the sub-charts
@@ -21,11 +21,11 @@ Guidelines for developers regarding usage of schema files:
   the [related epic](https://gitlab.com/groups/gitlab-org/charts/-/epics/8). Future
   iterations will focus on improving and polishing these schema files and enhance their
   efficiency and usability.
-- All settings configurable via `values.yml` must have type validations (ensure they
+- All settings configurable via `values.yaml` must have type validations (ensure they
   accept only the correct data types as values) implemented in the `values.schema.json`
   file. This must be completed in the first iteration.
 - During the first iteration, validation of required fields can be limited to ensuring
-  the settings a user has defined in their `values.yml` file is sufficient to spin up a
+  the settings a user has defined in their `values.yaml` file is sufficient to spin up a
   pod with just that component, and without any error being reported in the logs. In
   future iterations, this should be expanded to ensure the pod is, in fact, functional.
   This involves deeper testing.

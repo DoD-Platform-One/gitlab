@@ -25,7 +25,8 @@ describe 'kas configuration' do
       global:
         kas:
           enabled: true
-        imagePullPolicy: Always
+        image:
+          pullPolicy: Always
         appConfig:
           gitlab_kas:
             key: #{custom_secret_key}
@@ -94,14 +95,14 @@ describe 'kas configuration' do
       expect(t.dig('Deployment/test-kas', 'metadata', 'labels')).to include('global' => 'kas')
       expect(t.dig('Deployment/test-kas', 'metadata', 'labels')).not_to include('global' => 'global')
       expect(t.dig('Deployment/test-kas', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
-      expect(t.dig('Deployment/test-kas', 'spec', 'template', 'metadata', 'labels')).to include('pod' => true)
-      expect(t.dig('Deployment/test-kas', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => true)
+      expect(t.dig('Deployment/test-kas', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
+      expect(t.dig('Deployment/test-kas', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
       expect(t.dig('HorizontalPodAutoscaler/test-kas', 'metadata', 'labels')).to include('global' => 'kas')
       expect(t.dig('Ingress/test-kas', 'metadata', 'labels')).to include('global' => 'kas')
       expect(t.dig('PodDisruptionBudget/test-kas', 'metadata', 'labels')).to include('global' => 'kas')
       expect(t.dig('Service/test-kas', 'metadata', 'labels')).to include('global' => 'service')
-      expect(t.dig('Service/test-kas', 'metadata', 'labels')).to include('global_service' => true)
-      expect(t.dig('Service/test-kas', 'metadata', 'labels')).to include('service' => true)
+      expect(t.dig('Service/test-kas', 'metadata', 'labels')).to include('global_service' => 'true')
+      expect(t.dig('Service/test-kas', 'metadata', 'labels')).to include('service' => 'true')
       expect(t.dig('Service/test-kas', 'metadata', 'labels')).not_to include('global' => 'global')
       expect(t.dig('ServiceAccount/test-kas', 'metadata', 'labels')).to include('global' => 'kas')
     end

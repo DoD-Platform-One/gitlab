@@ -20,9 +20,9 @@ spec:
   maxReplicas: {{ .Values.controller.autoscaling.maxReplicas }}
   metrics:
   {{- with .Values.controller.autoscaling.targetMemoryUtilizationPercentage }}
-  - type: Resource 
-    resource: 
-      name: memory 
+  - type: Resource
+    resource:
+      name: memory
       target:
         type: Utilization
         averageUtilization: {{ . }}

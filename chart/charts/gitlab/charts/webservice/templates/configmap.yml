@@ -1,4 +1,5 @@
 {{- if .Values.enabled -}}
+{{- include "database.datamodel.prepare" $ -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,8 +9,9 @@ metadata:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
 data:
-  {{- if $.Values.debugDeploymentsConfig }}
-  # DEBUG to show generated map
+  {{- if $.Values.debugDatamodel }}
+  # gitlab.webservice.debugDatamodel
+  # helm template . -f test_values.yaml | yq -r '.data.deployments | select(. != null)'
   {{- include "webservice.datamodel.prepare" $ -}}
   deployments: |
     blank:
@@ -168,6 +170,13 @@ data:
     gitlab-helm-chart
   workhorse-config.toml.erb: |
     shutdown_timeout = "{{ template "gitlab.workhorse.shutdownTimeout" $ }}"
+    {{- if $.Values.workhorse.trustedCIDRsForPropagation }}
+    trusted_cidrs_for_propagation = {{ $.Values.workhorse.trustedCIDRsForPropagation | toStrings | toJson }}
+    {{- end }}
+    {{- if $.Values.workhorse.trustedCIDRsForXForwardedFor }}
+    trusted_cidrs_for_x_forwarded_for = {{ $.Values.workhorse.trustedCIDRsForXForwardedFor | toStrings | toJson }}
+    {{- end }}
+
     {{- if .workhorse.keywatcher }}
     [redis]
     {{- if not $.Values.global.redis.sentinels }}

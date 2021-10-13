@@ -75,7 +75,12 @@ data:
     storage:
       maintenance:
         readonly:
-          enabled: {{ .Values.maintenance.readOnly.enabled }}
+          enabled: {{ .Values.maintenance.readonly.enabled }}
+        uploadpurging:
+          enabled: {{ .Values.maintenance.uploadpurging.enabled }}
+          age: {{ .Values.maintenance.uploadpurging.age }}
+          interval: {{ .Values.maintenance.uploadpurging.interval }}
+          dryrun: {{ .Values.maintenance.uploadpurging.dryrun }}
       {{- if .Values.storage }}
       {{- with .Values.storage.redirect }}
       redirect:

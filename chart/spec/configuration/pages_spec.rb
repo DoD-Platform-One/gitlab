@@ -50,6 +50,23 @@ describe 'GitLab Pages' do
       end
     end
 
+    describe 'when network policy is enabled' do
+      let(:enable_network_policy) do
+        YAML.safe_load(%(
+          gitlab:
+            gitlab-pages:
+              networkpolicy:
+                enabled: true
+        )).deep_merge(pages_enabled_values).deep_merge(values)
+      end
+
+      it 'creates a network policy object' do
+        t = HelmTemplate.new(enable_network_policy)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        expect(t.dig('NetworkPolicy/test-gitlab-pages-v1', 'metadata', 'labels')).to include('app' => 'gitlab-pages')
+      end
+    end
+
     context 'When customer provides additional labels' do
       let(:labels) do
         YAML.safe_load(%(
@@ -90,14 +107,14 @@ describe 'GitLab Pages' do
         expect(t.dig('Deployment/test-gitlab-pages', 'metadata', 'labels')).to include('global' => 'pages')
         expect(t.dig('Deployment/test-gitlab-pages', 'metadata', 'labels')).not_to include('global' => 'global')
         expect(t.dig('Deployment/test-gitlab-pages', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
-        expect(t.dig('Deployment/test-gitlab-pages', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => true)
-        expect(t.dig('Deployment/test-gitlab-pages', 'spec', 'template', 'metadata', 'labels')).to include('pod' => true)
+        expect(t.dig('Deployment/test-gitlab-pages', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
+        expect(t.dig('Deployment/test-gitlab-pages', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
         expect(t.dig('HorizontalPodAutoscaler/test-gitlab-pages', 'metadata', 'labels')).to include('global' => 'pages')
         expect(t.dig('Ingress/test-gitlab-pages', 'metadata', 'labels')).to include('global' => 'pages')
         expect(t.dig('PodDisruptionBudget/test-gitlab-pages', 'metadata', 'labels')).to include('global' => 'pages')
         expect(t.dig('Service/test-gitlab-pages', 'metadata', 'labels')).to include('global' => 'service')
-        expect(t.dig('Service/test-gitlab-pages', 'metadata', 'labels')).to include('global_service' => true)
-        expect(t.dig('Service/test-gitlab-pages', 'metadata', 'labels')).to include('service' => true)
+        expect(t.dig('Service/test-gitlab-pages', 'metadata', 'labels')).to include('global_service' => 'true')
+        expect(t.dig('Service/test-gitlab-pages', 'metadata', 'labels')).to include('service' => 'true')
         expect(t.dig('Service/test-gitlab-pages', 'metadata', 'labels')).not_to include('global' => 'global')
         expect(t.dig('ServiceAccount/test-gitlab-pages', 'metadata', 'labels')).to include('global' => 'pages')
       end
@@ -182,6 +199,7 @@ describe 'GitLab Pages' do
 
       context 'with default values' do
         it 'populates Pages configuration' do
+          expect(pages_enabled_template.exit_code).to eq(0), "Unexpected error code #{pages_enabled_template.exit_code} -- #{pages_enabled_template.stderr}"
           expect(config_yaml_data['production']['pages']).to eq(
             'enabled' => true,
             'access_control' => false,
@@ -205,6 +223,10 @@ describe 'GitLab Pages' do
                 'aws_access_key_id' => "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>",
                 'aws_secret_access_key' => "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
               }
+            },
+            'local_store' => {
+              'enabled' => false,
+              'path' => nil
             }
           )
         end
@@ -230,6 +252,9 @@ describe 'GitLab Pages' do
                   connection:
                     secret: custom-secret
                     key: custom-key
+                localStore:
+                  enabled: true
+                  path: /random/path
           ))
         end
 
@@ -249,6 +274,10 @@ describe 'GitLab Pages' do
               'enabled' => true,
               'remote_directory' => 'random-bucket',
               'connection' => "<%= YAML.load_file(\"/etc/gitlab/objectstorage/pages\").to_json() %>"
+            },
+            'local_store' => {
+              'enabled' => true,
+              'path' => '/random/path'
             }
           )
         end
@@ -432,8 +461,12 @@ describe 'GitLab Pages' do
                 domainConfigSource: disk
                 gitlabClientHttpTimeout: 25
                 gitlabClientJwtExpiry: 35
+                gitlabRetrieval:
+                  retries: 3
                 gitlabServer: https://randomgitlabserver.com
-                headers: ['FOO: ABC']
+                headers:
+                  - "FOO: BAR"
+                  - "BAZ: BAT"
                 insecureCiphers: true
                 internalGitlabServer: https://int.randomgitlabserver.com
                 logFormat: text
@@ -450,11 +483,15 @@ describe 'GitLab Pages' do
                 useHttp2: false
                 metrics:
                   port: 9999
+                zipCache:
+                  refresh: 60s
           ))
         end
 
         it 'populates Pages configuration' do
           default_content = <<~MSG
+            gitlab-retrieval-retries=3
+            header=FOO: BAR;;BAZ: BAT
             listen-proxy=0.0.0.0:8090
             pages-domain=pages.example.com
             pages-root=/srv/gitlab-pages
@@ -481,8 +518,10 @@ describe 'GitLab Pages' do
             auth-client-id=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appid').strip.dump[1..-2] %>
             auth-client-secret=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appsecret').strip.dump[1..-2] %>
             auth-secret=<%= File.read('/etc/gitlab-secrets/pages/auth_secret').strip.dump[1..-2] %>
+            zip-cache-refresh=60s
           MSG
 
+          expect(pages_enabled_template.exit_code).to eq(0), "Unexpected error code #{pages_enabled_template.exit_code} -- #{pages_enabled_template.stderr}"
           expect(config_data).to eq default_content
         end
       end
@@ -806,6 +845,28 @@ describe 'GitLab Pages' do
                 }
               ]
             )
+          end
+        end
+      end
+
+      context 'when using HTTPS Proxy V2' do
+        let(:pages_enabled_values) do
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                externalHttps:
+                  - 1.1.1.1
+            gitlab:
+              gitlab-pages:
+                useProxyV2: true
+          ))
+        end
+
+        describe 'pages configuration' do
+          it 'exposes proper listeners' do
+            expect(pages_config_data).to match(/listen-https-proxyv2=0.0.0.0:8091/)
+            expect(pages_config_data).not_to match(/listen-https=0.0.0.0:8091/)
           end
         end
       end

@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Deployment Guide
+# Deployment Guide **(FREE SELF)**
 
 Before running `helm install`, you need to make some decisions about how you will run GitLab.
 Options can be specified using Helm's `--set option.name=value` command line option.
@@ -98,49 +98,40 @@ certificates.
 
 ### PostgreSQL
 
-By default this chart provides an in-cluster PostgreSQL database, for trial
-purposes only.
+It's recommended to set up an
+[external production-ready PostgreSQL instance](../advanced/external-db/index.md).
 
-> **NOTE: This configuration is not recommended for use in production.**
->
-> - A single StatefulSet is provided by [`bitnami/PostgreSQL`](https://artifacthub.io/packages/helm/bitnami/postgresql) by default.
-> - As of 4.0.0 of these charts, replication is available internally, but _not enabled by default_. Such functionality has not been load tested by GitLab.
+As of GitLab Chart 4.0.0, replication is available internally, but _not enabled by default_. Such functionality has not been load tested by GitLab.
 
-You can read more about setting up your production-ready database in the [advanced database docs](../advanced/external-db/index.md).
-
-If you have an external PostgreSQL database ready, the chart can be configured to
-use it as shown below.
-
-*Include these options in your Helm install command:*
-
-```shell
---set postgresql.install=false
---set global.psql.host=production.postgress.hostname.local
---set global.psql.password.secret=kubernetes_secret_name
---set global.psql.password.key=key_that_contains_postgres_password
-```
+NOTE:
+By default, the GitLab Chart includes an in-cluster PostgreSQL deployment that
+is provided by [`bitnami/PostgreSQL`](https://artifacthub.io/packages/helm/bitnami/postgresql).
+This is for trial purposes only and **not recommended for use in production**.
 
 ### Redis
 
-All Redis configuration settings have been moved and consolidated on the
-[charts/globals.md](../charts/globals.md#configure-redis-settings) page.
+It's recommended to set up an
+[external production-ready Redis instance](../advanced/external-redis/index.md).
+For all the available configuration settings, see the
+[Redis globals documentation](../charts/globals.md#configure-redis-settings).
 
-> **NOTE: This configuration is not recommended for use in production.**
->
-> - A single StatefulSet is provided by [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/redis) by default.
-> - As of 4.0.0 of these charts, replication is available internally, but _not enabled by default_. Such functionality has not been load tested by GitLab.
+As of GitLab Chart 4.0.0, replication is available internally, but
+_not enabled by default_. Such functionality has not been load tested by GitLab.
 
-You can read more about setting up a production-ready Redis instance in the [advanced Redis docs](../advanced/external-redis/index.md).
+NOTE:
+By default, the GitLab Chart includes an in-cluster Redis deployment that
+is provided by [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/redis).
+This is for trial purposes only and **not recommended for use in production**.
 
 ### MinIO
 
-By default this chart provides an in-cluster MinIO deployment to provide an object storage API.
+It's recommended to set up an
+[external production-ready object storage](../advanced/external-object-storage/index.md)
 
-> **NOTE: This configuration is not recommended for use in production.**
->
-> - A singleton, non-resilient Deployment is provided by our [MinIO fork](../charts/minio/index.md).
-
-You can read more about setting up your production-ready object storage in the [external object storage](../advanced/external-object-storage/index.md)
+NOTE:
+By default, the GitLab chart provides an in-cluster MinIO deployment to provide an object storage API.
+A singleton, non-resilient Deployment is provided by our [MinIO fork](../charts/minio/index.md).
+This is for trial purposes only and **not recommended for use in production**.
 
 ### Prometheus
 

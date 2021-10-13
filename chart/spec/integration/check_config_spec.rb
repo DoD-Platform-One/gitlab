@@ -849,6 +849,32 @@ describe 'checkConfig template' do
                      error_description: 'when migration disablemirrorfs is true, with database disabled'
   end
 
+  describe 'registry.migration (enabled)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        registry:
+          database:
+            enabled: true
+          migration:
+            enabled: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        registry:
+          migration:
+            enabled: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling migration mode requires the metadata database to be enabled' }
+
+    include_examples 'config validation',
+                     success_description: 'when migration enabled is true, with database enabled',
+                     error_description: 'when migration enabled is true, with database disabled'
+  end
+
   describe 'sidekiq.timeout' do
     context 'with deployment-global values specified for both timeout and terminationGracePeriodSeconds and no pod-local values specified for either' do
       let(:success_values) do

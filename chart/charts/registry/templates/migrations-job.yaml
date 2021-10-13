@@ -50,7 +50,7 @@ spec:
         env:
         {{- include "gitlab.extraEnv" . | nindent 8 }}
       restartPolicy: OnFailure
-      {{- include "pullsecrets" .Values.image | indent 6 }}
+      {{- include "gitlab.image.pullSecrets" (dict "global" .Values.global.image "local" .Values.image) | indent 6 }}
       containers:
       {{- include "gitlab.extraContainers" . | nindent 6 }}
       - name: migrations
