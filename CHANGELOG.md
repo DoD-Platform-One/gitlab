@@ -56,6 +56,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.1-bb.1] - 2021-10-15
+- Updated README.md
+- Renamed docs/README.md to docs/overview.md
+
 ## [5.3.1-bb.0] - 2021-10-08
 - upgrade Gitlab to application version 14.3.1 helm chart version v5.3.1
 - If upgrading from 13.12.9 to 14.3.1 must first upgrade to 14.0.5 see Gitlab documentation

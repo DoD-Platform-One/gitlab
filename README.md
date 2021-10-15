@@ -1,61 +1,739 @@
-# Gitlab Package chart
+# gitlab
 
-This is a modified upstream chart. Custom templates and values are added to support the BigBang Umbrella chart.
+![Version: 5.3.1-bb.0](https://img.shields.io/badge/Version-5.3.1--bb.0-informational?style=flat-square) ![AppVersion: 14.3.1](https://img.shields.io/badge/AppVersion-14.3.1-informational?style=flat-square)
 
-Temporarily the subchart dependencies were downloaded as tar archives in the chart/charts/ directory.  These will need to be replaced with BigBang packages
-```
-helm dependency update
+Web-based Git-repository manager with wiki and issue-tracking features.
+
+## Upstream References
+* <https://about.gitlab.com/>
+
+* <https://gitlab.com/gitlab-org/charts/gitlab>
+
+## Learn More
+- [Application Overview](docs/overview.md)
+- [Other Documentation](docs/)
+
+## Pre-Requisites
+
+* Kubernetes Cluster deployed
+* Kubernetes config installed in `~/.kube/config`
+* Helm installed
+
+Install Helm
+
+https://helm.sh/docs/intro/install/
+
+## Deployment
+
+* Clone down the repository
+* cd into directory
+```bash
+helm install gitlab chart/
 ```
 
-This package can be deployed independently from the BigBang umbrella with this helm command
-```
-helm upgrade -i gitlab chart -n gitlab --create-namespace -f chart/values.yaml
-```
+## Values
 
-And it can be deleted with this helm command
-```
-helm delete gitlab -n gitlab
-```
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| global.common.labels | object | `{}` |  |
+| global.image | object | `{}` |  |
+| global.operator.enabled | bool | `false` |  |
+| global.operator.rollout.autoPause | bool | `true` |  |
+| global.pod.labels | object | `{}` |  |
+| global.edition | string | `"ee"` |  |
+| global.application.create | bool | `false` |  |
+| global.application.links | list | `[]` |  |
+| global.application.allowClusterRoles | bool | `true` |  |
+| global.hosts.domain | string | `"bigbang.dev"` |  |
+| global.hosts.hostSuffix | string | `nil` |  |
+| global.hosts.https | bool | `true` |  |
+| global.hosts.externalIP | string | `nil` |  |
+| global.hosts.ssh | string | `nil` |  |
+| global.hosts.gitlab.name | string | `"gitlab.bigbang.dev"` |  |
+| global.hosts.minio | object | `{}` |  |
+| global.hosts.registry.name | string | `"registry.bigbang.dev"` |  |
+| global.hosts.tls | object | `{}` |  |
+| global.hosts.smartcard | object | `{}` |  |
+| global.hosts.kas | object | `{}` |  |
+| global.hosts.pages | object | `{}` |  |
+| global.ingress.configureCertmanager | bool | `false` |  |
+| global.ingress.annotations | object | `{}` |  |
+| global.ingress.enabled | bool | `false` |  |
+| global.ingress.tls | object | `{}` |  |
+| global.ingress.path | string | `"/"` |  |
+| global.ingress.pathType | string | `"Prefix"` |  |
+| global.gitlab.license | object | `{}` |  |
+| global.initialRootPassword | object | `{}` |  |
+| global.psql.connectTimeout | string | `nil` |  |
+| global.psql.keepalives | string | `nil` |  |
+| global.psql.keepalivesIdle | string | `nil` |  |
+| global.psql.keepalivesInterval | string | `nil` |  |
+| global.psql.keepalivesCount | string | `nil` |  |
+| global.psql.tcpUserTimeout | string | `nil` |  |
+| global.psql.password | object | `{}` |  |
+| global.redis.password.enabled | bool | `true` |  |
+| global.gitaly.enabled | bool | `true` |  |
+| global.gitaly.authToken | object | `{}` |  |
+| global.gitaly.internal.names[0] | string | `"default"` |  |
+| global.gitaly.external | list | `[]` |  |
+| global.gitaly.service.name | string | `"gitaly"` |  |
+| global.gitaly.service.type | string | `"ClusterIP"` |  |
+| global.gitaly.service.externalPort | int | `8075` |  |
+| global.gitaly.service.internalPort | int | `8075` |  |
+| global.gitaly.service.tls.externalPort | int | `8076` |  |
+| global.gitaly.service.tls.internalPort | int | `8076` |  |
+| global.gitaly.tls.enabled | bool | `false` |  |
+| global.praefect.enabled | bool | `false` |  |
+| global.praefect.replaceInternalGitaly | bool | `true` |  |
+| global.praefect.authToken | object | `{}` |  |
+| global.praefect.autoMigrate | bool | `true` |  |
+| global.praefect.dbSecret | object | `{}` |  |
+| global.praefect.virtualStorages[0].name | string | `"default"` |  |
+| global.praefect.virtualStorages[0].gitalyReplicas | int | `3` |  |
+| global.praefect.virtualStorages[0].maxUnavailable | int | `1` |  |
+| global.praefect.psql.sslMode | string | `"disable"` |  |
+| global.praefect.service.name | string | `"praefect"` |  |
+| global.praefect.service.type | string | `"ClusterIP"` |  |
+| global.praefect.service.externalPort | int | `8075` |  |
+| global.praefect.service.internalPort | int | `8075` |  |
+| global.praefect.service.tls.externalPort | int | `8076` |  |
+| global.praefect.service.tls.internalPort | int | `8076` |  |
+| global.praefect.tls.enabled | bool | `false` |  |
+| global.minio.enabled | bool | `true` |  |
+| global.minio.credentials | object | `{}` |  |
+| global.grafana.enabled | bool | `false` |  |
+| global.appConfig.enableUsagePing | bool | `true` |  |
+| global.appConfig.enableSeatLink | bool | `true` |  |
+| global.appConfig.enableImpersonation | string | `nil` |  |
+| global.appConfig.applicationSettingsCacheSeconds | int | `60` |  |
+| global.appConfig.defaultCanCreateGroup | bool | `false` |  |
+| global.appConfig.usernameChangingEnabled | bool | `true` |  |
+| global.appConfig.issueClosingPattern | string | `nil` |  |
+| global.appConfig.defaultTheme | string | `nil` |  |
+| global.appConfig.defaultProjectsFeatures.issues | bool | `true` |  |
+| global.appConfig.defaultProjectsFeatures.mergeRequests | bool | `true` |  |
+| global.appConfig.defaultProjectsFeatures.wiki | bool | `true` |  |
+| global.appConfig.defaultProjectsFeatures.snippets | bool | `true` |  |
+| global.appConfig.defaultProjectsFeatures.builds | bool | `true` |  |
+| global.appConfig.webhookTimeout | string | `nil` |  |
+| global.appConfig.maxRequestDurationSeconds | string | `nil` |  |
+| global.appConfig.cron_jobs | object | `{}` |  |
+| global.appConfig.contentSecurityPolicy.enabled | bool | `false` |  |
+| global.appConfig.contentSecurityPolicy.report_only | bool | `true` |  |
+| global.appConfig.gravatar.plainUrl | string | `nil` |  |
+| global.appConfig.gravatar.sslUrl | string | `nil` |  |
+| global.appConfig.extra.googleAnalyticsId | string | `nil` |  |
+| global.appConfig.extra.matomoUrl | string | `nil` |  |
+| global.appConfig.extra.matomoSiteId | string | `nil` |  |
+| global.appConfig.extra.matomoDisableCookies | string | `nil` |  |
+| global.appConfig.object_store.enabled | bool | `false` |  |
+| global.appConfig.object_store.proxy_download | bool | `true` |  |
+| global.appConfig.object_store.storage_options | object | `{}` |  |
+| global.appConfig.object_store.connection | object | `{}` |  |
+| global.appConfig.lfs.enabled | bool | `true` |  |
+| global.appConfig.lfs.proxy_download | bool | `true` |  |
+| global.appConfig.lfs.bucket | string | `"git-lfs"` |  |
+| global.appConfig.lfs.connection | object | `{}` |  |
+| global.appConfig.artifacts.enabled | bool | `true` |  |
+| global.appConfig.artifacts.proxy_download | bool | `true` |  |
+| global.appConfig.artifacts.bucket | string | `"gitlab-artifacts"` |  |
+| global.appConfig.artifacts.connection | object | `{}` |  |
+| global.appConfig.uploads.enabled | bool | `true` |  |
+| global.appConfig.uploads.proxy_download | bool | `true` |  |
+| global.appConfig.uploads.bucket | string | `"gitlab-uploads"` |  |
+| global.appConfig.uploads.connection | object | `{}` |  |
+| global.appConfig.packages.enabled | bool | `true` |  |
+| global.appConfig.packages.proxy_download | bool | `true` |  |
+| global.appConfig.packages.bucket | string | `"gitlab-packages"` |  |
+| global.appConfig.packages.connection | object | `{}` |  |
+| global.appConfig.externalDiffs.enabled | bool | `false` |  |
+| global.appConfig.externalDiffs.when | string | `nil` |  |
+| global.appConfig.externalDiffs.proxy_download | bool | `true` |  |
+| global.appConfig.externalDiffs.bucket | string | `"gitlab-mr-diffs"` |  |
+| global.appConfig.externalDiffs.connection | object | `{}` |  |
+| global.appConfig.terraformState.enabled | bool | `false` |  |
+| global.appConfig.terraformState.bucket | string | `"gitlab-terraform-state"` |  |
+| global.appConfig.terraformState.connection | object | `{}` |  |
+| global.appConfig.dependencyProxy.enabled | bool | `false` |  |
+| global.appConfig.dependencyProxy.proxy_download | bool | `true` |  |
+| global.appConfig.dependencyProxy.bucket | string | `"gitlab-dependency-proxy"` |  |
+| global.appConfig.dependencyProxy.connection | object | `{}` |  |
+| global.appConfig.pseudonymizer.configMap | string | `nil` |  |
+| global.appConfig.pseudonymizer.bucket | string | `"gitlab-pseudo"` |  |
+| global.appConfig.pseudonymizer.connection | object | `{}` |  |
+| global.appConfig.backups.bucket | string | `"gitlab-backups"` |  |
+| global.appConfig.backups.tmpBucket | string | `"tmp"` |  |
+| global.appConfig.incomingEmail.enabled | bool | `false` |  |
+| global.appConfig.incomingEmail.address | string | `""` |  |
+| global.appConfig.incomingEmail.host | string | `"imap.gmail.com"` |  |
+| global.appConfig.incomingEmail.port | int | `993` |  |
+| global.appConfig.incomingEmail.ssl | bool | `true` |  |
+| global.appConfig.incomingEmail.startTls | bool | `false` |  |
+| global.appConfig.incomingEmail.user | string | `""` |  |
+| global.appConfig.incomingEmail.password.secret | string | `""` |  |
+| global.appConfig.incomingEmail.password.key | string | `"password"` |  |
+| global.appConfig.incomingEmail.expungeDeleted | bool | `false` |  |
+| global.appConfig.incomingEmail.logger.logPath | string | `"/dev/stdout"` |  |
+| global.appConfig.incomingEmail.mailbox | string | `"inbox"` |  |
+| global.appConfig.incomingEmail.idleTimeout | int | `60` |  |
+| global.appConfig.incomingEmail.inboxMethod | string | `"imap"` |  |
+| global.appConfig.incomingEmail.clientSecret.key | string | `"secret"` |  |
+| global.appConfig.incomingEmail.pollInterval | int | `60` |  |
+| global.appConfig.serviceDeskEmail.enabled | bool | `false` |  |
+| global.appConfig.serviceDeskEmail.address | string | `""` |  |
+| global.appConfig.serviceDeskEmail.host | string | `"imap.gmail.com"` |  |
+| global.appConfig.serviceDeskEmail.port | int | `993` |  |
+| global.appConfig.serviceDeskEmail.ssl | bool | `true` |  |
+| global.appConfig.serviceDeskEmail.startTls | bool | `false` |  |
+| global.appConfig.serviceDeskEmail.user | string | `""` |  |
+| global.appConfig.serviceDeskEmail.password.secret | string | `""` |  |
+| global.appConfig.serviceDeskEmail.password.key | string | `"password"` |  |
+| global.appConfig.serviceDeskEmail.expungeDeleted | bool | `false` |  |
+| global.appConfig.serviceDeskEmail.logger.logPath | string | `"/dev/stdout"` |  |
+| global.appConfig.serviceDeskEmail.mailbox | string | `"inbox"` |  |
+| global.appConfig.serviceDeskEmail.idleTimeout | int | `60` |  |
+| global.appConfig.serviceDeskEmail.inboxMethod | string | `"imap"` |  |
+| global.appConfig.serviceDeskEmail.clientSecret.key | string | `"secret"` |  |
+| global.appConfig.serviceDeskEmail.pollInterval | int | `60` |  |
+| global.appConfig.ldap.preventSignin | bool | `false` |  |
+| global.appConfig.ldap.servers | object | `{}` |  |
+| global.appConfig.gitlab_kas | object | `{}` |  |
+| global.appConfig.omniauth.enabled | bool | `false` |  |
+| global.appConfig.omniauth.autoSignInWithProvider | string | `nil` |  |
+| global.appConfig.omniauth.syncProfileFromProvider | list | `[]` |  |
+| global.appConfig.omniauth.syncProfileAttributes[0] | string | `"email"` |  |
+| global.appConfig.omniauth.allowSingleSignOn[0] | string | `"saml"` |  |
+| global.appConfig.omniauth.blockAutoCreatedUsers | bool | `true` |  |
+| global.appConfig.omniauth.autoLinkLdapUser | bool | `false` |  |
+| global.appConfig.omniauth.autoLinkSamlUser | bool | `false` |  |
+| global.appConfig.omniauth.autoLinkUser | list | `[]` |  |
+| global.appConfig.omniauth.externalProviders | list | `[]` |  |
+| global.appConfig.omniauth.allowBypassTwoFactor | list | `[]` |  |
+| global.appConfig.omniauth.providers | list | `[]` |  |
+| global.appConfig.sentry.enabled | bool | `false` |  |
+| global.appConfig.sentry.dsn | string | `nil` |  |
+| global.appConfig.sentry.clientside_dsn | string | `nil` |  |
+| global.appConfig.sentry.environment | string | `nil` |  |
+| global.appConfig.smartcard.enabled | bool | `false` |  |
+| global.appConfig.smartcard.CASecret | string | `nil` |  |
+| global.appConfig.smartcard.clientCertificateRequiredHost | string | `nil` |  |
+| global.appConfig.smartcard.sanExtensions | bool | `false` |  |
+| global.appConfig.smartcard.requiredForGitAccess | bool | `false` |  |
+| global.appConfig.sidekiq.routingRules | list | `[]` |  |
+| global.appConfig.initialDefaults | object | `{}` |  |
+| global.oauth.gitlab-pages | object | `{}` |  |
+| global.geo.enabled | bool | `false` |  |
+| global.geo.role | string | `"primary"` |  |
+| global.geo.nodeName | string | `nil` |  |
+| global.geo.psql.password | object | `{}` |  |
+| global.geo.registry.replication.enabled | bool | `false` |  |
+| global.geo.registry.replication.primaryApiUrl | string | `nil` |  |
+| global.kas.enabled | bool | `false` |  |
+| global.shell.authToken | object | `{}` |  |
+| global.shell.hostKeys | object | `{}` |  |
+| global.shell.tcp.proxyProtocol | bool | `false` |  |
+| global.railsSecrets | object | `{}` |  |
+| global.rails.bootsnap.enabled | bool | `true` |  |
+| global.registry.bucket | string | `"registry"` |  |
+| global.registry.certificate | object | `{}` |  |
+| global.registry.httpSecret | object | `{}` |  |
+| global.registry.notificationSecret | object | `{}` |  |
+| global.registry.notifications | object | `{}` |  |
+| global.pages.enabled | bool | `false` |  |
+| global.pages.accessControl | bool | `false` |  |
+| global.pages.path | string | `nil` |  |
+| global.pages.host | string | `nil` |  |
+| global.pages.port | string | `nil` |  |
+| global.pages.https | string | `nil` |  |
+| global.pages.externalHttp | list | `[]` |  |
+| global.pages.externalHttps | list | `[]` |  |
+| global.pages.artifactsServer | bool | `true` |  |
+| global.pages.localStore.enabled | bool | `false` |  |
+| global.pages.objectStore.enabled | bool | `true` |  |
+| global.pages.objectStore.bucket | string | `"gitlab-pages"` |  |
+| global.pages.objectStore.connection | object | `{}` |  |
+| global.pages.apiSecret | object | `{}` |  |
+| global.pages.authSecret | object | `{}` |  |
+| global.runner.registrationToken | object | `{}` |  |
+| global.smtp.enabled | bool | `false` |  |
+| global.smtp.address | string | `"smtp.mailgun.org"` |  |
+| global.smtp.port | int | `2525` |  |
+| global.smtp.user_name | string | `""` |  |
+| global.smtp.password.secret | string | `""` |  |
+| global.smtp.password.key | string | `"password"` |  |
+| global.smtp.authentication | string | `"plain"` |  |
+| global.smtp.starttls_auto | bool | `false` |  |
+| global.smtp.openssl_verify_mode | string | `"peer"` |  |
+| global.smtp.pool | bool | `false` |  |
+| global.email.from | string | `""` |  |
+| global.email.display_name | string | `"GitLab"` |  |
+| global.email.reply_to | string | `""` |  |
+| global.email.subject_suffix | string | `""` |  |
+| global.email.smime.enabled | bool | `false` |  |
+| global.email.smime.secretName | string | `""` |  |
+| global.email.smime.keyName | string | `"tls.key"` |  |
+| global.email.smime.certName | string | `"tls.crt"` |  |
+| global.time_zone | string | `"UTC"` |  |
+| global.service.labels | object | `{}` |  |
+| global.service.annotations | object | `{}` |  |
+| global.deployment.annotations | object | `{}` |  |
+| global.antiAffinity | string | `"soft"` |  |
+| global.workhorse.serviceName | string | `"webservice-default"` |  |
+| global.webservice.workerTimeout | int | `60` |  |
+| global.certificates.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates"` |  |
+| global.certificates.image.tag | string | `"14.3.1"` |  |
+| global.certificates.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| global.certificates.customCAs[0].secret | string | `"ca-certs-dod-trust-anchors"` |  |
+| global.certificates.customCAs[1].secret | string | `"ca-certs-dod-intermediate-dod-email-ca"` |  |
+| global.certificates.customCAs[2].secret | string | `"ca-certs-dod-intermediate-dod-id-ca"` |  |
+| global.certificates.customCAs[3].secret | string | `"ca-certs-dod-intermediate-dod-id-sw-ca"` |  |
+| global.certificates.customCAs[4].secret | string | `"ca-certs-dod-intermediate-dod-sw-ca"` |  |
+| global.certificates.customCAs[5].secret | string | `"ca-certs-eca-sha-1"` |  |
+| global.certificates.customCAs[6].secret | string | `"ca-certs-eca-sha-256"` |  |
+| global.certificates.customCAs[7].secret | string | `"ca-certs-ado-sha-256-cc-chain"` |  |
+| global.certificates.customCAs[8].secret | string | `"ca-certs-ado-sha-256-dt-chain"` |  |
+| global.certificates.customCAs[9].secret | string | `"ca-certs-boeing-sha-1"` |  |
+| global.certificates.customCAs[10].secret | string | `"ca-certs-carillon-federal-services"` |  |
+| global.certificates.customCAs[11].secret | string | `"ca-certs-department-of-state-trust-chain-1"` |  |
+| global.certificates.customCAs[12].secret | string | `"ca-certs-department-of-state-trust-chain-2"` |  |
+| global.certificates.customCAs[13].secret | string | `"ca-certs-entrust-nfi-trust-chain-1"` |  |
+| global.certificates.customCAs[14].secret | string | `"ca-certs-entrust-nfi-trust-chain-2"` |  |
+| global.certificates.customCAs[15].secret | string | `"ca-certs-entrust-ssp"` |  |
+| global.certificates.customCAs[16].secret | string | `"ca-certs-exostar-llc"` |  |
+| global.certificates.customCAs[17].secret | string | `"ca-certs-identrust-nfi"` |  |
+| global.certificates.customCAs[18].secret | string | `"ca-certs-lockheed-martin-sha-256"` |  |
+| global.certificates.customCAs[19].secret | string | `"ca-certs-nl-mod"` |  |
+| global.certificates.customCAs[20].secret | string | `"ca-certs-northrop-grumman-sha-256"` |  |
+| global.certificates.customCAs[21].secret | string | `"ca-certs-orc-nfi"` |  |
+| global.certificates.customCAs[22].secret | string | `"ca-certs-orc-ssp"` |  |
+| global.certificates.customCAs[23].secret | string | `"ca-certs-raytheon-sha-1"` |  |
+| global.certificates.customCAs[24].secret | string | `"ca-certs-raytheon-sha-256"` |  |
+| global.certificates.customCAs[25].secret | string | `"ca-certs-symantec-nfi-trust-chain-1"` |  |
+| global.certificates.customCAs[26].secret | string | `"ca-certs-symantec-nfi-trust-chain-2"` |  |
+| global.certificates.customCAs[27].secret | string | `"ca-certs-symantec-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[28].secret | string | `"ca-certs-symantec-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[29].secret | string | `"ca-certs-treasury-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[30].secret | string | `"ca-certs-treasury-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[31].secret | string | `"ca-certs-verizon-business-nfi"` |  |
+| global.certificates.customCAs[32].secret | string | `"ca-certs-verizon-business-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[33].secret | string | `"ca-certs-verizon-business-ssp-trust-chain-2"` |  |
+| global.kubectl.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kubectl"` |  |
+| global.kubectl.image.tag | string | `"14.3.1"` |  |
+| global.kubectl.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| global.kubectl.securityContext.runAsUser | int | `65534` |  |
+| global.kubectl.securityContext.fsGroup | int | `65534` |  |
+| global.busybox.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
+| global.busybox.image.tag | string | `"8.4"` |  |
+| global.busybox.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| global.serviceAccount.enabled | bool | `false` |  |
+| global.serviceAccount.create | bool | `true` |  |
+| global.serviceAccount.annotations | object | `{}` |  |
+| global.tracing.connection.string | string | `""` |  |
+| global.tracing.urlTemplate | string | `""` |  |
+| global.extraEnv | object | `{}` |  |
+| upgradeCheck.enabled | bool | `true` |  |
+| upgradeCheck.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
+| upgradeCheck.image.tag | string | `"8.4"` |  |
+| upgradeCheck.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| upgradeCheck.securityContext.runAsUser | int | `65534` |  |
+| upgradeCheck.securityContext.fsGroup | int | `65534` |  |
+| upgradeCheck.tolerations | list | `[]` |  |
+| upgradeCheck.resources.requests.cpu | string | `"500m"` |  |
+| upgradeCheck.resources.requests.memory | string | `"500Mi"` |  |
+| upgradeCheck.resources.limits.cpu | string | `"500m"` |  |
+| upgradeCheck.resources.limits.memory | string | `"500Mi"` |  |
+| certmanager.installCRDs | bool | `false` |  |
+| certmanager.nameOverride | string | `"certmanager"` |  |
+| certmanager.install | bool | `false` |  |
+| certmanager.rbac.create | bool | `true` |  |
+| nginx-ingress.enabled | bool | `false` |  |
+| nginx-ingress.tcpExternalConfig | string | `"true"` |  |
+| nginx-ingress.controller.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
+| nginx-ingress.controller.config.hsts | string | `"false"` |  |
+| nginx-ingress.controller.config.hsts-include-subdomains | string | `"false"` |  |
+| nginx-ingress.controller.config.hsts-max-age | string | `"63072000"` |  |
+| nginx-ingress.controller.config.server-name-hash-bucket-size | string | `"256"` |  |
+| nginx-ingress.controller.config.use-http2 | string | `"true"` |  |
+| nginx-ingress.controller.config.ssl-ciphers | string | `"ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
+| nginx-ingress.controller.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
+| nginx-ingress.controller.config.server-tokens | string | `"false"` |  |
+| nginx-ingress.controller.service.externalTrafficPolicy | string | `"Local"` |  |
+| nginx-ingress.controller.resources.requests.cpu | string | `"100m"` |  |
+| nginx-ingress.controller.resources.requests.memory | string | `"100Mi"` |  |
+| nginx-ingress.controller.publishService.enabled | bool | `true` |  |
+| nginx-ingress.controller.replicaCount | int | `2` |  |
+| nginx-ingress.controller.minAvailable | int | `1` |  |
+| nginx-ingress.controller.scope.enabled | bool | `true` |  |
+| nginx-ingress.controller.metrics.enabled | bool | `true` |  |
+| nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
+| nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
+| nginx-ingress.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
+| nginx-ingress.controller.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
+| nginx-ingress.controller.admissionWebhooks.enabled | bool | `false` |  |
+| nginx-ingress.defaultBackend.enabled | bool | `true` |  |
+| nginx-ingress.defaultBackend.minAvailable | int | `1` |  |
+| nginx-ingress.defaultBackend.replicaCount | int | `1` |  |
+| nginx-ingress.defaultBackend.resources.requests.cpu | string | `"5m"` |  |
+| nginx-ingress.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
+| nginx-ingress.rbac.create | bool | `true` |  |
+| nginx-ingress.rbac.scope | bool | `true` |  |
+| nginx-ingress.serviceAccount.create | bool | `true` |  |
+| prometheus.install | bool | `false` |  |
+| prometheus.rbac.create | bool | `true` |  |
+| prometheus.alertmanager.enabled | bool | `false` |  |
+| prometheus.alertmanagerFiles."alertmanager.yml" | object | `{}` |  |
+| prometheus.kubeStateMetrics.enabled | bool | `false` |  |
+| prometheus.nodeExporter.enabled | bool | `false` |  |
+| prometheus.pushgateway.enabled | bool | `false` |  |
+| prometheus.server.enabled | bool | `false` |  |
+| prometheus.server.retention | string | `"15d"` |  |
+| prometheus.server.strategy.type | string | `"Recreate"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[0].job_name | string | `"prometheus"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[0].static_configs[0].targets[0] | string | `"localhost:9090"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].job_name | string | `"kubernetes-apiservers"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].kubernetes_sd_configs[0].role | string | `"endpoints"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].scheme | string | `"https"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].tls_config.ca_file | string | `"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].tls_config.insecure_skip_verify | bool | `true` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].bearer_token_file | string | `"/var/run/secrets/kubernetes.io/serviceaccount/token"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].relabel_configs[0].source_labels[0] | string | `"__meta_kubernetes_namespace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].relabel_configs[0].source_labels[1] | string | `"__meta_kubernetes_service_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].relabel_configs[0].source_labels[2] | string | `"__meta_kubernetes_endpoint_port_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].relabel_configs[0].action | string | `"keep"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[1].relabel_configs[0].regex | string | `"default;kubernetes;https"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].job_name | string | `"kubernetes-pods"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].kubernetes_sd_configs[0].role | string | `"pod"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[0].source_labels[0] | string | `"__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scrape"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[0].action | string | `"keep"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[0].regex | bool | `true` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[1].source_labels[0] | string | `"__meta_kubernetes_pod_annotation_gitlab_com_prometheus_path"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[1].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[1].target_label | string | `"__metrics_path__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[1].regex | string | `"(.+)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[2].source_labels[0] | string | `"__address__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[2].source_labels[1] | string | `"__meta_kubernetes_pod_annotation_gitlab_com_prometheus_port"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[2].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[2].regex | string | `"([^:]+)(?::\\d+)?;(\\d+)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[2].replacement | string | `"$1:$2"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[2].target_label | string | `"__address__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[3].action | string | `"labelmap"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[3].regex | string | `"__meta_kubernetes_pod_label_(.+)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[4].source_labels[0] | string | `"__meta_kubernetes_namespace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[4].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[4].target_label | string | `"kubernetes_namespace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[5].source_labels[0] | string | `"__meta_kubernetes_pod_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[5].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[2].relabel_configs[5].target_label | string | `"kubernetes_pod_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].job_name | string | `"kubernetes-service-endpoints"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].kubernetes_sd_configs[0].role | string | `"endpoints"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[0].action | string | `"keep"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[0].regex | bool | `true` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[0].source_labels[0] | string | `"__meta_kubernetes_service_annotation_gitlab_com_prometheus_scrape"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[1].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[1].regex | string | `"(https?)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[1].source_labels[0] | string | `"__meta_kubernetes_service_annotation_gitlab_com_prometheus_scheme"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[1].target_label | string | `"__scheme__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[2].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[2].regex | string | `"(.+)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[2].source_labels[0] | string | `"__meta_kubernetes_service_annotation_gitlab_com_prometheus_path"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[2].target_label | string | `"__metrics_path__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[3].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[3].regex | string | `"([^:]+)(?::\\d+)?;(\\d+)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[3].replacement | string | `"$1:$2"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[3].source_labels[0] | string | `"__address__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[3].source_labels[1] | string | `"__meta_kubernetes_service_annotation_gitlab_com_prometheus_port"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[3].target_label | string | `"__address__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[4].action | string | `"labelmap"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[4].regex | string | `"__meta_kubernetes_service_label_(.+)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[5].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[5].source_labels[0] | string | `"__meta_kubernetes_namespace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[5].target_label | string | `"kubernetes_namespace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[6].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[6].source_labels[0] | string | `"__meta_kubernetes_service_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[6].target_label | string | `"kubernetes_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[7].action | string | `"replace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[7].source_labels[0] | string | `"__meta_kubernetes_pod_node_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[3].relabel_configs[7].target_label | string | `"kubernetes_node"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].job_name | string | `"kubernetes-services"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].metrics_path | string | `"/probe"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].params.module[0] | string | `"http_2xx"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].kubernetes_sd_configs[0].role | string | `"service"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[0].source_labels[0] | string | `"__meta_kubernetes_service_annotation_gitlab_com_prometheus_probe"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[0].action | string | `"keep"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[0].regex | bool | `true` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[1].source_labels[0] | string | `"__address__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[1].target_label | string | `"__param_target"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[2].target_label | string | `"__address__"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[2].replacement | string | `"blackbox"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[3].source_labels[0] | string | `"__param_target"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[3].target_label | string | `"instance"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[4].action | string | `"labelmap"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[4].regex | string | `"__meta_kubernetes_service_label_(.+)"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[5].source_labels[0] | string | `"__meta_kubernetes_namespace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[5].target_label | string | `"kubernetes_namespace"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[6].source_labels[0] | string | `"__meta_kubernetes_service_name"` |  |
+| prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[6].target_label | string | `"kubernetes_name"` |  |
+| redis.install | bool | `true` |  |
+| redis.existingSecret | string | `"gitlab-redis-secret"` |  |
+| redis.existingSecretKey | string | `"redis-password"` |  |
+| redis.usePasswordFile | bool | `true` |  |
+| redis.cluster.enabled | bool | `false` |  |
+| redis.metrics.enabled | bool | `true` |  |
+| redis.metrics.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
+| redis.metrics.image.repository | string | `"analytics/redis-exporter"` |  |
+| redis.metrics.image.tag | string | `"1.18.0"` |  |
+| redis.metrics.image.pullSecrets[0] | string | `"private-registry"` |  |
+| redis.metrics.resources.limits.cpu | string | `"250m"` |  |
+| redis.metrics.resources.limits.memory | string | `"256Mi"` |  |
+| redis.metrics.resources.requests.cpu | string | `"250m"` |  |
+| redis.metrics.resources.requests.memory | string | `"256Mi"` |  |
+| redis.image.registry | string | `"registry1.dso.mil/ironbank/opensource"` |  |
+| redis.image.repository | string | `"redis/redis5"` |  |
+| redis.image.tag | string | `"5.0.9"` |  |
+| redis.image.pullSecrets[0] | string | `"private-registry"` |  |
+| redis.master.command | string | `"redis-server"` |  |
+| redis.master.resources.limits.cpu | string | `"250m"` |  |
+| redis.master.resources.limits.memory | string | `"256Mi"` |  |
+| redis.master.resources.requests.cpu | string | `"250m"` |  |
+| redis.master.resources.requests.memory | string | `"256Mi"` |  |
+| redis.slave.command | string | `"redis-server"` |  |
+| redis.slave.resources.limits.cpu | string | `"250m"` |  |
+| redis.slave.resources.limits.memory | string | `"256Mi"` |  |
+| redis.slave.resources.requests.cpu | string | `"250m"` |  |
+| redis.slave.resources.requests.memory | string | `"256Mi"` |  |
+| redis.sentinel.resources.limits.cpu | string | `"250m"` |  |
+| redis.sentinel.resources.limits.memory | string | `"256Mi"` |  |
+| redis.sentinel.resources.requests.cpu | string | `"250m"` |  |
+| redis.sentinel.resources.requests.memory | string | `"256Mi"` |  |
+| redis.volumePermissions.resources.limits.cpu | string | `"250m"` |  |
+| redis.volumePermissions.resources.limits.memory | string | `"256Mi"` |  |
+| redis.volumePermissions.resources.requests.cpu | string | `"250m"` |  |
+| redis.volumePermissions.resources.requests.memory | string | `"256Mi"` |  |
+| redis.sysctlImage.resources.limits.cpu | string | `"250m"` |  |
+| redis.sysctlImage.resources.limits.memory | string | `"256Mi"` |  |
+| redis.sysctlImage.resources.requests.cpu | string | `"250m"` |  |
+| redis.sysctlImage.resources.requests.memory | string | `"256Mi"` |  |
+| postgresql.postgresqlUsername | string | `"gitlab"` |  |
+| postgresql.postgresqlPostgresPassword | string | `"bogus"` |  |
+| postgresql.install | bool | `true` |  |
+| postgresql.postgresqlDatabase | string | `"gitlabhq_production"` |  |
+| postgresql.resources.limits.cpu | string | `"500m"` |  |
+| postgresql.resources.limits.memory | string | `"500Mi"` |  |
+| postgresql.resources.requests.cpu | string | `"500m"` |  |
+| postgresql.resources.requests.memory | string | `"500Mi"` |  |
+| postgresql.image.registry | string | `"registry.dso.mil"` |  |
+| postgresql.image.repository | string | `"platform-one/big-bang/apps/developer-tools/gitlab/postgresql"` |  |
+| postgresql.image.tag | string | `"12.7.0"` |  |
+| postgresql.usePasswordFile | bool | `true` |  |
+| postgresql.existingSecret | string | `"bogus"` |  |
+| postgresql.initdbScriptsConfigMap | string | `"bogus"` |  |
+| postgresql.master.extraVolumeMounts[0].name | string | `"custom-init-scripts"` |  |
+| postgresql.master.extraVolumeMounts[0].mountPath | string | `"/docker-entrypoint-preinitdb.d/init_revision.sh"` |  |
+| postgresql.master.extraVolumeMounts[0].subPath | string | `"init_revision.sh"` |  |
+| postgresql.master.podAnnotations."postgresql.gitlab/init-revision" | string | `"1"` |  |
+| postgresql.metrics.enabled | bool | `false` |  |
+| registry.enabled | bool | `true` |  |
+| registry.init.resources.limits.cpu | string | `"200m"` |  |
+| registry.init.resources.limits.memory | string | `"200Mi"` |  |
+| registry.init.resources.requests.cpu | string | `"200m"` |  |
+| registry.init.resources.requests.memory | string | `"200Mi"` |  |
+| registry.resources.limits.cpu | string | `"200m"` |  |
+| registry.resources.limits.memory | string | `"1024Mi"` |  |
+| registry.resources.requests.cpu | string | `"200m"` |  |
+| registry.resources.requests.memory | string | `"1024Mi"` |  |
+| registry.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry"` |  |
+| registry.image.tag | string | `"14.3.1"` |  |
+| registry.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| registry.ingress.enabled | bool | `false` |  |
+| shared-secrets.enabled | bool | `true` |  |
+| shared-secrets.rbac.create | bool | `true` |  |
+| shared-secrets.selfsign.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign"` |  |
+| shared-secrets.selfsign.image.tag | string | `"1.4.1"` |  |
+| shared-secrets.selfsign.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| shared-secrets.selfsign.keyAlgorithm | string | `"rsa"` |  |
+| shared-secrets.selfsign.keySize | string | `"4096"` |  |
+| shared-secrets.selfsign.expiry | string | `"3650d"` |  |
+| shared-secrets.selfsign.caSubject | string | `"GitLab Helm Chart"` |  |
+| shared-secrets.env | string | `"production"` |  |
+| shared-secrets.serviceAccount.enabled | bool | `true` |  |
+| shared-secrets.serviceAccount.create | bool | `true` |  |
+| shared-secrets.serviceAccount.name | string | `nil` |  |
+| shared-secrets.resources.requests.cpu | string | `"300m"` |  |
+| shared-secrets.resources.requests.memory | string | `"200Mi"` |  |
+| shared-secrets.resources.limits.cpu | string | `"300m"` |  |
+| shared-secrets.resources.limits.memory | string | `"200Mi"` |  |
+| shared-secrets.securityContext.runAsUser | int | `65534` |  |
+| shared-secrets.securityContext.fsGroup | int | `65534` |  |
+| shared-secrets.tolerations | list | `[]` |  |
+| shared-secrets.podLabels | object | `{}` |  |
+| shared-secrets.annotations | object | `{}` |  |
+| gitlab-runner.install | bool | `false` |  |
+| gitlab-runner.rbac.create | bool | `true` |  |
+| gitlab-runner.runners.locked | bool | `false` |  |
+| gitlab-runner.runners.config | string | `"[[runners]]\n  [runners.kubernetes]\n  image = \"ubuntu:18.04\"\n  {{- if .Values.global.minio.enabled }}\n  [runners.cache]\n    Type = \"s3\"\n    Path = \"gitlab-runner\"\n    Shared = true\n    [runners.cache.s3]\n      ServerAddress = {{ include \"gitlab-runner.cache-tpl.s3ServerAddress\" . }}\n      BucketName = \"runner-cache\"\n      BucketLocation = \"us-east-1\"\n      Insecure = false\n  {{ end }}\n"` |  |
+| gitlab-runner.podAnnotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
+| gitlab-runner.podAnnotations."gitlab.com/prometheus_port" | int | `9252` |  |
+| grafana.nameOverride | string | `"grafana-app"` |  |
+| grafana.admin.existingSecret | string | `"bogus"` |  |
+| grafana.env.GF_SECURITY_ADMIN_USER | string | `"bogus"` |  |
+| grafana.env.GF_SECURITY_ADMIN_PASSWORD | string | `"bogus"` |  |
+| grafana.command[0] | string | `"sh"` |  |
+| grafana.command[1] | string | `"-x"` |  |
+| grafana.command[2] | string | `"/tmp/scripts/import-secret.sh"` |  |
+| grafana.sidecar.dashboards.enabled | bool | `true` |  |
+| grafana.sidecar.dashboards.label | string | `"gitlab_grafana_dashboard"` |  |
+| grafana.sidecar.datasources.enabled | bool | `true` |  |
+| grafana.sidecar.datasources.label | string | `"gitlab_grafana_datasource"` |  |
+| grafana."grafana.ini".server.serve_from_sub_path | bool | `true` |  |
+| grafana."grafana.ini".server.root_url | string | `"http://localhost/-/grafana/"` |  |
+| grafana."grafana.ini".auth.login_cookie_name | string | `"gitlab_grafana_session"` |  |
+| grafana.extraSecretMounts[0].name | string | `"initial-password"` |  |
+| grafana.extraSecretMounts[0].mountPath | string | `"/tmp/initial"` |  |
+| grafana.extraSecretMounts[0].readOnly | bool | `true` |  |
+| grafana.extraSecretMounts[0].secretName | string | `"gitlab-grafana-initial-password"` |  |
+| grafana.extraSecretMounts[0].defaultMode | int | `400` |  |
+| grafana.extraConfigmapMounts[0].name | string | `"import-secret"` |  |
+| grafana.extraConfigmapMounts[0].mountPath | string | `"/tmp/scripts"` |  |
+| grafana.extraConfigmapMounts[0].configMap | string | `"gitlab-grafana-import-secret"` |  |
+| grafana.extraConfigmapMounts[0].readOnly | bool | `true` |  |
+| grafana.testFramework.enabled | bool | `false` |  |
+| gitlab.task-runner.replicas | int | `1` |  |
+| gitlab.task-runner.antiAffinityLabels.matchLabels.app | string | `"gitaly"` |  |
+| gitlab.task-runner.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
+| gitlab.task-runner.image.tag | string | `"14.3.1"` |  |
+| gitlab.task-runner.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.task-runner.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.task-runner.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.task-runner.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.task-runner.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.task-runner.resources.requests.cpu | int | `2` |  |
+| gitlab.task-runner.resources.requests.memory | string | `"3.5Gi"` |  |
+| gitlab.task-runner.resources.limits.cpu | int | `2` |  |
+| gitlab.task-runner.resources.limits.memory | string | `"3.5Gi"` |  |
+| gitlab.task-runner.backups.cron.resources.requests.cpu | string | `"350m"` |  |
+| gitlab.task-runner.backups.cron.resources.requests.memory | string | `"350Mi"` |  |
+| gitlab.task-runner.backups.cron.resources.limits.cpu | string | `"350m"` |  |
+| gitlab.task-runner.backups.cron.resources.limits.memory | string | `"350Mi"` |  |
+| gitlab.gitlab-exporter.enabled | bool | `false` |  |
+| gitlab.gitlab-exporter.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.gitlab-exporter.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.gitlab-exporter.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.gitlab-exporter.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.gitlab-exporter.resources.limits.cpu | string | `"150m"` |  |
+| gitlab.gitlab-exporter.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.gitlab-exporter.resources.requests.cpu | string | `"150m"` |  |
+| gitlab.gitlab-exporter.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.gitlab-exporter.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter"` |  |
+| gitlab.gitlab-exporter.image.tag | string | `"14.3.1"` |  |
+| gitlab.gitlab-exporter.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.gitlab-exporter.metrics.enabled | bool | `true` |  |
+| gitlab.gitlab-exporter.metrics.port | int | `9168` |  |
+| gitlab.migrations.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.migrations.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.migrations.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.migrations.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.migrations.resources.limits.cpu | string | `"500m"` |  |
+| gitlab.migrations.resources.limits.memory | string | `"1G"` |  |
+| gitlab.migrations.resources.requests.cpu | string | `"500m"` |  |
+| gitlab.migrations.resources.requests.memory | string | `"1G"` |  |
+| gitlab.migrations.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
+| gitlab.migrations.image.tag | string | `"14.3.1"` |  |
+| gitlab.migrations.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.webservice.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.webservice.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.webservice.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.webservice.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.webservice.resources.limits.cpu | string | `"600m"` |  |
+| gitlab.webservice.resources.limits.memory | string | `"2.5G"` |  |
+| gitlab.webservice.resources.requests.cpu | string | `"600m"` |  |
+| gitlab.webservice.resources.requests.memory | string | `"2.5G"` |  |
+| gitlab.webservice.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice"` |  |
+| gitlab.webservice.image.tag | string | `"14.3.1"` |  |
+| gitlab.webservice.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.webservice.workhorse.resources.limits.cpu | string | `"600m"` |  |
+| gitlab.webservice.workhorse.resources.limits.memory | string | `"2.5G"` |  |
+| gitlab.webservice.workhorse.resources.requests.cpu | string | `"600m"` |  |
+| gitlab.webservice.workhorse.resources.requests.memory | string | `"2.5G"` |  |
+| gitlab.webservice.workhorse.image | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse"` |  |
+| gitlab.webservice.workhorse.tag | string | `"14.3.1"` |  |
+| gitlab.webservice.workhorse.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.webservice.ingress.enabled | bool | `false` |  |
+| gitlab.sidekiq.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq"` |  |
+| gitlab.sidekiq.image.tag | string | `"14.3.1"` |  |
+| gitlab.sidekiq.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.sidekiq.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.sidekiq.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.sidekiq.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.sidekiq.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.sidekiq.resources.requests.memory | string | `"3G"` |  |
+| gitlab.sidekiq.resources.requests.cpu | string | `"1500m"` |  |
+| gitlab.sidekiq.resources.limits.memory | string | `"3G"` |  |
+| gitlab.sidekiq.resources.limits.cpu | string | `"1500m"` |  |
+| gitlab.gitaly.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
+| gitlab.gitaly.image.tag | string | `"14.3.1"` |  |
+| gitlab.gitaly.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.gitaly.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.gitaly.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.gitaly.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.gitaly.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.gitaly.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.gitaly.resources.requests.memory | string | `"300Mi"` |  |
+| gitlab.gitaly.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.gitaly.resources.limits.memory | string | `"300Mi"` |  |
+| gitlab.gitlab-shell.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell"` |  |
+| gitlab.gitlab-shell.image.tag | string | `"14.3.1"` |  |
+| gitlab.gitlab-shell.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.gitlab-shell.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.gitlab-shell.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.gitlab-shell.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.gitlab-shell.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.gitlab-shell.resources.limits.cpu | string | `"300m"` |  |
+| gitlab.gitlab-shell.resources.limits.memory | string | `"300Mi"` |  |
+| gitlab.gitlab-shell.resources.requests.cpu | string | `"300m"` |  |
+| gitlab.gitlab-shell.resources.requests.memory | string | `"300Mi"` |  |
+| gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
+| gitlab.praefect.image.tag | string | `"14.3.1"` |  |
+| gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |
+| gitlab.praefect.init.resources.limits.memory | string | `"200Mi"` |  |
+| gitlab.praefect.init.resources.requests.cpu | string | `"200m"` |  |
+| gitlab.praefect.init.resources.requests.memory | string | `"200Mi"` |  |
+| gitlab.praefect.resources.requests.cpu | int | `1` |  |
+| gitlab.praefect.resources.requests.memory | string | `"1Gi"` |  |
+| gitlab.praefect.resources.limits.cpu | int | `1` |  |
+| gitlab.praefect.resources.limits.memory | string | `"1Gi"` |  |
+| minio.init.resources.limits.cpu | string | `"200m"` |  |
+| minio.init.resources.limits.memory | string | `"200Mi"` |  |
+| minio.init.resources.requests.cpu | string | `"200m"` |  |
+| minio.init.resources.requests.memory | string | `"200Mi"` |  |
+| minio.resources.limits.cpu | string | `"200m"` |  |
+| minio.resources.limits.memory | string | `"300Mi"` |  |
+| minio.resources.requests.cpu | string | `"200m"` |  |
+| minio.resources.requests.memory | string | `"300Mi"` |  |
+| minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
+| minio.imageTag | string | `"RELEASE.2021-04-06T23-11-00Z"` |  |
+| minio.pullSecrets[0].name | string | `"private-registry"` |  |
+| minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
+| minio.minioMc.tag | string | `"RELEASE.2021-03-23T05-46-11Z"` |  |
+| minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
+| hostname | string | `"bigbang.dev"` |  |
+| istio.enabled | bool | `false` |  |
+| istio.gitlab.enabled | bool | `true` |  |
+| istio.gitlab.annotations | object | `{}` |  |
+| istio.gitlab.labels | object | `{}` |  |
+| istio.gitlab.gateways[0] | string | `"istio-system/main"` |  |
+| istio.gitlab.hosts | string | `nil` |  |
+| istio.registry.enabled | bool | `true` |  |
+| istio.registry.annotations | object | `{}` |  |
+| istio.registry.labels | object | `{}` |  |
+| istio.registry.gateways[0] | string | `"istio-system/main"` |  |
+| istio.registry.hosts | string | `nil` |  |
+| monitoring.enabled | bool | `false` |  |
+| networkPolicies.enabled | bool | `false` |  |
+| networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
+| networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
+| networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
+| openshift | bool | `false` |  |
 
-For additional documentation see the files in the [docs directory and the docs/README.md](docs/README.md).
+## Contributing
 
-## Initial admin login
-
-The initial admin login is user ```root```.  The password can be obtained with the following command.
-```
-kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 --decode ; echo
-```
-
-##  Deployment
-
-For production deployments you must externalize the postgres and MinIO services. See docs/README.md.  
-
-WARNING FOR OPERATIONAL ENVIRONMENTS:  
-If the gitlab-rails-secret happens to get overwritten, Gitlab will no longer be able to access the encrypted data in the database. You will get errors like this in the logs.
-```
-OpenSSL::Cipher::CipherError ()
-```
-Many things break when this happens and the recovery is ugly with serious user impacts.  
-
-At a minimum an operational deployment of Gitlab should export and save the gitlab-rails-secret somewhere safe outside the cluster.
-```
-kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
-```
-Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). The helm chart values ```global.railsSecrets.secret``` can be overridden to point to the secret.
-```
-global:
-  railsSecrets:
-    secret:  my-gitlab-rails-secret
-```
-This secret should be backed up somewhere safe outside the cluster.
-
-## Configuring Gitlab with custom certificate authorities
-
-Create a k8s secret in the Gitlab namespace. The secret can have multiple keys but each key must be a single pem encoded certificate, not a bundle of multiple secrets. Each key in the secret must be unique. Reference the [Gitlab documentation](https://docs.gitlab.com/charts/charts/globals.html#custom-certificate-authorities).  
-Then in your values overrides add the name of the secret
-```
-global:
-  certificates:
-    customCAs:
-      - secret: my-custom-ca-secret-name
-```
+Please see the [contributing guide](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/blob/master/CONTRIBUTING.md) if you are interested in contributing to Big Bang.
