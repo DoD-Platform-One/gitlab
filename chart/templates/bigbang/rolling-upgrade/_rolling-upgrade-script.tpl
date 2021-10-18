@@ -37,7 +37,11 @@ if [[ ${OLD_VERSION_STRING} == "13.12.9" && ${GITLAB_VERSION} == "14.3.1" ]]; th
 
   # then patch gitrepository ref to new chart version 5.3.1
   echo  "Rolling upgrade to application version 14.3.1 chart version 5.3.1 is starting now..."
-  kubectl patch gitrepository gitlab -n bigbang --type=merge -p '{"spec":{"ref":{"tag":"5.3.1-bb.0"}}}'
+  kubectl patch gitrepository gitlab -n bigbang --type=merge -p '{"spec":{"ref":{"tag":"'$CHART_VERSION'"}}}'
+
+  # for testing
+  # TEST_BRANCH=105-update-rolling-upgrade-job-with-new-tag
+  # kubectl patch gitrepository gitlab -n bigbang --type=merge -p '{"spec":{"ref":{"tag":"","branch":"'$TEST_BRANCH'"}}}'
 
 else
   echo "No rolling upgrade will be performed."
