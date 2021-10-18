@@ -56,6 +56,9 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.1-bb.2] - 2021-10-17
+- Update rolling upgrade job with variable for release tag
+
 ## [5.3.1-bb.1] - 2021-10-15
 - Updated README.md
 - Renamed docs/README.md to docs/overview.md
