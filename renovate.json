@@ -5,7 +5,6 @@
     "dependencyDashboardAutoclose": true,
     "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
     "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
-    "dependencyDashboardLabels": ["gitlab","renovate","Big Bang Add-Ons","Package Sustainment","kind::chore","team::execution","priority::3"],
     "draftPR": true,
     "enabledManagers": ["helm-values", "regex"],
     "ignorePaths": ["chart/charts/**", "chart/examples/**", "chart/scripts/**"],
