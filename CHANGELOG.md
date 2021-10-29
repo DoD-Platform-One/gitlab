@@ -34,12 +34,34 @@
       subPath: ca-bundle.crt
       readOnly: true
     ```
+
 ## chart/charts/minio/templates/_helper_create_buckets.sh
 - hack the MinIO sub-chart to work with newer mc version in IronBank image   
     line 65  
     ```
     /usr/bin/mc policy set $POLICY myminio/$BUCKET
     ```
+    
+## chart/charts/minio/templates/create-buckets-job.yaml    
+- hack the MinIO sub-chart to add annotation to to conditionally disable istio injection   
+    lines 22-25
+    ```
+    {{- if .Values.global.istio.enabled }}  
+    annotations:
+      sidecar.istio.io/inject: "false"
+    {{- end }}
+    ```
+
+# chart/templates/upgrade_check_hook.yaml
+- add annotation to to conditionally disable istio injection
+    lines 38-41
+    ```
+    {{- if .Values.global.istio.enabled }}  
+      annotations:
+        sidecar.istio.io/inject: "false"
+    {{- end }}
+    ```
+
 ## chart/charts/gitlab/charts/gitlab-exporter/templates/bigbang/service-monitor.yaml
 - add ServiceMonitor to Gitlab sub-chart ```gitlab-exporterr``` to enable prometheus monitoring
   
@@ -55,6 +77,11 @@
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [5.3.1-bb.3] - 2021-10-29
+- increase resoures for gitaly
+- conditionally disable istio injection for the upgrade-check job
+- modify minio sub-chart to conditionally disable istio injection for the create-buckets job
 
 ## [5.3.1-bb.2] - 2021-10-17
 - Update rolling upgrade job with variable for release tag

@@ -19,6 +19,10 @@ spec:
         {{- include "gitlab.standardLabels" . | nindent 8 }}
         {{- include "gitlab.commonLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
+      {{- if .Values.global.istio.enabled }}  
+      annotations:
+        sidecar.istio.io/inject: "false"
+      {{- end }}
     spec:
       automountServiceAccountToken: false
       restartPolicy: OnFailure

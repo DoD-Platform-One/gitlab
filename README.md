@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.3.1-bb.0](https://img.shields.io/badge/Version-5.3.1--bb.0-informational?style=flat-square) ![AppVersion: 14.3.1](https://img.shields.io/badge/AppVersion-14.3.1-informational?style=flat-square)
+![Version: 5.3.1-bb.3](https://img.shields.io/badge/Version-5.3.1--bb.3-informational?style=flat-square) ![AppVersion: 14.3.1](https://img.shields.io/badge/AppVersion-14.3.1-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -35,6 +35,7 @@ helm install gitlab chart/
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| global.istio.enabled | bool | `false` |  |
 | global.common.labels | object | `{}` |  |
 | global.image | object | `{}` |  |
 | global.operator.enabled | bool | `false` |  |
@@ -676,10 +677,10 @@ helm install gitlab chart/
 | gitlab.gitaly.init.resources.limits.memory | string | `"200Mi"` |  |
 | gitlab.gitaly.init.resources.requests.cpu | string | `"200m"` |  |
 | gitlab.gitaly.init.resources.requests.memory | string | `"200Mi"` |  |
-| gitlab.gitaly.resources.requests.cpu | string | `"200m"` |  |
-| gitlab.gitaly.resources.requests.memory | string | `"300Mi"` |  |
-| gitlab.gitaly.resources.limits.cpu | string | `"200m"` |  |
-| gitlab.gitaly.resources.limits.memory | string | `"300Mi"` |  |
+| gitlab.gitaly.resources.requests.cpu | string | `"400m"` |  |
+| gitlab.gitaly.resources.requests.memory | string | `"600Mi"` |  |
+| gitlab.gitaly.resources.limits.cpu | string | `"400m"` |  |
+| gitlab.gitaly.resources.limits.memory | string | `"600Mi"` |  |
 | gitlab.gitlab-shell.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell"` |  |
 | gitlab.gitlab-shell.image.tag | string | `"14.3.1"` |  |
 | gitlab.gitlab-shell.image.pullSecrets[0].name | string | `"private-registry"` |  |

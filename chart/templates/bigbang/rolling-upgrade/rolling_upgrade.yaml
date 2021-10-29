@@ -106,6 +106,10 @@ spec:
       labels:
         app: {{ template "name" . }}
         release: {{ .Release.Name }}
+      {{- if .Values.global.istio.enabled }}  
+      annotations:
+        sidecar.istio.io/inject: "false"
+      {{- end }}
     spec:
       serviceAccountName: {{ template "fullname" . }}-rolling-upgrade
       {{- if .Values.upgradeCheck.nodeSelector }}

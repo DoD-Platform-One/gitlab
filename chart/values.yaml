@@ -24,6 +24,11 @@
 ## The global properties are used to configure multiple charts at once.
 ## https://docs.gitlab.com/charts/charts/globals
 global:
+
+  # added by BigBang to help with sub-chart configuration
+  istio:
+    enabled: false
+
   common:
     labels: {}
 
@@ -1354,11 +1359,11 @@ gitlab:
           memory: 200Mi
     resources:
       requests:
-        cpu: 200m
-        memory: 300Mi
+        cpu: 400m
+        memory: 600Mi
       limits:
-        cpu: 200m
-        memory: 300Mi
+        cpu: 400m
+        memory: 600Mi
 ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
