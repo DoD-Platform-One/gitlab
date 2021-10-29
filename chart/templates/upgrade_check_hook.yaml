@@ -35,6 +35,10 @@ spec:
       labels:
         app: {{ template "name" . }}
         release: {{ .Release.Name }}
+      {{- if .Values.global.istio.enabled }}  
+      annotations:
+        sidecar.istio.io/inject: "false"
+      {{- end }}
     spec:
       {{- if .Values.upgradeCheck.nodeSelector }}
         nodeSelector: {{ toYaml .Values.upgradeCheck.nodeSelector | nindent 8 }}

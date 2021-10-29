@@ -1,4 +1,6 @@
 global:
+  istio:
+    enabled: true
   hosts:
     domain: gitlab.svc.cluster.local
     https: false
