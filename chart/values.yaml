@@ -1480,3 +1480,6 @@ networkPolicies:
   controlPlaneCidr: 0.0.0.0/0
 
 openshift: false
+
+# Track if AWS IAM Profile is used for Object Storage
+use_iam_profile: false
