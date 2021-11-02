@@ -19,11 +19,12 @@ echo "FROM alpine" > Dockerfile
 
 echo "pushing changes to repo..."
 git add Dockerfile
-git commit -m 'initial commit'
+git commit -m 'initial commit' --allow-empty
 git remote rm origin
 git remote add origin ${GITLAB_ORIGIN}/${GITLAB_USER}/${GITLAB_PROJECT}.git
-git checkout -b test
-git push -u origin test
+export testbranch=test-$RANDOM
+git checkout -b $testbranch
+git push -u origin $testbranch
 
 echo "pulling image..."
 crane pull alpine:latest alpine-latest.tar

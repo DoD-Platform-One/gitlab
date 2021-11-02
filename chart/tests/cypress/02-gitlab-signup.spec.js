@@ -7,7 +7,12 @@ describe('Gitlab Signup', () => {
     cy.get('input[id="new_user_username"]').type(Cypress.env('gitlab_username'))
     cy.get('input[id="new_user_email"]').type(Cypress.env('gitlab_email'))
     cy.wait(3000) // wait 3 seconds for username check to complete
-    cy.get('input[id="new_user_password"]').type(Cypress.env('gitlab_password'))
-    cy.get('input[type="submit"]').click()
+    // add user if not already created
+    cy.get('.validation-error').then(($userexist) => {
+      if ($userexist.hasClass('hide')) {
+        cy.get('input[id="new_user_password"]').type(Cypress.env('gitlab_password'))
+        cy.get('input[type="submit"]').click()
+      }
+    })
   })
 })
