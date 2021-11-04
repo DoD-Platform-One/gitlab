@@ -73,7 +73,10 @@ spec:
             - /scripts/geo-db-migrate
           {{- else }}
             - /scripts/db-migrate
-          {{- end}}
+          {{- end }}
+          {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+            - '&& sleep 5 && curl -X POST http://localhost:15020/quitquitquit'
+          {{- end }}
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           env:
             - name: CONFIG_TEMPLATE_DIRECTORY

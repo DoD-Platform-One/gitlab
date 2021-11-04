@@ -51,6 +51,14 @@
       sidecar.istio.io/inject: "false"
     {{- end }}
     ```
+## chart/charts/gitlab/charts/migrations/templates/_jobspec.yaml
+- add curl to quit istio proxy
+    lines 77-79
+    ```
+    {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+      - '&& sleep 5 && curl -X POST http://localhost:15020/quitquitquit'
+    {{- end }}
+    ```
 
 # chart/templates/upgrade_check_hook.yaml
 - add annotation to to conditionally disable istio injection
@@ -78,8 +86,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.1-bb.6] - 2021-11-03
+- add istio injection for migrations job
+
 ## [5.3.1-bb.5] - 2021-11-01
 - Fixed CI for upgrades
+
 ## [5.3.1-bb.4] - 2021-10-29
 - Add check for AWS IAM profile to update the egress-kube-api network policy to allow access to AWS metadata endpoint
 - Add specific NetworkPolicy templates for 4 pods to hit AWS metadata endpoint to use IAM Role

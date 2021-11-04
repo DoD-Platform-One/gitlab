@@ -28,7 +28,8 @@ global:
   # added by BigBang to help with sub-chart configuration
   istio:
     enabled: false
-
+    injection: disabled
+    
   common:
     labels: {}
 
@@ -1449,6 +1450,7 @@ hostname: bigbang.dev
 istio:
   # Toggle istio integration
   enabled: false
+  injection: disabled
   gitlab:
     # Toggle vs creation
     enabled: true
