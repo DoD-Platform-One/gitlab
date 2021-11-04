@@ -104,6 +104,10 @@ spec:
 {{- end }}
           kubectl --namespace=$namespace label --overwrite \
             secret ${certname}-chain {{ include "gitlab.standardLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }} {{ include "gitlab.commonLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }}
+          # Kill istio sidecar container so gitlab can continue installing
+          {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+          curl -X POST http://localhost:15020/quitquitquit
+          {{- end }}
         volumeMounts:
         - name: certs-path
           mountPath: /output

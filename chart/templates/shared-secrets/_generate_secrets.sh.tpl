@@ -193,3 +193,8 @@ generate_secret_if_needed {{ template "gitlab.praefect.dbSecret.secret" . }} --f
 # Gitaly secret
 generate_secret_if_needed {{ template "gitlab.praefect.authToken.secret" . }} --from-literal={{ template "gitlab.praefect.authToken.key" . }}=$(gen_random 'a-zA-Z0-9' 64)
 {{ end }}
+
+# Kill istio sidecar container so gitlab can continue installing
+{{ if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+curl -X POST http://localhost:15020/quitquitquit
+{{ end }}
