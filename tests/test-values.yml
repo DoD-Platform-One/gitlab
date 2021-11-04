@@ -1,7 +1,6 @@
 global:
   istio:
     enabled: true
-    injection: enabled
   hosts:
     domain: gitlab.svc.cluster.local
     https: false
@@ -81,7 +80,6 @@ minio:
 
 istio:
   enabled: true
-  injection: enabled
 
 networkPolicies:
   enabled: true

@@ -60,6 +60,24 @@
     {{- end }}
     ```
 
+## gitlab/chart/templates/shared-secrets/_self-signed-cert-job.yml
+- add curl to quit isto proxy
+  lines 108-110
+  ```
+  {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+  curl -X POST http://localhost:15020/quitquitquit
+  {{- end }}
+  ```
+
+## gitlab/chart/templates/shared-secrets/_generate_secrets.sh.tpl
+- add curl to quit isto proxy
+  lines 198-200
+  ```
+  {{ if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+  curl -X POST http://localhost:15020/quitquitquit
+  {{ end }}
+  ```
+
 # chart/templates/upgrade_check_hook.yaml
 - add annotation to to conditionally disable istio injection
     lines 38-41
@@ -85,6 +103,9 @@
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [5.3.1-bb.7] - 2021-11-04
+- add istio injection for shared-secrets jobs
 
 ## [5.3.1-bb.6] - 2021-11-03
 - add istio injection for migrations job
