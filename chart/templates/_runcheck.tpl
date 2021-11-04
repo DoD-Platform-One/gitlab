@@ -74,3 +74,8 @@ if [ ${OLD_MAJOR_VERSION} -lt ${NEW_MAJOR_VERSION} ] || [ ${OLD_CHART_MAJOR_VERS
     exit 1
   fi
 fi
+
+{{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+# Kill istio sidecar container so gitlab can continue installing
+curl -X POST http://localhost:15020/quitquitquit
+{{- end }}

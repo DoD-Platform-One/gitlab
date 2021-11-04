@@ -78,15 +78,15 @@
   {{ end }}
   ```
 
-# chart/templates/upgrade_check_hook.yaml
-- add annotation to to conditionally disable istio injection
-    lines 38-41
-    ```
-    {{- if .Values.global.istio.enabled }}  
-      annotations:
-        sidecar.istio.io/inject: "false"
-    {{- end }}
-    ```
+## chart/templates/_runcheck.tpl
+- add curl to quit isto proxy
+  lines 78-81
+  ```
+  {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+  # Kill istio sidecar container so gitlab can continue installing
+  curl -X POST http://localhost:15020/quitquitquit
+  {{- end }}
+  ```
 
 ## chart/charts/gitlab/charts/gitlab-exporter/templates/bigbang/service-monitor.yaml
 - add ServiceMonitor to Gitlab sub-chart ```gitlab-exporterr``` to enable prometheus monitoring
@@ -103,6 +103,10 @@
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+
+## [5.3.1-bb.8] - 2021-11-04
+- add istio injection for upgrade job
 
 ## [5.3.1-bb.7] - 2021-11-04
 - add istio injection for shared-secrets jobs
