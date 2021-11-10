@@ -75,7 +75,10 @@ spec:
             - /scripts/db-migrate
           {{- end }}
           {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
-            - '&& sleep 5 && curl -X POST http://localhost:15020/quitquitquit'
+            - '&& sleep 5'
+            - '&& echo "Attempting to stop the istio proxy..."'
+            - '&& echo "curl -X POST http://localhost:15020/quitquitquit"'
+            - '&& curl -X POST http://localhost:15020/quitquitquit'
           {{- end }}
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           env:

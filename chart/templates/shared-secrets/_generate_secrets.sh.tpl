@@ -194,7 +194,12 @@ generate_secret_if_needed {{ template "gitlab.praefect.dbSecret.secret" . }} --f
 generate_secret_if_needed {{ template "gitlab.praefect.authToken.secret" . }} --from-literal={{ template "gitlab.praefect.authToken.key" . }}=$(gen_random 'a-zA-Z0-9' 64)
 {{ end }}
 
-# Kill istio sidecar container so gitlab can continue installing
+
 {{ if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+# Stop istio sidecar container so gitlab can continue installing
+until curl -fsI http://localhost:15021/healthz/ready; do echo "Waiting for Istio sidecar proxy..."; sleep 3; done;
+sleep 5
+echo "Istio proxy container is ready. Now stop the istio proxy..."
+echo "curl -X POST http://localhost:15020/quitquitquit"
 curl -X POST http://localhost:15020/quitquitquit
 {{ end }}

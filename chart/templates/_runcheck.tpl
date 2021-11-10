@@ -76,6 +76,9 @@ if [ ${OLD_MAJOR_VERSION} -lt ${NEW_MAJOR_VERSION} ] || [ ${OLD_CHART_MAJOR_VERS
 fi
 
 {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
-# Kill istio sidecar container so gitlab can continue installing
+# Stop istio sidecar container so gitlab can continue installing
+until curl -fsI http://localhost:15021/healthz/ready; do echo "Waiting for Istio sidecar proxy..."; sleep 3; done;
+sleep 5
+echo "Istio proxy container is ready. Now stop the istio proxy..."
 curl -X POST http://localhost:15020/quitquitquit
 {{- end }}
