@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.3.1-bb.8](https://img.shields.io/badge/Version-5.3.1--bb.8-informational?style=flat-square) ![AppVersion: 14.3.1](https://img.shields.io/badge/AppVersion-14.3.1-informational?style=flat-square)
+![Version: 5.3.1-bb.9](https://img.shields.io/badge/Version-5.3.1--bb.9-informational?style=flat-square) ![AppVersion: 14.3.1](https://img.shields.io/badge/AppVersion-14.3.1-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 

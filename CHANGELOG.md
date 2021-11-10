@@ -53,37 +53,52 @@
     ```
 ## chart/charts/gitlab/charts/migrations/templates/_jobspec.yaml
 - add curl to quit istio proxy
-    lines 77-79
+    lines 77-82
     ```
     {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
-      - '&& sleep 5 && curl -X POST http://localhost:15020/quitquitquit'
+      - '&& sleep 5'
+      - '&& echo "Attempting to stop the istio proxy..."'
+      - '&& echo "curl -X POST http://localhost:15020/quitquitquit"'
+      - '&& curl -X POST http://localhost:15020/quitquitquit'
     {{- end }}
     ```
 
 ## gitlab/chart/templates/shared-secrets/_self-signed-cert-job.yml
 - add curl to quit isto proxy
-  lines 108-110
+  lines 108-114
   ```
   {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+  # Stop istio sidecar container so gitlab can continue installing
+  until curl -fsI http://localhost:15021/healthz/ready; do echo "Waiting for Istio sidecar proxy..."; sleep 3; done;
+  sleep 5
+  echo "Istio proxy container is ready. Now stop the istio proxy..."
   curl -X POST http://localhost:15020/quitquitquit
   {{- end }}
   ```
 
 ## gitlab/chart/templates/shared-secrets/_generate_secrets.sh.tpl
 - add curl to quit isto proxy
-  lines 198-200
+  lines 198-205
   ```
   {{ if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+  # Stop istio sidecar container so gitlab can continue installing
+  until curl -fsI http://localhost:15021/healthz/ready; do echo "Waiting for Istio sidecar proxy..."; sleep 3; done;
+  sleep 5
+  echo "Istio proxy container is ready. Now stop the istio proxy..."
+  echo "curl -X POST http://localhost:15020/quitquitquit"
   curl -X POST http://localhost:15020/quitquitquit
   {{ end }}
   ```
 
 ## chart/templates/_runcheck.tpl
 - add curl to quit isto proxy
-  lines 78-81
+  lines 78-84
   ```
   {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
-  # Kill istio sidecar container so gitlab can continue installing
+  # Stop istio sidecar container so gitlab can continue installing
+  until curl -fsI http://localhost:15021/healthz/ready; do echo "Waiting for Istio sidecar proxy..."; sleep 3; done;
+    sleep 5
+    echo "Istio proxy container is ready. Now stop the istio proxy..."
   curl -X POST http://localhost:15020/quitquitquit
   {{- end }}
   ```
@@ -104,9 +119,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.1-bb.9] - 2021-11-10
+- improvements for istio sidecar proxy injection
 
 ## [5.3.1-bb.8] - 2021-11-04
 - add istio injection for upgrade job
+- remove rolling upgade job.
 
 ## [5.3.1-bb.7] - 2021-11-04
 - add istio injection for shared-secrets jobs

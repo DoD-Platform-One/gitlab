@@ -104,8 +104,12 @@ spec:
 {{- end }}
           kubectl --namespace=$namespace label --overwrite \
             secret ${certname}-chain {{ include "gitlab.standardLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }} {{ include "gitlab.commonLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }}
-          # Kill istio sidecar container so gitlab can continue installing
+
           {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
+          # Stop istio sidecar container so gitlab can continue installing
+          until curl -fsI http://localhost:15021/healthz/ready; do echo "Waiting for Istio sidecar proxy..."; sleep 3; done;
+          sleep 5
+          echo "Istio proxy container is ready. Now stop the istio proxy..."
           curl -X POST http://localhost:15020/quitquitquit
           {{- end }}
         volumeMounts:
