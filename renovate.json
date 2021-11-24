@@ -2,7 +2,7 @@
     "baseBranches": ["main"],
     "configWarningReuseIssue": false,
     "dependencyDashboard": true,
-    "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
+    "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies. \n - [ ] Update synker file in bigbang with gitlab-exporter version. ", 
     "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
     "draftPR": true,
     "enabledManagers": ["helm-values", "regex"],
@@ -38,6 +38,15 @@
             ],
             "datasourceTemplate": "docker",
             "versioningTemplate": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$"
+        },
+        {
+          "fileMatch": ["^tests/images\\.txt$"],
+          "matchStrings": [
+            "registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:(?<currentValue>.+)"
+          ],
+          "depNameTemplate": "registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter",
+          "datasourceTemplate": "docker",
+          "registryUrlTemplate": "https://registry1.dso.mil"
         }
     ],
     "separateMajorMinor": false
