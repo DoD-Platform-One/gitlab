@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.1-bb.11] - 2022-01-05
+### Added
+- `allow-prometheus-ingress-redis` NetworkPolicy template added for redis metrics scraping
+
 ## [5.3.1-bb.10] - 2021-12-21
 ### Changed
 - Update DoD approved CA certificates
