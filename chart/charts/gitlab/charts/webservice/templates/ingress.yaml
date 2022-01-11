@@ -14,8 +14,9 @@ From here on:
 - `.` is `.deployments.xyz` value
 - `.name` is the key (xyz)
 */}}
+{{- $ingressCfg := dict "global" $.Values.global.ingress "local" .ingress "capabilities" $.Capabilities -}}
 ---
-apiVersion: {{ template "ingress.apiVersion" $}}
+apiVersion: {{ template "gitlab.ingress.apiVersion" $ingressCfg }}
 kind: Ingress
 metadata:
   name: {{ template "webservice.fullname.withSuffix" . }}
@@ -25,11 +26,9 @@ metadata:
     {{- include "webservice.labels" . | nindent 4 }}
     {{- include "webservice.commonLabels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" $ }}"
-    {{- if default .ingress.provider $.Values.global.ingress.provider }}
-    kubernetes.io/ingress.provider: {{ default .ingress.provider $.Values.global.ingress.provider }}
-    {{- end }}
-    {{- if eq "nginx" (default .ingress.provider $.Values.global.ingress.provider) }}
+    {{ include "gitlab.ingress.classAnnotation" $ }}
+    kubernetes.io/ingress.provider: "{{ template "gitlab.ingress.provider" $ingressCfg }}"
+    {{- if eq "nginx" (default $.Values.global.ingress.provider .ingress.provider) }}
     nginx.ingress.kubernetes.io/proxy-body-size: {{ .ingress.proxyBodySize | quote }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .ingress.proxyReadTimeout | quote }}
     nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .ingress.proxyConnectTimeout | quote }}
@@ -39,12 +38,13 @@ metadata:
     {{ $key }}: {{ $value | quote }}
   {{- end }}
 spec:
+  {{ template "gitlab.ingress.classnameField" $ }}
   rules:
     - host: {{ $gitlabHostname }}
       http:
         paths:
           - path: {{ .ingress.path }}
-            {{ if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+            {{ if or ($.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress") (eq $.Values.global.ingress.apiVersion "networking.k8s.io/v1") -}}
             pathType: {{ default .ingress.pathType $.Values.global.ingress.pathType }}
             backend:
               service:

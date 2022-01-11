@@ -8,8 +8,8 @@ export CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}
 
 # Derive the Helm RELEASE argument from CI_ENVIRONMENT_SLUG
 if [[ $CI_ENVIRONMENT_SLUG =~ ^.{3}-review ]]; then
-  # if a "review", use CI_COMMIT_REF_SLUG
-  RELEASE_NAME=rvw-${CI_COMMIT_REF_SLUG}
+  # if a "review", use $REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  RELEASE_NAME=rvw-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}
   # Trim release name to leave room for prefixes/suffixes
   RELEASE_NAME=${RELEASE_NAME:0:30}
   # Trim any hyphens in the suffix
@@ -70,19 +70,24 @@ function deploy() {
     )
   fi
 
-  # Use stable images when on the stable branch
-  gitlab_version=$(grep 'appVersion:' Chart.yaml | awk '{ print $2}')
+  # Use the gitlab version from the environment or use stable images when on the stable branch
+  gitlab_app_version=$(grep 'appVersion:' Chart.yaml | awk '{ print $2}')
+  if [[ -n "${GITLAB_VERSION}" ]]; then
+    image_branch=$GITLAB_VERSION
+  elif [[ "${CI_COMMIT_BRANCH}" =~ -stable$ ]] && [[ "${gitlab_app_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    image_branch=$(echo "${gitlab_app_version%.*}-stable" | tr '.' '-')
+  fi
+
   gitlab_version_args=()
-  if [[ $CI_COMMIT_BRANCH =~ -stable$ ]] && [[ $gitlab_version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    stable_branch=$(echo "${gitlab_version%.*}-stable" | tr '.' '-')
-    gitlab_version_args=(
-      "--set" "global.gitlabVersion=${stable_branch}"
-      "--set" "global.certificates.image.tag=${stable_branch}"
-      "--set" "global.kubectl.image.tag=${stable_branch}"
-      "--set" "gitlab.gitaly.image.tag=${stable_branch}"
-      "--set" "gitlab.gitlab-shell.image.tag=${stable_branch}"
-      "--set" "gitlab.gitlab-exporter.image.tag=${stable_branch}"
-      "--set" "registry.image.tag=${stable_branch}"
+  if [[ -n "$image_branch" ]]; then
+      gitlab_version_args=(
+      "--set" "global.gitlabVersion=${image_branch}"
+      "--set" "global.certificates.image.tag=${image_branch}"
+      "--set" "global.kubectl.image.tag=${image_branch}"
+      "--set" "gitlab.gitaly.image.tag=${image_branch}"
+      "--set" "gitlab.gitlab-shell.image.tag=${image_branch}"
+      "--set" "gitlab.gitlab-exporter.image.tag=${image_branch}"
+      "--set" "registry.image.tag=${image_branch}"
     )
   fi
 
@@ -153,7 +158,7 @@ CIYAML
     gitlab-shell:
       minReplicas: 1    # 2
       maxReplicas: 2    # 10
-    task-runner:
+    toolbox:
       enabled: true
   nginx-ingress:
     controller:
@@ -180,6 +185,9 @@ CIYAML
     --set global.ingress.tls.secretName=helm-charts-win-tls \
     --set global.ingress.configureCertmanager=false \
     --set global.appConfig.initialDefaults.signupEnabled=false \
+    --set nginx-ingress.controller.electionID="$RELEASE_NAME" \
+    --set nginx-ingress.controller.ingressClassByName=true \
+    --set nginx-ingress.controller.ingressClassResource.controllerValue="ci.gitlab.com/$RELEASE_NAME" \
     --set certmanager.install=false \
     --set prometheus.install=$PROMETHEUS_INSTALL \
     --set global.gitlab.license.secret="$RELEASE_NAME-gitlab-license" \
@@ -252,13 +260,13 @@ function wait_for_deploy {
   echo ""
 }
 
-function restart_task_runner() {
-  # restart the task-runner pods, by deleting them
+function restart_toolbox() {
+  # restart the toolbox pods, by deleting them
   # the ReplicaSet of the Deployment will re-create them
   # this ensure we run up-to-date on tags like `master` when there
   # have been no changes to the configuration to warrant a restart
   # via metadata checksum annotations
-  kubectl -n ${NAMESPACE} delete pods -lapp=task-runner,release=${RELEASE_NAME}
+  kubectl -n ${NAMESPACE} delete pods -lapp=toolbox,release=${RELEASE_NAME}
   # always "succeed" so not to block.
   return 0
 }

@@ -13,7 +13,7 @@ describe 'Workhorse configuration' do
   let(:template) { HelmTemplate.new(default_values) }
 
   it 'renders a TOML configuration file' do
-    raw_toml = template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.erb')
+    raw_toml = template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.tpl')
 
     expect(raw_toml).to match /^shutdown_timeout = "61s"/
     expect(raw_toml).not_to include('trusted_cidrs_for_propagation')
@@ -56,7 +56,7 @@ describe 'Workhorse configuration' do
     let(:template) { HelmTemplate.new(custom_values) }
 
     it 'renders a TOML configuration file' do
-      raw_toml = template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.erb')
+      raw_toml = template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.tpl')
 
       expect(raw_toml).to match /^shutdown_timeout = "30s"/
       expect(raw_toml).to include(%(trusted_cidrs_for_propagation = ["127.0.0.1/32","192.168.0.1/32"]\n))

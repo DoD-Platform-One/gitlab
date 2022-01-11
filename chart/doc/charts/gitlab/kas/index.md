@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab-Kas chart
+# Using the GitLab-Kas chart **(FREE SELF)**
 
 The `kas` sub-chart provides a configurable deployment of the [Kubernetes Agent Server](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent#gitlab-kubernetes-agent-server-kas), which is the server-side component of the [GitLab Kubernetes Agent](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent) implementation.
 
@@ -46,6 +46,7 @@ the `helm install` command using the `--set` flags.
 | `image.tag`                 | `v13.7.0`      | Image tag                        |
 | `hpa.targetAverageValue`    | `100m`         | Set the autoscaling target value (CPU) |
 | `ingress.enabled`           |  `true` if `global.kas.enabled=true` | You can use `kas.ingress.enabled` to explicitly turn it on or off. If not set, you can optionally use `global.ingress.enabled` for the same purpose. |
+| `ingress.apiVersion`        |                | Value to use in the `apiVersion` field. |
 | `ingress.annotations`       | `{}`           | Ingress annotations              |
 | `ingress.tls`               | `{}`           | Ingress TLS configuration        |
 | `ingress.agentPath`         | `/`            | Ingress path for the agent API endpoint |

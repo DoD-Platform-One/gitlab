@@ -139,3 +139,21 @@ helm install gitlab gitlab/gitlab \
   --set global.pages.enabled=true \
   --set gitlab.gitlab-pages.ingress.tls.secretName=<secret name>
 ```
+
+## Troubleshooting
+
+This section contains possible solutions for problems you might encounter.
+
+### SSL termination errors
+
+If you are using Let's Encrypt as your TLS provider and you are facing certificate-related errors, you have a few options to debug this:
+
+1. Check your domain with [letsdebug](https://letsdebug.net/) for any possible errors.
+1. If letsdebug returns not errors, see if there's a problem related to cert-manager:
+
+   ```shell
+   kubectl describe certificate,order,challenge --all-namespaces
+   ```
+
+   If you see any errors, try removing the certificate object to force requesting a new one.
+1. If nothing of the above works, consider reinstalling the cert-manager.

@@ -136,7 +136,15 @@ module Gitlab
     end
 
     def set_runner_token
-      cmd = full_command("gitlab-rails runner \"settings = ApplicationSetting.current_without_cache; settings.set_runners_registration_token('#{runner_registration_token}'); settings.encrypted_ci_jwt_signing_key=nil; settings.save!; Ci::Runner.delete_all\"")
+      cmd = full_command(
+        "gitlab-rails runner \"" \
+        "settings = ApplicationSetting.current_without_cache; " \
+        "settings.update_columns(encrypted_customers_dot_jwt_signing_key_iv: nil, encrypted_customers_dot_jwt_signing_key: nil, encrypted_ci_jwt_signing_key_iv: nil, encrypted_ci_jwt_signing_key: nil); " \
+        "settings.set_runners_registration_token('#{runner_registration_token}'); " \
+        "settings.save!; " \
+        "Ci::Runner.delete_all" \
+        "\""
+      )
 
       stdout, status = Open3.capture2e(cmd)
       return [stdout, status]
@@ -158,7 +166,7 @@ module Gitlab
     end
 
     def pod_name
-      filters = 'app=task-runner'
+      filters = 'app=toolbox'
 
       @pod ||= find_pod_name(filters)
     end

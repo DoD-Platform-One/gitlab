@@ -156,6 +156,7 @@ spec:
             {{- include "webservice.extraEnv" (dict "global" $.Values.global "local" .) | nindent 12 }}
           volumeMounts:
             {{- include "gitlab.extraVolumeMounts" $ | nindent 12 }}
+            {{- include "gitlab.certificates.volumeMount" $ | nindent 12 }}
             - name: webservice-config
               mountPath: '/var/opt/gitlab/templates'
             - name: webservice-secrets

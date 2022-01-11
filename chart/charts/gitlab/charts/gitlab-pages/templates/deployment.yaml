@@ -74,6 +74,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.parseAppVersion" (dict "appVersion" .Chart.AppVersion "prepend" "true")) }}"
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           env:
+          {{- include "gitlab.extraEnv" $ | nindent 12 }}
             - name: CONFIG_TEMPLATE_DIRECTORY
               value: '/etc/gitlab-pages/templates'
             - name: CONFIG_DIRECTORY
@@ -97,6 +98,17 @@ spec:
             - containerPort: {{ .Values.metrics.port | int }}
               name: metrics
           {{- end }}
+          # readinessProbe should always hit port used by `listen-http`, as k8s won't use TLS or ProxyV2
+          {{- $externalHttp := $.Values.global.pages.externalHttp }}
+          readinessProbe:
+            httpGet:
+              path: {{ $.Values.statusUri | quote }}
+              port: {{ if $externalHttp }}{{ $.Values.service.internalPort | int }}{{ else }}9090{{ end }}
+            initialDelaySeconds: {{ $.Values.deployment.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ $.Values.deployment.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ $.Values.deployment.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ $.Values.deployment.readinessProbe.successThreshold }}
+            failureThreshold: {{ $.Values.deployment.readinessProbe.failureThreshold }}
       volumes:
       {{- include "gitlab.extraVolumes" $ | nindent 6 }}
       - name: pages-config

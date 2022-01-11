@@ -14,7 +14,7 @@ for testing purposes. For production use, you are advised to set up an
 
 The easiest way to figure out the access details to built-in MinIO cluster is to
 look at the `gitlab.yml` file that is generated in Sidekiq, Webservice and
-Task Runner pods.
+Toolbox pods.
 
 To grab it from the Sidekiq pod:
 

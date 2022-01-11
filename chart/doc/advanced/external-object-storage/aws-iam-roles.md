@@ -59,10 +59,10 @@ region: us-east-1
 
 ### Backups
 
-The Task Runner configuration allows for annotations to be set to upload backups to S3:
+The Toolbox configuration allows for annotations to be set to upload backups to S3:
 
 ```shell
---set gitlab.task-runner.annotations."iam\.amazonaws\.com/role"=<role name>
+--set gitlab.toolbox.annotations."iam\.amazonaws\.com/role"=<role name>
 ```
 
 The [`s3cmd.config`](index.md#backups-storage-example) secret is to be created without the access and secret keys:
@@ -85,17 +85,26 @@ Appropriate IRSA annotations for roles can be applied to ServiceAccounts through
 this Helm chart in one of two ways:
 
 1. ServiceAccounts that have been pre-created as described in the above AWS documentation.
-This will ensure the proper annotations on the ServiceAccount and the linked OIDC provider.
+   This ensures the proper annotations on the ServiceAccount and the linked OIDC provider.
 1. Chart-generated ServiceAccounts with annotations defined. We allow for the configuration
-of annotations on ServiceAccounts both globally and on a per-chart basis.
+   of annotations on ServiceAccounts both globally and on a per-chart basis.
 
 WARNING:
 Using the `backup-utility` as specified in the [backup documentation](../../backup-restore/backup.md)
 does not properly copy the backup file to the S3 bucket. The `backup-utility` uses
 the `s3cmd` to perform the copy of the backup file and it has a known
 issue of [not supporting OIDC authentication](https://github.com/s3tools/s3cmd/issues/1075).
-There is a [pull request](https://github.com/s3tools/s3cmd/pull/1112)
-to mitigate this issue, but it has yet to be accepted into the `s3cmd` code base.
+This has been resolved in their 2.2.0 release, which has been
+[merged](https://gitlab.com/gitlab-org/build/CNG/-/merge_requests/772) into GitLab 14.4.
+
+#### Workaround to perform backups before GitLab 14.4
+
+If you are on a version earlier than 14.4, run the following command in your task-runner pod to sideload
+the latest version of `s3cmd`. You can then run `backup-utility` as per usual.
+
+```shell
+pip install --upgrade s3cmd && export PATH="$(python3 -m site --user-base)/bin:${PATH}"
+```
 
 #### Using pre-created service accounts
 
@@ -126,10 +135,10 @@ gitlab:
     serviceAccount:
       create: false
       name: gitlab-sidekiq
-  task-runner:
+  toolbox:
     serviceAccount:
       create: false
-      name: gitlab-task-runner
+      name: gitlab-toolbox
 ```
 
 #### Using chart-owned service accounts
@@ -161,16 +170,16 @@ gitlab:
     serviceAccount:
       annotations:
         eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab
-  task-runner:
+  toolbox:
     serviceAccount:
       annotations:
-        eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab-task-runner
+        eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab-toolbox
 ```
 
 ## Troubleshooting
 
 You can test if the IAM role is correctly set up and that GitLab is accessing
-S3 using the IAM role by logging into the `taskrunner` pod and installing the
+S3 using the IAM role by logging into the `toolbox` pod and installing the
 `awscli` Python package:
 
 ```shell
@@ -192,7 +201,7 @@ full path to execute the command.
 A normal response showing the temporary user ID, account number and IAM
 ARN (this will not be the IAM ARN for the role used to access S3) will be
 returned if connection to the AWS API was successful. An unsuccessful
-connection will require more troubleshooting to determine why the `taskrunner`
+connection will require more troubleshooting to determine why the `toolbox`
 pod is not able to communicate with the AWS APIs.
 
 If connecting to the AWS APIs is successful, then the following command

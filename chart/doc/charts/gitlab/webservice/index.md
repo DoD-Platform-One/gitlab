@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab Webservice Chart
+# Using the GitLab Webservice Chart **(FREE SELF)**
 
 The `webservice` sub-chart provides the GitLab Rails webserver with two Webservice workers
 per pod. (The minimum necessary for a single pod to be able to serve any web request in GitLab)
@@ -56,7 +56,7 @@ to the `helm install` command using the `--set` flags.
 | `gitlab.webservice.workhorse.image` | `registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee` | Workhorse image repository |
 | `gitlab.webservice.workhorse.tag`   |                       | Workhorse image tag                            |
 | `hpa.targetAverageValue`         | `1`                   | Set the autoscaling target value               |
-| `sshHostKeys.mount`         | `false`                   | Whether to mount the GitLab Shell [secret] containing the public SSH keys.                |
+| `sshHostKeys.mount`         | `false`                   | Whether to mount the GitLab Shell secret containing the public SSH keys.                |
 | `sshHostKeys.mountName`         | `ssh-host-keys`                   | Name of the mounted volume.                |
 | `sshHostKeys.types`         | `[dsa,rsa,ecdsa,ed25519]`                   | List of SSH key types to mount.               |
 | `image.pullPolicy`               | `Always`              | Webservice image pull policy                      |
@@ -330,6 +330,7 @@ webservice:
 
 | Name                                   | Type    | Default | Description |
 |:-------------------------------------- |:-------:|:------- |:----------- |
+| `ingress.apiVersion`                   | String  |         | Value to use in the `apiVersion` field. |
 | `ingress.annotations` | Map  |  See [below](#annotations) | These annotations will be used for every Ingress. For example: `ingress.annotations."nginx\.ingress\.kubernetes\.io/enable-access-log"=true`. |
 | `ingress.configureCertmanager`         | Boolean |         | Toggles Ingress annotation `cert-manager.io/issuer`. For more information see the [TLS requirement for GitLab Pages](../../../installation/tls.md).  |
 | `ingress.enabled`                      | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false`, the `global.ingress.enabled` setting value is used. |

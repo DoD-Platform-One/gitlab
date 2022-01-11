@@ -4,7 +4,7 @@
 #
 # - all pods start with a single replica, rather than their other highly available defaults
 # - resource requests are tuned down to the minimal requirements for a single user to fully use GitLab
-# - prometheus, gitlab ci runner, and the gitlab task-runner (used for backups and maintenance) are disabled
+# - prometheus, gitlab ci runner, and the gitlab toolbox (used for backups and maintenance) are disabled
 prometheus:
   install: false
 gitlab-runner:
@@ -66,7 +66,7 @@ gitlab:
         memory: 625M
   gitlab-shell:
     minReplicas: 1
-  task-runner:
+  toolbox:
     enabled: false
 registry:
   hpa:

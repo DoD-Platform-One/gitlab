@@ -2,8 +2,9 @@
 
 ##  chart/charts/*.tgz
 - run ```helm dependency update``` and commit the downloaded archives
-- comment the *.tgz from the .gitignore file
-- commit the tar archives that were downloaded from the helm dependency update command
+- comment the ```charts/*.tgz``` from the .gitignore file
+- comment the ```requirements.lock``` in the .gitignore file.
+- commit the tar archives that were downloaded from the helm dependency update command. And also commit the requirements.lock that was generated.
 
 ## chart/values.yaml
 - disable all internal services other than postgres, minio, and redis

@@ -30,7 +30,7 @@ global:
       bucket: gitlab-backup-storage
       tmpBucket: gitlab-tmp-storage
 gitlab:
-  task-runner:
+  toolbox:
     backups:
       objectStorage:
         config:

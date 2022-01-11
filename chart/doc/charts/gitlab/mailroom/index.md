@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the Mailroom chart
+# Using the Mailroom chart **(FREE SELF)**
 
 The Mailroom Pod handles the ingestion of email into the GitLab application.
 

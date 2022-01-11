@@ -71,7 +71,7 @@ describe 'Mailroom configuration' do
 
       expect(t.exit_code).to eq(0)
       expect(mail_room_yml[:mailboxes].length).to eq(1)
-      expect(raw_mail_room_yml).to include(%(:password: "<%= File.read("/etc/gitlab/mailroom/password_incoming_email").strip.dump[1..-2] %>"))
+      expect(raw_mail_room_yml).to include(%(:password: <%= File.read("/etc/gitlab/mailroom/password_incoming_email").strip.to_json %>))
       expect(mailbox[:email]).to eq('myusername')
       expect(mailbox[:name]).to eq('inbox')
       expect(mailbox[:delete_after_delivery]).to be true
@@ -105,7 +105,7 @@ describe 'Mailroom configuration' do
 
         expect(t.exit_code).to eq(0)
         expect(mail_room_yml[:mailboxes].length).to eq(2)
-        expect(raw_mail_room_yml).to include(%(:password: "<%= File.read("/etc/gitlab/mailroom/password_service_desk").strip.dump[1..-2] %>"))
+        expect(raw_mail_room_yml).to include(%(:password: <%= File.read("/etc/gitlab/mailroom/password_service_desk").strip.to_json %>))
         expect(mailbox[:email]).to eq('servicedesk')
         expect(mailbox[:name]).to eq('inbox')
         expect(mailbox[:delete_after_delivery]).to be true
@@ -157,7 +157,7 @@ describe 'Mailroom configuration' do
 
       expect(t.exit_code).to eq(0)
       expect(mail_room_yml[:mailboxes].length).to eq(1)
-      expect(raw_mail_room_yml).to include(%(:client_secret: "<%= File.read("/etc/gitlab/mailroom/client_id_incoming_email").strip.dump[1..-2] %>"))
+      expect(raw_mail_room_yml).to include(%(:client_secret: <%= File.read("/etc/gitlab/mailroom/client_id_incoming_email").strip.to_json %>))
       expect(mailbox[:inbox_options]).to be_a(Hash)
       expect(mailbox[:inbox_options][:tenant_id]).to eq('SOME-TENANT-ID')
       expect(mailbox[:inbox_options][:client_id]).to eq('SOME-CLIENT-ID')
@@ -186,7 +186,7 @@ describe 'Mailroom configuration' do
 
         expect(t.exit_code).to eq(0)
         expect(mail_room_yml[:mailboxes].length).to eq(2)
-        expect(raw_mail_room_yml).to include(%(:client_secret: "<%= File.read("/etc/gitlab/mailroom/client_id_service_desk").strip.dump[1..-2] %>"))
+        expect(raw_mail_room_yml).to include(%(:client_secret: <%= File.read("/etc/gitlab/mailroom/client_id_service_desk").strip.to_json %>))
         expect(mailbox[:inbox_options]).to be_a(Hash)
         expect(mailbox[:inbox_options][:tenant_id]).to eq('OTHER-TENANT-ID')
         expect(mailbox[:inbox_options][:client_id]).to eq('OTHER-CLIENT-ID')

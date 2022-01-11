@@ -9,10 +9,10 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 ## Resource Requests
 
 All of our containers include predefined resource request values. By default we
-have not put resource limits into place. But we recommend users set limits, particularly
-on memory if they are running on nodes without a lot of excess memory capacity.
-(You want to avoid running out of memory on any of your Kubernetes nodes, as the
-Kernel memory killer may end essential Kube processes)
+have not put resource limits into place. If your nodes do not have excess memory
+capacity, one option is to apply memory limits, though adding more memory (or nodes)
+would be preferable. (You want to avoid running out of memory on any of your
+Kubernetes nodes, as the Linux kernel's [out of memory manager](https://www.kernel.org/doc/gorman/html/understand/understand016.html) may end essential Kube processes)
 
 In order to come up with our default request values, we run the application, and
 come up with a way to generate various levels of load for each service. We monitor the
@@ -87,6 +87,9 @@ In future tests we will try to include sustained concurrent load, to better matc
 - **Recommended Limits**
   - cpu: > `300m` (greater than stress task)
   - memory: > `20M` (greater than stress task)
+
+Check the [troubleshooting documentation](../troubleshooting/index.md#git-over-ssh-the-remote-end-hung-up-unexpectedly)
+for details on what might happen if `gitlab.gitlab-shell.resources.limits.memory` is set too low.
 
 ### Webservice
 

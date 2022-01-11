@@ -23,7 +23,8 @@ Follow the installation instructions for [Omnibus GitLab](https://about.gitlab.c
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be _very_ explicit about what is enabled on this node, use the contents below.
 
-*Note*: This example is not intended to provide [Redis for scaling](https://docs.gitlab.com/ee/administration/redis/index.html).
+NOTE:
+This example is not intended to provide [Redis for scaling](https://docs.gitlab.com/ee/administration/redis/index.html).
 
 - `REDIS_PASSWORD` should be replaced with the value in the [`gitlab-redis` secret](../../installation/secrets.md#redis-password).
 
@@ -34,7 +35,6 @@ redis['bind'] = '0.0.0.0'
 redis['port'] = 6379
 # Set password, as in the secret `gitlab-redis` populated in Kubernetes
 redis['password'] = 'REDIS_PASSWORD'
-
 
 ## Disable everything else
 gitlab_rails['enable'] = false
@@ -48,7 +48,9 @@ prometheus_monitoring['enable'] = false
 postgresql['enable'] = false
 ```
 
-After creating `gitlab.rb`, we'll reconfigure the package with `gitlab-ctl reconfigure`. Once the task has completed, check the running processes with `gitlab-ctl status`. The output should appear as such:
+After creating `gitlab.rb`, reconfigure the package with `gitlab-ctl reconfigure`.
+After the task completes, check the running processes with `gitlab-ctl status`.
+The output should appear similar to:
 
 ```plaintext
 # gitlab-ctl status

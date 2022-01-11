@@ -6,13 +6,14 @@ class HelmTemplate
     `helm version -c`.match('Ver(sion)?:"v(\d)\.')[2]
   end
 
-  def self.helm_template_call(release_name: 'test', path: '-', namespace: nil)
+  def self.helm_template_call(release_name: 'test', path: '-', namespace: nil, extra_args: nil)
     namespace_arg = namespace.nil? ? '' : "--namespace #{namespace}"
+
     case helm_version
     when "2" then
-      "helm template -n #{release_name} -f #{path} #{namespace_arg} ."
+      "helm template -n #{release_name} -f #{path} #{namespace_arg} #{extra_args} ."
     when "3" then
-      "helm template #{release_name} . -f #{path} #{namespace_arg}"
+      "helm template #{release_name} . -f #{path} #{namespace_arg} #{extra_args}"
     else
       # If we don't know the version of Helm, use `false` command
       "false"
@@ -41,8 +42,8 @@ class HelmTemplate
 
   attr_reader :mapped
 
-  def initialize(values, release_name = 'test')
-    template(values, release_name)
+  def initialize(values, release_name = 'test', extra_args = '')
+    template(values, release_name, extra_args)
   end
 
   def namespace
@@ -53,9 +54,9 @@ class HelmTemplate
     stdout.strip
   end
 
-  def template(values, release_name = 'test')
+  def template(values, release_name = 'test', extra_args = '')
     @values  = values
-    result = Open3.capture3(self.class.helm_template_call(namespace: 'default', release_name: release_name),
+    result = Open3.capture3(self.class.helm_template_call(namespace: 'default', release_name: release_name, extra_args: extra_args),
                             chdir: File.join(__dir__,  '..'),
                             stdin_data: YAML.dump(values))
     @stdout, @stderr, @exit_code = result
@@ -64,6 +65,7 @@ class HelmTemplate
     when 256
       fail "Chart dependencies not installed, run 'helm dependency update'" if @stderr.include? 'found in Chart.yaml, but missing in charts/ directory'
     end
+
     # load the complete output's YAML documents into an array
     yaml = YAML.load_stream(@stdout)
     # filter out any empty YAML documents (nil)

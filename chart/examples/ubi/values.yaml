@@ -139,7 +139,7 @@ gitlab:
     image:
       tag: master-ubi8
 
-  task-runner:
+  toolbox:
     image:
       tag: master-ubi8
 

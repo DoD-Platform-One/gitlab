@@ -52,8 +52,15 @@ init:
 
 deployment:
   strategy: {}
+  readinessProbe:
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 2
+    successThreshold: 1
+    failureThreshold: 3
 
 ingress:
+  apiVersion:
   annotations: {}
   configureCertmanager: false
   tls: {}
@@ -133,10 +140,11 @@ sentry:
   enabled: false
   dsn:
   environment:
-statusUri:
+statusUri: '/-/readiness'
 tls:
   minVersion:
   maxVersion:
+useHTTPProxy: false
 useProxyV2: false
 useHttp2: true
 

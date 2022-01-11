@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab Pages chart
+# Using the GitLab Pages chart **(FREE SELF)**
 
 The `gitlab-pages` subchart provides a daemon for serving static websites from
 GitLab projects.
@@ -87,6 +87,7 @@ configurations that can be supplied to the `helm install` command using the
 | `logFormat`                      | `json`                | Log output format                                    |
 | `logVerbose`                     | `false`               | Verbose logging                                      |
 | `maxConnections`                 |                       | Limit on the number of concurrent connections to the HTTP, HTTPS or proxy listeners |
+| `maxURILength`                   |                       | Limit the length of URI, 0 for unlimited. |
 | `propagateCorrelationId`         |                       | Reuse existing Correlation-ID from the incoming request header `X-Request-ID` if present |
 | `redirectHttp`                   | `false`               | Redirect pages from HTTP to HTTPS                    |
 | `sentry.enabled`                 | `false`               | Enable Sentry reporting                              |
@@ -96,11 +97,14 @@ configurations that can be supplied to the `helm install` command using the
 | `tls.minVersion`                 |                       | Specifies the minimum SSL/TLS version                |
 | `tls.maxVersion`                 |                       | Specifies the maximum SSL/TLS version                |
 | `useHttp2`                       | `true`                | Enable HTTP2 support                                 |
+| `useHTTPProxy`                   | `false`               | Use this option when GitLab Pages is behind a Reverse Proxy.    |
 | `useProxyV2`                     | `false`               | Force HTTPS request to utilize the PROXYv2 protocol. |
 | `zipCache.cleanup`               | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
 | `zipCache.expiration`            | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
 | `zipCache.refresh`               | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
 | `zipOpenTimeout`                 | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
+| `rateLimitSourceIP`              | int                   | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENABLE_RATE_LIMITER=true"]` |
+| `rateLimitSourceIPBurst`         | int                   | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits) |
 
 ### Configuring the `ingress`
 
@@ -108,6 +112,7 @@ This section controls the GitLab Pages Ingress.
 
 | Name                   | Type    | Default | Description |
 |:---------------------- |:-------:|:------- |:----------- |
+| `apiVersion`           | String  |         | Value to use in the `apiVersion` field. |
 | `annotations`          | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/). |
 | `configureCertmanager` | Boolean | `false` | Toggles Ingress annotation `cert-manager.io/issuer`. The acquisition of a TLS certificate for GitLab Pages via cert-manager is disabled because a wildcard certificate acquisition requires a cert-manager Issuer with a [DNS01 solver](https://cert-manager.io/docs/configuration/acme/dns01/), and the Issuer deployed by this chart only provides a [HTTP01 solver](https://cert-manager.io/docs/configuration/acme/http01/). For more information see the [TLS requirement for GitLab Pages](../../../installation/tls.md). |
 | `enabled`              | Boolean |         | Setting that controls whether to create Ingress objects for services that support them. When not set, the `global.ingress.enabled` setting is used. |
@@ -194,3 +199,29 @@ networkpolicy:
           - port: 53
             protocol: UDP
 ```
+
+### TLS access to GitLab Pages
+
+To have TLS access to the GitLab Pages feature you must:
+
+1. Create a dedicated wildcard certificate for your GitLab Pages domain in this format:
+   `*.pages.<yourdomain>`.
+
+1. Create the secret in Kubernetes:
+
+   ```shell
+   kubectl create secret tls tls-star-pages-<mysecret> --cert=<path/to/fullchain.pem> --key=<path/to/privkey.pem>
+   ```
+
+1. Configure GitLab Pages to use this secret:
+
+   ```yaml
+   gitlab:
+     gitlab-pages:
+       ingress:
+         tls:
+           secretName: tls-star-pages-<mysecret>
+   ```
+
+1. Create a DNS entry in your DNS provider with the name `*.pages.<yourdomaindomain>`
+   pointing to your LoadBalancer.

@@ -192,7 +192,7 @@ use of two separate buckets. A bucket for storing backups (`global.appConfig.bac
 and a temporary bucket for preserving existing data during the restore process (`global.appConfig.backups.tmpBucket`).
 Currently AWS S3-compatible object storage systems and Google Cloud Storage are supported backends
 The backend type is configurable by setting `global.appConfig.backups.objectStorage.backend` to `s3` and `gcs` respectively.
-A connection configuration through the `gitlab.task-runner.backups.objectStorage.config` key must also be provided.
+A connection configuration through the `gitlab.toolbox.backups.objectStorage.config` key must also be provided.
 When using Google Cloud Storage, the GCP project must be set with the `global.appConfig.backups.objectStorage.config.gcpProject` value.
 
 For S3-compatible storage:
@@ -200,8 +200,8 @@ For S3-compatible storage:
 ```shell
 --set global.appConfig.backups.bucket=gitlab-backup-storage
 --set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
---set gitlab.task-runner.backups.objectStorage.config.secret=storage-config
---set gitlab.task-runner.backups.objectStorage.config.key=config
+--set gitlab.toolbox.backups.objectStorage.config.secret=storage-config
+--set gitlab.toolbox.backups.objectStorage.config.key=config
 ```
 
 For Google Cloud Storage (GCS):
@@ -209,16 +209,17 @@ For Google Cloud Storage (GCS):
 ```shell
 --set global.appConfig.backups.bucket=gitlab-backup-storage
 --set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
---set gitlab.task-runner.backups.objectStorage.backend=gcs
---set gitlab.task-runner.backups.objectStorage.config.gcpProject=my-gcp-project-id
---set gitlab.task-runner.backups.objectStorage.config.secret=storage-config
---set gitlab.task-runner.backups.objectStorage.config.key=config
+--set gitlab.toolbox.backups.objectStorage.backend=gcs
+--set gitlab.toolbox.backups.objectStorage.config.gcpProject=my-gcp-project-id
+--set gitlab.toolbox.backups.objectStorage.config.secret=storage-config
+--set gitlab.toolbox.backups.objectStorage.config.key=config
 ```
 
 See the [backup/restore object storage documentation](../../backup-restore/index.md#object-storage) for full details.
 
-> **Note**: In order to backup/restore files from the other object storage locations, the configuration file needs to be
-> configured to authenticate as a user with sufficient access to read/write to all GitLab buckets.
+NOTE:
+To backup or restore files from the other object storage locations, the configuration file needs to be
+configured to authenticate as a user with sufficient access to read/write to all GitLab buckets.
 
 ### Backups storage example
 
@@ -260,7 +261,7 @@ See the [backup/restore object storage documentation](../../backup-restore/index
 
      # Setup access keys
      # Access Key = Azure Storage Account name
-     access_key =  BOGUS_ACCOUNT_NAME
+     access_key = BOGUS_ACCOUNT_NAME
      # Secret Key = Azure Storage Account Key
      secret_key = BOGUS_KEY
 

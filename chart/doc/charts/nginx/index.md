@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using NGINX
+# Using NGINX **(FREE SELF)**
 
 We provide a complete NGINX deployment to be used as an Ingress Controller. Not all
 Kubernetes providers natively support the NGINX [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls),
@@ -16,6 +16,11 @@ and `defaultbackend` from the [Google Container Registry](https://gcr.io/google_
 NOTE:
 Our [fork](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/nginx-ingress) of the NGINX chart was pulled from
 [GitHub](https://github.com/kubernetes/ingress-nginx). See [Our NGINX fork](fork.md) for details on what was modified in our fork.
+
+NOTE:
+The version of the NGINX Ingress Helm Chart bundled with the GitLab Helm Charts
+has been updated to support Kubernetes 1.22. As a result, the GitLab Helm
+Chart can not longer support Kubernetes versions prior to 1.19.
 
 ## Configuring NGINX
 

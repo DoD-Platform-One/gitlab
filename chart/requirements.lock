@@ -13,7 +13,7 @@ dependencies:
   version: '*.*.*'
 - name: cert-manager
   repository: https://charts.jetstack.io/
-  version: v1.2.0
+  version: v1.5.4
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 11.16.9
@@ -22,7 +22,7 @@ dependencies:
   version: 8.9.4
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
-  version: 0.32.0
+  version: 0.36.0
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.9.1
@@ -35,5 +35,5 @@ dependencies:
 - name: gluon
   repository: oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon
   version: 0.2.4
-digest: sha256:efbc853d94f8c6c31b0e07e7cacfc8362fa3e26f90e907d7080779d36d8361ee
-generated: "2021-10-08T10:49:03.668969797-06:00"
+digest: sha256:5134333a514c41654c6bf05349cf3fb2ee9e6469379988fc48e66b06278f01c2
+generated: "2022-01-11T09:20:24.793304318-07:00"

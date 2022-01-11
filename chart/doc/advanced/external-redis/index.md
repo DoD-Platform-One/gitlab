@@ -21,11 +21,11 @@ You must set the following parameters:
 - `global.redis.host`: Set to the hostname of the external Redis, can be a domain or an IP address.
 - `global.redis.password.enabled`: Set to `false` if the external Redis does not require a password.
 - `global.redis.password.secret`: The name of the [secret which contains the token for authentication](../../installation/secrets.md#redis-password).
-- `global.redis.password.key`: The key within the secret, which contains the token content.
+- `global.redis.password.key`: The key in the secret, which contains the token content.
 
 Items below can be further customized if you are not using the defaults:
 
-- `global.redis.port`: The port the database is available on, defaults to `6379`
+- `global.redis.port`: The port the database is available on, defaults to `6379`.
 
 For example, pass these values via Helm's `--set` flag while deploying:
 
@@ -44,20 +44,20 @@ specified in the `sentinel.conf`. Sentinel servers can be referenced
 using the `global.redis.sentinels[0].host` and `global.redis.sentinels[0].port`
 values for the `--set` flag. The index is zero based.
 
-## Using multiple Redis instances
+## Use multiple Redis instances
 
 GitLab supports splitting several of the resource intensive
 Redis operations across multiple Redis instances. This chart supports distributing
-those persistence classes to other Redis instances: `cache`, `queues`, `sharedState`, `actioncable`, and `traceChunks`.
+those persistence classes to other Redis instances.
 
 More detailed information on configuring the chart for using multiple Redis
 instances can be found in the [globals](../../charts/globals.md#multiple-redis-support)
 documentation.
 
-## Specifying secure Redis scheme (SSL)
+## Specify secure Redis scheme (SSL)
 
-In order to connect to Redis using SSL, the `rediss` (note the double `s`) scheme parameter is required:
+To connect to Redis using SSL, use the `rediss` (note the double `s`) scheme parameter:
 
 ```shell
-  --set global.redis.scheme=rediss
+--set global.redis.scheme=rediss
 ```

@@ -6,7 +6,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Preparing OKE resources **(FREE SELF)**
 
-For a fully functional GitLab instance, you will need a few resources before
+For a fully functional GitLab instance, you need a few resources before
 deploying the `gitlab` chart to [Oracle Container Engine for Kubernetes (OKE)](https://docs.oracle.com/en-us/iaas/Content/ContEng/Concepts/contengoverview.htm). Check how to [prepare](https://docs.oracle.com/en-us/iaas/Content/ContEng/Concepts/contengprerequisites.htm) your Oracle Cloud Infrastructure tenancy before creating the OKE cluster.
 
 ## Creating the OKE cluster
@@ -18,7 +18,7 @@ A cluster with 4 OCPUs and 30GB of RAM is recommended.
 
 ### External access to GitLab
 
-By default, the GitLab Chart will deploy an Ingress Controller which creates an
+By default, the GitLab Chart deploys an Ingress Controller which creates an
 Oracle Cloud Infrastructure Public Load Balancer with 100Mbps shape. The Load
 Balancer service assigns a floating public IP address which doesn't come from
 the host subnet.

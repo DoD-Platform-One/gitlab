@@ -45,7 +45,7 @@ Returns the KAS internal URL (for GitLab backend connections)
 {{-   else -}}
 {{-     $serviceName := include "gitlab.kas.serviceName" . -}}
 {{-     $port := .Values.global.kas.service.apiExternalPort -}}
-{{-     printf "grpc://%s.svc:%s" $serviceName (toString $port) -}}
+{{-     printf "grpc://%s.%s.svc:%s" $serviceName $.Release.Namespace (toString $port) -}}
 {{-   end -}}
 {{- end -}}
 

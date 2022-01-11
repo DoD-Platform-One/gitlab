@@ -68,6 +68,8 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     jmespath (1.4.0)
+    knapsack (4.0.0)
+      rake
     launchy (2.4.3)
       addressable (~> 2.3)
     memoizable (0.4.2)
@@ -184,6 +186,7 @@ DEPENDENCIES
   docker-api
   gitlab-styles (~> 6.1)
   hash-deep-merge
+  knapsack
   pry
   rake
   rspec

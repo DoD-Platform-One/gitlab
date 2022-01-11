@@ -326,6 +326,31 @@ describe 'kas configuration' do
             end
           end
         end
+
+        describe 'tls' do
+          let(:kas_values) { default_kas_values }
+
+          it 'is empty by default' do
+            expect(config_yaml_data['redis']).not_to include('tls')
+          end
+
+          context 'when redis scheme is "rediss"' do
+            let(:kas_values) do
+              default_kas_values.deep_merge!(YAML.safe_load(%(
+                global:
+                  redis:
+                    scheme: rediss
+              )))
+            end
+
+            it 'is enabled' do
+              expect(config_yaml_data['redis']).to include(YAML.safe_load(%(
+                tls:
+                  enabled: true
+              )))
+            end
+          end
+        end
       end
     end
 
@@ -383,12 +408,12 @@ describe 'kas configuration' do
       )['production']['gitlab_kas']
     end
 
-    %w[webservice task-runner sidekiq].each do |chart|
+    %w[webservice toolbox sidekiq].each do |chart|
       context "for #{chart}" do
         it 'has the correct defaults' do
           expect(gitlab_yml(chart)).to include(YAML.safe_load(%(
             enabled: true
-            internal_url: grpc://test-kas.svc:8153
+            internal_url: grpc://test-kas.default.svc:8153
             external_url: wss://kas.example.com
           )))
         end

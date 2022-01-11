@@ -9,7 +9,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 This is the official, recommended, and supported method to install GitLab on a cloud native environment.
 
 NOTE:
-It is not necessary to have GitLab installed on Kubernetes in order to use
+It is not necessary to have GitLab installed on Kubernetes to use
 the [GitLab Kubernetes integration](https://docs.gitlab.com/ee/user/project/clusters/).
 
 ## Introduction
@@ -31,7 +31,7 @@ can be installed separately.
   - GitLab/[Mailroom](charts/gitlab/mailroom/index.md)
   - GitLab/[Migrations](charts/gitlab/migrations/index.md)
   - GitLab/[Sidekiq](charts/gitlab/sidekiq/index.md)
-  - GitLab/[Task Runner](charts/gitlab/task-runner/index.md)
+  - GitLab/[Toolbox](charts/gitlab/toolbox/index.md)
   - GitLab/[Webservice](charts/gitlab/webservice/index.md)
 - Optional dependencies:
   - [PostgreSQL](https://artifacthub.io/packages/helm/bitnami/postgresql)
@@ -94,22 +94,7 @@ the amount of context we're comfortable placing here. Please see our (nearly)
 
 ## Upgrading
 
-Once your GitLab Chart is installed, configuration changes and chart updates
-should be done using `helm upgrade`:
-
-```shell
-helm repo add gitlab https://charts.gitlab.io/
-helm repo update
-helm get values gitlab > gitlab.yaml
-helm upgrade gitlab gitlab/gitlab -f gitlab.yaml
-```
-
-For more detailed information see [Upgrading](installation/upgrade.md).
-
-NOTE:
-**Zero-downtime upgrades** are not available with the GitLab charts.
-Ongoing work to support this feature can be tracked via
-[the GitLab Operator issue](https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/issues/59).
+Please see [Upgrading](installation/upgrade.md).
 
 ## Uninstall
 

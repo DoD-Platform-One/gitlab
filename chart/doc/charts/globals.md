@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Configure Charts using Globals
+# Configure Charts using Globals **(FREE SELF)**
 
 To reduce configuration duplication when installing our wrapper Helm chart, several
 configuration settings are available to be set in the `global` section of `values.yaml`.
@@ -115,6 +115,7 @@ The GitLab global host settings for Ingress are located under the `global.ingres
 
 | Name                           | Type    | Default        | Description |
 |:------------------------------ |:-------:|:-------        |:----------- |
+| `apiVersion`                   | String  |                | API version to use in the Ingress object definitions.
 | `annotations.*annotation-key*` | String  |                | Where `annotation-key` is a string that will be used with the value as an annotation on every Ingress. For Example: `global.ingress.annotations."nginx\.ingress\.kubernetes\.io/enable-access-log"=true`. No global annotations are provided by default. |
 | `configureCertmanager`         | Boolean | `true`         | [See below](#globalingressconfigurecertmanager). |
 | `class`                        | String  | `gitlab-nginx` | Global setting that controls `kubernetes.io/ingress.class` annotation in `Ingress` resources. |
@@ -437,16 +438,17 @@ continue to apply with the Sentinel support unless re-specified in the table abo
 ### Multiple Redis support
 
 The GitLab chart includes support for running with separate Redis instances
-for different persistence classes, currently: `cache`, `queues`, `sharedState`,
-`actioncable` and `traceChunks`.
+for different persistence classes, currently:
 
-| Instance     | Purpose                                             |
-|:-------------|:----------------------------------------------------|
-| `cache`        | Store cached data                                   |
-| `queues`       | Store Sidekiq background jobs                       |
-| `sharedState`  | Store session-related and other persistent data     |
-| `actioncable`  | Pub/Sub queue backend for ActionCable               |
-| `traceChunks`  | Store job traces temporarily                        |
+| Instance       | Purpose                                                         |
+|:---------------|:----------------------------------------------------------------|
+| `cache`        | Store cached data                                               |
+| `queues`       | Store Sidekiq background jobs                                   |
+| `sharedState`  | Store various persistent data such as distributed locks         |
+| `actioncable`  | Pub/Sub queue backend for ActionCable                           |
+| `traceChunks`  | Store job traces temporarily                                    |
+| `rateLimiting` | Store rate-limiting usage for RackAttack and Application Limits |
+| `sessions`     | Store user session data                                         |
 
 Any number of the instances may be specified. Any instances not specified
 will be handled by the primary Redis instance specified
@@ -499,6 +501,20 @@ global:
         enabled: true
         secret: traceChunks-secret
         key: traceChunks-password
+    rateLimiting:
+      host: rateLimiting.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: rateLimiting-secret
+        key: rateLimiting-password
+    sessions:
+      host: sessions.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: sessions-secret
+        key: sessions-password
 ```
 
 The following table describes the attributes for each dictionary of the
@@ -529,6 +545,20 @@ global:
   redis:
     scheme: rediss
   --set global.redis.scheme=rediss
+```
+
+### Password-less Redis Servers
+
+Some Redis services such as Google Cloud Memorystore do not make use of passwords and the associated `AUTH` command. The use and requirement for a password can be disabled via the following configuration setting:
+
+```yaml
+global:
+  redis:
+    password:
+      enabled: false
+    host: ${REDIS_PRIVATE_IP}
+redis:
+  enabled: false
 ```
 
 ## Configure Grafana integration
@@ -792,6 +822,8 @@ global:
       matomoUrl:
       matomoSiteId:
       matomoDisableCookies:
+      oneTrustId:
+      googleTagManagerNonceId:
     object_store:
       enabled: false
       proxy_download: true
@@ -969,6 +1001,8 @@ under the `extra` key below `appConfig`:
 | `extra.matomoSiteId`       | String | (empty) | Matomo Site ID. |
 | `extra.matomoUrl`          | String | (empty) | Matomo URL. |
 | `extra.matomoDisableCookies`| Boolean | (empty) | Disable Matomo cookies (corresponds to `disableCookies` in the Matomo script) |
+| `extra.oneTrustId`         | String | (empty) | OneTrust ID. |
+| `extra.googleTagManagerNonceId` | String | (empty) | Google Tag Manager ID. |
 
 ### Consolidated object storage
 
@@ -1294,7 +1328,7 @@ omniauth:
 | Name                      | Type    | Default     | Description |
 |:------------------------- |:-------:|:----------- |:----------- |
 | `allowBypassTwoFactor`    |         |             | Allows users to log in with the specified providers without two factor authentication. Can be set to `true`, `false`, or an array of providers. See [Bypassing two factor authentication](https://docs.gitlab.com/ee/integration/omniauth.html#bypassing-two-factor-authentication). |
-| `allowSingleSignOn`       | Boolean | `false`     | Enable the automatic creation of accounts when signing in with OmniAuth. |
+| `allowSingleSignOn`       | Array | `['saml']`     | Enable the automatic creation of accounts when signing in with OmniAuth. Input the [name of the OmniAuth Provider](https://docs.gitlab.com/ee/integration/omniauth.html#supported-providers). |
 | `autoLinkLdapUser`        | Boolean | `false`     | Can be used if you have LDAP / ActiveDirectory integration enabled. When enabled, users automatically created through OmniAuth will be linked to their LDAP entry as well. |
 | `autoLinkSamlUser`        | Boolean | `false`     | Can be used if you have SAML integration enabled. When enabled, users automatically created through OmniAuth will be linked to their SAML entry as well. |
 | `autoLinkUser`            |         |             | Allows users authenticating via an OmniAuth provider to be automatically linked to a current GitLab user if their emails match. Can be set to `true`, `false`, or an array of providers. |
@@ -1449,7 +1483,7 @@ sample [`gitlab.yml`](https://gitlab.com/gitlab-org/gitlab/blob/master/config/gi
 for more job examples.
 
 These settings are shared between Sidekiq, Webservice (for showing tooltips in UI)
-and Task Runner (for debugging purposes) pods.
+and Toolbox (for debugging purposes) pods.
 
 ```yaml
 global:

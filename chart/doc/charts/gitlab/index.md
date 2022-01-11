@@ -20,5 +20,5 @@ service sub-charts:
 - [Migrations](migrations/index.md)
 - [Praefect](praefect/index.md)
 - [Sidekiq](sidekiq/index.md)
-- [Task Runner](task-runner/index.md)
+- [Toolbox](toolbox/index.md)
 - [Webservice](webservice/index.md)

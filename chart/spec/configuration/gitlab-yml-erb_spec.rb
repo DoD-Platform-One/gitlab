@@ -122,6 +122,45 @@ describe 'gitlab.yml.erb configuration' do
     end
   end
 
+  context 'oneTrustId' do
+    let(:required_values) do
+      YAML.safe_load(%(
+        global:
+          appConfig:
+            extra:
+              oneTrustId: #{value}
+      )).merge(default_values)
+    end
+
+    context 'when configured' do
+      let(:value) { 'foo' }
+
+      it 'populates the gitlab.yml.erb with id' do
+        t = HelmTemplate.new(required_values)
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).to include('one_trust_id: "foo"')
+      end
+    end
+
+    context 'when not configured' do
+      let(:value) { nil }
+
+      it 'does not populate the gitlab.yml.erb' do
+        t = HelmTemplate.new(required_values)
+
+        expect(t.exit_code).to eq(0)
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).not_to include('one_trust_id')
+      end
+    end
+  end
+
   context 'sidekiq.routingRules on web' do
     let(:required_values) do
       value.merge(default_values)
