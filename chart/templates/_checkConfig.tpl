@@ -36,7 +36,8 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.gitaly.extern.repos" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.geo.database" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.geo.secondary.database" .) -}}
-{{- $messages = append $messages (include "gitlab.task-runner.replicas" .) -}}
+{{- $messages = append $messages (include "gitlab.toolbox.replicas" .) -}}
+{{- $messages = append $messages (include "gitlab.toolbox.backups.objectStorage.config.secret" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.multipleRedis" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.hostWhenNoInstall" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.postgresql.deprecatedVersion" .) -}}
@@ -55,6 +56,7 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.objectStorage.consolidatedConfig" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.objectStorage.typeSpecificConfig" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.nginx.controller.extraArgs" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.nginx.clusterrole.scope" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.loadBalancer" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.smtp.openssl_verify_mode" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.geo.registry.replication.primaryApiUrl" .) -}}
@@ -311,17 +313,31 @@ gitaly:
 {{/* END gitlab.checkConfig.gitaly.extern.repos */}}
 
 {{/*
-Ensure that gitlab/task-runner is not configured with `replicas` > 1 if
-persistence is enabled.
+Ensure that a valid object storage config secret is provided.
 */}}
-{{- define "gitlab.task-runner.replicas" -}}
-{{-   $replicas := index $.Values.gitlab "task-runner" "replicas" | int -}}
-{{-   if and (gt $replicas 1) (index $.Values.gitlab "task-runner" "persistence" "enabled") -}}
-task-runner: replicas is greater than 1, with persistence enabled.
-    It appear that `gitlab/task-runner` has been configured with more than 1 replica, but also with a PersistentVolumeClaim. This is not supported. Please either reduce the replicas to 1, or disable persistence.
+{{- define "gitlab.toolbox.backups.objectStorage.config.secret" -}}
+{{-   if or .Values.gitlab.toolbox.backups.objectStorage.config (not (or .Values.global.minio.enabled .Values.global.appConfig.object_store.enabled)) (eq .Values.gitlab.toolbox.backups.objectStorage.backend "gcs") }}
+{{-     if not .Values.gitlab.toolbox.backups.objectStorage.config.secret -}}
+toolbox:
+    A valid object storage config secret is needed for backups.
+    Please configure it via `gitlab.toolbox.backups.objectStorage.config.secret`.
+{{-     end -}}
 {{-   end -}}
 {{- end -}}
-{{/* END gitlab.task-runner.replicas */}}
+{{/* END gitlab.toolbox.backups.objectStorage.config.secret */}}
+
+{{/*
+Ensure that gitlab/toolbox is not configured with `replicas` > 1 if
+persistence is enabled.
+*/}}
+{{- define "gitlab.toolbox.replicas" -}}
+{{-   $replicas := index $.Values.gitlab "toolbox" "replicas" | int -}}
+{{-   if and (gt $replicas 1) (index $.Values.gitlab "toolbox" "persistence" "enabled") -}}
+toolbox: replicas is greater than 1, with persistence enabled.
+    It appear that `gitlab/toolbox` has been configured with more than 1 replica, but also with a PersistentVolumeClaim. This is not supported. Please either reduce the replicas to 1, or disable persistence.
+{{-   end -}}
+{{- end -}}
+{{/* END gitlab.toolbox.replicas */}}
 
 {{/*
 Ensure that `redis.install: false` if configuring multiple Redis instances
@@ -376,7 +392,7 @@ Ensure that if `psql.password.useSecret` is set to false, a path to the password
 */}}
 {{- define "gitlab.checkConfig.postgresql.noPasswordFile" -}}
 {{- $errorMsg := list -}}
-{{- $subcharts := pick .Values.gitlab "geo-logcursor" "gitlab-exporter" "migrations" "sidekiq" "task-runner" "webservice" -}}
+{{- $subcharts := pick .Values.gitlab "geo-logcursor" "gitlab-exporter" "migrations" "sidekiq" "toolbox" "webservice" -}}
 {{- range $name, $sub := $subcharts -}}
 {{-   $useSecret := include "gitlab.boolean.local" (dict "local" (pluck "useSecret" (index $sub "psql" "password") | first) "global" $.Values.global.psql.password.useSecret "default" true) -}}
 {{-   if and (not $useSecret) (not (pluck "file" (index $sub "psql" "password") ($.Values.global.psql.password) | first)) -}}
@@ -649,6 +665,15 @@ nginx-ingress:
 {{-   end -}}
 {{- end -}}
 {{/* END "gitlab.checkConfig.nginx.controller" */}}
+
+{{- define "gitlab.checkConfig.nginx.clusterrole.scope" -}}
+{{-   if (index $.Values "nginx-ingress").rbac.scope -}}
+nginx-ingress:
+  'rbac.scope' should be false. Namespaced IngressClasses do not exist.
+  See https://github.com/kubernetes/ingress-nginx/issues/7519
+{{-   end -}}
+{{- end -}}
+{{/* END "gitlab.checkConfig.nginx.clusterrole" */}}
 
 {{/*
 Ensure that when type is set to LoadBalancer that loadBalancerSourceRanges are set

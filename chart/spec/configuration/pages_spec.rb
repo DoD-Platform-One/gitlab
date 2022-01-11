@@ -220,8 +220,8 @@ describe 'GitLab Pages' do
                 'host' => 'minio.example.com',
                 'endpoint' => 'http://test-minio-svc.default.svc:9000',
                 'path_style' => true,
-                'aws_access_key_id' => "<%= File.read('/etc/gitlab/minio/accesskey').strip.dump[1..-2] %>",
-                'aws_secret_access_key' => "<%= File.read('/etc/gitlab/minio/secretkey').strip.dump[1..-2] %>"
+                'aws_access_key_id' => "<%= File.read('/etc/gitlab/minio/accesskey').strip.to_json %>",
+                'aws_secret_access_key' => "<%= File.read('/etc/gitlab/minio/secretkey').strip.to_json %>"
               }
             },
             'local_store' => {
@@ -412,7 +412,7 @@ describe 'GitLab Pages' do
 
     describe 'Pages configuration file' do
       subject(:config_data) do
-        pages_enabled_template.dig('ConfigMap/test-gitlab-pages', 'data', 'config.erb')
+        pages_enabled_template.dig('ConfigMap/test-gitlab-pages', 'data', 'config.tpl')
       end
 
       context 'default values with Pages enabled' do
@@ -427,6 +427,7 @@ describe 'GitLab Pages' do
         it 'populates Pages config file' do
           default_content = <<~MSG
             listen-proxy=0.0.0.0:8090
+            listen-http=0.0.0.0:9090
             pages-domain=pages.example.com
             pages-root=/srv/gitlab-pages
             log-format=json
@@ -441,6 +442,7 @@ describe 'GitLab Pages' do
             api-secret-key=/etc/gitlab-secrets/pages/secret
             domain-config-source=gitlab
             metrics-address=:9235
+            pages-status=/-/readiness
           MSG
 
           expect(config_data).to eq default_content
@@ -472,6 +474,7 @@ describe 'GitLab Pages' do
                 logFormat: text
                 logVerbose: true
                 maxConnections: 45
+                maxURILength: 2048
                 redirectHttp: true
                 sentry:
                   enabled: true
@@ -485,6 +488,8 @@ describe 'GitLab Pages' do
                   port: 9999
                 zipCache:
                   refresh: 60s
+                rateLimitSourceIP: 100.5
+                rateLimitSourceIPBurst: 50
           ))
         end
 
@@ -493,6 +498,7 @@ describe 'GitLab Pages' do
             gitlab-retrieval-retries=3
             header=FOO: BAR;;BAZ: BAT
             listen-proxy=0.0.0.0:8090
+            listen-http=0.0.0.0:9090
             pages-domain=pages.example.com
             pages-root=/srv/gitlab-pages
             log-format=text
@@ -508,17 +514,21 @@ describe 'GitLab Pages' do
             domain-config-source=disk
             metrics-address=:9999
             max-conns=45
+            max-uri-length=2048
             gitlab-client-http-timeout=25
             gitlab-client-jwt-expiry=35
             sentry-dsn=foobar
             sentry-environment=qwerty
+            pages-status=/-/readiness
             tls-min-version=tls1.0
             tls-max-version=tls1.2
             auth-redirect-uri=https://projects.pages.example.com/auth
-            auth-client-id=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appid').strip.dump[1..-2] %>
-            auth-client-secret=<%= File.read('/etc/gitlab-secrets/pages/gitlab_appsecret').strip.dump[1..-2] %>
-            auth-secret=<%= File.read('/etc/gitlab-secrets/pages/auth_secret').strip.dump[1..-2] %>
+            auth-client-id={% file.Read "/etc/gitlab-secrets/pages/gitlab_appid" %}
+            auth-client-secret={% file.Read "/etc/gitlab-secrets/pages/gitlab_appsecret" %}
+            auth-secret={% file.Read "/etc/gitlab-secrets/pages/auth_secret" %}
             zip-cache-refresh=60s
+            rate-limit-source-ip=100.5
+            rate-limit-source-ip-burst=50
           MSG
 
           expect(pages_enabled_template.exit_code).to eq(0), "Unexpected error code #{pages_enabled_template.exit_code} -- #{pages_enabled_template.stderr}"
@@ -533,7 +543,7 @@ describe 'GitLab Pages' do
       end
 
       subject(:pages_config_data) do
-        pages_enabled_template.dig('ConfigMap/test-gitlab-pages', 'data', 'config.erb')
+        pages_enabled_template.dig('ConfigMap/test-gitlab-pages', 'data', 'config.tpl')
       end
 
       context 'when not enabled' do
@@ -545,8 +555,7 @@ describe 'GitLab Pages' do
         end
 
         describe 'pages configuration' do
-          it 'does not expose listen-http, listen-https, root-cert or root-key' do
-            expect(pages_config_data).not_to match(/listen-http=/)
+          it 'does not expose listen-https, root-cert or root-key' do
             expect(pages_config_data).not_to match(/listen-https=/)
             expect(pages_config_data).not_to match(/root-cert=/)
             expect(pages_config_data).not_to match(/root-key=/)
@@ -554,6 +563,11 @@ describe 'GitLab Pages' do
 
           it 'exposes listen-proxy correctly' do
             expect(pages_config_data).to match(/listen-proxy=0.0.0.0:8090/)
+          end
+
+          it 'configures readiness probe correctly' do
+            expect(pages_config_data).to match(/listen-http=0.0.0.0:9090/)
+            expect(pages_config_data).to match(%r{pages-status=/-/readiness})
           end
         end
 
@@ -663,8 +677,9 @@ describe 'GitLab Pages' do
             expect(pages_config_data).to match(%r{root-key=/etc/gitlab-secrets/pages/pages.example.com.key})
           end
 
-          it 'does not expose listen-http' do
-            expect(pages_config_data).not_to match(/listen-http=/)
+          it 'configures readiness probe correctly' do
+            expect(pages_config_data).to match(/listen-http=0.0.0.0:9090/)
+            expect(pages_config_data).to match(%r{pages-status=/-/readiness})
           end
 
           it 'does not expose listen-proxy ' do
@@ -867,6 +882,30 @@ describe 'GitLab Pages' do
           it 'exposes proper listeners' do
             expect(pages_config_data).to match(/listen-https-proxyv2=0.0.0.0:8091/)
             expect(pages_config_data).not_to match(/listen-https=0.0.0.0:8091/)
+          end
+        end
+      end
+
+      context 'when using HTTP Proxy' do
+        let(:pages_enabled_values) do
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                externalHttp:
+                  - 1.1.1.1
+                externalHttps:
+                  - 1.1.1.1
+            gitlab:
+              gitlab-pages:
+                useHTTPProxy: true
+          ))
+        end
+
+        describe 'pages configuration' do
+          it 'exposes proper listeners' do
+            expect(pages_config_data).to match(/listen-proxy=0.0.0.0:8090/)
+            expect(pages_config_data).not_to match(/listen-http=0.0.0.0:8090/)
           end
         end
       end

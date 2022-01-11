@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Restoring a GitLab installation
+# Restoring a GitLab installation **(FREE SELF)**
 
 > To obtain a backup tarball of an existing GitLab instance that used other installation methods like an Omnibus GitLab package or Omnibus GitLab Helm chart, follow the instructions [given in documentation](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system)
 >
@@ -12,16 +12,16 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 It is recommended that you restore a backup to the same version of GitLab on which it was created.
 
-GitLab backup restores are taken by running the `backup-utility` command on the Task Runner pod provided in the chart.
+GitLab backup restores are taken by running the `backup-utility` command on the Toolbox pod provided in the chart.
 
-Before running the restore for the first time, you should ensure the [Task Runner is properly configured](index.md) for
+Before running the restore for the first time, you should ensure the [Toolbox is properly configured](index.md) for
 access to [object storage](index.md#object-storage)
 
 The backup utility provided by GitLab Helm chart supports restoring a tarball from any of the following locations
 
 1. The `gitlab-backups` bucket in the object storage service associated to the instance. This is the default scenario.
 1. A public URL that can be accessed from the pod.
-1. A local file that you can copy to the Task Runner pod using `kubectl cp`
+1. A local file that you can copy to the Toolbox pod using `kubectl cp`
 
 ## Restoring the secrets
 
@@ -62,36 +62,36 @@ Once you have the secrets created as a local YAML file:
 
 ### Restart the pods
 
-In order to use the new secrets, the Webservice, Sidekiq and Task Runner pods
+In order to use the new secrets, the Webservice, Sidekiq and Toolbox pods
 need to be restarted. The safest way to restart those pods is to run:
 
 ```shell
 kubectl delete pods -lapp=sidekiq,release=<helm release name>
 kubectl delete pods -lapp=webservice,release=<helm release name>
-kubectl delete pods -lapp=task-runner,release=<helm release name>
+kubectl delete pods -lapp=toolbox,release=<helm release name>
 ```
 
 ## Restoring the backup file
 
 The steps for restoring a GitLab installation are
 
-1. Make sure you have a running GitLab instance by deploying the charts. Ensure the Task Runner pod is enabled and running by executing the following command
+1. Make sure you have a running GitLab instance by deploying the charts. Ensure the Toolbox pod is enabled and running by executing the following command
 
    ```shell
-   kubectl get pods -lrelease=RELEASE_NAME,app=task-runner
+   kubectl get pods -lrelease=RELEASE_NAME,app=toolbox
    ```
 
 1. Get the tarball ready in any of the above locations. Make sure it is named in the `<timestamp>_<version>_gitlab_backup.tar` format.
 1. Run the backup utility to restore the tarball
 
    ```shell
-   kubectl exec <Task Runner pod name> -it -- backup-utility --restore -t <timestamp>_<version>
+   kubectl exec <Toolbox pod name> -it -- backup-utility --restore -t <timestamp>_<version>
    ```
 
    Here, `<timestamp>_<version>` is from the name of the tarball stored in `gitlab-backups` bucket. In case you want to provide a public URL, use the following command
 
    ```shell
-   kubectl exec <Task Runner pod name> -it -- backup-utility --restore -f <URL>
+   kubectl exec <Toolbox pod name> -it -- backup-utility --restore -f <URL>
    ```
 
     You can provide a local path as a URL as long as it's in the format: `file://<path>`
@@ -101,8 +101,8 @@ The steps for restoring a GitLab installation are
 
 NOTE:
 During restoration, the backup tarball needs to be extracted to disk.
-This means the Task Runner pod should have disk of necessary size available.
-For more details and configuration please see the [Task Runner documentation](../charts/gitlab/task-runner/index.md#persistence-configuration).
+This means the Toolbox pod should have disk of necessary size available.
+For more details and configuration please see the [Toolbox documentation](../charts/gitlab/toolbox/index.md#persistence-configuration).
 
 ### Restore the runner registration token
 
@@ -114,16 +114,16 @@ Follow these [troubleshooting steps](../troubleshooting/index.md#included-gitlab
 If the restored backup was not from an existing installation of the chart, you will also need to enable some Kubernetes specific features after the restore. Such as
 [incremental CI job logging](https://docs.gitlab.com/ee/administration/job_logs.html#new-incremental-logging-architecture).
 
-1. Find your Task Runner pod by executing the following command
+1. Find your Toolbox pod by executing the following command
 
    ```shell
-   kubectl get pods -lrelease=RELEASE_NAME,app=task-runner
+   kubectl get pods -lrelease=RELEASE_NAME,app=toolbox
    ```
 
 1. Run the instance setup script to enable the necessary features
 
    ```shell
-   kubectl exec <Task Runner pod name> -it -- gitlab-rails runner -e production /scripts/custom-instance-setup
+   kubectl exec <Toolbox pod name> -it -- gitlab-rails runner -e production /scripts/custom-instance-setup
    ```
 
 ## Restart the pods

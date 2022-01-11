@@ -2,6 +2,114 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 5.6.0 (2021-12-21)
+
+### Changed (6 changes)
+
+- [Update gitlab-org/container-registry from 3.18.1-gitlab to 3.19.0-gitlab](gitlab-org/charts/gitlab@8c76c6594e07be584709112bd0ad6322bbe2b411) ([merge request](gitlab-org/charts/gitlab!2312))
+- [Update gitlab-org/charts/gitlab-runner from 0.35.3 to 0.36.0](gitlab-org/charts/gitlab@504aebed4b7ee63c73436d081392c531b29d7f6f) ([merge request](gitlab-org/charts/gitlab!2313))
+- [Update gitlab-org/charts/gitlab-runner from 0.35.0 to 0.35.3](gitlab-org/charts/gitlab@7017fda23b1a3788c9e6fb7a5e8f11027775c842) ([merge request](gitlab-org/charts/gitlab!2301))
+- [Update gitlab-org/container-registry from 3.16.0-gitlab to 3.17.0-gitlab](gitlab-org/charts/gitlab@e1b12db5cb630926ee76ce7684fba64263dc79af) ([merge request](gitlab-org/charts/gitlab!2285))
+- [Update gitlab-org/charts/gitlab-runner from 0.34.0 to 0.35.0](gitlab-org/charts/gitlab@12c4740147c25f788061176f124e5749eb9a7726) ([merge request](gitlab-org/charts/gitlab!2275))
+- [Update gitlab-org/container-registry from 3.15.0-gitlab to 3.16.0-gitlab](gitlab-org/charts/gitlab@3d2e013c2c37ee987fa064dacb8ae3f2f645aa4b) ([merge request](gitlab-org/charts/gitlab!2276))
+
+## 5.5.2 (2021-12-03)
+
+No changes.
+
+## 5.5.1 (2021-12-01)
+
+No changes.
+
+## 5.5.0 (2021-11-19)
+
+### Added (3 changes)
+
+- [Add MaxURILength option for GitLab Pages](gitlab-org/charts/gitlab@426e60d5229d92090f3e7c207438aac481ce1c8a) ([merge request](gitlab-org/charts/gitlab!2266))
+- [Add loose foreign key cron worker](gitlab-org/charts/gitlab@e37cfdb0f344c51320268784838b4292daa153d7) ([merge request](gitlab-org/charts/gitlab!2265))
+- [Add one_trust_id config](gitlab-org/charts/gitlab@86339448ae78770fc4637020c34370f5c45b03a6) ([merge request](gitlab-org/charts/gitlab!2237))
+
+### Fixed (1 change)
+
+- [Raise Sidekiq job timeout from 5 to 25 seconds](gitlab-org/charts/gitlab@f94968b4bef32446b38c2033364107d1cff6e1bb) ([merge request](gitlab-org/charts/gitlab!2249))
+
+### Changed (7 changes)
+
+- [Update gitlab-org/container-registry from 3.14.3-gitlab to 3.15.0-gitlab](gitlab-org/charts/gitlab@f8f07d262d73c80b2bf863b79358cf9c53214689) ([merge request](gitlab-org/charts/gitlab!2271))
+- [Update gitlab-org/container-registry from 3.14.2-gitlab to 3.14.3-gitlab](gitlab-org/charts/gitlab@34fbd2864de95f80337da3db08ff92323a1a1e33) ([merge request](gitlab-org/charts/gitlab!2264))
+- [Update gitlab-org/container-registry from 3.14.1-gitlab to 3.14.2-gitlab](gitlab-org/charts/gitlab@fe13ae8f5bed9ab67593b526f52bb97835203c41) ([merge request](gitlab-org/charts/gitlab!2257))
+- [Update gitlab-org/container-registry from 3.13.0-gitlab to 3.14.1-gitlab](gitlab-org/charts/gitlab@6119f3f5307166cf99df9a8fdc14ffbc153143fb) ([merge request](gitlab-org/charts/gitlab!2250))
+- [GitLab Shell: replace ERB with gomplate](gitlab-org/charts/gitlab@44923bed8bb1578a68b50d5a0d93b5b8cb51fc05) by @kristofkalocsai ([merge request](gitlab-org/charts/gitlab!2220))
+- [GitLab Pages: replace ERB with gomplate](gitlab-org/charts/gitlab@22119c6893be97ed9d2ea8fd72a12784d45a3abe) by @kristofkalocsai ([merge request](gitlab-org/charts/gitlab!2217))
+- [Update gitlab-org/container-registry from 3.12.0-gitlab to 3.13.0-gitlab](gitlab-org/charts/gitlab@2ea30e59cdad005e45866da788ecf8dfd212eb2b) ([merge request](gitlab-org/charts/gitlab!2235))
+
+### Other (1 change)
+
+- [[Docs] Operator: clarify available chart versions](gitlab-org/charts/gitlab@afcb3d95d2f997cc1d77087bb85a73b918a38101) ([merge request](gitlab-org/charts/gitlab!2268))
+
+## 5.4.4 (2021-12-03)
+
+No changes.
+
+## 5.4.3 (2021-12-01)
+
+No changes.
+
+## 5.4.2 (2021-11-08)
+
+No changes.
+
+## 5.4.1 (2021-10-28)
+
+No changes.
+
+## 5.4.0 (2021-10-21)
+
+### Added (2 changes)
+
+- [Pages: enable proper readiness probe](gitlab-org/charts/gitlab@9b4d367bc96a2430eca9cfb32b916f0860bdd7ff) ([merge request](gitlab-org/charts/gitlab!2225))
+- [Allow configuring redis instance for rate limiting](gitlab-org/charts/gitlab@349cb8056f484dde330589805076ba86e70306d5) ([merge request](gitlab-org/charts/gitlab!2187))
+
+### Fixed (4 changes)
+
+- [Add certificate volumeMounts to Rails deployments](gitlab-org/charts/gitlab@7a1fbf603eca4d698c16275eb1f7dd8dbcfdb45b) ([merge request](gitlab-org/charts/gitlab!2219))
+- [Add missing namespace to default KAS internal URL](gitlab-org/charts/gitlab@582d9b2b3298da78dc7b6c826e7dd5ee705505dd) ([merge request](gitlab-org/charts/gitlab!2207))
+- [Add a preStop hook to registry to sleep for 5 seconds](gitlab-org/charts/gitlab@24efafe6276eb5ea5ae9bc82d670cf0529356dd5) ([merge request](gitlab-org/charts/gitlab!2199))
+- [Move 'global.kas.apiExternalPort' to parent chart](gitlab-org/charts/gitlab@d68096d019a01cf1ba1953fde6b26e6cfcdffa6b) ([merge request](gitlab-org/charts/gitlab!2201))
+
+### Changed (5 changes)
+
+- [Pin mailroom to 0.0.14](gitlab-org/charts/gitlab@5befab88589e25b0b851e6f39432e2051d3628d2) ([merge request](gitlab-org/charts/gitlab!2236))
+- [Update gitlab-org/container-registry from 3.11.1-gitlab to 3.12.0-gitlab](gitlab-org/charts/gitlab@cc5af8331e1f3aef9eaaee88f366e516cfc80c3f) ([merge request](gitlab-org/charts/gitlab!2230))
+- [Update runner chart to v0.33.1](gitlab-org/charts/gitlab@c40f40aab0118470f1b18dd42bae86e85fe1d6e9) by @xasx ([merge request](gitlab-org/charts/gitlab!2206))
+- [Update gitlab-org/charts/gitlab-runner from 0.32.0 to 0.33.0](gitlab-org/charts/gitlab@ce87597fbd8881f1a711affd926c6a332daf9254) ([merge request](gitlab-org/charts/gitlab!2203))
+- [Update gitlab-org/container-registry from 3.11.0-gitlab to 3.11.1-gitlab](gitlab-org/charts/gitlab@3e6492bf41609054214308006289a9e638038e22) ([merge request](gitlab-org/charts/gitlab!2194))
+
+### Other (2 changes)
+
+- [Remove reference to deprecated operator](gitlab-org/charts/gitlab@d03e3293fdfe698eb3b5defe0b919351ef9485eb) ([merge request](gitlab-org/charts/gitlab!2197))
+- [Add $PLATFORM to installation commands](gitlab-org/charts/gitlab@8e72a88fb391cb98f64e712b07e65d65db4ab8fd) ([merge request](gitlab-org/charts/gitlab!2190))
+
+## 5.3.6 (2021-12-03)
+
+No changes.
+
+## 5.3.5 (2021-11-26)
+
+No changes.
+
+## 5.3.4 (2021-10-28)
+
+No changes.
+
+## 5.3.3 (2021-10-12)
+
+No changes.
+
+## 5.3.2 (2021-10-01)
+
+No changes.
+
 ## 5.3.1 (2021-09-30)
 
 No changes.
@@ -27,6 +135,18 @@ No changes.
 - [Change default configuration for HSTS](gitlab-org/charts/gitlab@14936c95c921770b67c28642dc950fa186252bdd) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2118))
 - [Update gitlab-org/charts/gitlab-runner from 0.31.0 to 0.32.0](gitlab-org/charts/gitlab@0665982645d842994a54bddb1269fbb694a743cb) ([merge request](gitlab-org/charts/gitlab!2149))
 - [Adds pages local_store configuration](gitlab-org/charts/gitlab@426c34858876fe0d52cd4fe880f44771af17e19b) ([merge request](gitlab-org/charts/gitlab!2141))
+
+## 5.2.7 (2021-11-26)
+
+No changes.
+
+## 5.2.6 (2021-10-28)
+
+No changes.
+
+## 5.2.5 (2021-09-30)
+
+No changes.
 
 ## 5.2.4 (2021-09-17)
 
@@ -80,6 +200,18 @@ No changes.
 - [Update gitlab-exporter appVersion 11.0.1](gitlab-org/charts/gitlab@d6cc85961e3d8369460840e70415b593bd82e432) ([merge request](gitlab-org/charts/gitlab!2092))
 - [Update gitlab-org/gitlab-exporter from 10.5.0 to 11.0.0](gitlab-org/charts/gitlab@2c2a8c2b877b45d47b8bb61a09ed6cb5f8b79392) ([merge request](gitlab-org/charts/gitlab!2092))
 
+## 5.1.8 (2021-11-15)
+
+No changes.
+
+## 5.1.7 (2021-09-30)
+
+No changes.
+
+## 5.1.6 (2021-09-27)
+
+No changes.
+
 ## 5.1.5 (2021-09-02)
 
 No changes.
@@ -122,6 +254,14 @@ No changes.
 ### Security (1 change)
 
 - [Do not automount SA token when not needed](gitlab-org/charts/gitlab@108af40ae28e55c882feae66eaecd3a0d0f45996) ([merge request](gitlab-org/charts/gitlab!2093))
+
+## 5.0.12 (2021-11-05)
+
+No changes.
+
+## 5.0.11 (2021-09-23)
+
+No changes.
 
 ## 5.0.10 (2021-09-02)
 
@@ -203,6 +343,14 @@ No changes.
 - [Remove deprecated `experimentalQueueSelector` option for Sidekiq](gitlab-org/charts/gitlab@007788f0ba373f7d3fc51623ea5b70021b62ca5b) ([merge request](gitlab-org/charts/gitlab!2023))
 - [Remove the old resouce changes notices](gitlab-org/charts/gitlab@1755275b75dfe669c038e44dd2d218e3aa62c2e6) ([merge request](gitlab-org/charts/gitlab!2028))
 - [Remove ability to disable cluster from sidekiq values](gitlab-org/charts/gitlab@0de93fe181cd8c514aec013bf7e1541e1b41660b) ([merge request](gitlab-org/charts/gitlab!2024))
+
+## 4.12.13 (2021-10-29)
+
+No changes.
+
+## 4.12.12 (2021-09-21)
+
+No changes.
 
 ## 4.12.11 (2021-09-02)
 

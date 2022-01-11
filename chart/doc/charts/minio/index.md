@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using MinIO for Object storage
+# Using MinIO for Object storage **(FREE SELF)**
 
 This chart is based on [`stable/minio`](https://github.com/helm/charts/tree/master/stable/minio)
 version [`0.4.3`](https://github.com/helm/charts/tree/aaaf98b5d25c26cc2d483925f7256f2ce06be080/stable/minio),
@@ -34,6 +34,7 @@ minio:
   init:
   ingress:
     enabled:
+    apiVersion:
     tls:
       enabled:
       secretName:
@@ -179,6 +180,7 @@ These settings control the MinIO Ingress.
 
 | Name             | Type    | Default | Description |
 |:---------------- |:-------:|:------- |:----------- |
+| `apiVersion`     | String  |         | Value to use in the `apiVersion` field. |
 | `annotations`    | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/). |
 | `enabled`        | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used. |
 | `configureCertmanager` | Boolean |   | Toggles Ingress annotation `cert-manager.io/issuer`. For more information see the [TLS requirement for GitLab Pages](../../installation/tls.md).  |

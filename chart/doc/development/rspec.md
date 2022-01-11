@@ -335,3 +335,46 @@ available, then the tests in the `features` directory will be skipped. At
 the start of an RSpec run `kubectl get nodes` will be checked for results
 and if it returns successfully the tests in the `features` directory will
 be included.
+
+## Optimizing test speed
+
+Each `it` block runs a Helm template, which is a time and resource intensive
+operation. Given the high frequency of these blocks in our RSpec test suites,
+we aim to reduce the number of `it` blocks where possible.
+
+The [RSpec docs](https://relishapp.com/rspec/rspec-core/v/3-10/docs/helper-methods/let-and-let)
+provide further explanation:
+
+>>>
+Use `let` to define a memoized helper method. The value will be cached
+across multiple calls in the same example but not across examples.
+>>>
+
+For example, consider this test refactor:
+
+Before: ~14 seconds to run
+
+```ruby
+let(:template) { HelmTemplate.new(deployments_values) }
+
+it 'properly sets the global ingress provider when not specified' do
+  expect(template.annotations('Ingress/test-webservice-default')).to include('kubernetes.io/ingress.provider' => 'global-provider')
+end
+
+it 'properly sets the local ingress provider when specified' do
+  expect(template.annotations('Ingress/test-webservice-second')).to include('kubernetes.io/ingress.provider' => 'second-provider')
+end
+```
+
+After: ~5 seconds to run
+
+```ruby
+let(:template) { HelmTemplate.new(deployments_values) }
+
+it 'properly sets the ingress provider' do
+  expect(template.annotations('Ingress/test-webservice-default')).to include('kubernetes.io/ingress.provider' => 'global-provider')
+  expect(template.annotations('Ingress/test-webservice-second')).to include('kubernetes.io/ingress.provider' => 'second-provider')
+end
+```
+
+Consolidating two `it` blocks into one leads to significant time savings because it reduces the number of calls to `helm template`.

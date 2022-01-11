@@ -37,7 +37,7 @@ shared-secrets:
       pullSecrets:
       - name: private-registry
 gitlab:
-  task-runner:
+  toolbox:
     image:
       pullSecrets:
       - name: private-registry

@@ -108,7 +108,7 @@ Consider the example where `registry-authorization-header` secret with value
 `RandomFooBar` is created.
 
 ```shell
-kubectl create secret generic registry-authorization-header --from-literal="value=[RandomFooBar]"
+kubectl create secret generic registry-authorization-header --from-literal=value="[RandomFooBar]"
 ```
 
 By default, the key used within the secret is "value". However, users can use a

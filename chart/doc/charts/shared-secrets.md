@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the Shared-Secrets Job
+# Using the Shared-Secrets Job **(FREE SELF)**
 
 The `shared-secrets` job is responsible for provisioning a variety of secrets
 used across the installation, unless otherwise manually specified. This includes:

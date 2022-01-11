@@ -10,7 +10,7 @@ describe 'example configurations' do
 
       stdout, stderr, exit_code = result
 
-      expect(exit_code.to_i).to eq(0)
+      expect(exit_code.to_i).to eq(0), "helm template generated error for #{path}"
       expect(stdout).to include('name: gitlab-examples-test')
       expect(stderr).to be_empty
     end

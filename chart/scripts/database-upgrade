@@ -18,9 +18,9 @@ selector() {
     echo "${base}"
 }
 
-# Run command in the task-runner pod
-in_task_runner() {
-    task_pod=$(kubectl ${namespace} get pods -l "$(selector task-runner)" --field-selector status.phase=Running  -o custom-columns=N:.metadata.name --no-headers | grep -v backup | head -n 1)
+# Run command in the toolbox pod
+in_toolbox() {
+    task_pod=$(kubectl ${namespace} get pods -l "$(selector toolbox)" --field-selector status.phase=Running  -o custom-columns=N:.metadata.name --no-headers | grep -v backup | head -n 1)
     kubectl ${namespace} exec -it "${task_pod}" -- "${@}"
 }
 
@@ -36,7 +36,7 @@ patch_replicas() {
 }
 
 pre() {
-    in_task_runner backup-utility -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
+    in_toolbox backup-utility -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
 }
 
 post() {
@@ -76,8 +76,8 @@ post() {
     done
 
     # Restore the database
-    in_task_runner backup-utility --restore -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
-    in_task_runner gitlab-rake db:migrate
+    in_toolbox backup-utility --restore -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
+    in_toolbox gitlab-rake db:migrate
 
     # Start the deployments back up
 

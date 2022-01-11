@@ -58,7 +58,7 @@ gitlab:
     resources:
       requests:
         cpu: 10m
-  task-runner:
+  toolbox:
     resources:
       requests:
         cpu: 10m

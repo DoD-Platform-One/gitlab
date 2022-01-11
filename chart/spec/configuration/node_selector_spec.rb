@@ -55,6 +55,7 @@ describe 'Node Selector configuration' do
       'Deployment/test-certmanager-cainjector',
       'Deployment/test-certmanager-webhook',
       'Deployment/test-certmanager',
+      'Job/test-certmanager-startupapicheck',
       'Deployment/test-gitlab-runner',
       'Deployment/test-prometheus-server',
       'StatefulSet/test-postgresql',

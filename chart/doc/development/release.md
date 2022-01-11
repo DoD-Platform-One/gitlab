@@ -10,13 +10,13 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 ### Major Releases
 
-Major releases will be for breaking changes **and** significant milestones in the chart or GitLab release. We will start at 0, and bump it to 1 for our GA release of the charts.
+Major releases are for breaking changes **and** significant milestones in the chart or GitLab release.
 
-We will bump it for:
+We bump the major version number for:
 
-- significant additions/changes (let's say we add pages by default, or we drop NGINX completely)
-- breaking changes in GitLab or in the charts (requiring manual interaction to your existing install to upgrade)
-- Major updates in the GitLab image. (the release of 12.0.0)
+- Significant additions or changes. For example, we add Pages by default or we drop NGINX completely.
+- Breaking changes in GitLab or in the charts, requiring manual interaction to upgrade your existing install.
+- Major updates in the GitLab image (for example, the release of 12.0.0).
 
 ### Minor Releases
 
@@ -105,6 +105,28 @@ Releasing a new version of the chart is handled by the Helm release tasks in the
 By default, this task will be automatically run from CI when a new release image is tagged in the [CNG image repository](https://gitlab.com/gitlab-org/build/CNG)
 
 > Currently the `helm-release-tools` branch from the release tools repository is used to release the chart
+
+### Development builds
+
+Development chart versions are being built with every merge to `master`.
+
+It is possible to track current non-production "development" releases of Helm chart by using `devel` channel:
+
+```shell
+helm repo add gitlab-devel https://gitlab.com/api/v4/projects/3828396/packages/helm/devel
+```
+
+and using `--devel` option for `helm` pointing to a specific release:
+
+```shell
+helm install --devel --version 1.2.3-4567 gitlab-devel/gitlab
+```
+
+to list available `devel` versions:
+
+```shell
+helm search repo gitlab-devel --devel
+```
 
 ### Manually releasing the chart
 

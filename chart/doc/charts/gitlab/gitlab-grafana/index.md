@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab-Grafana chart
+# Using the GitLab-Grafana chart **(FREE SELF)**
 
 The `gitlab-grafana` subchart adapts the [`grafana/grafana`](https://artifacthub.io/packages/helm/grafana/grafana)
 chart to operate correctly with the same level of configuration as the Omnibus
@@ -53,6 +53,7 @@ kubectl get secret gitlab-grafana-initial-password -ojsonpath='{.data.password}'
 | Parameter             | Default | Description                                                          |
 |-----------------------|---------|----------------------------------------------------------------------|
 | `common.labels`       | `{}`    | Supplemental labels that are applied to all objects created by this chart.  |
+| `ingress.apiVersion`  |         | Value to use in the `apiVersion` field. |
 | `ingress.tls`         | `{}`    | Hash of Ingress TLS settings if GitLab cert manager is not installed |
 | `ingress.annotations` | `{}`    | Additional annotations to add to Grafana Ingress resource            |
 

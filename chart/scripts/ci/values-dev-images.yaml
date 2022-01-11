@@ -15,13 +15,13 @@ gitlab:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-shell
   migrations:
     image:
-      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-task-runner-ee
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-toolbox-ee
   sidekiq:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-sidekiq-ee
-  task-runner:
+  toolbox:
     image:
-      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-task-runner-ee
+      repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-toolbox-ee
   webservice:
     image:
       repository: dev.gitlab.org:5005/gitlab/charts/components/images/gitlab-webservice-ee

@@ -45,3 +45,10 @@ global:
         enabled: true
         secret: cable-secret
         key: cable-password
+    sessions:
+      host: sessions.redis.example
+      port: 9005
+      password:
+        enabled: true
+        secret: sessions-secret
+        key: sessions-password

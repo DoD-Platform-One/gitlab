@@ -10,7 +10,7 @@ describe 'ObjectStorage configuration' do
     [
       'sidekiq',
       'webservice',
-      'task-runner'
+      'toolbox'
     ]
   end
 

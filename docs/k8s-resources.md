@@ -8,7 +8,7 @@ addons:
 Here are the possible settings:
 ```yaml
 gitlab:
-  task-runner:
+  toolbox:
     init:
       resources:
         requests:

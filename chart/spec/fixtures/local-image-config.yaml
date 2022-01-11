@@ -100,14 +100,14 @@ gitlab:
     init:
       image:
         pullPolicy: pp-sidekiq-init
-  task-runner:
+  toolbox:
     image:
-      pullPolicy: pp-task-runner
+      pullPolicy: pp-toolbox
       pullSecrets:
-      - name: ps-task-runner
+      - name: ps-toolbox
     init:
       image:
-        pullPolicy: pp-task-runner-init
+        pullPolicy: pp-toolbox-init
   webservice:
     image:
       pullPolicy: pp-webservice

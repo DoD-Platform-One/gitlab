@@ -77,7 +77,9 @@ global:
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
   ingress:
+    apiVersion: ""
     configureCertmanager: false
+    provider: nginx
     annotations: {}
     enabled: false
     tls: {}
@@ -266,6 +268,8 @@ global:
       ### Snapshot active user statistics
       # historical_data_worker:
       #   cron: "0 12 * * *"
+      # loose_foreign_keys_cleanup_worker_cron:
+      #   cron: "*/5 * * * *"
 
     ## https://docs.gitlab.com/charts/charts/globals#content-security-policy
     contentSecurityPolicy:
@@ -284,6 +288,8 @@ global:
       matomoUrl:
       matomoSiteId:
       matomoDisableCookies:
+      oneTrustId:
+      googleTagManagerNonceId:
 
     ## https://docs.gitlab.com/charts/charts/globals#lfs-artifacts-uploads-packages-external-mr-diffs-and-dependency-proxy
     object_store:
@@ -494,6 +500,8 @@ global:
   ## https://docs.gitlab.com/charts/charts/gitlab/kas/
   kas:
     enabled: false
+    service:
+      apiExternalPort: 8153 # port for connections from the GitLab backend
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-gitlab-shell
   shell:
@@ -643,7 +651,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -686,7 +694,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -783,6 +791,9 @@ nginx-ingress:
       server-tokens: "false"
     service:
       externalTrafficPolicy: "Local"
+    ingressClassByName: false
+    ingressClassResource:
+      name: "{{ .Release.Name }}-nginx"
     resources:
       requests:
         cpu: 100m
@@ -813,7 +824,10 @@ nginx-ingress:
         memory: 5Mi
   rbac:
     create: true
-    scope: true
+    # Needed for k8s 1.20 and 1.21
+    # https://github.com/kubernetes/ingress-nginx/issues/7510
+    # https://github.com/kubernetes/ingress-nginx/issues/7519
+    scope: false
   serviceAccount:
     create: true
 
@@ -1075,7 +1089,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 14.3.1
+    tag: 14.6.0
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1197,15 +1211,15 @@ grafana:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
-  ## https://docs.gitlab.com/charts/charts/gitlab/task-runner
-  task-runner:
+  ## https://docs.gitlab.com/charts/charts/gitlab/toolbox
+  toolbox:
     replicas: 1
     antiAffinityLabels:
       matchLabels:
         app: 'gitaly'
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1252,7 +1266,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1277,7 +1291,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
 ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1301,7 +1315,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1314,7 +1328,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     ingress:
@@ -1323,7 +1337,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1346,7 +1360,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1368,7 +1382,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 14.3.1
+      tag: 14.6.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1391,7 +1405,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.3.1
+      tag: 14.6.0
     init:
       resources:
         limits:

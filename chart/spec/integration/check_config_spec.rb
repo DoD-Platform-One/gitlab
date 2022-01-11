@@ -641,11 +641,11 @@ describe 'checkConfig template' do
                     error_description: 'when Gitaly and Praefect are enabled and no storages are named "default"'
   end
 
-  describe 'gitaly.task-runner.replicas' do
+  describe 'gitaly.toolbox.replicas' do
     let(:success_values) do
       YAML.safe_load(%(
         gitlab:
-          task-runner:
+          toolbox:
             replicas: 1
             persistence:
               enabled: true
@@ -655,7 +655,7 @@ describe 'checkConfig template' do
     let(:error_values) do
       YAML.safe_load(%(
         gitlab:
-          task-runner:
+          toolbox:
             replicas: 2
             persistence:
               enabled: true
@@ -665,8 +665,40 @@ describe 'checkConfig template' do
     let(:error_output) { 'more than 1 replica, but also with a PersistentVolumeClaim' }
 
     include_examples 'config validation',
-                     success_description: 'when task-runner has persistence enabled and one replica',
-                     error_description: 'when task-runner has persistence enabled and more than one replica'
+                     success_description: 'when toolbox has persistence enabled and one replica',
+                     error_description: 'when toolbox has persistence enabled and more than one replica'
+  end
+
+  describe 'gitlab.toolbox.backups.objectStorage.config.secret' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        gitlab:
+          toolbox:
+            backups:
+              objectStorage:
+                config:
+                  secret: s3cmd-config
+                  key: config
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        gitlab:
+          toolbox:
+            backups:
+              objectStorage:
+                config:
+                  # secret: s3cmd-config
+                  key: config
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'A valid object storage config secret is needed for backups.' }
+
+    include_examples 'config validation',
+                     success_description: 'when toolbox has a valid object storage backup secret configured',
+                     error_description: 'when toolbox does not have a valid object storage backup secret configured'
   end
 
   describe 'multipleRedis' do
@@ -953,7 +985,7 @@ describe 'checkConfig template' do
         )).deep_merge(default_required_values)
       end
 
-      let(:error_output) { 'You must set `terminationGracePeriodSeconds` (1) longer than `timeout` (5) for pod `valid-1`.' }
+      let(:error_output) { 'You must set `terminationGracePeriodSeconds` (1) longer than `timeout` (25) for pod `valid-1`.' }
 
       include_examples 'config validation',
                       success_description: 'when Sidekiq timeout is less than terminationGracePeriodSeconds',
@@ -1321,5 +1353,29 @@ describe 'checkConfig template' do
     include_examples 'config validation',
                      success_description: 'when Registry replication is enabled for Geo and primary API URL is specified',
                      error_description: 'when Registry replication is enabled for Geo but no primary API URL is specified'
+  end
+
+  describe 'nginx-ingress.rbac.scope' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        nginx-ingress:
+          rbac:
+            scope: false
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        nginx-ingress:
+          rbac:
+            scope: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Namespaced IngressClasses do not exist' }
+
+    include_examples 'config validation',
+                     success_description: 'when set to false',
+                     error_description: 'when set to true'
   end
 end

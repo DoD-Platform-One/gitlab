@@ -110,7 +110,8 @@ describe "Restoring a backup" do
       expect(status.success?).to be(true), "Error unarchiving generated backup: #{stdout}"
 
       Dir.glob("/tmp/original_backup/*") do |file|
-        expect(File.exist?("/tmp/test_backup/#{File.basename(file)}")).to be_truthy
+        file_path = "/tmp/test_backup/#{File.basename(file)}"
+        expect(File.exist?(file_path)).to be_truthy, "#{File.basename(file)} exists in original backup but not in test ( #{file_path} )"
         # extract every tar file
         if File.extname(file) == 'tar'
           cmd = "tar -xf #{file} -C /tmp/original_backup"

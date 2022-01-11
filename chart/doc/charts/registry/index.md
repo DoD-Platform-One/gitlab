@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the Container Registry
+# Using the Container Registry **(FREE SELF)**
 
 The `registry` sub-chart provides the Registry component to a complete cloud-native
 GitLab deployment on Kubernetes. This sub-chart makes use of the upstream
@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.11.0-gitlab'
+    tag: 'v3.19.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -99,6 +99,11 @@ registry:
       enabled: false
   validation:
     disabled: true
+    manifests:
+      referencelimit: 0
+      urls:
+        allow: []
+        deny: []
   notifications: {}
   tolerations: []
   ingress:
@@ -148,7 +153,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                         |                                              | Pull policy for the registry image                                                                   |
 | `image.pullSecrets`                        |                                              | Secrets to use for image repository                                                                  |
 | `image.repository`                         | `registry`                                   | Registry image                                                                                       |
-| `image.tag`                                | `v3.11.0-gitlab`                              | Version of the image to use                                                                          |
+| `image.tag`                                | `v3.19.0-gitlab`                              | Version of the image to use                                                                          |
 | `init.image.repository`                    |                                              | initContainer image                                                                                  |
 | `init.image.tag`                           |                                              | initContainer image tag                                                                              |
 | `log`                                      | `{level: info, fields: {service: registry}}` | Configure the logging options                                                                        |
@@ -274,7 +279,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.11.0-gitlab'`
+- `tag: 'v3.19.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -299,6 +304,7 @@ This section controls the registry Ingress.
 
 | Name              | Type    | Default | Description |
 |:----------------- |:-------:|:------- |:----------- |
+| `apiVersion`      | String  |         | Value to use in the `apiVersion` field. |
 | `annotations`     | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/). |
 | `configureCertmanager` | Boolean |    | Toggles Ingress annotation `cert-manager.io/issuer`. For more information see the [TLS requirement for GitLab Pages](../../installation/tls.md).  |
 | `enabled`         | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used. |
@@ -477,11 +483,31 @@ If you _must_ support older versions of Docker clients, you can do so by setting
 
 The `validation` field is a map that controls the Docker image validation
 process in the registry. When image validation is enabled the registry rejects
-windows images with foreign layers.
+windows images with foreign layers, unless the `manifests.urls.allow` field
+within the validation stanza is explicitly set to allow those layer urls.
+
+Validation only happens during manifest push, so images already present in the
+registry are not affected by changes to the values in this section.
 
 The image validation is turned off by default.
 
 To enable image validation you need to explicitly set `registry.validation.disabled: false`.
+
+#### manifests
+
+The `manifests` field allows configuration of validation policies particular to
+manifests.
+
+The `urls` section contains both `allow` and `deny` fields. For manifest layers
+which contain URLs to pass validation, that layer must match one of the regular
+expressions in the `allow` field, while not matching any regular expression in
+the `deny` field.
+
+| Name              | Type   | Default | Description                                                                                                                                                                             |
+| :---------------: | :----: | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| `referencelimit`  | Int    | `0`     | The maximum number of references, such as layers, image configurations, and other manifests, that a single manifest may have. When set to `0` (default) this validation is disabled.    |
+| `urls.allow`      | Array  | `[]`    | List of regular expressions that enables URLs in the layers of manifests. When left empty (default), layers with any URLs will be rejected.                                             |
+| `urls.deny`       | Array  | `[]`    | List of regular expressions that restricts the URLs in the layers of manifests. When left empty (default), no layer with URLs which passed the `urls.allow` list will be rejected       |
 
 ### notifications
 
@@ -817,7 +843,7 @@ helm upgrade mygitlab gitlab/gitlab -f mygitlab.yml --wait
 The administrative commands can be run against the Container Registry
 only from a Registry pod, where both the `registry` binary as well as necessary
 configuration is available. [Issue #2629](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2629)
-is open to discuss how to provide this functionality from the task-runner pod.
+is open to discuss how to provide this functionality from the toolbox pod.
 
 To run administrative commands:
 

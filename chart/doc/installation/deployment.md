@@ -259,13 +259,6 @@ Mappings between chart versions and GitLab versions can be found [here](../index
 
 Instructions for installing a development branch rather than a tagged release can be found in the [developer deploy documentation](../development/deploy.md).
 
-### GitLab Operator (experimental)
-
-WARNING:
-This functionality was Alpha and marked experimental. It is now
-[**deprecated**](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2210), and will be removed in
-the future. Do not use in production.
-
 ## Monitoring the Deployment
 
 This will output the list of resources installed once the deployment finishes which may take 5-10 minutes.

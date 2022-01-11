@@ -293,7 +293,7 @@ describe 'Redis configuration' do
         expect(t.dig('Service/test-master')).to be_falsey
         expect(t.dig('Service/test-redis-master')).to be_truthy
         # check resque.yml
-        expect(t.dig('ConfigMap/test-task-runner','data','resque.yml.erb')).to include('test-redis-master')
+        expect(t.dig('ConfigMap/test-toolbox','data','resque.yml.erb')).to include('test-redis-master')
       end
     end
 
@@ -306,7 +306,7 @@ describe 'Redis configuration' do
         expect(t.dig('Service/redis-test-master')).to be_truthy
         expect(t.dig('Service/redis-test-redis-master')).to be_falsey
         # check resque.yml is pointing to the right service.
-        expect(t.dig('ConfigMap/redis-test-task-runner','data','resque.yml.erb')).to include('redis-test-master')
+        expect(t.dig('ConfigMap/redis-test-toolbox','data','resque.yml.erb')).to include('redis-test-master')
       end
     end
   end

@@ -1,31 +1,31 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Backing up a GitLab installation
+# Backing up a GitLab installation **(FREE SELF)**
 
-GitLab backups are taken by running the `backup-utility` command in the Task Runner pod provided in the chart. Backups can also be automated by enabling the [Cron based backup](#cron-based-backup) functionality of this chart.
+GitLab backups are taken by running the `backup-utility` command in the Toolbox pod provided in the chart. Backups can also be automated by enabling the [Cron based backup](#cron-based-backup) functionality of this chart.
 
 Before running the backup for the first time, you should ensure the
-[Task Runner is properly configured](../charts/gitlab/task-runner/index.md#configuration)
+[Toolbox is properly configured](../charts/gitlab/toolbox/index.md#configuration)
 for access to [object storage](index.md#object-storage)
 
 Follow these steps for backing up a GitLab Helm chart based installation
 
 ## Create the backup
 
-1. Ensure the task runner pod is running, by executing the following command
+1. Ensure the toolbox pod is running, by executing the following command
 
    ```shell
-   kubectl get pods -lrelease=RELEASE_NAME,app=task-runner
+   kubectl get pods -lrelease=RELEASE_NAME,app=toolbox
    ```
 
 1. Run the backup utility
 
    ```shell
-   kubectl exec <Task Runner pod name> -it -- backup-utility
+   kubectl exec <Toolbox pod name> -it -- backup-utility
    ```
 
 1. Visit the `gitlab-backups` bucket in the object storage service and ensure a tarball has been added. It will be named in `<timestamp>_<version>_gitlab_backup.tar` format.
@@ -38,16 +38,16 @@ Cron based backups can be enabled in this chart to happen at regular intervals a
 
 You need to set the following parameters:
 
-- `gitlab.task-runner.backups.cron.enabled`: Set to true to enable cron based backups
-- `gitlab.task-runner.backups.cron.schedule`: Set as per the Kubernetes schedule docs
-- `gitlab.task-runner.backups.cron.extraArgs`: Optionally set extra arguments for [backup-utility](https://gitlab.com/gitlab-org/build/CNG/blob/master/gitlab-task-runner/scripts/bin/backup-utility) (like `--skip db`)
+- `gitlab.toolbox.backups.cron.enabled`: Set to true to enable cron based backups
+- `gitlab.toolbox.backups.cron.schedule`: Set as per the Kubernetes schedule docs
+- `gitlab.toolbox.backups.cron.extraArgs`: Optionally set extra arguments for [backup-utility](https://gitlab.com/gitlab-org/build/CNG/blob/master/gitlab-toolbox/scripts/bin/backup-utility) (like `--skip db`)
 
 ## Backup utility extra arguments
 
 The backup utility can take some extra arguments. See what those are with:
 
 ```shell
-kubectl exec <Task Runner pod name> -it -- backup-utility --help
+kubectl exec <Toolbox pod name> -it -- backup-utility --help
 ```
 
 ## Backup the secrets

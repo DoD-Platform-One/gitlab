@@ -39,7 +39,7 @@ Note the following:
   `kubectl config set-context --current --namespace=NAMESPACE`, or using
   [`kubens` from kubectx](https://github.com/ahmetb/kubectx).
 
-The `pre` stage will create a backup of your database using the backup-utility script in the Task Runner, which gets saved to the configured s3 bucket (MinIO by default):
+The `pre` stage will create a backup of your database using the backup-utility script in the Toolbox, which gets saved to the configured s3 bucket (MinIO by default):
 
 ```shell
 # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v3.0.0
@@ -108,13 +108,13 @@ Note the following:
 - You'll need to be using Bash 4.0 or above to run the script successfully as it requires the use of
   bash associative arrays.
 
-1. Wait for the upgrade to complete for the Task Runner pod. RELEASE_NAME should be the name of the GitLab release from `helm list`
+1. Wait for the upgrade to complete for the Toolbox pod. RELEASE_NAME should be the name of the GitLab release from `helm list`
 
    ```shell
-   kubectl rollout status -w deployment/RELEASE_NAME-task-runner
+   kubectl rollout status -w deployment/RELEASE_NAME-toolbox
    ```
 
-1. After the Task Runner pod is deployed successfully, run the `post` steps:
+1. After the Toolbox pod is deployed successfully, run the `post` steps:
 
    This step will do the following:
 

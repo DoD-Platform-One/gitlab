@@ -1,10 +1,10 @@
 ---
 stage: Enablement
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab-Exporter chart
+# Using the GitLab-Exporter chart **(FREE SELF)**
 
 The `gitlab-exporter` sub-chart provides Prometheus metrics for GitLab
 application-specific data. It talks to PostgreSQL directly to perform

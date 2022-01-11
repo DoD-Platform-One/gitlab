@@ -44,7 +44,7 @@ gitlab:
       requests:
         cpu: 900m # Assume single-process, 1 CPU
         memory: 2G
-  task-runner:
+  toolbox:
     backups:
       # Below, GCS is used an example for the ObjectStorage section.
       # All ObjectStorage options are documented here:

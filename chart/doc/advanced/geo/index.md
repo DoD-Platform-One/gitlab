@@ -9,16 +9,16 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 GitLab Geo provides the ability to have read-only, geographically distributed
 application deployments.
 
-While external database services can be used, these documents currently focus on
-the use of the [Omnibus GitLab](https://docs.gitlab.com/omnibus/) for PostgreSQL in order to provide the
-most platform agnostic guide, and make use of the automation included within `gitlab-ctl`.
+While external database services can be used, these documents focus on
+the use of the [Omnibus GitLab](https://docs.gitlab.com/omnibus/) for PostgreSQL to provide the
+most platform agnostic guide, and make use of the automation included in `gitlab-ctl`.
 
 ## Requirements
 
-In order to use GitLab Geo with the GitLab Helm chart, the following requirements must be met:
+To use GitLab Geo with the GitLab Helm chart, the following requirements must be met:
 
 - The use of [external PostgreSQL](../external-db/index.md) services, as the
-  PostgresSQL included with the chart is not exposed to outside networks, or currently
+  PostgresSQL included with the chart is not exposed to outside networks, and doesn't
   have WAL support required for replication.
 - The supplied database must:
   - Support replication.
@@ -32,16 +32,16 @@ In order to use GitLab Geo with the GitLab Helm chart, the following requirement
 
 ## Overview
 
-This guide will use 2 Omnibus GitLab instances, configuring only the PostgreSQL
+This guide uses 2 Omnibus GitLab instances, configuring only the PostgreSQL
 services needed, and 2 deployments of the GitLab Helm chart. It is intended to be
-the _minimal_ required configuration. This documentation does not currently
+the _minimal_ required configuration. This documentation does not
 include SSL from application to database, support for other database providers, or
 promoting a secondary instance to primary.
 
 The outline below should be followed in order:
 
-1. [Setup Omnibus instances](#setup-omnibus-instances)
-1. [Setup Kubernetes clusters](#setup-kubernetes-clusters)
+1. [Setup Omnibus instances](#set-up-omnibus-instances)
+1. [Setup Kubernetes clusters](#set-up-kubernetes-clusters)
 1. [Collect information](#collect-information)
 1. [Configure Primary database](#configure-primary-database)
 1. [Deploy chart as Geo Primary](#deploy-chart-as-geo-primary)
@@ -52,9 +52,9 @@ The outline below should be followed in order:
 1. [Add Secondary Geo instance via Primary](#add-secondary-geo-instance-via-primary)
 1. [Confirm Operational Status](#confirm-operational-status)
 
-## Setup Omnibus instances
+## Set up Omnibus instances
 
-For this process, two instances are required. One will be the Primary, the other
+For this process, two instances are required. One is the Primary, the other
 the Secondary. You may use any provider of machine infrastructure, on-premise or
 from a cloud provider.
 
@@ -62,19 +62,19 @@ Bear in mind that communication is required:
 
 - Between the two database instances for replication.
 - Between each database instance and their respective Kubernetes deployments:
-  - Primary will need to expose TCP port `5432`.
-  - Secondary will need to expose TCP ports `5432` & `5431`.
+  - The primary needs to expose TCP port `5432`.
+  - The secondary needs to expose TCP ports `5432` & `5431`.
 
 Install an [operating system supported by Omnibus GitLab](https://docs.gitlab.com/ee/install/requirements.html#operating-systems), and then
 [install the Omnibus GitLab](https://about.gitlab.com/install/) onto it. Do not provide the
 `EXTERNAL_URL` environment variable when installing, as we'll provide a minimal
 configuration file before reconfiguring the package.
 
-Once you have installed the operating system, and the GitLab package, configuration
+After you have installed the operating system, and the GitLab package, configuration
 can be created for the services that will be used. Before we do that, information
 must be collected.
 
-## Setup Kubernetes clusters
+## Set up Kubernetes clusters
 
 For this process, two Kubernetes clusters should be used. These can be from any
 provider, on-premise or from a cloud provider.
@@ -90,9 +90,9 @@ Each cluster that is provisioned should have:
 
 - Enough resources to support a base-line installation of these charts.
 - Access to persistent storage:
-  - MinIO not required if using [external object storage](../external-object-storage/index.md)
-  - Gitaly not required if using [external Gitaly](../external-gitaly/index.md)
-  - Redis not required if using [external Redis](../external-redis/index.md)
+  - MinIO not required if using [external object storage](../external-object-storage/index.md).
+  - Gitaly not required if using [external Gitaly](../external-gitaly/index.md).
+  - Redis not required if using [external Redis](../external-redis/index.md).
 
 ## Collect information
 
@@ -110,16 +110,16 @@ the rest of this documentation.
   - IP addresses of nodes
 - Secondary cluster:
   - IP addresses of nodes
-- Database Passwords (_must pre-decide the password(s)_)
+- Database Passwords (_must pre-decide the passwords_):
   - `gitlab` (used in `postgresql['sql_user_password']`, `global.psql.password`)
   - `gitlab_geo` (used in `geo_postgresql['sql_user_password']`, `global.geo.psql.password`)
   - `gitlab_replicator` (needed for replication)
 - Your GitLab license file
 
-The `gitlab` and `gitlab_geo` database user passwords will need to exist in two
+The `gitlab` and `gitlab_geo` database user passwords must exist in two
 forms: bare password, and PostgreSQL hashed password. To obtain the hashed form,
-perform the following commands on one of the Omnibus instances, which will ask
-you to enter, and confirm the password before outputting an appropriate hash
+perform the following commands on one of the Omnibus instances, which asks
+you to enter and confirm the password before outputting an appropriate hash
 value for you to make note of.
 
 1. `gitlab-ctl pg-password-md5 gitlab`
@@ -127,10 +127,10 @@ value for you to make note of.
 
 ## Configure Primary database
 
-_This section will be performed on the Primary Omnibus GitLab instance._
+_This section is performed on the Primary Omnibus GitLab instance._
 
-To configure the Primary database instance's Omnibus GitLab, we'll work from
-this example configuration.
+To configure the Primary database instance's Omnibus GitLab, work from
+this example configuration:
 
 ```ruby
 ### Geo Primary
@@ -160,52 +160,54 @@ postgresql['sql_user_password'] = 'gitlab_user_password_hash'
 postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
 ```
 
-We need to replace several items:
+We must replace several items:
 
 - `external_url` must be updated to reflect the host name of our Primary
-instance.
+  instance.
 - `gitlab_rails['geo_node_name']` must be replaced with a unique name for your node.
 - `gitlab_user_password_hash` must be replaced with the hashed form of the
-`gitlab` password.
+  `gitlab` password.
 - `postgresql['md5_auth_cidr_addresses']` can be update to be a list of
-explicit IP addresses, or address blocks in CIDR notation.
+  explicit IP addresses, or address blocks in CIDR notation.
 
 The `md5_auth_cidr_addresses` should be in the form of
 `[ '127.0.0.1/24', '10.41.0.0/16']`. It is important to include `127.0.0.1` in
-this list, as the automation within Omnibus GitLab will connect using this. The
+this list, as the automation in Omnibus GitLab connects using this. The
 addresses in this list should include the IP address (not hostname) of your
 Secondary database, and all nodes of your primary Kubernetes cluster. This _can_
 be left as `['0.0.0.0/0']`, however _it is not best practice_.
 
-Once the configuration above is prepared:
+After the configuration above is prepared:
 
 1. Place the content into `/etc/gitlab/gitlab.rb`
 1. Run `gitlab-ctl reconfigure`. If you experience any issues in regards to the
-service not listening on TCP, try directly restarting it with
-`gitlab-ctl restart postgresql`.
-1. Run `gitlab-ctl set-replication-password` in order to set the password for
-the `gitlab_replicator` user.
-1. Retrieve the Primary database server's public certificate, this will be needed
-for the Secondary database to be able to replicate.
-    1. `cat ~gitlab-psql/data/server.crt`
-    1. **Store this output.**
+   service not listening on TCP, try directly restarting it with
+   `gitlab-ctl restart postgresql`.
+1. Run `gitlab-ctl set-replication-password` to set the password for
+   the `gitlab_replicator` user.
+1. Retrieve the Primary database server's public certificate, this is needed
+   for the Secondary database to be able to replicate (save this output):
+
+   ```shell
+   cat ~gitlab-psql/data/server.crt
+   ```
 
 ## Deploy chart as Geo Primary
 
-_This section will be performed on the Primary Kubernetes cluster._
+_This section is performed on the Primary Kubernetes cluster._
 
-In order to deploy this chart as a Geo Primary, we'll start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/primary.yaml).
+To deploy this chart as a Geo Primary, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/primary.yaml):
 
-1. We'll need to create a secret containing the database password, for the
+1. Create a secret containing the database password for the
    chart to consume. Replace `PASSWORD` below with the password for the `gitlab`
-   database user.
+   database user:
 
    ```shell
    kubectl --namespace gitlab create secret generic geo --from-literal=postgresql-password=PASSWORD
    ```
 
 1. Create a `primary.yaml` file based on the [example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/primary.yaml)
-  and update the configuration to reflect the correct values:
+   and update the configuration to reflect the correct values:
 
    ```yaml
    ### Geo Primary
@@ -238,43 +240,43 @@ In order to deploy this chart as a Geo Primary, we'll start [from this example c
      - [Using external Redis](../external-redis/index.md)
      - [using external Object Storage](../external-object-storage/index.md)
 
-1. Deploy the chart using this configuration
+1. Deploy the chart using this configuration:
 
    ```shell
    helm upgrade --install gitlab-geo gitlab/gitlab --namespace gitlab -f primary.yaml
    ```
 
    NOTE:
-   This assumes you are using the `gitlab` namespace, if you want to use a different namespace,
+   This assumes you are using the `gitlab` namespace. If you want to use a different namespace,
    you should also replace it in `--namespace gitlab` throughout the rest of this document.
 
-1. Wait for the deployment to complete, and the application to come online. Once
-the application is reachable, login.
+1. Wait for the deployment to complete, and the application to come online. When
+   the application is reachable, log in.
 
-1. Login to GitLab, and upload your GitLab license file by navigating to
-`/admin/license`. **This step is required for Geo to function.**
+1. Log in to GitLab, and upload your GitLab license file by navigating to
+   `/admin/license`. **This step is required for Geo to function.**
 
 ## Set the Geo Primary instance
 
 Now that the chart has been deployed, and a license uploaded, we can configure
-this as the Primary instance. We will do this via the Task Runner Pod.
+this as the Primary instance. We will do this via the Toolbox Pod.
 
-1. Find the Task Runner Pod
+1. Find the Toolbox Pod
 
    ```shell
-   kubectl --namespace gitlab get pods -lapp=task-runner
+   kubectl --namespace gitlab get pods -lapp=toolbox
    ```
 
-1. Run `gitlab-rake geo:set_primary_node` with `kubectl exec`
+1. Run `gitlab-rake geo:set_primary_node` with `kubectl exec`:
 
    ```shell
-   kubectl --namespace gitlab exec -ti gitlab-geo-task-runner-XXX -- gitlab-rake geo:set_primary_node
+   kubectl --namespace gitlab exec -ti gitlab-geo-toolbox-XXX -- gitlab-rake geo:set_primary_node
    ```
 
-1. Check the status of Geo configuration
+1. Check the status of Geo configuration:
 
    ```shell
-   kubectl --namespace gitlab exec -ti gitlab-geo-task-runner-XXX -- gitlab-rake gitlab:geo:check
+   kubectl --namespace gitlab exec -ti gitlab-geo-toolbox-XXX -- gitlab-rake gitlab:geo:check
    ```
 
    You should see output similar to below:
@@ -307,17 +309,17 @@ this as the Primary instance. We will do this via the Task Runner Pod.
    Checking Geo ... Finished
    ```
 
-   - Don't worry about `Exception: getaddrinfo: Servname not supported for ai_socktype`, as Kubernetes containers will not have access to the host clock. _This is OK_.
+   - Don't worry about `Exception: getaddrinfo: Servname not supported for ai_socktype`, as Kubernetes containers don't have access to the host clock. _This is OK_.
    - `OpenSSH configured to use AuthorizedKeysCommand ... no` _is expected_. This
-   Rake task is checking for a local SSH server, which is actually present in the
-   `gitlab-shell` chart, deployed elsewhere, and already configured appropriately.
+     Rake task is checking for a local SSH server, which is actually present in the
+     `gitlab-shell` chart, deployed elsewhere, and already configured appropriately.
 
 ## Configure Secondary database
 
-_This section will be performed on the Secondary Omnibus GitLab instance._
+_This section is performed on the Secondary Omnibus GitLab instance._
 
-To configure the Secondary database instance's Omnibus GitLab, we'll work from
-this example configuration.
+To configure the Secondary database instance's Omnibus GitLab, work from
+this example configuration:
 
 ```ruby
 ### Geo Secondary
@@ -357,30 +359,30 @@ geo_postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
 gitlab_rails['db_password']='gitlab_user_password'
 ```
 
-We need to replace several items:
+We must replace several items:
 
 - `external_url` must be updated to reflect the host name of our Secondary
-instance.
+  instance.
 - `gitlab_rails['geo_node_name']` must be replaced with a unique name for your node.
 - `gitlab_user_password_hash` must be replaced with the hashed form of the
-`gitlab` password.
+  `gitlab` password.
 - `postgresql['md5_auth_cidr_addresses']` should be updated to be a list of
-explicit IP addresses, or address blocks in CIDR notation.
+  explicit IP addresses, or address blocks in CIDR notation.
 - `gitlab_geo_user_password_hash` must be replaced with the hashed form of the
-`gitlab_geo` password.
+  `gitlab_geo` password.
 - `geo_postgresql['md5_auth_cidr_addresses']` should be updated to be a list of
-explicit IP addresses, or address blocks in CIDR notation.
+  explicit IP addresses, or address blocks in CIDR notation.
 - `gitlab_user_password` must be updated, and is used here to allow Omnibus GitLab
-to automate the PostgreSQL configuration.
+  to automate the PostgreSQL configuration.
 
 The `md5_auth_cidr_addresses` should be in the form of
 `[ '127.0.0.1/24', '10.41.0.0/16']`. It is important to include `127.0.0.1` in
-this list, as the automation within Omnibus GitLab will connect using this. The
+this list, as the automation in Omnibus GitLab connects using this. The
 addresses in this list should include the IP addresses of all nodes of your
 Secondary Kubernetes cluster. This _can_ be left as `['0.0.0.0/0']`, however
 _it is not best practice_.
 
-Once the configuration above is prepared:
+After configuration above is prepared:
 
 1. Check TCP connectivity to the **primary** node's PostgreSQL server:
 
@@ -404,8 +406,8 @@ Once the configuration above is prepared:
 
 1. Place the content into `/etc/gitlab/gitlab.rb`
 1. Run `gitlab-ctl reconfigure`. If you experience any issues in regards to the
-service not listening on TCP, try directly restarting it with
-`gitlab-ctl restart postgresql`.
+   service not listening on TCP, try directly restarting it with
+   `gitlab-ctl restart postgresql`.
 1. Place the Primary database's certificate content from above into `primary.crt`
 1. Set up PostgreSQL TLS verification on the **secondary** node:
 
@@ -446,14 +448,14 @@ service not listening on TCP, try directly restarting it with
    match the contents of `~gitlab-psql/.postgresql/root.crt` on the **secondary** node.
 
 1. Replicate the databases. Replace `PRIMARY_DATABASE_HOST` with the IP or hostname
-of your Primary database instance.
+of your Primary database instance:
 
    ```shell
    gitlab-ctl replicate-geo-database --slot-name=geo_2 --host=PRIMARY_DATABASE_HOST
    ```
 
 1. After replication has finished, we must reconfigure the Omnibus GitLab one last time
-   to ensure `pg_hba.conf` is correct for the secondary.
+   to ensure `pg_hba.conf` is correct for the secondary:
 
    ```shell
    gitlab-ctl reconfigure
@@ -461,24 +463,24 @@ of your Primary database instance.
 
 ## Copy secrets from the primary cluster to the secondary cluster
 
-We now need to copy a few secrets from the Primary Kubernetes deployment to the
-Secondary Kubernetes deployment.
+Now copy a few secrets from the Primary Kubernetes deployment to the
+Secondary Kubernetes deployment:
 
 - `gitlab-geo-gitlab-shell-host-keys`
 - `gitlab-geo-rails-secret`
-- `gitlab-registry-secret`, if Registry replication is enabled.
+- `gitlab-geo-registry-secret`, if Registry replication is enabled.
 
 1. Change your `kubectl` context to that of your Primary.
-1. Collect these secrets from the Primary deployment
+1. Collect these secrets from the Primary deployment:
 
-  ```shell
-  kubectl get --namespace gitlab -o yaml secret gitlab-geo-gitlab-shell-host-keys > ssh-host-keys.yaml
-  kubectl get --namespace gitlab -o yaml secret gitlab-geo-rails-secret > rails-secrets.yaml
-  kubectl get --namespace gitlab -o yaml secret gitlab-registry-secret > registry-secrets.yaml
-  ```
+   ```shell
+   kubectl get --namespace gitlab -o yaml secret gitlab-geo-gitlab-shell-host-keys > ssh-host-keys.yaml
+   kubectl get --namespace gitlab -o yaml secret gitlab-geo-rails-secret > rails-secrets.yaml
+   kubectl get --namespace gitlab -o yaml secret gitlab-geo-registry-secret > registry-secrets.yaml
+   ```
 
 1. Change your `kubectl` context to that of your Secondary.
-1. Apply these secrets
+1. Apply these secrets:
 
    ```shell
    kubectl --namespace gitlab apply -f ssh-host-keys.yaml
@@ -486,8 +488,8 @@ Secondary Kubernetes deployment.
    kubectl --namespace gitlab apply -f registry-secrets.yaml
    ```
 
-We'll now need to create a secret containing the database passwords. Replace the
-passwords below with the appropriate values.
+Next create a secret containing the database passwords. Replace the
+passwords below with the appropriate values:
 
 ```shell
 kubectl --namespace gitlab create secret generic geo \
@@ -497,12 +499,12 @@ kubectl --namespace gitlab create secret generic geo \
 
 ## Deploy chart as Geo Secondary
 
-_This section will be performed on the Secondary Kubernetes cluster._
+_This section is performed on the Secondary Kubernetes cluster._
 
-In order to deploy this chart as a Geo Secondary, we'll start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/secondary.yaml).
+To deploy this chart as a Geo Secondary, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/secondary.yaml).
 
 1. Create a `secondary.yaml` file based on the [example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/secondary.yaml)
-  and update the configuration to reflect the correct values:
+   and update the configuration to reflect the correct values:
 
    ```yaml
    ## Geo Secondary
@@ -544,7 +546,7 @@ In order to deploy this chart as a Geo Secondary, we'll start [from this example
      - [using external Object Storage](../external-object-storage/index.md)
    - For external databases, `global.psql.host` is the secondary, read-only database, while `global.geo.psql.host` is the tracking database
 
-1. Deploy the chart using this configuration
+1. Deploy the chart using this configuration:
 
    ```shell
    helm upgrade --install gitlab-geo gitlab/gitlab --namespace gitlab -f secondary.yaml
@@ -568,29 +570,35 @@ the Primary that the Secondary exists:
    **secondary** instance. Leave blank to replicate all.
 1. Select **Add node**.
 
-Once added to the admin panel, the **secondary** instance will automatically start
-replicating missing data from the **primary** instance in a process known as **backfill**.
-Meanwhile, the **primary** instance will start to notify each **secondary** instance of any changes, so
+After the **secondary** instance is added to the administration panel, it automatically starts
+replicating missing data from the **primary** instance. This process is known as "backfill".
+Meanwhile, the **primary** instance starts to notify each **secondary** instance of any changes, so
 that the **secondary** instance can act on those notifications immediately.
+
+## Use Geo proxying for secondary sites
+
+To serve read-write traffic by proxying to the primary site, you can
+[enable Geo secondary proxying](https://docs.gitlab.com/ee/administration/geo/secondary_proxy/)
+and use a single, unified URL for all Geo sites.
 
 ## Confirm Operational Status
 
 The final step is to verify the Geo replication status on the secondary instance once fully
-configured, via the Task Runner Pod.
+configured, via the Toolbox Pod.
 
-1. Find the Task Runner Pod
-
-   ```shell
-   kubectl --namespace gitlab get pods -lapp=task-runner
-   ```
-
-1. Attach to the Pod with `kubectl exec`
+1. Find the Toolbox Pod:
 
    ```shell
-   kubectl --namespace gitlab exec -ti gitlab-geo-task-runner-XXX -- bash -l
+   kubectl --namespace gitlab get pods -lapp=toolbox
    ```
 
-1. Check the status of Geo configuration
+1. Attach to the Pod with `kubectl exec`:
+
+   ```shell
+   kubectl --namespace gitlab exec -ti gitlab-geo-toolbox-XXX -- bash -l
+   ```
+
+1. Check the status of Geo configuration:
 
    ```shell
    gitlab-rake gitlab:geo:check
@@ -628,7 +636,7 @@ configured, via the Task Runner Pod.
    ```
 
    - Don't worry about `Exception: getaddrinfo: Servname not supported for ai_socktype`,
-   as Kubernetes containers will not have access to the host clock. _This is OK_.
+     as Kubernetes containers do not have access to the host clock. _This is OK_.
    - `OpenSSH configured to use AuthorizedKeysCommand ... no` _is expected_. This
-   Rake task is checking for a local SSH server, which is actually present in the
-   `gitlab-shell` chart, deployed elsewhere, and already configured appropriately.
+     Rake task is checking for a local SSH server, which is actually present in the
+     `gitlab-shell` chart, deployed elsewhere, and already configured appropriately.

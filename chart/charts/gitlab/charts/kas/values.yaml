@@ -7,8 +7,6 @@ global:
   ingress: {}
   kas:
     enabled: false
-    service:
-      apiExternalPort: 8153 # port for connections from the GitLab backend
   redis:
     # host: '0.0.0.0'
     password: {}
@@ -16,6 +14,14 @@ global:
     # kas:
       # name: kas.example.com
       # https: true
+
+init:
+  image: {}
+    # repository:
+    # tag:
+  resources:
+    requests:
+      cpu: 50m
 
 hpa:
   targetAverageValue: 100m
@@ -25,6 +31,7 @@ image:
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 ingress:
+  apiVersion:
   annotations: {}
   tls: {}
   agentPath: /

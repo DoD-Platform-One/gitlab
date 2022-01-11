@@ -51,9 +51,9 @@ describe 'global configuration' do
     it 'configures the notification endpoint' do
       t = HelmTemplate.new(registry_notifications)
       expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
-      expect(t.find_projected_secret('Deployment/test-sidekiq-all-in-1-v1', 'init-sidekiq-secrets', 'test-registry-notification')).to be true
+      expect(t.find_projected_secret('Deployment/test-sidekiq-all-in-1-v2', 'init-sidekiq-secrets', 'test-registry-notification')).to be true
       expect(t.find_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', 'test-registry-notification')).to be true
-      expect(t.find_projected_secret('Deployment/test-task-runner', 'init-task-runner-secrets', 'test-registry-notification')).to be true
+      expect(t.find_projected_secret('Deployment/test-toolbox', 'init-toolbox-secrets', 'test-registry-notification')).to be true
       gitlab_config = t.dig('ConfigMap/test-sidekiq', 'data', 'gitlab.yml.erb')
       expect(gitlab_config).to include('notification_secret')
 

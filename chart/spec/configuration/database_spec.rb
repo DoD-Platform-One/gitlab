@@ -74,7 +74,7 @@ describe 'Database configuration' do
       it 'populates global database to all charts' do
         template = HelmTemplate.new(global_values)
         expect(database_yml(template,'webservice')).to include("database: testing")
-        expect(database_yml(template,'task-runner')).to include("database: testing")
+        expect(database_yml(template,'toolbox')).to include("database: testing")
         expect(database_yml(template,'sidekiq')).to include("database: testing")
       end
 
@@ -91,7 +91,7 @@ describe 'Database configuration' do
         it 'populates local database to webservice, and global to others' do
           template = HelmTemplate.new(local_values)
           expect(database_yml(template,'webservice')).to include("database: local")
-          expect(database_yml(template,'task-runner')).to include("database: testing")
+          expect(database_yml(template,'toolbox')).to include("database: testing")
           expect(database_yml(template,'sidekiq')).to include("database: testing")
         end
       end
@@ -266,7 +266,7 @@ describe 'Database configuration' do
           .and match(/keepalives_interval: $/)
           .and match(/keepalives_count: $/)
           .and match(/tcp_user_timeout: $/)
-        sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v1','init-sidekiq-secrets').select { |item|
+        sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v2','init-sidekiq-secrets').select { |item|
           item['secret']['name'] == 'test-postgresql-password'
         }
         expect(sidekiq_secret_mounts.length).to eq(1)
@@ -320,7 +320,7 @@ describe 'Database configuration' do
           .and match(/keepalives_interval: $/)
           .and match(/keepalives_count: $/)
           .and match(/tcp_user_timeout: $/)
-        sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v1','init-sidekiq-secrets').select { |item|
+        sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v2','init-sidekiq-secrets').select { |item|
           item['secret']['name'] == 'test-postgresql-password' && item['secret']['items'][0]['key'] == 'postgresql-password'
         }
         expect(sidekiq_secret_mounts.length).to eq(1)
@@ -366,7 +366,7 @@ describe 'Database configuration' do
         expect(t.exit_code).to eq(0)
         # sidekiq gets "global"
         expect(t.dig('ConfigMap/test-sidekiq','data','database.yml.erb')).to include('host: "psql.global"')
-        sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v1','init-sidekiq-secrets').select { |item|
+        sidekiq_secret_mounts =  t.projected_volume_sources('Deployment/test-sidekiq-all-in-1-v2','init-sidekiq-secrets').select { |item|
           item['secret']['name'] == 'global-postgresql-password' && item['secret']['items'][0]['key'] == 'global-password'
         }
         expect(sidekiq_secret_mounts.length).to eq(1)
