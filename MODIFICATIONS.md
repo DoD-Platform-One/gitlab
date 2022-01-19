@@ -116,3 +116,10 @@
 ## chart/.helmignore
 - change `scripts/` to `/scripts/` so that the helm test scripts are not ignored
 
+## chart/charts/gitlab/charts/toolbox/templates/backup-job.yaml
+- lines 31-33
+  ```
+    {{- if .Values.global.istio.enabled }}  
+      sidecar.istio.io/inject: "false"
+    {{- end }}
+  ```
