@@ -52,18 +52,6 @@
       sidecar.istio.io/inject: "false"
     {{- end }}
     ```
-## chart/charts/gitlab/charts/migrations/templates/_jobspec.yaml
-- add curl to quit istio proxy
-    lines 77-82
-    ```
-    {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
-      - '&& sleep 5'
-      - '&& echo "Attempting to stop the istio proxy..."'
-      - '&& echo "curl -X POST http://localhost:15020/quitquitquit"'
-      - '&& curl -X POST http://localhost:15020/quitquitquit'
-    {{- end }}
-    ```
-
 ## gitlab/chart/templates/shared-secrets/_self-signed-cert-job.yml
 - add curl to quit isto proxy
   lines 108-114
