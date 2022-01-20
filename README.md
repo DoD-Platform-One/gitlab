@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.6.2-bb.1](https://img.shields.io/badge/Version-5.6.2--bb.1-informational?style=flat-square) ![AppVersion: 14.6.2](https://img.shields.io/badge/AppVersion-14.6.2-informational?style=flat-square)
+![Version: 5.6.2-bb.2](https://img.shields.io/badge/Version-5.6.2--bb.2-informational?style=flat-square) ![AppVersion: 14.6.2](https://img.shields.io/badge/AppVersion-14.6.2-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -635,6 +635,7 @@ helm install gitlab chart/
 | gitlab.gitlab-exporter.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-exporter.metrics.enabled | bool | `true` |  |
 | gitlab.gitlab-exporter.metrics.port | int | `9168` |  |
+| gitlab.migrations.annotations."sidecar.istio.io/inject" | string | `"false"` |  |
 | gitlab.migrations.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.migrations.init.resources.limits.memory | string | `"200Mi"` |  |
 | gitlab.migrations.init.resources.requests.cpu | string | `"200m"` |  |

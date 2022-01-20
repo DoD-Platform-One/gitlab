@@ -1274,6 +1274,9 @@ gitlab:
       port: 9168
 ## https://docs.gitlab.com/charts/charts/gitlab/migrations
   migrations:
+    # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
+    annotations:
+      sidecar.istio.io/inject: "false"
     init:
       resources:
         limits:
