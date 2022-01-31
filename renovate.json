@@ -47,6 +47,15 @@
           "depNameTemplate": "registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter",
           "datasourceTemplate": "docker",
           "registryUrlTemplate": "https://registry1.dso.mil"
+        },
+        {
+            "fileMatch": ["^chart/Chart\\.yaml$"],
+            "matchStrings": [
+                "- Gitlab:\\s+(?<currentValue>.+)"
+            ],
+            "registryUrlTemplate": "https://registry1.dso.mil",
+            "depNameTemplate": "ironbank/gitlab/gitlab/gitlab-webservice",
+            "datasourceTemplate": "docker"
         }
     ],
     "separateMajorMinor": false
