@@ -35,6 +35,25 @@ and customize the values.yaml for your RDS credentials
     # preparedStatements: false
 ```
 
+WARNING FOR OPERATIONAL ENVIRONMENTS:  
+Gitlab will no longer be able to access the encrypted data in the database if the Kubernetes gitlab-rails-secret happens to get overwritten. You will get errors like this in the logs.
+```
+OpenSSL::Cipher::CipherError ()
+```
+Many things break when this happens and the recovery is ugly with serious user impacts.  
+
+At a minimum an operational deployment of Gitlab should export and save the gitlab-rails-secret somewhere safe outside the cluster.
+```
+kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
+```
+Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). The helm chart values ```global.railsSecrets.secret``` can be overridden to point to the secret.
+```
+global:
+  railsSecrets:
+    secret:  my-gitlab-rails-secret
+```
+This secret should be backed up somewhere safe outside the cluster.
+
 ## Kubernetes resource configuration
 The BigBang Gitlab Package has a default resource configuration for a minimal installation which is sufficient for development, demos, and CI pipelines. For larger operational deployments you must increase the CPU and memory as needed. Consult Gitlab documentation and Gitlab Support for appropriate settings. See the [k8s-resources.md](k8s-resources.md) for a list of possible configurations. 
 
