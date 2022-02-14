@@ -1,1 +1,3 @@
 registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:14.3.1
+registry1.dso.mil/ironbank/gitlab/gitlab-runner/gitlab-runner-helper:v14.3.1
+registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:13.9.0
