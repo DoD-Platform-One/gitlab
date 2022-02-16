@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.6.2-bb.4](https://img.shields.io/badge/Version-5.6.2--bb.4-informational?style=flat-square) ![AppVersion: 14.6.2](https://img.shields.io/badge/AppVersion-14.6.2-informational?style=flat-square)
+![Version: 5.6.2-bb.5](https://img.shields.io/badge/Version-5.6.2--bb.5-informational?style=flat-square) ![AppVersion: 14.6.2](https://img.shields.io/badge/AppVersion-14.6.2-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -328,7 +328,7 @@ helm install gitlab chart/
 | global.kubectl.securityContext.runAsUser | int | `65534` |  |
 | global.kubectl.securityContext.fsGroup | int | `65534` |  |
 | global.busybox.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
-| global.busybox.image.tag | string | `"8.4"` |  |
+| global.busybox.image.tag | string | `"8.5"` |  |
 | global.busybox.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.serviceAccount.enabled | bool | `false` |  |
 | global.serviceAccount.create | bool | `true` |  |
@@ -338,7 +338,7 @@ helm install gitlab chart/
 | global.extraEnv | object | `{}` |  |
 | upgradeCheck.enabled | bool | `true` |  |
 | upgradeCheck.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
-| upgradeCheck.image.tag | string | `"8.4"` |  |
+| upgradeCheck.image.tag | string | `"8.5"` |  |
 | upgradeCheck.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | upgradeCheck.securityContext.runAsUser | int | `65534` |  |
 | upgradeCheck.securityContext.fsGroup | int | `65534` |  |
@@ -488,7 +488,7 @@ helm install gitlab chart/
 | redis.metrics.enabled | bool | `true` |  |
 | redis.metrics.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.metrics.image.repository | string | `"analytics/redis-exporter"` |  |
-| redis.metrics.image.tag | string | `"1.18.0"` |  |
+| redis.metrics.image.tag | string | `"1.35.0"` |  |
 | redis.metrics.image.pullSecrets[0] | string | `"private-registry"` |  |
 | redis.metrics.resources.limits.cpu | string | `"250m"` |  |
 | redis.metrics.resources.limits.memory | string | `"256Mi"` |  |
@@ -496,7 +496,7 @@ helm install gitlab chart/
 | redis.metrics.resources.requests.memory | string | `"256Mi"` |  |
 | redis.image.registry | string | `"registry1.dso.mil/ironbank/opensource"` |  |
 | redis.image.repository | string | `"redis/redis5"` |  |
-| redis.image.tag | string | `"5.0.9"` |  |
+| redis.image.tag | string | `"5.0.14"` |  |
 | redis.image.pullSecrets[0] | string | `"private-registry"` |  |
 | redis.master.command | string | `"redis-server"` |  |
 | redis.master.resources.limits.cpu | string | `"250m"` |  |
@@ -718,10 +718,10 @@ helm install gitlab chart/
 | minio.resources.requests.cpu | string | `"200m"` |  |
 | minio.resources.requests.memory | string | `"300Mi"` |  |
 | minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
-| minio.imageTag | string | `"RELEASE.2021-04-06T23-11-00Z"` |  |
+| minio.imageTag | string | `"RELEASE.2022-02-07T08-17-33Z"` |  |
 | minio.pullSecrets[0].name | string | `"private-registry"` |  |
 | minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
-| minio.minioMc.tag | string | `"RELEASE.2021-03-23T05-46-11Z"` |  |
+| minio.minioMc.tag | string | `"RELEASE.2022-02-07T09-25-34Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | hostname | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` |  |

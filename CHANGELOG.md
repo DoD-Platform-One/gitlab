@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.6.2-bb.5] - 2022-02-14
+### Updated
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter minor 1.18.0 -> 1.35.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter minor 14.3.1 -> 14.6.2
+- registry1.dso.mil/ironbank/opensource/minio/mc major RELEASE.2021-03-23T05-46-11Z -> RELEASE.2022-02-07T09-25-34Z
+- registry1.dso.mil/ironbank/opensource/minio/minio major RELEASE.2021-04-06T23-11-00Z -> RELEASE.2022-02-07T08-17-33Z
+- registry1.dso.mil/ironbank/opensource/redis/redis5 patch 5.0.9 -> 5.0.14
+- registry1.dso.mil/ironbank/redhat/ubi/ubi8 minor 8.4 -> 8.5
+- redis 5 to redis 6
+- updated test/images.txt versions
+
 ## [5.6.2-bb.4] - 2022-02-09
 ### Changed
 - Updated `renovate.json` to track all images in `tests/images.txt`
