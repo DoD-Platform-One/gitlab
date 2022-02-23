@@ -103,8 +103,10 @@ configurations that can be supplied to the `helm install` command using the
 | `zipCache.expiration`            | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
 | `zipCache.refresh`               | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
 | `zipOpenTimeout`                 | int                   | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration) |
-| `rateLimitSourceIP`              | int                   | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENABLE_RATE_LIMITER=true"]` |
+| `rateLimitSourceIP`              | int                   | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENFORCE_IP_RATE_LIMITS=true"]` |
 | `rateLimitSourceIPBurst`         | int                   | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits) |
+| `rateLimitDomain`                | int                   | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENFORCE_DOMAIN_RATE_LIMITS=true"]` |
+| `rateLimitDomainBurst`           | int                   | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits) |
 
 ### Configuring the `ingress`
 

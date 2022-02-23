@@ -21,7 +21,7 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   condition: postgresql.install
 - name: gitlab-runner
-  version: 0.36.0
+  version: 0.37.2
   repository: https://charts.gitlab.io/
   condition: gitlab-runner.install
 - name: grafana
@@ -36,6 +36,6 @@ dependencies:
   condition: nginx-ingress.enabled
   version: '*.*.*'
 - name: gluon
-  version: "0.2.4"
+  version: "0.2.8"
   repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
 

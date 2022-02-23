@@ -77,6 +77,20 @@ helm install gitlab gitlab/gitlab \
   --set global.ingress.tls.secretName=<tls-secret-name>
 ```
 
+### Use AWS ACM to manage certificates
+
+If you are using AWS ACM to create your wildcard certificate, it is not possible to specify it via secret because ACM certificates cannot be downloaded.
+Instead, specify them via  `nginx-ingress.controller.service.annotations`:
+
+```yaml
+nginx-ingress:
+  controller:
+    service:
+      annotations:
+        ...
+        service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:{region}:{user id}:certificate/{id}
+```
+
 ## Option 3: Use individual certificate per service
 
 Add your full chain certificates to the cluster as secrets, and then pass those secret names to each Ingress.

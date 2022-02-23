@@ -135,7 +135,9 @@ backups:
     concurrencyPolicy: Replace
     failedJobsHistoryLimit: 1
     schedule: "0 1 * * *"
+    startingDeadlineSeconds: null
     successfulJobsHistoryLimit: 3
+    suspend: false
     extraArgs: ""
     resources:
       # limits:

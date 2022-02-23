@@ -70,7 +70,9 @@ gitlab:
 | `backups.cron.resources.requests.cpu`       | Backup cron minimum needed CPU               | `50m`                        |
 | `backups.cron.resources.requests.memory`    | Backup cron minimum needed memory            | `350M`                       |
 | `backups.cron.schedule`                     | Cron style schedule string                   | `0 1 * * *`                  |
+| `backups.cron.startingDeadlineSeconds`      | Backup cron job starting deadline, in seconds (if null, no starting deadline is applied) | `null`                      |
 | `backups.cron.successfulJobsHistoryLimit`   | Number of successful backup jobs list in history | `3`                      |
+| `backups.cron.suspend`                      | Backup cron job is suspended | `false`                      |
 | `backups.objectStorage.backend`             | Object storage provider to use (`s3` or `gcs`) | `s3`                       |
 | `backups.objectStorage.config.gcpProject`   | GCP Project to use when backend is `gcs`     | ""                           |
 | `backups.objectStorage.config.key`          | Key containing credentials in secret         | ""                           |

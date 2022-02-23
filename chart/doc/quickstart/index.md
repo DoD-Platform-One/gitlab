@@ -6,9 +6,9 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Quick Start Guide
 
-This guide services as a concise but complete documentation on how to install the
+This guide serves as a concise but complete documentation about how to install the
 Cloud Native GitLab chart with default values onto Google Kubernetes Engine (GKE).
-We'll be focusing exclusively on GKE in order to keep it as direct and simple as possible.
+For clarity, we focus exclusively on GKE.
 
 ## Requirements
 
@@ -23,39 +23,38 @@ In order to complete this guide, you _must have_ the following:
 
 No folks, you can not use `example.com`.
 
-You'll need to have access to a internet accessible domain to which you can add
+You must have access to an internet-accessible domain to which you can add
 a DNS record. This _can be a sub-domain_ such as `poc.domain.com`, but the
 Let's Encrypt servers have to be able to resolve the addresses to be able to
 issue certificates.
 
-For the sake of this guide, we'll assume this is in Google's Cloud DNS. Other
+For the sake of this guide, we assume this is in Google's Cloud DNS. Other
 services can be used, but are not covered here.
 
 ### Getting a Kubernetes cluster
 
 This guide is not intended to cover how to create or obtain a Kubernetes cluster.
-We'll instead refer to Google's own [GKE cluster creation guide](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster).
+We instead refer to the Google [GKE cluster creation guide](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster).
 
 NOTE:
 A cluster with a total of 8vCPU and 30GB of RAM, or more is recommended.
 
 ### Installing kubectl
 
-We'll point right to the official Kubernetes documentation for
-[installing kubectl](https://kubernetes.io/docs/tasks/tools/).
-It is simple, covers most operating systems and also covers Google
+To install kubectl, see the [Kubernetes installation documentation](https://kubernetes.io/docs/tasks/tools/).
+The documentation covers most operating systems and the Google
 Cloud SDK, which you may have installed during the previous step.
 
 Be sure to configure your `kubectl` to talk to your newly minted cluster, per
 Google's documentation:
 
-> After you create a cluster, you need to [configure kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#generate_kubeconfig_entry) before you can interact with the cluster from the command line.
+NOTE:
+After you create a cluster, you must [configure kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#generate_kubeconfig_entry) before you can interact with the cluster from the command line.
 
 ### Installing Helm v3
 
-For this guide, we'll make use of the latest release of Helm v3 (v3.3.1 or newer).
-[Official installation instructions](https://helm.sh/docs/intro/install/)
-exist, and are sound, so we'll let you follow those.
+For this guide, we use the latest release of Helm v3 (v3.3.1 or later).
+To install Helm, see the [Helm installation instructions](https://helm.sh/docs/intro/install/).
 
 ## Adding the GitLab Helm repository
 
@@ -71,12 +70,12 @@ helm repo add gitlab https://charts.gitlab.io/
 Here's the beauty of what this chart is capable of. One command. Poof! All
 of GitLab installed, and configured with SSL.
 
-In order to properly configure the chart, we'll need two things:
+To configure the chart, you need:
 
-1. The domain or subdomain GitLab will operate under.
-1. Your email address, so Let's Encrypt can issue a certificate.
+- The domain or subdomain for GitLab to operate under.
+- Your email address, so Let's Encrypt can issue a certificate.
 
-In order to install the chart, we'll issue the install command, with two
+To install the chart, run the install command with two
 `--set` arguments:
 
 ```shell
@@ -111,8 +110,8 @@ gitlab-registry    registry.domain.tld   35.239.27.235   80, 443   118m
 gitlab-webservice  gitlab.domain.tld     35.239.27.235   80, 443   118m
 ```
 
-You'll notice there are 3 entries, and they all have the same IP address.
-You'll need to take this IP address, and add it to your DNS for the domain
+Notice there are three entries and they all have the same IP address.
+Take this IP address and add it to your DNS for the domain
 you have chosen to use. You can add 3 separate records of type `A`, but we
 suggest adding a single "wildcard" record for simplicity. In Google Cloud DNS,
 this is done by creating an `A` record, but with the name being `*`. We also
@@ -123,7 +122,7 @@ suggest you set the TTL to `1` minute instead of `5` minutes.
 You can access GitLab at `gitlab.domain.tld`. For example, if you set
 `global.hosts.domain=my.domain.tld`, then you would visit `gitlab.my.domain.tld`.
 
-In order to sign in, we'll need to collect the password for the `root` user.
+To sign in, you must collect the password for the `root` user.
 This is automatically generated at installation time, and stored in a Kubernetes
 Secret. Let's fetch that password from the secret, and decode it:
 
@@ -144,7 +143,7 @@ be sure are working:
 
 1. The `gitlab.my.domain.tld` resolves to the IP address of the Ingress you retrieved.
 1. If you get a certificate warning, there has been a problem with Let's Encrypt,
-usually related to DNS, or the need to retry.
+   usually related to DNS, or the requirement to retry.
 
 For further troubleshooting tips, see our [troubleshooting](../troubleshooting/index.md) guide.
 

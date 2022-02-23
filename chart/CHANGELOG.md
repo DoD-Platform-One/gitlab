@@ -2,6 +2,35 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 5.7.1 (2022-02-03)
+
+No changes.
+
+## 5.7.0 (2022-01-21)
+
+### Added (3 changes)
+
+- [Add domain rate-limiting options for GitLab Pages](gitlab-org/charts/gitlab@b61174649493db72d15fce4334a3fd14e58d58e6) ([merge request](gitlab-org/charts/gitlab!2338))
+- [Registry: Add middleware.storage config ability](gitlab-org/charts/gitlab@d11b891716f870823150c11cadcf68155300c6a5) ([merge request](gitlab-org/charts/gitlab!2328))
+- [Feature gate metrics port exposure, expose on Service](gitlab-org/charts/gitlab@29644d37ebee555b5171f2a26dccbe6fd2bfc43f) ([merge request](gitlab-org/charts/gitlab!2311))
+
+### Fixed (1 change)
+
+- [Revert "Favor GitLab's nodeSelectors instead nginx-ingress"](gitlab-org/charts/gitlab@c01708c7b0be1f4f64663d66f2659664a5ece67f) ([merge request](gitlab-org/charts/gitlab!2342))
+
+### Changed (6 changes)
+
+- [Update gitlab-org/charts/gitlab-runner from 0.36.0 to 0.37.0](gitlab-org/charts/gitlab@f4d6e7ae413cf7a1a010b65c75fa050c8b656b22) ([merge request](gitlab-org/charts/gitlab!2352))
+- [Update gitlab-org/container-registry from 3.21.0-gitlab to 3.22.0-gitlab](gitlab-org/charts/gitlab@af098951c8f43cb27e6e5f865771041044f4bae0) ([merge request](gitlab-org/charts/gitlab!2346))
+- [Update Operator docs for 0.3.0](gitlab-org/charts/gitlab@3c8e8c4dc79796bf1cb5df256d379929b044e2c2) ([merge request](gitlab-org/charts/gitlab!2343))
+- [Add test specs](gitlab-org/charts/gitlab@0777257463d3f6169d7fbc47e2931a3347698630) ([merge request](gitlab-org/charts/gitlab!2304))
+- [Update gitlab-org/container-registry from 3.20.0-gitlab to 3.21.0-gitlab](gitlab-org/charts/gitlab@52b9f0d5b6ae45cbf578dffd94cd1e544938a093) ([merge request](gitlab-org/charts/gitlab!2337))
+- [Update gitlab-org/container-registry from 3.19.0-gitlab to 3.20.0-gitlab](gitlab-org/charts/gitlab@4ae9e795d2ae3ceec5f2d75a9c5c9ecefb88f707) ([merge request](gitlab-org/charts/gitlab!2334))
+
+## 5.6.3 (2022-01-18)
+
+No changes.
+
 ## 5.6.2 (2022-01-11)
 
 No changes.
@@ -20,6 +49,10 @@ No changes.
 - [Update gitlab-org/container-registry from 3.16.0-gitlab to 3.17.0-gitlab](gitlab-org/charts/gitlab@e1b12db5cb630926ee76ce7684fba64263dc79af) ([merge request](gitlab-org/charts/gitlab!2285))
 - [Update gitlab-org/charts/gitlab-runner from 0.34.0 to 0.35.0](gitlab-org/charts/gitlab@12c4740147c25f788061176f124e5749eb9a7726) ([merge request](gitlab-org/charts/gitlab!2275))
 - [Update gitlab-org/container-registry from 3.15.0-gitlab to 3.16.0-gitlab](gitlab-org/charts/gitlab@3d2e013c2c37ee987fa064dacb8ae3f2f645aa4b) ([merge request](gitlab-org/charts/gitlab!2276))
+
+## 5.5.3 (2022-01-11)
+
+No changes.
 
 ## 5.5.2 (2021-12-03)
 
@@ -54,6 +87,10 @@ No changes.
 ### Other (1 change)
 
 - [[Docs] Operator: clarify available chart versions](gitlab-org/charts/gitlab@afcb3d95d2f997cc1d77087bb85a73b918a38101) ([merge request](gitlab-org/charts/gitlab!2268))
+
+## 5.4.5 (2022-01-11)
+
+No changes.
 
 ## 5.4.4 (2021-12-03)
 

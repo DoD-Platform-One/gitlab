@@ -62,7 +62,7 @@ hostname part of the url.
 {{/*
 Returns the nginx ingress class
 */}}
-{{- define "registry.ingressclass" -}}
+{{- define "registry.ingress.className" -}}
 {{- pluck "class" .Values.global.ingress (dict "class" (printf "%s-nginx" .Release.Name)) | first -}}
 {{- end -}}
 

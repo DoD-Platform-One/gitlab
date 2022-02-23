@@ -490,6 +490,8 @@ describe 'GitLab Pages' do
                   refresh: 60s
                 rateLimitSourceIP: 100.5
                 rateLimitSourceIPBurst: 50
+                rateLimitDomain: 2000.5
+                rateLimitDomainBurst: 20000
           ))
         end
 
@@ -529,6 +531,8 @@ describe 'GitLab Pages' do
             zip-cache-refresh=60s
             rate-limit-source-ip=100.5
             rate-limit-source-ip-burst=50
+            rate-limit-domain=2000.5
+            rate-limit-domain-burst=20000
           MSG
 
           expect(pages_enabled_template.exit_code).to eq(0), "Unexpected error code #{pages_enabled_template.exit_code} -- #{pages_enabled_template.stderr}"

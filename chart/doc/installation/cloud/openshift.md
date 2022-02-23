@@ -29,7 +29,7 @@ Copy the pull secret to your clipboard and write the content to a file `pull_sec
 
 ### Create a Google Cloud (GCP) Service Account
 
-Follow [these instructions](https://docs.openshift.com/container-platform/4.6/installing/installing_gcp/installing-gcp-account.html#installation-gcp-service-account_installing-gcp-account) to create a Service Account in the Google Cloud `cloud-native` project. Attach all roles marked as Required in that document.
+Follow [these instructions](https://docs.openshift.com/container-platform/4.9/installing/installing_gcp/installing-gcp-account.html#installation-gcp-service-account_installing-gcp-account) to create a Service Account in the Google Cloud `cloud-native` project. Attach all roles marked as Required in that document.
 Once the Service Account is created, generate a JSON key and save it as `gcloud.json` in the root of this repository. This file is gitignored.
 
 ## Create your OpenShift cluster
@@ -118,6 +118,6 @@ When the cluster is up and running, you can continue [installing GitLab](../oper
 - [`openshift-installer` source code](https://github.com/openshift/installer)
 - [`oc` source code](https://github.com/openshift/oc)
 - [`openshift-installer` and `oc` packages](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/)
-- [OpenShift Container Project (OCP) architecture docs](https://access.redhat.com/documentation/en-us/openshift_container_platform/latest/html/architecture/architecture)
-- [OpenShift GCP docs](https://docs.openshift.com/container-platform/4.8/installing/installing_gcp/installing-gcp-account.html)
-- [OpenShift troubleshooting guide](https://docs.openshift.com/container-platform/4.8/support/troubleshooting/troubleshooting-installations.html)
+- [OpenShift Container Project (OCP) architecture docs](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/architecture/architecture)
+- [OpenShift GCP docs](https://docs.openshift.com/container-platform/4.9/installing/installing_gcp/installing-gcp-account.html)
+- [OpenShift troubleshooting guide](https://docs.openshift.com/container-platform/4.9/support/troubleshooting/troubleshooting-installations.html)
