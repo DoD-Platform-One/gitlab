@@ -11,7 +11,7 @@ If you want to integrate GitLab with OpenShift, see the [OpenShift and GitLab do
 
 GitLab Operator is an implementation of the [Operator pattern](https://www.openshift.com/blog)
 for managing the lifecycle and upgrades of a GitLab instance. The GitLab Operator strengthens the support of OpenShift from GitLab, but is intended to be as native to Kubernetes as for OpenShift. The GitLab Operator provides a method of synchronizing and controlling various
-stages of cloud-native GitLab installation/upgrade procedures. Using the Operator provides the ability to perform
+stages of cloud-native GitLab installation and upgrade procedures. Using the Operator provides the ability to perform
 rolling upgrades with minimal down time. The first goal is to support OpenShift, the subsequent goal will be for automation of day 2 operations like upgrades as noted.
 
 The Operator offers the benefit of Day 2 operators to the GitLab installation, there are many automation benefits to utilizing the Operator vs Helm. The Operator utilizes the Helm Chart but the Operator will continuously run making upgrading, backups, and more, automatic.
@@ -94,7 +94,9 @@ deployment manifests available in the
 1. Deploy the GitLab Operator:
 
    ```shell
-   GL_OPERATOR_VERSION=0.2.0 # https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/releases
+   # Use latest version of operator released at
+   #  https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/releases
+   GL_OPERATOR_VERSION=0.3.0 
    PLATFORM=kubernetes # or "openshift"
    kubectl create namespace gitlab-system
    kubectl apply -f https://gitlab.com/api/v4/projects/18899486/packages/generic/gitlab-operator/${GL_OPERATOR_VERSION}/gitlab-operator-${PLATFORM}-${GL_OPERATOR_VERSION}.yaml
@@ -126,7 +128,11 @@ deployment manifests available in the
      name: example
    spec:
      chart:
-       version: "X.Y.Z" # https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/blob/0.2.0/CHART_VERSIONS
+       # Provided <Operator Version> is the released version from 
+       #  https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/releases
+       # obtain list of available chart versions from:
+       #  https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/blob/<Operator Version>/CHART_VERSIONS
+       version: "X.Y.Z" 
        values:
          global:
            hosts:
@@ -194,7 +200,9 @@ To remove the GitLab Operator and its associated resources:
 1. Uninstall the GitLab Operator.
 
    ```shell
-   GL_OPERATOR_VERSION=0.2.0 # https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/releases
+   # Use latest version of operator released at
+   #  https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/releases
+   GL_OPERATOR_VERSION=0.3.0 
    PLATFORM=kubernetes # or "openshift"
    kubectl delete -f https://gitlab.com/api/v4/projects/18899486/packages/generic/gitlab-operator/${GL_OPERATOR_VERSION}/gitlab-operator-${PLATFORM}-${GL_OPERATOR_VERSION}.yaml
    ```

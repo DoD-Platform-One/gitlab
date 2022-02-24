@@ -15,7 +15,7 @@ service sub-charts:
 - [GitLab Pages](gitlab-pages/index.md)
 - [GitLab Runner](gitlab-runner/index.md)
 - [GitLab Shell](gitlab-shell/index.md)
-- [Kubernetes Agent Server (KAS)](kas/index.md)
+- [GitLab Agent Server (KAS)](kas/index.md)
 - [Mailroom](mailroom/index.md)
 - [Migrations](migrations/index.md)
 - [Praefect](praefect/index.md)

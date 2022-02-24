@@ -267,7 +267,7 @@ minimize their own configuration files without it being cumbersome.
 A charts template helpers are located in `templates/_helpers.tpl`. These contain the [named templates](https://helm.sh/docs/chart_template_guide/named_templates/)
 used within the chart.
 
-When using these templates, there a few things to keep in mind regarding the [golang templating syntax](https://golang.org/pkg/text/template/).
+When using these templates, there a few things to keep in mind regarding the [golang templating syntax](https://pkg.go.dev/text/template).
 
 ### Trapping non-printed values from actions
 
@@ -290,7 +290,7 @@ template would try to output the result of `set` (which returns the Map it modif
 
 ### Passing variables between control structures
 
-The go templating syntax [strongly differentiates between initialization (`:=`) and assignment (`=`)](https://golang.org/pkg/text/template/#hdr-Variables), and this is impacted by scope.
+The go templating syntax [strongly differentiates between initialization (`:=`) and assignment (`=`)](https://pkg.go.dev/text/template#hdr-Variables), and this is impacted by scope.
 
 As a result you can re-initialize a variable that existed outside your control structure (if/with/range), but know that
 variables declared within your control structure are not available outside.

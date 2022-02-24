@@ -178,7 +178,7 @@ Sidekiq pods did not receive a unique selector prior to chart release
 `3.0.0`. [The problems with this were documented in](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/663).
 
 Upgrades to `3.0.0` using Helm will automatically delete the old Sidekiq deployments and create new ones by appending `-v1` to the
-name of the Sidekiq `Deployments`,`HPAs`, and `Pods`. 
+name of the Sidekiq `Deployments`,`HPAs`, and `Pods`.
 
 Starting from `5.5.0` Helm will delete old Sidekiq deployments from prior versions and will use `-v2` suffix for `Pods`, `Deployments` and `HPAs`.
 

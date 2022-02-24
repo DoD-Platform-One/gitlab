@@ -12,6 +12,14 @@ describe 'GitLab Ingress configuration(s)' do
     template.dig("Ingress/#{ingress_name}", 'apiVersion')
   end
 
+  def get_ingress_class_annotation(template, ingress_name)
+    template.dig("Ingress/#{ingress_name}", 'metadata', 'annotations', 'kubernetes.io/ingress.class')
+  end
+
+  def get_ingress_class_spec(template, ingress_name)
+    template.dig("Ingress/#{ingress_name}", 'spec', 'ingressClassName')
+  end
+
   let(:default_values) do
     YAML.safe_load(%(
       certmanager-issuer:
@@ -150,6 +158,14 @@ describe 'GitLab Ingress configuration(s)' do
   end
 
   describe 'api version' do
+    let(:ingress_class_specified) do
+      enable_all_ingress.deep_merge(YAML.safe_load(%(
+        global:
+          ingress:
+            class: fakeclass
+      )))
+    end
+
     let(:api_version_specified) do
       enable_all_ingress.deep_merge(YAML.safe_load(%(
         global:
@@ -167,12 +183,16 @@ describe 'GitLab Ingress configuration(s)' do
 
     context 'when not specified (without cluster connection)' do
       it 'sets default version (extensions/v1beta1)' do
-        template = HelmTemplate.new(enable_all_ingress)
+        template = HelmTemplate.new(ingress_class_specified)
         expect(template.exit_code).to eq(0)
 
         ingress_names.each do |ingress_name|
           api_version = get_api_version(template, ingress_name)
+          ingress_class_annotation = get_ingress_class_annotation(template, ingress_name)
+          ingress_class_spec = get_ingress_class_spec(template, ingress_name)
           expect(api_version).to eq("extensions/v1beta1")
+          expect(ingress_class_annotation).to eq('fakeclass')
+          expect(ingress_class_spec).to be_nil
         end
       end
     end
@@ -180,12 +200,16 @@ describe 'GitLab Ingress configuration(s)' do
     context 'when not specified (with cluster connection)' do
       it 'sets highest cluster-supported version' do
         api_versions_args = "--api-versions=networking.k8s.io/v1beta1/Ingress --api-versions=networking.k8s.io/v1/Ingress"
-        template = HelmTemplate.new(enable_all_ingress, 'test', api_versions_args)
+        template = HelmTemplate.new(ingress_class_specified, 'test', api_versions_args)
         expect(template.exit_code).to eq(0)
 
         ingress_names.each do |ingress_name|
           api_version = get_api_version(template, ingress_name)
+          ingress_class_annotation = get_ingress_class_annotation(template, ingress_name)
+          ingress_class_spec = get_ingress_class_spec(template, ingress_name)
           expect(api_version).to eq('networking.k8s.io/v1')
+          expect(ingress_class_annotation).to be_nil
+          expect(ingress_class_spec).to eq('fakeclass')
         end
       end
     end

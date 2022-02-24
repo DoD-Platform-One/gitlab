@@ -43,7 +43,7 @@ can be installed separately.
   - [_Unprivileged_](https://docs.gitlab.com/runner/install/kubernetes.html#running-docker-in-docker-containers-with-gitlab-runner) [GitLab Runner](https://docs.gitlab.com/runner/) using the Kubernetes executor
   - Automatically provisioned SSL via [Let's Encrypt](https://letsencrypt.org/), using [Jetstack](https://www.jetstack.io/)'s [cert-manager](https://cert-manager.io/docs/)
   - GitLab/[Praefect](charts/gitlab/praefect/index.md)
-  - GitLab/[Kubernetes Agent Server (KAS)](charts/gitlab/kas/index.md)
+  - GitLab/[GitLab Agent Server (KAS)](charts/gitlab/kas/index.md)
 
 ## GitLab Helm chart quick start guide
 

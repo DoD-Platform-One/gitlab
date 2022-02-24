@@ -13,9 +13,11 @@ describe('Create Gitlab Project', () => {
     cy.get('input[id="user_password"]').type(Cypress.env('gitlab_password'))
     cy.get('input[type="submit"]').click()
     
-    // if first login assign Developer role
+    // if first login assign Developer role with the joining_team objective
     cy.url().then(($url) => {
       if ($url.includes('welcome')) {
+        cy.get('select#user_role').select('software_developer')
+        cy.get('select#user_registration_objective').select('joining_team')
         cy.get('button[type="submit"]').click()
       }
     })

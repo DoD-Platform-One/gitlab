@@ -66,7 +66,7 @@ The Distribution Team has a [training presentation for Helm Charts](https://docs
 
 ### Templates
 
-Templating in Helm is done via golang's [text/template](https://golang.org/pkg/text/template/)
+Templating in Helm is done via golang's [text/template](https://pkg.go.dev/text/template)
 and [sprig](https://pkg.go.dev/github.com/Masterminds/sprig?utm_source=godoc%27).
 
 Some information on how all the inner workings behave:

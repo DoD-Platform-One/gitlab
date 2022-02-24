@@ -1,8 +1,8 @@
 ---
 apiVersion: v1
 name: gitlab
-version: 5.6.2-bb.5
-appVersion: 14.6.2
+version: 5.7.1-bb.0
+appVersion: 14.7.1
 description: Web-based Git-repository manager with wiki and issue-tracking features.
 keywords:
 - gitlab
@@ -15,4 +15,4 @@ maintainers:
   email: support@gitlab.com
 annotations:
   bigbang.dev/applicationVersions: |
-    - Gitlab: 14.6.2
+    - Gitlab: 14.7.1

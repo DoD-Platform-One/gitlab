@@ -22,8 +22,7 @@ The following adjustments were made to the NGINX fork:
 - Replace `controller.service.loadBalancerIP` with `global.hosts.externalIP`
 - Added support to add common labels through `common.labels` configuration option
 - `controller-deployment.yaml`:
-  - Disabled the use of `nginx-ingress.controller.nodeSelector` value
   - Add `podlabels` and `global.pod.labels` to `.spec.template.metadata.labels`
 - `default-backend-deployment.yaml`:
-  - Disable the use of `nginx-ingress.defaultbackend.nodeSelector` value
   - Add `podlabels` and `global.pod.labels` to `.spec.template.metadata.labels`
+- Disable NGINX's default nodeSelectors.
