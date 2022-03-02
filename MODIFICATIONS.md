@@ -52,9 +52,9 @@
       sidecar.istio.io/inject: "false"
     {{- end }}
     ```
-## gitlab/chart/templates/shared-secrets/_self-signed-cert-job.yml
+## gitlab/chart/templates/shared-secrets/self-signed-cert-job.yml
 - add curl to quit isto proxy
-  lines 108-114
+  lines 107-113
   ```
   {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}
   # Stop istio sidecar container so gitlab can continue installing

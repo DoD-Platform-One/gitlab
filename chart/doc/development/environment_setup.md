@@ -40,7 +40,7 @@ When dealing with networking, storage, or other complex issues, a cloud Kubernet
 
 The following local cluster options are supported:
 
-- [Minikube](minikube/index.md) - Cluster in virtual machines
+- [minikube](minikube/index.md) - Cluster in virtual machines
 - [KinD (Kubernetes in Docker)](kind/index.md) - Cluster in Docker containers
 
 ### Cloud cluster

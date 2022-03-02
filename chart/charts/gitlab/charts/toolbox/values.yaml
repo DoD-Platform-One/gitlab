@@ -21,6 +21,10 @@ extraEnv: {}
 antiAffinityLabels:
   matchLabels: {}
 
+affinity:
+  podAntiAffinity:
+    topologyKey:
+
 common:
   labels: {}
 

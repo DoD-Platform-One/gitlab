@@ -15,6 +15,8 @@ global:
         secret: my-incoming-mail-secret
         key: secret
       mailbox: inbox
+      deliveryMethod: sidekiq
+      authToken: {}
     serviceDeskEmail:
       enabled: true
       address: project_contact+%{key}@gmail.com
@@ -28,3 +30,5 @@ global:
         secret: my-service-desk-email-secret
         key: secret
       mailbox: inbox
+      deliveryMethod: sidekiq
+      authToken: {}

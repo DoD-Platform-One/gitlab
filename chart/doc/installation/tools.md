@@ -41,7 +41,7 @@ gcloud container clusters get-credentials <cluster-name> --zone <zone> --project
 For the most up to date instructions, follow the Amazon EKS documentation on
 [connecting to a cluster](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html#eks-configure-kubectl).
 
-#### Minikube
+#### minikube
 
 If you are doing local development, you can use `minikube` as your
 local cluster. If `kubectl cluster-info` is not showing `minikube` as the current

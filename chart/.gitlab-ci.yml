@@ -42,6 +42,7 @@ variables:
 
 stages:
   - prepare
+  - test
   - preflight
   - review
   - staging
@@ -54,6 +55,16 @@ stages:
   - release-package
   - cleanup
   - report
+
+include:
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+dependency_scanning:
+  needs: []
+  before_script: []
+secret_detection:
+  needs: []
+  before_script: []
 
 before_script:
   - source scripts/ci/autodevops.sh
@@ -482,7 +493,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.15-vale-2.14.0-markdownlint-0.30.0
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.15-vale-2.15.0-markdownlint-0.31.0
   stage: prepare
   cache: {}
   dependencies: []

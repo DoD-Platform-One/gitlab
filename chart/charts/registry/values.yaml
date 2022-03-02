@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.22.0-gitlab'
+  tag: 'v3.27.1-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -197,6 +197,11 @@ resources:
 ## Node labels for pod assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}
+
+affinity:
+  podAntiAffinity:
+    topologyKey:
+
 # Protocol/Host only. '/jwt/auth' will be appended.
 authEndpoint:
 # Do not change this

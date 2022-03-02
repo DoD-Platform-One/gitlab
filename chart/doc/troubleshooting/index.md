@@ -8,8 +8,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 ## UPGRADE FAILED: "$name" has no deployed releases
 
-This error will occur on your second install/upgrade if your initial
-install failed.
+This error occurs on your second install/upgrade if your initial install failed.
 
 If your initial install completely failed, and GitLab was never operational, you
 should first purge the failed install before installing again.
@@ -217,6 +216,23 @@ actually applied to the deployment.
     ```shell
     helm upgrade --install --values - YOUR-RELEASE-NAME gitlab/gitlab < <(helm get values YOUR-RELEASE-NAME)
     ```
+
+### cannot patch `gitlab-kube-state-metrics` with kind Deployment
+
+Upgrading from **Prometheus** version `11.16.9` to `15.0.4` changes the selector labels
+used on the [kube-state-metrics Deployment](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics),
+which is disabled by default (`prometheus.kubeStateMetrics.enabled=false`).
+
+If this error message is encountered, meaning `prometheus.kubeStateMetrics.enabled=true`, then upgrading
+requires [an additional step](https://artifacthub.io/packages/helm/prometheus-community/prometheus#to-15-0):
+
+1. Remove the old **kube-state-metrics** Deployment.
+
+   ```shell
+   kubectl delete deployments.apps -l app.kubernetes.io/instance=RELEASE_NAME,app.kubernetes.io/name=kube-state-metrics --cascade=orphan
+   ```
+
+1. Perform an upgrade via Helm.
 
 ## `ImagePullBackOff`, `Failed to pull image` and `manifest unknown` errors
 

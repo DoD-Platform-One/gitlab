@@ -12,6 +12,10 @@ describe 'GitLab Ingress configuration(s)' do
     template.dig("Ingress/#{ingress_name}", 'apiVersion')
   end
 
+  def get_ingress_class_name(template, ingress_class_name)
+    template.dig("IngressClass/#{ingress_class_name}", 'metadata', 'name')
+  end
+
   def get_ingress_class_annotation(template, ingress_name)
     template.dig("Ingress/#{ingress_name}", 'metadata', 'annotations', 'kubernetes.io/ingress.class')
   end
@@ -296,6 +300,76 @@ describe 'GitLab Ingress configuration(s)' do
           annotation = template.dig("Ingress/#{ingress_name}", 'metadata', 'annotations', 'kubernetes.io/ingress.class')
           expect(annotation).to eq(nil)
         end
+      end
+    end
+  end
+
+  describe 'ingress class v2' do
+    context 'when rendering ingress class configuration' do
+      using RSpec::Parameterized::TableSyntax
+      where(:api_version, :class_name, :expected_annotation, :expected_spec) do
+        'v1beta1' | nil    | 'test-nginx' | nil
+        'v1beta1' | 'foo'  | 'foo'        | nil
+        'v1beta1' | '""'   | ""           | nil
+        'v1beta1' | 'none' | nil          | nil
+        'v1'      | nil    | nil          | 'test-nginx'
+        'v1'      | 'foo'  | nil          | 'foo'
+        'v1'      | '""'   | nil          | ""
+        'v1'      | 'none' | nil          | nil
+      end
+
+      with_them do
+        it 'populates expected result' do
+          values = enable_all_ingress.deep_merge(YAML.safe_load(%(
+              global:
+                ingress:
+                  apiVersion: networking.k8s.io/#{api_version}
+                  class: #{class_name}
+            )))
+
+          template = HelmTemplate.new(values)
+          expect(template.exit_code).to eq(0)
+
+          ingress_names.each do |ingress_name|
+            annotation = get_ingress_class_annotation(template, ingress_name)
+            expect(annotation).to eq(expected_annotation)
+
+            class_spec = get_ingress_class_spec(template, ingress_name)
+            expect(class_spec).to eq(expected_spec)
+          end
+        end
+      end
+    end
+  end
+
+  describe 'ingress class name' do
+    let(:ingress_class_specified) do
+      default_values.deep_merge(YAML.safe_load(%(
+        global:
+          ingress:
+            class: specified
+      )))
+    end
+
+    context 'default' do
+      it 'populates the default name' do
+        template = HelmTemplate.new(default_values)
+        expect(template.exit_code).to eq(0)
+
+        expected_name = 'test-nginx'
+        name = get_ingress_class_name(template, expected_name)
+        expect(name).to eq(expected_name)
+      end
+    end
+
+    context 'specified' do
+      it 'populates the specified name' do
+        template = HelmTemplate.new(ingress_class_specified)
+        expect(template.exit_code).to eq(0)
+
+        expected_name = 'specified'
+        name = get_ingress_class_name(template, expected_name)
+        expect(name).to eq(expected_name)
       end
     end
   end

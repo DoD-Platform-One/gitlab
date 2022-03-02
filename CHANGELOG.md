@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.8.2-bb.0] - 2022-03-01
+### Changed
+- Update GitLab to app version 14.8.2 and helm chart to version v5.8.2
+
 ## [5.7.1-bb.0] - 2022-02-22
 ### Changed
 - Update GitLab to app version 14.7.1 and helm chart to version v5.7.1

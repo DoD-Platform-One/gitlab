@@ -3,6 +3,7 @@ global:
   # See docs.gitlab.com/charts/charts/globals
   # Configure host & domain
   hosts:
+    hostSuffix: gitlab
     domain: example.com
   # configure DB connection
   psql:
@@ -13,6 +14,7 @@ global:
       key: postgresql-password
   # configure geo (primary)
   geo:
+    nodeName: London Office
     enabled: true
     role: primary
 # External DB, disable

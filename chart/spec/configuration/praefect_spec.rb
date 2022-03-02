@@ -145,37 +145,6 @@ describe 'Praefect configuration' do
           expect(template.dig(r)).to be_truthy
         end
       end
-
-      context 'with operator enabled' do
-        let(:values_operator_enabled) do
-          YAML.safe_load(%(
-            global:
-              operator:
-                enabled: true
-          )).deep_merge(values_multiple_virtual_storages)
-        end
-
-        let(:operator_resources) do
-          [
-            'ServiceAccount/test-gitaly-pause',
-            'Role/test-gitaly-pause',
-            'RoleBinding/test-gitaly-pause',
-            'Job/test-gitaly-pause'
-          ]
-        end
-
-        let(:template) { HelmTemplate.new(values_operator_enabled) }
-
-        it 'templates successfully' do
-          expect(template.exit_code).to eq(0)
-        end
-
-        it 'generates operator-related resources' do
-          operator_resources.each do |r|
-            expect(template.dig(r)).to be_truthy
-          end
-        end
-      end
     end
 
     context 'When customer provides additional labels' do

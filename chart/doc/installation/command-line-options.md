@@ -84,13 +84,16 @@ helm inspect values gitlab/gitlab
 
 ### Common settings
 
-| Parameter                                        | Description                                                                                            | Default       |
-|--------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
-| `global.appConfig.incomingEmail.address`         | The email address to reference the item being replied to (example: `gitlab-incoming+%{key}@gmail.com`) | empty         |
-| `global.appConfig.incomingEmail.enabled`         | Enable incoming email                                                                                  | false         |
-| `global.appConfig.incomingEmail.expungeDeleted`  | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false         |
-| `global.appConfig.incomingEmail.logger.logPath`  | Path to write JSON structured logs to; set to "" to disable this logging                               | `/dev/stdout` |
-| `global.appConfig.incomingEmail.inboxMethod`     | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                    | `imap`        |
+| Parameter                                         | Description                                                                                            | Default                                                    |
+|---------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
+| `global.appConfig.incomingEmail.address`          | The email address to reference the item being replied to (example: `gitlab-incoming+%{key}@gmail.com`) | empty                                                      |
+| `global.appConfig.incomingEmail.enabled`          | Enable incoming email                                                                                  | false                                                      |
+| `global.appConfig.incomingEmail.expungeDeleted`   | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false                                                      |
+| `global.appConfig.incomingEmail.logger.logPath`   | Path to write JSON structured logs to; set to "" to disable this logging                               | `/dev/stdout`                                              |
+| `global.appConfig.incomingEmail.inboxMethod`      | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                    | `imap`                                                     |
+| `global.appConfig.incomingEmail.deliveryMethod`   | How mailroom can send an email content to Rails app for processing. Either `sidekiq` or `webhook`      | `sidekiq`                                                  |
+| `gitlab.appConfig.incomingEmail.authToken.key`    | Key to incoming email token in incoming email secret. Effective when the delivery method is webhook.   | `authToken`                                                |
+| `gitlab.appConfig.incomingEmail.authToken.secret` | Incoming email authentication secret. Effective when the delivery method is webhook.                   | `{Release.Name}-incoming-email-auth-token`                 |
 
 ### IMAP settings
 
@@ -128,13 +131,16 @@ must be `+%{key}`.
 
 ### Common settings
 
-| Parameter                                           | Description                                                                                            | Default       |
-|-----------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
-| `global.appConfig.serviceDeskEmail.address`         | The email address to reference the item being replied to (example: `project_contact+%{key}@gmail.com`) | empty         |
-| `global.appConfig.serviceDeskEmail.enabled`         | Enable service desk email                                                                              | false         |
-| `global.appConfig.serviceDeskEmail.expungeDeleted`  | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false         |
-| `global.appConfig.serviceDeskEmail.logger.logPath`  | Path to write JSON structured logs to; set to "" to disable this logging                               | `/dev/stdout` |
-| `global.appConfig.serviceDeskEmail.inboxMethod`     | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                    | `imap`        |
+| Parameter                                            | Description                                                                                                  | Default                                                        |
+|------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| `global.appConfig.serviceDeskEmail.address`          | The email address to reference the item being replied to (example: `project_contact+%{key}@gmail.com`)       | empty                                                          |
+| `global.appConfig.serviceDeskEmail.enabled`          | Enable service desk email                                                                                    | false                                                          |
+| `global.appConfig.serviceDeskEmail.expungeDeleted`   | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery       | false                                                          |
+| `global.appConfig.serviceDeskEmail.logger.logPath`   | Path to write JSON structured logs to; set to "" to disable this logging                                     | `/dev/stdout`                                                  |
+| `global.appConfig.serviceDeskEmail.inboxMethod`      | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                          | `imap`                                                         |
+| `global.appConfig.serviceDeskEmail.deliveryMethod`   | How mailroom can send an email content to Rails app for processing. Either `sidekiq` or `webhook`            | `sidekiq`                                                      |
+| `gitlab.appConfig.serviceDeskEmail.authToken.key`    | Key to service desk email token in service desk email secret. Effective when the delivery method is webhook. | `authToken`                                                    |
+| `gitlab.appConfig.serviceDeskEmail.authToken.secret` | service-desk email authentication secret. Effective when the delivery method is webhook.                     | `{Release.Name}-service-desk-email-auth-token`                 |
 
 ### IMAP settings
 

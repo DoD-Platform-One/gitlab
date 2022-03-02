@@ -6,12 +6,16 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # GitLab Geo
 
-GitLab Geo provides the ability to have read-only, geographically distributed
-application deployments.
+GitLab Geo provides the ability to have geographically distributed application
+deployments.
 
 While external database services can be used, these documents focus on
 the use of the [Omnibus GitLab](https://docs.gitlab.com/omnibus/) for PostgreSQL to provide the
 most platform agnostic guide, and make use of the automation included in `gitlab-ctl`.
+
+NOTE:
+See the [defined terms](https://docs.gitlab.com/ee/administration/geo/glossary.html)
+to describe all aspects of Geo (mainly the distinction between `site` and `node`).
 
 ## Requirements
 
@@ -22,46 +26,47 @@ To use GitLab Geo with the GitLab Helm chart, the following requirements must be
   have WAL support required for replication.
 - The supplied database must:
   - Support replication.
-  - The primary database must reachable by the primary application deployment,
+  - The primary database must be reachable by the
+  - The primary database must be reachable by the primary site,
     and all secondary database nodes (for replication).
-  - Secondary databases only need to be reachable by the secondary application
-    deployments.
-  - Support SSL between primary and secondary.
-- The primary application instance must be reachable via HTTPS by all secondary instances.
-  Secondary application instances must be accessible to the primary instance via HTTPS.
+  - Secondary databases only need to be reachable by the secondary sites.
+  - Support SSL between primary and secondary database nodes.
+- The primary site must be reachable via HTTP(S) by all secondary sites.
+  Secondary sites must be accessible to the primary site via HTTP(S).
 
 ## Overview
 
-This guide uses 2 Omnibus GitLab instances, configuring only the PostgreSQL
-services needed, and 2 deployments of the GitLab Helm chart. It is intended to be
-the _minimal_ required configuration. This documentation does not
-include SSL from application to database, support for other database providers, or
-promoting a secondary instance to primary.
+This guide uses 2 Omnibus GitLab database nodes,
+configuring only the PostgreSQL services needed, and 2 deployments of the
+GitLab Helm chart. It is intended to be the _minimal_ required configuration.
+This documentation does not include SSL from application to database, support
+for other database providers, or
+[promoting a secondary site to primary](https://docs.gitlab.com/ee/administration/geo/disaster_recovery/).
 
 The outline below should be followed in order:
 
-1. [Setup Omnibus instances](#set-up-omnibus-instances)
+1. [Setup Omnibus database nodes](#set-up-omnibus-database-nodes)
 1. [Setup Kubernetes clusters](#set-up-kubernetes-clusters)
 1. [Collect information](#collect-information)
 1. [Configure Primary database](#configure-primary-database)
-1. [Deploy chart as Geo Primary](#deploy-chart-as-geo-primary)
-1. [Set the Geo primary instance](#set-the-geo-primary-instance)
+1. [Deploy chart as Geo Primary site](#deploy-chart-as-geo-primary-site)
+1. [Set the Geo primary site](#set-the-geo-primary-site)
 1. [Configure Secondary database](#configure-secondary-database)
-1. [Copy secrets from primary cluster to secondary cluster](#copy-secrets-from-the-primary-cluster-to-the-secondary-cluster)
-1. [Deploy chart as Geo Secondary](#deploy-chart-as-geo-secondary)
-1. [Add Secondary Geo instance via Primary](#add-secondary-geo-instance-via-primary)
+1. [Copy secrets from primary site to secondary site](#copy-secrets-from-the-primary-site-to-the-secondary-site)
+1. [Deploy chart as Geo Secondary site](#deploy-chart-as-geo-secondary-site)
+1. [Add Secondary Geo site via Primary](#add-secondary-geo-site-via-primary)
 1. [Confirm Operational Status](#confirm-operational-status)
 
-## Set up Omnibus instances
+## Set up Omnibus database nodes
 
-For this process, two instances are required. One is the Primary, the other
-the Secondary. You may use any provider of machine infrastructure, on-premise or
-from a cloud provider.
+For this process, two nodes are required. One is the Primary database node, the
+other the Secondary database node. You may use any provider of machine
+infrastructure, on-premise or from a cloud provider.
 
 Bear in mind that communication is required:
 
-- Between the two database instances for replication.
-- Between each database instance and their respective Kubernetes deployments:
+- Between the two database nodes for replication.
+- Between each database node and their respective Kubernetes deployments:
   - The primary needs to expose TCP port `5432`.
   - The secondary needs to expose TCP ports `5432` & `5431`.
 
@@ -81,7 +86,7 @@ provider, on-premise or from a cloud provider.
 
 Bear in mind that communication is required:
 
-- To the respective database instances:
+- To the respective database nodes:
   - Primary outbound to TCP `5432`.
   - Secondary outbound to TCP `5432` and `5431`.
 - Between both Kubernetes Ingress via HTTPS.
@@ -127,17 +132,17 @@ value for you to make note of.
 
 ## Configure Primary database
 
-_This section is performed on the Primary Omnibus GitLab instance._
+_This section is performed on the Primary Omnibus GitLab database node._
 
-To configure the Primary database instance's Omnibus GitLab, work from
+To configure the Primary database node's Omnibus GitLab, work from
 this example configuration:
 
 ```ruby
 ### Geo Primary
-external_url 'http://gitlab-primary.example.com'
+external_url 'http://gitlab.example.com'
 roles ['geo_primary_role']
 # The unique identifier for the Geo node.
-gitlab_rails['geo_node_name'] = 'gitlab-primary.example.com'
+gitlab_rails['geo_node_name'] = 'London Office'
 gitlab_rails['auto_migrate'] = false
 ## turn off everything but the DB
 sidekiq['enable']=false
@@ -156,15 +161,16 @@ postgresql['sql_user_password'] = 'gitlab_user_password_hash'
 # !! CAUTION !!
 # This list of CIDR addresses should be customized
 # - primary application deployment
-# - secondary database instance(s)
+# - secondary database node(s)
 postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
 ```
 
 We must replace several items:
 
-- `external_url` must be updated to reflect the host name of our Primary
-  instance.
-- `gitlab_rails['geo_node_name']` must be replaced with a unique name for your node.
+- `external_url` must be updated to reflect the host name of our Primary site.
+- `gitlab_rails['geo_node_name']` must be replaced with a unique name for your
+  site. See the Name field in
+  [Common settings](https://docs.gitlab.com/ee/user/admin_area/geo_nodes.html#common-settings).
 - `gitlab_user_password_hash` must be replaced with the hashed form of the
   `gitlab` password.
 - `postgresql['md5_auth_cidr_addresses']` can be update to be a list of
@@ -185,16 +191,16 @@ After the configuration above is prepared:
    `gitlab-ctl restart postgresql`.
 1. Run `gitlab-ctl set-replication-password` to set the password for
    the `gitlab_replicator` user.
-1. Retrieve the Primary database server's public certificate, this is needed
+1. Retrieve the Primary database node's public certificate, this is needed
    for the Secondary database to be able to replicate (save this output):
 
    ```shell
    cat ~gitlab-psql/data/server.crt
    ```
 
-## Deploy chart as Geo Primary
+## Deploy chart as Geo Primary site
 
-_This section is performed on the Primary Kubernetes cluster._
+_This section is performed on the Primary site's Kubernetes cluster._
 
 To deploy this chart as a Geo Primary, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/primary.yaml):
 
@@ -225,7 +231,7 @@ To deploy this chart as a Geo Primary, start [from this example configuration](h
          key: postgresql-password
      # configure geo (primary)
      geo:
-       nodeName: primary.example.com
+       nodeName: London Office
        enabled: true
        role: primary
    # External DB, disable
@@ -233,12 +239,16 @@ To deploy this chart as a Geo Primary, start [from this example configuration](h
      install: false
    ```
 
+   <!-- markdownlint-disable MD044 -->
    - [global.hosts.domain](../../charts/globals.md#configure-host-settings)
    - [global.psql.host](../../charts/globals.md#configure-postgresql-settings)
+   - global.geo.nodeName must match
+     [the Name field of a Geo site in the Admin Area](https://docs.gitlab.com/ee/user/admin_area/geo_nodes.html#common-settings)
    - Also configure any additional settings, such as:
      - [Configuring SSL/TLS](../../installation/deployment.md#tls-certificates)
      - [Using external Redis](../external-redis/index.md)
      - [using external Object Storage](../external-object-storage/index.md)
+   <!-- markdownlint-enable MD044 -->
 
 1. Deploy the chart using this configuration:
 
@@ -256,10 +266,10 @@ To deploy this chart as a Geo Primary, start [from this example configuration](h
 1. Log in to GitLab, and upload your GitLab license file by navigating to
    `/admin/license`. **This step is required for Geo to function.**
 
-## Set the Geo Primary instance
+## Set the Geo Primary site
 
 Now that the chart has been deployed, and a license uploaded, we can configure
-this as the Primary instance. We will do this via the Toolbox Pod.
+this as the Primary site. We will do this via the Toolbox Pod.
 
 1. Find the Toolbox Pod
 
@@ -316,18 +326,18 @@ this as the Primary instance. We will do this via the Toolbox Pod.
 
 ## Configure Secondary database
 
-_This section is performed on the Secondary Omnibus GitLab instance._
+_This section is performed on the Secondary Omnibus GitLab database node._
 
-To configure the Secondary database instance's Omnibus GitLab, work from
+To configure the Secondary database node's Omnibus GitLab, work from
 this example configuration:
 
 ```ruby
 ### Geo Secondary
-external_url 'http://gitlab-secondary.example.com'
+external_url 'http://gitlab.example.com'
 roles ['geo_secondary_role']
 gitlab_rails['enable'] = true
 # The unique identifier for the Geo node.
-gitlab_rails['geo_node_name'] = 'gitlab-secondary.example.com'
+gitlab_rails['geo_node_name'] = 'Shanghai Office'
 gitlab_rails['auto_migrate'] = false
 geo_secondary['auto_migrate'] = false
 ## turn off everything but the DB
@@ -347,14 +357,14 @@ postgresql['sql_user_password'] = 'gitlab_user_password_hash'
 # !! CAUTION !!
 # This list of CIDR addresses should be customized
 # - secondary application deployment
-# - secondary database instance(s)
+# - secondary database node(s)
 postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
 geo_postgresql['listen_address'] = '0.0.0.0'
 geo_postgresql['sql_user_password'] = 'gitlab_geo_user_password_hash'
 # !! CAUTION !!
 # This list of CIDR addresses should be customized
 # - secondary application deployment
-# - secondary database instance(s)
+# - secondary database node(s)
 geo_postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
 gitlab_rails['db_password']='gitlab_user_password'
 ```
@@ -363,7 +373,8 @@ We must replace several items:
 
 - `external_url` must be updated to reflect the host name of our Secondary
   instance.
-- `gitlab_rails['geo_node_name']` must be replaced with a unique name for your node.
+- `gitlab_rails['geo_node_name']` must be replaced with a unique name for your site. See the Name field in
+  [Common settings](https://docs.gitlab.com/ee/user/admin_area/geo_nodes.html#common-settings).
 - `gitlab_user_password_hash` must be replaced with the hashed form of the
   `gitlab` password.
 - `postgresql['md5_auth_cidr_addresses']` should be updated to be a list of
@@ -384,7 +395,7 @@ _it is not best practice_.
 
 After configuration above is prepared:
 
-1. Check TCP connectivity to the **primary** node's PostgreSQL server:
+1. Check TCP connectivity to the **primary** site's PostgreSQL node:
 
    ```shell
    openssl s_client -connect <primary_node_ip>:5432 </dev/null
@@ -401,15 +412,15 @@ After configuration above is prepared:
    If this step fails, you may be using the wrong IP address, or a firewall may
    be preventing access to the server. Check the IP address, paying close
    attention to the difference between public and private addresses and ensure
-   that, if a firewall is present, the **secondary** node is permitted to connect
-   to the **primary** node on port 5432.
+   that, if a firewall is present, the **secondary** PostgreSQL node is
+   permitted to connect to the **primary** PostgreSQL node on TCP port 5432.
 
 1. Place the content into `/etc/gitlab/gitlab.rb`
 1. Run `gitlab-ctl reconfigure`. If you experience any issues in regards to the
    service not listening on TCP, try directly restarting it with
    `gitlab-ctl restart postgresql`.
-1. Place the Primary database's certificate content from above into `primary.crt`
-1. Set up PostgreSQL TLS verification on the **secondary** node:
+1. Place the Primary PostgreSQL node's certificate content from above into `primary.crt`
+1. Set up PostgreSQL TLS verification on the **secondary** PostgreSQL node:
 
    Install the `primary.crt` file:
 
@@ -424,9 +435,10 @@ After configuration above is prepared:
 
    PostgreSQL will now only recognize that exact certificate when verifying TLS
    connections. The certificate can only be replicated by someone with access
-   to the private key, which is **only** present on the **primary** node.
+   to the private key, which is **only** present on the **primary** PostgreSQL
+   node.
 
-1. Test that the `gitlab-psql` user can connect to the **primary** node's database
+1. Test that the `gitlab-psql` user can connect to the **primary** site's PostgreSQL
    (the default Omnibus database name is `gitlabhq_production`):
 
    ```shell
@@ -436,35 +448,37 @@ After configuration above is prepared:
       -U gitlab_replicator \
       -d "dbname=gitlabhq_production sslmode=verify-ca" \
       -W \
-      -h <primary_node_ip>
+      -h <primary_database_node_ip>
    ```
 
    When prompted enter the password collected earlier for the
    `gitlab_replicator` user. If all worked correctly, you should see
-   the list of **primary** node's databases.
+   the list of **primary** PostgreSQL node's databases.
 
    A failure to connect here indicates that the TLS configuration is incorrect.
-   Ensure that the contents of `~gitlab-psql/data/server.crt` on the **primary** node
-   match the contents of `~gitlab-psql/.postgresql/root.crt` on the **secondary** node.
+   Ensure that the contents of `~gitlab-psql/data/server.crt` on the
+   **primary** PostgreSQL node
+   match the contents of `~gitlab-psql/.postgresql/root.crt` on the
+   **secondary** PostgreSQL node.
 
 1. Replicate the databases. Replace `PRIMARY_DATABASE_HOST` with the IP or hostname
-of your Primary database instance:
+of your Primary PostgreSQL node:
 
    ```shell
    gitlab-ctl replicate-geo-database --slot-name=geo_2 --host=PRIMARY_DATABASE_HOST
    ```
 
 1. After replication has finished, we must reconfigure the Omnibus GitLab one last time
-   to ensure `pg_hba.conf` is correct for the secondary:
+   to ensure `pg_hba.conf` is correct for the secondary PostgreSQL node:
 
    ```shell
    gitlab-ctl reconfigure
    ```
 
-## Copy secrets from the primary cluster to the secondary cluster
+## Copy secrets from the primary site to the secondary site
 
-Now copy a few secrets from the Primary Kubernetes deployment to the
-Secondary Kubernetes deployment:
+Now copy a few secrets from the Primary site's Kubernetes deployment to the
+Secondary site's Kubernetes deployment:
 
 - `gitlab-geo-gitlab-shell-host-keys`
 - `gitlab-geo-rails-secret`
@@ -497,11 +511,11 @@ kubectl --namespace gitlab create secret generic geo \
    --from-literal=geo-postgresql-password=gitlab_geo_user_password
 ```
 
-## Deploy chart as Geo Secondary
+## Deploy chart as Geo Secondary site
 
-_This section is performed on the Secondary Kubernetes cluster._
+_This section is performed on the Secondary site's Kubernetes cluster._
 
-To deploy this chart as a Geo Secondary, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/secondary.yaml).
+To deploy this chart as a Geo Secondary site, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/secondary.yaml).
 
 1. Create a `secondary.yaml` file based on the [example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/secondary.yaml)
    and update the configuration to reflect the correct values:
@@ -525,7 +539,7 @@ To deploy this chart as a Geo Secondary, start [from this example configuration]
      geo:
        enabled: true
        role: secondary
-       nodeName: secondary.example.com
+       nodeName: Shanghai Office
        psql:
          host: geo-2.db.example.com
          port: 5431
@@ -537,14 +551,18 @@ To deploy this chart as a Geo Secondary, start [from this example configuration]
      install: false
    ```
 
+   <!-- markdownlint-disable MD044 -->
    - [`global.hosts.domain`](../../charts/globals.md#configure-host-settings)
    - [`global.psql.host`](../../charts/globals.md#configure-postgresql-settings)
    - [`global.geo.psql.host`](../../charts/globals.md#configure-postgresql-settings)
+   - global.geo.nodeName must match
+     [the Name field of a Geo site in the Admin Area](https://docs.gitlab.com/ee/user/admin_area/geo_nodes.html#common-settings)
    - Also configure any additional settings, such as:
      - [Configuring SSL/TLS](../../installation/deployment.md#tls-certificates)
      - [Using external Redis](../external-redis/index.md)
      - [using external Object Storage](../external-object-storage/index.md)
-   - For external databases, `global.psql.host` is the secondary, read-only database, while `global.geo.psql.host` is the tracking database
+   - For external databases, `global.psql.host` is the secondary, read-only replica database, while `global.geo.psql.host` is the Geo tracking database
+   <!-- markdownlint-enable MD044 -->
 
 1. Deploy the chart using this configuration:
 
@@ -554,36 +572,30 @@ To deploy this chart as a Geo Secondary, start [from this example configuration]
 
 1. Wait for the deployment to complete, and the application to come online.
 
-## Add Secondary Geo instance via Primary
+## Add Secondary Geo site via Primary
 
 Now that both databases are configured and applications are deployed, we must tell
-the Primary that the Secondary exists:
+the Primary site that the Secondary site exists:
 
-1. Visit the **primary** instance, and on the top bar, select
+1. Visit the **primary** site, and on the top bar, select
    **Menu >** **{admin}** **Admin**.
 1. On the left sidebar, select **Geo**.
-1. Select **New node**.
-1. Add the **secondary** instance. Use the full URL for the URL.
+1. Select **Add site**.
+1. Add the **secondary** site. Use the full URL for the URL.
    **Do not** select the **This is a primary node** checkbox.
-1. Enter a Name with the `global.geo.nodeName`. These values must always match exactly, character for character.
+1. Enter a Name with the `global.geo.nodeName` of the Secondary site. These values must always match exactly, character for character.
 1. Optionally, choose which groups or storage shards should be replicated by the
-   **secondary** instance. Leave blank to replicate all.
+   **secondary** site. Leave blank to replicate all.
 1. Select **Add node**.
 
-After the **secondary** instance is added to the administration panel, it automatically starts
-replicating missing data from the **primary** instance. This process is known as "backfill".
-Meanwhile, the **primary** instance starts to notify each **secondary** instance of any changes, so
-that the **secondary** instance can act on those notifications immediately.
-
-## Use Geo proxying for secondary sites
-
-To serve read-write traffic by proxying to the primary site, you can
-[enable Geo secondary proxying](https://docs.gitlab.com/ee/administration/geo/secondary_proxy/)
-and use a single, unified URL for all Geo sites.
+After the **secondary** site is added to the administration panel, it automatically starts
+replicating missing data from the **primary** site. This process is known as "backfill".
+Meanwhile, the **primary** site starts to notify each **secondary** site of any changes, so
+that the **secondary** site can replicate those changes promptly.
 
 ## Confirm Operational Status
 
-The final step is to verify the Geo replication status on the secondary instance once fully
+The final step is to double check the Geo configuration on the secondary site once fully
 configured, via the Toolbox Pod.
 
 1. Find the Toolbox Pod:

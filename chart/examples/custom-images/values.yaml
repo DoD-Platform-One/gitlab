@@ -34,7 +34,6 @@ gitlab:
   migrations:
     <<: *custom
     init: *custom
-  operator: *custom
   sidekiq:
     <<: *custom
     init: *custom

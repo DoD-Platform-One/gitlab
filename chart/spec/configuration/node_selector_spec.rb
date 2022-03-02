@@ -28,16 +28,6 @@ describe 'Node Selector configuration' do
         ingress:
           configureCertmanager: false
 
-        # ensures inclusion of:
-        # - gitlab/charts/webservice/templates/pause_job.yaml
-        # - gitlab/charts/sidekiq/templates/pause_job.yaml
-        # - gitlab/charts/gitaly/templates/pause_job.yaml
-        # - gitlab/charts/operator/templates/deployment.yaml
-        operator:
-          enabled: true
-          rollout:
-            autoPause: true
-
       # ensures inclusion of:
       # - nginx-ingress/templates/admission-webhooks/job-patch/job-createSecret.yaml
       # - nginx-ingress/templates/admission-webhooks/job-patch/job-patchWebhook.yaml

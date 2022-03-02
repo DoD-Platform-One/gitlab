@@ -47,7 +47,9 @@ describe 'Mailroom configuration' do
             secret: mailroom-secret
       ))
     end
+
     let(:app_config) { incoming_email_settings }
+
     let(:values) do
       YAML.safe_load(%(
         certmanager-issuer:
@@ -56,14 +58,18 @@ describe 'Mailroom configuration' do
           appConfig: #{app_config.to_json}
       ))
     end
+
     let(:template) { HelmTemplate.new(values) }
+
     let(:raw_mail_room_yml) { template.dig('ConfigMap/test-mailroom', 'data', 'mail_room.yml') }
+
     let(:mail_room_yml) do
       data = raw_mail_room_yml.dup
       data.gsub!(/:password: .*/, ':password: secret')
       data.gsub!(/:redis_url: .*/, 'redis_url: redis://test.example.com')
       YAML.safe_load(data, permitted_classes: [Symbol])
     end
+
     let(:mailbox) { mail_room_yml[:mailboxes].first }
 
     it 'renders mail_room.yml' do
@@ -98,6 +104,7 @@ describe 'Mailroom configuration' do
               secret: mailroom-secret
         )))
       end
+
       let(:mailbox) { mail_room_yml[:mailboxes].last }
 
       it 'renders both mailboxes in mail_room.yml' do
@@ -133,7 +140,9 @@ describe 'Mailroom configuration' do
           pollInterval: 30
       ))
     end
+
     let(:app_config) { incoming_email_settings }
+
     let(:values) do
       YAML.safe_load(%(
         certmanager-issuer:
@@ -142,14 +151,18 @@ describe 'Mailroom configuration' do
           appConfig: #{app_config.to_json}
       ))
     end
+
     let(:template) { HelmTemplate.new(values) }
+
     let(:raw_mail_room_yml) { template.dig('ConfigMap/test-mailroom', 'data', 'mail_room.yml') }
+
     let(:mail_room_yml) do
       data = raw_mail_room_yml.dup
       data.gsub!(/:client_secret: .*/, ':client_secret: secret')
       data.gsub!(/:redis_url: .*/, 'redis_url: redis://test.example.com')
       YAML.safe_load(data, permitted_classes: [Symbol])
     end
+
     let(:mailbox) { mail_room_yml[:mailboxes].first }
 
     it 'renders mail_room.yml' do
@@ -334,6 +347,190 @@ describe 'Mailroom configuration' do
       expect(t.dig('HorizontalPodAutoscaler/test-mailroom', 'metadata', 'labels')).to include('global' => 'mailroom')
       expect(t.dig('NetworkPolicy/test-mailroom-v1', 'metadata', 'labels')).to include('global' => 'mailroom')
       expect(t.dig('ServiceAccount/test-mailroom', 'metadata', 'labels')).to include('global' => 'mailroom')
+    end
+  end
+
+  context 'with incoming_email webhook delivery method' do
+    let(:auth_token_secret) { "test-mailroom-auth-token" }
+
+    let(:incoming_email_settings) do
+      YAML.safe_load(%(
+        incomingEmail:
+          enabled: true
+          password:
+            secret: mailroom-secret
+          deliveryMethod: webhook
+          authToken:
+            secret: "#{auth_token_secret}"
+      ))
+    end
+
+    let(:app_config) { incoming_email_settings }
+
+    let(:values) do
+      YAML.safe_load(%(
+        certmanager-issuer:
+          email: test@example.com
+        global:
+          appConfig: #{app_config.to_json}
+      ))
+    end
+
+    let(:template) { HelmTemplate.new(values) }
+
+    let(:mail_room_yml) do
+      YAML.safe_load(template.dig('ConfigMap/test-mailroom', 'data', 'mail_room.yml'), permitted_classes: [Symbol])
+    end
+
+    let(:gitlab_yml) do
+      YAML.safe_load(template.dig("ConfigMap/test-webservice", "data", "gitlab.yml.erb"), permitted_classes: [Symbol])
+    end
+
+    it 'renders mail_room.yml' do
+      expect(template.exit_code).to eq(0)
+      expect(mail_room_yml[:mailboxes].length).to eq(1)
+
+      mail_box = mail_room_yml[:mailboxes].first
+
+      expect(mail_box[:delivery_method]).to eq('postback')
+      expect(mail_box[:delivery_options]).to eq(
+        delivery_url: 'http://test-webservice-default.default.svc:8181/api/v4/internal/mail_room/incoming_email',
+        jwt_auth_header: "Gitlab-Mailroom-Api-Request",
+        jwt_issuer: "gitlab-mailroom",
+        jwt_algorithm: "HS256",
+        jwt_secret_path: "/etc/gitlab/mailroom/incoming_email_webhook_secret"
+      )
+
+      projected_secret = template.get_projected_secret('Deployment/test-mailroom', 'init-mailroom-secrets', 'test-mailroom-auth-token')
+      expect(projected_secret).to eql(
+        "name" => "test-mailroom-auth-token",
+        "items" => [
+          {
+            "key" => "authToken",
+            "path" => "mailroom/incoming_email_webhook_secret"
+          }
+        ]
+      )
+    end
+
+    it 'adds secret_file support to incoming_email config inside gitlab.yml of webservice' do
+      expect(gitlab_yml["production"]["incoming_email"]).to include(
+        "secret_file" => "/etc/gitlab/mailroom/incoming_email_webhook_secret"
+      )
+      projected_secret = template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', 'test-mailroom-auth-token')
+      expect(projected_secret).to eql(
+        "name" => "test-mailroom-auth-token",
+        "items" => [
+          {
+            "key" => "authToken",
+            "path" => "mailroom/incoming_email_webhook_secret"
+          }
+        ]
+      )
+    end
+
+    context 'when authToken.secret is empty' do
+      let(:auth_token_secret) { "" }
+      let(:default_secret_name) { 'test-incoming-email-auth-token' }
+
+      it 'uses a default secret name' do
+        expect(template.get_projected_secret('Deployment/test-mailroom', 'init-mailroom-secrets', default_secret_name)).not_to be_empty
+        expect(template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', default_secret_name)).not_to be_empty
+      end
+    end
+  end
+
+  context 'with service_desk_email webhook delivery method' do
+    let(:auth_token_secret) { "test-mailroom-auth-token" }
+
+    let(:app_config) do
+      YAML.safe_load(%(
+        incomingEmail:
+          enabled: true
+          address: incoming+%{key}@test.example2.com
+          password:
+            secret: mailroom-secret
+        serviceDeskEmail:
+          enabled: true
+          address: incoming+%{key}@test.example2.com
+          password:
+            secret: mailroom-secret
+          deliveryMethod: webhook
+          authToken:
+            secret: "#{auth_token_secret}"
+      ))
+    end
+
+    let(:values) do
+      YAML.safe_load(%(
+        certmanager-issuer:
+          email: test@example.com
+        global:
+          appConfig: #{app_config.to_json}
+      ))
+    end
+
+    let(:template) { HelmTemplate.new(values) }
+
+    let(:mail_room_yml) do
+      YAML.safe_load(template.dig('ConfigMap/test-mailroom', 'data', 'mail_room.yml'), permitted_classes: [Symbol])
+    end
+
+    let(:gitlab_yml) do
+      YAML.safe_load(template.dig("ConfigMap/test-webservice", "data", "gitlab.yml.erb"), permitted_classes: [Symbol])
+    end
+
+    it 'renders mail_room.yml' do
+      puts template.stderr
+      expect(template.exit_code).to eq(0)
+      expect(mail_room_yml[:mailboxes].length).to eq(2)
+
+      mail_box = mail_room_yml[:mailboxes].last
+      expect(mail_box[:delivery_method]).to eq('postback')
+      expect(mail_box[:delivery_options]).to eq(
+        delivery_url: 'http://test-webservice-default.default.svc:8181/api/v4/internal/mail_room/service_desk_email',
+        jwt_auth_header: "Gitlab-Mailroom-Api-Request",
+        jwt_issuer: "gitlab-mailroom",
+        jwt_algorithm: "HS256",
+        jwt_secret_path: "/etc/gitlab/mailroom/service_desk_email_webhook_secret"
+      )
+
+      projected_secret = template.get_projected_secret('Deployment/test-mailroom', 'init-mailroom-secrets', 'test-mailroom-auth-token')
+      expect(projected_secret).to eql(
+        "name" => "test-mailroom-auth-token",
+        "items" => [
+          {
+            "key" => "authToken",
+            "path" => "mailroom/service_desk_email_webhook_secret"
+          }
+        ]
+      )
+    end
+
+    it 'adds secret_file support to service_desk_email config inside gitlab.yml of webservice' do
+      expect(gitlab_yml["production"]["service_desk_email"]).to include(
+        "secret_file" => "/etc/gitlab/mailroom/service_desk_email_webhook_secret"
+      )
+      projected_secret = template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', 'test-mailroom-auth-token')
+      expect(projected_secret).to eql(
+        "name" => "test-mailroom-auth-token",
+        "items" => [
+          {
+            "key" => "authToken",
+            "path" => "mailroom/service_desk_email_webhook_secret"
+          }
+        ]
+      )
+    end
+
+    context 'when authToken.secret is empty' do
+      let(:auth_token_secret) { "" }
+      let(:default_secret_name) { 'test-service-desk-email-auth-token' }
+
+      it 'uses a default secret name' do
+        expect(template.get_projected_secret('Deployment/test-mailroom', 'init-mailroom-secrets', default_secret_name)).not_to be_empty
+        expect(template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', default_secret_name)).not_to be_empty
+      end
     end
   end
 end

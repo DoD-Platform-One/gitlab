@@ -13,6 +13,8 @@ global:
       clientSecret:
         secret: my-incoming-mail-client-secret
         key: secret
+      deliveryMethod: sidekiq
+      authToken: {}
     serviceDeskEmail:
       enabled: true
       address: example-servicedesk+%{key}@@example.onmicrosoft.com
@@ -24,3 +26,5 @@ global:
       clientSecret:
         secret: my-service-desk-client-secret
         key: secret
+      deliveryMethod: sidekiq
+      authToken: {}
