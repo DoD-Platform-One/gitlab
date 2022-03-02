@@ -38,6 +38,7 @@ for more information on how the global variables work.
 - [OAuth](#configure-oauth-settings)
 - [Outgoing email](#outgoing-email)
 - [Platform](#platform)
+- [Affinity](#affinity)
 
 ## Configure Host settings
 
@@ -118,13 +119,19 @@ The GitLab global host settings for Ingress are located under the `global.ingres
 | `apiVersion`                   | String  |                | API version to use in the Ingress object definitions.
 | `annotations.*annotation-key*` | String  |                | Where `annotation-key` is a string that will be used with the value as an annotation on every Ingress. For Example: `global.ingress.annotations."nginx\.ingress\.kubernetes\.io/enable-access-log"=true`. No global annotations are provided by default. |
 | `configureCertmanager`         | Boolean | `true`         | [See below](#globalingressconfigurecertmanager). |
-| `class`                        | String  | `gitlab-nginx` | Global setting that controls `kubernetes.io/ingress.class` annotation in `Ingress` resources. |
+| `class`                        | String  | `gitlab-nginx` | Global setting that controls `kubernetes.io/ingress.class` annotation or `spec.IngressClassName` in `Ingress` resources. Set to `none` to disable, or `""` for empty. Note: for `none` or `""`, set `nginx-ingress.enabled=false` to prevent the Charts from deploying unnecessary Ingress resources. |
 | `enabled`                      | Boolean | `true`         | Global setting that controls whether to create Ingress objects for services that support them. |
 | `tls.enabled`                  | Boolean | `true`         | When set to `false`, this disables TLS in GitLab. This is useful for cases in which you cannot use TLS termination of Ingresses, such as when you have a TLS-terminating proxy before the Ingress Controller. If you want to disable https completely, this should be set to `false` together with [`global.hosts.https`](#configure-host-settings). |
 | `tls.secretName`               | String  |                | The name of the [Kubernetes TLS Secret](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) that contains a **wildcard** certificate and key for the domain used in `global.hosts.domain`. |
 | `path`                         | String  | `/`            | Default for `path` entries in [Ingress objects](https://kubernetes.io/docs/concepts/services-networking/ingress/) |
 | `pathType`                     | String  | `Prefix`       | A [Path Type](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types) allows you to specify how a path should be matched. Our current default is `Prefix` but you can use `ImplementationSpecific` or `Exact` depending on your use case. |
 | `provider`                     | String  | `nginx`       | Global setting that defines the Ingress provider to use. `nginx` is used as the default provider.  |
+
+Sample [configurations for various cloud providers](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples)
+can be found in the examples folder.
+
+- [`AWS`](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/aws/ingress.yaml)
+- [`GKE`](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/gke/ingress.yaml)
 
 ### Ingress Path
 
@@ -882,6 +889,8 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
+      deliveryMethod: sidekiq
+      authToken: {}
 
     serviceDeskEmail:
       enabled: false
@@ -900,6 +909,8 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
+      deliveryMethod: sidekiq
+      authToken: {}
 
     pseudonymizer:
       configMap:
@@ -955,7 +966,7 @@ global:
       directives:
         default_src: "'self'"
         script_src: "'self' 'unsafe-inline' 'unsafe-eval' https://www.recaptcha.net https://apis.google.com"
-        frame_ancestor: "'self'"
+        frame_ancestors: "'self'"
         frame_src: "'self' https://www.recaptcha.net/ https://content.googleapis.com https://content-compute.googleapis.com https://content-cloudbilling.googleapis.com https://content-cloudresourcemanager.googleapis.com"
         img_src: "* data: blob:"
         style_src: "'self' 'unsafe-inline'"
@@ -1807,8 +1818,6 @@ relevant charts packaged with Cloud Native GitLab.
 global:
   application:
     allowClusterRoles: false
-  operator:
-     enabled: false
 nginx:
   controller:
     scope:
@@ -2048,3 +2057,31 @@ More detailed examples can be found in the
 
 The `platform` key is reserved for specific features targeting a specific
 platform like GKE or EKS.
+
+## Affinity
+
+Affinity configuration is available via `global.antiAffinity` and `global.affinity`.
+Affinity allows you to constrain which nodes your pod is eligible to be scheduled on, based on node labels or labels of pods that are already running on a node. This allow spread pods across the cluster or select specific nodes, ensuring more resilience in case of a failing node.
+
+```yaml
+global:
+  antiAffinity: soft
+  affinity:
+    podAntiAffinity:
+      topologyKey: "kubernetes.io/hostname"
+```
+
+| Name                                   | Type   | Default                   | Description                         |
+| :------------------------------------- | :--:   | :------------------------ | :---------------------------------- |
+| `antiAffinity`                         | String |  `soft`                   | Pod anti-affinity to apply on pods. |
+| `affinity.podAntiAffinity.topologyKey` | String |  `kubernetes.io/hostname` | Pod anti-affinity topology key.     |
+
+- `global.antiAffinity` can take two values:
+  - `soft`: Define a `preferredDuringSchedulingIgnoredDuringExecution` anti-affinity where the Kubernetes scheduler will try to enforce the rule but will not guarantee the result.
+  - `hard`: Defined a `requiredDuringSchedulingIgnoredDuringExecution` anti-affinity where the rule _must_ be met for a pod to be scheduled onto a node.
+- `global.affinity.podAntiAffinity.topologyKey` define a node attribute used two divide them into logical zone. Most common `topologyKey` values are :
+  - `kubernetes.io/hostname`
+  - `topology.kubernetes.io/zone`
+  - `topology.kubernetes.io/region`
+
+Kubernetes references on [Inter-pod affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity)

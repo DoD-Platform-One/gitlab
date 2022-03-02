@@ -32,7 +32,7 @@ describe 'gitlab.yml.erb configuration' do
               report_only: false
               directives:
                 connect_src: "'self'"
-                frame_ancestor: "'self'"
+                frame_ancestors: "'self'"
                 frame_src: "'self'"
                 img_src: "* data: blob:"
                 object_src: "'none'"

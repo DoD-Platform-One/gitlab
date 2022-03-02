@@ -438,11 +438,6 @@ describe 'Sidekiq configuration' do
         YAML.safe_load(%(
           certmanager-issuer:
             email: test@example.com
-          global:
-            operator:
-              enabled: true
-              rollout:
-                autoPause: true
         )).deep_merge(labels)
       end
 
@@ -459,10 +454,6 @@ describe 'Sidekiq configuration' do
         expect(t.dig('NetworkPolicy/test-sidekiq-v1', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('PodDisruptionBudget/test-sidekiq-all-in-1-v1', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('ServiceAccount/test-sidekiq', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('ServiceAccount/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('Role/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('RoleBinding/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('Job/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
       end
     end
 
@@ -471,11 +462,6 @@ describe 'Sidekiq configuration' do
         YAML.safe_load(%(
           certmanager-issuer:
             email: test@example.com
-          global:
-            operator:
-              enabled: true
-              rollout:
-                autoPause: true
           gitlab:
             sidekiq:
               pods:
@@ -527,10 +513,6 @@ describe 'Sidekiq configuration' do
         expect(t.dig('NetworkPolicy/test-sidekiq-v1', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('PodDisruptionBudget/test-sidekiq-pod-1-v1', 'metadata', 'labels')).to include('global' => 'sidekiq')
         expect(t.dig('ServiceAccount/test-sidekiq', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('ServiceAccount/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('Role/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('RoleBinding/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
-        expect(t.dig('Job/test-sidekiq-pause', 'metadata', 'labels')).to include('global' => 'sidekiq')
       end
     end
   end

@@ -353,13 +353,6 @@ kubernetes.io/ingress.provider: "{{ template "gitlab.ingress.provider" $ingressC
 {{- end -}}
 
 {{/*
-Returns the nginx ingress class
-*/}}
-{{- define "gitlab.ingress.className" -}}
-{{- pluck "class" .Values.global.ingress (dict "class" (printf "%s-nginx" .Release.Name)) | first -}}
-{{- end -}}
-
-{{/*
 Returns the ingress provider
 
 It expects a dictionary with two entries:
@@ -375,13 +368,6 @@ Overrides the ingress-nginx template to make sure gitlab-shell name matches
 */}}
 {{- define "ingress-nginx.tcp-configmap" -}}
 {{ .Release.Name}}-nginx-ingress-tcp
-{{- end -}}
-
-{{/*
-Overrides the ingress-nginx template to make sure our ingresses match
-*/}}
-{{- define "ingress-nginx.controller.ingress-class" -}}
-{{ template "gitlab.ingress.className" . }}
 {{- end -}}
 
 {{/* ######### annotations */}}

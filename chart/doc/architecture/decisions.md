@@ -156,5 +156,22 @@ Related Merge Requests:
 
 - [`charts/gitlab!1053`](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/1053)
 - [`build/CNG!329`](https://gitlab.com/gitlab-org/build/CNG/-/merge_requests/329)
-- [`charts/components/gitlab-operator!72`](https://gitlab.com/gitlab-org/charts/components/gitlab-operator/-/merge_requests/72)
 - [`gitlab-build-images!251`](https://gitlab.com/gitlab-org/gitlab-build-images/-/merge_requests/251)
+
+## Image variants shipped with CNG
+
+Date: 2022-02-10
+
+The [CNG project](https://gitlab.com/gitlab-org/build/CNG) ships images based on both Debian and UBI. The decision to maintain configuration
+for both distributions was based upon the following:
+
+- Why we ship Debian-based images:
+  - Track record, precedent
+  - Familiarity with distribution
+  - Community vs "enterprise"
+  - Lack of perceived vendor lock-in
+- Why we ship UBI-based images:
+  - Required in some customer environments
+  - Required for RHEL certification and inclusion into the OpenShift Marketplace / RedHat Catalog
+
+Further discussion on this topic can be found in [issue #3095](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3095).

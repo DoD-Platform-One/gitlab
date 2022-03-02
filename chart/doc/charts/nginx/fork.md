@@ -18,7 +18,6 @@ The following adjustments were made to the NGINX fork:
   - `controller-deployment.yaml`: `.spec.template.spec.containers[0].args` uses `ingress-nginx.tcp-configmap` template for ConfigMap name
   - GitLab chart overrides `ingress-nginx.tcp-configmap` so that `gitlab/gitlab-org/charts/gitlab-shell` can configure its TCP service
 - Ability to use a templated Ingress name based on the release name
-  - `controller-deployment.yaml`: `.spec.template.spec.containers[0].args` uses `ingress-nginx.controller.ingress-class`
 - Replace `controller.service.loadBalancerIP` with `global.hosts.externalIP`
 - Added support to add common labels through `common.labels` configuration option
 - `controller-deployment.yaml`:

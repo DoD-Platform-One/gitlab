@@ -4,17 +4,17 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Developing for Kubernetes with Minikube
+# Developing for Kubernetes with minikube
 
 This guide is meant to serve as a cross-plaform resource for setting up a local
 Kubernetes development environment. In this guide, we'll be using
-[Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/) as it is the accepted standard.
+[minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/) as it is the accepted standard.
 
-## Getting Started with Minikube
+## Getting Started with minikube
 
 We'll extract and expound on the official documentation from the
 [Kubernetes project](https://kubernetes.io/),
-[Running Kubernetes Locally with Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/).
+[Running Kubernetes Locally with minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/).
 
 ### Installing kubectl
 
@@ -40,7 +40,7 @@ can do one of three things:
   - [macOS](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-with-homebrew-on-macos)
   - [Windows](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/#install-on-windows-using-chocolatey-or-scoop)
 
-### Installing Minikube
+### Installing minikube
 
 See the [Kubernetes documentation](https://minikube.sigs.k8s.io/docs/start/)
 where they suggest directly installing from the [releases on GitHub](https://github.com/kubernetes/minikube/releases).
@@ -50,18 +50,18 @@ where they suggest directly installing from the [releases on GitHub](https://git
 For the purposes of cross-platform compatibility in this guide, we'll stick
 with VirtualBox, however there are drivers for VMware Fusion, HyperV, KVM, and Xhyve.
 
-### Starting / Stopping Minikube
+### Starting / Stopping minikube
 
-Minikube resource requests must be set higher than the default for developing
+minikube resource requests must be set higher than the default for developing
 the GitLab chart. The key configuration items can be found with
 `minikube start --help`. A selection is provided below, for what we may want to
 change according to the pieces being tested, and the requirements as listed:
 
-- `--cpus int`: Number of CPUs allocated to the Minikube VM (default `2`).
+- `--cpus int`: Number of CPUs allocated to the minikube VM (default `2`).
   The absolute minimum necessary CPU is `3`. Deploying the _complete_ chart requires `4`.
-- `--memory int`: Amount of RAM allocated to the Minikube VM (default `2048`).
+- `--memory int`: Amount of RAM allocated to the minikube VM (default `2048`).
   The absolute same minimum is `6144` (6 GB). Recommendation is `10240` (10 GB).
-- `--disk-size string`: Disk size allocated to the Minikube VM (format: `<number>[<unit>]`,
+- `--disk-size string`: Disk size allocated to the minikube VM (format: `<number>[<unit>]`,
   where unit = `b`, `k`, `m` or `g`) (default `20g`). See the GitLab
   [storage](https://docs.gitlab.com/ee/install/requirements.html#storage) and
   [database](https://docs.gitlab.com/ee/install/requirements.html#database)
@@ -70,7 +70,7 @@ change according to the pieces being tested, and the requirements as listed:
   NOTE:
   This is created in your home directory under `~/.minikube/machines/minikube/`.
 
-- `--kubernetes-version string`: The Kubernetes version that the Minikube VM will use (e.g., `v1.2.3`).
+- `--kubernetes-version string`: The Kubernetes version that the minikube VM will use (e.g., `v1.2.3`).
 - `--registry-mirror stringSlice`: Registry mirrors to pass to the Docker daemon.
 
 NOTE:
@@ -78,7 +78,7 @@ Changing these values in a second `start` command, requires to first delete
 the existing instance with `minikube delete`, or manually you can alter the
 properties with VirtualBox Manager.
 
-Once you have all the tools installed and configured, starting at stopping Minikube
+Once you have all the tools installed and configured, starting at stopping minikube
 can be done with:
 
 ```shell
@@ -108,11 +108,11 @@ Machine stopped.
 
 Take note of the result from running the `minikube ip` command. If the output is not `192.168.99.100`, the output IP will be needed later.
 
-## Using Minikube
+## Using minikube
 
-Minikube can be used directly as a Kubernetes installation, and treated as a
+minikube can be used directly as a Kubernetes installation, and treated as a
 single node cluster. There are some behaviors that are slightly different between
-Minikube and full-fledged Kubernetes clusters, such as [Google Container Engine (GKE)](https://cloud.google.com/).
+minikube and full-fledged Kubernetes clusters, such as [Google Container Engine (GKE)](https://cloud.google.com/).
 
 Different:
 
@@ -125,16 +125,16 @@ Unavailable:
 
 ### Gotcha: Persistent Volumes
 
-Minikube supports [PersistentVolumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
-of the `hostPath` type, which are mapped to directories inside the VM. As Minikube
+minikube supports [PersistentVolumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+of the `hostPath` type, which are mapped to directories inside the VM. As minikube
 boots into a `tmpfs`, most directories will not persist across reboots via `minikube stop`.
 
 Further details and listings of directories that do persist, can be found
-in the [Minikube getting started guide](https://kubernetes.io/docs/setup/learning-environment/minikube/#persistent-volumes).
+in the [minikube getting started guide](https://kubernetes.io/docs/setup/learning-environment/minikube/#persistent-volumes).
 
 ### Enable Add-ons
 
-Minikube handles some features apart from the base configuration. For the
+minikube handles some features apart from the base configuration. For the
 development of this project, we'll need access to `Ingress`:
 
 ```shell
@@ -151,20 +151,20 @@ minikube dashboard --url
 
 ## Deploying the chart
 
-When deploying this chart into Minikube, some chart resources need to be reduced or disabled.
+When deploying this chart into minikube, some chart resources need to be reduced or disabled.
 It is not possible to use the `nginx-ingress` chart to provide ports `22`, `80`,
 `443`. It's best to disable it and set the Ingress class by setting
 `nginx-ingress.enabled=false,global.ingress.class="nginx"`.
 
-The `certmanager` chart can not be used with Minikube. You must disable this by
+The `certmanager` chart can not be used with minikube. You must disable this by
 setting `certmanager.install=false,global.ingress.configureCertmanager=false`.
 As a result, if you don't provide your own SSL certificates, self-signed
 certificates will be generated. The `gitlab-runner` chart will accept the self-signed
 certificates via `gitlab-runner.certsSecretName`. Assuming your release name is `gitlab`,
 the certificate name will be `gitlab-wildcard-tls-chain`.
 
-The `gitlab-shell` chart can be used with Minikube, but requires mapping to a port other
-than 22 as it used by Minikube already. You can configure `gitlab.gitlab-shell.service.type=NodePort`
+The `gitlab-shell` chart can be used with minikube, but requires mapping to a port other
+than 22 as it used by minikube already. You can configure `gitlab.gitlab-shell.service.type=NodePort`
 and `gitlab.gitlab-shell.service.nodePort=<high-numbered port>`, which will allow cloning a repository
 via the specified port. To ensure this port is reflected in the clone link in the UI, configure
 `global.shell.port=<high-numbered port>`.

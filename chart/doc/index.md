@@ -73,7 +73,7 @@ may want to enable optional features or [advanced configuration](#advanced-confi
 This guide walks all of the options and features of these charts in great depth.
 
 If you are just looking to deploy a Proof of Concept for testing, we strongly suggest
-you follow our [Quick Start](#gitlab-helm-chart-quick-start-guide) for your first iteration.
+you follow our [Quick Start](quickstart/index.md) for your first iteration.
 
 1. [Preparation](installation/index.md)
 1. [Deployment](installation/deployment.md)

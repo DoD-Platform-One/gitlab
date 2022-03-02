@@ -46,19 +46,25 @@ If you're upgrading to the `5.0` version of the chart, follow the [manual upgrad
 If you're upgrading to the `4.0` version of the chart, follow the [manual upgrade steps for 4.0](#upgrade-steps-for-40-release).
 If you're upgrading to an older version of the chart, follow the [upgrade steps for older versions](upgrade_old.md).
 
+Before you upgrade, reflect on your set values and if you've possibly "over-configured" your settings. We expect you to maintain a small list of modified values, and leverage most of the chart defaults. If you've explicitly set a large number of settings by:
+
+- Copying computed settings
+- Copying all settings and explicitly defining values that are actually the same as the default values
+
+This will almost certainly cause issues during the upgrade as the configuration structure could have changed across versions, and that will cause problems applying the settings. We cover how to check this in the following steps.
+
 The following are the steps to upgrade GitLab to a newer version:
 
-1. Check the [change log](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md) for the specific version you would like to upgrade to
-1. Go through [deployment documentation](deployment.md) step by step
-1. Extract your previous `--set` arguments with
+1. Check the [change log](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md) for the specific version you would like to upgrade to.
+1. Go through the [deployment documentation](deployment.md) step by step.
+1. Extract your previously provided values:
 
    ```shell
    helm get values gitlab > gitlab.yaml
    ```
 
-1. Decide on all the values you need to set
-1. If you were using the GitLab Operator, it is [**deprecated**](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2210), and will be removed in the future.
-1. Perform the upgrade, with all `--set` arguments extracted in step 4
+1. Decide on all the values you need to carry through as you upgrade. GitLab has reasonable default values, and while upgrading, you can attempt to pass in all values from the above command, but it could create a scenario where a configuration has changed across chart versions and it might not map cleanly. We advise keeping a minimal set of values that you want to explicitly set, and passing those during the upgrade process.
+1. Perform the upgrade, with values extracted in the previous step:
 
    ```shell
    helm upgrade gitlab gitlab/gitlab \

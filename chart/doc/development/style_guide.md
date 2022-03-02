@@ -172,7 +172,7 @@ Let's look at two snippet examples, which easily exemplify the reasoning:
         time_zone: {{ .Values.global.time_zone | quote }}
         {{- include "gitlab.outgoing_email_settings" . | nindent 8 }}
       {{- with .Values.global.appConfig }}
-      {{- if eq .incomingEmail.enabled true }}
+      {{- if .incomingEmail.enabled }}
       {{- include "gitlab.appConfig.incoming_email" . | nindent 6 }}
       {{- end }}
       {{- include "gitlab.appConfig.cronJobs" . | nindent 6 }}
@@ -208,7 +208,7 @@ Let's look at two snippet examples, which easily exemplify the reasoning:
         time_zone: {{ .Values.global.time_zone | quote }}
 {{- include "gitlab.outgoing_email_settings" . | indent 8 }}
 {{- with .Values.global.appConfig }}
-{{- if eq .incomingEmail.enabled true }}
+{{- if .incomingEmail.enabled }}
 {{- include "gitlab.appConfig.incoming_email" . | indent 6 }}
 {{- end }}
 {{- include "gitlab.appConfig.cronJobs" . | indent 6 }}

@@ -59,6 +59,8 @@ documentation.
   - [Registry notification secret](#registry-notification-secret)
   - [Grafana password](#grafana-password)
   - [GitLab Pages secret](#gitlab-pages-secret)
+  - [GitLab incoming email auth token](#gitlab-incoming-email-auth-token)
+  - [GitLab service desk email auth token](#gitlab-service-desk-email-auth-token)
 - [External Services](#external-services)
   - [OmniAuth](#omniauth)
   - [LDAP Password](#ldap-password)
@@ -400,6 +402,32 @@ in your Helm command along with other required settings as specified [in the doc
 
 NOTE:
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+### GitLab incoming email auth token
+
+When incoming email is configured to use webhook delivery method, there should
+be a shared secret between mail_room service and webservice. This must have a
+length of 32 characters and base64-encoded. Replace `<name>` with the name of
+the release.
+
+```shell
+kubectl create secret generic <name>-incoming-email-auth-token --from-literal=authToken=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
+```
+
+This secret is referenced by the `global.incomingEmail.authToken` setting.
+
+### GitLab service desk email auth token
+
+When service desk email is configured to use webhook delivery method, there should
+be a shared secret between mail_room service and webservice. This must have a
+length of 32 characters and base64-encoded. Replace `<name>` with the name of
+the release.
+
+```shell
+kubectl create secret generic <name>-service-desk-email-auth-token --from-literal=authToken=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
+```
+
+This secret is referenced by the `global.serviceDeskEmail.authToken` setting.
 
 ### Microsoft Graph client secret for incoming emails
 

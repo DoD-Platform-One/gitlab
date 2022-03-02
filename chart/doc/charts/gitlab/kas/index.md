@@ -24,7 +24,7 @@ Follow the link for further information about the [GitLab Agent for Kubernetes a
 
 ### Enable
 
-`kas` is deployed turned off by default. To enable it on your GitLab server, use the Helm property `global.kas.enabled`, like: `helm install --set global.kas.enabled=true`.
+`kas` is disabled by default. To enable it on your GitLab instance, set the Helm property `global.kas.enabled` to `true`, like: `helm upgrade --install kas --set global.kas.enabled=true`.
 
 ### Ingress
 

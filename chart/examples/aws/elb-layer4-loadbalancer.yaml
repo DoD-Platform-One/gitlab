@@ -22,6 +22,6 @@ nginx-ingress:
         service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
         # Configure NLB to use ProxyProtocol
         service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
-      config:
-        proxy-real-ip-cidr: 10.2.0.0/16  # The VPC CIDR, to be trusted
-        use-proxy-protocol: "true"       # Tell NGINX to Expect ProxyProtocol headers
+    config:
+      proxy-real-ip-cidr: 10.2.0.0/16  # The VPC CIDR, to be trusted
+      use-proxy-protocol: "true"       # Tell NGINX to Expect ProxyProtocol headers

@@ -8,8 +8,8 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 Before running `helm install`, you need to make some decisions about how you will run GitLab.
 Options can be specified using Helm's `--set option.name=value` command line option.
-A complete list of command line options can be found [here](command-line-options.md).
 This guide will cover required values and common options.
+For a complete list of options, read [Installation command line options](command-line-options.md).
 
 ## Selecting configuration options
 
@@ -32,14 +32,10 @@ objects. You'll need to specify a domain which will contain records to resolve
 --set global.hosts.domain=example.com
 ```
 
-NOTE:
-If you enable custom domain support for GitLab Pages, `*.<pages domain>`
-sub-domains (by default, `<pages domain>` will be `pages.<global.hosts.domain>`)
-should be resolving to any of the external IP that is dedicated to Pages (set
-via `global.pages.externalHttp` or `global.pages.externalHttps`). This way,
-users who want to use custom domains for their GitLab Pages can add a CNAME
-record pointing their custom domain to corresponding `<namespace>.<pages domain>`
-domain.
+As an example:
+
+With custom domain support enabled, a `*.<pages domain>`
+sub-domain, which by default is `<pages domain>`, becomes `pages.<global.hosts.domain>`, and will need to resolve to the external IP assigned to Pages (by `--set global.pages.externalHttp` or `--set global.pages.externalHttps`). To use custom domains, GitLab Pages can use a CNAME record pointing the custom domain to a corresponding `<namespace>.<pages domain>` domain.
 
 #### Dynamic IPs with external-dns
 
@@ -62,9 +58,8 @@ static IP. For example if you choose `example.com` and you have a static IP
 of `10.10.10.10`, then `gitlab.example.com`, `registry.example.com` and
 `minio.example.com` (if using MinIO) should all resolve to `10.10.10.10`.
 
-If you are using GKE, there is some documentation [here](cloud/gke.md#creating-the-external-ip)
-for configuring static IPs and DNS. Consult your Cloud and/or DNS provider's
-documentation for more help on this process.
+If you are using GKE, read more on [creating the external IP and DNS entry](cloud/gke.md#creating-the-external-ip).
+Consult your Cloud and/or DNS provider's documentation for more help on this process.
 
 *Include these options in your Helm install command:*
 
@@ -85,7 +80,7 @@ You should be running GitLab using https which requires TLS certificates. By def
 chart will install and configure [cert-manager](https://github.com/jetstack/cert-manager)
 to obtain free TLS certificates.
 If you have your own wildcard certificate, you already have cert-manager installed, or you
-have some other way of obtaining TLS certificates, [read about more TLS options here](tls.md).
+have some other way of obtaining TLS certificates, read about more [TLS options](tls.md).
 
 For the default configuration, you must specify an email address to register your TLS
 certificates.
@@ -220,8 +215,8 @@ a smaller cluster.
 The [minimal GKE example values file](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/values-gke-minimum.yaml) provides an example of tuning the resources
 to fit within a 3vCPU 12gb cluster.
 
-The [minimal Minikube example values file](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/values-minikube-minimum.yaml) provides an example of tuning the
-resources to fit within a 2vCPU, 4gb Minikube instance.
+The [minimal minikube example values file](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/values-minikube-minimum.yaml) provides an example of tuning the
+resources to fit within a 2vCPU, 4gb minikube instance.
 
 ## Deploy using Helm
 
@@ -255,7 +250,7 @@ Note the following:
 
 You can also use `--version <installation version>` option if you would like to install a specific version of GitLab.
 
-Mappings between chart versions and GitLab versions can be found [here](../index.md#gitlab-version-mappings).
+For mappings between chart versions and GitLab versions, read [GitLab version mappings](version_mappings.md).
 
 Instructions for installing a development branch rather than a tagged release can be found in the [developer deploy documentation](../development/deploy.md).
 

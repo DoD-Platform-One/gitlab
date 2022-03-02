@@ -30,8 +30,6 @@ describe 'Webservice Deployments configuration' do
             labels:
               global: true
               foo: global
-          operator:
-            enabled: true
           pod:
             labels:
               global_pod: true
@@ -114,15 +112,6 @@ describe 'Webservice Deployments configuration' do
       expect(t.labels('NetworkPolicy/test-webservice-v1')).to include('global' => 'webservice')
 
       expect(t.labels('PodDisruptionBudget/test-webservice-default')).to include('global' => 'webservice')
-
-      expect(t.labels('ServiceAccount/test-webservice-pause')).to include('global' => 'webservice')
-      expect(t.labels('ServiceAccount/test-webservice-pause')).to include('global' => 'webservice')
-
-      expect(t.labels('Role/test-webservice-pause')).to include('global' => 'webservice')
-
-      expect(t.labels('RoleBinding/test-webservice-pause')).to include('global' => 'webservice')
-
-      expect(t.labels('Job/test-webservice-pause')).to include('global' => 'webservice')
     end
 
     it 'Populates the additional labels on on all objects per deployment' do

@@ -156,8 +156,6 @@ describe 'Gitaly configuration' do
             labels:
               global: global
               foo: global
-          operator:
-            enabled: true
           pod:
             labels:
               global_pod: true
@@ -201,11 +199,6 @@ describe 'Gitaly configuration' do
         expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('service' => 'true')
         expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
         expect(t.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('ServiceAccount/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('Role/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('RoleBinding/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('Job/test-gitaly-pause', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('Job/test-gitaly-pause', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
       end
     end
 

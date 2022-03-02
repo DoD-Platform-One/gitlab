@@ -8,14 +8,15 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 WARNING:
 The Praefect chart is still under development. The alpha version is not yet suitable for production use. Upgrades may require significant manual intervention.
+See our [Praefect GA release Epic](https://gitlab.com/groups/gitlab-org/charts/-/epics/33) for more information.
 
 The Praefect chart is used to manage a [Gitaly cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) inside a GitLab installment deployed with the Helm charts.
 
 ## Known limitations and issues
 
 1. The database has to be [manually created](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2310).
-1. [Migrating from an existing Gitaly setup](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2311) to Praefect is not supported.
 1. The cluster size is fixed: [Gitaly Cluster does not currently support autoscaling](https://gitlab.com/gitlab-org/gitaly/-/issues/2997).
+1. Using a Praefect instance in the cluster to manage Gitaly instances outside the cluster is [not supported](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2662).
 1. Upgrades to version 4.8 of the chart (GitLab 13.8) [will encounter an issue that makes it _appear_ that repository data is lost](../../../installation/upgrade.md#48-repository-data-appears-to-be-lost-upgrading-praefect). Data is not lost, but requires manual intervention.
 
 ## Requirements
