@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.8.2-bb.1](https://img.shields.io/badge/Version-5.8.2--bb.1-informational?style=flat-square) ![AppVersion: 14.8.2](https://img.shields.io/badge/AppVersion-14.8.2-informational?style=flat-square)
+![Version: 5.8.2-bb.2](https://img.shields.io/badge/Version-5.8.2--bb.2-informational?style=flat-square) ![AppVersion: 14.8.2](https://img.shields.io/badge/AppVersion-14.8.2-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -721,10 +721,10 @@ helm install gitlab chart/
 | minio.resources.requests.cpu | string | `"200m"` |  |
 | minio.resources.requests.memory | string | `"300Mi"` |  |
 | minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
-| minio.imageTag | string | `"RELEASE.2022-02-18T01-50-10Z"` |  |
+| minio.imageTag | string | `"RELEASE.2022-03-05T06-32-39Z"` |  |
 | minio.pullSecrets[0].name | string | `"private-registry"` |  |
 | minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
-| minio.minioMc.tag | string | `"RELEASE.2022-02-16T05-54-01Z"` |  |
+| minio.minioMc.tag | string | `"RELEASE.2022-02-26T03-58-31Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | hostname | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` |  |
