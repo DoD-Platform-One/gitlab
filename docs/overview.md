@@ -1,70 +1,23 @@
 # GitLab
 
-## Table of Contents
-
-- Application Deployment
-- Integrations
-    - Keycloak
-    - ECK
+[[_TOC_]]
 
 # Gitlab for Kubernetes
-
-[gitlab](https://docs.gitlab.com/) provides  is the main repository for the DSOP Pipeline.  From the Docs:
+[gitlab](https://docs.gitlab.com/) provides the upstream documentation:
 
 GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking and continuous integration/continuous deployment pipeline features, using an open-source license, developed by GitLab Inc.
 
 ## Application Deployment
-
-For production deployments you must externalize the postgres and MinIO services. You should disable the internal postgres and enable RDS for the database in the values.yaml
-```
-postgresql:
-  install: false
-```
-and customize the values.yaml for your RDS credentials
-```
- ## doc/charts/globals.md#configure-postgresql-settings
-  psql:
-    password: {}
-      # secret:
-      # key:
-    # host: postgresql.hostedsomewhere.else
-    # port: 123
-    # username: gitlab
-    # database: gitlabhq_production
-    # pool: 1
-    # preparedStatements: false
-```
-
-WARNING FOR OPERATIONAL ENVIRONMENTS:  
-Gitlab will no longer be able to access the encrypted data in the database if the Kubernetes gitlab-rails-secret happens to get overwritten. You will get errors like this in the logs.
-```
-OpenSSL::Cipher::CipherError ()
-```
-Many things break when this happens and the recovery is ugly with serious user impacts.  
-
-At a minimum an operational deployment of Gitlab should export and save the gitlab-rails-secret somewhere safe outside the cluster.
-```
-kubectl get secret/gitlab-rails-secret -n gitlab -o yaml > cya.yaml
-```
-Ideally, an operational deployment should create a secret with a different name as [documented here](https://docs.gitlab.com/charts/installation/secrets.html#gitlab-rails-secret). The helm chart values ```global.railsSecrets.secret``` can be overridden to point to the secret.
-```
-global:
-  railsSecrets:
-    secret:  my-gitlab-rails-secret
-```
-This secret should be backed up somewhere safe outside the cluster.
+The default values are intended for development, demo, and CI pipelines. For operational/production environments see the suggestions in [docs/operational-production-settings.md](./operational-production-settings.md).
 
 ## Kubernetes resource configuration
-The BigBang Gitlab Package has a default resource configuration for a minimal installation which is sufficient for development, demos, and CI pipelines. For larger operational deployments you must increase the CPU and memory as needed. Consult Gitlab documentation and Gitlab Support for appropriate settings. See the [k8s-resources.md](k8s-resources.md) for a list of possible configurations. 
+The BigBang Gitlab Package has a default resource configuration for a minimal installation which is sufficient for development, demos, and CI pipelines. For larger operational deployments you must increase the CPU and memory as needed. See suggested production settings here [docs/operational-production-settings.md](./operational-production-settings.md). Consult the upstream Gitlab documentation and Gitlab Support for appropriate settings. See the [docs/k8s-resources.md](./k8s-resources.md) for a list of all possible configuration values. 
 
 ## Keycloak SSO integration
-
 Gitlab SSO integration can be 100% configuration as code. No manual post-install actions are required if the configuration is correct.
-see [keycloak.md](keycloak.md)
-
+see [docs/keycloak.md](./keycloak.md)
 
 ## elasticsearch notes
-
 create an index pattern for fluentd if not already created for you
 ```
 logstash-*
