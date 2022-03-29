@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.8.2-bb.2](https://img.shields.io/badge/Version-5.8.2--bb.2-informational?style=flat-square) ![AppVersion: 14.8.2](https://img.shields.io/badge/AppVersion-14.8.2-informational?style=flat-square)
+![Version: 5.8.2-bb.3](https://img.shields.io/badge/Version-5.8.2--bb.3-informational?style=flat-square) ![AppVersion: 14.8.2](https://img.shields.io/badge/AppVersion-14.8.2-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -531,9 +531,10 @@ helm install gitlab chart/
 | postgresql.resources.limits.memory | string | `"500Mi"` |  |
 | postgresql.resources.requests.cpu | string | `"500m"` |  |
 | postgresql.resources.requests.memory | string | `"500Mi"` |  |
-| postgresql.image.registry | string | `"registry.dso.mil"` |  |
-| postgresql.image.repository | string | `"platform-one/big-bang/apps/developer-tools/gitlab/postgresql"` |  |
-| postgresql.image.tag | string | `"12.7.0"` |  |
+| postgresql.image.registry | string | `"registry1.dso.mil"` |  |
+| postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql12"` |  |
+| postgresql.image.tag | float | `12.9` |  |
+| postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.usePasswordFile | bool | `true` |  |
 | postgresql.existingSecret | string | `"bogus"` |  |
 | postgresql.initdbScriptsConfigMap | string | `"bogus"` |  |
@@ -542,6 +543,19 @@ helm install gitlab chart/
 | postgresql.master.extraVolumeMounts[0].subPath | string | `"init_revision.sh"` |  |
 | postgresql.master.podAnnotations."postgresql.gitlab/init-revision" | string | `"1"` |  |
 | postgresql.metrics.enabled | bool | `false` |  |
+| postgresql.postgresqlConfiguration.listen_addresses | string | `"*"` |  |
+| postgresql.pgHbaConfiguration | string | `"local all all md5\nhost all all all md5"` |  |
+| postgresql.securityContext.fsGroup | int | `26` |  |
+| postgresql.securityContext.runAsUser | int | `26` |  |
+| postgresql.securityContext.runAsGroup | int | `26` |  |
+| postgresql.persistence.subPath | string | `"pgdata/data"` |  |
+| postgresql.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
+| postgresql.postgresqlDataDir | string | `"/var/lib/postgresql/pgdata/data"` |  |
+| postgresql.volumePermissions.enabled | bool | `true` |  |
+| postgresql.volumePermissions.image.registry | string | `"registry1.dso.mil"` |  |
+| postgresql.volumePermissions.image.repository | string | `"ironbank/big-bang/base"` |  |
+| postgresql.volumePermissions.image.tag | string | `"1.0.0"` |  |
+| postgresql.volumePermissions.image.pullSecrets[0] | string | `"private-registry"` |  |
 | registry.enabled | bool | `true` |  |
 | registry.init.resources.limits.cpu | string | `"200m"` |  |
 | registry.init.resources.limits.memory | string | `"200Mi"` |  |

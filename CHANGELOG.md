@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.8.2-bb.3] - 2022-03-29
+### Updated
+- Switched postgres to IB image
+
 ## [5.8.2-bb.2] - 2022-03-08
 ### Updated
 - registry1.dso.mil/ironbank/opensource/minio/mc    patch RELEASE.2022-02-16T05-54-01Z -> RELEASE.2022-02-26T03-58-31Z
