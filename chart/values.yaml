@@ -1044,10 +1044,11 @@ postgresql:
       cpu: 500m
       memory: 500Mi
   image:
-    ## could not get IronBank hardened image to work with the bitnami postgres sub-chart
-    registry: registry.dso.mil
-    repository: platform-one/big-bang/apps/developer-tools/gitlab/postgresql
-    tag: 12.7.0
+    registry: registry1.dso.mil
+    repository: ironbank/opensource/postgres/postgresql12
+    tag: 12.9
+    pullSecrets:
+    - private-registry
   usePasswordFile: true
   existingSecret: 'bogus'
   initdbScriptsConfigMap: 'bogus'
@@ -1062,6 +1063,31 @@ postgresql:
     enabled: false
     ## Optionally define additional custom metrics
     ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
+
+  # Added by BB to get IB image working with bitnami subchart
+  ## Sets the configs to allow listening and connecting from other pods
+  postgresqlConfiguration: {"listen_addresses": "*"}
+  pgHbaConfiguration: |-
+    local all all md5
+    host all all all md5
+  ## Sets the securityContext needed for the IB image
+  securityContext:
+    fsGroup: 26
+    runAsUser: 26
+    runAsGroup: 26
+  ## Sets persistence to work with the IB image
+  persistence:
+    subPath: "pgdata/data"
+    mountPath: /var/lib/postgresql
+  postgresqlDataDir: /var/lib/postgresql/pgdata/data
+  volumePermissions:
+    enabled: true
+    image:
+      registry: registry1.dso.mil
+      repository: ironbank/big-bang/base
+      tag: 1.0.0
+      pullSecrets:
+        - private-registry
 
 ## Installation & configuration charts/registry
 ## https://docs.gitlab.com/charts/architecture/decisions#registry

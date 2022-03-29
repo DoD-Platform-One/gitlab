@@ -15,6 +15,7 @@
 - add pullSecrets for each IronBank image
 - add default bigbag.dev hostnames at global.hosts
 - add customCAs (the cert files and secrets need to be added in the next 2 steps for this to work)
+- add `postgresqlConfiguration`, `pgHbaConfiguration`, `securityContext`, `postgresqlDataDir`, `volumePermissions` and `persistence` to get IB image working with postgres subchart
 
 ## chart/bigbang/*
 - add DoD approved CA certificates (recursive copy directory from previous release)
