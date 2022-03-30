@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.8.2-bb.4](https://img.shields.io/badge/Version-5.8.2--bb.4-informational?style=flat-square) ![AppVersion: 14.8.2](https://img.shields.io/badge/AppVersion-14.8.2-informational?style=flat-square)
+![Version: 5.8.2-bb.5](https://img.shields.io/badge/Version-5.8.2--bb.5-informational?style=flat-square) ![AppVersion: 14.8.2](https://img.shields.io/badge/AppVersion-14.8.2-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -548,14 +548,8 @@ helm install gitlab chart/
 | postgresql.securityContext.fsGroup | int | `26` |  |
 | postgresql.securityContext.runAsUser | int | `26` |  |
 | postgresql.securityContext.runAsGroup | int | `26` |  |
-| postgresql.persistence.subPath | string | `"pgdata/data"` |  |
 | postgresql.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
 | postgresql.postgresqlDataDir | string | `"/var/lib/postgresql/pgdata/data"` |  |
-| postgresql.volumePermissions.enabled | bool | `true` |  |
-| postgresql.volumePermissions.image.registry | string | `"registry1.dso.mil"` |  |
-| postgresql.volumePermissions.image.repository | string | `"ironbank/big-bang/base"` |  |
-| postgresql.volumePermissions.image.tag | string | `"1.0.0"` |  |
-| postgresql.volumePermissions.image.pullSecrets[0] | string | `"private-registry"` |  |
 | registry.enabled | bool | `true` |  |
 | registry.init.resources.limits.cpu | string | `"200m"` |  |
 | registry.init.resources.limits.memory | string | `"200Mi"` |  |
