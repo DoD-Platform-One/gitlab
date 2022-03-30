@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.8.2-bb.5] - 2022-03-30
+### Changed
+- Remove postgres persistence subpath and removed postgres permissions job
+- Upgrade from `5.8.2-bb.2` or previous requires dumping/restoring PG data
+
 ## [5.8.2-bb.4] - 2022-03-29
 ### Added
 - Added Tempo Zipkin Egress Policy

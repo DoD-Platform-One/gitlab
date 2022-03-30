@@ -1077,17 +1077,8 @@ postgresql:
     runAsGroup: 26
   ## Sets persistence to work with the IB image
   persistence:
-    subPath: "pgdata/data"
     mountPath: /var/lib/postgresql
   postgresqlDataDir: /var/lib/postgresql/pgdata/data
-  volumePermissions:
-    enabled: true
-    image:
-      registry: registry1.dso.mil
-      repository: ironbank/big-bang/base
-      tag: 1.0.0
-      pullSecrets:
-        - private-registry
 
 ## Installation & configuration charts/registry
 ## https://docs.gitlab.com/charts/architecture/decisions#registry
