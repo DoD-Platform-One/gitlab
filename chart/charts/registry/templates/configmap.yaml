@@ -19,8 +19,8 @@ data:
       debug:
         addr: ':{{ .Values.debug.addr.port | int }}'
         prometheus:
-          enabled: {{ eq true .Values.debug.prometheus.enabled }}
-          path: {{ .Values.debug.prometheus.path }}
+          enabled: {{ (or .Values.metrics.enabled .Values.debug.prometheus.enabled) }}
+          path: {{ default .Values.metrics.path .Values.debug.prometheus.path }}
       {{- end }}
       draintimeout: {{ .Values.draintimeout }}
       headers:

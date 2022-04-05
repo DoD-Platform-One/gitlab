@@ -30,6 +30,12 @@ data:
           :client_id: "{{ .clientId }}"
           :client_secret: <%= File.read("/etc/gitlab/mailroom/client_id_incoming_email").strip.to_json %>
           :poll_interval: {{ .pollInterval }}
+          {{- if .azureAdEndpoint }}
+          :azure_ad_endpoint: {{ .azureAdEndpoint }}
+          {{- end }}
+          {{- if .graphEndpoint }}
+          :graph_endpoint: {{ .graphEndpoint }}
+          {{- end }}
         {{- else }}
         :host: {{ .host }}
         :port: {{ .port }}
@@ -79,6 +85,12 @@ data:
           :client_id: "{{ .clientId }}"
           :client_secret: <%= File.read("/etc/gitlab/mailroom/client_id_service_desk").strip.to_json %>
           :poll_interval: {{ .pollInterval }}
+          {{- if .azureAdEndpoint }}
+          :azure_ad_endpoint: {{ .azureAdEndpoint }}
+          {{- end }}
+          {{- if .graphEndpoint }}
+          :graph_endpoint: {{ .graphEndpoint }}
+          {{- end }}
         {{- else }}
         :host: {{ .host }}
         :port: {{ .port }}

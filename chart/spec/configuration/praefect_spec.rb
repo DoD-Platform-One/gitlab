@@ -93,6 +93,10 @@ describe 'Praefect configuration' do
       end
     end
 
+    it 'enables prometheus_exclude_database_from_default_metrics by default' do
+      expect(template.dig('ConfigMap/test-praefect', 'data', 'config.toml.erb')).to include('prometheus_exclude_database_from_default_metrics = true')
+    end
+
     context 'without replacing Gitaly' do
       let(:values_with_internal_gitaly) do
         YAML.safe_load(%(
@@ -144,6 +148,27 @@ describe 'Praefect configuration' do
         gitaly_resources_with_multiple_storages.each do |r|
           expect(template.dig(r)).to be_truthy
         end
+      end
+    end
+
+    context 'with separate_database_metrics false' do
+      let(:values_separate_db_metrics) do
+        YAML.safe_load(%(
+          gitlab:
+            praefect:
+              metrics:
+                separate_database_metrics: false
+        )).deep_merge(values_praefect_enabled)
+      end
+
+      let(:template) { HelmTemplate.new(values_separate_db_metrics) }
+
+      it 'templates successfully' do
+        expect(template.exit_code).to eq(0)
+      end
+
+      it 'disables prometheus_exclude_database_from_default_metrics' do
+        expect(template.dig('ConfigMap/test-praefect', 'data', 'config.toml.erb')).to include('prometheus_exclude_database_from_default_metrics = false')
       end
     end
 

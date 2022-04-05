@@ -8,6 +8,8 @@ global:
       user: example-incoming@example.onmicrosoft.com
       mailbox: inbox
       inboxMethod: microsoft_graph
+      azureAdEndpoint: https://login.microsoftonline.com
+      graphEndpoint: https://graph.microsoft.com
       tenantId: "YOUR-TENANT-ID"
       clientId: "YOUR-CLIENT-ID"
       clientSecret:

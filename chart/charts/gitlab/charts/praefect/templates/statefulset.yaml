@@ -29,6 +29,14 @@ spec:
       {{- range $key, $value := .Values.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
+      {{- if and .Values.metrics.enabled (not .Values.metrics.serviceMonitor.enabled) }}
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_port: {{ .Values.metrics.port | quote }}
+        gitlab.com/prometheus_path: {{ .Values.metrics.path }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/path: {{ .Values.metrics.path }}
+      {{- end }}
     spec:
       {{- if eq (default .Values.global.antiAffinity .Values.antiAffinity) "hard" }}
       affinity:
@@ -98,6 +106,7 @@ spec:
         {{- end }}
         {{- if .Values.metrics.enabled }}
           - containerPort: {{ .Values.metrics.port }}
+            name: http-metrics
         {{- end }}
         env:
         - name: CONFIG_TEMPLATE_DIRECTORY

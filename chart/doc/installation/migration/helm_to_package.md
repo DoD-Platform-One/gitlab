@@ -19,24 +19,23 @@ To migrate from a Helm installation to a Linux package (Omnibus) installation:
    and make sure to [back up the secrets](../../backup-restore/backup.md#backup-the-secrets)
    as well.
 1. Back up `/etc/gitlab/gitlab-secrets.json` on your Omnibus GitLab instance.
-1. Use the `secrets.yaml` file from your GitLab Helm chart instance to fill
-   `/etc/gitlab/gitlab-secrets.json` on the new Omnibus GitLab instance:
-    1. In `/etc/gitlab/gitlab-secrets.json`, replace all the secrets in the
-       section `gitlab_rails` with the secrets from `secrets.yaml`:
-       - Make sure that the values of `secret_key_base`, `db_key_base`, `otp_key_base`, and
-         `encrypted_settings_key_base` do not contain line breaks.
-       - The values of `openid_connect_signing_key` and `ci_jwt_signing_key` should have `\n`
-         instead of line breaks, and the entire value should be in one line, for example:
+1. Install the [yq](https://github.com/mikefarah/yq) tool (version 4.21.1 or later) on the workstation where you run `kubectl` commands.
+1. Create a copy of your `/etc/gitlab/gitlab-secrets.json` file on your workstation.
+1. Run the following command to obtain the secrets from your GitLab Helm chart instance. 
+   Replace `GITLAB_NAMESPACE` and `RELEASE` with appropriate values:
 
-            ```plaintext
-            -----BEGIN RSA PRIVATE KEY-----\nprivatekey\nhere\n-----END RSA PRIVATE KEY-----\n
-            ```
+   ```shell
+   kubectl get secret -n GITLAB_NAMESPACE RELEASE-rails-secret -ojsonpath='{.data.secrets\.yml}' | yq '@base64d | from_yaml | .production' -o json > rails-secrets.json
+   yq eval-all 'select(filename == "gitlab-secrets.json").gitlab_rails = select(filename == "rails-secrets.json") | select(filename == "gitlab-secrets.json")' -ojson  gitlab-secrets.json rails-secrets.json > gitlab-secrets-updated.json
+   ```
+   
+1. The result is `gitlab-secrets-updated.json`, which you can use to replace the old version of `/etc/gitlab/gitlab-secrets.json` 
+   on your Omnibus GitLab instance.
+1. After replacing `/etc/gitlab/gitlab-secrets.json`, reconfigure Omnibus GitLab:
 
-    1. Save the file and reconfigure GitLab:
-
-       ```shell
-       sudo gitlab-ctl reconfigure
-       ```
+   ```shell
+   sudo gitlab-ctl reconfigure
+   ```
 
 1. In the Omnibus instance, configure [object storage](https://docs.gitlab.com/ee/administration/object_storage.html),
    and make sure it works by testing LFS, artifacts, uploads, and so on.

@@ -28,38 +28,43 @@ Settings](#global-settings) and [Chart Settings](#chart-settings).
 The table below contains all the possible chart configurations that can be supplied
 to the `helm install` command using the `--set` flags.
 
-| Parameter                        | Default               | Description                                    |
-| -------------------------------- | --------------------- | ---------------------------------------------- |
-| `annotations`                    |                       | Pod annotations                                |
-| `common.labels`                  | `{}`                  | Supplemental labels that are applied to all objects created by this chart.  |
-| `podLabels`                      |                       | Supplemental Pod labels. Will not be used for selectors. |
-| `common.labels`                  |                       | Supplemental labels that are applied to all objects created by this chart. |
-| `deployment.strategy`            | `{}`                  | Allows one to configure the update strategy utilized by the deployment |
-| `enabled`                        | `true`                | GitLab Exporter enabled flag                   |
-| `extraContainers`                |                       | List of extra containers to include            |
-| `extraInitContainers`            |                       | List of extra init containers to include       |
-| `extraVolumeMounts`              |                       | List of extra volumes mounts to do            |
-| `extraVolumes`                   |                       | List of extra volumes to create                |
-| `extraEnv`                       |                       | List of extra environment variables to expose  |
-| `image.pullPolicy`               | `IfNotPresent`        | GitLab image pull policy                       |
-| `image.pullSecrets`              |                       | Secrets for the image repository               |
-| `image.repository`               | `registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter` | GitLab Exporter image repository |
-| `image.tag`                      |                       | image tag                                      |
-| `init.image.repository`          |                       | initContainer image                            |
-| `init.image.tag`                 |                       | initContainer image tag                        |
-| `metrics.enabled`                | `true`                | Toggle Prometheus metrics exporter             |
-| `metrics.port`                   | `9168`                | Listen port for the Prometheus metrics exporter |
-| `resources.requests.cpu`         | `75m`                 | GitLab Exporter minimum CPU                    |
-| `resources.requests.memory`      | `100M`                | GitLab Exporter minimum memory                 |
-| `serviceLabels`                  | `{}`                  | Supplemental service labels                    |
-| `service.externalPort`           | `9168`                | GitLab Exporter exposed port                   |
-| `service.internalPort`           | `9168`                | GitLab Exporter internal port                  |
-| `service.name`                   | `gitlab-exporter`     | GitLab Exporter service name                   |
-| `service.type`                   | `ClusterIP`           | GitLab Exporter service type                   |
-| `securityContext.fsGroup`        | `1000`                | Group ID under which the pod should be started |
-| `securityContext.runAsUser`      | `1000`                | User ID under which the pod should be started  |
-| `tolerations`                    | `[]`                  | Toleration labels for pod assignment           |
-| `psql.port`                      |                       | Set PostgreSQL server port. Takes precedence over `global.psql.port` |
+| Parameter                                 | Default                                                    | Description                                                                                                                                                                |
+| ----------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `annotations`                             |                                                            | Pod annotations                                                                                                                                                            |
+| `common.labels`                           | `{}`                                                       | Supplemental labels that are applied to all objects created by this chart.                                                                                                 |
+| `podLabels`                               |                                                            | Supplemental Pod labels. Will not be used for selectors.                                                                                                                   |
+| `common.labels`                           |                                                            | Supplemental labels that are applied to all objects created by this chart.                                                                                                 |
+| `deployment.strategy`                     | `{}`                                                       | Allows one to configure the update strategy utilized by the deployment                                                                                                     |
+| `enabled`                                 | `true`                                                     | GitLab Exporter enabled flag                                                                                                                                               |
+| `extraContainers`                         |                                                            | List of extra containers to include                                                                                                                                        |
+| `extraInitContainers`                     |                                                            | List of extra init containers to include                                                                                                                                   |
+| `extraVolumeMounts`                       |                                                            | List of extra volumes mounts to do                                                                                                                                         |
+| `extraVolumes`                            |                                                            | List of extra volumes to create                                                                                                                                            |
+| `extraEnv`                                |                                                            | List of extra environment variables to expose                                                                                                                              |
+| `image.pullPolicy`                        | `IfNotPresent`                                             | GitLab image pull policy                                                                                                                                                   |
+| `image.pullSecrets`                       |                                                            | Secrets for the image repository                                                                                                                                           |
+| `image.repository`                        | `registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter` | GitLab Exporter image repository                                                                                                                                           |
+| `image.tag`                               |                                                            | image tag                                                                                                                                                                  |
+| `init.image.repository`                   |                                                            | initContainer image                                                                                                                                                        |
+| `init.image.tag`                          |                                                            | initContainer image tag                                                                                                                                                    |
+| `metrics.enabled`                         | `true`                                                     | If a metrics endpoint should be made available for scraping                                                                                                                |
+| `metrics.port`                            | `9168`                                                     | Metrics endpoint port                                                                                                                                                      |
+| `metrics.path`                            | `/metrics`                                                 | Metrics endpoint path                                                                                                                                                      |
+| `metrics.serviceMonitor.enabled`          | `false`                                                    | If a ServiceMonitor should be created to enable Prometheus Operator to manage the metrics scraping, note that enabling this removes the `prometheus.io` scrape annotations |
+| `metrics.serviceMonitor.additionalLabels` | `{}`                                                       | Additional labels to add to the ServiceMonitor                                                                                                                             |
+| `metrics.serviceMonitor.endpointConfig`   | `{}`                                                       | Additional endpoint configuration for the ServiceMonitor                                                                                                                   |
+| `metrics.annotations`                     |                                                            | **DEPRECATED** Set explicit metrics annotations. Replaced by template content.                                                                                             |
+| `resources.requests.cpu`                  | `75m`                                                      | GitLab Exporter minimum CPU                                                                                                                                                |
+| `resources.requests.memory`               | `100M`                                                     | GitLab Exporter minimum memory                                                                                                                                             |
+| `serviceLabels`                           | `{}`                                                       | Supplemental service labels                                                                                                                                                |
+| `service.externalPort`                    | `9168`                                                     | GitLab Exporter exposed port                                                                                                                                               |
+| `service.internalPort`                    | `9168`                                                     | GitLab Exporter internal port                                                                                                                                              |
+| `service.name`                            | `gitlab-exporter`                                          | GitLab Exporter service name                                                                                                                                               |
+| `service.type`                            | `ClusterIP`                                                | GitLab Exporter service type                                                                                                                                               |
+| `securityContext.fsGroup`                 | `1000`                                                     | Group ID under which the pod should be started                                                                                                                             |
+| `securityContext.runAsUser`               | `1000`                                                     | User ID under which the pod should be started                                                                                                                              |
+| `tolerations`                             | `[]`                                                       | Toleration labels for pod assignment                                                                                                                                       |
+| `psql.port`                               |                                                            | Set PostgreSQL server port. Takes precedence over `global.psql.port`                                                                                                       |
 
 ## Chart configuration examples
 

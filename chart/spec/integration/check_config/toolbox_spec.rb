@@ -32,34 +32,56 @@ describe 'checkConfig toolbox' do
   end
 
   describe 'gitlab.toolbox.backups.objectStorage.config.secret' do
-    let(:success_values) do
-      YAML.safe_load(%(
-        gitlab:
-          toolbox:
-            backups:
-              objectStorage:
-                config:
-                  secret: s3cmd-config
-                  key: config
-      )).merge(default_required_values)
+    describe 'gitlab.toolbox.enabled (the default value)' do
+      let(:success_values) do
+        YAML.safe_load(%(
+          gitlab:
+            toolbox:
+              enabled: true
+              backups:
+                objectStorage:
+                  config:
+                    secret: s3cmd-config
+                    key: config
+        )).merge(default_required_values)
+      end
+
+      let(:error_values) do
+        YAML.safe_load(%(
+          gitlab:
+            toolbox:
+              enabled: true
+              backups:
+                objectStorage:
+                  config:
+                    # secret: s3cmd-config
+                    key: config
+        )).merge(default_required_values)
+      end
+
+      let(:error_output) { 'A valid object storage config secret is needed for backups.' }
+
+      include_examples 'config validation',
+                       success_description: 'when toolbox has a valid object storage backup secret configured',
+                       error_description: 'when toolbox does not have a valid object storage backup secret configured'
     end
 
-    let(:error_values) do
-      YAML.safe_load(%(
-        gitlab:
-          toolbox:
-            backups:
-              objectStorage:
-                config:
-                  # secret: s3cmd-config
-                  key: config
-      )).merge(default_required_values)
+    describe 'gitlab.toolbox.enabled (set to false)' do
+      let(:success_values) do
+        YAML.safe_load(%(
+          gitlab:
+            toolbox:
+              enabled: false
+              backups:
+                objectStorage:
+                  config:
+                    # secret: s3cmd-config
+                    key: config
+        )).merge(default_required_values)
+      end
+
+      include_examples 'config validation',
+                       success_description: 'when toolbox is disabled and does not have a valid object storage backup secret configured'
     end
-
-    let(:error_output) { 'A valid object storage config secret is needed for backups.' }
-
-    include_examples 'config validation',
-                     success_description: 'when toolbox has a valid object storage backup secret configured',
-                     error_description: 'when toolbox does not have a valid object storage backup secret configured'
   end
 end

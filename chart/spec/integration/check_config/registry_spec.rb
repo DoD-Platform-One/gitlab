@@ -130,6 +130,89 @@ describe 'checkConfig registry' do
                      error_description: 'when migration enabled is true, with database disabled'
   end
 
+  describe 'registry.migration.importnotification (enabled)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          migration:
+            enabled: true
+            importnotification:
+              enabled: true
+              url: 'https://gitlab.example.com'
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          migration:
+            enabled: false
+            importnotification:
+              enabled: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling importnotification requires the migration mode to be enabled' }
+
+    include_examples 'config validation',
+                     success_description: 'when import notification is enabled, with migration enabled',
+                     error_description: 'when import notification is enabled, with migration disabled'
+  end
+
+  describe 'registry.migration.importnotification (url)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          migration:
+            enabled: true
+            importnotification:
+              enabled: true
+              url: 'https://gitlab.example.com'
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          migration:
+            enabled: true
+            importnotification:
+              enabled: true
+              url: ''
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling importnotification requires the URL to not be empty' }
+
+    include_examples 'config validation',
+                     success_description: 'when import notification is enabled, with url',
+                     error_description: 'when import notification is enabled, with empty url'
+  end
+
   describe 'registry.gc (disabled)' do
     let(:success_values) do
       YAML.safe_load(%(

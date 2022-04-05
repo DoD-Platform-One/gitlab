@@ -366,6 +366,37 @@ There are a number of potential causes for this error:
   Memory cgroup out of memory: Killed process 3141592 (gitlab-shell)
   ```
 
+## YAML configuration: `mapping values are not allowed in this context`
+
+The following error message may appear when YAML configuration contains leading spaces:
+
+```plaintext
+template: /var/opt/gitlab/templates/workhorse-config.toml.tpl:16:98:
+  executing \"/var/opt/gitlab/templates/workhorse-config.toml.tpl\" at <data.YAML>:
+    error calling YAML:
+      yaml: line 2: mapping values are not allowed in this context
+```
+
+To address this, ensure that there are no leading spaces in configuration.
+
+For example, change this:
+
+```yaml
+  key1: value1
+  key2: value2
+```
+
+... to this:
+
+```yaml
+key1: value1
+key2: value2
+```
+
+This change ensures that the configuration can be populated correctly by
+[gomplate](https://gomplate.ca), which was added in GitLab 14.5 (chart version 5.5.0)
+via [MR 2218](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2218).
+
 ## TLS and certificates
 
 If your GitLab instance needs to trust a private TLS certificate authority, GitLab might
@@ -436,13 +467,12 @@ kubectl logs gitlab-webservice-default-pod -c certificates
 
 ### Check on the Rails console
 
-Use the task runner pod to verify if Rails trusts the certificates you supplied.
+Use the toolbox pod to verify if Rails trusts the certificates you supplied.
 
-1. Start a rails console:
+1. Start a Rails console (replace `<namespace>` with the namespace where GitLab is installed):
 
    ```shell
-   kubectl get pods | grep task-runner
-   kubectl exec -it <task-runner-pod-name> -- bash
+   kubectl exec -ti $(kubectl get pod -n <namespace> -lapp=toolbox -o jsonpath='{.items[0].metadata.name}') -n <namespace> -- bash
    /srv/gitlab/bin/rails console
    ```
 
@@ -505,6 +535,7 @@ Run the certificates container using Docker.
         -v $(pwd)/etc/ssl/certs:/etc/ssl/certs \
         -v $(pwd)/usr/local/share/ca-certificates:/usr/local/share/ca-certificates \
         registry.gitlab.com/gitlab-org/build/cng/alpine-certificates:20191127-r2
+   ```
 
 1. Check your certificates have been correctly built:
 

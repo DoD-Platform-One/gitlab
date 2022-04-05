@@ -22,7 +22,7 @@ dependencies:
   version: 8.9.4
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
-  version: 0.38.0
+  version: 0.39.0
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.9.1
@@ -35,5 +35,5 @@ dependencies:
 - name: gluon
   repository: oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon
   version: 0.2.8
-digest: sha256:c434babfcc33f01d74346ed0ed98e39cd6c11835f1f2a527a2a5d83e502f40bc
-generated: "2022-02-28T16:50:48.36598273-07:00"
+digest: sha256:bdcfcd5c6c9fb008ef6857397b0786891f3f111f5380583f8f5f6fa07ee277b3
+generated: "2022-04-05T07:17:08.599042556-06:00"

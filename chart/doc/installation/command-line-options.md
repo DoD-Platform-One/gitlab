@@ -118,6 +118,8 @@ helm inspect values gitlab/gitlab
 | `global.appConfig.incomingEmail.clientSecret.key`    | Key in `appConfig.incomingEmail.clientSecret.secret` that contains the OAuth2 client secret              | empty      |
 | `global.appConfig.incomingEmail.clientSecret.secret` | Name of a `Secret` containing the OAuth2 client secret                                                   | secret     |
 | `global.appConfig.incomingEmail.pollInterval`        | The interval in seconds how often to poll for new mail                                                   | 60         |
+| `global.appConfig.incomingEmail.azureAdEndpoint`     | The URL of the Azure Active Directory endpoint (example: `https://login.microsoftonline.com`)            | empty      |
+| `global.appConfig.incomingEmail.graphEndpoint`       | The URL of the Microsoft Graph endpoint (example: `https://graph.microsoft.com`)                         | empty      |
 
 See the [instructions for creating secrets](secrets.md).
 
@@ -165,6 +167,8 @@ must be `+%{key}`.
 | `global.appConfig.serviceDeskEmail.clientSecret.key`    | Key in `appConfig.serviceDeskEmail.clientSecret.secret` that contains the OAuth2 client secret              | empty      |
 | `global.appConfig.serviceDeskEmail.clientSecret.secret` | Name of a `Secret` containing the OAuth2 client secret                                                      | secret     |
 | `global.appConfig.serviceDeskEmail.pollInterval`        | The interval in seconds how often to poll for new mail                                                      | 60         |
+| `global.appConfig.serviceDeskEmail.azureAdEndpoint`     | The URL of the Azure Active Directory endpoint (example: `https://login.microsoftonline.com`)               | empty      |
+| `global.appConfig.serviceDeskEmail.graphEndpoint`       | The URL of the Microsoft Graph endpoint (example: `https://graph.microsoft.com`)                            | empty      |
 
 See the [instructions for creating secrets](secrets.md).
 

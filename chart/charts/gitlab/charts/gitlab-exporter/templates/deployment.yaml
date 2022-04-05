@@ -28,8 +28,17 @@ spec:
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-      {{- if .Values.metrics.enabled }}
+      {{- if and .Values.metrics.enabled (not .Values.metrics.serviceMonitor.enabled) }}
+      {{- if .Values.metrics.annotations }}
         {{- toYaml .Values.metrics.annotations | nindent 8 }}
+      {{- else }}
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_port: {{ .Values.metrics.port | quote }}
+        gitlab.com/prometheus_path: {{ .Values.metrics.path }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/path: {{ .Values.metrics.path }}
+      {{- end }}
       {{- end }}
       {{- range $key, $value := .Values.annotations }}
         {{ $key }}: {{ $value | quote }}
@@ -99,7 +108,7 @@ spec:
             {{- include "gitlab.extraEnv" . | nindent 12 }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
-            name: gitlab-exporter
+            name: http-metrics
           volumeMounts:
             - name: gitlab-exporter-config
               mountPath: /var/opt/gitlab-exporter/templates/gitlab-exporter.yml.erb

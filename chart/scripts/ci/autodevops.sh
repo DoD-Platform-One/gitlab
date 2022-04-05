@@ -164,6 +164,7 @@ CIYAML
     --set nginx-ingress.controller.ingressClassResource.controllerValue="ci.gitlab.com/$RELEASE_NAME" \
     --set certmanager.install=false \
     --set prometheus.install=$PROMETHEUS_INSTALL \
+    --set prometheus.server.retention="4d" \
     --set global.gitlab.license.secret="$RELEASE_NAME-gitlab-license" \
     "${enable_kas[@]}" \
     --namespace="$NAMESPACE" \

@@ -2,6 +2,65 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 5.9.2 (2022-03-31)
+
+No changes.
+
+## 5.9.1 (2022-03-23)
+
+No changes.
+
+## 5.9.0 (2022-03-21)
+
+### Added (7 changes)
+
+- [Support separate_database_metrics for Praefect](gitlab-org/charts/gitlab@a9624b7f20c8d8d360250c2bdcb4ba1ee8b46b4c) ([merge request](gitlab-org/charts/gitlab!2405))
+- [feat: adds ci Secure Files settings](gitlab-org/charts/gitlab@054bc4d30eabffc81950096c56a1d9696bdeebd1) ([merge request](gitlab-org/charts/gitlab!2437))
+- [Add Spamcheck to GitLab Helm Chart](gitlab-org/charts/gitlab@f838962ee7ff7da85fc0d1b50da22a2c3c55e065) ([merge request](gitlab-org/charts/gitlab!2241))
+- [Add TLS rate-limiting options for GitLab Pages](gitlab-org/charts/gitlab@92659ef1fb2a4f6ba8c5612b6fe0bbd679e06dcc) ([merge request](gitlab-org/charts/gitlab!2403))
+- [Add importnotification settings for the registry](gitlab-org/charts/gitlab@8f1c9f83ebf7d3e863f45955f5c5aa57ee0f69c6) ([merge request](gitlab-org/charts/gitlab!2396))
+- [Add more registry migration configuration options](gitlab-org/charts/gitlab@e8437edcbf9e2ec21652c864a2d6fdd5d280cc73) ([merge request](gitlab-org/charts/gitlab!2389))
+- [Add bizible settings](gitlab-org/charts/gitlab@5a7bbe298d1393bd92bbde844d849bdde06ad50b) ([merge request](gitlab-org/charts/gitlab!2393))
+
+### Fixed (1 change)
+
+- [skip praefect db secret generation for external db](gitlab-org/charts/gitlab@f310323f6d7adfd08fc4bc063c26ce54c0e3a29c) by @walkafwalka ([merge request](gitlab-org/charts/gitlab!2366))
+
+### Changed (10 changes)
+
+- [Add support for configuring Microsoft Graph endpoints](gitlab-org/charts/gitlab@2cb3a252c8eb85786a50a2f646eb3a5c21447f2c) ([merge request](gitlab-org/charts/gitlab!2444))
+- [Update gitlab-org/gitlab-exporter from 11.11.0 to 11.12.0](gitlab-org/charts/gitlab@a4263ab277fab3ac67e86f69172fcd5a58cc7c55) ([merge request](gitlab-org/charts/gitlab!2441))
+- [Update gitlab-org/container-registry from 3.31.0-gitlab to 3.32.0-gitlab](gitlab-org/charts/gitlab@8d7e3fbae410857f5185ef9adca5a7b8ca16d1cb) ([merge request](gitlab-org/charts/gitlab!2432))
+- [Update gitlab-org/charts/gitlab-runner from 0.38.0 to 0.38.1](gitlab-org/charts/gitlab@8d666ef8c25fd5541cc0b6c3463dea193daedb5f) ([merge request](gitlab-org/charts/gitlab!2431))
+- [Add tolerations for the geo-logcursor deployment](gitlab-org/charts/gitlab@97e29a5f7ee662c420459181ffdc184c4ea79e86) by @vmoudy1 ([merge request](gitlab-org/charts/gitlab!2426))
+- [Bump Container Registry to v3.31.0-gitlab](gitlab-org/charts/gitlab@a65743249fde61ea84301e7a6863af9b5cbaa185) ([merge request](gitlab-org/charts/gitlab!2423))
+- [Use CNG images for KAS](gitlab-org/charts/gitlab@adfb07a2bfd6fcdd69f03a8737e0e158ea2b9f73) ([merge request](gitlab-org/charts/gitlab!2398))
+- [Update gitlab-org/container-registry from 3.28.2-gitlab to 3.30.0-gitlab](gitlab-org/charts/gitlab@14fb9cbeac0479a80d6c20897bf3e44e26f95ef5) ([merge request](gitlab-org/charts/gitlab!2412))
+- [Update gitlab-org/container-registry from 3.27.1-gitlab to 3.28.2-gitlab](gitlab-org/charts/gitlab@1a8cff22a5ceb57555fe1cba1f2ab4de625d5e4a) ([merge request](gitlab-org/charts/gitlab!2401))
+- [Update gitlab-org/charts/gitlab-runner from 0.37.2 to 0.38.0](gitlab-org/charts/gitlab@b09571bb48d4301ac2be260daf525fad69c6eaa8) ([merge request](gitlab-org/charts/gitlab!2400))
+
+### Other (11 changes)
+
+- [Updates docs to rename task runner pod to toolbox](gitlab-org/charts/gitlab@5620ec0d6bfde3f0fd0d2757d524a984ce449a50) ([merge request](gitlab-org/charts/gitlab!2433))
+- [Adjust yq syntax based on current version](gitlab-org/charts/gitlab@2ce7be58e29e8991886af29fcf77d9d6807e7f7b) ([merge request](gitlab-org/charts/gitlab!2425))
+- [MR template: reference Distribution MR workflow](gitlab-org/charts/gitlab@e081c47606ccf0f15f152152933e37e6e939a657) ([merge request](gitlab-org/charts/gitlab!2455))
+- [Set Prometheus Server retention to 2 days](gitlab-org/charts/gitlab@6a4240848752782ed0a78455ca213e8dad425e98) ([merge request](gitlab-org/charts/gitlab!2382))
+- [Document how to set TLS Secret for KAS/Grafana](gitlab-org/charts/gitlab@d88d73f6202e923b3874e468c1cc07af924fd720) ([merge request](gitlab-org/charts/gitlab!2429))
+- [Use image digest for helper images](gitlab-org/charts/gitlab@4ab53015bf67f7552e905309ea64eab9752f76ed) ([merge request](gitlab-org/charts/gitlab!2427))
+- [Use yq v4 syntax](gitlab-org/charts/gitlab@662d0b96fd4dd0ccf7ca85db41807598047a6b31) ([merge request](gitlab-org/charts/gitlab!2409))
+- [Update Operator install docs for version 0.5.1](gitlab-org/charts/gitlab@44bbe6236cb050bb9d287790997a7f3860a072c1) ([merge request](gitlab-org/charts/gitlab!2417))
+- [Add troubleshooting docs for YAML parse errors](gitlab-org/charts/gitlab@b9947210a310b2eb69cd0a3727d69f0378b6b3ce) ([merge request](gitlab-org/charts/gitlab!2414))
+- [Update Operator docs for version 0.5.0](gitlab-org/charts/gitlab@bffc825cf4730c78e4127e3b0cd8983f7d0545ea) ([merge request](gitlab-org/charts/gitlab!2407))
+- [Update link to Gitaly Cluster migration](gitlab-org/charts/gitlab@0901cb209b15f7ed43eb04576e249940c3afb608) ([merge request](gitlab-org/charts/gitlab!2399))
+
+## 5.8.4 (2022-03-16)
+
+No changes.
+
+## 5.8.3 (2022-03-14)
+
+No changes.
+
 ## 5.8.2 (2022-02-25)
 
 No changes.
@@ -52,6 +111,14 @@ No changes.
 
 - [Add ERROR: to output message to make more visible](gitlab-org/charts/gitlab@6fe9d83f2d6be4266c26eb7b91f8e6efc54984ea) ([merge request](gitlab-org/charts/gitlab!2294))
 
+## 5.7.5 (2022-03-09)
+
+No changes.
+
+## 5.7.4 (2022-02-25)
+
+No changes.
+
 ## 5.7.3 (2022-02-15)
 
 No changes.
@@ -84,6 +151,14 @@ No changes.
 - [Add test specs](gitlab-org/charts/gitlab@0777257463d3f6169d7fbc47e2931a3347698630) ([merge request](gitlab-org/charts/gitlab!2304))
 - [Update gitlab-org/container-registry from 3.20.0-gitlab to 3.21.0-gitlab](gitlab-org/charts/gitlab@52b9f0d5b6ae45cbf578dffd94cd1e544938a093) ([merge request](gitlab-org/charts/gitlab!2337))
 - [Update gitlab-org/container-registry from 3.19.0-gitlab to 3.20.0-gitlab](gitlab-org/charts/gitlab@4ae9e795d2ae3ceec5f2d75a9c5c9ecefb88f707) ([merge request](gitlab-org/charts/gitlab!2334))
+
+## 5.6.6 (2022-03-01)
+
+No changes.
+
+## 5.6.5 (2022-02-25)
+
+No changes.
 
 ## 5.6.4 (2022-02-03)
 

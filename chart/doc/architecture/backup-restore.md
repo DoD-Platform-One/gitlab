@@ -45,7 +45,7 @@ Backups are made using the following steps, in order:
 
 - `--skip <component>`
 
-  You can skip parts of the backup process by using `--skip <component>` for every component that you want to skip in the backup process. Skippable components are the database (`db`), repositories (`repositories`), and any of the object storages (`registry`, `uploads`, `artifacts`, `lfs`, `packages`, `external_diffs`, or `terraform_state`).
+  You can skip parts of the backup process by using `--skip <component>` for every component that you want to skip in the backup process. Skippable components are the database (`db`), repositories (`repositories`), and any of the object storages (`registry`, `uploads`, `artifacts`, `lfs`, `packages`, `external_diffs`, `terraform_state`, or `ci_secure_files`).
 
 - `-t <timestamp-override-value>`
 

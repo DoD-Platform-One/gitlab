@@ -831,6 +831,7 @@ global:
       matomoDisableCookies:
       oneTrustId:
       googleTagManagerNonceId:
+      bizible:
     object_store:
       enabled: false
       proxy_download: true
@@ -865,6 +866,10 @@ global:
     terraformState:
       enabled: false
       bucket: gitlab-terraform-state
+      connection: {}
+    ciSecureFiles:
+      enabled: false
+      bucket: gitlab-ci-secure-files
       connection: {}
     dependencyProxy:
       enabled: false
@@ -1014,6 +1019,7 @@ under the `extra` key below `appConfig`:
 | `extra.matomoDisableCookies`| Boolean | (empty) | Disable Matomo cookies (corresponds to `disableCookies` in the Matomo script) |
 | `extra.oneTrustId`         | String | (empty) | OneTrust ID. |
 | `extra.googleTagManagerNonceId` | String | (empty) | Google Tag Manager ID. |
+| `extra.bizible`            | Boolean | `false` | Set to true to enable Bizible script |
 
 ### Consolidated object storage
 
@@ -1064,6 +1070,7 @@ By default, GitLab uses these bucket names for each type:
 | Uploads                      | `gitlab-uploads`          |
 | External merge request diffs | `gitlab-mr-diffs`         |
 | Terraform State              | `gitlab-terraform-state`  |
+| CI Secure Files              | `gitlab-ci-secure-files`  |
 | Dependency Proxy             | `gitlab-dependency-proxy` |
 | Pages                        | `gitlab-pages`            |
 
@@ -1076,6 +1083,7 @@ You can use these defaults or configure the bucket names:
 --set global.appConfig.uploads.bucket=<BUCKET NAME> \
 --set global.appConfig.externalDiffs.bucket=<BUCKET NAME> \
 --set global.appConfig.terraformState.bucket=<BUCKET NAME> \
+--set global.appConfig.ciSecureFiles.bucket=<BUCKET NAME> \
 --set global.appConfig.dependencyProxy.bucket=<BUCKET NAME>
 ```
 
@@ -1392,6 +1400,12 @@ args:
   idp_sso_target_url: 'https://SAML_IDP/app/xxxxxxxxx/xxxxxxxxx/sso/saml'
   issuer: 'https://gitlab.example.com'
   name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'
+```
+
+[Group SAML](https://docs.gitlab.com/ee/integration/saml.html#configuring-group-saml-on-a-self-managed-gitlab-instance) configuration example:
+
+```yaml
+name: group_saml
 ```
 
 This content can be saved as `provider.yaml`, and then a secret created from it:

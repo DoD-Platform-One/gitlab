@@ -60,6 +60,8 @@ gitlab:
     image:
       pullSecrets:
       - name: private-registry
+    minReplicas: 1
+    maxReplicas: 1
   gitaly:
     image:
       pullSecrets:

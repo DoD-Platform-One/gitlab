@@ -25,7 +25,7 @@ data:
 
     # If metrics collection is enabled, inform gitaly about that
     {{- if .Values.metrics.enabled }}
-    prometheus_listen_addr = "0.0.0.0:{{ .Values.metrics.metricsPort }}"
+    prometheus_listen_addr = "0.0.0.0:{{ default .Values.metrics.port .Values.metrics.metricsPort }}"
     {{- end }}
 
     {{- if $.Values.global.gitaly.tls.enabled }}

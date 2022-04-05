@@ -176,6 +176,41 @@ describe 'Mailroom configuration' do
       expect(mailbox[:inbox_options][:client_id]).to eq('SOME-CLIENT-ID')
       expect(mailbox[:inbox_options][:client_secret]).to eq('secret')
       expect(mailbox[:inbox_options][:poll_interval]).to eq(30)
+      expect(mailbox[:inbox_options][:azure_ad_endpoint]).to be_nil
+      expect(mailbox[:inbox_options][:graph_endpoint]).to be_nil
+    end
+
+    context 'with custom endpoints' do
+      let(:incoming_email_settings) do
+        YAML.safe_load(%(
+          incomingEmail:
+            enabled: true
+            address: incoming+%{key}@test.example.com
+            inboxMethod: microsoft_graph
+            azureAdEndpoint: https://login.microsoftonline.us
+            graphEndpoint: https://graph.microsoft.us
+            tenantId: SOME-TENANT-ID
+            clientId: SOME-CLIENT-ID
+            clientSecret:
+              secret: mailroom-client-id
+            pollInterval: 30
+        ))
+      end
+
+      it 'renders mail_room.yml' do
+        t = HelmTemplate.new(values)
+
+        expect(t.exit_code).to eq(0)
+        expect(mail_room_yml[:mailboxes].length).to eq(1)
+        expect(raw_mail_room_yml).to include(%(:client_secret: <%= File.read("/etc/gitlab/mailroom/client_id_incoming_email").strip.to_json %>))
+        expect(mailbox[:inbox_options]).to be_a(Hash)
+        expect(mailbox[:inbox_options][:azure_ad_endpoint]).to eq('https://login.microsoftonline.us')
+        expect(mailbox[:inbox_options][:graph_endpoint]).to eq('https://graph.microsoft.us')
+        expect(mailbox[:inbox_options][:tenant_id]).to eq('SOME-TENANT-ID')
+        expect(mailbox[:inbox_options][:client_id]).to eq('SOME-CLIENT-ID')
+        expect(mailbox[:inbox_options][:client_secret]).to eq('secret')
+        expect(mailbox[:inbox_options][:poll_interval]).to eq(30)
+      end
     end
 
     context 'with Service Desk' do
@@ -205,6 +240,41 @@ describe 'Mailroom configuration' do
         expect(mailbox[:inbox_options][:client_id]).to eq('OTHER-CLIENT-ID')
         expect(mailbox[:inbox_options][:client_secret]).to eq('secret')
         expect(mailbox[:inbox_options][:poll_interval]).to eq(45)
+        expect(mailbox[:inbox_options][:azure_ad_endpoint]).to be_nil
+        expect(mailbox[:inbox_options][:graph_endpoint]).to be_nil
+      end
+
+      context 'with custom endpoints' do
+        let(:app_config) do
+          incoming_email_settings.merge(YAML.safe_load(%(
+            serviceDeskEmail:
+              enabled: true
+              address: servicedesk+%{key}@test.example.com
+              inboxMethod: microsoft_graph
+              tenantId: OTHER-TENANT-ID
+              clientId: OTHER-CLIENT-ID
+              azureAdEndpoint: https://login.microsoftonline.us
+              graphEndpoint: https://graph.microsoft.us
+              clientSecret:
+                secret: mailroom-client-id
+              pollInterval: 45
+          )))
+        end
+
+        it 'renders mail_room.yml' do
+          t = HelmTemplate.new(values)
+
+          expect(t.exit_code).to eq(0)
+          expect(mail_room_yml[:mailboxes].length).to eq(2)
+          expect(raw_mail_room_yml).to include(%(:client_secret: <%= File.read("/etc/gitlab/mailroom/client_id_service_desk").strip.to_json %>))
+          expect(mailbox[:inbox_options]).to be_a(Hash)
+          expect(mailbox[:inbox_options][:azure_ad_endpoint]).to eq('https://login.microsoftonline.us')
+          expect(mailbox[:inbox_options][:graph_endpoint]).to eq('https://graph.microsoft.us')
+          expect(mailbox[:inbox_options][:tenant_id]).to eq('OTHER-TENANT-ID')
+          expect(mailbox[:inbox_options][:client_id]).to eq('OTHER-CLIENT-ID')
+          expect(mailbox[:inbox_options][:client_secret]).to eq('secret')
+          expect(mailbox[:inbox_options][:poll_interval]).to eq(45)
+        end
       end
     end
   end
@@ -481,7 +551,6 @@ describe 'Mailroom configuration' do
     end
 
     it 'renders mail_room.yml' do
-      puts template.stderr
       expect(template.exit_code).to eq(0)
       expect(mail_room_yml[:mailboxes].length).to eq(2)
 
