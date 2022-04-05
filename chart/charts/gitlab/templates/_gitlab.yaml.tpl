@@ -78,6 +78,9 @@ extra:
   {{ if .extra.googleTagManagerNonceId }}
   google_tag_manager_nonce_id: {{ .extra.googleTagManagerNonceId | quote }}
   {{- end }}
+  {{ if .extra.bizible }}
+  bizible: {{ eq true .extra.bizible }}
+  {{- end }}
 {{- end -}}
 
 {{- define "gitlab.appConfig.rackAttack" -}}

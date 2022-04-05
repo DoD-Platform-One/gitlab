@@ -76,6 +76,9 @@ data:
     {{- if .Values.maxURILength }}
     max-uri-length={{ .Values.maxURILength }}
     {{- end }}
+    {{- if .Values.serverShutdownTimeout }}
+    server-shutdown-timeout={{ .Values.serverShutdownTimeout }}
+    {{- end }}
     {{- if .Values.gitlabClientHttpTimeout }}
     gitlab-client-http-timeout={{ .Values.gitlabClientHttpTimeout }}
     {{- end }}
@@ -130,6 +133,18 @@ data:
     {{- end }}
     {{- if .Values.rateLimitDomainBurst }}
     rate-limit-domain-burst={{ .Values.rateLimitDomainBurst }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSSourceIP }}
+    rate-limit-tls-source-ip={{ .Values.rateLimitTLSSourceIP }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSSourceIPBurst }}
+    rate-limit-tls-source-ip-burst={{ .Values.rateLimitTLSSourceIPBurst }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSDomain }}
+    rate-limit-tls-domain={{ .Values.rateLimitTLSDomain }}
+    {{- end }}
+    {{- if .Values.rateLimitTLSDomainBurst }}
+    rate-limit-tls-domain-burst={{ .Values.rateLimitTLSDomainBurst }}
     {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}

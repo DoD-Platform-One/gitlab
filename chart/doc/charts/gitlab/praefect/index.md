@@ -23,7 +23,7 @@ The Praefect chart is used to manage a [Gitaly cluster](https://docs.gitlab.com/
 
 This chart consumes the Gitaly chart. Settings from `global.gitaly` are used to configure the instances created by this chart. Documentation of these settings can be found in [Gitaly chart documentation](../gitaly/index.md).
 
-*Important*: `global.gitaly.tls` is independent of `global.praefect.tls`. They are configured separately.
+_Important_: `global.gitaly.tls` is independent of `global.praefect.tls`. They are configured separately.
 
 By default, this chart will create 3 Gitaly Replicas.
 
@@ -117,7 +117,7 @@ When migrating to Praefect, none of Praefect's virtual storages can be named `de
 This is because there must be at least one storage named `default` at all times,
 therefore the name is already taken by the non-Praefect configuration.
 
-The instructions to [migrate existing repositories to Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#migrate-existing-repositories-to-gitaly-cluster)
+The instructions to [migrate to Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/index.html#migrating-to-gitaly-cluster)
 can then be followed to move data from the `default` storage to `virtualStorage2`. If additional storages
 were defined under `global.gitaly.internal.names`, be sure to migrate repositories from those storages as well.
 
@@ -138,7 +138,7 @@ global:
       maxUnavailable: 2
 ```
 
-The instructions to [migrate existing repositories to Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#migrate-existing-repositories-to-gitaly-cluster)
+The instructions to [migrate to Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/index.html#migrating-to-gitaly-cluster)
 can be followed again to move data from `virtualStorage2` to the newly-added `default` storage if desired.
 
 Finally, see the [repository storage paths documentation](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-repositories-are-stored)
@@ -250,29 +250,34 @@ global:
 The table below contains all the possible charts configurations that can be supplied to
 the `helm install` command using the `--set` flags.
 
-| Parameter                      | Default                                           | Description                                                                                             |
-| ------------------------------ | ------------------------------------------        | ----------------------------------------                                                                |
-| common.labels                  | `{}`                                              | Supplemental labels that are applied to all objects created by this chart.                              |
-| failover.enabled               | true                                              | Whether Praefect should perform failover on node failure                                                |
-| failover.readonlyAfter         | false                                             | Whether the nodes should be in read-only mode after failover                                            |
-| autoMigrate                    | true                                              | Automatically run migrations on startup                                                                 |
-| electionStrategy               | `sql`                                               | See [election strategy](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#automatic-failover-and-leader-election) |
-| image.repository               | `registry.gitlab.com/gitlab-org/build/cng/gitaly` | The default image repository to use. Praefect is bundled as part of the Gitaly image                    |
-| podLabels                      | `{}`                                              | Supplemental Pod labels. Will not be used for selectors.                                                |
-| service.name                   | `praefect`                                        | The name of the service to create                                                                       |
-| service.type                   | ClusterIP                                         | The type of service to create                                                                           |
-| service.internalPort           | 8075                                              | The internal port number that the Praefect pod will be listening on                                     |
-| service.externalPort           | 8075                                              | The port number the Praefect service should expose in the cluster                                       |
-| init.resources                 |                                                   |                                                                                                         |
-| init.image                     |                                                   |                                                                                                         |
-| logging.level                  |                                                   | Log level                                                                                               |
-| logging.format                 | `json`                                            | Log format                                                                                              |
-| logging.sentryDsn              |                                                   | Sentry DSN URL - Exceptions from Go server                                                              |
-| logging.rubySentryDsn          |                                                   | Sentry DSN URL - Exceptions from `gitaly-ruby`                                                          |
-| logging.sentryEnvironment      |                                                   | Sentry environment to be used for logging                                                               |
-| metrics.enabled                | true                                              |                                                                                                         |
-| metrics.port                   | 9236                                              |                                                                                                         |
-| securityContext.runAsUser      | 1000                                              |                                                                                                         |
-| securityContext.fsGroup        | 1000                                              |                                                                                                         |
-| serviceLabels                  | `{}`                                              | Supplemental service labels                                                                             |
-| statefulset.strategy           | `{}`                                              | Allows one to configure the update strategy utilized by the statefulset                                 |
+| Parameter                                 | Default                                           | Description                                                                                                                                                                |
+| ----------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| common.labels                             | `{}`                                              | Supplemental labels that are applied to all objects created by this chart.                                                                                                 |
+| failover.enabled                          | true                                              | Whether Praefect should perform failover on node failure                                                                                                                   |
+| failover.readonlyAfter                    | false                                             | Whether the nodes should be in read-only mode after failover                                                                                                               |
+| autoMigrate                               | true                                              | Automatically run migrations on startup                                                                                                                                    |
+| electionStrategy                          | `sql`                                             | See [election strategy](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#automatic-failover-and-leader-election)                                             |
+| image.repository                          | `registry.gitlab.com/gitlab-org/build/cng/gitaly` | The default image repository to use. Praefect is bundled as part of the Gitaly image                                                                                       |
+| podLabels                                 | `{}`                                              | Supplemental Pod labels. Will not be used for selectors.                                                                                                                   |
+| service.name                              | `praefect`                                        | The name of the service to create                                                                                                                                          |
+| service.type                              | ClusterIP                                         | The type of service to create                                                                                                                                              |
+| service.internalPort                      | 8075                                              | The internal port number that the Praefect pod will be listening on                                                                                                        |
+| service.externalPort                      | 8075                                              | The port number the Praefect service should expose in the cluster                                                                                                          |
+| init.resources                            |                                                   |                                                                                                                                                                            |
+| init.image                                |                                                   |                                                                                                                                                                            |
+| logging.level                             |                                                   | Log level                                                                                                                                                                  |
+| logging.format                            | `json`                                            | Log format                                                                                                                                                                 |
+| logging.sentryDsn                         |                                                   | Sentry DSN URL - Exceptions from Go server                                                                                                                                 |
+| logging.rubySentryDsn                     |                                                   | Sentry DSN URL - Exceptions from `gitaly-ruby`                                                                                                                             |
+| logging.sentryEnvironment                 |                                                   | Sentry environment to be used for logging                                                                                                                                  |
+| `metrics.enabled`                         | `true`                                            | If a metrics endpoint should be made available for scraping                                                                                                                |
+| `metrics.port`                            | `9236`                                            | Metrics endpoint port                                                                                                                                                      |
+| `metrics.separate_database_metrics`       | `true`                                            | If true then metrics scrapes will not perform database queries, setting to false [may cause performance problems](https://gitlab.com/gitlab-org/gitaly/-/issues/3796)      |
+| `metrics.path`                            | `/metrics`                                        | Metrics endpoint path                                                                                                                                                      |
+| `metrics.serviceMonitor.enabled`          | `false`                                           | If a ServiceMonitor should be created to enable Prometheus Operator to manage the metrics scraping, note that enabling this removes the `prometheus.io` scrape annotations |
+| `metrics.serviceMonitor.additionalLabels` | `{}`                                              | Additional labels to add to the ServiceMonitor                                                                                                                             |
+| `metrics.serviceMonitor.endpointConfig`   | `{}`                                              | Additional endpoint configuration for the ServiceMonitor                                                                                                                   |
+| securityContext.runAsUser                 | 1000                                              |                                                                                                                                                                            |
+| securityContext.fsGroup                   | 1000                                              |                                                                                                                                                                            |
+| serviceLabels                             | `{}`                                              | Supplemental service labels                                                                                                                                                |
+| statefulset.strategy                      | `{}`                                              | Allows one to configure the update strategy utilized by the statefulset                                                                                                    |

@@ -25,7 +25,7 @@ pushd /tmp/gitlab-operator || exit
     -o merge_request.label="group::distribution" \
     -o merge_request.label="devops::enablement" \
     -o merge_request.label="section::enablement" \
-    -o merge_request.label="feature::maintenance" \
+    -o merge_request.label="type::maintenance" \
     -o merge_request.label="Category:Cloud Native Installation" \
     -o merge_request.label="workflow::ready for review"
 popd || exit

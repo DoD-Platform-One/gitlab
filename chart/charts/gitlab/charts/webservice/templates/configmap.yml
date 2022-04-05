@@ -87,6 +87,7 @@ data:
           {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "packages" "config" $.Values.global.appConfig.packages) | nindent 10 -}}
           {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "external_diffs" "config" $.Values.global.appConfig.externalDiffs) | nindent 10 -}}
           {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "terraform_state" "config" $.Values.global.appConfig.terraformState) | nindent 10 -}}
+          {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "ci_secure_files" "config" $.Values.global.appConfig.ciSecureFiles) | nindent 10 -}}
           {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "dependency_proxy" "config" $.Values.global.appConfig.dependencyProxy) | nindent 10 -}}
           {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 10 -}}
       {{- end }}
@@ -96,6 +97,7 @@ data:
       {{- include "gitlab.appConfig.packages.configuration" (dict "config" $.Values.global.appConfig.packages "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.external_diffs.configuration" (dict "config" $.Values.global.appConfig.externalDiffs "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.terraformState.configuration" (dict "config" $.Values.global.appConfig.terraformState "context" $) | nindent 6 }}
+      {{- include "gitlab.appConfig.ciSecureFiles.configuration" (dict "config" $.Values.global.appConfig.ciSecureFiles "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.dependencyProxy.configuration" (dict "config" $.Values.global.appConfig.dependencyProxy "context" $) | nindent 6 }}
       {{- include "gitlab.geo.config" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sentry.configuration" $ | nindent 6 }}
@@ -128,7 +130,7 @@ data:
           {{ toYaml .Values.monitoring.ipWhitelist | nindent 10 | trim }}
           {{- end }}
         web_exporter:
-          enabled: {{ eq .Values.monitoring.exporter.enabled true }}
+          enabled: {{ or .Values.monitoring.exporter.enabled (and .Values.metrics.enabled (eq .Values.metrics.port .Values.monitoring.exporter.port)) }}
           address: 0.0.0.0
           port: {{ .Values.monitoring.exporter.port }}
         sidekiq_exporter:

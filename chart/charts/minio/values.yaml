@@ -145,6 +145,7 @@ defaultBuckets:
   - name: gitlab-pseudo
   - name: gitlab-mr-diffs
   - name: gitlab-terraform-state
+  - name: gitlab-ci-secure-files
   - name: gitlab-dependency-proxy
   - name: gitlab-pages
   #

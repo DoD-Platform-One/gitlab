@@ -79,7 +79,14 @@ shell:
 ## container on.
 metrics:
   enabled: true
-  metricsPort: 9236
+  port: 9236
+  path: /metrics
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    endpointConfig: {}
+  # DEPRECATED in favor of `metrics.port` as seen above
+  metricsPort:
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/

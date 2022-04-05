@@ -30,57 +30,64 @@ controlled by `global.shell.port`.
 
 ## Installation command line options
 
-| Parameter                | Default        | Description                              |
-| ------------------------ | -------------- | ---------------------------------------- |
-| `annotations`            |                | Pod annotations                          |
-| `podLabels`              |                | Supplemental Pod labels. Will not be used for selectors. |
-| `common.labels`          |                | Supplemental labels that are applied to all objects created by this chart. |
-| `config.clientAliveInterval`  | `0`          | Interval between keepalive pings on otherwise idle connections; the default value of 0 disables this ping |
-| `config.loginGraceTime`  | `120`          | Specifies amount of time that the server will disconnect after if the user has not successfully logged in |
-| `config.maxStartups.full`  | `100`     | SSHd refuse probability will increase linearly and all unauthenticated connection attempts would be refused when unauthenticated connections number will reach specified number |
-| `config.maxStartups.rate`  | `30`      | SSHd will refuse connections with specified probability when there would be too many unauthenticated connections (optional) |
-| `config.maxStartups.start` | `10`      | SSHd will refuse connection attempts with some probability if there are currently more than the specified number of unauthenticated connections (optional) |
-| `deployment.livenessProbe.initialDelaySeconds` | 10 | Delay before liveness probe is initiated |
-| `deployment.livenessProbe.periodSeconds`  | 10 | How often to perform the liveness probe |
-| `deployment.livenessProbe.timeoutSeconds` | 3 | When the liveness probe times out |
-| `deployment.livenessProbe.successThreshold` | 1 | Minimum consecutive successes for the liveness probe to be considered successful after having failed |
-| `deployment.livenessProbe.failureThreshold` | 3 | Minimum consecutive failures for the liveness probe to be considered failed after having succeeded |
-| `deployment.readinessProbe.initialDelaySeconds` | 10 | Delay before readiness probe is initiated      |
-| `deployment.readinessProbe.periodSeconds`       | 5  | How often to perform the readiness probe       |
-| `deployment.readinessProbe.timeoutSeconds`      | 3  | When the readiness probe times out             |
-| `deployment.readinessProbe.successThreshold`    | 1  | Minimum consecutive successes for the readiness probe to be considered successful after having failed |
-| `deployment.readinessProbe.failureThreshold`    | 2  | Minimum consecutive failures for the readiness probe to be considered failed after having succeeded |
-| `deployment.strategy`                       | `{}` | Allows one to configure the update strategy utilized by the deployment |
-| `deployment.terminationGracePeriodSeconds`  | 30 | Seconds that Kubernetes will wait for a pod to forcibly exit |
-| `enabled`                | `true`         | Shell enable flag                        |
-| `extraContainers`        |                | List of extra containers to include      |
-| `extraInitContainers`    |                | List of extra init containers to include |
-| `extraVolumeMounts`      |                | List of extra volumes mounts to do       |
-| `extraVolumes`           |                | List of extra volumes to create          |
-| `extraEnv`               |                | List of extra environment variables to expose |
-| `hpa.targetAverageValue` | `100m`         | Set the autoscaling target value         |
-| `image.pullPolicy`       | `IfNotPresent` | Shell image pull policy                  |
-| `image.pullSecrets`      |                | Secrets for the image repository         |
-| `image.repository`       | `registry.com/gitlab-org/build/cng/gitlab-shell` | Shell image repository |
-| `image.tag`              | `master`       | Shell image tag                          |
-| `init.image.repository`  |                | initContainer image                      |
-| `init.image.tag`         |                | initContainer image tag                  |
-| `logging.format`         | `text`      | Set to `json` for JSON-structured logs   |
-| `logging.sshdLogLevel`   | `ERROR`     | Log level for underlying SSH daemon |
-| `replicaCount`           | `1`            | Shell replicas                           |
-| `serviceLabels`          | `{}`           | Supplemental service labels |
-| `service.externalTrafficPolicy` | `Cluster` | Shell service external traffic policy (Cluster or Local)  |
-| `service.internalPort`   | `2222`         | Shell internal port                      |
-| `service.nodePort`       |                | Sets shell nodePort if set               |
-| `service.name`           | `gitlab-shell` | Shell service name                       |
-| `service.type`           | `ClusterIP`    | Shell service type                       |
-| `service.loadBalancerIP` |                | IP address to assign to LoadBalancer (if supported) |
-| `service.loadBalancerSourceRanges` |      | List of IP CIDRs allowed access to LoadBalancer (if supported)  |
-| `securityContext.fsGroup` | `1000`      |Group ID under which the pod should be started |
-| `securityContext.runAsUser` | `1000`      |User ID under which the pod should be started  |
-| `sshDaemon` | `openssh` | Selects which SSH daemon would be run, possible values (`openssh`, `gitlab-sshd`) |
-| `tolerations`            | `[]`           | Toleration labels for pod assignment     |
-| `workhorse.serviceName`    | `webservice`      | Workhorse service name (by default, Workhorse is a part of the webservice Pods / Service)                   |
+| Parameter                                       | Default                                          | Description                                                                                                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `annotations`                                   |                                                  | Pod annotations                                                                                                                                                                 |
+| `podLabels`                                     |                                                  | Supplemental Pod labels. Will not be used for selectors.                                                                                                                        |
+| `common.labels`                                 |                                                  | Supplemental labels that are applied to all objects created by this chart.                                                                                                      |
+| `config.clientAliveInterval`                    | `0`                                              | Interval between keepalive pings on otherwise idle connections; the default value of 0 disables this ping                                                                       |
+| `config.loginGraceTime`                         | `120`                                            | Specifies amount of time that the server will disconnect after if the user has not successfully logged in                                                                       |
+| `config.maxStartups.full`                       | `100`                                            | SSHd refuse probability will increase linearly and all unauthenticated connection attempts would be refused when unauthenticated connections number will reach specified number |
+| `config.maxStartups.rate`                       | `30`                                             | SSHd will refuse connections with specified probability when there would be too many unauthenticated connections (optional)                                                     |
+| `config.maxStartups.start`                      | `10`                                             | SSHd will refuse connection attempts with some probability if there are currently more than the specified number of unauthenticated connections (optional)                      |
+| `deployment.livenessProbe.initialDelaySeconds`  | 10                                               | Delay before liveness probe is initiated                                                                                                                                        |
+| `deployment.livenessProbe.periodSeconds`        | 10                                               | How often to perform the liveness probe                                                                                                                                         |
+| `deployment.livenessProbe.timeoutSeconds`       | 3                                                | When the liveness probe times out                                                                                                                                               |
+| `deployment.livenessProbe.successThreshold`     | 1                                                | Minimum consecutive successes for the liveness probe to be considered successful after having failed                                                                            |
+| `deployment.livenessProbe.failureThreshold`     | 3                                                | Minimum consecutive failures for the liveness probe to be considered failed after having succeeded                                                                              |
+| `deployment.readinessProbe.initialDelaySeconds` | 10                                               | Delay before readiness probe is initiated                                                                                                                                       |
+| `deployment.readinessProbe.periodSeconds`       | 5                                                | How often to perform the readiness probe                                                                                                                                        |
+| `deployment.readinessProbe.timeoutSeconds`      | 3                                                | When the readiness probe times out                                                                                                                                              |
+| `deployment.readinessProbe.successThreshold`    | 1                                                | Minimum consecutive successes for the readiness probe to be considered successful after having failed                                                                           |
+| `deployment.readinessProbe.failureThreshold`    | 2                                                | Minimum consecutive failures for the readiness probe to be considered failed after having succeeded                                                                             |
+| `deployment.strategy`                           | `{}`                                             | Allows one to configure the update strategy utilized by the deployment                                                                                                          |
+| `deployment.terminationGracePeriodSeconds`      | 30                                               | Seconds that Kubernetes will wait for a pod to forcibly exit                                                                                                                    |
+| `enabled`                                       | `true`                                           | Shell enable flag                                                                                                                                                               |
+| `extraContainers`                               |                                                  | List of extra containers to include                                                                                                                                             |
+| `extraInitContainers`                           |                                                  | List of extra init containers to include                                                                                                                                        |
+| `extraVolumeMounts`                             |                                                  | List of extra volumes mounts to do                                                                                                                                              |
+| `extraVolumes`                                  |                                                  | List of extra volumes to create                                                                                                                                                 |
+| `extraEnv`                                      |                                                  | List of extra environment variables to expose                                                                                                                                   |
+| `hpa.targetAverageValue`                        | `100m`                                           | Set the autoscaling target value                                                                                                                                                |
+| `image.pullPolicy`                              | `IfNotPresent`                                   | Shell image pull policy                                                                                                                                                         |
+| `image.pullSecrets`                             |                                                  | Secrets for the image repository                                                                                                                                                |
+| `image.repository`                              | `registry.com/gitlab-org/build/cng/gitlab-shell` | Shell image repository                                                                                                                                                          |
+| `image.tag`                                     | `master`                                         | Shell image tag                                                                                                                                                                 |
+| `init.image.repository`                         |                                                  | initContainer image                                                                                                                                                             |
+| `init.image.tag`                                |                                                  | initContainer image tag                                                                                                                                                         |
+| `logging.format`                                | `text`                                           | Set to `json` for JSON-structured logs                                                                                                                                          |
+| `logging.sshdLogLevel`                          | `ERROR`                                          | Log level for underlying SSH daemon                                                                                                                                             |
+| `replicaCount`                                  | `1`                                              | Shell replicas                                                                                                                                                                  |
+| `serviceLabels`                                 | `{}`                                             | Supplemental service labels                                                                                                                                                     |
+| `service.externalTrafficPolicy`                 | `Cluster`                                        | Shell service external traffic policy (Cluster or Local)                                                                                                                        |
+| `service.internalPort`                          | `2222`                                           | Shell internal port                                                                                                                                                             |
+| `service.nodePort`                              |                                                  | Sets shell nodePort if set                                                                                                                                                      |
+| `service.name`                                  | `gitlab-shell`                                   | Shell service name                                                                                                                                                              |
+| `service.type`                                  | `ClusterIP`                                      | Shell service type                                                                                                                                                              |
+| `service.loadBalancerIP`                        |                                                  | IP address to assign to LoadBalancer (if supported)                                                                                                                             |
+| `service.loadBalancerSourceRanges`              |                                                  | List of IP CIDRs allowed access to LoadBalancer (if supported)                                                                                                                  |
+| `securityContext.fsGroup`                       | `1000`                                           | Group ID under which the pod should be started                                                                                                                                  |
+| `securityContext.runAsUser`                     | `1000`                                           | User ID under which the pod should be started                                                                                                                                   |
+| `sshDaemon`                                     | `openssh`                                        | Selects which SSH daemon would be run, possible values (`openssh`, `gitlab-sshd`)                                                                                               |
+| `tolerations`                                   | `[]`                                             | Toleration labels for pod assignment                                                                                                                                            |
+| `workhorse.serviceName`                         | `webservice`                                     | Workhorse service name (by default, Workhorse is a part of the webservice Pods / Service)                                                                                       |
+| `metrics.enabled`                               | `false`                                          | If a metrics endpoint should be made available for scraping                                                                                                                     |
+| `metrics.port`                                  | `9122`                                           | Metrics endpoint port                                                                                                                                                           |
+| `metrics.path`                                  | `/metrics`                                       | Metrics endpoint path                                                                                                                                                           |
+| `metrics.serviceMonitor.enabled`                | `false`                                          | If a ServiceMonitor should be created to enable Prometheus Operator to manage the metrics scraping, note that enabling this removes the `prometheus.io` scrape annotations      |
+| `metrics.serviceMonitor.additionalLabels`       | `{}`                                             | Additional labels to add to the ServiceMonitor                                                                                                                                  |
+| `metrics.serviceMonitor.endpointConfig`         | `{}`                                             | Additional endpoint configuration for the ServiceMonitor                                                                                                                        |
+| `metrics.annotations`                           |                                                  | **DEPRECATED** Set explicit metrics annotations. Replaced by template content.                                                                                                  |
 
 ## Chart configuration examples
 
@@ -199,10 +206,10 @@ workhorse:
   port: 8181
 ```
 
-| Name          | Type    | Default   | Description |
-|:--------------|:-------:|:----------|:------------|
-| `host`        | String  |           | The hostname of the Workhorse server. This can be omitted in lieu of `serviceName`. |
-| `port`        | Integer | `8181`    | The port on which to connect to the Workhorse server.|
+| Name          |  Type   | Default      | Description                                                                                                                                                                                                                                                                                                                                                                |
+| :------------ | :-----: | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `host`        | String  |              | The hostname of the Workhorse server. This can be omitted in lieu of `serviceName`.                                                                                                                                                                                                                                                                                        |
+| `port`        | Integer | `8181`       | The port on which to connect to the Workhorse server.                                                                                                                                                                                                                                                                                                                      |
 | `serviceName` | String  | `webservice` | The name of the `service` which is operating the Workhorse server. By default, Workhorse is a part of the webservice Pods / Service. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Workhorse as a part of the overall GitLab chart. |
 
 ## Chart Settings
@@ -225,10 +232,10 @@ authToken:
  key: secret
 ```
 
-| Name               | Type    | Default | Description |
-|:-------------------|:-------:|:--------|:------------|
-| `authToken.key`    | String  |         | The name of the key in the above secret that contains the auth token. |
-| `authToken.secret` | String  |         | The name of the Kubernetes `Secret` to pull from. |
+| Name               |  Type  | Default | Description                                                           |
+| :----------------- | :----: | :------ | :-------------------------------------------------------------------- |
+| `authToken.key`    | String |         | The name of the key in the above secret that contains the auth token. |
+| `authToken.secret` | String |         | The name of the Kubernetes `Secret` to pull from.                     |
 
 ### LoadBalancer Service
 
@@ -257,13 +264,13 @@ This section controls the
 This configuration is optional and is used to limit Egress and Ingress of the
 Pods to specific endpoints.
 
-| Name              | Type    | Default | Description |
-|:----------------- |:-------:|:------- |:----------- |
-| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy` |
-| `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified. |
-| `ingress.rules`   | Array   | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
-| `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified. |
-| `egress.rules`    | Array   | `[]`    | Rules for the egress policy, these for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
+| Name              |  Type   | Default | Description                                                                                                                                                                     |
+| :---------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy`                                                                                                                                        |
+| `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified.                                         |
+| `ingress.rules`   |  Array  | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below      |
+| `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified.                                           |
+| `egress.rules`    |  Array  | `[]`    | Rules for the egress policy, these for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
 
 ### Example Network Policy
 

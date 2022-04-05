@@ -35,5 +35,6 @@ There are some common global settings that apply to multiple charts. See the
 - GitLab/[Migrations](gitlab/migrations/index.md)
 - GitLab/[Praefect](gitlab/praefect/index.md)
 - GitLab/[Sidekiq](gitlab/sidekiq/index.md)
+- GitLab/[Spamcheck](gitlab/spamcheck/index.md)
 - GitLab/[Toolbox](gitlab/toolbox/index.md)
 - GitLab/[Webservice](gitlab/webservice/index.md)

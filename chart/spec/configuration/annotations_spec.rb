@@ -15,6 +15,8 @@ describe 'Annotations configuration' do
       gitlab:
         kas:
           enabled: true  # DELETE THIS WHEN KAS BECOMES ENABLED BY DEFAULT
+        spamcheck:
+          enabled: true  # DELETE THIS WHEN SPAMCHECK BECOMES ENABLED BY DEFAULT
     )))
   end
 

@@ -459,6 +459,7 @@ describe 'GitLab Pages' do
             gitlab:
               gitlab-pages:
                 artifactsServerTimeout: 50
+                serverShutdownTimeout: 50s
                 artifactsServerUrl: https://randomwebsite.com
                 domainConfigSource: disk
                 gitlabClientHttpTimeout: 25
@@ -492,6 +493,10 @@ describe 'GitLab Pages' do
                 rateLimitSourceIPBurst: 50
                 rateLimitDomain: 2000.5
                 rateLimitDomainBurst: 20000
+                rateLimitTLSSourceIP: 200.5
+                rateLimitTLSSourceIPBurst: 51
+                rateLimitTLSDomain: 1000.5
+                rateLimitTLSDomainBurst: 20001
           ))
         end
 
@@ -517,6 +522,7 @@ describe 'GitLab Pages' do
             metrics-address=:9999
             max-conns=45
             max-uri-length=2048
+            server-shutdown-timeout=50s
             gitlab-client-http-timeout=25
             gitlab-client-jwt-expiry=35
             sentry-dsn=foobar
@@ -533,6 +539,10 @@ describe 'GitLab Pages' do
             rate-limit-source-ip-burst=50
             rate-limit-domain=2000.5
             rate-limit-domain-burst=20000
+            rate-limit-tls-source-ip=200.5
+            rate-limit-tls-source-ip-burst=51
+            rate-limit-tls-domain=1000.5
+            rate-limit-tls-domain-burst=20001
           MSG
 
           expect(pages_enabled_template.exit_code).to eq(0), "Unexpected error code #{pages_enabled_template.exit_code} -- #{pages_enabled_template.stderr}"

@@ -53,8 +53,17 @@ spec:
       {{- range $key, $value := .pod.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
-      {{- if $.Values.metrics.enabled }}
+      {{- if and $.Values.metrics.enabled (not $.Values.metrics.serviceMonitor.enabled) }}
+      {{- if $.Values.metrics.annotations }}
         {{- toYaml $.Values.metrics.annotations | nindent 8 }}
+      {{- else }}
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_port: {{ $.Values.service.internalPort | quote }}
+        gitlab.com/prometheus_path: {{ $.Values.metrics.path }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ $.Values.service.internalPort | quote }}
+        prometheus.io/path: {{ $.Values.metrics.path }}
+      {{- end }}
       {{- end }}
     spec:
       {{- if .tolerations }}
@@ -169,7 +178,11 @@ spec:
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           ports:
             - containerPort: {{ $.Values.service.internalPort }}
-              name: webservice
+              name: http-webservice
+          {{- if or $.Values.monitoring.exporter.enabled (and $.Values.metrics.enabled (eq $.Values.metrics.port $.Values.monitoring.exporter.port)) }}
+            - containerPort: {{ $.Values.monitoring.exporter.port }}
+              name: http-metrics-ws
+          {{- end }}
           env:
             - name: GITLAB_WEBSERVER
               value: {{ $.Values.webServer }}
@@ -280,7 +293,11 @@ spec:
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           ports:
             - containerPort: {{ $.Values.service.workhorseInternalPort }}
-              name: workhorse
+              name: http-workhorse
+          {{- if or $.Values.workhorse.monitoring.exporter.enabled $.Values.workhorse.metrics.enabled }}
+            - containerPort: {{ $.Values.workhorse.monitoring.exporter.port }}
+              name: http-metrics-wh
+          {{- end }}
           env:
             - name: TMPDIR
               value: "/tmp/gitlab"
@@ -294,9 +311,9 @@ spec:
               value: '/var/opt/gitlab/templates'
             - name: CONFIG_DIRECTORY
               value: '/srv/gitlab/config'
-            {{- if .workhorse.monitoring.exporter.enabled }}
+            {{- if or .workhorse.monitoring.exporter.enabled .workhorse.metrics.enabled }}
             - name: GITLAB_WORKHORSE_PROM_LISTEN_ADDR
-              value: "0.0.0.0:{{ $.Values.workhorse.monitoring.exporter.port }}"
+              value: "0.0.0.0:{{ .workhorse.monitoring.exporter.port }}"
             {{- end }}
             {{- if .workhorse.sentryDSN }}
             - name: GITLAB_WORKHORSE_SENTRY_DSN
@@ -410,6 +427,7 @@ spec:
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "packages" "config" $.Values.global.appConfig.packages) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "external_diffs" "config" $.Values.global.appConfig.externalDiffs) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "terraform_state" "config" $.Values.global.appConfig.terraformState) | nindent 10 }}
+          {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "ci_secure_files" "config" $.Values.global.appConfig.ciSecureFiles) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "dependency_proxy" "config" $.Values.global.appConfig.dependencyProxy) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 10 }}
           {{- include "gitlab.appConfig.ldap.servers.mountSecrets" $ | nindent 10 }}

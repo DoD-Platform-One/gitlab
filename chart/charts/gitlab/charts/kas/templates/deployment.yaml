@@ -25,14 +25,14 @@ spec:
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-        {{- if .Values.metrics.enabled }}
+      {{- if and .Values.metrics.enabled (not .Values.metrics.serviceMonitor.enabled) }}
         gitlab.com/prometheus_scrape: "true"
-        gitlab.com/prometheus_path: {{ .Values.metrics.path | quote }}
         gitlab.com/prometheus_port: {{ .Values.metrics.port | quote }}
+        gitlab.com/prometheus_path: {{ .Values.metrics.path }}
         prometheus.io/scrape: "true"
-        prometheus.io/path: {{ .Values.metrics.path | quote }}
         prometheus.io/port: {{ .Values.metrics.port | quote }}
-        {{- end }}
+        prometheus.io/path: {{ .Values.metrics.path }}
+      {{- end }}
       {{- range $key, $value := .Values.annotations }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
@@ -89,12 +89,14 @@ spec:
           ports:
             - containerPort: {{ .Values.service.internalPort }}
               name: {{ template "name" . }}
-            - containerPort: {{ .Values.metrics.port }}
-              name: {{ template "name" . }}-metrics
             - containerPort: {{ .Values.service.kubernetesApiPort }}
               name: {{ template "name" . }}-k8s-api
             - containerPort: {{ .Values.service.privateApiPort }}
               name: {{ template "name" . }}-private-api
+          {{- if .Values.metrics.enabled }}
+            - containerPort: {{ .Values.metrics.port }}
+              name: http-metrics
+          {{- end }}
           readinessProbe:
             tcpSocket:
               port: {{ .Values.service.internalPort }}

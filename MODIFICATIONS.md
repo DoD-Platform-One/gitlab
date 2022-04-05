@@ -1,7 +1,7 @@
 # Modifications made to upstream chart
 
 ##  chart/charts/*.tgz
-- run ```helm dependency update``` and commit the downloaded archives
+- run ```helm dependency update ./chart``` and commit the downloaded archives
 - comment the ```charts/*.tgz``` from the .gitignore file
 - comment the ```requirements.lock``` in the .gitignore file.
 - commit the tar archives that were downloaded from the helm dependency update command. And also commit the requirements.lock that was generated.
@@ -94,7 +94,7 @@
   ```
 
 ## chart/charts/gitlab/charts/gitlab-exporter/templates/bigbang/service-monitor.yaml
-- add ServiceMonitor to Gitlab sub-chart ```gitlab-exporterr``` to enable prometheus monitoring
+- add ServiceMonitor to Gitlab sub-chart ```gitlab-exporter``` to enable prometheus monitoring
   
 ## chart/tests/*
 - add helm test scripts

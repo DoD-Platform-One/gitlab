@@ -127,7 +127,7 @@ You should see a list of available buckets.
 An error like `[Error] AccessDeniedException: 403 <GCP Account> does not have storage.objects.list access to the Google Cloud Storage bucket.`
 usually happens during a backup or restore of a GitLab instance, because of missing permissions.
 
-The backup and restore operations use all buckets in the environment,so
+The backup and restore operations use all buckets in the environment, so
 confirm that all buckets in your environment have been created, and that the GCP account can access (list, read, and write) all buckets:
 
 1. Find your toolbox pod:

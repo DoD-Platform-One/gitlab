@@ -36,7 +36,7 @@ patch_replicas() {
 }
 
 pre() {
-    in_toolbox backup-utility -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
+    in_toolbox backup-utility -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,ci_secure_files,repositories
 }
 
 post() {
@@ -76,7 +76,7 @@ post() {
     done
 
     # Restore the database
-    in_toolbox backup-utility --restore -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,repositories
+    in_toolbox backup-utility --restore -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,ci_secure_files,repositories
     in_toolbox gitlab-rake db:migrate
 
     # Start the deployments back up

@@ -236,16 +236,38 @@
     "metrics": {
       "properties": {
         "enabled": {
-          "title": "Enable generation of metrics annotations",
+          "title": "Enable generation of metrics via annotations or ServiceMonitor",
           "type": "boolean"
         },
         "port": {
           "title": "Metrics port",
           "type": "integer"
         },
+        "path": {
+          "title": "Metrics path",
+          "type": "string"
+        },
+        "serviceMonitor": {
+          "properties": {
+            "enabled": {
+              "title": "Create a ServiceMonitor",
+              "type": "boolean"
+            },
+            "additionalLabels": {
+              "title": "Additional labels",
+              "type": "object"
+            },
+            "endpointConfig": {
+              "title": "Endpoint config",
+              "type": "object"
+            }
+          },
+          "title": "ServiceMonitor",
+          "type": "object"
+        },
         "annotations": {
           "title": "Metrics annotations",
-          "type": "object" 
+          "type": "object"
         }
       }
     },

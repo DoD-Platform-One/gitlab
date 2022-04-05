@@ -15,10 +15,20 @@ service sub-charts:
 - [GitLab Pages](gitlab-pages/index.md)
 - [GitLab Runner](gitlab-runner/index.md)
 - [GitLab Shell](gitlab-shell/index.md)
-- [GitLab Agent Server (KAS)](kas/index.md)
+- [GitLab agent server (KAS)](kas/index.md)
 - [Mailroom](mailroom/index.md)
 - [Migrations](migrations/index.md)
 - [Praefect](praefect/index.md)
 - [Sidekiq](sidekiq/index.md)
+- [Spamcheck](spamcheck/index.md)
 - [Toolbox](toolbox/index.md)
 - [Webservice](webservice/index.md)
+
+The parameters for each subchart must be under the `gitlab` key. For example, 
+GitLab Shell parameters would be similar to:
+
+```yaml
+gitlab:
+  gitlab-shell:
+    ...
+```

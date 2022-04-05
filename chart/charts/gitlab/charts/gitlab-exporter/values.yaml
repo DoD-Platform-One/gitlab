@@ -16,13 +16,14 @@ service:
 metrics:
   enabled: true
   port: 9168
-  annotations:
-    gitlab.com/prometheus_scrape: "true"
-    gitlab.com/prometheus_port: "9168"
-    gitlab.com/prometheus_path: "/metrics"
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9168"
-    prometheus.io/path: "/metrics"
+  path: /metrics
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    endpointConfig: {}
+  # DEPRECATED
+  annotations: {}
+    
 enabled: true
 
 # Tolerations for pod scheduling

@@ -7,12 +7,16 @@ module Gitlab
   end
 
   module TestHelper
-    def full_command(cmd)
-      "kubectl exec -it #{pod_name} -- #{cmd}"
+    def full_command(cmd, env = {})
+      "kubectl exec -it #{pod_name} -- env #{env_hash_to_str(env)} #{cmd}"
     end
 
     def gitaly_full_command(cmd)
       "kubectl exec -it #{gitaly_pod_name} -- #{cmd}"
+    end
+
+    def env_hash_to_str(env)
+      env.map { |key, value| "#{key}=#{value}" }.join(' ')
     end
 
     def wait_until_app_ready(retries:30, interval: 10)
@@ -92,14 +96,14 @@ module Gitlab
     end
 
     def restore_from_backup
-      cmd = full_command("backup-utility --restore -t original")
+      cmd = full_command("backup-utility --restore -t original", { GITLAB_ASSUME_YES: "1" })
       stdout, status = Open3.capture2e(cmd)
 
       return [stdout, status]
     end
 
     def backup_instance
-      cmd = full_command("backup-utility -t test-backup")
+      cmd = full_command("backup-utility -t test-backup", { GITLAB_ASSUME_YES: "1" })
       stdout, status = Open3.capture2e(cmd)
 
       return [stdout, status]
