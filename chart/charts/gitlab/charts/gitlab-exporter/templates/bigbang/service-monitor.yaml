@@ -14,7 +14,7 @@ spec:
   endpoints:
     - path: /sidekiq 
       interval: 30s
-      port: http-exporter
+      port: http-metrics
       scheme: http
   jobLabel: gitlab
 {{- end }}
