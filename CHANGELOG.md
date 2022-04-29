@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.9.2-bb.2] - 2022-04-26
+### Added
+- Added Oscal Component
+
 ## [5.9.2-bb.1] - 2022-04-05
 ### Changed
 - Fix port name in exporter servicemonitor
@@ -249,7 +253,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [4.8.0-bb.0] - 2021-02-12
 ### Changed
-- upgrade Gitlab to application version 13.8.0 chart version 4.8.0 
+- upgrade Gitlab to application version 13.8.0 chart version 4.8.0
 
 ## [4.7.2-bb.0] - 2021-01-20
 ### Changed

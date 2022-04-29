@@ -1,0 +1,305 @@
+component-definition:
+  uuid: c1419e97-09fe-42ef-9645-266ef40947cb
+  metadata:
+    title: Gitlab Component
+    last-modified: '2021-10-19T12:00:00Z'
+    version: "20211019"
+    oscal-version: 1.0.0
+    parties:
+      # Should be consistent across all of the packages, but where is ground truth?
+    - uuid: 72134592-08C2-4A77-ABAD-C880F109367A
+      type: organization
+      name: Platform One
+      links:
+      - href: <https://p1.dso.mil>
+        rel: website
+  components:
+  - uuid: 410b85fb-afb7-415b-8476-aa96dd11c9ac
+    type: software
+    title: Gitlab
+    description: |
+      An implementation of a web-based DevOps lifecycle tool that combines the ability to develop, secure, and operate software in a single application
+    purpose: Provides devops lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking and continuous integration/continuous deployment pipeline features
+    responsible-roles:
+    - role-id: provider
+      party-uuids:
+      - 72134592-08C2-4A77-ABAD-C880F109367A # matches parties entry for p1
+    control-implementations:
+    - uuid: eb5b8231-4d15-4672-84f8-1452f8142f19
+      source: https://raw.githubusercontent.com/usnistgov/oscal-content/master/nist.gov/SP800-53/rev5/json/NIST_SP-800-53_rev5_catalog.json
+      description:
+        Controls implemented by Gitlab for inheritance by applications
+      implemented-requirements:
+      - uuid: 87568c56-c420-4b77-a868-b3f43a99968e
+        control-id: ac-2.1
+        description: >-
+          Gitlab can be used to manage account roles used to manage the application when GitOps is the deployment mechanism.
+          Gitlab is also used as the login provider for Mattermost, allowing the controls from Keycloak to be passed through Gitlab
+      - uuid: 06f02634-8002-403f-8827-cc32bb026a19
+        control-id: ac-2.2
+        description: >-
+          Gitlab has built in account management which can be used to remove or disable per account. Reference https://docs.gitlab.com/ee/user/admin_area/moderate_users.html
+      - uuid: 9b031f94-34e8-4c4f-8bd0-6fb1baa24895
+        control-id: ac-2.3
+        description: >-
+          Gitlab has built in account management which can be used to remove or disable per account. Reference https://docs.gitlab.com/ee/user/admin_area/moderate_users.html
+      - uuid: 9a29abfc-1465-46bf-b327-839166d5340e
+        control-id: ac-2.4
+        description: >-
+          Gitlab integrates with external authentication and authorization. Reference https://docs.gitlab.com/ee/administration/auth/
+      - uuid: 3487b1e4-1756-48fc-a381-7e026a8cb78b
+        control-id: ac-3
+        description: >-
+          Gitlab has access enforcement. Reference https://docs.gitlab.com/ee/topics/authentication/#authentication
+      - uuid: b7d6f6c1-864c-4aee-a6b1-408eb10c3228
+        control-id: ac-5
+        description: >-
+          Gitlab provides permissions and roles. Reference https://docs.gitlab.com/ee/user/permissions.html
+      - uuid: 3a470e69-5e62-4488-a927-da7d082f7110
+        control-id: ac-6
+        description: >-
+          Gitlab provides permissions and roles. Reference https://docs.gitlab.com/ee/user/permissions.html
+      - uuid: 7389a7cd-0bf4-4290-a436-c8a16ca0c4af
+        control-id: ac-6.1
+        description: >-
+          Gitlab provides permissions and roles. Reference https://docs.gitlab.com/ee/user/permissions.html
+      - uuid: 4c58262a-c9c7-4eec-b396-f62df3500745
+        control-id: ac-6.2
+        description: >-
+          Gitlab provides permissions and roles. Reference https://docs.gitlab.com/ee/user/permissions.html
+      - uuid: 806ca407-42a0-42d8-9585-edd4d474cbd7
+        control-id: ac-6.5
+        description: >-
+          Gitlab provides permissions and roles. Reference https://docs.gitlab.com/ee/user/permissions.html
+      - uuid: d4f48e02-9006-4cc3-8f59-478e885c7135
+        control-id: ac-6.7
+        description: >-
+          Gitlab provides permissions and roles. Reference https://docs.gitlab.com/ee/user/permissions.html
+      - uuid: d689f0cd-a277-4cc9-9994-9068c71979fe
+        control-id: ac-6.9
+        description: >-
+          Gitlab provides events. Reference https://docs.gitlab.com/ee/administration/audit_events.html
+      - uuid: b1acd75a-5b0c-4bb3-bdcf-ee3a812a0c46
+        control-id: ac-6.10
+        description: >-
+          Gitlab provides permissions and roles. https://docs.gitlab.com/ee/user/permissions.html
+      - uuid: 40bcbf86-b3ec-4451-9c5c-348588209233
+        control-id: ac-8
+        description: >-
+          Reference https://docs.gitlab.com/ee/user/admin_area/appearance.html
+      - uuid: 549177f2-9427-47af-a58b-f72aa6e7d748
+        control-id: ac-10
+        description: >-
+          Gtilab tracks sessions. Reference https://docs.gitlab.com/ee/user/profile/active_sessions.html
+      - uuid: 8ba8138e-a687-491f-a37b-d914748d5217
+        control-id: au-2
+        description: >-
+          Gitlab provides event logging, reference https://docs.gitlab.com/ee/administration/audit_events.html
+      - uuid: 8f8c34a7-1d4e-4f29-a26e-08e2195983c7
+        control-id: au-3
+        description: >-
+          Gitlab provides audit record review, analysis and reporting, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: 6774f825-6ee3-4a7c-ab5f-dbf7c2392139
+        control-id: au-3.1
+        description: >-
+          Gitlab provides audit record review, analysis and reporting, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: d36a7db7-d387-4c28-89da-09be2b23ff2f
+        control-id: au-6
+        description: >-
+          Gitlab provides audit record review, analysis and reporting, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: 2c885551-0395-4212-907d-999b2489e09d
+        control-id: au-6.1
+        description: >-
+          Gitlab provides audit record review, analysis and reporting, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: 03175db0-6ab5-4a26-8976-bcdf355eb85f
+        control-id: au-6.3
+        description: >-
+          Gitlab provides audit record review, analysis and reporting, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: 98c0800f-9762-4ed1-bda0-01d1623d6b2e
+        control-id: au-6.5
+        description: >-
+          Gitlab provides audit record review, analysis and reporting, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: b0e814a6-d01d-4f83-bb2b-729ce87ee4c9
+        control-id: au-6.6
+        description: >-
+          Gitlab provides audit record review, analysis and reporting, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: daafec57-80fc-41f0-af23-05cf2103f89d
+        control-id: au-7
+        description: >-
+          Gitlab provides audit record reduction and report generation, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: a47ac3d5-32f2-4dbf-bf47-7ece82bc22ed
+        control-id: au-7.1
+        description: >-
+          Gitlab provides audit record reduction and report generation, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: 5639cd67-fa83-4fcc-9653-f697bbc623d1
+        control-id: au-8
+        description: >-
+          Gitlab provides time stamps, reference https://docs.gitlab.com/ee/administration/audit_reports.html
+      - uuid: a4ca86a4-e200-4223-9a1d-114c70b4f7c7
+        control-id: au-10
+        description: >-
+          Gitlab provides non-repudiation, reference "https://docs.gitlab.com/ee/user/project/repository/gpg_signed_commits/ & https://docs.gitlab.com/ee/user/project/repository/x509_signed_commits/"
+      - uuid: 9305fee7-a9f0-4d88-b985-58880e6c5aaa
+        control-id: cm-2.2
+        description: >-
+          Gitlab provides baseline configuration management to enable and define automation support, retention of previous configurations, unauthorized software, authorized software, dev and test environments. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 69bfbe03-d786-4c71-a235-e006fb41fb2b
+        control-id: cm-2.3
+        description: >-
+          Gitlab provides baseline configuration management to enable and define automation support, retention of previous configurations, unauthorized software, authorized software, dev and test environments. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 08e5e7c7-b05a-4d49-bf4e-30ae7ecaa22f
+        control-id: cm-2.4
+        description: >-
+          Gitlab provides baseline configuration management to enable and define automation support, retention of previous configurations, unauthorized software, authorized software, dev and test environments. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 062caa2a-df1c-4484-be73-ecd35efca2f5
+        control-id: cm-2.5
+        description: >-
+          Gitlab provides baseline configuration management to enable and define automation support, retention of previous configurations, unauthorized software, authorized software, dev and test environments. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 2460923b-31d2-4a67-9862-e7ca7aff8a8a
+        control-id: cm-2.6
+        description: >-
+          Gitlab provides baseline configuration management to enable and define automation support, retention of previous configurations, unauthorized software, authorized software, dev and test environments. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 53ecf7b8-feca-4fe8-920c-f9ef71d1066a
+        control-id: cm-2.7
+        description: >-
+          Gitlab provides baseline configuration management to enable and define automation support, retention of previous configurations, unauthorized software, authorized software, dev and test environments. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: e309ebb7-52c0-4125-a951-7bf6ccc28df8
+        control-id: cm-3
+        description: >-
+          Gitlab provides change control via automated notification, prohibition of changes, testing, validation, documentation of changes, automated change implementation, and security and privacy representatives. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 5f984c3e-920b-45a4-86e3-5f8ee656e280
+        control-id: cm-3.1
+        description: >-
+          Gitlab provides change control via automated notification, prohibition of changes, testing, validation, documentation of changes, automated change implementation, and security and privacy representatives. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 5d594f34-f5b6-4cc8-920f-46c1ab2cfb14
+        control-id: cm-3.2
+        description: >-
+          Gitlab provides change control via automated notification, prohibition of changes, testing, validation, documentation of changes, automated change implementation, and security and privacy representatives. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: a1867bda-dfa9-4d16-9252-33e3bedbd412
+        control-id: cm-3.3
+        description: >-
+          Gitlab provides change control via automated notification, prohibition of changes, testing, validation, documentation of changes, automated change implementation, and security and privacy representatives. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 7b39109d-fcd6-4566-a77e-6a307e1beb5b
+        control-id: cm-3.4
+        description: >-
+          Gitlab provides change control via automated notification, prohibition of changes, testing, validation, documentation of changes, automated change implementation, and security and privacy representatives. Reference https://docs.gitlab.com/ee/user/project/
+      - uuid: 28ed9548-55f6-4a01-aaad-98121bd68811
+        control-id: cp-9
+        description: >-
+          Gitlab provides system backups that can be tested for reliability, tested for restoration, separate storage, potected from unauthorized modification, and transfered to alternative storage site. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: e3a4e82a-ac25-4cd5-a959-b5d757d866f7
+        control-id: cp-9.1
+        description: >-
+          Gitlab provides system backups that can be tested for reliability, tested for restoration, separate storage, potected from unauthorized modification, and transfered to alternative storage site. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 01f2da7c-8f0a-4078-9b63-800be81269db
+        control-id: cp-9.2
+        description: >-
+          Gitlab provides system backups that can be tested for reliability, tested for restoration, separate storage, potected from unauthorized modification, and transfered to alternative storage site. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 671de227-7174-4cf4-9c33-ba4ed161969c
+        control-id: cp-9.3
+        description: >-
+          Gitlab provides system backups that can be tested for reliability, tested for restoration, separate storage, potected from unauthorized modification, and transfered to alternative storage site. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 5c14ba42-f8f3-451e-918f-5f7544e1d1fe
+        control-id: cp-9.4
+        description: >-
+          Gitlab provides system backups that can be tested for reliability, tested for restoration, separate storage, potected from unauthorized modification, and transfered to alternative storage site. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 72e4a392-0796-49d4-b5e5-4fb3ccb1bcb3
+        control-id: cp-9.5
+        description: >-
+          Gitlab provides system backups that can be tested for reliability, tested for restoration, separate storage, potected from unauthorized modification, and transfered to alternative storage site. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 5d58d7b4-7497-426e-b651-bc28e08d989a
+        control-id: cp-10
+        description: >-
+          Gitlab provides system recovery. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 4f86933c-9822-48f4-8f02-9d22774a202b
+        control-id: cp-10.2
+        description: >-
+          Gitlab provides system recovery. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 2b5d43fc-a037-44a7-adb2-71c34222363b
+        control-id: cp-10.4
+        description: >-
+          Gitlab provides system recovery. Reference https://docs.gitlab.com/omnibus/settings/backups.html
+      - uuid: 3d260bc7-db92-4d19-afcc-f9ea41923698
+        control-id: ia-2
+        description: >-
+          Gitlab provides unique identification and authentication of users. Reference https://docs.gitlab.com/ee/user/admin_area/settings/sign_up_restrictions.html
+      - uuid: 5cba12f0-bda9-400e-818c-2cdef5483464
+        control-id: ia-2.1
+        description: >-
+          Gitlab allows implementation of multi-factor authentication for privileged and non-privileged accounts. Reference https://docs.gitlab.com/ee/user/profile/account/two_factor_authentication.html
+      - uuid: d770b286-dbff-4236-931a-13e6107524fe
+        control-id: ia-2.2
+        description: >-
+          Gitlab allows implementation of multi-factor authentication for privileged and non-privileged accounts. Reference https://docs.gitlab.com/ee/user/profile/account/two_factor_authentication.html
+      - uuid: 24595c11-6936-48a3-8068-43702aa2f4e8
+        control-id: ia-2.12
+        description: >-
+          Gitlab accepts PIV credentials. Reference https://docs.gitlab.com/ee/administration/auth/
+      - uuid: e69c6000-f2bc-4640-b9af-2bc1ebffa2a9
+        control-id: ia-3
+        description: >-
+          Gitlab provides device identification and authentication. Reference https://docs.gitlab.com/ee/topics/set_up_organization.html
+      - uuid: 625caa84-0f80-4e22-9c45-2366e421bf77
+        control-id: ia-4
+        description: >-
+          Gitlab provides user identifier management. Reference https://docs.gitlab.com/ee/topics/set_up_organization.html
+      - uuid: 137a5926-c55d-4d78-8dd6-2aa05a4aaf6a
+        control-id: ia-4.4
+        description: >-
+          Gitlab provides user identifier management. Reference https://docs.gitlab.com/ee/topics/set_up_organization.html
+      - uuid: 772edcce-5d70-4516-90c2-58739afd9e6b
+        control-id: ia-5
+        description: >-
+          Gitlab provides password-based authentication,public key-based authentication, and protection of authenticators. Reference https://docs.gitlab.com/ee/topics/authentication/
+      - uuid: 2264f7be-c60c-448f-b261-0902c594eb88
+        control-id: ia-5.1
+        description: >-
+          Gitlab provides password-based authentication,public key-based authentication, and protection of authenticators. Reference https://docs.gitlab.com/ee/topics/authentication/
+      - uuid: 8c9c29b3-8e1a-4173-b838-3f1b7f2e005d
+        control-id: ia-5.2
+        description: >-
+          Gitlab provides password-based authentication,public key-based authentication, and protection of authenticators. Reference https://docs.gitlab.com/ee/topics/authentication/
+      - uuid: ec7d9a9f-991f-473f-b0bb-8f47f30c83bb
+        control-id: ia-5.6
+        description: >-
+          Gitlab provides password-based authentication,public key-based authentication, and protection of authenticators. Reference https://docs.gitlab.com/ee/topics/authentication/
+      - uuid: be1730d3-1c48-4441-bad7-7b31770b720a
+        control-id: ia-8.1
+        description: >-
+          Gitlab provides acceptance of PIV credentials from other agencies. Reference https://docs.gitlab.com/ee/administration/auth/smartcard.html
+      - uuid: ef086032-cee6-48f1-951f-9d2da4d38125
+        control-id: ia-8.2
+        description: >-
+          Gitlab provides acceptance of external authenticators and PIV-I credentials. Reference https://docs.gitlab.com/ee/administration/auth/
+      - uuid: 6ce38056-6af9-42dc-a83d-198518eee7d2
+        control-id: ia-8.5
+        description: >-
+          Gitlab provides acceptance of external authenticators and PIV-I credentials. Reference https://docs.gitlab.com/ee/administration/auth/
+      - uuid: 306ecb7d-8dbd-4e37-b8fb-9502a3328e46
+        control-id: ia-12
+        description: >-
+          Gitlab provides identity proofing. Reference https://docs.gitlab.com/ee/user/admin_area/settings/sign_in_restrictions.html & https://docs.gitlab.com/ee/administration/audit_events.html#sign-in-events
+      - uuid: 87de6688-90b1-42d5-9bb8-0b4772e74a3b
+        control-id: ma-2
+        description: >-
+          Gitlab enables controlled and timely maintenance. Reference https://docs.gitlab.com/ee/administration/maintenance_mode/
+      - uuid: d7f76f22-9fd7-4cd6-b9db-01e0c2a6ae41
+        control-id: ma-6
+        description: >-
+          Gitlab enables controlled and timely maintenance. Reference https://docs.gitlab.com/ee/administration/maintenance_mode/
+      - uuid: 1bc8523f-bec1-4849-b80b-800eeefca054
+        control-id: ra-5
+        description: >-
+          With Gitops and using gitlab pipelines Gitlab can be configured to for security scanning of application code. Reference https://docs.gitlab.com/ee/user/application_security/
+      - uuid: 45923003-b329-4402-89ce-9923d36baa9a
+        control-id: ra-5.2
+        description: >-
+          Gitlab scans for known vulnerabillities. Reference https://docs.gitlab.com/ee/user/application_security/vulnerabilities/index.html
+      - uuid: 070046db-8541-4e27-8175-06629bccf7ff
+        control-id: ra-5.4
+        description: >-
+          Gitlab can prevent gitops deployments and even commits for example: https://docs.gitlab.com/ee/user/application_security/secret_detection/index.html
+      - uuid: 29f60b37-4ff7-4b75-9a29-2fd1e793ccd4
+        control-id: sa-10
+        description: >-
+          Gitlab enable configuration management. Reference https://docs.gitlab.com/ee/user/project/
