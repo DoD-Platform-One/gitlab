@@ -16,12 +16,12 @@ Using this pod user can run commands using `kubectl exec -it <pod name> -- <arbi
 
 The Toolbox runs a container from the [Toolbox image](https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-toolbox).
 
-The image contains some custom scripts that are to be called as commands by the user, these scripts can be found [here](https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-toolbox/scripts). These scripts are for running Rake tasks, backup, restore, and some helper scripts for interacting with object storage.
+The image contains some [custom scripts](https://gitlab.com/gitlab-org/build/CNG/-/tree/master/gitlab-toolbox/scripts/bin) that are to be called as commands by the user. Those scripts are for running Rake tasks, backup, restore, and some helper scripts for interacting with object storage.
 
 ## Backup utility
 
-[Backup utility](https://gitlab.com/gitlab-org/build/CNG/blob/master/gitlab-toolbox/scripts/bin/backup-utility) is one of the scripts
-in the toolbox container and as the name suggests it is a script used for doing backups but also handles restoring of an existing backup.
+[Backup utility](https://gitlab.com/gitlab-org/build/CNG/-/blob/master/gitlab-toolbox/scripts/bin/backup-utility) is one of the scripts
+in the task runner container and as the name suggests it is a script used for doing backups but also handles restoring of an existing backup.
 
 ### Backups
 
@@ -31,8 +31,8 @@ The backup utility script when run without any arguments creates a backup tar an
 
 Backups are made using the following steps, in order:
 
-1. Backup the database (if not skipped) using the [GitLab backup Rake task](https://gitlab.com/gitlab-org/build/CNG/blob/74dc35d4b481e86330bf6b244f88e5dd8876cc0c/gitlab-toolbox/scripts/bin/backup-utility#L120)
-1. Backup the repositories (if not skipped) using the [GitLab backup Rake task](https://gitlab.com/gitlab-org/build/CNG/blob/74dc35d4b481e86330bf6b244f88e5dd8876cc0c/gitlab-toolbox/scripts/bin/backup-utility#L123)
+1. Backup the database (if not skipped) using the [GitLab backup Rake task](https://gitlab.com/gitlab-org/build/CNG/-/blob/f65867afa54f6d0033e19f9e9038ec680abd5eb2/gitlab-toolbox/scripts/bin/backup-utility#L217)
+1. Backup the repositories (if not skipped) using the [GitLab backup Rake task](https://gitlab.com/gitlab-org/build/CNG/-/blob/f65867afa54f6d0033e19f9e9038ec680abd5eb2/gitlab-toolbox/scripts/bin/backup-utility#L220)
 1. For each of the object storage backends
    1. If the object storage backend is marked for skipping, skip this storage backend.
    1. Tar the existing data in the corresponding object storage bucket naming it `<bucket-name>.tar`

@@ -101,9 +101,48 @@ tolerations:
 
 ### annotations
 
-`annotations` allows you to add annotations to the Webservice pods. For example:
+`annotations` allows you to add annotations to the Spamcheck pods. For example:
 
 ```yaml
 annotations:
   kubernetes.io/example-annotation: annotation-value
 ```
+
+### resources
+
+`resources` allows you to configure the minimum and maximum amount of resources (memory and CPU) a Spamcheck pod can consume.
+
+For example:
+
+```yaml
+resources:
+  requests:
+    memory: 100m
+    cpu: 100M
+```
+
+### livenessProbe/readinessProbe
+
+`deployment.livenessProbe` and `deployment.readinessProbe` provide a mechanism to help control the termination of Spamcheck Pods in certain scenarios,
+such as, when a container is in a broken state.
+
+For example:
+
+```yaml
+deployment:
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 20
+    timeoutSeconds: 3
+    successThreshold: 1
+    failureThreshold: 10
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 2
+    successThreshold: 1
+    failureThreshold: 3
+```
+
+Refer to the official [Kubernetes Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+for additional details regarding this configuration.

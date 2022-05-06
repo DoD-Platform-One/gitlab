@@ -101,6 +101,22 @@ The steps have been documented in the [5.0 upgrade steps](#upgrade-steps-for-50-
 As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) from `7.7.0` to `8.9.4`. This is not a drop in replacement. Manual steps need to be performed to upgrade the database.
 The steps have been documented in the [4.0 upgrade steps](#upgrade-steps-for-40-release).
 
+## Upgrade steps for 5.9 release
+
+### Sidekiq pod never becomes ready
+
+Upgrading to `5.9.x` may lead to a situation where the Sidekiq pod does not become ready. The pod starts and appears to work properly but never listens on the `3807`, the default metrics endpoint port (`metrics.port`). As a result, the Sidekiq pod is not considered to be ready. 
+
+This can be resolved from the **Admin Area**: 
+
+  1. On the top bar, select **Menu > Admin**.
+  1. On the left sidebar, select **Settings > Metrics and profiling**.
+  1. Expand  **Metrics - Prometheus**.
+  1. Ensure that **Enable health and performance metrics endpoint** is enabled.
+  1. Restart the affected pods.
+
+There is additional conversation about this scenario in a [closed issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3198). 
+
 ## Upgrade steps for 5.5 release
 
 The `task-runner` chart [was renamed](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2099/diffs)

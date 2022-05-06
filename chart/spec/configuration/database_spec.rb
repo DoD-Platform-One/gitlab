@@ -243,6 +243,7 @@ describe 'Database configuration' do
                 username: webservice
                 applicationName: ''
                 preparedStatements: true
+                databaseTasks: false
                 password:
                   secret: other-postgresql-password
                   key: other-password
@@ -277,6 +278,7 @@ describe 'Database configuration' do
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('username: webservice')
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('application_name: ""')
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('prepared_statements: true')
+        expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('database_tasks: false')
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('connect_timeout: 55')
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('keepalives: 1')
         expect(t.dig('ConfigMap/test-webservice','data','database.yml.erb')).to include('keepalives_idle: 5')

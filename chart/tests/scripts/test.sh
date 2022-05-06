@@ -1,17 +1,20 @@
 #!/bin/bash
 set -ex
 
-# set credentials
-git config --global user.email ${GITLAB_EMAIL}
-git config --global user.name ${GITLAB_USER}
-git config --global user.password ${GITLAB_PASS}
-crane auth login ${GITLAB_REGISTRY} -u ${GITLAB_USER} -p ${GITLAB_PASS}
+export HOME=/test
 
 echo "cloning repo..."
 git clone ${GITLAB_REPOSITORY}/${GITLAB_USER}/${GITLAB_PROJECT}.git
 
 echo "changing into repo directory..."
 cd ${GITLAB_PROJECT}
+
+# set credentials
+git config --local user.email ${GITLAB_EMAIL}
+git config --local user.name ${GITLAB_USER}
+git config --local user.password ${GITLAB_PASS}
+
+/go/bin/crane auth login ${GITLAB_REGISTRY} -u ${GITLAB_USER} -p ${GITLAB_PASS}
 
 echo "modifying repo..."
 touch Dockerfile
@@ -27,9 +30,9 @@ git checkout -b $testbranch
 git push -u origin $testbranch
 
 echo "pulling image..."
-crane pull alpine:latest alpine-latest.tar
+/go/bin/crane pull alpine:latest alpine-latest.tar
 
 echo "pushing image to gitlab registry..."
-crane push alpine-latest.tar ${GITLAB_REGISTRY}/${GITLAB_USER}/${GITLAB_PROJECT}/alpine:latest
+/go/bin/crane push alpine-latest.tar ${GITLAB_REGISTRY}/${GITLAB_USER}/${GITLAB_PROJECT}/alpine:latest
 
 echo "All tests complete!"

@@ -59,7 +59,7 @@ kubectl exec <Toolbox pod name> -it -- backup-utility --help
 
 ## Backup the secrets
 
-You should also save a copy of the rails secrets. (These are not included in the backup as a security precaution. We recommend keeping your full backup that includes the database separate from the copy of the secrets.)
+You also need to save a copy of the rails secrets as these are not included in the backup as a security precaution. We recommend keeping your full backup that includes the database separate from the copy of the secrets.
 
 1. Find the object name for the rails secrets
 
@@ -73,7 +73,7 @@ You should also save a copy of the rails secrets. (These are not included in the
    kubectl get secrets <rails-secret-name> -o jsonpath="{.data['secrets\.yml']}" | base64 --decode > secrets.yaml
    ```
 
-1. Store `secrets.yml` in a secure location, you may need it to fully restore your backups.
+1. Store `secrets.yml` in a secure location. You need it to restore your backups.
 
 ## Additional Information
 

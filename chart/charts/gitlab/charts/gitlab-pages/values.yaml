@@ -41,6 +41,16 @@ service:
     nodePort: {}
       # http
       # https
+  # Set `sessionAffinity` to `ClientIP` to configure gitlab-pages with session affinity.
+  # Note that this setting only affects traffic originating within the cluster.
+  # To enable session affinity for traffic originating from outside the cluster
+  # when using NGINX, see the NGINX documentation on sticky sessions:
+  # https://kubernetes.github.io/ingress-nginx/examples/affinity/cookie/
+  sessionAffinity: None
+  sessionAffinityConfig: {}
+  # sessionAffinityConfig:
+  #  clientIP:
+  #    timeoutSeconds: 10800
 
 init:
   image: {}
@@ -152,6 +162,13 @@ useHttp2: true
 #   cleanup:
 #   expiration:
 #   refresh:
+
+# zipHTTPClientTimeout:
+
+# serverReadTimeout:
+# serverReadHeaderTimeout:
+# serverWriteTimeout:
+# serverKeepAlive:
 
 metrics:
   enabled: true

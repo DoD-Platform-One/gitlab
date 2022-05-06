@@ -41,7 +41,7 @@ describe 'gitlab.yml.erb configuration' do
       )).merge(default_values)
     end
 
-    let(:missing_values) do
+    let(:no_directives) do
       YAML.safe_load(%(
         global:
           appConfig:
@@ -59,12 +59,13 @@ describe 'gitlab.yml.erb configuration' do
       )).to include('content_security_policy')
     end
 
-    it 'fails when we are missing a required value' do
-      t = HelmTemplate.new(missing_values)
-      expect(t.exit_code).not_to eq(0)
-      expect(t.stderr).to include(
-        'set `global.appConfig.contentSecurityPolicy.directives'
-      )
+    it 'populates the gitlab.yml.erb even when directives are not set' do
+      t = HelmTemplate.new(no_directives)
+      expect(t.dig(
+        'ConfigMap/test-webservice',
+        'data',
+        'gitlab.yml.erb'
+      )).to include('content_security_policy')
     end
   end
 

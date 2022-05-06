@@ -58,10 +58,10 @@ spec:
         {{- toYaml $.Values.metrics.annotations | nindent 8 }}
       {{- else }}
         gitlab.com/prometheus_scrape: "true"
-        gitlab.com/prometheus_port: {{ $.Values.service.internalPort | quote }}
+        gitlab.com/prometheus_port: {{ $.Values.metrics.port | quote }}
         gitlab.com/prometheus_path: {{ $.Values.metrics.path }}
         prometheus.io/scrape: "true"
-        prometheus.io/port: {{ $.Values.service.internalPort | quote }}
+        prometheus.io/port: {{ $.Values.metrics.port | quote }}
         prometheus.io/path: {{ $.Values.metrics.path }}
       {{- end }}
       {{- end }}

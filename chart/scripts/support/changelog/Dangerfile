@@ -32,9 +32,9 @@ end
 
 NO_CHANGELOG_LABELS = [
   'documentation',
-  'type::tooling',
-  'tooling::pipelines',
-  'tooling::workflow',
+  'type::maintenance',
+  'maintenance::pipelines',
+  'maintenance::workflow',
   'ci-build',
   'meta'
 ].freeze
@@ -45,7 +45,8 @@ CATEGORIES = YAML
   .keys
   .freeze
 
-SEE_DOC = "See [the documentation](https://docs.gitlab.com/ee/development/changelog.html).".freeze
+SEE_DOC = "See [the documentation](https://docs.gitlab.com/ee/development/changelog.html) for more information on these labels.".freeze
+SEE_DOC_WORKTYPE = "[the work type classification documentation](https://about.gitlab.com/handbook/engineering/metrics/#work-type-classification).".freeze
 
 CHANGELOG_MISSING = <<~MSG.freeze
 **[CHANGELOG missing](https://docs.gitlab.com/ee/development/changelog.html).**
@@ -59,6 +60,8 @@ When adding the trailer, you can use the following values:
 
 - #{CATEGORIES.join("\n- ")}
 
+#{SEE_DOC}
+
 For example:
 
 ```
@@ -70,9 +73,9 @@ Changelog: added
 ```
 
 If your merge request doesn't warrant a CHANGELOG entry, consider adding any of
-the #{presented_no_changelog_labels} labels.
+the #{presented_no_changelog_labels} labels. More information on these
+labels is available in #{SEE_DOC_WORKTYPE}.
 
-#{SEE_DOC}
 MSG
 
 changelog_needed = (gitlab.mr_labels & NO_CHANGELOG_LABELS).empty?

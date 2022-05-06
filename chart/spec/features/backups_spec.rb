@@ -125,10 +125,21 @@ describe "Restoring a backup" do
         end
       end
 
+      # Remove timestamp information from directory structure
+      ## Find nested repo LATEST files to locate a repo directory
+      ## Find all dirs within that directory, and rename them to increments rather than date
+      Dir.glob(["/tmp/original_backup/repositories/@hashed/*/*/*/LATEST", "/tmp/test_backup/repositories/@hashed/*/*/*/LATEST"]) do |latest_file|
+        repo_dir = File.dirname(latest_file)
+        Dir.glob(File.join(repo_dir, '*')).sort.each_with_index do |file, index|
+          parent_dir = File.dirname(file)
+          File.rename(file, File.join(parent_dir, index.to_s)) if File.directory?(file)
+        end
+      end
+
       Dir.glob("/tmp/original_backup/**/*") do |file|
         next if ['tar', '.gz'].include? File.extname(file)
         next if File.directory?(file)
-        next if File.basename(file) == 'backup_information.yml'
+        next if ['backup_information.yml', 'LATEST'].include? File.basename(file)
 
         test_counterpart = file.gsub('original_backup', 'test_backup')
 

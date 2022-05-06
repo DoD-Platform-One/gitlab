@@ -48,6 +48,7 @@ sidekiq['enable'] = false
 gitlab_workhorse['enable'] = false
 grafana['enable'] = false
 gitlab_exporter['enable'] = false
+gitlab_kas['enable'] = false
 
 # If you run a seperate monitoring node you can disable these services
 alertmanager['enable'] = false

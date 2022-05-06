@@ -34,7 +34,7 @@ Wait for the pods to run. Then, using the Ingress host you specified in the conf
 
 For additional configuration information, refer to the [Mattermost Helm configuration guide](https://github.com/mattermost/mattermost-helm/tree/master/charts/mattermost-team-edition#configuration).
 you experience any issues with this, please view the [Mattermost Helm Chart issue repository](https://github.com/mattermost/mattermost-helm/issues) or
-the [Mattermost Forum](https://forum.mattermost.org/search?q=helm).
+the [Mattermost Forum](https://forum.mattermost.com/search?q=helm).
 
 ## Deploy GitLab Helm Chart
 
@@ -71,4 +71,4 @@ supported and are known not to work on some experiences.
 ## Troubleshooting
 
 If you are following a process other than the one provided and experience authentication and/or deployment issues,
-let us know in the [Mattermost troubleshooting forum](https://mattermost.org/troubleshoot/).
+let us know in the [Mattermost troubleshooting forum](https://docs.mattermost.com/install/troubleshooting.html?&redirect_source=mm-org).
