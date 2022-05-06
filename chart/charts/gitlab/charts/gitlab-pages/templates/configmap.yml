@@ -106,7 +106,8 @@ data:
     auth-redirect-uri={{ template "oauth.gitlab-pages.authRedirectUri" . }}
     auth-client-id={% file.Read "/etc/gitlab-secrets/pages/gitlab_appid" %}
     auth-client-secret={% file.Read "/etc/gitlab-secrets/pages/gitlab_appsecret" %}
-    auth-secret={% file.Read "/etc/gitlab-secrets/pages/auth_secret" %} 
+    auth-secret={% file.Read "/etc/gitlab-secrets/pages/auth_secret" %}
+    auth-scope={{ template "oauth.gitlab-pages.authScope" . }}
     {{- end }}
     {{- with .Values.zipCache }}
     {{- if .cleanup }}
@@ -121,6 +122,9 @@ data:
     {{- end }}
     {{- if .Values.zipOpenTimeout }}
     zip-open-timeout={{ .Values.zipOpenTimeout }}
+    {{- end }}
+    {{- if .Values.zipHTTPClientTimeout }}
+    zip-http-client-timeout={{ .Values.zipHTTPClientTimeout }}
     {{- end }}
     {{- if .Values.rateLimitSourceIP }}
     rate-limit-source-ip={{ .Values.rateLimitSourceIP }}
@@ -145,6 +149,18 @@ data:
     {{- end }}
     {{- if .Values.rateLimitTLSDomainBurst }}
     rate-limit-tls-domain-burst={{ .Values.rateLimitTLSDomainBurst }}
+    {{- end }}
+    {{- if .Values.serverReadTimeout }}
+    server-read-timeout={{ .Values.serverReadTimeout }}
+    {{- end }}
+    {{- if .Values.serverReadHeaderTimeout }}
+    server-read-header-timeout={{ .Values.serverReadHeaderTimeout }}
+    {{- end }}
+    {{- if .Values.serverWriteTimeout }}
+    server-write-timeout={{ .Values.serverWriteTimeout }}
+    {{- end }}
+    {{- if .Values.serverKeepAlive }}
+    server-keep-alive={{ .Values.serverKeepAlive }}
     {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}

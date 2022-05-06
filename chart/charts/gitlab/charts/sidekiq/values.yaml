@@ -55,6 +55,7 @@ metrics:
 
 health_checks:
   enabled: true
+  port: 3808
 
 redis:
   password: {}
@@ -105,6 +106,7 @@ global:
     # username: 'gitlab'
     # applicationName:
     # preparedStatements: false
+    # databaseTasks: true
     # password:
     #   secret: gitlab-postgres
     #   key: psql-password

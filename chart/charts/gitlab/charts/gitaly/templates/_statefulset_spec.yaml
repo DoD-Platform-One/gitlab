@@ -124,7 +124,7 @@ spec:
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           ports:
             - containerPort: {{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}
-              name: grcp-gitaly
+              name: grpc-gitaly
            {{- if .Values.metrics.enabled }}
             - containerPort: {{ default $.Values.metrics.port $.Values.metrics.metricsPort }}
               name: http-metrics

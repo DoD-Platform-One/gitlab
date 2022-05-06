@@ -214,7 +214,7 @@ describe 'Sidekiq configuration' do
             'sidekiq_health_checks' => {
               'enabled' => true,
               'address' => '0.0.0.0',
-              'port' => 3807
+              'port' => 3808
             }
           )
         end
@@ -232,12 +232,19 @@ describe 'Sidekiq configuration' do
             )).deep_merge(default_values)
           end
 
-          it 'inherits its settings' do
+          it 'does not inherits its settings' do
+            expect(monitoring).to include(
+              'sidekiq_exporter' => {
+                'enabled' => true,
+                'address' => '0.0.0.0',
+                'port' => 2222
+              }
+            )
             expect(monitoring).to include(
               'sidekiq_health_checks' => {
                 'enabled' => true,
                 'address' => '0.0.0.0',
-                'port' => 2222
+                'port' => 3808
               }
             )
           end

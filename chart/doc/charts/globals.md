@@ -201,6 +201,7 @@ global:
     username: gitlab
     applicationName:
     preparedStatements: false
+    databaseTasks: true
     connectTimeout:
     keepalives:
     keepalivesIdle:
@@ -219,13 +220,14 @@ global:
 | `host`               | String    |                        | The hostname of the PostgreSQL server with the database to use. This can be omitted if using PostgreSQL deployed by this chart.                                                                |
 | `serviceName`        | String    |                        | The name of the `service` which is operating the PostgreSQL database. If this is present, and `host` is not, the chart will template the hostname of the service in place of the `host` value. |
 | `database`           | String    | `gitlabhq_production`  | The name of the database to use on the PostgreSQL server.                                                                                                                                      |
-| `password.useSecret` | Boolean      | `true`                 | Controls whether the password for PostgreSQL is read from a secret or file.                                                                                                                    |
+| `password.useSecret` | Boolean   | `true`                 | Controls whether the password for PostgreSQL is read from a secret or file.                                                                                                                    |
 | `password.file`      | String    |                        | Defines the path to the file that contains the password for PostgreSQL. Ignored if `password.useSecret` is true                                                                                |
 | `password.key`       | String    |                        | The `password.key` attribute for PostgreSQL defines the name of the key in the secret (below) that contains the password. Ignored if `password.useSecret` is false.                            |
 | `password.secret`    | String    |                        | The `password.secret` attribute for PostgreSQL defines the name of the Kubernetes `Secret` to pull from. Ignored if `password.useSecret` is false.                                             |
 | `port`               | Integer   | `5432`                 | The port on which to connect to the PostgreSQL server.                                                                                                                                         |
 | `username`           | String    | `gitlab`               | The username with which to authenticate to the database.                                                                                                                                       |
-| `preparedStatements` | Boolean      | `false`                | If prepared statements should be used when communicating with the PostgreSQL server.                                                                                                           |
+| `preparedStatements` | Boolean   | `false`                | If prepared statements should be used when communicating with the PostgreSQL server.                                                                                                           |
+| `databaseTasks`      | Boolean   | `true`                 | If GitLab should perform database tasks for a given database. Automatically disabled when sharing host/port/database match `main`.                                                   |
 | `connectTimeout`     | Integer   |                        | The number of seconds to wait for a database connection.                                                                                                                                       |
 | `keepalives`         | Integer   |                        | Controls whether client-side TCP keepalives are used (1, meaning on, 0, meaning off).                                                                                                          |
 | `keepalivesIdle`     | Integer   |                        | The number of seconds of inactivity after which TCP should send a keepalive message to the server. A value of zero uses the system default.                                                    |
@@ -291,7 +293,7 @@ This feature requires the use of an
 deploy PostgreSQL in an HA fashion.
 
 The Rails components in GitLab have the ability to [make use of PostgreSQL
-clusters to load balance read-only queries](https://docs.gitlab.com/ee/administration/database_load_balancing.html).
+clusters to load balance read-only queries](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html).
 
 This feature can be configured in two fashions:
 
@@ -312,7 +314,7 @@ global:
 
 Configuration of service discovery can be more complex. For a complete
 details of this configuration, the parameters and their associated
-behaviors, see [Service Discovery](https://docs.gitlab.com/ee/administration/database_load_balancing.html#service-discovery)
+behaviors, see [Service Discovery](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html#service-discovery)
 in the [GitLab Administration documentation](https://docs.gitlab.com/ee/administration/index.html).
 
 ```yaml
@@ -331,7 +333,7 @@ global:
 ```
 
 Further tuning is also available, in regards to the
-[handling of stale reads](https://docs.gitlab.com/ee/administration/database_load_balancing.html#handling-stale-reads).
+[handling of stale reads](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html#handling-stale-reads).
 The GitLab Administration documentation covers these items in detail,
 and those properties can be added directly under `load_balancing`.
 
@@ -959,8 +961,17 @@ application are described below:
 Setting a Content Security Policy (CSP) can help thwart JavaScript cross-site
 scripting (XSS) attacks. See GitLab documentation for configuration details. [Content Security Policy Documentation](https://docs.gitlab.com/omnibus/settings/configuration.html#content-security-policy)
 
-Note that when enabled, the `directives` MUST be configured. Sane example
-configuration below:
+GitLab automatically provides secure default values for the CSP.
+
+```yaml
+global:
+  appConfig:
+    contentSecurityPolicy:
+      enabled: true
+      report_only: false
+```
+
+To add a custom CSP:
 
 ```yaml
 global:
@@ -1314,7 +1325,7 @@ If the LDAP server uses a custom CA or self-signed certificate, you must:
 1. Then, specify:
 
    ```shell
-   --set global.certificates.customCAs[0].secret=my-custom-ca.pem
+   --set global.certificates.customCAs[0].secret=my-custom-ca
    --set global.appConfig.ldap.servers.main.ca_file=/etc/ssl/certs/ca-cert-my-custom-ca.pem
    ```
 
@@ -2029,6 +2040,7 @@ global:
     # appid
     # appsecret
     # redirectUri
+    # authScope
 ```
 
 | Name           | Type   | Default | Description                                                                                            |
@@ -2037,6 +2049,7 @@ global:
 | `appIdKey`     | String |         | Key in the secret under which App ID of service is stored. Default value being set is `appid`.         |
 | `appSecretKey` | String |         | Key in the secret under which App Secret of service is stored. Default value being set is `appsecret`. |
 | `redirectUri`  | String |         | URI to which user should be redirected after successful authorization.                                 |
+| `authScope`    | String | `api`   | Scope used for authentication with GitLab API.                                                         |
 
 Check the [secrets documentation](../installation/secrets.md#oauth-integration) for more details on the secret.
 

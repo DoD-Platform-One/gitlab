@@ -17,6 +17,11 @@ Technical details for how the utility works can be found in the [architecture do
 
 - This chart relies on the use of [object storage](#object-storage) for `artifacts`, `uploads`, `packages`, `registry` and `lfs` objects, and does not currently migrate these for you during restore. If you are restoring a backup taken from another instance, you must migrate your existing instance to using object storage before taking the backup. See [issue 646](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/646).
 
+## Backup and Restoring procedures
+
+- [Backing up a GitLab installation](backup.md)
+- [Restoring a GitLab installation](restore.md)
+
 ## Object storage
 
 We provide a MinIO instance out of the box when using this charts unless an [external object storage](../advanced/external-object-storage/index.md) is specified. The Toolbox connects to the included MinIO by default, unless specific settings are given. The Toolbox can also be configured to back up to Amazon S3 or Google Cloud Storage (GCS).
@@ -75,11 +80,6 @@ when restoring a backup.
 --set global.appConfig.backups.bucket=gitlab-backup-storage
 --set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
 ```
-
-## Backup and Restoring procedures
-
-- [Backing up a GitLab installation](backup.md)
-- [Restoring a GitLab installation](restore.md)
 
 ## Troubleshooting
 

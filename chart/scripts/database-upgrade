@@ -21,7 +21,7 @@ selector() {
 # Run command in the toolbox pod
 in_toolbox() {
     task_pod=$(kubectl ${namespace} get pods -l "$(selector toolbox)" --field-selector status.phase=Running  -o custom-columns=N:.metadata.name --no-headers | grep -v backup | head -n 1)
-    kubectl ${namespace} exec -it "${task_pod}" -- "${@}"
+    kubectl ${namespace} exec -it "${task_pod}" -- env GITLAB_ASSUME_YES=1 "${@}"
 }
 
 database_service() {

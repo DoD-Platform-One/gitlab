@@ -117,6 +117,7 @@ global:
     # database: gitlabhq_production
     # applicationName:
     # preparedStatements: false
+    # databaseTasks: true
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-redis-settings
   redis:
@@ -466,6 +467,7 @@ global:
       # appIdKey:
       # appSecretKey:
       # redirectUri:
+      # authScope:
 
   ## https://docs.gitlab.com/charts/advanced/geo/
   geo:
@@ -656,7 +658,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -699,7 +701,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1125,7 +1127,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 14.9.2
+    tag: 14.10.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1167,7 +1169,8 @@ shared-secrets:
     fsGroup: 65534
   tolerations: []
   podLabels: {}
-  annotations: {}
+  annotations:
+    sidecar.istio.io/inject: "false"
 
 ## Installation & configuration of gitlab/gitlab-runner
 ## See requirements.yaml for current version
@@ -1255,7 +1258,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1302,7 +1305,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1330,7 +1333,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
 ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1354,7 +1357,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1367,7 +1370,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     ingress:
@@ -1376,7 +1379,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1399,7 +1402,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1421,7 +1424,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 14.9.2
+      tag: 14.10.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1448,11 +1451,11 @@ gitlab:
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
 
-## doc/charts/gitlab/praefect
+  ## https://docs.gitlab.com/charts/charts/gitlab/praefect
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.9.2
+      tag: 14.10.1
     init:
       resources:
         limits:
@@ -1543,3 +1546,32 @@ openshift: false
 
 # Track if AWS IAM Profile is used for Object Storage
 use_iam_profile: false
+
+bbtests:
+  enabled: false
+  cypress:
+    artifacts: true
+    envs:
+      cypress_baseUrl: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      cypress_gitlab_first_name: "test"
+      cypress_gitlab_last_name: "user"
+      cypress_gitlab_username: "testuser"
+      cypress_gitlab_password: "12345678"
+      cypress_gitlab_email: "testuser@example.com"
+      cypress_gitlab_project: "my-awesome-project"
+    secretEnvs:
+      - name: cypress_adminpassword
+        valueFrom:
+          secretKeyRef:
+            name: gitlab-gitlab-initial-root-password
+            key: password
+  scripts:
+    image: "registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.4"
+    envs:
+      GITLAB_USER: "testuser"
+      GITLAB_PASS: "12345678"
+      GITLAB_EMAIL: "testuser@example.com"
+      GITLAB_PROJECT: "my-awesome-project"
+      GITLAB_REPOSITORY: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      GITLAB_ORIGIN: http://testuser:12345678@gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      GITLAB_REGISTRY: gitlab-registry-test-svc.gitlab.svc.cluster.local:80

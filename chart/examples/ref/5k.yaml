@@ -65,6 +65,11 @@ gitlab:
       port: example-postgresql-primary-port
 
 global:
+  # Set pods to deploy on support node pool by default.
+  # This ensures that only the Webservice and Sidekiq workloads
+  # are deployed to their respective pools and have sufficient resources.
+  nodeSelector:
+    workload: support
   appConfig:
     # For context on the ObjectStorage configuration below, see:
     # https://docs.gitlab.com/ee/administration/reference_architectures/5k_users.html#configure-the-object-storage
@@ -131,43 +136,13 @@ global:
   registry:
     bucket: example-registry-storage
 
+# Run Prometheus
+prometheus:
+  install: true
+
 # https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
 gitlab-runner:
   install: false
-
-# Below, we use nodeSelectors to send certain
-# workloads to a node separate from the nodes
-# used for the Webservice and Sidekiq workloads.
-# This helps to ensure Webservice and Sidekiq have
-# sufficient resources to schedule enough pods to
-# meet the 5k reference architecture specifications.
-grafana:
-  nodeSelector:
-    workload: ""
-nginx-ingress:
-  controller:
-    nodeSelector:
-      workload: ""
-  defaultBackend:
-    nodeSelector:
-      workload: ""
-prometheus:
-  alertmanager:
-    nodeSelector:
-      workload: ""
-  install: true
-  kubeStateMetrics:
-    nodeSelector:
-      workload: ""
-  nodeExporter:
-    nodeSelector:
-      workload: ""
-  pushgateway:
-    nodeSelector:
-      workload: ""
-  server:
-    nodeSelector:
-      workload: ""
 
 # Run Redis outside of cluster
 redis:

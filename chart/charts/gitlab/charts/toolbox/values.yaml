@@ -51,6 +51,7 @@ global:
     # username: 'gitlab'
     # applicationName:
     # preparedStatements: false
+    # databaseTasks: true
     # ssl:
     #   secret: gitlab-ssl-secret
     #   clientKey: client-key.pem

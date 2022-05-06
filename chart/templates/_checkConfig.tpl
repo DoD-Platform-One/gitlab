@@ -87,7 +87,6 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.loadBalancer" .) -}}
 
 {{/* other checks */}}
-{{- $messages = append $messages (include "gitlab.checkConfig.contentSecurityPolicy" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.multipleRedis" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.hostWhenNoInstall" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sentry" .) -}}
@@ -101,21 +100,6 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{-   printf "\nCONFIGURATION CHECKS:\n%s" $message | fail -}}
 {{- end -}}
 {{- end -}}
-
-{{/*
-Ensure that content_security_policy.directives is not empty
-*/}}
-{{- define "gitlab.checkConfig.contentSecurityPolicy" -}}
-{{-   if eq true $.Values.global.appConfig.contentSecurityPolicy.enabled }}
-{{-     if not (hasKey $.Values.global.appConfig.contentSecurityPolicy "directives") }}
-contentSecurityPolicy:
-    When configuring Content Security Policy, you must also configure its Directives.
-    set `global.appConfig.contentSecurityPolicy.directives`
-    See https://docs.gitlab.com/charts/charts/globals#content-security-policy
-{{-   end -}}
-{{- end -}}
-{{- end -}}
-{{/* END gitlab.checkConfig.contentSecurityPolicy */}}
 
 {{/*
 Ensure that `redis.install: false` if configuring multiple Redis instances

@@ -57,6 +57,12 @@ use_iam_profile: true
 region: us-east-1
 ```
 
+NOTE:
+Do NOT include `endpoint` in this configuration.
+IRSA makes use of [STS tokens, which use specialized endpoints](https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html).
+When `endpoint` is provided, the AWS client will attempt
+[to send an `AssumeRoleWithWebIdentity` message to this endpoint and will fail](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3148#note_889357676).
+
 ### Backups
 
 The Toolbox configuration allows for annotations to be set to upload backups to S3:
@@ -183,25 +189,21 @@ gitlab:
 
 ## Troubleshooting
 
-You can test if the IAM role is correctly set up and that GitLab is accessing
-S3 using the IAM role by logging into the `toolbox` pod and installing the
-`awscli` Python package (replace `<namespace>` with the namespace where GitLab is installed):
+You can test if the IAM role is correctly set up and that GitLab is
+accessing S3 using the IAM role by logging into the `toolbox` pod and
+using `awscli` (replace `<namespace>` with the namespace where GitLab is
+installed):
 
 ```shell
 kubectl exec -ti $(kubectl get pod -n <namespace> -lapp=toolbox -o jsonpath='{.items[0].metadata.name}') -n <namespace> -- bash
-pip install awscli
 ```
 
 With the `awscli` package installed, verify that you are able to communicate
 with the AWS API:
 
 ```shell
-/home/git/.local/bin/aws sts get-caller-identity
+aws sts get-caller-identity
 ```
-
-NOTE:
-The `aws` command is not in the path so it is necessary to use the
-full path to execute the command.
 
 A normal response showing the temporary user ID, account number and IAM
 ARN (this will not be the IAM ARN for the role used to access S3) will be
@@ -216,7 +218,7 @@ variables are defined in the environment when IAM role annotation has been
 added to the pod and do not require that they be defined:
 
 ```shell
-/home/git/.local/bin/aws sts assume-role-with-web-identity --role-arn $AWS_ROLE_ARN  --role-session-name gitlab --web-identity-token file://$AWS_WEB_IDENTITY_TOKEN_FILE
+aws sts assume-role-with-web-identity --role-arn $AWS_ROLE_ARN  --role-session-name gitlab --web-identity-token file://$AWS_WEB_IDENTITY_TOKEN_FILE
 ```
 
 If the IAM role could not be assumed then an error message similar to the
@@ -227,3 +229,9 @@ An error occurred (AccessDenied) when calling the AssumeRoleWithWebIdentity oper
 ```
 
 Otherwise, the STS credentials and IAM role information will be displayed.
+
+## `WebIdentityErr: failed to retrieve credentials`
+
+If you see this error in the logs, this suggests that `endpoint` has
+been configured in your [`object-storage.yaml`](../../charts/globals.md#connection) secret. Remove
+this setting and restart the `webservice` and `sidekiq` pods.

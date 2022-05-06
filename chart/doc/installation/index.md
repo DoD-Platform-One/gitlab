@@ -62,7 +62,7 @@ Before proceeding to deploying GitLab, you need to prepare your environment.
 
 ### Tools
 
-`helm` and `kubectl` need to be [installed on your computer](tools.md).
+`helm` and `kubectl` must be [installed on your computer](tools.md).
 
 ### Cloud cluster preparation
 

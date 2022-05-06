@@ -24,7 +24,7 @@ service sub-charts:
 - [Toolbox](toolbox/index.md)
 - [Webservice](webservice/index.md)
 
-The parameters for each subchart must be under the `gitlab` key. For example, 
+The parameters for each subchart must be under the `gitlab` key. For example,
 GitLab Shell parameters would be similar to:
 
 ```yaml

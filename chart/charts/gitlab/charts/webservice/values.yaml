@@ -205,6 +205,7 @@ global:
     # database: 'gitlabhq_production'
     # username: 'gitlab'
     # preparedStatements: false
+    # databaseTasks: true
     # applicationName:
     # password:
     #   secret: gitlab-postgres

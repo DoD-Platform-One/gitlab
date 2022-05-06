@@ -422,6 +422,7 @@ describe 'Mailroom configuration' do
 
   context 'with incoming_email webhook delivery method' do
     let(:auth_token_secret) { "test-mailroom-auth-token" }
+    let(:auth_token_secret_key) { "test-mailroom-auth-token-key" }
 
     let(:incoming_email_settings) do
       YAML.safe_load(%(
@@ -432,6 +433,7 @@ describe 'Mailroom configuration' do
           deliveryMethod: webhook
           authToken:
             secret: "#{auth_token_secret}"
+            key: "#{auth_token_secret_key}"
       ))
     end
 
@@ -476,7 +478,7 @@ describe 'Mailroom configuration' do
         "name" => "test-mailroom-auth-token",
         "items" => [
           {
-            "key" => "authToken",
+            "key" => auth_token_secret_key,
             "path" => "mailroom/incoming_email_webhook_secret"
           }
         ]
@@ -492,7 +494,7 @@ describe 'Mailroom configuration' do
         "name" => "test-mailroom-auth-token",
         "items" => [
           {
-            "key" => "authToken",
+            "key" => auth_token_secret_key,
             "path" => "mailroom/incoming_email_webhook_secret"
           }
         ]
@@ -508,10 +510,40 @@ describe 'Mailroom configuration' do
         expect(template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', default_secret_name)).not_to be_empty
       end
     end
+
+    context 'when authToken.secret.key is empty' do
+      let(:auth_token_secret_key) { "" }
+      let(:default_secret_key) { 'authToken' }
+
+      it 'uses a default secret key name' do
+        mailroom_secret = template.get_projected_secret('Deployment/test-mailroom', 'init-mailroom-secrets', auth_token_secret)
+        expect(mailroom_secret).to eql(
+          "name" => "test-mailroom-auth-token",
+          "items" => [
+            {
+              "key" => default_secret_key,
+              "path" => "mailroom/incoming_email_webhook_secret"
+            }
+          ]
+        )
+
+        webservice_secret = template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', auth_token_secret)
+        expect(webservice_secret).to eql(
+          "name" => "test-mailroom-auth-token",
+          "items" => [
+            {
+              "key" => default_secret_key,
+              "path" => "mailroom/incoming_email_webhook_secret"
+            }
+          ]
+        )
+      end
+    end
   end
 
   context 'with service_desk_email webhook delivery method' do
     let(:auth_token_secret) { "test-mailroom-auth-token" }
+    let(:auth_token_secret_key) { "test-mailroom-auth-token-key" }
 
     let(:app_config) do
       YAML.safe_load(%(
@@ -528,6 +560,7 @@ describe 'Mailroom configuration' do
           deliveryMethod: webhook
           authToken:
             secret: "#{auth_token_secret}"
+            key: "#{auth_token_secret_key}"
       ))
     end
 
@@ -569,7 +602,7 @@ describe 'Mailroom configuration' do
         "name" => "test-mailroom-auth-token",
         "items" => [
           {
-            "key" => "authToken",
+            "key" => "test-mailroom-auth-token-key",
             "path" => "mailroom/service_desk_email_webhook_secret"
           }
         ]
@@ -585,7 +618,7 @@ describe 'Mailroom configuration' do
         "name" => "test-mailroom-auth-token",
         "items" => [
           {
-            "key" => "authToken",
+            "key" => "test-mailroom-auth-token-key",
             "path" => "mailroom/service_desk_email_webhook_secret"
           }
         ]
@@ -599,6 +632,35 @@ describe 'Mailroom configuration' do
       it 'uses a default secret name' do
         expect(template.get_projected_secret('Deployment/test-mailroom', 'init-mailroom-secrets', default_secret_name)).not_to be_empty
         expect(template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', default_secret_name)).not_to be_empty
+      end
+    end
+
+    context 'when authToken.secret.key is empty' do
+      let(:auth_token_secret_key) { "" }
+      let(:default_secret_key) { 'authToken' }
+
+      it 'uses a default secret key name' do
+        mailroom_secret = template.get_projected_secret('Deployment/test-mailroom', 'init-mailroom-secrets', auth_token_secret)
+        expect(mailroom_secret).to eql(
+          "name" => "test-mailroom-auth-token",
+          "items" => [
+            {
+              "key" => default_secret_key,
+              "path" => "mailroom/service_desk_email_webhook_secret"
+            }
+          ]
+        )
+
+        webservice_secret = template.get_projected_secret('Deployment/test-webservice-default', 'init-webservice-secrets', auth_token_secret)
+        expect(webservice_secret).to eql(
+          "name" => "test-mailroom-auth-token",
+          "items" => [
+            {
+              "key" => default_secret_key,
+              "path" => "mailroom/service_desk_email_webhook_secret"
+            }
+          ]
+        )
       end
     end
   end
