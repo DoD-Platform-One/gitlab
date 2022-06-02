@@ -1090,11 +1090,8 @@ postgresql:
     ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
 
   # Added by BB to get IB image working with bitnami subchart
-  ## Sets the configs to allow listening and connecting from other pods
-  postgresqlConfiguration: {"listen_addresses": "*"}
-  pgHbaConfiguration: |-
-    local all all md5
-    host all all all md5
+  ## extraEnv to set scram-sha-256 auth
+  postgresqlInitdbArgs: "-A scram-sha-256"
   ## Sets the securityContext needed for the IB image
   securityContext:
     fsGroup: 26

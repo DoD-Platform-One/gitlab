@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.10.1-bb.0](https://img.shields.io/badge/Version-5.10.1--bb.0-informational?style=flat-square) ![AppVersion: 14.10.1](https://img.shields.io/badge/AppVersion-14.10.1-informational?style=flat-square)
+![Version: 5.10.1-bb.1](https://img.shields.io/badge/Version-5.10.1--bb.1-informational?style=flat-square) ![AppVersion: 14.10.1](https://img.shields.io/badge/AppVersion-14.10.1-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -538,7 +538,7 @@ helm install gitlab chart/
 | postgresql.resources.requests.memory | string | `"500Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
 | postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql12"` |  |
-| postgresql.image.tag | float | `12.9` |  |
+| postgresql.image.tag | string | `"12.9"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.usePasswordFile | bool | `true` |  |
 | postgresql.existingSecret | string | `"bogus"` |  |
@@ -548,8 +548,7 @@ helm install gitlab chart/
 | postgresql.master.extraVolumeMounts[0].subPath | string | `"init_revision.sh"` |  |
 | postgresql.master.podAnnotations."postgresql.gitlab/init-revision" | string | `"1"` |  |
 | postgresql.metrics.enabled | bool | `false` |  |
-| postgresql.postgresqlConfiguration.listen_addresses | string | `"*"` |  |
-| postgresql.pgHbaConfiguration | string | `"local all all md5\nhost all all all md5"` |  |
+| postgresql.postgresqlInitdbArgs | string | `"-A scram-sha-256"` |  |
 | postgresql.securityContext.fsGroup | int | `26` |  |
 | postgresql.securityContext.runAsUser | int | `26` |  |
 | postgresql.securityContext.runAsGroup | int | `26` |  |
@@ -589,7 +588,7 @@ helm install gitlab chart/
 | shared-secrets.securityContext.fsGroup | int | `65534` |  |
 | shared-secrets.tolerations | list | `[]` |  |
 | shared-secrets.podLabels | object | `{}` |  |
-| shared-secrets.annotations | object | `{}` |  |
+| shared-secrets.annotations."sidecar.istio.io/inject" | string | `"false"` |  |
 | gitlab-runner.install | bool | `false` |  |
 | gitlab-runner.rbac.create | bool | `true` |  |
 | gitlab-runner.runners.locked | bool | `false` |  |
@@ -759,6 +758,26 @@ helm install gitlab chart/
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
 | openshift | bool | `false` |  |
 | use_iam_profile | bool | `false` |  |
+| bbtests.enabled | bool | `false` |  |
+| bbtests.cypress.artifacts | bool | `true` |  |
+| bbtests.cypress.envs.cypress_baseUrl | string | `"http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
+| bbtests.cypress.envs.cypress_gitlab_first_name | string | `"test"` |  |
+| bbtests.cypress.envs.cypress_gitlab_last_name | string | `"user"` |  |
+| bbtests.cypress.envs.cypress_gitlab_username | string | `"testuser"` |  |
+| bbtests.cypress.envs.cypress_gitlab_password | string | `"12345678"` |  |
+| bbtests.cypress.envs.cypress_gitlab_email | string | `"testuser@example.com"` |  |
+| bbtests.cypress.envs.cypress_gitlab_project | string | `"my-awesome-project"` |  |
+| bbtests.cypress.secretEnvs[0].name | string | `"cypress_adminpassword"` |  |
+| bbtests.cypress.secretEnvs[0].valueFrom.secretKeyRef.name | string | `"gitlab-gitlab-initial-root-password"` |  |
+| bbtests.cypress.secretEnvs[0].valueFrom.secretKeyRef.key | string | `"password"` |  |
+| bbtests.scripts.image | string | `"registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.4"` |  |
+| bbtests.scripts.envs.GITLAB_USER | string | `"testuser"` |  |
+| bbtests.scripts.envs.GITLAB_PASS | string | `"12345678"` |  |
+| bbtests.scripts.envs.GITLAB_EMAIL | string | `"testuser@example.com"` |  |
+| bbtests.scripts.envs.GITLAB_PROJECT | string | `"my-awesome-project"` |  |
+| bbtests.scripts.envs.GITLAB_REPOSITORY | string | `"http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
+| bbtests.scripts.envs.GITLAB_ORIGIN | string | `"http://testuser:12345678@gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
+| bbtests.scripts.envs.GITLAB_REGISTRY | string | `"gitlab-registry-test-svc.gitlab.svc.cluster.local:80"` |  |
 
 ## Contributing
 
