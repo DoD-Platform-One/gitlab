@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.10.1-bb.2] - 2022-05-19
+### Changed
+- Added mTLS for Istio
+- Set mTLS exceptions for redis and postgresql
+
 ## [5.10.1-bb.1] - 2022-06-02
 ### Changed
 - Added `postgresqlInitdbArgs` to set password encryption for the gitlab user to be `scram-sha-256`
