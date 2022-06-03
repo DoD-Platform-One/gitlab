@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 5.10.1-bb.1](https://img.shields.io/badge/Version-5.10.1--bb.1-informational?style=flat-square) ![AppVersion: 14.10.1](https://img.shields.io/badge/AppVersion-14.10.1-informational?style=flat-square)
+![Version: 5.10.1-bb.2](https://img.shields.io/badge/Version-5.10.1--bb.2-informational?style=flat-square) ![AppVersion: 14.10.1](https://img.shields.io/badge/AppVersion-14.10.1-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -751,6 +751,8 @@ helm install gitlab chart/
 | istio.registry.labels | object | `{}` |  |
 | istio.registry.gateways[0] | string | `"istio-system/main"` |  |
 | istio.registry.hosts | string | `nil` |  |
+| istio.mtls | object | `{"mode":"STRICT"}` | Default peer authentication |
+| istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
 | monitoring.enabled | bool | `false` |  |
 | networkPolicies.enabled | bool | `false` |  |
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
