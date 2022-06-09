@@ -6,7 +6,7 @@ annotations: {}
 global:
   ingress: {}
   kas:
-    enabled: false
+    enabled: true
   redis:
     # host: '0.0.0.0'
     password: {}
@@ -85,6 +85,7 @@ privateApi: {}
 
 deployment:
   strategy: {}
+  # minReadySeconds: 0
 
 ## Allow to overwrite under which User and Group we're running.
 securityContext:

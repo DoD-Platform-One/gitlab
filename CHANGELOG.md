@@ -3,6 +3,29 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.0.1-bb.0] - 2022-06-07
+### Updated
+- Updated to helm chart to 6.0.1 and appVersion to 15.0.1
+- ironbank/gitlab/gitlab/gitlab-webservice major update 14.10.1 -> 15.0.1
+- ironbank/bitnami/analytics/redis-exporter minor 1.35.0 -> 1.37.0
+- ironbank/bitnami/redis major 6.2.5 -> 7.0.0
+- ironbank/gitlab/gitlab/alpine-certificates major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitaly major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-container-registry major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-exporter major 14.9.2 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-exporter major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-shell major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-sidekiq major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-toolbox major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-webservice major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/gitlab-workhorse major 14.10.1 -> 15.0.1
+- ironbank/gitlab/gitlab/kubectl major 14.9.2 -> 15.0.1
+- ironbank/gitlab/gitlab/kubectl major 14.10.1 -> 15.0.1
+- ironbank/opensource/minio/mc minor RELEASE.2022-03-17T07-21-29Z -> RELEASE.2022-05-09T04-08-26Z
+- ironbank/opensource/minio/minio minor RELEASE.2022-03-22T02-05-10Z -> RELEASE. 2022-06-03T01-40-53Z
+- ironbank/opensource/postgres/postgresql12 minor 12.9 -> 12.11
+- ironbank/redhat/ubi/ubi8 minor 8.5 -> 8.6
+
 ## [5.10.1-bb.3] - 2022-06-07
 ### Changed
 - Make conditionals better for mTLS (exceptions only when in STRICT, all enabled only when injected)

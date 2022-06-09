@@ -142,7 +142,6 @@ defaultBuckets:
   - name: gitlab-backups
   - name: gitlab-packages
   - name: tmp
-  - name: gitlab-pseudo
   - name: gitlab-mr-diffs
   - name: gitlab-terraform-state
   - name: gitlab-ci-secure-files

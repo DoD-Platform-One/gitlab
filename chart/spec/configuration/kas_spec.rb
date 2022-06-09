@@ -20,11 +20,8 @@ describe 'kas configuration' do
     YAML.safe_load(%(
       gitlab:
         kas:
-          enabled: true
           customConfig: #{custom_config.to_json}
       global:
-        kas:
-          enabled: true
         image:
           pullPolicy: Always
         appConfig:
@@ -40,9 +37,13 @@ describe 'kas configuration' do
     %w[Deployment ConfigMap Ingress Service HorizontalPodAutoscaler PodDisruptionBudget]
   end
 
-  describe 'kas is disabled by default' do
+  context 'when kas is disabled' do
+    let(:disable_kas) do
+      { 'global' => { 'kas' => { 'enabled' => false } } }
+    end
+
     it 'does not create any kas related resource' do
-      template = HelmTemplate.new(default_values)
+      template = HelmTemplate.new(default_values.merge!(disable_kas))
 
       required_resources.each do |resource|
         resource_name = "#{resource}/test-kas"
@@ -392,6 +393,34 @@ describe 'kas configuration' do
           it 'contains the loadBalancerSourceRanges customization' do
             expect(service['spec']).to include('loadBalancerSourceRanges' => ['a', 'b', 'c'])
           end
+        end
+      end
+    end
+
+    describe 'templates/deployment.yaml' do
+      subject(:deployment) { kas_enabled_template.resources_by_kind('Deployment')['Deployment/test-kas'] }
+
+      let(:deployment_values) { {} }
+
+      let(:kas_values) do
+        default_kas_values.deep_merge!(
+          'gitlab' => {
+            'kas' => {
+              'deployment' => {}.merge!(deployment_values)
+            }
+          }
+        )
+      end
+
+      it 'does not specify minReadySeconds' do
+        expect(deployment['spec']).not_to have_key('minReadySeconds')
+      end
+
+      context 'when deployment.minReadySeconds is given' do
+        let(:deployment_values) { { 'minReadySeconds' => 60 } }
+
+        it 'contains the minReadySeconds customization' do
+          expect(deployment['spec']).to include('minReadySeconds' => 60)
         end
       end
     end

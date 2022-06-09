@@ -218,61 +218,14 @@ describe 'Sidekiq configuration' do
             }
           )
         end
-
-        context 'when sidekiq_exporter is configured' do
-          let(:values) do
-            YAML.safe_load(%(
-              gitlab:
-                sidekiq:
-                  metrics:
-                    enabled: true
-                    port: 2222
-                  health_checks:
-                    enabled: true
-            )).deep_merge(default_values)
-          end
-
-          it 'does not inherits its settings' do
-            expect(monitoring).to include(
-              'sidekiq_exporter' => {
-                'enabled' => true,
-                'address' => '0.0.0.0',
-                'port' => 2222
-              }
-            )
-            expect(monitoring).to include(
-              'sidekiq_health_checks' => {
-                'enabled' => true,
-                'address' => '0.0.0.0',
-                'port' => 3808
-              }
-            )
-          end
-        end
       end
 
-      context 'when disabled' do
+      context 'when custom port is set' do
         let(:values) do
           YAML.safe_load(%(
             gitlab:
               sidekiq:
                 health_checks:
-                  enabled: false
-          )).deep_merge(default_values)
-        end
-
-        it 'emits empty hash' do
-          expect(monitoring['sidekiq_health_checks']).to be(nil)
-        end
-      end
-
-      context 'when custom values are set' do
-        let(:values) do
-          YAML.safe_load(%(
-            gitlab:
-              sidekiq:
-                health_checks:
-                  enabled: true
                   port: 2222
           )).deep_merge(default_values)
         end

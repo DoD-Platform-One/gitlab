@@ -75,6 +75,7 @@ spec:
             - name: STORAGE_URL
               value: {{ .Values.storageUrl | quote }}
             {{- include "gitlab.extraEnv" . | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 12 }}
           volumeMounts:
           {{- include "gitlab.extraVolumeMounts" $ | nindent 10 }}
           - name: spamcheck-data-volume
@@ -96,6 +97,7 @@ spec:
             - name: STORAGE_URL
               value: {{ .Values.storageUrl | quote }}
             {{- include "gitlab.extraEnv" . | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

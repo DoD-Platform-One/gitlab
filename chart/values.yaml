@@ -232,11 +232,11 @@ global:
       ## Verify custom GitLab Pages domains
       # pages_domain_verification_cron_worker:
       #   cron: "*/15 * * * *"
-      ## Export pseudonymized data
-      # pseudonymizer_worker:
-      #   cron: "0 * * * *"
       # schedule_migrate_external_diffs_worker:
       #   cron: "15 * * * *"
+      ## Prune stale group runners on opted-in namespaces
+      # ci_runners_stale_group_runners_prune_worker_cron:
+      #   cron: "30 * * * *"
       ### GitLab Geo
       # Geo Primary only!
       # geo_prune_event_log_worker:
@@ -344,13 +344,6 @@ global:
       bucket: gitlab-dependency-proxy
       connection: {}
 
-    ## https://docs.gitlab.com/charts/charts/globals#pseudonymizer-settings
-    pseudonymizer:
-      configMap:
-      bucket: gitlab-pseudo
-      connection: {}
-        # secret:
-        # key:
     backups:
       bucket: gitlab-backups
       tmpBucket: tmp
@@ -658,7 +651,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -701,7 +694,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -714,7 +707,7 @@ global:
       # tag: latest
       # Busybox can not be hardened with no STIGS. Replacing with UBI-8 container
       repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-      tag: "8.5"
+      tag: "8.6"
       pullSecrets:
       - name: private-registry
 
@@ -737,13 +730,32 @@ global:
   #   SOME_KEY: some_value
   #   SOME_OTHER_KEY: some_other_value
 
+  ## https://docs.gitlab.com/charts/charts/globals
+  extraEnvFrom: {}
+  #   MY_NODE_NAME:
+  #     fieldRef:
+  #       fieldPath: spec.nodeName
+  #   MY_CPU_REQUEST:
+  #     resourceFieldRef:
+  #       containerName: test-container
+  #       resource: requests.cpu
+  #   SECRET_THING:
+  #     secretKeyRef:
+  #       name: special-secret
+  #       key: special_token
+  #       # optional: boolean
+  #   CONFIG_STRING:
+  #     configMapKeyRef:
+  #       name: useful-config
+  #       key: some-string
+  #       # optional: boolean
 ## End of global
 
 upgradeCheck:
   enabled: true
   image:
     repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-    tag: "8.5"
+    tag: "8.6"
     pullSecrets:
     - name: private-registry
   securityContext:
@@ -793,7 +805,7 @@ nginx-ingress:
       hsts-max-age: "63072000"
       server-name-hash-bucket-size: "256"
       use-http2: "true"
-      ssl-ciphers: "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"
+      ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"
       ssl-protocols: "TLSv1.3 TLSv1.2"
       server-tokens: "false"
     service:
@@ -994,7 +1006,7 @@ redis:
     image:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
-      tag: 1.35.0
+      tag: 1.37.0
       pullSecrets:
       - private-registry
     resources:
@@ -1007,7 +1019,7 @@ redis:
   image:
     registry: registry1.dso.mil/ironbank/bitnami
     repository: redis
-    tag: 6.2.5
+    tag: 6.2.7
     pullSecrets:
     - private-registry
   master:
@@ -1071,7 +1083,7 @@ postgresql:
   image:
     registry: registry1.dso.mil
     repository: ironbank/opensource/postgres/postgresql12
-    tag: "12.9"
+    tag: "12.11"
     pullSecrets:
     - private-registry
   usePasswordFile: true
@@ -1124,7 +1136,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 14.10.1
+    tag: 15.0.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1255,7 +1267,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1302,7 +1314,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1330,7 +1342,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
 ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1354,7 +1366,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1367,7 +1379,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     ingress:
@@ -1376,7 +1388,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1399,7 +1411,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1421,7 +1433,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 14.10.1
+      tag: 15.0.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1452,7 +1464,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 14.10.1
+      tag: 15.0.1
     init:
       resources:
         limits:
@@ -1490,7 +1502,7 @@ minio:
       memory: 300Mi
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-03-22T02-05-10Z
+  imageTag: RELEASE.2022-06-03T01-40-53Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1499,7 +1511,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-03-17T07-21-29Z
+    tag: RELEASE.2022-05-09T04-08-26Z
     pullSecrets:
     - name: private-registry
 

@@ -43,12 +43,6 @@ function previousDeployFailed() {
 }
 
 function deploy() {
-  # Enable / disable KAS based on environment
-  local enable_kas=()
-  if [[ -n "$KAS_ENABLED" ]]; then
-    enable_kas=("--set" "global.kas.enabled=true")
-  fi
-
   # Use the gitlab version from the environment or use stable images when on the stable branch
   gitlab_app_version=$(grep 'appVersion:' Chart.yaml | awk '{ print $2}')
   if [[ -n "${GITLAB_VERSION}" ]]; then
@@ -166,7 +160,6 @@ CIYAML
     --set prometheus.install=$PROMETHEUS_INSTALL \
     --set prometheus.server.retention="4d" \
     --set global.gitlab.license.secret="$RELEASE_NAME-gitlab-license" \
-    "${enable_kas[@]}" \
     --namespace="$NAMESPACE" \
     "${gitlab_version_args[@]}" \
     --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
@@ -209,9 +202,7 @@ function wait_for_deploy {
     sleep 5;
   done
 
-  if [[ -n "$KAS_ENABLED" ]]; then
-    check_kas_status
-  fi
+  check_kas_status
 
   echo ""
 }

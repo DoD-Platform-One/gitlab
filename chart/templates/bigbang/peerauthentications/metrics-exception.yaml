@@ -16,7 +16,7 @@ spec:
 {{- end }}
 ---
 # metrics for gitlab but only when gitlab runner is enabled
-{{ if .Values.istio.enabled }}
+{{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") (eq .Values.istio.mtls.mode "STRICT") }}
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:

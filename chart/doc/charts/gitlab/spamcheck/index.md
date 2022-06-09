@@ -78,6 +78,7 @@ The table below contains all the possible charts configurations that can be supp
 | `serviceAccount.enabled`             | Flag for using ServiceAccount                    | `false`                       |
 | `serviceAccount.create`              | Flag for creating a ServiceAccount               | `false`                       |
 | `tolerations`                    | `[]`                  | Toleration labels for pod assignment |
+| `extraEnvFrom`              | `{}`|List of extra environment variables from other data sources to expose|
 
 ## Chart configuration examples
 

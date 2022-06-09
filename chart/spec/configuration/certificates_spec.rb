@@ -9,6 +9,7 @@ describe 'Certificates configuration' do
     [
       'minio', 'nginx', 'postgresql', 'redis',
       'gitlab-runner',
+      'test-kas',
       # cert-manager Pods (2)
       'cainjector',
       'cert-manager', 'certmanager',

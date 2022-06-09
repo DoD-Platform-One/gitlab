@@ -113,6 +113,7 @@ spec:
           {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 10 }}
           env:
             {{- include "webservice.extraEnv" (dict "global" $.Values.global "local" .) | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
           volumeMounts:
           {{- include "gitlab.extraVolumeMounts" $ | nindent 10 }}
           {{- include "gitlab.psql.ssl.volumeMount" $ | nindent 10 }}
@@ -156,6 +157,7 @@ spec:
               value: "1"
             {{- end }}
             {{- include "webservice.extraEnv" (dict "global" $.Values.global "local" .) | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
           volumeMounts:
             {{- include "gitlab.extraVolumeMounts" $ | nindent 12 }}
             {{- include "gitlab.certificates.volumeMount" $ | nindent 12 }}
@@ -228,6 +230,7 @@ spec:
             - name: WORKHORSE_ARCHIVE_CACHE_DISABLED
               value: "true"
             {{- include "webservice.extraEnv" (dict "global" $.Values.global "local" .) | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
           volumeMounts:
             {{- if .sshHostKeys.mount }}
             - name: {{ .sshHostKeys.mountName }}
@@ -321,6 +324,7 @@ spec:
             {{- end }}
             {{- include "gitlab.tracing.env" $ | nindent 12 }}
             {{- include "webservice.extraEnv" (dict "global" $.Values.global "local" .) | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
           volumeMounts:
             - name: workhorse-config
               mountPath: '/var/opt/gitlab/templates'

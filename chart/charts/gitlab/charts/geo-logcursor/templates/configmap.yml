@@ -12,8 +12,6 @@ data:
     gitlab-helm-chart
   database.yml.erb: |
     {{- include "gitlab.database.yml" . | nindent 4 }}
-  database_geo.yml.erb: |
-    {{- include "gitlab.geo.database.yml" . | nindent 4 }}
   smtp_settings.rb: |
     {{- include "gitlab.smtp_settings" . | nindent 4 }}
   {{- include "gitlab.rails.redis.all" . | nindent 2 }}

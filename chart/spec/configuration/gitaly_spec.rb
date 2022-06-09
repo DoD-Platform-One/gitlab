@@ -142,7 +142,18 @@ describe 'Gitaly configuration' do
           gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
           security_context = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['securityContext']
 
-          expect(security_context).to eq(expectedContext)
+          # Helm 3.2+ renders the full security context. So we check given
+          # the expected context from the table above and then check the
+          # additional attributes that are not specified in the table above.
+          full_context = { "runAsUser" => 1000, "fsGroup" => 1000 }
+          expectedContext&.each_key do |expected_key|
+            expect(security_context[expected_key]).to eq(expectedContext[expected_key])
+            full_context.delete(expected_key)
+          end
+
+          full_context.each_key do |unexpected_key|
+            expect(security_context[unexpected_key]).to eq(full_context[unexpected_key])
+          end
         end
       end
     end

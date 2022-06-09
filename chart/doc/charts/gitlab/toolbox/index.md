@@ -25,17 +25,22 @@ gitlab:
       cron:
         enabled: false
         concurrencyPolicy: Replace
-        persistence:
-          enabled: false
-          accessMode: 'ReadWriteOnce'
-          size: '10Gi'
+        failedJobsHistoryLimit: 1
+        schedule: "0 1 * * *"
+        successfulJobsHistoryLimit: 3
+        suspend: false
+        backoffLimit: 6
+        restartPolicy: "OnFailure"
         resources:
           requests:
-            cpu: '50m'
-            memory: '350M'
-        schedule: '0 1 * * *'
+            cpu: 50m
+            memory: 350M
+        persistence:
+          enabled: false
+          accessMode: ReadWriteOnce
+          size: 10Gi
       objectStorage:
-        backend: 's3'
+        backend: s3
         config: {}
     persistence:
       enabled: false
@@ -55,6 +60,8 @@ gitlab:
 | `annotations`                               | Annotations to add to the Toolbox Pods and Jobs | `{}`                      |
 | `common.labels`                             | Supplemental labels that are applied to all objects created by this chart.  | `{}` |
 | `antiAffinityLabels.matchLabels`            | Labels for setting anti-affinity options     |                              |
+| `backups.cron.activeDeadlineSeconds`        | Backup CronJob active deadline seconds (if null, no active deadline is applied)| `null` |
+| `backups.cron.backoffLimit`                 | Backup CronJob backoff limit| `6` |
 | `backups.cron.concurrencyPolicy`            | Kubernetes Job concurrency policy            | `Replace`                    |
 | `backups.cron.enabled`                      | Backup CronJob enabled flag                  | false                        |
 | `backups.cron.extraArgs`                    | String of arguments to pass to the backup utility |                              |
@@ -69,6 +76,7 @@ gitlab:
 | `backups.cron.persistence.volumeName`       | Existing persistent volume name              |                              |
 | `backups.cron.resources.requests.cpu`       | Backup cron minimum needed CPU               | `50m`                        |
 | `backups.cron.resources.requests.memory`    | Backup cron minimum needed memory            | `350M`                       |
+| `backups.cron.restartPolicy`                | Backup cron restart policy (`Never` or `OnFailure`) | `OnFailure` |
 | `backups.cron.schedule`                     | Cron style schedule string                   | `0 1 * * *`                  |
 | `backups.cron.startingDeadlineSeconds`      | Backup cron job starting deadline, in seconds (if null, no starting deadline is applied) | `null`                      |
 | `backups.cron.successfulJobsHistoryLimit`   | Number of successful backup jobs list in history | `3`                      |
@@ -107,6 +115,7 @@ gitlab:
 | `serviceAccount.create`                     | Flag for creating a ServiceAccount           | false                        |
 | `serviceAccount.name`                       | Name of ServiceAccount to use                |                              |
 | `tolerations`                               | Tolerations to add to the Toolbox        |                              |
+| `extraEnvFrom`                              | List of extra environment variables from other data sources to expose  | |
 
 ## Configuring backups
 

@@ -40,6 +40,8 @@ controlled by `global.shell.port`.
 | `config.maxStartups.full`                       | `100`                                            | SSHd refuse probability will increase linearly and all unauthenticated connection attempts would be refused when unauthenticated connections number will reach specified number |
 | `config.maxStartups.rate`                       | `30`                                             | SSHd will refuse connections with specified probability when there would be too many unauthenticated connections (optional)                                                     |
 | `config.maxStartups.start`                      | `10`                                             | SSHd will refuse connection attempts with some probability if there are currently more than the specified number of unauthenticated connections (optional)                      |
+| `config.proxyProtocol`                          | `false`                                          | Enable PROXY protocol support for the `gitlab-sshd` daemon |
+| `config.proxyPolicy`                            | `"use"`                                          | Specify policy for handling PROXY protocol. Value must be one of `use, require, ignore, reject` |
 | `deployment.livenessProbe.initialDelaySeconds`  | 10                                               | Delay before liveness probe is initiated                                                                                                                                        |
 | `deployment.livenessProbe.periodSeconds`        | 10                                               | How often to perform the liveness probe                                                                                                                                         |
 | `deployment.livenessProbe.timeoutSeconds`       | 3                                                | When the liveness probe times out                                                                                                                                               |
@@ -58,6 +60,7 @@ controlled by `global.shell.port`.
 | `extraVolumeMounts`                             |                                                  | List of extra volumes mounts to do                                                                                                                                              |
 | `extraVolumes`                                  |                                                  | List of extra volumes to create                                                                                                                                                 |
 | `extraEnv`                                      |                                                  | List of extra environment variables to expose                                                                                                                                   |
+| `extraEnvFrom`                                  |                                                  | List of extra environment variables from other data sources to expose                                                                                                           |
 | `hpa.targetAverageValue`                        | `100m`                                           | Set the autoscaling target value                                                                                                                                                |
 | `image.pullPolicy`                              | `IfNotPresent`                                   | Shell image pull policy                                                                                                                                                         |
 | `image.pullSecrets`                             |                                                  | Secrets for the image repository                                                                                                                                                |
@@ -109,6 +112,33 @@ When the container is started, you can confirm that the environment variables ar
 env | grep SOME
 SOME_KEY=some_value
 SOME_OTHER_KEY=some_other_value
+```
+
+### extraEnvFrom
+
+`extraEnvFrom` allows you to expose additional environment variables from other data sources in all containers in the pods.
+
+Below is an example use of `extraEnvFrom`:
+
+```yaml
+extraEnvFrom:
+  MY_NODE_NAME:
+    fieldRef:
+      fieldPath: spec.nodeName
+  MY_CPU_REQUEST:
+    resourceFieldRef:
+      containerName: test-container
+      resource: requests.cpu
+  SECRET_THING:
+    secretKeyRef:
+      name: special-secret
+      key: special_token
+      # optional: boolean
+  CONFIG_STRING:
+    configMapKeyRef:
+      name: useful-config
+      key: some-string
+      # optional: boolean
 ```
 
 ### image.pullSecrets

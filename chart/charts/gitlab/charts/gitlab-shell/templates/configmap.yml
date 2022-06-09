@@ -56,6 +56,9 @@ data:
       web_listen: "0.0.0.0:{{ .Values.metrics.port }}"
       # Maximum number of concurrent sessions allowed on a single SSH connection. Defaults to 100.
       concurrent_sessions_limit: {{ .Values.config.maxStartups.full }}
+      # PROXY protocol support for correct IP address detection
+      proxy_protocol: {{ .Values.config.proxyProtocol }}
+      proxy_policy: {{ .Values.config.proxyPolicy }}
       # SSH host key files.
       host_key_files:
       {%- range file.Walk "/etc/ssh" %}

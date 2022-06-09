@@ -202,3 +202,5 @@ exceptions:
   - YAML
   - ZAP
   - ZIP
+  - GCS
+  - KMS

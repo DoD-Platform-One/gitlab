@@ -478,4 +478,204 @@ describe 'Database configuration' do
       end
     end
   end
+
+  describe 'Geo primary role' do
+    let(:geo_values) do
+      default_values.deep_merge(YAML.safe_load(%(
+        global:
+          psql:
+            host: db.example.com
+            password:
+              secret: sekrit
+              key: pa55word
+          geo:
+            enabled: true
+            role: primary
+      )))
+    end
+
+    context 'With default configuration' do
+      context 'With Geo primary enabled' do
+        it 'Provides only `main` stanza' do
+          t = HelmTemplate.new(geo_values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main')
+          expect(db_config['production'].dig('main', 'host')).to eq('db.example.com')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+        end
+      end
+
+      context 'With Geo primary disabled' do
+        it 'Provides only `main` stanza' do
+          t = HelmTemplate.new(default_values.deep_merge(YAML.safe_load(%(
+            global:
+              geo:
+                enabled: false
+          ))))
+
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main')
+          expect(db_config['production'].dig('main', 'host')).to eq('test-postgresql.default.svc')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+        end
+      end
+    end
+
+    context 'When `main` is provided' do
+      context 'With Geo primary enabled' do
+        it 'Provides only `main` stanza' do
+          t = HelmTemplate.new(geo_values.deep_merge(YAML.safe_load(%(
+            global:
+              psql:
+                main:
+                  host: server
+                  port: 9999
+          ))))
+
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main')
+          expect(db_config['production'].dig('main', 'host')).to eq('server')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+        end
+      end
+
+      context 'With Geo primary disabled' do
+        it 'Provides only `main` stanza' do
+          t = HelmTemplate.new(geo_values.deep_merge(YAML.safe_load(%(
+            global:
+              psql:
+                main:
+                  host: server
+                  port: 9999
+              geo:
+                enabled: false
+          ))))
+
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main')
+          expect(db_config['production'].dig('main', 'host')).to eq('server')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+        end
+      end
+    end
+  end
+
+  describe 'Geo secondary role' do
+    let(:geo_values) do
+      default_values.deep_merge(YAML.safe_load(%(
+        global:
+          psql:
+            host: geo-1.db.example.com
+            password:
+              secret: sekrit
+              key: pa55word
+          geo:
+            enabled: true
+            role: secondary
+            psql:
+              host: geo-2.db.example.com
+              port: 5431
+              password:
+                secret: geo
+                key: postgresql-password
+      )))
+    end
+
+    context 'With default configuration' do
+      context 'With Geo secondary enabled' do
+        it 'Provides `main` and `geo` stanzas' do
+          t = HelmTemplate.new(geo_values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main', 'geo')
+          expect(db_config['production'].dig('main', 'host')).to eq('geo-1.db.example.com')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+          expect(db_config['production'].dig('geo', 'host')).to eq('geo-2.db.example.com')
+          expect(db_config['production'].dig('geo', 'database_tasks')).to eq(true)
+        end
+
+        it 'Places `main` stanza first' do
+          t = HelmTemplate.new(geo_values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          database_yml = database_yml(t, 'webservice')
+          expect(database_yml).to match("production:\n  main:\n")
+        end
+      end
+
+      context 'With Geo secondary disabled' do
+        it 'Provides only `main` stanza' do
+          t = HelmTemplate.new(default_values.deep_merge(YAML.safe_load(%(
+            global:
+              geo:
+                enabled: false
+          ))))
+
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main')
+          expect(db_config['production'].dig('main', 'host')).to eq('test-postgresql.default.svc')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+        end
+      end
+    end
+
+    context 'When `main` is provided' do
+      context 'With Geo secondary enabled' do
+        it 'Provides `main` and `geo` stanzas' do
+          t = HelmTemplate.new(geo_values.deep_merge(YAML.safe_load(%(
+            global:
+              psql:
+                main:
+                  host: server
+                  port: 9999
+          ))))
+
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main', 'geo')
+          expect(db_config['production'].dig('main', 'host')).to eq('server')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+          expect(db_config['production'].dig('geo', 'host')).to eq('geo-2.db.example.com')
+          expect(db_config['production'].dig('geo', 'database_tasks')).to eq(true)
+        end
+
+        it 'Places `main` stanza first' do
+          t = HelmTemplate.new(geo_values.deep_merge(YAML.safe_load(%(
+            global:
+              psql:
+                main:
+                  port: 9999
+          ))))
+
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          database_yml = database_yml(t, 'webservice')
+          expect(database_yml).to match("production:\n  main:\n")
+        end
+      end
+
+      context 'With Geo secondary disabled' do
+        it 'Provides only `main` stanza' do
+          t = HelmTemplate.new(geo_values.deep_merge(YAML.safe_load(%(
+            global:
+              psql:
+                main:
+                  host: server
+                  port: 9999
+              geo:
+                enabled: false
+          ))))
+
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          db_config = database_config(t, 'webservice')
+          expect(db_config['production'].keys).to contain_exactly('main')
+          expect(db_config['production'].dig('main', 'host')).to eq('server')
+          expect(db_config['production'].dig('main', 'database_tasks')).to eq(true)
+        end
+      end
+    end
+  end
 end

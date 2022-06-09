@@ -103,6 +103,7 @@ data:
     token = <%= File.read('/etc/gitlab-secrets/gitaly/gitaly_token').strip.to_json %>
 
     [git]
+    use_bundled_binaries = true
     {{- with .Values.git }}
     {{-   if .catFileCacheSize }}
     catfile_cache_size = {{ .catFileCacheSize }}

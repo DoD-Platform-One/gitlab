@@ -8,7 +8,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 GitLab relies on object storage for highly-available persistent data in Kubernetes.
 By default, an S3-compatible storage solution named `minio` is deployed with the
-chart, but for production quality deployments, we recommend using a hosted
+chart. For production quality deployments, we recommend using a hosted
 object storage solution like Google Cloud Storage or AWS S3.
 
 To disable MinIO, set this option and then follow the related documentation below:
@@ -33,9 +33,8 @@ You can enable this in two ways:
 - In AWS, [configure the S3 bucket to use default encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html).
 - In GitLab, enable [server side encryption headers](../../charts/globals.md#storage_options).
 
-These two options are not mutually exclusive. If you choose the first option, you do not need to do
-the other option, unless you want to [set an S3 bucket policy to require encrypted objects](https://aws.amazon.com/premiumsupport/knowledge-center/s3-bucket-store-kms-encrypted-objects/).
-You can set a default encryption policy but also enable server-side encryption headers to override those defaults.
+These two options are not mutually exclusive. You can set a default encryption
+policy, but also enable server-side encryption headers to override those defaults.
 
 See the [GitLab documentation on encrypted S3 buckets](https://docs.gitlab.com/ee/administration/object_storage.html#encrypted-s3-buckets)
 for more details.
@@ -82,6 +81,10 @@ Then, disable MinIO and set these global settings:
 
 Be sure to create Azure containers for the [default names or set the container names in the bucket configuration](../../charts/globals.md#specify-buckets).
 
+NOTE:
+If you experience requests failing with `Requests to the local network are not allowed`,
+see the [Troubleshooting section](#troubleshooting).
+
 ## Docker Registry images
 
 Configuration of object storage for the `registry` chart is done via the `registry.storage` key, and the `global.registry.bucket` key.
@@ -112,13 +115,30 @@ Examples for [S3](https://docs.docker.com/registry/storage-drivers/s3/)(S3 compa
 1. Follow [registry chart documentation on storage](../../charts/registry/index.md#storage) for creating the secret.
 1. Configure the chart as documented.
 
-## LFS, Artifacts, Uploads, Packages, External Diffs, Pseudonymizer, Terraform State, Dependency Proxy
+## LFS, Artifacts, Uploads, Packages, External Diffs, Terraform State, Dependency Proxy
 
 Configuration of object storage for LFS, artifacts, uploads, packages, external
-diffs, and pseudonymizer is done via the `global.appConfig.lfs`,
-`global.appConfig.artifacts`, `global.appConfig.uploads`,
-`global.appConfig.packages`, `global.appConfig.externalDiffs`,
-`global.appConfig.dependencyProxy` and `global.appConfig.pseudonymizer` keys.
+diffs, and pseudonymizer is done via the following keys:
+
+- `global.appConfig.lfs`
+- `global.appConfig.artifacts`
+- `global.appConfig.uploads`
+- `global.appConfig.packages`
+- `global.appConfig.externalDiffs`
+- `global.appConfig.dependencyProxy`
+
+Note also that:
+
+- A different bucket is needed for each, otherwise performing a restore from
+  backup doesn't function properly.
+- Storing MR diffs on external storage is not enabled by default, so,
+  for the object storage settings for `externalDiffs` to take effect,
+  `global.appConfig.externalDiffs.enabled` key should have a `true` value.
+- The dependency proxy feature is not enabled by default, so,
+  for the object storage settings for `dependencyProxy` to take effect,
+  `global.appConfig.dependencyProxy.enabled` key should have a `true` value.
+
+Below is an example of the configuration options:
 
 ```shell
 --set global.appConfig.lfs.bucket=gitlab-lfs-storage
@@ -145,24 +165,10 @@ diffs, and pseudonymizer is done via the `global.appConfig.lfs`,
 --set global.appConfig.terraformState.connection.secret=object-storage
 --set global.appConfig.terraformState.connection.key=connection
 
---set global.appConfig.pseudonymizer.bucket=gitlab-pseudonymizer-storage
---set global.appConfig.pseudonymizer.connection.secret=object-storage
---set global.appConfig.pseudonymizer.connection.key=connection
-
 --set global.appConfig.dependencyProxy.bucket=gitlab-dependencyproxy-storage
 --set global.appConfig.dependencyProxy.connection.secret=object-storage
 --set global.appConfig.dependencyProxy.connection.key=connection
 ```
-
-Notes:
-
-- Currently a different bucket is needed for each, otherwise performing a restore from backup will not properly function.
-- Storing MR diffs on external storage is not enabled by default. So,
-  for the object storage settings for `externalDiffs` to take effect,
-  `global.appConfig.externalDiffs.enabled` key should have a `true` value.
-- The dependency proxy feature is not enabled by default. So,
-  for the object storage settings for `dependencyProxy` to take effect,
-  `global.appConfig.dependencyProxy.enabled` key should have a `true` value.
 
 See the [charts/globals documentation on appConfig](../../charts/globals.md#configure-appconfig-settings) for full details.
 
@@ -186,11 +192,11 @@ Examples for [AWS](https://fog.io/storage/#using-amazon-s3-and-fog) (any S3 comp
 
 ## Backups
 
-Backups are also stored in object storage, and need to be configured to point
+Backups are also stored in object storage, and must be configured to point
 externally rather than the included MinIO service. The backup/restore procedure makes
 use of two separate buckets. A bucket for storing backups (`global.appConfig.backups.bucket`)
 and a temporary bucket for preserving existing data during the restore process (`global.appConfig.backups.tmpBucket`).
-Currently AWS S3-compatible object storage systems and Google Cloud Storage are supported backends
+AWS S3-compatible object storage systems and Google Cloud Storage are supported backends.
 The backend type is configurable by setting `global.appConfig.backups.objectStorage.backend` to `s3` and `gcs` respectively.
 A connection configuration through the `gitlab.toolbox.backups.objectStorage.config` key must also be provided.
 When using Google Cloud Storage, the GCP project must be set with the `global.appConfig.backups.objectStorage.config.gcpProject` value.
@@ -236,7 +242,7 @@ configured to authenticate as a user with sufficient access to read/write to all
      ```
 
    - On Google Cloud Storage, you can create the file by creating a service account
-     with the storage.admin role and then
+     with the `storage.admin` role and then
      [creating a service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys).
      Below is an example of using the `gcloud` CLI to create the file.
 
@@ -274,3 +280,11 @@ configured to authenticate as a user with sufficient access to read/write to all
    ```shell
    kubectl create secret generic storage-config --from-file=config=storage.config
    ```
+
+## Troubleshooting
+
+### Azure Blob: URL \[FILTERED] is blocked: Requests to the local network are not allowed
+
+This happens when the Azure Blob hostname is resolved to a [RFC1918 (local / private) IP address](https://docs.microsoft.com/en-us/azure/storage/common/storage-private-endpoints#dns-changes-for-private-endpoints). As a workaround,
+allow [Outbound requests](https://docs.gitlab.com/ee/security/webhooks.html#allowlist-for-local-requests)
+for your Azure Blob hostname (`yourinstance.blob.core.windows.net`).

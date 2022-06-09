@@ -17,6 +17,9 @@ spec:
   {{- if .Values.deployment.strategy }}
   strategy: {{ .Values.deployment.strategy | toYaml | nindent 4 }}
   {{- end }}
+  {{- if .Values.deployment.minReadySeconds }}
+  minReadySeconds: {{ .Values.deployment.minReadySeconds }}
+  {{- end }}
   template:
     metadata:
       labels:

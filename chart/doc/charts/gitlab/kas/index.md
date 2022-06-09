@@ -26,15 +26,15 @@ The route to access the service depends on your [Ingress configuration](#specify
 For more information, see the
 [GitLab agent for Kubernetes architecture](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent/-/blob/master/doc/architecture.md).
 
-## Enable the agent server
+## Disable the agent server
 
-The GitLab agent server (`kas`) is disabled by default.
-To enable it on your GitLab instance, set the Helm property `global.kas.enabled` to `true`.
+The GitLab agent server (`kas`) is enabled by default.
+To disable it on your GitLab instance, set the Helm property `global.kas.enabled` to `false`.
 
 For example:
 
 ```shell
-helm upgrade --install kas --set global.kas.enabled=true
+helm upgrade --install kas --set global.kas.enabled=false
 ```
 
 ### Specify an Ingress
@@ -105,6 +105,7 @@ You can pass these parameters to the `helm install` command by using the `--set`
 | `service.type` | `ClusterIP` | Service type. |
 | `tolerations` | `[]` | Toleration labels for pod assignment. |
 | `customConfig` | `{}` | When given, merges the default `kas` configuration with these values giving precedence to those defined here. |
+| `deployment.minReadySeconds` | `0` | Minimum number of seconds that must pass before a `kas` pod is considered ready. |
 | `deployment.strategy` | `{}` | Allows one to configure the update strategy utilized by the deployment. |
 
 ## Test the `kas` chart
@@ -113,16 +114,14 @@ To install the chart:
 
 1. Create your own Kubernetes cluster.
 1. Check out the merge request's working branch.
-1. Install (or upgrade) GitLab with `kas` enabled from your local chart branch,
-   using `--set global.kas.enabled=true`, for example:
+1. Install (or upgrade) GitLab with `kas` enabled by default from your local chart branch:
 
    ```shell
    helm upgrade --force --install gitlab . \
      --timeout 600s \
      --set global.hosts.domain=your.domain.com \
      --set global.hosts.externalIP=XYZ.XYZ.XYZ.XYZ \
-     --set certmanager-issuer.email=your@email.com \
-     --set global.kas.enabled=true
+     --set certmanager-issuer.email=your@email.com
    ```
 
 1. Use the GDK to run the process to configure and use the

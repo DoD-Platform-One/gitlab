@@ -41,7 +41,7 @@ Note the following:
 The `pre` stage will create a backup of your database using the backup-utility script in the Toolbox, which gets saved to the configured s3 bucket (MinIO by default):
 
 ```shell
-# GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v5.0.0
+# GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v6.0.0
 curl -s "https://gitlab.com/gitlab-org/charts/gitlab/-/raw/${GITLAB_RELEASE}/scripts/database-upgrade" | bash -s pre
 ```
 
@@ -86,7 +86,7 @@ Note the following:
 1. After the Toolbox pod is deployed successfully, run the `post` steps:
 
    ```shell
-   # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v5.0.0
+   # GITLAB_RELEASE should be the version of the chart you are installing, starting with 'v': v6.0.0
    curl -s "https://gitlab.com/gitlab-org/charts/gitlab/-/raw/${GITLAB_RELEASE}/scripts/database-upgrade" | bash -s post
    ```
 

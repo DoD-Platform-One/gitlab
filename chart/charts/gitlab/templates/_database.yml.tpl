@@ -33,6 +33,9 @@ production:
     {{- include "gitlab.database.loadBalancing" $context | nindent 4 }}
     {{- include "gitlab.psql.ssl.config" $context | nindent 4 }}
 {{- end }}
+{{- if include "gitlab.geo.secondary" . }}
+{{-   include "gitlab.geo.database.yml" . | nindent 2 }}
+{{- end }}
 {{- end -}}
 
 {{/*
