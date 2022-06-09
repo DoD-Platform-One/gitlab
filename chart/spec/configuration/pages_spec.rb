@@ -439,14 +439,12 @@ describe 'GitLab Pages' do
             log-format=json
             log-verbose=false
             redirect-http=false
-            use-http2=true
             insecure-ciphers=false
             artifacts-server=http://test-webservice-default.default.svc:8181/api/v4
             artifacts-server-timeout=10
             gitlab-server=https://gitlab.example.com
             internal-gitlab-server=http://test-webservice-default.default.svc:8181
             api-secret-key=/etc/gitlab-secrets/pages/secret
-            domain-config-source=gitlab
             metrics-address=:9235
             pages-status=/-/readiness
           MSG
@@ -470,7 +468,6 @@ describe 'GitLab Pages' do
                 artifactsServerTimeout: 50
                 serverShutdownTimeout: 50s
                 artifactsServerUrl: https://randomwebsite.com
-                domainConfigSource: disk
                 gitlabClientHttpTimeout: 25
                 gitlabClientJwtExpiry: 35
                 gitlabRetrieval:
@@ -493,7 +490,6 @@ describe 'GitLab Pages' do
                 tls:
                   minVersion: tls1.0
                   maxVersion: tls1.2
-                useHttp2: false
                 metrics:
                   port: 9999
                 zipCache:
@@ -525,14 +521,12 @@ describe 'GitLab Pages' do
             log-format=text
             log-verbose=true
             redirect-http=true
-            use-http2=false
             insecure-ciphers=true
             artifacts-server=https://randomwebsite.com
             artifacts-server-timeout=50
             gitlab-server=https://randomgitlabserver.com
             internal-gitlab-server=https://int.randomgitlabserver.com
             api-secret-key=/etc/gitlab-secrets/pages/secret
-            domain-config-source=disk
             metrics-address=:9999
             max-conns=45
             max-uri-length=2048

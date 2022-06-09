@@ -22,7 +22,7 @@ global:
       port: 5431
       password:
         secret: geo
-        key: postgresql-password
+        key: geo-postgresql-password
 # External DB, disable
 postgresql:
   install: false

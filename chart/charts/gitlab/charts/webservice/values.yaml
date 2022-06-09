@@ -34,6 +34,7 @@ shutdown:
   blackoutSeconds: 10
 
 extraEnv: {}
+extraEnvFrom: {}
 
 annotations: {}
 
@@ -124,10 +125,10 @@ deployment:
     failureThreshold: 3
   readinessProbe:
     initialDelaySeconds: 0
-    periodSeconds: 10
+    periodSeconds: 5
     timeoutSeconds: 2
     successThreshold: 1
-    failureThreshold: 3
+    failureThreshold: 2
 
   # strategy is used to configure the desired upgrade approach and
   # configuration for the deployment. See the Kubernetes documentation

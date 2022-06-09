@@ -139,6 +139,25 @@ global:
 # Run Prometheus
 prometheus:
   install: true
+  alertmanager:
+    nodeSelector:
+      workload: "support"
+  kubeStateMetrics:
+    nodeSelector:
+      workload: "support"
+  nodeExporter:
+    nodeSelector:
+      workload: "support"
+  pushgateway:
+    nodeSelector:
+      workload: "support"
+  server:
+    nodeSelector:
+      workload: "support"
+
+grafana:
+  nodeSelector:
+    workload: "support"
 
 # https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
 gitlab-runner:

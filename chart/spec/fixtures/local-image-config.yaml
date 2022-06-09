@@ -76,6 +76,11 @@ gitlab:
     init:
       image:
         pullPolicy: Never-init
+  kas:
+    image:
+      pullPolicy: pp-kas
+      pullSecrets:
+      - name: ps-kas
   mailroom:
     image:
       pullPolicy: pp-mailroom

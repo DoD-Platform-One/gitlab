@@ -18,7 +18,7 @@
 {{- $metricsEnabled := .Values.metrics.enabled -}}
 {{- $metricsPort := .Values.metrics.port -}}
 {{- $metricsPath := .Values.metrics.path -}}
-{{- $healthChecksPort := .Values.health_checks.port | default $metricsPort -}}
+{{- $healthChecksPort := .Values.health_checks.port -}}
 {{- $configMapChecksum := include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
 {{- range .Values.pods -}}
 {{-   $queueName := printf "%s-%s" $fullname .name | trunc 63 }}
@@ -114,6 +114,7 @@ spec:
           {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" $ | nindent 10 }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
           volumeMounts:
           {{- tpl (default "" .extraVolumeMounts) $ | nindent 10 }}
           {{- include "gitlab.extraVolumeMounts" $ | nindent 10 }}
@@ -151,6 +152,7 @@ spec:
               value: "1"
             {{- end }}
             {{- include "gitlab.extraEnv" $ | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 12 }}
           volumeMounts:
           {{- tpl (default "" .extraVolumeMounts) $ | nindent 10 }}
           {{- include "gitlab.extraVolumeMounts" $ | nindent 10 }}
@@ -288,10 +290,6 @@ spec:
           sources:
             - configMap:
                 name: {{ $fullname }}
-            {{- if $.Values.global.appConfig.pseudonymizer.configMap }}
-            - configMap:
-                name: {{ $.Values.global.appConfig.pseudonymizer.configMap }}
-            {{- end }}
       - name: init-sidekiq-secrets
         projected:
           defaultMode: 0400
@@ -332,7 +330,6 @@ spec:
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "ci_secure_files" "config" $.Values.global.appConfig.ciSecureFiles) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "dependency_proxy" "config" $.Values.global.appConfig.dependencyProxy) | nindent 10 }}
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 10 }}
-          {{- include "gitlab.appConfig.pseudonymizer.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.appConfig.ldap.servers.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.appConfig.omniauth.mountSecrets" $ | nindent 10 }}
           {{- if and $.Values.global.smtp.enabled $.Values.global.smtp.authentication }}

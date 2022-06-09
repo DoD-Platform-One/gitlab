@@ -57,6 +57,7 @@ Table below contains all the possible charts configurations that can be supplied
 | `extraVolumes`              | List of extra volumes to create          |                   |
 | `extraVolumeMounts`         | List of extra volumes mounts to do      |                   |
 | `extraEnv`                  | List of extra environment variables to expose |              |
+| `extraEnvFrom`              | List of extra environment variables from other data sources to expose|                              |
 | `bootsnap.enabled`          | Enable the Bootsnap cache for Rails      | `true`            |
 
 ## Chart configuration examples
@@ -79,6 +80,33 @@ When the container is started, you can confirm that the environment variables ar
 env | grep SOME
 SOME_KEY=some_value
 SOME_OTHER_KEY=some_other_value
+```
+
+### extraEnvFrom
+
+`extraEnvFrom` allows you to expose additional environment variables from other data sources in all containers in the pods.
+
+Below is an example use of `extraEnvFrom`:
+
+```yaml
+extraEnvFrom:
+  MY_NODE_NAME:
+    fieldRef:
+      fieldPath: spec.nodeName
+  MY_CPU_REQUEST:
+    resourceFieldRef:
+      containerName: test-container
+      resource: requests.cpu
+  SECRET_THING:
+    secretKeyRef:
+      name: special-secret
+      key: special_token
+      # optional: boolean
+  CONFIG_STRING:
+    configMapKeyRef:
+      name: useful-config
+      key: some-string
+      # optional: boolean
 ```
 
 ### image.pullSecrets

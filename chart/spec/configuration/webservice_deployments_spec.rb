@@ -283,6 +283,11 @@ describe 'Webservice Deployments configuration' do
         global:
           extraEnv:
             GLOBAL: present
+          extraEnvFrom:
+            SECRETGLOBAL:
+              secretKeyRef:
+                key: "secretPresent"
+                name: "secretPresent"
         gitlab:
           webservice:
             # "base" configuration
@@ -311,6 +316,11 @@ describe 'Webservice Deployments configuration' do
                 effect: "NoSchedule"
             extraEnv:
               CHART: "present"
+            extraEnvFrom:
+              SECRETCHART:
+                secretKeyRef:
+                  key: "secretPresent"
+                  name: "secretPresent"
             # individual configurations
             deployments:
               a:
@@ -339,6 +349,11 @@ describe 'Webservice Deployments configuration' do
                     effect: "NoExecute"
                 extraEnv:
                   DEPLOYMENT: "b"
+                extraEnvFrom:
+                  SECRETDEPLOYMENT:
+                    secretKeyRef:
+                      key: "secretB"
+                      name: "secretB"
                 sshHostKeys:
                   mount: true
                   mountName: ssh-host-keys-b
@@ -354,6 +369,15 @@ describe 'Webservice Deployments configuration' do
                 extraEnv:
                   DEPLOYMENT: "c"
                   CHART: "overridden"
+                extraEnvFrom:
+                  SECRETDEPLOYMENT:
+                    secretKeyRef:
+                      key: "secretC"
+                      name: "secretC"
+                  SECRETCHART:
+                    secretKeyRef:
+                      key: "SecretOverridden"
+                      name: "SecretOverridden"
         )).deep_merge(default_values)
       end
 
@@ -392,6 +416,10 @@ describe 'Webservice Deployments configuration' do
           expect(env_1).to include(env_value('GLOBAL', 'present'))
           expect(env_1).to include(env_value('CHART', 'present'))
           expect(env_1).not_to include(env_value('DEPLOYMENT', 'a'))
+
+          expect(env_1).to include({ "name" => "SECRETGLOBAL", "valueFrom" => { "secretKeyRef" => { "name" => "secretPresent", "key" => "secretPresent" } } })
+          expect(env_1).to include({ "name" => "SECRETCHART", "valueFrom" => { "secretKeyRef" => { "name" => "secretPresent", "key" => "secretPresent" } } })
+          expect(env_1).not_to include({ "name" => "SECRETDEPLOYMENT", "valueFrom" => { "secretKeyRef" => { "name" => "secretA", "key" => "secretA" } } })
         end
 
         it 'merges when present' do
@@ -399,6 +427,10 @@ describe 'Webservice Deployments configuration' do
           expect(env_1).to include(env_value('GLOBAL', 'present'))
           expect(env_1).to include(env_value('CHART', 'present'))
           expect(env_1).to include(env_value('DEPLOYMENT', 'b'))
+
+          expect(env_1).to include({ "name" => "SECRETGLOBAL", "valueFrom" => { "secretKeyRef" => { "name" => "secretPresent", "key" => "secretPresent" } } })
+          expect(env_1).to include({ "name" => "SECRETCHART", "valueFrom" => { "secretKeyRef" => { "name" => "secretPresent", "key" => "secretPresent" } } })
+          expect(env_1).to include({ "name" => "SECRETDEPLOYMENT", "valueFrom" => { "secretKeyRef" => { "name" => "secretB", "key" => "secretB" } } })
         end
 
         it 'override when present' do
@@ -406,6 +438,10 @@ describe 'Webservice Deployments configuration' do
           expect(env_1).to include(env_value('GLOBAL', 'present'))
           expect(env_1).to include(env_value('CHART', 'overridden'))
           expect(env_1).to include(env_value('DEPLOYMENT', 'c'))
+
+          expect(env_1).to include({ "name" => "SECRETGLOBAL", "valueFrom" => { "secretKeyRef" => { "name" => "secretPresent", "key" => "secretPresent" } } })
+          expect(env_1).to include({ "name" => "SECRETCHART", "valueFrom" => { "secretKeyRef" => { "name" => "SecretOverridden", "key" => "SecretOverridden" } } })
+          expect(env_1).to include({ "name" => "SECRETDEPLOYMENT", "valueFrom" => { "secretKeyRef" => { "name" => "secretC", "key" => "secretC" } } })
         end
       end
 

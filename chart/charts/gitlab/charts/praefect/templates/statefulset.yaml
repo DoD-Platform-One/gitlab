@@ -74,6 +74,7 @@ spec:
           {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" $ | nindent 10 }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 10 }}
           volumeMounts:
           {{- include "gitlab.extraVolumeMounts" $ | nindent 10 }}
           - name: praefect-config
@@ -125,6 +126,7 @@ spec:
           value: '{{ .Values.global.praefect.autoMigrate | int }}'
         {{- include "gitlab.tracing.env" . | nindent 8 }}
         {{- include "gitlab.extraEnv" . | nindent 8 }}
+        {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 8 }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
         terminationMessagePath: /dev/termination-log

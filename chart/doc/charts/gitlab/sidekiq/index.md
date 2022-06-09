@@ -51,7 +51,9 @@ to the `helm install` command using the `--set` flags:
 | `extraVolumeMounts`                        |                                                              | String template of extra volume mounts to configure                                                   |
 | `extraVolumes`                             |                                                              | String template of extra volumes to configure                                                         |
 | `extraEnv`                                 |                                                              | List of extra environment variables to expose                                                         |
+| `extraEnvFrom`                             |                                                              | List of extra environment variables from other data sources to expose                                 |
 | `gitaly.serviceName`                       | `gitaly`                                                     | Gitaly service name                                                                                   |
+| `health_checks.port`                       | `3808`                                                       | Health check server port                                                                                 |
 | `hpa.targetAverageValue`                   | `350m`                                                       | Set the autoscaling target value                                                                      |
 | `minReplicas`                              | `2`                                                          | Minimum number of replicas                                                                            |
 | `maxReplicas`                              | `10`                                                         | Maximum number of replicas                                                                            |
@@ -158,6 +160,33 @@ pods:
 
 This will set `SOME_POD_KEY` only for application containers in the `mailers`
 pod. Pod-level `extraEnv` settings are not added to [init containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
+
+### extraEnvFrom
+
+`extraEnvFrom` allows you to expose additional environment variables from other data sources in all containers in the pods.
+
+Below is an example use of `extraEnvFrom`:
+
+```yaml
+extraEnvFrom:
+  MY_NODE_NAME:
+    fieldRef:
+      fieldPath: spec.nodeName
+  MY_CPU_REQUEST:
+    resourceFieldRef:
+      containerName: test-container
+      resource: requests.cpu
+  SECRET_THING:
+    secretKeyRef:
+      name: special-secret
+      key: special_token
+      # optional: boolean
+  CONFIG_STRING:
+    configMapKeyRef:
+      name: useful-config
+      key: some-string
+      # optional: boolean
+```
 
 ### extraVolumes
 
@@ -393,6 +422,7 @@ a different pod configuration. It will not add a new pod in addition to the defa
 | `priorityClassName`             | String  | `""`                                                                | Allow configuring pods `priorityClassName`, this is used to control pod priority in case of eviction                                                                                                                                                                    |
 | `hpa.targetAverageValue`        | String  |                                                                     | Overrides the autoscaling target value for the given pod.                                                                                                                                                                                                               |
 | `extraEnv`                      |   Map   |                                                                     | List of extra environment variables to expose. The chart-wide value is merged into this, with values from the pod taking precedence                                                                                                                                     |
+| `extraEnvFrom`                  |   Map   | | List of extra environment variables from other data source to expose          | 
 | `terminationGracePeriodSeconds` |  `30`   | Optional duration in seconds the pod needs to terminate gracefully. |
 
 ### queues

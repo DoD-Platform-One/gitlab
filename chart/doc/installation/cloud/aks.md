@@ -77,7 +77,7 @@ The table below describes all available variables.
 A cluster with 8vCPU and 30GB of RAM is recommended.
 
 For the most up to date instructions, follow Microsoft's
-[AKS walkthrough](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough-portal).
+[AKS walkthrough](https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-portal).
 
 ## External Access to GitLab
 

@@ -26,7 +26,6 @@ To use GitLab Geo with the GitLab Helm chart, the following requirements must be
   have WAL support required for replication.
 - The supplied database must:
   - Support replication.
-  - The primary database must be reachable by the
   - The primary database must be reachable by the primary site,
     and all secondary database nodes (for replication).
   - Secondary databases only need to be reachable by the secondary sites.
@@ -263,8 +262,10 @@ To deploy this chart as a Geo Primary, start [from this example configuration](h
 1. Wait for the deployment to complete, and the application to come online. When
    the application is reachable, log in.
 
-1. Log in to GitLab, and upload your GitLab license file by navigating to
-   `/admin/license`. **This step is required for Geo to function.**
+1. Sign in to GitLab, and [activate your GitLab subscription](https://docs.gitlab.com/ee/user/admin_area/license.html).
+
+   NOTE:
+   **This step is required for Geo to function.**
 
 ## Set the Geo Primary site
 
@@ -465,7 +466,7 @@ After configuration above is prepared:
 of your Primary PostgreSQL node:
 
    ```shell
-   gitlab-ctl replicate-geo-database --slot-name=geo_2 --host=PRIMARY_DATABASE_HOST
+   gitlab-ctl replicate-geo-database --slot-name=geo_2 --host=PRIMARY_DATABASE_HOST --sslmode=verify-ca
    ```
 
 1. After replication has finished, we must reconfigure the Omnibus GitLab one last time
@@ -581,8 +582,7 @@ the Primary site that the Secondary site exists:
    **Menu >** **{admin}** **Admin**.
 1. On the left sidebar, select **Geo**.
 1. Select **Add site**.
-1. Add the **secondary** site. Use the full URL for the URL.
-   **Do not** select the **This is a primary node** checkbox.
+1. Add the **secondary** site. Use the full GitLab URL for the URL.
 1. Enter a Name with the `global.geo.nodeName` of the Secondary site. These values must always match exactly, character for character.
 1. Optionally, choose which groups or storage shards should be replicated by the
    **secondary** site. Leave blank to replicate all.

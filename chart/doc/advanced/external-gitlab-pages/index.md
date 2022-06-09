@@ -40,10 +40,6 @@ Omnibus GitLab package.
    # Information regarding GitLab instance
    gitlab_pages['gitlab_server'] = '<GitLab URL>'  # Example: 'https://gitlab.example.com'
    gitlab_pages['api_secret_key'] = '<Base64 encoded form of API secret key>'
-
-   # Tell GitLab to fetch configuration regarding domains from GitLab (as
-   # opposed to fetch it from `disk`, which is the default)
-   gitlab_pages['domain_config_source'] = 'gitlab'
    ```
 
 1. Apply the changes by running `sudo gitlab-ctl reconfigure`.

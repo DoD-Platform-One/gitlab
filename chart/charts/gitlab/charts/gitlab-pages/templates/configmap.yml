@@ -59,14 +59,12 @@ data:
     log-format={{ .Values.logFormat }}
     log-verbose={{ eq .Values.logVerbose true }}
     redirect-http={{ eq .Values.redirectHttp true }}
-    use-http2={{ eq .Values.useHttp2 true }}
     insecure-ciphers={{ eq .Values.insecureCiphers true }}
     artifacts-server={{ template "gitlab.pages.artifactsServer" . }}
     artifacts-server-timeout={{ default 10 .Values.artifactsServerTimeout }}
     gitlab-server={{ template "gitlab.pages.gitlabServer" . }}
     internal-gitlab-server={{ template "gitlab.pages.internalGitlabServer" . }}
     api-secret-key=/etc/gitlab-secrets/pages/secret
-    domain-config-source={{ default "gitlab" .Values.domainConfigSource }}
     {{- if and .Values.metrics.enabled .Values.metrics.port }}
     metrics-address=:{{ .Values.metrics.port | int }}
     {{- end }}

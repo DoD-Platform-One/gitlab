@@ -360,4 +360,55 @@ describe 'checkConfig sidekiq' do
       end
     end
   end
+
+  describe 'sidekiq.server_ports' do
+    let(:error_output) { 'metrics.port and health_checks.port must not be equal' }
+
+    context 'when metrics are enabled' do
+      let(:success_values) do
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              metrics:
+                enabled: true
+                port: 8082
+              health_checks:
+                port: 8083
+        )).deep_merge(default_required_values)
+      end
+
+      let(:error_values) do
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              metrics:
+                enabled: true
+                port: 8082
+              health_checks:
+                port: 8082
+        )).deep_merge(default_required_values)
+      end
+
+      include_examples 'config validation',
+                       success_description: 'when Sidekiq metrics and health check servers bind different ports',
+                       error_description: 'when Sidekiq metrics and health check servers bind the same port'
+    end
+
+    context 'when metrics are disabled' do
+      let(:success_values) do
+        YAML.safe_load(%(
+          gitlab:
+            sidekiq:
+              metrics:
+                enabled: false
+                port: 8082
+              health_checks:
+                port: 8082
+        )).deep_merge(default_required_values)
+      end
+
+      include_examples 'config validation',
+                       success_description: 'when Sidekiq metrics and health check servers bind the same port'
+    end
+  end
 end

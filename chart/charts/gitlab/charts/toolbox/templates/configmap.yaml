@@ -11,10 +11,6 @@ metadata:
 data:
   database.yml.erb: |
     {{- include "gitlab.database.yml" . | nindent 4 }}
-  {{- if include "gitlab.geo.secondary" . }}
-  database_geo.yml.erb: |
-    {{- include "gitlab.geo.database.yml" . | nindent 4 }}
-  {{- end }}
   smtp_settings.rb: |
     {{- include "gitlab.smtp_settings" . | nindent 4 }}
   {{- include "gitlab.rails.redis.all" . | nindent 2 }}
@@ -75,7 +71,6 @@ data:
       {{- include "gitlab.appConfig.terraformState.configuration" (dict "config" $.Values.global.appConfig.terraformState "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.ciSecureFiles.configuration" (dict "config" $.Values.global.appConfig.ciSecureFiles "context" $) | nindent 6 }}
       {{- include "gitlab.appConfig.dependencyProxy.configuration" (dict "config" $.Values.global.appConfig.dependencyProxy "context" $) | nindent 6 }}
-      {{- include "gitlab.appConfig.pseudonymizer.configuration" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sidekiq.configuration" $ | nindent 6 }}
       {{- include "gitlab.geo.config" $ | nindent 6 }}
       {{- include "gitlab.pages.config" $ | nindent 6 }}

@@ -70,10 +70,10 @@ You also need to save a copy of the rails secrets as these are not included in t
 1. Save a copy of the rails secrets
 
    ```shell
-   kubectl get secrets <rails-secret-name> -o jsonpath="{.data['secrets\.yml']}" | base64 --decode > secrets.yaml
+   kubectl get secrets <rails-secret-name> -o jsonpath="{.data['secrets\.yml']}" | base64 --decode > gitlab-secrets.yaml
    ```
 
-1. Store `secrets.yml` in a secure location. You need it to restore your backups.
+1. Store `gitlab-secrets.yaml` in a secure location. You need it to restore your backups.
 
 ## Additional Information
 

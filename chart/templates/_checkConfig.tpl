@@ -76,6 +76,7 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.queues" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.timeout" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.routingRules" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.sidekiq.server_ports" .) -}}
 
 {{/* _checkConfig_toolbox.tpl*/}}
 {{- $messages = append $messages (include "gitlab.toolbox.replicas" .) -}}
@@ -85,6 +86,9 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.appConfig.maxRequestDurationSeconds" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.gracePeriod" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.loadBalancer" .) -}}
+
+{{/* _checkConfig_gitlab_shell.tpl*/}}
+{{- $messages = append $messages (include "gitlab.checkConfig.gitlabShell.proxyPolicy" .) -}}
 
 {{/* other checks */}}
 {{- $messages = append $messages (include "gitlab.checkConfig.multipleRedis" .) -}}

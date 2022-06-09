@@ -51,7 +51,7 @@ redis:
 _Note:_ The current Redis Sentinel support only supports Sentinels that have
 been deployed separately from the GitLab chart. As a result, the Redis
 deployment through the GitLab chart should be disabled with `redis.install=false`.
-The Secret containing the Redis password will need to be manually created
+The Secret containing the Redis password must be manually created
 before deploying the GitLab chart.
 
 ### Sharing secrets

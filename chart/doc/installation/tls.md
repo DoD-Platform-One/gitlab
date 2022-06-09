@@ -57,14 +57,14 @@ helm install gitlab gitlab/gitlab \
   --set global.ingress.annotations."kubernetes\.io/tls-acme"=true \
   --set gitlab.webservice.ingress.tls.secretName=RELEASE-gitlab-tls \
   --set registry.ingress.tls.secretName=RELEASE-registry-tls \
-  --set minio.ingress.tls.secretName=RELEASE-minio-tls
+  --set minio.ingress.tls.secretName=RELEASE-minio-tls \
+  --set gitlab.kas.ingress.tls.secretName=RELEASE-kas-tls
 ```
 
-Additionally, if KAS and/or Grafana are enabled:
+Additionally, if Grafana is enabled:
 
 ```shell
   --set gitlab.gitlab-grafana.ingress.tls.secretName=grafana-tls
-  --set gitlab.kas.ingress.tls.secretName=kas-tls
 ```
 
 ## Option 2: Use your own wildcard certificate
@@ -109,14 +109,14 @@ helm install gitlab gitlab/gitlab \
   --set global.ingress.tls.enabled=true \
   --set gitlab.webservice.ingress.tls.secretName=RELEASE-gitlab-tls \
   --set registry.ingress.tls.secretName=RELEASE-registry-tls \
-  --set minio.ingress.tls.secretName=RELEASE-minio-tls
+  --set minio.ingress.tls.secretName=RELEASE-minio-tls \
+  --set gitlab.kas.ingress.tls.secretName=RELEASE-kas-tls
 ```
 
-Additionally, if KAS and/or Grafana are enabled:
+Additionally, if Grafana is enabled:
 
 ```shell
   --set gitlab.gitlab-grafana.ingress.tls.secretName=grafana-tls
-  --set gitlab.kas.ingress.tls.secretName=kas-tls
 ```
 
 NOTE:

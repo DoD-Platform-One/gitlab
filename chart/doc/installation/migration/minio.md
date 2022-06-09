@@ -39,8 +39,6 @@ To grab it from the Sidekiq pod:
      object_store:
      enabled: true
      remote_directory: gitlab-uploads
-     direct_upload: true
-     background_upload: false
      proxy_download: true
      connection:
        provider: AWS

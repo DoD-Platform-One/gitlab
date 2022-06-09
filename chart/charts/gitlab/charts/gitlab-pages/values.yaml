@@ -120,7 +120,6 @@ priorityClassName: ""
 
 artifactsServerTimeout: 10
 artifactsServerUrl:
-domainConfigSource: 'gitlab'
 
 #  gitlabCache:
 #    cleanup:
@@ -156,7 +155,6 @@ tls:
   maxVersion:
 useHTTPProxy: false
 useProxyV2: false
-useHttp2: true
 
 # zipCache:
 #   cleanup:

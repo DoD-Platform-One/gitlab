@@ -44,7 +44,7 @@ can be installed separately.
   - [Prometheus](https://artifacthub.io/packages/helm/prometheus-community/prometheus)
   - [Grafana](https://artifacthub.io/packages/helm/grafana/grafana)
   - [_Unprivileged_](https://docs.gitlab.com/runner/install/kubernetes.html#running-docker-in-docker-containers-with-gitlab-runner) [GitLab Runner](https://docs.gitlab.com/runner/) using the Kubernetes executor
-  - Automatically provisioned SSL via [Let's Encrypt](https://letsencrypt.org/), using [Jetstack](https://www.jetstack.io/)'s [cert-manager](https://cert-manager.io/docs/)
+  - Automatically provisioned SSL via [Let's Encrypt](https://letsencrypt.org/), using [Jetstack](https://www.jetstack.io/)'s [cert-manager](https://cert-manager.io/docs/) along with [certmanager-issuer](charts/certmanager-issuer/index.md)
   - GitLab/[Praefect](charts/gitlab/praefect/index.md)
   - GitLab/[GitLab agent server (KAS)](charts/gitlab/kas/index.md)
   - GitLab/[Spamcheck](charts/gitlab/spamcheck/index.md)

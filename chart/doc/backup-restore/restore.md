@@ -27,7 +27,7 @@ The backup utility provided by GitLab Helm chart supports restoring a tarball fr
 
 ### Restore the rails secrets
 
-The GitLab chart expects rails secrets to be provided as a Kubernetes Secret with content in YAML. On an Omnibus GitLab instance, secrets are stored in JSON format in the `/etc/gitlab/gitlab-secrets.json` file. To convert the file and create the secret:
+The GitLab chart expects rails secrets to be provided as a Kubernetes Secret with content in YAML. If you are restoring the rails secret from an Omnibus GitLab instance, secrets are stored in JSON format in the `/etc/gitlab/gitlab-secrets.json` file. To convert the file and create the secret in YAML format:
 
 1. Copy the file `/etc/gitlab/gitlab-secrets.json` to the workstation where you run `kubectl` commands.
 
@@ -36,10 +36,10 @@ The GitLab chart expects rails secrets to be provided as a Kubernetes Secret wit
 1. Run the following command to convert your `gitlab-secrets.json` to YAML format:
 
    ```shell
-   yq -P '{"production": .gitlab_rails}' gitlab-secrets.json >> gitlab-secrets-updated.yaml
+   yq -P '{"production": .gitlab_rails}' gitlab-secrets.json >> gitlab-secrets.yaml
    ```
 
-1. Check that the new `gitlab-secrets-updated.yaml` file has the following contents:
+1. Check that the new `gitlab-secrets.yaml` file has the following contents:
 
    ```YAML
    production:
@@ -49,6 +49,8 @@ The GitLab chart expects rails secrets to be provided as a Kubernetes Secret wit
      openid_connect_signing_key: <your openid signing key>
      ci_jwt_signing_key: <your ci jwt signing key>
    ```
+
+To restore the rails secrets from a YAML file:
 
 1. Find the object name for the rails secrets:
 
@@ -65,7 +67,7 @@ The GitLab chart expects rails secrets to be provided as a Kubernetes Secret wit
 1. Create the new secret using the same name as the old, and passing in your local YAML file
 
    ```shell
-   kubectl create secret generic <rails-secret-name> --from-file=secrets.yml=gitlab-secrets-updated.yaml
+   kubectl create secret generic <rails-secret-name> --from-file=secrets.yml=gitlab-secrets.yaml
    ```
 
 ### Restart the pods

@@ -2,17 +2,34 @@ require 'yaml'
 require 'open3'
 
 class HelmTemplate
-  def self.helm_version
-    `helm version -c`.match('Ver(sion)?:"v(\d)\.')[2]
+  @_helm_major_version = nil
+  @_helm_minor_version = nil
+
+  def self.helm_major_version
+    if @_helm_major_version.nil?
+      parts = `helm version -c`.match('Ver(sion)?:"v(\d)\.(\d+)\.')
+      @_helm_major_version = parts[2].to_i
+      @_helm_minor_version = parts[3].to_i
+
+      # Check for Helm version below minimum supported version
+      if @_helm_major_version < 3 || (@_helm_major_version == 3 && @_helm_minor_version < 3)
+        puts "ERROR: Helm version needs to be greater than 3.3.1"
+        exit(1)
+      end
+    end
+
+    @_helm_major_version
+  end
+
+  def self.helm_minor_version
+    @_helm_minor_version
   end
 
   def self.helm_template_call(release_name: 'test', path: '-', namespace: nil, extra_args: nil)
     namespace_arg = namespace.nil? ? '' : "--namespace #{namespace}"
 
-    case helm_version
-    when "2" then
-      "helm template -n #{release_name} -f #{path} #{namespace_arg} #{extra_args} ."
-    when "3" then
+    case helm_major_version
+    when 3 then
       "helm template #{release_name} . -f #{path} #{namespace_arg} #{extra_args}"
     else
       # If we don't know the version of Helm, use `false` command

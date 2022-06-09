@@ -25,3 +25,4 @@ The following adjustments were made to the NGINX fork:
 - `default-backend-deployment.yaml`:
   - Add `podlabels` and `global.pod.labels` to `.spec.template.metadata.labels`
 - Disable NGINX's default nodeSelectors.
+- Added support for PDB `maxUnavailable`.

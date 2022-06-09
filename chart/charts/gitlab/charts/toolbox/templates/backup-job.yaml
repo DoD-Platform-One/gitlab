@@ -19,6 +19,10 @@ spec:
   suspend: {{ .Values.backups.cron.suspend }}
   jobTemplate:
     spec:
+      backoffLimit: {{ .Values.backups.cron.backoffLimit }}
+      {{- if .Values.backups.cron.activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ .Values.backups.cron.activeDeadlineSeconds }}
+      {{- end }}
       template:
         metadata:
           labels:
@@ -34,7 +38,7 @@ spec:
             sidecar.istio.io/inject: "false"
           {{- end }}
         spec:
-          restartPolicy: "OnFailure"
+          restartPolicy: {{ .Values.backups.cron.restartPolicy }}
           {{- if .Values.tolerations }}
           tolerations:
             {{- toYaml .Values.tolerations | nindent 12 }}
@@ -54,6 +58,7 @@ spec:
               {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 14 }}
               env:
                 {{- include "gitlab.extraEnv" $ | nindent 16 }}
+                {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 16 }}
               volumeMounts:
                 {{- include "gitlab.extraVolumeMounts" . | nindent 16 }}
                 {{- include "gitlab.psql.ssl.volumeMount" . | nindent 16 }}
@@ -84,6 +89,7 @@ spec:
               {{- include "gitlab.image.pullPolicy" $imageCfg | indent 14 }}
               env:
                 {{- include "gitlab.extraEnv" $ | nindent 16 }}
+                {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 16 }}
                 - name: ARTIFACTS_BUCKET_NAME
                   value: {{ .Values.global.appConfig.artifacts.bucket }}
                 - name: REGISTRY_BUCKET_NAME
@@ -145,10 +151,6 @@ spec:
                 sources:
                   - configMap:
                       name: {{ template "fullname" . }}
-                  {{- if .Values.global.appConfig.pseudonymizer.configMap }}
-                  - configMap:
-                      name: {{ .Values.global.appConfig.pseudonymizer.configMap }}
-                  {{- end }}
             - name: toolbox-tmp
               {{- if .Values.backups.cron.persistence.enabled }}
               persistentVolumeClaim:
@@ -208,7 +210,6 @@ spec:
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "ci_secure_files" "config" $.Values.global.appConfig.ciSecureFiles) | nindent 16 }}
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "dependency_proxy" "config" $.Values.global.appConfig.dependencyProxy) | nindent 16 }}
                 {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 16 }}
-                {{- include "gitlab.appConfig.pseudonymizer.mountSecrets" $ | nindent 16 }}
                 {{- include "gitlab.appConfig.ldap.servers.mountSecrets" $ | nindent 16 }}
                 {{- include "gitlab.appConfig.omniauth.mountSecrets" $ | nindent 16 }}
             - name: toolbox-secrets
