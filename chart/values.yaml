@@ -1031,6 +1031,13 @@ redis:
       requests: 
         cpu: 250m
         memory: 256Mi
+    podSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      fsGroup: 1001
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
   slave:
     command: "redis-server"
     resources: 
@@ -1040,6 +1047,13 @@ redis:
       requests: 
         cpu: 250m
         memory: 256Mi
+    podSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      fsGroup: 1001
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
   sentinel:
     resources: 
       limits: 
@@ -1106,6 +1120,7 @@ postgresql:
   postgresqlInitdbArgs: "-A scram-sha-256"
   ## Sets the securityContext needed for the IB image
   securityContext:
+    enabled: true
     fsGroup: 26
     runAsUser: 26
     runAsGroup: 26
