@@ -1016,6 +1016,14 @@ redis:
       requests: 
         cpu: 250m
         memory: 256Mi
+  securityContext:
+    runAsUser: 1001
+    fsGroup: 1001
+    runAsNonRoot: true
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
   image:
     registry: registry1.dso.mil/ironbank/bitnami
     repository: redis
@@ -1031,13 +1039,6 @@ redis:
       requests: 
         cpu: 250m
         memory: 256Mi
-    podSecurityContext:
-      enabled: true
-      runAsUser: 1001
-      fsGroup: 1001
-    containerSecurityContext:
-      enabled: true
-      runAsUser: 1001
   slave:
     command: "redis-server"
     resources: 
@@ -1047,13 +1048,6 @@ redis:
       requests: 
         cpu: 250m
         memory: 256Mi
-    podSecurityContext:
-      enabled: true
-      runAsUser: 1001
-      fsGroup: 1001
-    containerSecurityContext:
-      enabled: true
-      runAsUser: 1001
   sentinel:
     resources: 
       limits: 
