@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.0.1-bb.4](https://img.shields.io/badge/Version-6.0.1--bb.4-informational?style=flat-square) ![AppVersion: 15.0.1](https://img.shields.io/badge/AppVersion-15.0.1-informational?style=flat-square)
+![Version: 6.0.1-bb.5](https://img.shields.io/badge/Version-6.0.1--bb.5-informational?style=flat-square) ![AppVersion: 15.0.1](https://img.shields.io/badge/AppVersion-15.0.1-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -508,7 +508,7 @@ helm install gitlab chart/
 | redis.containerSecurityContext.runAsNonRoot | bool | `true` |  |
 | redis.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.image.repository | string | `"redis"` |  |
-| redis.image.tag | string | `"6.2.7"` |  |
+| redis.image.tag | string | `"7.0.0-debian-10-r3"` |  |
 | redis.image.pullSecrets[0] | string | `"private-registry"` |  |
 | redis.master.command | string | `"redis-server"` |  |
 | redis.master.resources.limits.cpu | string | `"250m"` |  |
@@ -738,10 +738,10 @@ helm install gitlab chart/
 | minio.resources.requests.cpu | string | `"200m"` |  |
 | minio.resources.requests.memory | string | `"300Mi"` |  |
 | minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
-| minio.imageTag | string | `"RELEASE.2022-06-03T01-40-53Z"` |  |
+| minio.imageTag | string | `"RELEASE.2022-07-04T21-02-54Z"` |  |
 | minio.pullSecrets[0].name | string | `"private-registry"` |  |
 | minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
-| minio.minioMc.tag | string | `"RELEASE.2022-05-09T04-08-26Z"` |  |
+| minio.minioMc.tag | string | `"RELEASE.2022-06-26T18-51-48Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | hostname | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` |  |

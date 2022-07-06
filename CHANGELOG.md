@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.0.1-bb.5] - 2022-07-06
+### Updated
+- Updated Redis image version from 6.2.7 to 7.0.0-debian-10-r3 
+- Updated MinIO client image version from RELEASE.2022-05-09T04-08-26Z to RELEASE.2022-06-26T18-51-48Z
+- Updated MinIO image version from RELEASE.2022-06-03T01-40-53Z to RELEASE.2022-07-04T21-02-54Z
+
 ## [6.0.1-bb.4] - 2022-06-28
 ### Added
 - Pod and Container SecurityContext values for redis installations in correct location
