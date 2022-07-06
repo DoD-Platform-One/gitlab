@@ -1027,7 +1027,7 @@ redis:
   image:
     registry: registry1.dso.mil/ironbank/bitnami
     repository: redis
-    tag: 6.2.7
+    tag: 7.0.0-debian-10-r3
     pullSecrets:
     - private-registry
   master:
@@ -1511,7 +1511,7 @@ minio:
       memory: 300Mi
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-06-03T01-40-53Z
+  imageTag: RELEASE.2022-07-04T21-02-54Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1520,7 +1520,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-05-09T04-08-26Z
+    tag: RELEASE.2022-06-26T18-51-48Z
     pullSecrets:
     - name: private-registry
 
