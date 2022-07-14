@@ -64,6 +64,46 @@
           },
           "title": "Maximum number of concurrent unauthenticated connections to the SSH daemon",
           "type": "object"
+        },
+        "proxyProtocol": {
+          "title": "Enable PROXY support for gitlab-sshd",
+          "type": "boolean"
+        },
+        "proxyPolicy": {
+          "title": "The policy for handling PROXY protocol in gitlab-sshd",
+          "type": "string",
+          "enum": [
+            "use",
+            "require",
+            "ignore",
+            "reject"
+          ]
+        },
+        "proxyHeaderTimeout": {
+          "title": "The maximum duration gitlab-sshd will wait before giving up on reading the PROXY protocol header",
+          "pattern": "^[0-9]+(ms|s|m)$",
+          "type": "string"
+        },
+        "ciphers": {
+          "title": "The available ciphers in gitlab-sshd",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "kexAlgorithms": {
+          "title": "The available KEX (Key Exchange) algorithms in gitlab-sshd",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "macs": {
+          "title": "The available MAC (message authentication code) algorithms in gitlab-sshd",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [
@@ -95,7 +135,11 @@
           },
           "title": "Liveness probe settings",
           "type": "object"
-        }
+        },
+        "terminationGracePeriodSeconds": {
+          "type": "integer",
+          "minimum": 5
+	      }
       },
       "required": [
         "livenessProbe"

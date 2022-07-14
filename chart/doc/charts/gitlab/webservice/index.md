@@ -82,8 +82,8 @@ to the `helm install` command using the `--set` flags.
 | `psql.password.key`                                 | `psql-password`                                                 | Key to psql password in psql secret                                                                                                                                                                                                                                                                                             |
 | `psql.password.secret`                              | `gitlab-postgres`                                               | psql secret name                                                                                                                                                                                                                                                                                                                |
 | `psql.port`                                         |                                                                 | Set PostgreSQL server port. Takes precedence over `global.psql.port`                                                                                                                                                                                                                                                            |
-| `puma.disableWorkerKiller`                          | `false`                                                         | Disables Puma worker memory killer                                                                                                                                                                                                                                                                                              |
-| `puma.workerMaxMemory`                              | `1024`                                                          | The maximum memory (in megabytes) for the Puma worker killer                                                                                                                                                                                                                                                                    |
+| `puma.disableWorkerKiller`                          | `true`                                                         | Disables Puma worker memory killer                                                                                                                                                                                                                                                                                              |
+| `puma.workerMaxMemory`                              |                                                                 | The maximum memory (in megabytes) for the Puma worker killer                                                                                                                                                                                                                                                                    |
 | `puma.threads.min`                                  | `4`                                                             | The minimum amount of Puma threads                                                                                                                                                                                                                                                                                              |
 | `puma.threads.max`                                  | `4`                                                             | The maximum amount of Puma threads                                                                                                                                                                                                                                                                                              |
 | `rack_attack.git_basic_auth`                        | `{}`                                                            | See [GitLab documentation](https://docs.gitlab.com/ee/user/admin_area/settings/protected_paths.html) for details                                                                                                                                                                                                                                    |
@@ -107,9 +107,11 @@ to the `helm install` command using the `--set` flags.
 | `service.loadBalancerIP`                            |                                                                 | IP address to assign to LoadBalancer (if supported by cloud provider)                                                                                                                                                                                                                                                           |
 | `service.loadBalancerSourceRanges`                  |                                                                 | List of IP CIDRs allowed access to LoadBalancer (if supported) Required for service.type = LoadBalancer                                                                                                                                                                                                                         |
 | `shell.authToken.key`                               | `secret`                                                        | Key to shell token in shell secret                                                                                                                                                                                                                                                                                              |
-| `shell.authToken.secret`                            | `gitlab-shell-secret`                                           | Shell token secret                                                                                                                                                                                                                                                                                                              |
+| `shell.authToken.secret`                            | `{Release.Name}-gitlab-shell-secret`                            | Shell token secret                                                                                                                                                                                                                                                                                                              |
 | `shell.port`                                        | `nil`                                                           | Port number to use in SSH URLs generated by UI                                                                                                                                                                                                                                                                                  |
 | `shutdown.blackoutSeconds`                          | `10`                                                            | Number of seconds to keep Webservice running after receiving shutdown, note this must shorter than `deployment.terminationGracePeriodSeconds`                                                                                                                                                                                   |
+| `tls.enabled`                                       | `false`                                                         | Webservice TLS enabled |
+| `tls.secretName`                                    | `{Release.Name}-webservice-tls`                                 | Webservice TLS secrets. `secretName` must point to a [Kubernetes TLS secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets). |
 | `tolerations`                                       | `[]`                                                            | Toleration labels for pod assignment                                                                                                                                                                                                                                                                                            |
 | `trusted_proxies`                                   | `[]`                                                            | See [GitLab documentation](https://docs.gitlab.com/ee/install/installation.html#adding-your-trusted-proxies) for details                                                                                                                                                                                                        |
 | `workhorse.logFormat`                               | `json`                                                          | Logging format. Valid formats: `json`, `structured`, `text`                                                                                                                                                                                                                                                                     |
@@ -257,6 +259,46 @@ deployment:
 ```
 
 For more details, see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy).
+
+### TLS
+
+A Webservice pod runs two containers:
+
+- `gitlab-workhorse`
+- `webservice`
+
+#### `gitlab-workhorse`
+
+Workhorse supports TLS, but the [Webservice Chart does not yet support configuring these settings](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3316).
+
+#### `webservice`
+
+The primary use case for enabling TLS is to provide encryption via HTTPS
+for [scraping Prometheus metrics](https://docs.gitlab.com/ee/administration/monitoring/prometheus/gitlab_metrics.html).
+For this reason, the TLS certificate should include the Webservice
+hostname (ex: `RELEASE-webservice-default.default.svc`) in the Common
+Name (CN) or Subject Alternate Name (SAN).
+
+NOTE:
+[The Prometheus server bundled with the Chart](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3335) does not yet
+support scraping of HTTPS endpoints.
+
+TLS can be enabled on the `webservice` container by the settings `gitlab.webservice.tls.enabled` and `gitlab.webservice.tls.secretName`:
+
+```yaml
+gitlab:
+  webservice:
+    tls:
+      enabled: true
+      secretName: gitlab-webservice-tls
+```
+
+`secretName` must point to a [Kubernetes TLS secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets).
+For example, to create a TLS secret with a local certificate and key:
+
+```shell
+kubectl create secret tls <secret name> --cert=path/to/puma.crt --key=path/to/puma.key
+```
 
 ## Using the Community Edition of this chart
 
@@ -555,7 +597,7 @@ Puma unique options:
 
 | Name                   |  Type   | Default | Description                                                  |
 | :--------------------- | :-----: | :------ | :----------------------------------------------------------- |
-| `puma.workerMaxMemory` | Integer | `1024`  | The maximum memory (in megabytes) for the Puma worker killer |
+| `puma.workerMaxMemory` | Integer |         | The maximum memory (in megabytes) for the Puma worker killer |
 | `puma.threads.min`     | Integer | `4`     | The minimum amount of Puma threads                           |
 | `puma.threads.max`     | Integer | `4`     | The maximum amount of Puma threads                           |
 

@@ -77,12 +77,21 @@ networkpolicy:
     rules: []
   annotations: {}
 
+http:
+  enabled: true
+
+tls:
+  enabled: false
+
 service:
   type: ClusterIP
   externalPort: 8080
   internalPort: 8080
   workhorseExternalPort: 8181
   workhorseInternalPort: 8181
+  tls:
+    externalPort: 8081
+    internalPort: 8081
   # loadBalancerIP:
   # loadBalancerSourceRanges:
 enabled: true
@@ -105,11 +114,11 @@ ingress:
 workerProcesses: 2
 
 puma:
-  workerMaxMemory: 1024 # in MB units
   threads:
     min: 4
     max: 4
-  disableWorkerKiller: false
+  disableWorkerKiller: true
+  # workerMaxMemory: 1024 # in MB units
 
 hpa:
   targetAverageValue: 1

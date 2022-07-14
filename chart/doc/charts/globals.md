@@ -806,6 +806,7 @@ with the `global.appConfig` key.
 ```yaml
 global:
   appConfig:
+    # cdnHost:
     contentSecurityPolicy:
       enabled: false
       report_only: true
@@ -943,6 +944,7 @@ application are described below:
 
 | Name                                | Type    | Default | Description |
 |:----------------------------------- |:-------:|:------- |:----------- |
+| `cdnHost`                           | String  | (empty) | Sets a base URL for a CDN to serve static assets (for example, `https://mycdnsubdomain.fictional-cdn.com`). |
 | `contentSecurityPolicy`             | Struct  |         | [See below](#content-security-policy). |
 | `enableUsagePing`                   | Boolean | `true`  | A flag to disable the [usage ping support](https://docs.gitlab.com/ee/user/admin_area/settings/usage_statistics.html). |
 | `enableSeatLink`                    | Boolean | `true`  | A flag to disable the [seat link support](https://docs.gitlab.com/ee/subscriptions/#seat-link). |

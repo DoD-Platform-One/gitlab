@@ -103,7 +103,6 @@ spec:
 {{- end }}
           kubectl --namespace=$namespace label --overwrite \
             secret ${certname}-chain {{ include "gitlab.standardLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }} {{ include "gitlab.commonLabels" . | replace ": " "=" | replace "\r\n" " " | replace "\n" " " }}
-
         volumeMounts:
         - name: certs-path
           mountPath: /output

@@ -85,7 +85,7 @@ by the `gitlab:artifacts:migrate` script below.
 1. [Create a backup tarball](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system) and exclude the already migrated uploads:
 
    ```shell
-   sudo gitlab-rake gitlab:backup:create SKIP=artifacts,lfs,uploads
+   sudo gitlab-rake gitlab:backup:create SKIP=artifacts,lfs,packages,uploads
    ```
 
    The backup file will be stored under `/var/opt/gitlab/backups`, unless you

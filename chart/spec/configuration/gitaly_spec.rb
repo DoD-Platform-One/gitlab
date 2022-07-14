@@ -246,4 +246,50 @@ describe 'Gitaly configuration' do
       end
     end
   end
+
+  context 'packObjectsCache' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            packObjectsCache:
+              enabled: #{pack_objects_cache_enabled}
+              dir: #{pack_objects_cache_dir}
+              max_age: #{pack_objects_cache_max_age}
+      )).merge(default_values)
+    end
+
+    context 'when enabled' do
+      let(:pack_objects_cache_enabled) { 'true' }
+      let(:pack_objects_cache_dir) { '/pack-objects-cache' }
+      let(:pack_objects_cache_max_age) { '10m' }
+
+      let(:template) { HelmTemplate.new(values) }
+
+      it 'populates a pack_objects_cache section in config.toml.erb' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.erb')
+
+        pack_objects_cache_section = "[pack_objects_cache]\n" \
+                                     "enabled = #{pack_objects_cache_enabled}\n" \
+                                     "dir = \"#{pack_objects_cache_dir}\"\n" \
+                                     "max_age = #{pack_objects_cache_max_age}"
+
+        expect(config_toml).to include(pack_objects_cache_section)
+      end
+    end
+
+    context 'when not enabled' do
+      let(:pack_objects_cache_enabled) { 'false' }
+      let(:pack_objects_cache_dir) { '/pack-objects-cache' }
+      let(:pack_objects_cache_max_age) { '10m' }
+
+      let(:template) { HelmTemplate.new(values) }
+
+      it 'does not populate a pack_objects_cache section in config.toml.erb' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.erb')
+
+        expect(config_toml).not_to match /^\[pack_objects_cache\]/
+      end
+    end
+  end
 end

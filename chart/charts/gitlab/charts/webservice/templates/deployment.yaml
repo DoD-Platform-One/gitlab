@@ -179,8 +179,14 @@ spec:
           image: {{ include "webservice.image" $ }}
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           ports:
+            {{- if $.Values.http.enabled }}
             - containerPort: {{ $.Values.service.internalPort }}
               name: http-webservice
+            {{- end }}
+            {{- if $.Values.tls.enabled }}
+            - containerPort: {{ $.Values.service.tls.internalPort }}
+              name: https-ws
+            {{- end }}
           {{- if or $.Values.monitoring.exporter.enabled (and $.Values.metrics.enabled (eq $.Values.metrics.port $.Values.monitoring.exporter.port)) }}
             - containerPort: {{ $.Values.monitoring.exporter.port }}
               name: http-metrics-ws
@@ -208,8 +214,18 @@ spec:
               value: "{{ .workerProcesses }}"
             - name: WORKER_TIMEOUT
               value: "{{ $.Values.global.webservice.workerTimeout }}"
+            {{- if $.Values.http.enabled }}
             - name: INTERNAL_PORT
               value: "{{ $.Values.service.internalPort }}"
+            {{- end }}
+            {{- if $.Values.tls.enabled }}
+            - name: SSL_INTERNAL_PORT
+              value: {{ $.Values.service.tls.internalPort | quote }}
+            - name: PUMA_SSL_KEY
+              value: "/srv/gitlab/config/puma.key"
+            - name: PUMA_SSL_CERT
+              value: "/srv/gitlab/config/puma.crt"
+            {{- end }}
             {{- if eq $.Values.webServer "puma" }}
             - name: PUMA_THREADS_MIN
               value: "{{ .puma.threads.min }}"
@@ -248,6 +264,14 @@ spec:
             - name: webservice-secrets
               mountPath: /srv/gitlab/config/secrets.yml
               subPath: rails-secrets/secrets.yml
+            {{- if $.Values.tls.enabled }}
+            - name: webservice-secrets
+              mountPath: /srv/gitlab/config/puma.crt
+              subPath: puma/puma.crt
+            - name: webservice-secrets
+              mountPath: /srv/gitlab/config/puma.key
+              subPath: puma/puma.key
+           {{- end }}
             - name: webservice-config
               mountPath: '/srv/gitlab/config/initializers/smtp_settings.rb'
               subPath: smtp_settings.rb
@@ -270,7 +294,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /-/liveness
+              {{- if and (not $.Values.http.enabled) $.Values.tls.enabled }}
+              scheme: HTTPS
+              port: {{ $.Values.service.tls.internalPort }}
+              {{- else }}
               port: {{ $.Values.service.internalPort }}
+              {{- end }}
             initialDelaySeconds: {{ .deployment.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .deployment.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .deployment.livenessProbe.timeoutSeconds }}
@@ -279,7 +308,12 @@ spec:
           readinessProbe:
             httpGet:
               path: /-/readiness
+              {{- if and (not $.Values.http.enabled) $.Values.tls.enabled }}
+              scheme: HTTPS
+              port: {{ $.Values.service.tls.internalPort }}
+              {{- else }}
               port: {{ $.Values.service.internalPort }}
+              {{- end }}
             initialDelaySeconds: {{ .deployment.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .deployment.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .deployment.readinessProbe.timeoutSeconds }}
@@ -304,6 +338,8 @@ spec:
           env:
             - name: TMPDIR
               value: "/tmp/gitlab"
+            - name: GITLAB_WORKHORSE_AUTH_BACKEND
+              value: "http://localhost:{{ $.Values.service.internalPort }}"
             - name: GITLAB_WORKHORSE_EXTRA_ARGS
               value: {{ .workhorse.extraArgs | quote }}
             - name: GITLAB_WORKHORSE_LISTEN_PORT
@@ -396,6 +432,15 @@ spec:
               items:
                 - key: {{ template "gitlab.gitlab-shell.authToken.key" $ }}
                   path: shell/.gitlab_shell_secret
+          {{- if $.Values.tls.enabled }}
+          - secret:
+              name: {{ template "webservice.tls.secret" $ }}
+              items:
+                - key: "tls.crt"
+                  path: "puma/puma.crt"
+                - key: "tls.key"
+                  path: "puma/puma.key"
+          {{- end }}
           {{- include "gitlab.appConfig.incomingEmail.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.appConfig.serviceDeskEmail.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.gitaly.clientSecrets" $ | nindent 10 }}

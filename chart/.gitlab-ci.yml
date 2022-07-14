@@ -24,7 +24,8 @@
 # `.buildpacks` that contains the URLs, one on each line, in order.
 # Note: Auto CI does not work with multiple buildpacks yet
 
-image: registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base-helm-3
+default:
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base-helm-3.7
 
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
@@ -40,6 +41,7 @@ variables:
   NAMESPACE: $KUBE_NAMESPACE
   REVIEW_REF_PREFIX: ""
   ISSUE_BOT_LABELS_EXTRA: "group::distribution"
+  SAST_EXCLUDED_PATHS: "/doc,/examples,/spec"
 
 stages:
   - prepare
@@ -60,13 +62,23 @@ stages:
 include:
   - template: Security/Dependency-Scanning.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST-IaC.latest.gitlab-ci.yml
 dependency_scanning:
   needs: []
   before_script: []
 secret_detection:
   needs: []
   before_script: []
-
+sast:
+  needs: []
+  before_script: []
+sast:
+  needs: []
+  before_script: []
+iac-sast:
+  needs: []
+  before_script: []
 before_script:
   - source scripts/ci/autodevops.sh
 
@@ -124,9 +136,6 @@ lint_package:
   stage: preflight
   when: always
   script:
-    - helm repo add gitlab https://charts.gitlab.io
-    - helm repo add jetstack https://charts.jetstack.io
-    - helm dependencies update
     - helm lint --set certmanager-issuer.email=support@gitlab.com
     - mkdir -p build
     - helm package -d build .
@@ -146,10 +155,7 @@ lint_package:
   stage: preflight
   when: always
   script:
-    - helm repo add gitlab https://charts.gitlab.io
-    - helm repo add jetstack https://charts.jetstack.io
-    - helm dependencies update
-    - helm kubeval . --force-color --strict --set certmanager-issuer.email=support@gitlab.com $HELM_EXTRAS --skip-kinds "CustomResourceDefinition" -v $KUBE_VERSION
+    - helm kubeval . --force-color --strict --kube-version $KUBE_VERSION --set certmanager-issuer.email=support@gitlab.com $HELM_EXTRAS --skip-kinds "CustomResourceDefinition" -v $KUBE_VERSION
   except:
     <<: *deps_pipeline
     refs:
@@ -318,7 +324,6 @@ stop_review_eks:
   script:
     - check_kube_domain
     - check_domain_ip
-#    - download_chart
     - ensure_namespace
     - create_secret
     - deploy
@@ -346,7 +351,6 @@ stop_review_eks:
     - mkdir -p $(dirname "${VARIABLES_FILE}")
     - check_kube_domain
     - check_domain_ip
-#    - download_chart
     - ensure_namespace
     - create_secret
     - deploy
@@ -494,7 +498,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.15-vale-2.16.1-markdownlint-0.31.1
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.16-vale-2.17.0-markdownlint-0.31.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -513,7 +517,7 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.15-ruby-2.7.5-e6a8a48a
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.16-ruby-2.7.6-0bc327a4
   stage: prepare
   cache: {}
   dependencies: []
@@ -730,6 +734,7 @@ production_specs_eks:
   variables:
     DOCKER_HOST: tcp://docker:2375
     QA_ARTIFACTS_DIR: $CI_PROJECT_DIR
+    QA_CAN_TEST_PRAEFECT: "false"
   script:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
     - gem install gitlab-qa
@@ -774,13 +779,12 @@ wait_for_dev_images:
 .publish_chart_package:
   # publish chart into repo's Packages
   stage: package
-  image: "registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base-helm-3"
+  image: "registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base-helm-3.7"
   variables:
     # **Required** variable to set channel to which chart will be published:
     # CHANNEL: "unstable"
     VERSION_SUFFIX: ""
   script:
-    - helm dependency update
     - EXTRACTED_VERSION=$(awk '/^version/ {print $2}' Chart.yaml)
     - VERSION=${VERSION:-${EXTRACTED_VERSION}}
     - echo "Packaging ${VERSION}${VERSION_SUFFIX} for ${CHANNEL}"
@@ -838,7 +842,7 @@ release_package:
 .qa_branch:
   extends:
     - .qa
-  parallel: 10
+  parallel: 7
   except:
     refs:
       - master
@@ -848,7 +852,7 @@ release_package:
 .qa_production:
   extends:
     - .qa
-  parallel: 10
+  parallel: 7
   only:
     refs:
       - master

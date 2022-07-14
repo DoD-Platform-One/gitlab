@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.1.2-bb.0] - 2022-07-12
+### Updated
+- Updated to helm chart to 6.1.2 and appVersion to 15.1.2
+
 ## [6.0.1-bb.5] - 2022-07-06
 ### Updated
 - Updated Redis image version from 6.2.7 to 7.0.0-debian-10-r3 

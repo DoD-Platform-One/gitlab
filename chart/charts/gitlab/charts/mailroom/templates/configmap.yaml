@@ -56,6 +56,7 @@ data:
         :delivery_method: postback
         :delivery_options:
           :delivery_url: '{{ template "gitlab.workhorse.url" $ }}/api/v4/internal/mail_room/incoming_email'
+          :content_type: "text/plain"
           :jwt_auth_header: "Gitlab-Mailroom-Api-Request"
           :jwt_issuer: "gitlab-mailroom"
           :jwt_algorithm: "HS256"
@@ -111,6 +112,7 @@ data:
         :delivery_method: postback
         :delivery_options:
           :delivery_url: '{{ template "gitlab.workhorse.url" $ }}/api/v4/internal/mail_room/service_desk_email'
+          :content_type: "text/plain"
           :jwt_auth_header: "Gitlab-Mailroom-Api-Request"
           :jwt_issuer: "gitlab-mailroom"
           :jwt_algorithm: "HS256"

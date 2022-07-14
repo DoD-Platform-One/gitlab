@@ -127,7 +127,6 @@ data:
     num_workers = {{ .numWorkers }}
     {{-   end }}
     {{- end }}
-    rugged_git_config_search_path = "/usr/local/etc"
 
     [gitlab-shell]
     # The directory where gitlab-shell is installed
@@ -157,6 +156,19 @@ data:
     [[concurrency]]
     rpc = "{{ .rpc }}"
     max_per_repo = {{ .maxPerRepo }}
+    {{-     end }}
+    {{-   end }}
+    {{- end }}
+
+    {{- if .Values.packObjectsCache.enabled }}
+    [pack_objects_cache]
+    enabled = true
+    {{-   with .Values.packObjectsCache }}
+    {{-     if .dir }}
+    dir = {{ .dir | quote }}
+    {{-     end }}
+    {{-     if .max_age }}
+    max_age = {{ .max_age }}
     {{-     end }}
     {{-   end }}
     {{- end }}

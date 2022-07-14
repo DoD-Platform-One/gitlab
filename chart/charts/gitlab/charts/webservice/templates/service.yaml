@@ -38,14 +38,23 @@ spec:
     {{- end }}
   {{- end }}
   ports:
+    {{- if $.Values.http.enabled }}
     - port: {{ $.Values.service.externalPort }}
       targetPort: http-webservice
       protocol: TCP
       name: http-webservice
+    {{- end }}
     - port: {{ $.Values.service.workhorseExternalPort }}
       targetPort: http-workhorse
       protocol: TCP
       name: http-workhorse
+    {{- if $.Values.tls.enabled }}
+    - port: {{ $.Values.service.tls.externalPort }}
+      targetPort: https-ws
+      protocol: TCP
+      name: https-ws
+    {{- end }}
+
   {{- if or $.Values.monitoring.exporter.enabled (and $.Values.metrics.enabled (eq $.Values.metrics.port $.Values.monitoring.exporter.port)) }}
     - port: {{ $.Values.monitoring.exporter.port }}
       targetPort: http-metrics-ws

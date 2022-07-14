@@ -222,6 +222,10 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
 - add default bigbag.dev hostnames at global.hosts
 - add customCAs (the cert files and secrets need to be added in the next 2 steps for this to work)
 - add `postgresqlInitdbArgs`, `securityContext`, `postgresqlDataDir` and `persistence` to get IB image working with postgres subchart
+- add upgradeCheck.annotations: sidecar.istio.io/inject: "false"
+- add shared-secrets.annotations: sidecar.istio.io/inject: "false"
+- add gitlab.migrations.annotations: sidecar.istio.io/inject: "false"
+- add minio.jobAnnotations: sidecar.istio.io/inject: "false"
 
 ## chart/bigbang/*
 - add DoD approved CA certificates (recursive copy directory from previous release)
@@ -249,25 +253,6 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
     ```
     /usr/bin/mc policy set $POLICY myminio/$BUCKET
     ```
-    
-## chart/charts/minio/templates/create-buckets-job.yaml    
-- hack the MinIO sub-chart to add annotation to to conditionally disable istio injection   
-    lines 22-25
-    ```
-    {{- if .Values.global.istio.enabled }}  
-    annotations:
-      sidecar.istio.io/inject: "false"
-    {{- end }}
-    ```
-
-## chart/templates/upgrade_check_hook.yaml
-- exclude upgrade check job from istio sidecar injection. Lines 38-41
-```
-    {{- if .Values.global.istio.enabled }}  
-      annotations:
-        sidecar.istio.io/inject: "false"
-    {{- end }}
-```
 
 ## chart/charts/gitlab/charts/gitlab-exporter/templates/bigbang/service-monitor.yaml
 - add ServiceMonitor to Gitlab sub-chart ```gitlab-exporter``` to enable prometheus monitoring

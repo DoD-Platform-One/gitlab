@@ -2,6 +2,52 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 6.1.2 (2022-07-05)
+
+No changes.
+
+## 6.1.1 (2022-06-30)
+
+No changes.
+
+## 6.1.0 (2022-06-21)
+
+### Added (5 changes)
+
+- [Add option to enable Gitaly pack-objects cache](gitlab-org/charts/gitlab@a2841ce441e30f8c898717c1d1026504adba94d0) by @mienkowt ([merge request](gitlab-org/charts/gitlab!2513))
+- [Add support for enabling SSL on Puma](gitlab-org/charts/gitlab@d21249d87f4a761031813b43a06900312afbbf21) ([merge request](gitlab-org/charts/gitlab!2496))
+- [Make PROXY protocol header read timeout configurable](gitlab-org/charts/gitlab@afad21f1e44578f95f547e40de69c385d6b71f1d) ([merge request](gitlab-org/charts/gitlab!2586))
+- [Add global.appConfig.cdnHost setting](gitlab-org/charts/gitlab@3887cd79c5ca98d0efd01c159a070992152d4011) ([merge request](gitlab-org/charts/gitlab!2559))
+- [Add support for configuring gitlab-sshd crypto](gitlab-org/charts/gitlab@56c96ffa820b18d3a18b7526cc064e2bc4e4e585) ([merge request](gitlab-org/charts/gitlab!2581))
+
+### Changed (17 changes)
+
+- [Ensure proxy buffering is always off for KAS](gitlab-org/charts/gitlab@2d9bab7b22249ab11be3b45613fd36034cda8f02) ([merge request](gitlab-org/charts/gitlab!2609))
+- [Update gitlab-org/container-registry from 3.47.0-gitlab to 3.48.0-gitlab](gitlab-org/charts/gitlab@f3f7334c6c04eee956191704392c87c42aba620d) ([merge request](gitlab-org/charts/gitlab!2631))
+- [Disable Puma worker killer by default](gitlab-org/charts/gitlab@ac8d379b19d845d158c93a7a9d000606219db25a) ([merge request](gitlab-org/charts/gitlab!2605))
+- [Update gitlab-org/gitlab-exporter from 11.15.2 to 11.16.0](gitlab-org/charts/gitlab@2a49166b7ee5d5a643db330919da790dc282a13c) ([merge request](gitlab-org/charts/gitlab!2620))
+- [Update gitlab-org/container-registry from 3.46.0-gitlab to 3.47.0-gitlab](gitlab-org/charts/gitlab@1c31f8f9c03586ed7fabe45410b80c121af7d24d) ([merge request](gitlab-org/charts/gitlab!2616))
+- [Update gitlab-org/container-registry from 3.45.0-gitlab to 3.46.0-gitlab](gitlab-org/charts/gitlab@bbd48a58aae456f031c66dab105dcfba5501352e) ([merge request](gitlab-org/charts/gitlab!2610))
+- [Update gitlab-org/container-registry from 3.43.0-gitlab to 3.45.0-gitlab](gitlab-org/charts/gitlab@056fefdd0b8f0e387f83bf4f47a25283e3f740e4) ([merge request](gitlab-org/charts/gitlab!2604))
+- [Update gitlab-org/gitlab-exporter from 11.15.0 to 11.15.2](gitlab-org/charts/gitlab@9eb7b3e63e65d3327a2caadae99880fde4ac1859) ([merge request](gitlab-org/charts/gitlab!2596))
+- [Add annotations support to the upgrade check hook and minio job template](gitlab-org/charts/gitlab@ffc70957e823b90f24927a18849d749d5242133e) by @flintkr ([merge request](gitlab-org/charts/gitlab!2543))
+- [gitaly: Stop setting Rugged's gitconfig search path](gitlab-org/charts/gitlab@bba860d1eb8e3d639d481e38b0b9c57a150f961d) ([merge request](gitlab-org/charts/gitlab!2594))
+- [Update gitlab-shell chart to make login-grace-time configurable](gitlab-org/charts/gitlab@66afd333ccb49e7cfcef1ec920a23d32c44a70d3) ([merge request](gitlab-org/charts/gitlab!2593))
+- [Update gitlab-shell chart to make client-alive-interval configurable](gitlab-org/charts/gitlab@f0914d468108856fda89a5b1a8b2361a8e283d84) ([merge request](gitlab-org/charts/gitlab!2590))
+- [Update gitlab-shell chart to make grace-period configurable](gitlab-org/charts/gitlab@659ea8e0f2f0ad81f472a8d9bd5bfeb7f117d7be) ([merge request](gitlab-org/charts/gitlab!2579))
+- [Set MailRoom's delivery option content_type to text/plain](gitlab-org/charts/gitlab@78641fffe7a5798c73dc56c80601d88e78f73c38) ([merge request](gitlab-org/charts/gitlab!2589))
+- [Update gitlab-org/container-registry from 3.42.0-gitlab to 3.43.0-gitlab](gitlab-org/charts/gitlab@2bde33a3218c0cc3045462934db150c07d881c9e) ([merge request](gitlab-org/charts/gitlab!2588))
+- [Update gitlab-org/charts/gitlab-runner from 0.40.1 to 0.41.0](gitlab-org/charts/gitlab@6c34ec8cdd54b165f50444ff1d75dcad480d53c2) ([merge request](gitlab-org/charts/gitlab!2584))
+- [Update gitlab-org/container-registry from 3.41.1-gitlab to 3.42.0-gitlab](gitlab-org/charts/gitlab@2a0747412050b8f5b94dc23dd1e40bd5cf78496f) ([merge request](gitlab-org/charts/gitlab!2580))
+
+## 6.0.3 (2022-06-16)
+
+No changes.
+
+## 6.0.2 (2022-06-06)
+
+No changes.
+
 ## 6.0.1 (2022-06-01)
 
 ### Changed (1 change)
@@ -49,6 +95,10 @@ entry.
 - [Update 'Add License' location](gitlab-org/charts/gitlab@53f38975abef245735162df2f3208bd8547703cd) ([merge request](gitlab-org/charts/gitlab!2568))
 - [Add docs on certmanager-issuer chart](gitlab-org/charts/gitlab@74413b7abc3f6c9896fd7a7e0af86b869764411d) ([merge request](gitlab-org/charts/gitlab!2507))
 - [Update kubectl image to use yq v4.23.1](gitlab-org/charts/gitlab@966e02d12b1177888607f0d224caa97adcdc3940) ([merge request](gitlab-org/charts/gitlab!2459))
+
+## 5.10.4 (2022-06-01)
+
+No changes.
 
 ## 5.10.3 (2022-05-20)
 
@@ -104,6 +154,10 @@ No changes.
 - [Update Operator install docs for version 0.6.1](gitlab-org/charts/gitlab@17243ad2f7d29ca48c712d7a81773c090124349d) ([merge request](gitlab-org/charts/gitlab!2464))
 - [Use image digest from dev tag pipeline](gitlab-org/charts/gitlab@403b765779a8d43cc471ff9d35d6a0e23f9eea21) ([merge request](gitlab-org/charts/gitlab!2463))
 - [Update Operator install docs for version 0.6.0](gitlab-org/charts/gitlab@43398259cef8be83f88ec132b3471ca8dccaf73e) ([merge request](gitlab-org/charts/gitlab!2460))
+
+## 5.9.5 (2022-06-01)
+
+No changes.
 
 ## 5.9.4 (2022-04-29)
 

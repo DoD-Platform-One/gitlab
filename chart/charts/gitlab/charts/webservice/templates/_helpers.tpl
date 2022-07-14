@@ -124,8 +124,8 @@ provider = "{% $provider %}"
 # AWS / S3 object storage configuration.
 [object_storage.s3]
 # access/secret can be blank!
-aws_access_key_id = "{% $aws_access_key_id %}"
-aws_secret_access_key = "{% $aws_secret_access_key %}"
+aws_access_key_id = {% $aws_access_key_id | strings.TrimSpace | data.ToJSON %}
+aws_secret_access_key = {% $aws_secret_access_key | strings.TrimSpace | data.ToJSON %}
 {%-   else if eq $provider "AzureRM" %}
 # Azure Blob storage configuration.
 [object_storage.azurerm]
@@ -232,4 +232,11 @@ The `Release` and `Values` keys are needed because of the usage of the
     - key: ssh_host_{{ . }}_key.pub
       path: ssh_host_{{ . }}_key.pub
     {{- end -}}
+{{- end -}}
+
+{{/*
+Return the webservice TLS secret name
+*/}}
+{{- define "webservice.tls.secret" -}}
+{{- default (printf "%s-webservice-tls" .Release.Name) $.Values.tls.secretName | quote -}}
 {{- end -}}
