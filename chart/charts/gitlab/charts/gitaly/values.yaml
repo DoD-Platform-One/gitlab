@@ -153,3 +153,10 @@ statefulset:
 affinity:
   podAntiAffinity:
     topologyKey:
+
+## Enable the Gitaly pack-objects cache
+## ref: https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#pack-objects-cache
+packObjectsCache: {}
+#  enabled: false
+#  dir: "/home/git/repositories/+gitaly/PackObjectsCache"
+#  max_age: 5m

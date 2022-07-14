@@ -418,8 +418,13 @@ GitLab external URL                                              |
 | `gitlab.webservice.securityContext.fsGroup`                    | Group ID under which the pod should be started                       | `1000`                                                           |
 | `gitlab.webservice.securityContext.runAsUser`                  | User ID under which the pod should be started                        | `1000`                                                           |
 | `gitlab.webservice.service.annotations`                        | Annotations to add to the `Service`                                  | {}                                                               |
+| `gitlab.webservice.http.enabled`                               | webservice HTTP enabled                                              | true                                                             |
 | `gitlab.webservice.service.externalPort`                       | webservice exposed port                                              | `8080`                                                           |
 | `gitlab.webservice.service.internalPort`                       | webservice internal port                                             | `8080`                                                           |
+| `gitlab.webservice.tls.enabled`                                | webservice TLS enabled                                               | false                                                            |
+| `gitlab.webservice.tls.secretName`                             | webservice secret name of TLS key                                    | `{Release.Name}-webservice-tls`                                  |
+| `gitlab.webservice.service.tls.externalPort`                   | webservice TLS exposed port                                          | `8081`                                                           |
+| `gitlab.webservice.service.tls.internalPort`                   | webservice TLS internal port                                         | `8081`                                                           |
 | `gitlab.webservice.service.type`                               | webservice service type                                              | `ClusterIP`                                                      |
 | `gitlab.webservice.service.workhorseExternalPort`              | Workhorse exposed port                                               | `8181`                                                           |
 | `gitlab.webservice.service.workhorseInternalPort`              | Workhorse internal port                                              | `8181`                                                           |

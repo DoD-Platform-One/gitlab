@@ -6,6 +6,44 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Troubleshooting
 
+## UPGRADE FAILED: Job failed: BackoffLimitExceeded
+
+If you received this error when [upgrading to the 6.0 version of the chart](../releases/6_0.md#upgrade-path-from-5x),
+then it's probably because you didn't follow the right upgrade path, as you first need to upgrade to the latest 5.10.x version:
+
+1. List all your releases to identify your GitLab Helm release name (you will need to include `-n <namespace>` if your release was not deployed to the `default` K8s namespace):
+
+    ```shell
+    helm ls 
+    ```
+
+1. Assuming that your GitLab Helm release is called `gitlab` you then need to look at the release history and identify the last successful revision (you can see the status of a revision under `DESCRIPTION`):
+
+    ```shell
+    helm history gitlab
+    ``` 
+
+1. Assuming your most recent successful revision is `1` use this command to roll back:
+
+   ```shell
+   helm rollback gitlab 1
+   ```
+
+1. Re-run the upgrade command by replacing `<x>` with the appropriate chart version:
+
+   ```shell
+   helm upgrade --version=5.10.<x>
+   ```
+
+1. At this point you can use the `--version` option to pass a specific 6.x.x chart version or remove the option for upgrading to the latest version of GitLab:
+
+   ```shell
+   helm upgrade --install gitlab gitlab/gitlab <other_options>
+   ```
+
+More information about command line arguments can be found in our [Deploy using Helm](../installation/deployment.md#deploy-using-helm) section.
+For mappings between chart versions and GitLab versions, read [GitLab version mappings](../installation/version_mappings.md).
+
 ## UPGRADE FAILED: "$name" has no deployed releases
 
 This error occurs on your second install/upgrade if your initial install failed.

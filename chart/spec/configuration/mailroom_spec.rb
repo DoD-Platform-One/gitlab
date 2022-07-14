@@ -467,6 +467,7 @@ describe 'Mailroom configuration' do
       expect(mail_box[:delivery_method]).to eq('postback')
       expect(mail_box[:delivery_options]).to eq(
         delivery_url: 'http://test-webservice-default.default.svc:8181/api/v4/internal/mail_room/incoming_email',
+        content_type: "text/plain",
         jwt_auth_header: "Gitlab-Mailroom-Api-Request",
         jwt_issuer: "gitlab-mailroom",
         jwt_algorithm: "HS256",
@@ -591,6 +592,7 @@ describe 'Mailroom configuration' do
       expect(mail_box[:delivery_method]).to eq('postback')
       expect(mail_box[:delivery_options]).to eq(
         delivery_url: 'http://test-webservice-default.default.svc:8181/api/v4/internal/mail_room/service_desk_email',
+        content_type: "text/plain",
         jwt_auth_header: "Gitlab-Mailroom-Api-Request",
         jwt_issuer: "gitlab-mailroom",
         jwt_algorithm: "HS256",

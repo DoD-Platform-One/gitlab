@@ -399,8 +399,8 @@ describe 'Webservice Deployments configuration' do
           expect(env_2).to include(env_value('PUMA_THREADS_MAX', 4))
           expect(env_3).to include(env_value('PUMA_THREADS_MAX', 8))
 
-          expect(env_1).to include(env_value('PUMA_WORKER_MAX_MEMORY', 1024))
-          expect(env_2).to include(env_value('PUMA_WORKER_MAX_MEMORY', 1024))
+          expect(env_1).to include(env_value('PUMA_WORKER_MAX_MEMORY', ''))
+          expect(env_2).to include(env_value('PUMA_WORKER_MAX_MEMORY', ''))
           expect(env_3).to include(env_value('PUMA_WORKER_MAX_MEMORY', 2048))
 
           expect(env_1).to include(env_value('DISABLE_PUMA_WORKER_KILLER', true))
@@ -703,6 +703,146 @@ describe 'Webservice Deployments configuration' do
 
       expect(volumes).to include({ "name" => "shared-tmp", "emptyDir" => { "sizeLimit" => "1G" } })
       expect(volumes).to include({ "name" => "shared-upload-directory", "emptyDir" => { "sizeLimit" => "2G", "medium" => "Memory" } })
+    end
+  end
+
+  context 'when HTTP is active' do
+    it 'does not activate HTTPS' do
+      t = HelmTemplate.new(default_values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+      containers = t.dig('Deployment/test-webservice-default', 'spec', 'template', 'spec', 'containers')
+      expect(containers.length).to eq(2)
+      expect(containers[0]['name']).to eq('webservice')
+      expect(containers[1]['name']).to eq('gitlab-workhorse')
+
+      webservice_env = containers[0]['env']
+      env_keys = webservice_env.map { |entry| entry['name'] }
+      expect(webservice_env).to include(env_value('INTERNAL_PORT', '8080'))
+      expect(env_keys).not_to include('SSL_INTERNAL_PORT', 'PUMA_SSL_KEY', 'PUMA_SSL_CERT')
+
+      liveness_probe = containers[0].dig('livenessProbe', 'httpGet')
+      expect(liveness_probe['host']).to be_nil
+      expect(liveness_probe['scheme']).to be_nil
+      expect(liveness_probe['port']).to eq(8080)
+
+      readiness_probe = containers[0].dig('readinessProbe', 'httpGet')
+      expect(readiness_probe['host']).to be_nil
+      expect(readiness_probe['scheme']).to be_nil
+      expect(readiness_probe['port']).to eq(8080)
+
+      webservice_ports = containers[0]['ports']
+      port_names = webservice_ports.map { |entry| entry['name'] }
+      expect(webservice_ports).to include({ "containerPort" => 8080, "name" => 'http-webservice' })
+      expect(webservice_ports).to include({ "containerPort" => 8083, "name" => 'http-metrics-ws' })
+      expect(port_names).to_not include('https-ws')
+
+      workhorse_env = containers[1]['env']
+      expect(workhorse_env).to include(env_value('GITLAB_WORKHORSE_AUTH_BACKEND', 'http://localhost:8080'))
+
+      service_ports = t.dig('Service/test-webservice-default', 'spec', 'ports')
+      service_port_names = service_ports.map { |entry| entry['name'] }
+      expect(service_ports).to include({ 'port' => 8080, 'targetPort' => 'http-webservice', 'protocol' => 'TCP', 'name' => 'http-webservice' })
+      expect(service_ports).to include({ 'port' => 8181, 'targetPort' => 'http-workhorse', 'protocol' => 'TCP', 'name' => 'http-workhorse' })
+      expect(service_ports).to include({ 'port' => 8083, 'targetPort' => 'http-metrics-ws', 'protocol' => 'TCP', 'name' => 'http-metrics-ws' })
+      expect(service_port_names).to_not include('https-ws')
+    end
+  end
+
+  context 'when HTTPS is active' do
+    let(:http_enabled) { true }
+    let(:deployments_values) do
+      YAML.safe_load(%(
+        gitlab:
+          webservice:
+            http:
+              enabled: #{http_enabled}
+            tls:
+              enabled: true
+            service:
+              tls:
+                externalPort: 8081
+                internalPort: 8081
+      )).deep_merge(default_values)
+    end
+
+    context 'with both HTTPS and HTTP' do
+      it 'activates HTTPS but defaults to HTTP for Workhorse backend' do
+        t = HelmTemplate.new(deployments_values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        containers = t.dig('Deployment/test-webservice-default', 'spec', 'template', 'spec', 'containers')
+        expect(containers.length).to eq(2)
+        expect(containers[0]['name']).to eq('webservice')
+        expect(containers[1]['name']).to eq('gitlab-workhorse')
+
+        webservice_env = containers[0]['env']
+        expect(webservice_env).to include(env_value('INTERNAL_PORT', '8080'))
+        expect(webservice_env).to include(env_value('SSL_INTERNAL_PORT', '8081'))
+        expect(webservice_env).to include(env_value('PUMA_SSL_KEY', '/srv/gitlab/config/puma.key'))
+        expect(webservice_env).to include(env_value('PUMA_SSL_CERT', '/srv/gitlab/config/puma.crt'))
+
+        webservice_ports = containers[0]['ports']
+        expect(webservice_ports).to include({ "containerPort" => 8080, "name" => 'http-webservice' })
+        expect(webservice_ports).to include({ "containerPort" => 8081, "name" => 'https-ws' })
+        expect(webservice_ports).to include({ "containerPort" => 8083, "name" => 'http-metrics-ws' })
+
+        workhorse_env = containers[1]['env']
+        expect(workhorse_env).to include(env_value('GITLAB_WORKHORSE_AUTH_BACKEND', 'http://localhost:8080'))
+
+        service_ports = t.dig('Service/test-webservice-default', 'spec', 'ports')
+        expect(service_ports).to include({ 'port' => 8080, 'targetPort' => 'http-webservice', 'protocol' => 'TCP', 'name' => 'http-webservice' })
+        expect(service_ports).to include({ 'port' => 8181, 'targetPort' => 'http-workhorse', 'protocol' => 'TCP', 'name' => 'http-workhorse' })
+        expect(service_ports).to include({ 'port' => 8081, 'targetPort' => 'https-ws', 'protocol' => 'TCP', 'name' => 'https-ws' })
+        expect(service_ports).to include({ 'port' => 8083, 'targetPort' => 'http-metrics-ws', 'protocol' => 'TCP', 'name' => 'http-metrics-ws' })
+      end
+    end
+
+    context 'with only HTTPS' do
+      let(:http_enabled) { false }
+
+      it 'omits HTTP access' do
+        t = HelmTemplate.new(deployments_values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        containers = t.dig('Deployment/test-webservice-default', 'spec', 'template', 'spec', 'containers')
+        expect(containers.length).to eq(2)
+        expect(containers[0]['name']).to eq('webservice')
+        expect(containers[1]['name']).to eq('gitlab-workhorse')
+
+        webservice_env = containers[0]['env']
+        env_keys = webservice_env.map { |entry| entry['name'] }
+        expect(env_keys).not_to include('INTERNAL_PORT')
+        expect(webservice_env).to include(env_value('SSL_INTERNAL_PORT', '8081'))
+        expect(webservice_env).to include(env_value('PUMA_SSL_KEY', '/srv/gitlab/config/puma.key'))
+        expect(webservice_env).to include(env_value('PUMA_SSL_CERT', '/srv/gitlab/config/puma.crt'))
+
+        liveness_probe = containers[0].dig('livenessProbe', 'httpGet')
+        expect(liveness_probe['host']).to be_nil
+        expect(liveness_probe['scheme']).to eq('HTTPS')
+        expect(liveness_probe['port']).to eq(8081)
+
+        readiness_probe = containers[0].dig('readinessProbe', 'httpGet')
+        expect(readiness_probe['host']).to be_nil
+        expect(readiness_probe['scheme']).to eq('HTTPS')
+        expect(readiness_probe['port']).to eq(8081)
+
+        webservice_ports = containers[0]['ports']
+        port_names = webservice_ports.map { |entry| entry['name'] }
+        expect(webservice_ports).to include({ 'containerPort' => 8081, 'name' => 'https-ws' })
+        expect(webservice_ports).to include({ 'containerPort' => 8083, 'name' => 'http-metrics-ws' })
+        expect(port_names).to_not include('http-webservice')
+
+        workhorse_env = containers[1]['env']
+        expect(workhorse_env).to include(env_value('GITLAB_WORKHORSE_AUTH_BACKEND', 'http://localhost:8080'))
+
+        service_ports = t.dig('Service/test-webservice-default', 'spec', 'ports')
+        service_port_names = service_ports.map { |entry| entry['name'] }
+        expect(service_port_names).not_to include('http-webservice')
+        expect(service_ports).to include({ 'port' => 8181, 'targetPort' => 'http-workhorse', 'protocol' => 'TCP', 'name' => 'http-workhorse' })
+        expect(service_ports).to include({ 'port' => 8081, 'targetPort' => 'https-ws', 'protocol' => 'TCP', 'name' => 'https-ws' })
+        expect(service_ports).to include({ 'port' => 8083, 'targetPort' => 'http-metrics-ws', 'protocol' => 'TCP', 'name' => 'http-metrics-ws' })
+      end
     end
   end
 end

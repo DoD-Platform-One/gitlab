@@ -192,6 +192,7 @@ global:
   ## Rails based portions of this chart share many settings
   appConfig:
     ## https://docs.gitlab.com/charts/charts/globals#general-application-settings
+    # cdnHost:
     enableUsagePing: true
     enableSeatLink: true
     enableImpersonation:
@@ -651,7 +652,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -694,7 +695,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -763,6 +764,8 @@ upgradeCheck:
     runAsUser: 65534
     fsGroup: 65534
   tolerations: []
+  annotations:
+    sidecar.istio.io/inject: "false"
   resources:
     requests:
       cpu: 500m
@@ -1145,7 +1148,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.0.1
+    tag: 15.1.2
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1276,7 +1279,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1323,7 +1326,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1351,7 +1354,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
 ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1375,7 +1378,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1388,7 +1391,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     ingress:
@@ -1397,7 +1400,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1420,7 +1423,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1442,7 +1445,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.0.1
+      tag: 15.1.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1473,7 +1476,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.0.1
+      tag: 15.1.2
     init:
       resources:
         limits:
@@ -1509,9 +1512,12 @@ minio:
     requests:
       cpu: 200m
       memory: 300Mi
+  # Additional job annotations
+  jobAnnotations:
+    sidecar.istio.io/inject: "false"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-07-04T21-02-54Z
+  imageTag: RELEASE.2022-07-08T00-05-23Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1520,7 +1526,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-06-26T18-51-48Z
+    tag: RELEASE.2022-07-06T14-54-36Z
     pullSecrets:
     - name: private-registry
 

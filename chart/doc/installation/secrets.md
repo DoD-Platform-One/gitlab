@@ -246,7 +246,7 @@ base64-encoded. Replace `<name>` with the name of the release.
 kubectl create secret generic <name>-gitlab-workhorse-secret --from-literal=shared_secret=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
 ```
 
-This secret is referenced by the `global.workhorse.key` setting.
+This secret is referenced by the `global.workhorse.secret` setting.
 
 ### GitLab Runner secret
 
@@ -258,12 +258,20 @@ kubectl create secret generic <name>-gitlab-runner-secret --from-literal=runner-
 
 ### GitLab KAS secret
 
-GitLab Rails will always requires that a secret for KAS is present, even if one deploys this chart without installing the KAS sub-chart. Still, one can create this secret manually by following the below procedure or leave it to the chart to auto-generate the secret.
+GitLab Rails requires that a secret for KAS is present, even if one deploys this chart without installing the KAS sub-chart. Still, one can create this secret manually by following the below procedure or leave it to the chart to auto-generate the secret.
 
 Replace `<name>` with the name of the release.
 
 ```shell
 kubectl create secret generic <name>-gitlab-kas-secret --from-literal=kas_shared_secret=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
+```
+
+### GitLab KAS API secret
+
+You can leave it to the chart to auto-generate the secret, or you can create this secret manually (replace `<name>` with the name of the release):
+
+```shell
+kubectl create secret generic <name>-kas-private-api --from-literal=kas_private_api_secret=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
 ```
 
 ### MinIO secret

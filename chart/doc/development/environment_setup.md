@@ -33,8 +33,8 @@ Tool name | Benefits | Example use case | Link(s)
 ## Kubernetes cluster
 
 A cloud or local Kubernetes cluster may be used for development.
-For simple issues, a local cluster will often be enough to test deployments.
-When dealing with networking, storage, or other complex issues, a cloud Kubernetes cluster will allow you to more accurately recreate a production environment.
+For simple issues, a local cluster is often enough to test deployments.
+When dealing with networking, storage, or other complex issues, a cloud Kubernetes cluster allows you to more accurately recreate a production environment.
 
 ### Local cluster
 

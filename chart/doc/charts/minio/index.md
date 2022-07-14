@@ -90,6 +90,7 @@ to the `helm install` command using the `--set` flags:
 | `servicePort`                  | `9000`                        | MinIO service port                      |
 | `serviceType`                  | `ClusterIP`                   | MinIO service type                      |
 | `tolerations`                  | `[]`                          | Toleration labels for pod assignment    |
+| `jobAnnotations`               | `{}`                          | Annotations for the job spec            |
 
 ## Chart configuration examples
 

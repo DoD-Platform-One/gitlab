@@ -36,12 +36,16 @@ controlled by `global.shell.port`.
 | `podLabels`                                     |                                                  | Supplemental Pod labels. Will not be used for selectors.                                                                                                                        |
 | `common.labels`                                 |                                                  | Supplemental labels that are applied to all objects created by this chart.                                                                                                      |
 | `config.clientAliveInterval`                    | `0`                                              | Interval between keepalive pings on otherwise idle connections; the default value of 0 disables this ping                                                                       |
-| `config.loginGraceTime`                         | `120`                                            | Specifies amount of time that the server will disconnect after if the user has not successfully logged in                                                                       |
+| `config.loginGraceTime`                         | `60`                                             | Specifies amount of time that the server will disconnect after if the user has not successfully logged in                                                                       |
 | `config.maxStartups.full`                       | `100`                                            | SSHd refuse probability will increase linearly and all unauthenticated connection attempts would be refused when unauthenticated connections number will reach specified number |
 | `config.maxStartups.rate`                       | `30`                                             | SSHd will refuse connections with specified probability when there would be too many unauthenticated connections (optional)                                                     |
 | `config.maxStartups.start`                      | `10`                                             | SSHd will refuse connection attempts with some probability if there are currently more than the specified number of unauthenticated connections (optional)                      |
 | `config.proxyProtocol`                          | `false`                                          | Enable PROXY protocol support for the `gitlab-sshd` daemon |
 | `config.proxyPolicy`                            | `"use"`                                          | Specify policy for handling PROXY protocol. Value must be one of `use, require, ignore, reject` |
+| `config.proxyHeaderTimeout`                     | `"500ms"`                                        | The maximum duration `gitlab-sshd` will wait before giving up on reading the PROXY protocol header. Must include units: `ms`, `s`, or `m`. |
+| `config.ciphers`                                | `[aes128-gcm@openssh.com, chacha20-poly1305@openssh.com, aes256-gcm@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr]` | Specify the ciphers allowed. |
+| `config.kexAlgorithms`                          | `[curve25519-sha256, curve25519-sha256@libssh.org, ecdh-sha2-nistp256, ecdh-sha2-nistp384, ecdh-sha2-nistp521, diffie-hellman-group14-sha256, diffie-hellman-group14-sha1]` | Specifies the available KEX (Key Exchange) algorithms. |
+| `config.macs`                                   | `[hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1]` | Specifies the available MAC (message authentication code algorithms. |
 | `deployment.livenessProbe.initialDelaySeconds`  | 10                                               | Delay before liveness probe is initiated                                                                                                                                        |
 | `deployment.livenessProbe.periodSeconds`        | 10                                               | How often to perform the liveness probe                                                                                                                                         |
 | `deployment.livenessProbe.timeoutSeconds`       | 3                                                | When the liveness probe times out                                                                                                                                               |
@@ -321,7 +325,7 @@ networkpolicy:
   ingress:
     enabled: true
     rules:
-      - to:
+      - from:
         - ipBlock:
             cidr: 0.0.0.0/0
         ports:

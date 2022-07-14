@@ -216,6 +216,44 @@ describe 'gitlab.yml.erb configuration' do
     end
   end
 
+  context 'cdnHost' do
+    let(:required_values) do
+      YAML.safe_load(%(
+        global:
+          appConfig:
+            cdnHost: #{value}
+      )).merge(default_values)
+    end
+
+    context 'when configured' do
+      let(:value) { 'https://cdn.example.com' }
+
+      it 'populates the gitlab.yml.erb with cdn_host' do
+        t = HelmTemplate.new(required_values)
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).to include('cdn_host: "https://cdn.example.com"')
+      end
+    end
+
+    context 'when not configured' do
+      let(:value) { nil }
+
+      it 'does not populate the gitlab.yml.erb' do
+        t = HelmTemplate.new(required_values)
+
+        expect(t.exit_code).to eq(0)
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).not_to include('cdn_host')
+      end
+    end
+  end
+
   context 'sidekiq.routingRules on web' do
     let(:required_values) do
       value.merge(default_values)

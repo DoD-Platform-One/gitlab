@@ -29,15 +29,24 @@ describe 'gitlab-shell configuration' do
 
     let(:proxy_protocol) { true }
     let(:proxy_policy) { "require" }
+    let(:proxy_header_timeout) { "1s" }
+    let(:grace_period) { 30 }
+    let(:client_alive_interval) { 15 }
+    let(:login_grace_time) { 60 }
 
     let(:values) do
       YAML.safe_load(%(
         gitlab:
           gitlab-shell:
             sshDaemon: "gitlab-sshd"
+            deployment:
+              terminationGracePeriodSeconds: #{grace_period}
             config:
+              clientAliveInterval: #{client_alive_interval}
               proxyProtocol: #{proxy_protocol}
               proxyPolicy: #{proxy_policy}
+              proxyHeaderTimeout: #{proxy_header_timeout}
+              loginGraceTime: #{login_grace_time}
       )).deep_merge(default_values)
     end
 
@@ -48,6 +57,16 @@ describe 'gitlab-shell configuration' do
       expect(config).to match(/^sshd:$/)
       expect(config).to include("proxy_protocol: #{proxy_protocol}")
       expect(config).to include("proxy_policy: #{proxy_policy}")
+      expect(config).to include("client_alive_interval: #{client_alive_interval}")
+      expect(config).to include("proxy_header_timeout: #{proxy_header_timeout}")
+      expect(config).to match(/ciphers:\n    - aes128-gcm@openssh.com/m)
+      expect(config).to match(/kex_algorithms:\n    - curve25519-sha256/m)
+      expect(config).to match(/macs:\n    - hmac-sha2-256-etm@openssh.com/m)
+      expect(config).to include("login_grace_time: #{login_grace_time}")
+    end
+
+    it 'sets 5 seconds smaller grace period' do
+      expect(config).to include("grace_period: #{grace_period - 5}")
     end
   end
 

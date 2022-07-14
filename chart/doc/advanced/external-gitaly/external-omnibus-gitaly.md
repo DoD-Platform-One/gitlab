@@ -34,8 +34,10 @@ _**NOTE**: The values below should be replaced_
 - `SHELL_TOKEN` should be replaced with the value in the [`gitlab-shell-secret` secret](../../installation/secrets.md#gitlab-shell-secret)
 
 <!--
-updates to following example must also be made at
-https://gitlab.com/gitlab-org/gitlab/blob/master/doc/administration/gitaly/index.md#gitaly-server-configuration
+Updates to example must be made at:
+- https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/advanced/external-gitaly/external-omnibus-gitaly.md#configure-omnibus-gitlab
+- https://gitlab.com/gitlab-org/gitlab/blob/master/doc/administration/gitaly/index.md#gitaly-server-configuration
+- all reference architecture pages
 -->
 
 ```ruby
@@ -51,8 +53,8 @@ gitlab_exporter['enable'] = false
 gitlab_kas['enable'] = false
 
 # If you run a seperate monitoring node you can disable these services
-alertmanager['enable'] = false
 prometheus['enable'] = false
+alertmanager['enable'] = false
 
 # If you don't run a seperate monitoring node you can
 # Enable Prometheus access & disable these extra services
@@ -72,14 +74,14 @@ gitlab_rails['auto_migrate'] = false
 gitlab_rails['internal_api_url'] = 'GITLAB_URL'
 gitlab_shell['secret_token'] = 'SHELL_TOKEN'
 
-# Authentication token to ensure only authorized servers can communicate with
-# Gitaly server
-gitaly['auth_token'] = 'AUTH_TOKEN'
-
 # Make Gitaly accept connections on all network interfaces. You must use
 # firewalls to restrict access to this address/port.
 # Comment out following line if you only want to support TLS connections
 gitaly['listen_addr'] = "0.0.0.0:8075"
+
+# Authentication token to ensure only authorized servers can communicate with
+# Gitaly server
+gitaly['auth_token'] = 'AUTH_TOKEN'
 
 git_data_dirs({
  'default' => {
