@@ -76,6 +76,11 @@ gitlab:
     image:
       pullSecrets:
       - name: private-registry
+  mailroom:
+    image:
+      pullSecrets:
+        - name: private-registry
+
 minio:
   pullSecrets:
   - name: private-registry
