@@ -1463,6 +1463,12 @@ gitlab:
       requests:
         cpu: 300m
         memory: 300Mi
+  mailroom:
+    image:
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
+      tag: 15.1.2
+      pullSecrets:
+        - name: private-registry
 
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana

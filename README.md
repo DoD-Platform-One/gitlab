@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.1.2-bb.0](https://img.shields.io/badge/Version-6.1.2--bb.0-informational?style=flat-square) ![AppVersion: 15.1.2](https://img.shields.io/badge/AppVersion-15.1.2-informational?style=flat-square)
+![Version: 6.1.2-bb.1](https://img.shields.io/badge/Version-6.1.2--bb.1-informational?style=flat-square) ![AppVersion: 15.1.2](https://img.shields.io/badge/AppVersion-15.1.2-informational?style=flat-square)
 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
@@ -720,6 +720,9 @@ helm install gitlab chart/
 | gitlab.gitlab-shell.resources.limits.memory | string | `"300Mi"` |  |
 | gitlab.gitlab-shell.resources.requests.cpu | string | `"300m"` |  |
 | gitlab.gitlab-shell.resources.requests.memory | string | `"300Mi"` |  |
+| gitlab.mailroom.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom"` |  |
+| gitlab.mailroom.image.tag | string | `"15.1.2"` |  |
+| gitlab.mailroom.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
 | gitlab.praefect.image.tag | string | `"15.1.2"` |  |
 | gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |
