@@ -100,6 +100,7 @@ data:
       {{- include "gitlab.appConfig.dependencyProxy.configuration" (dict "config" $.Values.global.appConfig.dependencyProxy "context" $) | nindent 6 }}
       {{- include "gitlab.geo.config" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sentry.configuration" $ | nindent 6 }}
+      {{- include "gitlab.appConfig.gitlab_docs.configuration" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sidekiq.configuration" $ | nindent 6 }}
       {{- include "gitlab.pages.config" $ | nindent 6 }}
       mattermost:
@@ -132,6 +133,11 @@ data:
           enabled: {{ or .Values.monitoring.exporter.enabled (and .Values.metrics.enabled (eq .Values.metrics.port .Values.monitoring.exporter.port)) }}
           address: 0.0.0.0
           port: {{ .Values.monitoring.exporter.port }}
+          {{- if $.Values.metrics.tls.enabled }}
+          tls_enabled: true
+          tls_cert_path: "/etc/gitlab/webservice-metrics/webservice-metrics.crt"
+          tls_key_path: "/etc/gitlab/webservice-metrics/webservice-metrics.key"
+          {{- end }}
         sidekiq_exporter:
       shutdown:
         blackout_seconds: <%= ENV["SHUTDOWN_BLACKOUT_SECONDS"] %>
@@ -147,6 +153,11 @@ data:
       mkdir -p /init-secrets/puma
       cp -v -L /init-config/puma/puma.crt /init-secrets/puma/puma.crt
       cp -v -L /init-config/puma/puma.key /init-secrets/puma/puma.key
+    {{- end }}
+    {{- if $.Values.metrics.tls.enabled }}
+      mkdir -p /init-secrets/webservice-metrics
+      cp -v -L /init-config/webservice-metrics/webservice-metrics.crt /init-secrets/webservice-metrics/webservice-metrics.crt
+      cp -v -L /init-config/webservice-metrics/webservice-metrics.key /init-secrets/webservice-metrics/webservice-metrics.key
     {{- end }}
 
 {{- include "webservice.datamodel.prepare" $ -}}
@@ -194,6 +205,24 @@ data:
     [image_resizer]
     max_scaler_procs = {{ $.Values.workhorse.imageScaler.maxProcs | int }}
     max_filesize = {{ $.Values.workhorse.imageScaler.maxFileSizeBytes | int }}
+    [[listeners]]
+    network = "tcp"
+    addr = "0.0.0.0:{{ default 8181 $.Values.service.workhorseInternalPort | int }}"
+    {{- if $.Values.global.workhorse.tls.enabled }}
+    [listeners.tls]
+    certificate = "/etc/gitlab/gitlab-workhorse/tls.crt"
+    key = "/etc/gitlab/gitlab-workhorse/tls.key"
+    {{- end }}
+    {{- if or $.Values.workhorse.monitoring.exporter.enabled $.Values.workhorse.metrics.enabled }}
+    [metrics_listener]
+    network = "tcp"
+    addr = "0.0.0.0:{{ $.Values.workhorse.monitoring.exporter.port }}"
+    {{- if and $.Values.global.workhorse.tls.enabled $.Values.workhorse.monitoring.exporter.tls.enabled }}
+    [metrics_listener.tls]
+    certificate = "/etc/gitlab/gitlab-workhorse/tls.crt"
+    key = "/etc/gitlab/gitlab-workhorse/tls.key"
+    {{- end }}
+    {{- end }}
   configure: |
       set -e
       mkdir -p /init-secrets-workhorse/gitlab-workhorse
@@ -214,6 +243,11 @@ data:
         cp -v -r -L /init-config/objectstorage/object_store /init-secrets-workhorse/objectstorage/
       fi
       {{- end }}
+      {{- if $.Values.global.workhorse.tls.enabled }}
+      cp -v -L /init-config/gitlab-workhorse/tls.crt /init-secrets-workhorse/gitlab-workhorse/tls.crt
+      cp -v -L /init-config/gitlab-workhorse/tls.key /init-secrets-workhorse/gitlab-workhorse/tls.key
+      {{- end }}
+
 # Leave this here - This line denotes end of block to the parser.
 {{- end }}{{/* END range deployments */}}
 {{- end }}

@@ -83,6 +83,10 @@ global:
     path: /
     pathType: Prefix
 
+  # Override the API version to use for HorizontalPodAutoscaler
+  hpa:
+    apiVersion: ""
+
   gitlab:
     ## Enterprise license for this GitLab installation
     ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#initial-enterprise-license
@@ -440,6 +444,10 @@ global:
       clientside_dsn:
       environment:
 
+    gitlab_docs:
+      enabled: false
+      host: ""
+
     smartcard:
       enabled: false
       CASecret:
@@ -642,6 +650,8 @@ global:
     ## https://docs.gitlab.com/charts/installation/secrets#gitlab-workhorse-secret
     # secret:
     # key:
+    tls: {}
+      # enabled: true
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-webservice
   webservice:
@@ -652,7 +662,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -695,7 +705,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -908,6 +918,11 @@ prometheus:
               action: keep
               regex: true
             - source_labels:
+                [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scheme]
+              action: replace
+              regex: (https?)
+              target_label: __scheme__
+            - source_labels:
                 [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_path]
               action: replace
               target_label: __metrics_path__
@@ -1094,7 +1109,7 @@ postgresql:
   image:
     registry: registry1.dso.mil
     repository: ironbank/opensource/postgres/postgresql12
-    tag: "12.11"
+    tag: "12.12"
     pullSecrets:
     - private-registry
   usePasswordFile: true
@@ -1148,7 +1163,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.1.2
+    tag: 15.2.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1165,7 +1180,7 @@ shared-secrets:
   selfsign:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
-      tag: 1.4.1
+      tag: 1.6.1
       pullSecrets:
       - name: private-registry
     keyAlgorithm: "rsa"
@@ -1279,7 +1294,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1326,13 +1341,13 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     metrics:
       enabled: true
       port: 9168
-## https://docs.gitlab.com/charts/charts/gitlab/migrations
+  ## https://docs.gitlab.com/charts/charts/gitlab/migrations
   migrations:
     # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
     annotations:
@@ -1354,10 +1369,10 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
-## https://docs.gitlab.com/charts/charts/gitlab/webservice
+  ## https://docs.gitlab.com/charts/charts/gitlab/webservice
   webservice:
     init:
       resources:
@@ -1378,7 +1393,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1391,16 +1406,16 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     ingress:
       enabled: false  # Local setting in subchart must be overridden
-## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
+  ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1419,11 +1434,11 @@ gitlab:
         memory: 3G
         cpu: 1500m
 
-## https://docs.gitlab.com/charts/charts/gitlab/gitaly
+  ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1441,11 +1456,11 @@ gitlab:
       limits:
         cpu: 400m
         memory: 600Mi
-## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
+  ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1466,7 +1481,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.1.2
+      tag: 15.2.1
       pullSecrets:
         - name: private-registry
 
@@ -1482,7 +1497,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.1.2
+      tag: 15.2.1
     init:
       resources:
         limits:
@@ -1523,7 +1538,7 @@ minio:
     sidecar.istio.io/inject: "false"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-07-08T00-05-23Z
+  imageTag: RELEASE.2022-08-13T21-54-44Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1532,7 +1547,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-07-06T14-54-36Z
+    tag: RELEASE.2022-08-11T00-30-48Z
     pullSecrets:
     - name: private-registry
 

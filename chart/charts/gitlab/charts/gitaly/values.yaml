@@ -53,6 +53,10 @@ logging:
   # sentryEnvironment:
 git: {}
   # catFileCacheSize:
+  ## Amend the default configuration Gitaly is using when spawning Git
+  ## commands. Accepts configuration as documented in git-config(1).
+  # config:
+  #   - {key: "pack.threads", value: 4}
 ruby: {}
   # maxRss:
   # gracefulRestartTimeout:

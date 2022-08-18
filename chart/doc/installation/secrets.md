@@ -21,9 +21,9 @@ Optional External Services:
 - LDAP
 - OmniAuth
 - IMAP for incoming emails (via mail_room service)
-- IMAP for service desk emails (via mail_room service)
+- IMAP for Service Desk emails (via mail_room service)
 - Microsoft Graph with OAuth2 for incoming emails (via mail_room service)
-- Microsoft Graph with OAuth2 for service desk email (via mail_room service)
+- Microsoft Graph with OAuth2 for Service Desk email (via mail_room service)
 - S/MIME certificate
 - Smartcard authentication
 - OAuth integration
@@ -60,15 +60,15 @@ documentation.
   - [Grafana password](#grafana-password)
   - [GitLab Pages secret](#gitlab-pages-secret)
   - [GitLab incoming email auth token](#gitlab-incoming-email-auth-token)
-  - [GitLab service desk email auth token](#gitlab-service-desk-email-auth-token)
+  - [GitLab Service Desk email auth token](#gitlab-service-desk-email-auth-token)
 - [External Services](#external-services)
   - [OmniAuth](#omniauth)
   - [LDAP Password](#ldap-password)
   - [SMTP Password](#smtp-password)
   - [IMAP Password for incoming email](#imap-password-for-incoming-emails)
-  - [IMAP Password for service desk](#imap-password-for-service-desk-emails)
+  - [IMAP Password for Service Desk](#imap-password-for-service-desk-emails)
   - [Microsoft Graph client secret for incoming emails](#microsoft-graph-client-secret-for-incoming-emails)
-  - [Microsoft Graph client secret for service desk](#microsoft-graph-client-secret-for-service-desk-emails)
+  - [Microsoft Graph client secret for Service Desk](#microsoft-graph-client-secret-for-service-desk-emails)
   - [S/MIME Certificate](#smime-certificate)
   - [Smartcard Authentication](#smartcard-authentication)
 
@@ -396,7 +396,7 @@ in your Helm command along with other required settings as specified [in the doc
 NOTE:
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
 
-### IMAP password for service desk emails
+### IMAP password for Service Desk emails
 
 To let GitLab have access to [service_desk emails](https://docs.gitlab.com/ee/user/project/service_desk.html#using-custom-email-address)
 store the password of the IMAP account in a Kubernetes secret.
@@ -424,9 +424,9 @@ kubectl create secret generic <name>-incoming-email-auth-token --from-literal=au
 
 This secret is referenced by the `global.incomingEmail.authToken` setting.
 
-### GitLab service desk email auth token
+### GitLab Service Desk email auth token
 
-When service desk email is configured to use webhook delivery method, there should
+When Service Desk email is configured to use webhook delivery method, there should
 be a shared secret between mail_room service and webservice. This must have a
 length of 32 characters and base64-encoded. Replace `<name>` with the name of
 the release.
@@ -452,7 +452,7 @@ in your Helm command along with other required settings as specified [in the doc
 NOTE:
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
 
-### Microsoft Graph client secret for service desk emails
+### Microsoft Graph client secret for Service Desk emails
 
 To let GitLab have access to [service_desk emails](https://docs.gitlab.com/ee/user/project/service_desk.html#using-custom-email-address)
 store the password of the IMAP account in a Kubernetes secret:

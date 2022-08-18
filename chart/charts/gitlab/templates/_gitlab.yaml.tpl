@@ -137,3 +137,15 @@ cron_jobs:
 {{- $result }}
 {{- end }}
 {{/* END gitlab.appConfig.maxRequestDurationSeconds */}}
+
+{{/*
+Generates gitlab_docs configuration.
+
+Usage:
+{{ include "gitlab.appConfig.gitlab_docs.configuration" $ }}
+*/}}
+{{- define "gitlab.appConfig.gitlab_docs.configuration" -}}
+gitlab_docs:
+  enabled: {{ eq $.Values.global.appConfig.gitlab_docs.enabled true }}
+  host: {{ $.Values.global.appConfig.gitlab_docs.host | quote }}
+{{- end -}}{{/* "gitlab.appConfig.gitlab_docs.configuration" */}}

@@ -79,8 +79,6 @@ sast:
 iac-sast:
   needs: []
   before_script: []
-before_script:
-  - source scripts/ci/autodevops.sh
 
 .auto_deploy_items:
   - &com_auto_deploy_branch_ref /^[0-9]+-[0-9]+-auto-deploy-[0-9]+$/@gitlab-org/charts/gitlab
@@ -94,6 +92,10 @@ tag_auto_deploy:
     - if: $CI_PIPELINE_TRIGGERED && $TRIGGER_JOB == "tag_auto_deploy" && $AUTO_DEPLOY_TAG && $REPOSITORY_PAT
   script:
     - ./scripts/tag_auto_deploy.rb
+
+.source_autodevops:
+ before_script:
+   - source scripts/ci/autodevops.sh
 
 .deps_pipeline: &deps_pipeline
   variables:
@@ -136,6 +138,9 @@ lint_package:
   stage: preflight
   when: always
   script:
+    - helm repo add gitlab https://charts.gitlab.io
+    - helm repo add jetstack https://charts.jetstack.io
+    - helm dependency update
     - helm lint --set certmanager-issuer.email=support@gitlab.com
     - mkdir -p build
     - helm package -d build .
@@ -155,6 +160,9 @@ lint_package:
   stage: preflight
   when: always
   script:
+    - helm repo add gitlab https://charts.gitlab.io
+    - helm repo add jetstack https://charts.jetstack.io
+    - helm dependency update
     - helm kubeval . --force-color --strict --kube-version $KUBE_VERSION --set certmanager-issuer.email=support@gitlab.com $HELM_EXTRAS --skip-kinds "CustomResourceDefinition" -v $KUBE_VERSION
   except:
     <<: *deps_pipeline
@@ -189,6 +197,7 @@ lint_package:
     HOST_SUFFIX: "$CI_ENVIRONMENT_SLUG"
     DOMAIN: "-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN"
     VARIABLES_FILE: "variables/${CI_JOB_NAME}"
+  extends: .source_autodevops
   script:
     - mkdir -p $(dirname "${VARIABLES_FILE}")
     - check_kube_domain
@@ -347,6 +356,7 @@ stop_review_eks:
 
 .stable:
   stage: stable
+  extends: .source_autodevops
   script:
     - mkdir -p $(dirname "${VARIABLES_FILE}")
     - check_kube_domain
@@ -396,6 +406,7 @@ review_helm_test:
     name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke
+  extends: .source_autodevops
   script:
     - helm test "$RELEASE_NAME"
   only:
@@ -416,6 +427,7 @@ production_helm_test:
   environment:
     name: gke_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
+  extends: .source_autodevops
   script:
     - helm test "$RELEASE_NAME"
   <<: *except_deps_update
@@ -604,6 +616,7 @@ review-docs-cleanup:
     S3_CONFIG_PATH: /etc/gitlab/minio
     DEBIAN_VERSION: bullseye
     RUBY_VERSION: "2.7"
+  extends: .source_autodevops
   script:
     - ./scripts/ci/install_spec_dependencies
     - ./scripts/ci/run_specs
@@ -785,6 +798,7 @@ wait_for_dev_images:
     # CHANNEL: "unstable"
     VERSION_SUFFIX: ""
   script:
+    - helm dependency update
     - EXTRACTED_VERSION=$(awk '/^version/ {print $2}' Chart.yaml)
     - VERSION=${VERSION:-${EXTRACTED_VERSION}}
     - echo "Packaging ${VERSION}${VERSION_SUFFIX} for ${CHANNEL}"

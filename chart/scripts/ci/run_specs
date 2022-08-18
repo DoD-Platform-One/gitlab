@@ -4,6 +4,8 @@ set -e
 if [[ -n "${VARIABLES_FILE}" ]]; then
   source "${VARIABLES_FILE}"
   ./scripts/ci/feature_spec_setup
+else
+  ./scripts/ci/integration_spec_setup
 fi
 
 bundle config set path 'gems'

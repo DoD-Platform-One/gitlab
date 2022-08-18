@@ -91,7 +91,7 @@ helm inspect values gitlab/gitlab
 | `global.appConfig.incomingEmail.expungeDeleted`   | Whether to expunge (permanently remove) messages from the mailbox when they are deleted after delivery | false                                                      |
 | `global.appConfig.incomingEmail.logger.logPath`   | Path to write JSON structured logs to; set to "" to disable this logging                               | `/dev/stdout`                                              |
 | `global.appConfig.incomingEmail.inboxMethod`      | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                    | `imap`                                                     |
-| `global.appConfig.incomingEmail.deliveryMethod`   | How mailroom can send an email content to Rails app for processing. Either `sidekiq` or `webhook`      | `sidekiq`                                                  |
+| `global.appConfig.incomingEmail.deliveryMethod`   | How mailroom can send an email content to Rails app for processing. Either `sidekiq` or `webhook`      | `webhook`                                                  |
 | `gitlab.appConfig.incomingEmail.authToken.key`    | Key to incoming email token in incoming email secret. Effective when the delivery method is webhook.   | `authToken`                                                |
 | `gitlab.appConfig.incomingEmail.authToken.secret` | Incoming email authentication secret. Effective when the delivery method is webhook.                   | `{Release.Name}-incoming-email-auth-token`                 |
 
@@ -136,12 +136,12 @@ must be `+%{key}`.
 | Parameter                                            | Description                                                                                                            | Default                                                        |
 |------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
 | `global.appConfig.serviceDeskEmail.address`          | The email address to reference the item being replied to (example: `project_contact+%{key}@gmail.com`)                 | empty                                                          |
-| `global.appConfig.serviceDeskEmail.enabled`          | Enable service desk email                                                                                              | false                                                          |
+| `global.appConfig.serviceDeskEmail.enabled`          | Enable Service Desk email                                                                                              | false                                                          |
 | `global.appConfig.serviceDeskEmail.expungeDeleted`   | Whether to expunge (permanently remove) messages from the mailbox when they are marked as deleted after delivery       | false                                                          |
 | `global.appConfig.serviceDeskEmail.logger.logPath`   | Path to write JSON structured logs to; set to "" to disable this logging                                               | `/dev/stdout`                                                  |
 | `global.appConfig.serviceDeskEmail.inboxMethod`      | Read mail with IMAP (`imap`) or Microsoft Graph API with OAuth2 (`microsoft_graph`)                                    | `imap`                                                         |
-| `global.appConfig.serviceDeskEmail.deliveryMethod`   | How mailroom can send an email content to Rails app for processing. Either `sidekiq` or `webhook`                      | `sidekiq`                                                      |
-| `gitlab.appConfig.serviceDeskEmail.authToken.key`    | Key to service desk email token in service desk email secret. Effective when the delivery method is webhook.           | `authToken`                                                    |
+| `global.appConfig.serviceDeskEmail.deliveryMethod`   | How mailroom can send an email content to Rails app for processing. Either `sidekiq` or `webhook`                      | `webhook`                                                      |
+| `gitlab.appConfig.serviceDeskEmail.authToken.key`    | Key to Service Desk email token in Service Desk email secret. Effective when the delivery method is webhook.           | `authToken`                                                    |
 | `gitlab.appConfig.serviceDeskEmail.authToken.secret` | service-desk email authentication secret. Effective when the delivery method is webhook.                               | `{Release.Name}-service-desk-email-auth-token`                 |
 
 ### IMAP settings
@@ -150,7 +150,7 @@ must be `+%{key}`.
 |-----------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
 | `global.appConfig.serviceDeskEmail.host`            | Host for IMAP                                                                                          | empty      |
 | `global.appConfig.serviceDeskEmail.idleTimeout`     | The IDLE command timeout                                                                               | `60`       |
-| `global.appConfig.serviceDeskEmail.mailbox`         | Mailbox where service desk mail will end up.                                                           | `inbox`    |
+| `global.appConfig.serviceDeskEmail.mailbox`         | Mailbox where Service Desk mail will end up.                                                           | `inbox`    |
 | `global.appConfig.serviceDeskEmail.password.key`    | Key in `global.appConfig.serviceDeskEmail.password.secret` that contains the IMAP password             | `password` |
 | `global.appConfig.serviceDeskEmail.password.secret` | Name of a `Secret` containing the IMAP password                                                        | empty      |
 | `global.appConfig.serviceDeskEmail.port`            | Port for IMAP                                                                                          | `993`      |
@@ -452,6 +452,6 @@ for the exhaustive list of configuration options.
 
 ## Bringing your own images
 
-In certain scenarios (i.e. air-gapping), you may want to bring your own images rather than pulling them down from the Internet. This requires specifying your own Docker image registry/repository for each of the charts that make up the GitLab release.
+In certain scenarios (i.e. offline environment), you may want to bring your own images rather than pulling them down from the Internet. This requires specifying your own Docker image registry/repository for each of the charts that make up the GitLab release.
 
 Refer to the [custom images documentation](../advanced/custom-images/index.md) for more information.

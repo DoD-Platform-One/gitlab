@@ -81,6 +81,8 @@ function deploy() {
 
   # YAML_FILE=""${KUBE_INGRESS_BASE_DOMAIN//\./-}.yaml"
 
+  helm dependency update .
+
   WAIT="--wait --timeout 900s"
 
   # Only enable Prometheus on `master`

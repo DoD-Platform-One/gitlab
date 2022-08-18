@@ -159,6 +159,37 @@ describe 'Gitaly configuration' do
     end
   end
 
+  context 'With additional gitconfig' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            git:
+              config:
+              - {key: "pack.threads", value: "4"}
+              - {key: "fetch.fsckObjects", value: "false"}
+      )).deep_merge(default_values)
+    end
+
+    it 'populates [[git.config]] sections' do
+      t = HelmTemplate.new(values)
+      expect(t.exit_code).to eq(0)
+
+      config = t.dig('ConfigMap/test-gitaly', 'data', 'config.toml.erb')
+      expect(config).to include(
+        <<~CONFIG
+        [[git.config]]
+        key = "pack.threads"
+        value = "4"
+
+        [[git.config]]
+        key = "fetch.fsckObjects"
+        value = "false"
+        CONFIG
+      )
+    end
+  end
+
   context 'When customer provides additional labels' do
     let(:labeled_values) do
       YAML.safe_load(%(
@@ -289,6 +320,53 @@ describe 'Gitaly configuration' do
         config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.erb')
 
         expect(config_toml).not_to match /^\[pack_objects_cache\]/
+      end
+    end
+  end
+
+  context 'with extraVolumes' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            extraVolumes: |-
+             - name: #{volume_name}
+      )).deep_merge(default_values)
+    end
+
+    let(:template) { HelmTemplate.new(values) }
+
+    shared_examples 'a deprecated gitconfig volume' do
+      it 'fails due to gitconfig deprecation' do
+        expect(template.exit_code).not_to eq(0)
+        expect(template.stderr).to include("Gitaly have stopped reading `gitconfig`")
+      end
+    end
+
+    context 'with gitconfig volume' do
+      let(:volume_name) { "gitconfig" }
+
+      it_behaves_like 'a deprecated gitconfig volume'
+    end
+
+    context 'with git-config volume' do
+      let(:volume_name) { "git-config" }
+
+      it_behaves_like 'a deprecated gitconfig volume'
+    end
+
+    context 'with gitaly-gitconfig volume' do
+      let(:volume_name) { "gitaly-gitconfig" }
+
+      it_behaves_like 'a deprecated gitconfig volume'
+    end
+
+    context 'with gitaly-config volume' do
+      let(:volume_name) { "gitaly-config" }
+
+      it 'successfully renders the template' do
+        expect(template.exit_code).to eq(0)
+        expect(template.stderr).not_to include("Gitaly have stopped reading `gitconfig`")
       end
     end
   end

@@ -152,6 +152,16 @@ spec:
           {{-   include "gitlab.psql.secret" . | nindent 10 }}
           {{- end }}
           {{- include "gitlab.redis.secret" . | nindent 10 }}
+          {{ if .Values.tls.enabled }}
+          - secret:
+              name: {{ template "gitlab.gitlab-exporter.tls.secret" . }}
+              items:
+                - key: tls.crt
+                  path: "gitlab-exporter/tls.crt"
+                - key: tls.key
+                  path: "gitlab-exporter/tls.key"
+          {{- end }}
+
       - name: gitlab-exporter-secrets
         emptyDir:
           medium: "Memory"

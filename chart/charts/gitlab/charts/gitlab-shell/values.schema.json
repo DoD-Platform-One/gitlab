@@ -186,14 +186,47 @@
     },
     "hpa": {
       "properties": {
-        "targetAverageValue": {
-          "title": "Autoscaling target value",
-          "type": "string"
+        "cpu": {
+          "properties": {
+            "targetType": {
+              "title": "Autoscaling CPU target type",
+              "type": "string"
+            },
+            "targetAverageUtilization": {
+              "title": "Autoscaling CPU target utilization",
+              "type": "number"
+            },
+            "targetAverageValue": {
+              "title": "Autoscaling CPU target value",
+              "type": "string"
+            }
+          }
+        },
+        "memory": {
+          "properties": {
+            "targetType": {
+              "title": "Autoscaling memory target type",
+              "type": "string"
+            },
+            "targetAverageUtilization": {
+              "title": "Autoscaling memory target utilization",
+              "type": "number"
+            },
+            "targetAverageValue": {
+              "title": "Autoscaling memory target value",
+              "type": "string"
+            }
+          }
+        },
+        "customMetrics": {
+          "title": "Autoscaling custom metrics",
+          "type": "array"
+        },
+        "behavior": {
+          "title": "Autoscaling behavior definition",
+          "type": "object"
         }
       },
-      "required": [
-        "targetAverageValue"
-      ],
       "title": "Horizontal Pod Autoscaler settings",
       "type": "object"
     },
@@ -271,7 +304,10 @@
     },
     "maxUnavailable": {
       "title": "Maximum number of unavailable pods",
-      "type": "number"
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" }
+      ]
     },
     "minReplicas": {
       "title": "Minimum number of pod replicas",

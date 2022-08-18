@@ -89,6 +89,7 @@ the `helm install` command using the `--set` flags.
 | `packObjectsCache.dir`                    | `/home/git/repositories/+gitaly/PackObjectsCache` | Directory where cache files get stored                                                                                                                                         |
 | `packObjectsCache.max_age`                | `5m`                                              | Cache entries lifespan                                                                                                                                                         |
 | `git.catFileCacheSize`                    |                                                   | Cache size used by Git cat-file process                                                                                                                                        |
+| `git.config[]`                            | `[]`                                              | Git configuration that Gitaly should set when spawning Git commands                                                                                                            |
 | `prometheus.grpcLatencyBuckets`           |                                                   | Buckets corresponding to histogram latencies on GRPC method calls to be recorded by Gitaly. A string form of the array (for example, `"[1.0, 1.5, 2.0]"`) is required as input |
 | `statefulset.strategy`                    | `{}`                                              | Allows one to configure the update strategy utilized by the StatefulSet                                                                                                        |
 | `metrics.enabled`                         | `false`                                           | If a metrics endpoint should be made available for scraping                                                                                                                    |
@@ -205,6 +206,21 @@ Below is an example use of `priorityClassName`:
 
 ```yaml
 priorityClassName: persistence-enabled
+```
+
+### `git.config`
+
+`git.config` allows you to add configuration to all Git commands spawned by
+Gitaly. Accepts configuration as documented in `git-config(1)` in `key` /
+`value` pairs, as shown below.
+
+```yaml
+git:
+  config:
+    - key: "pack.threads"
+      value: 4
+    - key: "fsck.missingSpaceBeforeDate"
+      value: ignore
 ```
 
 ### Altering security contexts

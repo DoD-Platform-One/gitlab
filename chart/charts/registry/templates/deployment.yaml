@@ -121,7 +121,7 @@ spec:
           {{- include "gitlab.certificates.volumeMount" . | nindent 10 }}
           ports:
             - containerPort: {{ .Values.service.internalPort }}
-              name: http
+              name: {{ .Values.tls.enabled | ternary "https" "http" }}
           {{- with .Values.debug }}
             - containerPort: {{ .addr.port }}
               name: debug
@@ -214,6 +214,16 @@ spec:
           {{- end -}}
           {{- if .Values.migration.enabled -}}
           {{- include "gitlab.registry.notificationSecret.mount" $ | nindent 10 -}}
+          {{- end -}}
+          {{- if .Values.tls.enabled -}}
+          # TLS secret for HTTPS service
+          - secret:
+              name: {{ .Values.tls.secretName }}
+              items:
+                - key: tls.crt
+                  path: tls/tls.crt
+                - key: tls.key
+                  path: tls/tls.key
           {{- end -}}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
 {{- end -}}

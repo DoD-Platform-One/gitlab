@@ -27,6 +27,7 @@ spec:
         {{- include "gitlab.commonLabels" . | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       {{- if and .Values.metrics.enabled (not .Values.metrics.serviceMonitor.enabled) }}
         gitlab.com/prometheus_scrape: "true"
@@ -47,8 +48,8 @@ spec:
       {{- end }}
       {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
-      automountServiceAccountToken: false
       {{- end }}
+      automountServiceAccountToken: false
       {{- if eq (default .Values.global.antiAffinity .antiAffinity) "hard" }}
       affinity:
         podAntiAffinity:

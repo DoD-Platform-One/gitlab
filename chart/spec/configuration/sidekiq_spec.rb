@@ -205,6 +205,29 @@ describe 'Sidekiq configuration' do
           )
         end
       end
+
+      context 'when TLS support is enabled' do
+        let(:values) do
+          YAML.safe_load(%(
+            gitlab:
+              sidekiq:
+                metrics:
+                  enabled: true
+                  tls:
+                    enabled: true
+          )).deep_merge(default_values)
+        end
+        let(:tls_cert_path) { '/etc/gitlab/sidekiq-metrics/sidekiq-metrics.crt' }
+        let(:tls_key_path) { '/etc/gitlab/sidekiq-metrics/sidekiq-metrics.key' }
+
+        it 'populates the gitlab.yml.erb sidekiq_exporter tls settings' do
+          expect(monitoring['sidekiq_exporter']).to include(
+            'tls_enabled' => true,
+            'tls_cert_path' => tls_cert_path.to_s,
+            'tls_key_path' => tls_key_path.to_s
+          )
+        end
+      end
     end
 
     context 'sidekiq_health_checks' do

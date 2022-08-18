@@ -810,6 +810,7 @@ defaultBackend:
     maxReplicas: 2
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 50
+    behavior: {}
 
   service:
     annotations: {}

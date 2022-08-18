@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.48.0-gitlab'
+    tag: 'v3.51.1-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -90,6 +90,9 @@ registry:
     maxReplicas: 10
     cpu:
       targetAverageUtilization: 75
+    behavior:
+      scaleDown:
+        stabilizationWindowSeconds: 300
   storage:
     secret:
     key: storage
@@ -125,6 +128,11 @@ registry:
     ingress:
       enabled: false
       rules: []
+  tls:
+    enabled: false
+    secretName:
+    verify: true 
+    caSecretName:
 ```
 
 If you chose to deploy this chart as a standalone, remove the `registry` at the top level.
@@ -153,16 +161,22 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `draintimeout`                                                                                                                               | `'0'`                                                                          | Amount of time to wait for HTTP connections to drain after receiving a SIGTERM signal (e.g. `'10s'`)                                                                                                                                                                                                                                         |
 | `relativeurls`                                                                                                                               | `false`                                                                        | Enable the registry to return relative URLs in Location headers.                                                                                                                                                                                                                                                                             |
 | `enabled`                                                                                                                                    | `true`                                                                         | Enable registry flag                                                                                                                                                                                                                                                                                                                         |
-| `hpa.cpu.targetAverageUtilization`                                                                                                           | `75`                                                                           | Target value of the average of the resource metric across all relevant pods which governs the HPA                                                                                                                                                                                                                                            |
-| `hpa.customMetrics`                                                                                                                          | `[]`                                                                           | autoscaling/v2beta1 Metrics contains the specifications for which to use to calculate the desired replica count (overrides the default use of Average CPU Utilization configured in `targetAverageUtilization`)                                                                                                                              |
+| `hpa.behavior`                                                                                                                               | `{scaleDown: {stabilizationWindowSeconds: 300 }}`                              | Behavior contains the specifications for up- and downscaling behavior (requires `autoscaling/v2beta2` or higher)                                                                                                                                                                                                                             |
+| `hpa.customMetrics`                                                                                                                          | `[]`                                                                           | Custom metrics contains the specifications for which to use to calculate the desired replica count (overrides the default use of Average CPU Utilization configured in `targetAverageUtilization`)                                                                                                                                           |
+| `hpa.cpu.targetType`                                                                                                                         | `Utilization`                                                                  | Set the autoscaling CPU target type, must be either `Utilization` or `AverageValue`                                                                                                                                                                                                                                                          |
+| `hpa.cpu.targetAverageValue`                                                                                                                 |                                                                                | Set the autoscaling CPU target value                                                                                                                                                                                                                                                                                                         |
+| `hpa.cpu.targetAverageUtilization`                                                                                                           | `75`                                                                           | Set the autoscaling CPU target utilization                                                                                                                                                                                                                                                                                                   |
+| `hpa.memory.targetType`                                                                                                                      |                                                                                | Set the autoscaling memory target type, must be either `Utilization` or `AverageValue`                                                                                                                                                                                                                                                       |
+| `hpa.memory.targetAverageValue`                                                                                                              |                                                                                | Set the autoscaling memory target value                                                                                                                                                                                                                                                                                                      |
+| `hpa.memory.targetAverageUtilization`                                                                                                        |                                                                                | Set the autoscaling memory target utilization                                                                                                                                                                                                                                                                                                |
 | `hpa.minReplicas`                                                                                                                            | `2`                                                                            | Minimum number of replicas                                                                                                                                                                                                                                                                                                                   |
 | `hpa.maxReplicas`                                                                                                                            | `10`                                                                           | Maximum number of replicas                                                                                                                                                                                                                                                                                                                   |
 | `httpSecret`                                                                                                                                 |                                                                                | Https secret                                                                                                                                                                                                                                                                                                                                 |
-| `extraEnvFrom`      |  | List of extra environment variables from other data sources to expose          |
+| `extraEnvFrom`                                                                                                                               |                                                                                | List of extra environment variables from other data sources to expose                                                                                                                                                                                                                                                                        |
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.48.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.51.1-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
 | `log`                                                                                                                                        | `{level: info, fields: {service: registry}}`                                   | Configure the logging options                                                                                                                                                                                                                                                                                                                |
@@ -298,7 +312,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.48.0-gitlab'`
+- `tag: 'v3.51.1-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -329,6 +343,44 @@ This section controls the registry Ingress.
 | `enabled`              | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used.                                                                                    |
 | `tls.enabled`          | Boolean | `true`  | When set to `false`, you disable TLS for the Registry subchart. This is mainly useful for cases in which you cannot use TLS termination at `ingress-level`, like when you have a TLS-terminating proxy before the Ingress Controller. |
 | `tls.secretName`       | String  |         | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry URL. When not set, the `global.ingress.tls.secretName` is used instead. Defaults to not being set.                                   |
+
+## Configuring TLS
+
+Registry supports TLS. This will secure its communication with other components,
+including `nginx-ingress`. The TLS certificate should include the Registry
+Service host name (e.g. `RELEASE-registry.default.svc`) in the Common
+Name (CN) or Subject Alternate Name (SAN).
+
+Once the TLS certificate is generated, create a [Kubernetes TLS Secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets)
+for it. You also need to create another Secret that only contains the CA
+certificate of the TLS certificate with `ca.crt` key.
+
+TLS can be enabled for by setting `registry.tls.enabled` to `true`. You also
+need to tell other components that Registry is using HTTPS by setting
+`global.hosts.registry.protocol` to `https`. You also need to pass the Secret
+names to `registry.tls.secretName` and `global.certificates.customCAs` accordingly.
+
+When `registry.tls.verify` is `true`, you need to pass the CA certificate Secret
+name to `registry.tls.caSecretName`. This is necessary for self-signed
+certificates and custom CA. This Secret is used by NGINX to verify the TLS
+certificate of Registry.
+
+```yaml
+global:
+  certificates:
+    customCAs:
+    - secret: registry-tls-ca
+  hosts:
+    registry:
+      protocol: https
+
+registry:
+  tls:
+    enabled: true
+    secretName: registry-tls
+    verify: true
+    caSecretName: registry-tls-ca
+```
 
 ## Configuring the `networkpolicy`
 
@@ -613,6 +665,17 @@ kubectl create secret generic registry-storage \
 kubectl create secret generic registry-storage \
     --from-file=config=registry-storage.yaml \
     --from-file=gcs.json=example-project-382839-gcs-bucket.json
+```
+
+You can [disable the redirect for the storage driver](https://docs.gitlab.com/ee/administration/packages/container_registry.html#disable-redirect-for-storage-driver),
+ensuring that all traffic flows through the Registry service instead of redirecting to another backend:
+
+```yaml
+storage:
+  secret: example-secret
+  key: config
+  redirect:
+    disable: true
 ```
 
 If you chose to use the `filesystem` driver:

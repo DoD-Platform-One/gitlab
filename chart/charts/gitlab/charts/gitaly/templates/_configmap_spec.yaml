@@ -104,9 +104,18 @@ data:
 
     [git]
     use_bundled_binaries = true
+    ignore_gitconfig = true
     {{- with .Values.git }}
     {{-   if .catFileCacheSize }}
     catfile_cache_size = {{ .catFileCacheSize }}
+    {{-   end }}
+    {{- end }}
+    {{- if .Values.git.config }}
+    {{-   range .Values.git.config }}
+
+    [[git.config]]
+    key = "{{ .key }}"
+    value = "{{ .value }}"
     {{-   end }}
     {{- end }}
 
@@ -144,7 +153,6 @@ data:
     # password = somepass
     # ca_file = /etc/ssl/cert.pem
     # ca_path = /etc/pki/tls/certs
-    self_signed_cert = false
 
     [hooks]
     # directory containing custom hooks

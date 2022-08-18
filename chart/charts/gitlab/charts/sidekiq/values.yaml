@@ -52,6 +52,9 @@ metrics:
     endpointConfig: {}
   # DEPRECATED
   annotations: {}
+  tls:
+    enabled: false
+    # secretName:
 
 health_checks:
   port: 3808
@@ -252,7 +255,21 @@ deployment:
   terminationGracePeriodSeconds: 30
 
 hpa:
-  targetAverageValue: 350m
+  # targetAverageValue: 350m  # DEPRECATED: in favor of `hpa.cpu.targetAverageValue` below
+  cpu:
+    targetType: AverageValue  # Utilization or AverageValue
+    targetAverageValue: 350m
+    # targetAverageUtilization: 75
+  # memory:
+  #   targetType: Utilization  # Utilization or AverageValue
+  #   targetAverageValue: 1G
+  #   targetAverageUtilization: 75
+  # Note that the HPA is limited to autoscaling/v2beta1, autoscaling/v2beta2 and autoscaling/v2
+  customMetrics: []  # Overrides HPA metrics definition
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+
 timeout: 25
 resources:
   # limits:
@@ -279,7 +296,18 @@ pods:
     # extraVolumeMounts
     # priorityClassName: ""
     # hpa:
-    #   targetAverageValue:
+    #   cpu:
+    #     targetType: AverageValue
+    #     targetAverageValue:
+    #     targetAverageUtilization:
+    #   memory:
+    #     targetType: AverageValue
+    #     targetAverageValue:
+    #     targetAverageUtilization:
+    #   customMetrics: []
+    #   behavior:
+    #     scaleDown:
+    #       stabilizationWindowSeconds:
     # common:
     #   labels: {}
     # podLabels: {}
