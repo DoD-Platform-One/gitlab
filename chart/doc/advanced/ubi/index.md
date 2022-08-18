@@ -24,7 +24,6 @@ The services that must be disabled and provided externally are:
 The services must be disabled are:
 
 - CertManager (Let's Encrypt integration)
-- NGINX Ingress
 - Prometheus
 - Grafana
 - GitLab Runner

@@ -212,6 +212,15 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
 - comment the ```charts/*.tgz```
 - comment the ```requirements.lock```
 
+## chart/requirements.yaml
+- Add gluon dependency to the end of the list
+```
+- name: gluon
+  version: "0.2.10"
+  repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
+```
+
+
 ## chart/values.yaml
 - disable all internal services other than postgres, minio, and redis
 - add BigBang additional values at bottom of values.yaml

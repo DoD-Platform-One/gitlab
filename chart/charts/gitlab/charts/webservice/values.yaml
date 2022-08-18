@@ -60,6 +60,9 @@ metrics:
   enabled: true
   port: 8083
   path: /metrics
+  tls:
+    enabled: false
+    # secretName:
   serviceMonitor:
     enabled: false
     additionalLabels: {}
@@ -121,8 +124,20 @@ puma:
   # workerMaxMemory: 1024 # in MB units
 
 hpa:
-  targetAverageValue: 1
-  customMetrics: # optional replacement of HPA metrics definition
+  # targetAverageValue: 1  # DEPRECATED: in favor of `hpa.cpu.targetAverageValue` below
+  cpu:
+    targetType: AverageValue  # Utilization or AverageValue
+    targetAverageValue: 1
+    # targetAverageUtilization: 75
+  # memory:
+  #   targetType: Utilization  # Utilization or AverageValue
+  #   targetAverageValue: 1G
+  #   targetAverageUtilization: 75
+  # Note that the HPA is limited to autoscaling/v2beta1, autoscaling/v2beta2 and autoscaling/v2
+  customMetrics: []  # Overrides HPA metrics definition
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
 
 deployment:
   # terminationGracePeriodSeconds: 30
@@ -174,6 +189,7 @@ workhorse:
     exporter:
       enabled: false
       port: 9229
+      tls: {}
   metrics:
     enabled: false
     port: 9229
@@ -185,6 +201,10 @@ workhorse:
   imageScaler:
     maxProcs: 2 # aim for max(2, requested_cpus / 2)
     maxFileSizeBytes: 250000
+  tls: {}
+    # verify: true
+    # secretName:
+    # caSecretName:
 
 psql: {}
   # port: 5432
@@ -320,6 +340,9 @@ global:
       dsn:
       clientside_dsn:
       environment:
+    gitlab_docs:
+      enabled: false
+      host: ""
 
 redis:
   password: {}

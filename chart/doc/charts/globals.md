@@ -113,6 +113,14 @@ global:
     hostSuffix: staging
 ```
 
+## Configure Horizontal Pod Autoscaler settings
+
+The GitLab global host settings for HPA are located under the `global.hpa` key:
+
+| Name         | Type      | Default | Description                                                           |
+| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
+| `apiVersion` | String    |         | API version to use in the HorizontalPodAutoscaler object definitions. |
+
 ## Configure Ingress settings
 
 The GitLab global host settings for Ingress are located under the `global.ingress` key:
@@ -900,7 +908,7 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
-      deliveryMethod: sidekiq
+      deliveryMethod: webhook
       authToken: {}
 
     serviceDeskEmail:
@@ -920,7 +928,7 @@ global:
       clientSecret:
         key: secret
       pollInterval: 60
-      deliveryMethod: sidekiq
+      deliveryMethod: webhook
       authToken: {}
 
     cron_jobs: {}
@@ -929,6 +937,9 @@ global:
       dsn:
       clientside_dsn:
       environment:
+    gitlab_docs:
+      enabled: false
+      host: ""
     smartcard:
       enabled: false
       CASecret:
@@ -1515,6 +1526,23 @@ global:
 | `clientside_dsn` | String  |        | Sentry DSN for front-end errors |
 | `environment`    | String  |        | See [Sentry environments](https://docs.sentry.io/product/sentry-basics/environments/) |
 
+### gitlab_docs settings
+
+Use these settings to enable `gitlab_docs`.
+
+```yaml
+global:
+  appConfig:
+    gitlab_docs:
+      enabled:
+      host:
+```
+
+| Name        | Type    | Default | Description |
+|:----------- |:-------:|:------- |:----------- |
+| `enabled`         | Boolean | `false`  | Enable or Disable the gitlab_docs |
+| `host`            | String  |  ""        | docs host                       |
+
 ### Smartcard Authentication settings
 
 ```yaml
@@ -1602,6 +1630,7 @@ global:
 | scheme | String | `http` | Scheme of the API endpoint |
 | host | String | | Fully qualified hostname or IP address of an API endpoint. Overrides the presence of `serviceName`. |
 | port | Integer | `8181` | Port number of associated API server. |
+| tls.enabled | Boolean | `false` | When set to `true`, enables TLS support for Workhorse. |
 
 ### Bootsnap Cache
 

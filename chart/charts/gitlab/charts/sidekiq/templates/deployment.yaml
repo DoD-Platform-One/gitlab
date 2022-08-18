@@ -61,6 +61,10 @@ spec:
       {{- if $.Values.metrics.annotations }}
         {{- toYaml $.Values.metrics.annotations | nindent 8 }}
       {{- else }}
+        {{- if $.Values.metrics.tls.enabled }}
+        gitlab.com/prometheus_scheme: "https"
+        prometheus.io/scheme: "https"
+        {{- end }}
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: {{ $metricsPort | quote }}
         gitlab.com/prometheus_path: {{ $metricsPath }}
@@ -299,6 +303,15 @@ spec:
               items:
                 - key: secrets.yml
                   path: rails-secrets/secrets.yml
+          {{- if $.Values.metrics.tls.enabled }}
+          - secret:
+              name: {{ template "sidekiq-metrics.tls.secret" $ }}
+              items:
+                - key: "tls.crt"
+                  path: "sidekiq-metrics/sidekiq-metrics.crt"
+                - key: "tls.key"
+                  path: "sidekiq-metrics/sidekiq-metrics.key"
+          {{- end }}
           {{- include "gitlab.gitaly.clientSecrets" $ | nindent 10 }}
           {{- include "gitlab.redis.secrets" $ | nindent 10 }}
           {{- range $.Values.local.psql }}

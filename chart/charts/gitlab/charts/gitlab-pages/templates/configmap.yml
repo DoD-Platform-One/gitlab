@@ -67,6 +67,10 @@ data:
     api-secret-key=/etc/gitlab-secrets/pages/secret
     {{- if and .Values.metrics.enabled .Values.metrics.port }}
     metrics-address=:{{ .Values.metrics.port | int }}
+    {{-   if .Values.metrics.tls.enabled }}
+    metrics-certificate=/etc/gitlab-secrets/pages-metrics/pages-metrics.crt
+    metrics-key=/etc/gitlab-secrets/pages-metrics/pages-metrics.key
+    {{-   end }}
     {{- end }}
     {{- if .Values.maxConnections }}
     max-conns={{ .Values.maxConnections }}
@@ -162,3 +166,8 @@ data:
     {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}
+    {{- if $.Values.metrics.tls.enabled }}
+      mkdir -p /init-secrets/pages-metrics
+      cp -v -L /init-config/pages-metrics/pages-metrics.crt /init-secrets/pages-metrics/pages-metrics.crt
+      cp -v -L /init-config/pages-metrics/pages-metrics.key /init-secrets/pages-metrics/pages-metrics.key
+    {{- end }}

@@ -21,7 +21,7 @@ then it's probably because you didn't follow the right upgrade path, as you firs
 
     ```shell
     helm history gitlab
-    ``` 
+    ```
 
 1. Assuming your most recent successful revision is `1` use this command to roll back:
 

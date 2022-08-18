@@ -16,6 +16,9 @@
   - name: etc-ssl-certs
     mountPath: /etc/ssl/certs
     readOnly: false
+  - name: etc-pki-ca-trust-extracted-pem
+    mountPath: /etc/pki/ca-trust/extracted/pem
+    readOnly: false
 {{- if or $customCAsEnabled (or $certmanagerDisabled $internalGitalyTLSEnabled $internalPraefectTLSEnabled) }}
   - name: custom-ca-certificates
     mountPath: /usr/local/share/ca-certificates
@@ -31,6 +34,9 @@
 {{- $internalPraefectTLSEnabled := and $.Values.global.praefect.tls.enabled $.Values.global.praefect.tls.secretName }}
 {{- $certmanagerDisabled := not (or $.Values.global.ingress.configureCertmanager $.Values.global.ingress.tls) }}
 - name: etc-ssl-certs
+  emptyDir:
+    medium: "Memory"
+- name: etc-pki-ca-trust-extracted-pem
   emptyDir:
     medium: "Memory"
 {{- if or $customCAsEnabled (or $certmanagerDisabled $internalGitalyTLSEnabled $internalPraefectTLSEnabled) }}
@@ -84,5 +90,8 @@
 - name: etc-ssl-certs
   mountPath: /etc/pki/tls/cert.pem
   subPath: ca-bundle.crt
+  readOnly: true
+- name: etc-pki-ca-trust-extracted-pem
+  mountPath: /etc/pki/ca-trust/extracted/pem
   readOnly: true
 {{- end -}}

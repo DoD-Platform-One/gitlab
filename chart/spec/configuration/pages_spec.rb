@@ -563,6 +563,27 @@ describe 'GitLab Pages' do
           expect(config_data).to eq default_content
         end
       end
+
+      context 'when metrics TLS support is enabled' do
+        let(:pages_enabled_values) do
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+            gitlab:
+              gitlab-pages:
+                metrics:
+                  enabled: true
+                  tls:
+                    enabled: true
+          ))
+        end
+
+        it 'populates the config.tpl pages metrics tls settings' do
+          expect(config_data).to include('metrics-certificate=/etc/gitlab-secrets/pages-metrics/pages-metrics.crt')
+          expect(config_data).to include('metrics-key=/etc/gitlab-secrets/pages-metrics/pages-metrics.key')
+        end
+      end
     end
 
     describe 'customDomains' do

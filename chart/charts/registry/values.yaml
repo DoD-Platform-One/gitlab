@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.48.0-gitlab'
+  tag: 'v3.51.1-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -188,6 +188,12 @@ init:
       chmod 700 /registry/ssl
       chmod 600 /registry/ssl/*.pem
     fi
+    # Copy TLS certificates if present
+    if [ -d /config/tls ]; then
+      cp -r /config/tls/ /registry/tls
+      chmod 700 /registry/tls
+      chmod 600 /registry/tls/tls.*
+    fi
 
 # define some sane resource requests and limitations
 resources:
@@ -223,10 +229,18 @@ hpa:
   minReplicas: 2
   maxReplicas: 10
   cpu:
+    targetType: Utilization  # Utilization or AverageValue
+    # targetAverageValue: 1
     targetAverageUtilization: 75
-
-  # Note that the HPA is limited to autoscaling/v2beta1
-  customMetrics: []
+  # memory:
+  #   targetType: Utilization  # Utilization or AverageValue
+  #   targetAverageValue: 1G
+  #   targetAverageUtilization: 75
+  # Note that the HPA is limited to autoscaling/v2beta1, autoscaling/v2beta2 and autoscaling/v2
+  customMetrics: []  # Overrides HPA metrics definition
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
 
 storage: {}
 # secret:
@@ -366,3 +380,15 @@ migration:
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc
 gc:
   disabled: true
+
+
+## Configure TLS on the instance itself
+## WARNING: All clients must trust the certificate used for service.
+tls:
+  enabled: false
+  secretName: # Kubernetes secret, type kubernetes.io/tls
+  clientCAs: []
+  minimumTLS: "tls1.2"
+  # NGINX Ingress related
+  verify: true
+  caSecretName: # Kubernetes secret, type Opaque, with `ca.crt` key

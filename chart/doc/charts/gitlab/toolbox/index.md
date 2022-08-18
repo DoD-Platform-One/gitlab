@@ -131,7 +131,7 @@ The persistent stores for backups and restorations are configured separately.
 Please review the following considerations when configuring GitLab for
 backup and restore operations.
 
-Backups use the `backup.cron.persistence.*` properties and restorations
+Backups use the `backups.cron.persistence.*` properties and restorations
 use the `persistence.*` properties. Further descriptions concerning the
 configuration of a persistence store will use just the final property key
 (e.g. `.enabled` or `.size`) and the appropriate prefix will need to be
@@ -164,7 +164,7 @@ object store. The amount of disk space depends on the following factors:
 - Size of the PostgresSQL database (issues, MRs, etc.)
 - Size of each object store backend
 
-Once the rough size has been determined, the `backup.cron.persistence.size`
+Once the rough size has been determined, the `backups.cron.persistence.size`
 property can be set so that backups can commence.
 
 ### Restore considerations

@@ -8,7 +8,8 @@ gitlab:
     maxUnavailable: 10
     minReplicas: 15
     hpa:
-      targetAverageValue: 1600m
+      cpu:
+        targetAverageValue: 1600m
     ingress:
       proxyBodySize: 0 # To allow large file uploads like imports
     nodeSelector:
@@ -24,7 +25,8 @@ gitlab:
     maxReplicas: 14
     minReplicas: 10
     hpa:
-      targetAverageValue: 700m
+      cpu:
+        targetAverageValue: 700m
     nodeSelector:
       workload: sidekiq
     resources:

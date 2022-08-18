@@ -114,17 +114,27 @@ data:
         ip_whitelist:
           - 127.0.0.0/8
         sidekiq_exporter:
-{{- if .Values.metrics.enabled }}
+        {{- if .Values.metrics.enabled }}
           enabled: true
           address: 0.0.0.0
           port: {{ .Values.metrics.port }}
-{{- end }}
+        {{-   if $.Values.metrics.tls.enabled }}
+          tls_enabled: true
+          tls_cert_path: "/etc/gitlab/sidekiq-metrics/sidekiq-metrics.crt"
+          tls_key_path: "/etc/gitlab/sidekiq-metrics/sidekiq-metrics.key"
+        {{-   end }}
+        {{- end }}
         sidekiq_health_checks:
           enabled: true
           address: 0.0.0.0
           port: {{ .Values.health_checks.port }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "gitaly registry rails-secrets") | nindent 4 -}}
+    {{- if $.Values.metrics.tls.enabled }}
+      mkdir -p /init-secrets/sidekiq-metrics
+      cp -v -L /init-config/sidekiq-metrics/sidekiq-metrics.crt /init-secrets/sidekiq-metrics/sidekiq-metrics.crt
+      cp -v -L /init-config/sidekiq-metrics/sidekiq-metrics.key /init-secrets/sidekiq-metrics/sidekiq-metrics.key
+    {{- end }}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}
     {{- include "gitlab.geo.psql.ssl.initScript" . | nindent 4 }}
 # Leave this here - This line denotes end of block to the parser.

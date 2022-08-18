@@ -23,8 +23,12 @@ metrics:
     endpointConfig: {}
   # DEPRECATED
   annotations: {}
-    
+
 enabled: true
+
+tls:
+  enabled: false
+  # secretName:
 
 # Tolerations for pod scheduling
 tolerations: []

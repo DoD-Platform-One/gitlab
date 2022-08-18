@@ -22,9 +22,6 @@ data:
 
     secret_file: /etc/gitlab-secrets/shell/.gitlab_shell_secret
 
-    http_settings:
-      self_signed_cert: false
-
     # File used as authorized_keys for gitlab user
     auth_file: "/home/git/.ssh/authorized_keys"
 

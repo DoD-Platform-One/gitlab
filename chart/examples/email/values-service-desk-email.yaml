@@ -15,7 +15,7 @@ global:
         secret: my-incoming-mail-secret
         key: secret
       mailbox: inbox
-      deliveryMethod: sidekiq
+      deliveryMethod: webhook
       authToken: {}
     serviceDeskEmail:
       enabled: true
@@ -30,5 +30,5 @@ global:
         secret: my-service-desk-email-secret
         key: secret
       mailbox: inbox
-      deliveryMethod: sidekiq
+      deliveryMethod: webhook
       authToken: {}

@@ -20,7 +20,11 @@ redis:
   install: false
 
 nginx-ingress:
-  enabled: false
+  controller:
+    image:
+      repository: registry.gitlab.com/gitlab-org/cloud-native/charts/gitlab-ingress-nginx/controller
+      tag: v1.2.1-ubi8
+      digest: sha256:44233b030d0d4d2c1d2e59d5695489cb56bb912161342d3c7f5cb1ef046173cd
 
 prometheus:
   install: false

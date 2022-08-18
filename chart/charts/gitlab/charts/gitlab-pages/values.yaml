@@ -12,8 +12,20 @@ global:
 hpa:
   maxReplicas: 10
   minReplicas: 1
-  targetAverageValue: 100m
-  customMetrics: []
+  # targetAverageValue: 100m  # DEPRECATED: in favor of `hpa.cpu.targetAverageValue` below
+  cpu:
+    targetType: AverageValue  # Utilization or AverageValue
+    targetAverageValue: 100m
+    # targetAverageUtilization: 75
+  # memory:
+  #   targetType: Utilization  # Utilization or AverageValue
+  #   targetAverageValue: 1G
+  #   targetAverageUtilization: 75
+  # Note that the HPA is limited to autoscaling/v2beta1, autoscaling/v2beta2 and autoscaling/v2
+  customMetrics: []  # Overrides HPA metrics definition
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
 
 networkpolicy:
   enabled: false
@@ -172,6 +184,9 @@ metrics:
   enabled: true
   port: 9235
   path: /metrics
+  tls:
+    enabled: false
+    # secretName:
   serviceMonitor:
     enabled: false
     additionalLabels: {}

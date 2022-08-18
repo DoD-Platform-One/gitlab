@@ -176,6 +176,104 @@ prometheus:
       size: 8Gi
 ```
 
+#### Configuring Prometheus to scrape TLS-enabled endpoints
+
+Prometheus can be configured to scrape metrics from TLS-enabled endpoints if
+the given exporter allows for TLS and the chart configuration exposes a TLS
+configuration for the exporter's endpoint.
+
+There a few caveats when using TLS and [Kubernetes Service Discovery](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
+for the Prometheus [scrape configurations](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config):
+
+- With the [pod](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#pod)
+and [service endpoints](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#endpoints)
+discovery roles - Prometheus uses the internal IP address of the Pod to set
+the address of the scrape target. To verify the SSL certificate, Prometheus
+needs to be configured with either the Common Name (CN) set in the certificate
+created for the metrics endpoint, or configured with a name included
+in the Subject Alternative Name (SAN) extension. The name does not have to
+resolve, and can be any arbitrary string that is a [valid DNS name](https://datatracker.ietf.org/doc/html/rfc1034#section-3.1).
+- If the certificate used for the exporter's endpoint is self-signed or
+otherwise not present in the Prometheus base image - the Prometheus pod
+needs to mount a certificate for the Certificate Authority (CA) that signed the
+certificate used for the exporter's endpoint. Prometheus uses a `ca-bundle` from
+Debian [in its base image](https://github.com/prometheus/busybox).
+- Prometheus supports setting both of these items using a [tls_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tls_config)
+which is applied to each of the scrape configurations. While Prometheus has
+a robust [relabel_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
+mechanism for setting Prometheus target labels based on Pod annotations and other
+discovered attributes, setting the `tls_config.server_name` and
+`tls_config.ca_file` is not possible using the `relabel_config`. See this
+[Prometheus project issue](https://github.com/prometheus/prometheus/issues/4827)
+for more details.
+
+Given these caveats, the simplest configuration is to share a "name" and CA
+across all certificates used for the exporter endpoints:
+
+1. Choose a single arbitrary name to use for the `tls_config.server_name` (for example,
+`metrics.gitlab`).
+1. Add that name to the SAN list for each certificate used to TLS encrypt
+the exporter endpoints.
+1. Issue all certificates from the same CA:
+   - Add the CA certificate as a cluster secret.
+   - Mount that secret into the Prometheus server container using the
+     [Prometheus chart's](https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus/values.yaml)
+     `extraSecretMounts:` configuration.
+   - Set that as the `tls_config.ca_file` for the Prometheus `scrape_config`.
+
+The [Prometheus TLS values example](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/prometheus/values-tls.yaml)
+provides an example for this shared configuration by:
+
+1. Setting `tls_config.server_name` to `metrics.gitlab` for the pod/endpoint
+`scrape_config` roles.
+1. Assuming that `metrics.gitlab` has been added to the SAN list for every
+certificate used for the exporter endpoint.
+1. Assuming that the CA certificate has been added to a secret named
+`metrics.gitlab.tls-ca` with a secret key also named `metrics.gitlab.tls-ca`
+created in the same namespace that the Prometheus chart has been deployed
+to (for example, `kubectl create secret generic --namespace=gitlab metrics.gitlab.tls-ca --from-file=metrics.gitlab.tls-ca=./ca.pem`).
+1. Mounting that `metrics.gitlab.tls-ca` secret to
+`/etc/ssl/certs/metrics.gitlab.tls-ca` using an `extraSecretMounts:` entry.
+1. Setting `tls_config.ca_file` to `/etc/ssl/certs/metrics.gitlab.tls-ca`.
+
+#### Exporter endpoints
+
+Not all of the metrics endpoints included in the Chart support TLS.
+If the endpoint can be and is TLS-enabled they will also set the
+`gitlab.com/prometheus_scheme: "https"` annotation, as well as the
+`prometheus.io/scheme: "https"` annotation, either of which can be used with a
+`relabel_config` to set the Prometheus `__scheme__` target label.
+The [Prometheus TLS values example](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/prometheus/values-tls.yaml)
+includes a `relabel_config` that targets `__scheme__` using the
+`gitlab.com/prometheus_scheme: "https"` annotation.
+
+The following table lists the Deployments (or when using either or both of Gitaly and Praefect:
+StatefulSets) and Service endpoints that have the
+`gitlab.com/prometheus_scrape: true` annotation applied.
+
+In the documentation links below, if the component mentions adding SAN entries,
+please make sure that you also add the SAN that you decided on using for the
+Prometheus `tls_config.server_name`.
+
+| Service | Metrics Port(default) | Supports TLS? | Notes/Docs/Issue |
+| ---     | ---                   | ---           | ---              |
+| [Gitaly](../charts/gitlab/gitaly/index.md)                   | 9236  | YES | Enabled using `global.gitaly.tls.enabled=true` <br>Default Secret: `RELEASE-gitaly-tls` <br>[Docs: Running Gitaly over TLS](../charts/gitlab/gitaly/index.md#running-gitaly-over-tls) |
+| [GitLab Exporter](../charts/gitlab/gitlab-exporter/index.md) | 9168  | YES | Enabled using `gitlab.gitlab-exporter.tls.enabled=true` <br>Default Secret: `RELEASE-gitlab-exporter-tls` |
+| [GitLab Pages](../charts/gitlab/gitlab-pages/index.md)       | 9235  | YES | Enabled using `gitlab.gitlab-pages.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-pages-metrics-tls` <br>[Docs: General settings](../charts/gitlab/gitlab-pages/index.md#general-settings) |
+| [GitLab Runner](../charts/gitlab/gitlab-runner/index.md)     | 9252  | NO  | [Issue - Add TLS Support for Metrics Endpoint](https://gitlab.com/gitlab-org/gitlab-runner/-/issues/29176) |
+| [GitLab Shell](../charts/gitlab/gitlab-shell/index.md)       | 9122  | NO  | The GitLab Shell metrics exporter is only enabled when using [`gitlab-sshd`](https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh). OpenSSH is recommended for environments that require TLS |
+| [KAS](../charts/gitlab/kas/index.md)                         | 8151  | NO  | [Issue - Add TLS Support for Metrics Endpoint](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent/-/issues/288) |
+| [Praefect](../charts/gitlab/praefect/index.md)               | 9236  | YES | Enabled using `global.praefect.tls.enabled=true` <br>Default Secret: `RELEASE-praefect-tls` <br>[Docs: Running Praefect over TLS](../charts/gitlab/praefect/index.md#running-praefect-over-tls) |
+| [Registry](../charts/registry/index.md)                      | 5100  | NO  | [Issue - Add support of TLS on `http.debug`](https://gitlab.com/gitlab-org/container-registry/-/issues/729) |
+| [Sidekiq](../charts/gitlab/sidekiq/index.md)                 | 3807  | YES | Enabled using `gitlab.sidekiq.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-sidekiq-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/sidekiq/index.md#installation-command-line-options) |
+| [Webservice](../charts/gitlab/sidekiq/index.md)              | 8083  | YES | Enabled using `gitlab.webservice.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-webservice-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/webservice/index.md#installation-command-line-options) |
+| [Ingress-NGINX](../charts/nginx/index.md)                    | 10254 | NO  | Does not support TLS on metrics/healthcheck port |
+
+For the webservice pod, the exposed port is the standalone webrick exporter in
+the webservice container. The workhorse container port is not scraped. See the
+[Webservice Metrics documentation](../charts/gitlab/webservice/index.md#metrics)
+for additional details.
+
 ### Outgoing email
 
 By default outgoing email is disabled. To enable it, provide details for your SMTP server
@@ -193,7 +291,7 @@ is blocked](https://cloud.google.com/compute/docs/tutorials/sending-mail/#using_
 
 The configuration of incoming email is now documented in the [mailroom chart](../charts/gitlab/mailroom/index.md#incoming-email).
 
-### Service desk email
+### Service Desk email
 
 The configuration of incoming email is now documented in the [mailroom chart](../charts/gitlab/mailroom/index.md#service-desk-email).
 
@@ -289,3 +387,7 @@ By default, the Helm charts use the Enterprise Edition of GitLab. The Enterprise
 ```shell
 --set global.edition=ce
 ```
+
+## Install the product documentation
+
+This is an optional step. See how to [self-host the product documentation](https://docs.gitlab.com/ee/administration/docs_self_host.html).
