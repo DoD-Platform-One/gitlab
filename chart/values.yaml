@@ -1168,7 +1168,12 @@ registry:
     - name: private-registry
   ingress:
     enabled: false # Local setting in subchart must be overridden
-
+  # The registry debug.addr.port is used for metrics. Default is 5001
+  metrics:
+    enabled: true
+    path: /metrics
+    serviceMonitor:
+      enabled: true
 
 ## Automatic shared secret generation
 ## https://docs.gitlab.com/charts/installation/secrets
@@ -1347,7 +1352,9 @@ gitlab:
     metrics:
       enabled: true
       port: 9168
-  ## https://docs.gitlab.com/charts/charts/gitlab/migrations
+      serviceMonitor:
+        enabled: true
+## https://docs.gitlab.com/charts/charts/gitlab/migrations
   migrations:
     # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
     annotations:
@@ -1409,9 +1416,18 @@ gitlab:
       tag: 15.2.1
       pullSecrets:
       - name: private-registry
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
     ingress:
       enabled: false  # Local setting in subchart must be overridden
-  ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
+    metrics:
+      enabled: true
+      port: 8083
+      serviceMonitor:
+        enabled: true
+## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
@@ -1456,7 +1472,12 @@ gitlab:
       limits:
         cpu: 400m
         memory: 600Mi
-  ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
@@ -1478,13 +1499,21 @@ gitlab:
       requests:
         cpu: 300m
         memory: 300Mi
+    # metrics:
+    #   enabled: true
+    #   serviceMonitor:
+    #     enabled: true
+    # https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh
+    # gitlab-sshd is in Alpha. It is not ready for production use.
+    # is needed for prometheus servicemonitor metrics to work for gitlab-shell
+    # sshDaemon: gitlab-sshd
+
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
       tag: 15.2.1
       pullSecrets:
         - name: private-registry
-
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
   #   gitlab-grafana:
