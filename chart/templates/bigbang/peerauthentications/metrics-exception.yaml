@@ -15,6 +15,79 @@ spec:
       mode: PERMISSIVE
 {{- end }}
 ---
+{{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") (eq .Values.istio.mtls.mode "STRICT") .Values.monitoring.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: gitaly-exception
+  namespace: {{ .Release.Namespace }}
+spec:
+  mtls:
+    mode: {{ .Values.istio.mtls.mode }}
+  selector:
+    matchLabels:
+      app: gitaly
+  portLevelMtls:
+    "9236":
+      mode: PERMISSIVE
+{{- end }}
+---
+{{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") (eq .Values.istio.mtls.mode "STRICT") .Values.monitoring.enabled }}
+# monitoring for gitlab-shell is not currently working so servicemonitor is disabled
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: gitlab-shell-exception
+  namespace: {{ .Release.Namespace }}
+spec:
+  mtls:
+    mode: {{ .Values.istio.mtls.mode }}
+  selector:
+    matchLabels:
+      app: gitlab-shell
+  portLevelMtls:
+    "9122":
+      mode: PERMISSIVE
+{{- end }}
+---
+{{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") (eq .Values.istio.mtls.mode "STRICT") .Values.monitoring.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: webservice-workhorse-exception
+  namespace: {{ .Release.Namespace }}
+spec:
+  mtls:
+    mode: {{ .Values.istio.mtls.mode }}
+  selector:
+    matchLabels:
+      app: webservice
+  portLevelMtls:
+    # for webservice
+    "8083":
+      mode: PERMISSIVE
+    # for workhorse
+    "9229":
+      mode: PERMISSIVE
+{{- end }}
+---
+{{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") (eq .Values.istio.mtls.mode "STRICT") .Values.monitoring.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: registry-exception
+  namespace: {{ .Release.Namespace }}
+spec:
+  mtls:
+    mode: {{ .Values.istio.mtls.mode }}
+  selector:
+    matchLabels:
+      app: registry
+  portLevelMtls:
+    "5001":
+      mode: PERMISSIVE
+{{- end }}
+---
 # metrics for gitlab but only when gitlab runner is enabled
 {{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") (eq .Values.istio.mtls.mode "STRICT") .Values.monitoring.enabled }}
 apiVersion: security.istio.io/v1beta1

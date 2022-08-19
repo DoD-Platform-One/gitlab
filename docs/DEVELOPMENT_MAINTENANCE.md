@@ -1,5 +1,5 @@
 # How to upgrade the Gitlab Package chart
-BigBang makes modifications to the upstream helm chart. The full list of changes is at the end of  this document.
+BigBang makes modifications to the upstream helm chart. The full list of changes is at the end of  this document. 
 1. Read release notes from upstream [Gitlab Releases](https://about.gitlab.com/releases/categories/releases/). Be aware of changes that are included in the upgrade. Take note of any manual upgrade steps that customers might need to perform, if any.
 1. Do diff of [upstream chart](https://gitlab.com/gitlab-org/charts/gitlab) between old and new release tags to become aware of any significant chart changes. A graphical diff tool such as [Meld](https://meldmerge.org/) is useful. You can see where the current helm chart came from by inspecting ```/chart/kptfile```
 1. Create a development branch and merge request from the Gitlab issue.
@@ -220,7 +220,6 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
   repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
 ```
 
-
 ## chart/values.yaml
 - disable all internal services other than postgres, minio, and redis
 - add BigBang additional values at bottom of values.yaml
@@ -262,9 +261,6 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
     ```
     /usr/bin/mc policy set $POLICY myminio/$BUCKET
     ```
-
-## chart/charts/gitlab/charts/gitlab-exporter/templates/bigbang/service-monitor.yaml
-- add ServiceMonitor to Gitlab sub-chart ```gitlab-exporter``` to enable prometheus monitoring
   
 ## chart/tests/*
 - add helm test scripts

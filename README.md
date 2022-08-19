@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.2.1-bb.0](https://img.shields.io/badge/Version-6.2.1--bb.0-informational?style=flat-square) ![AppVersion: 15.2.1](https://img.shields.io/badge/AppVersion-15.2.1-informational?style=flat-square)
+![Version: 6.2.1-bb.1](https://img.shields.io/badge/Version-6.2.1--bb.1-informational?style=flat-square) ![AppVersion: 15.2.1](https://img.shields.io/badge/AppVersion-15.2.1-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -581,6 +581,9 @@ helm install gitlab chart/
 | registry.image.tag | string | `"15.2.1"` |  |
 | registry.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | registry.ingress.enabled | bool | `false` |  |
+| registry.metrics.enabled | bool | `true` |  |
+| registry.metrics.path | string | `"/metrics"` |  |
+| registry.metrics.serviceMonitor.enabled | bool | `true` |  |
 | shared-secrets.enabled | bool | `true` |  |
 | shared-secrets.rbac.create | bool | `true` |  |
 | shared-secrets.selfsign.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign"` |  |
@@ -664,6 +667,7 @@ helm install gitlab chart/
 | gitlab.gitlab-exporter.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-exporter.metrics.enabled | bool | `true` |  |
 | gitlab.gitlab-exporter.metrics.port | int | `9168` |  |
+| gitlab.gitlab-exporter.metrics.serviceMonitor.enabled | bool | `true` |  |
 | gitlab.migrations.annotations."sidecar.istio.io/inject" | string | `"false"` |  |
 | gitlab.migrations.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.migrations.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -694,7 +698,12 @@ helm install gitlab chart/
 | gitlab.webservice.workhorse.image | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse"` |  |
 | gitlab.webservice.workhorse.tag | string | `"15.2.1"` |  |
 | gitlab.webservice.workhorse.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.webservice.workhorse.metrics.enabled | bool | `true` |  |
+| gitlab.webservice.workhorse.metrics.serviceMonitor.enabled | bool | `true` |  |
 | gitlab.webservice.ingress.enabled | bool | `false` |  |
+| gitlab.webservice.metrics.enabled | bool | `true` |  |
+| gitlab.webservice.metrics.port | int | `8083` |  |
+| gitlab.webservice.metrics.serviceMonitor.enabled | bool | `true` |  |
 | gitlab.sidekiq.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq"` |  |
 | gitlab.sidekiq.image.tag | string | `"15.2.1"` |  |
 | gitlab.sidekiq.image.pullSecrets[0].name | string | `"private-registry"` |  |
@@ -717,6 +726,8 @@ helm install gitlab chart/
 | gitlab.gitaly.resources.requests.memory | string | `"600Mi"` |  |
 | gitlab.gitaly.resources.limits.cpu | string | `"400m"` |  |
 | gitlab.gitaly.resources.limits.memory | string | `"600Mi"` |  |
+| gitlab.gitaly.metrics.enabled | bool | `true` |  |
+| gitlab.gitaly.metrics.serviceMonitor.enabled | bool | `true` |  |
 | gitlab.gitlab-shell.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell"` |  |
 | gitlab.gitlab-shell.image.tag | string | `"15.2.1"` |  |
 | gitlab.gitlab-shell.image.pullSecrets[0].name | string | `"private-registry"` |  |
