@@ -45,9 +45,27 @@
     defaultMode: 0440
     sources:
     {{- range $index, $customCA := .Values.global.certificates.customCAs }}
+    {{- if $customCA.secret }}
     - secret:
         name: {{ $customCA.secret }}
-        # items not specified, will mount all keys
+        {{- if $customCA.keys }}
+        items:
+          {{- range $customCA.keys }}
+          - key: {{ . }}
+            path: {{ . }}
+          {{- end }}
+        {{- end }}
+    {{- else if $customCA.configMap }}
+    - configMap:
+        name: {{ $customCA.configMap }}
+        {{- if $customCA.keys }}
+        items:
+          {{- range $customCA.keys }}
+          - key: {{ . }}
+            path: {{ . }}
+          {{- end }}
+        {{- end }}
+    {{- end }}
     {{- end }}
     {{- if not (or $.Values.global.ingress.configureCertmanager $.Values.global.ingress.tls) }}
     - secret:

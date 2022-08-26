@@ -1,15 +1,5 @@
 # ubi/values.yaml
 
-# This example shows how to assign an external IP to GitLab Shell with an alternate port. This
-# is required for deployment on OpenShift, when the default SSH port is not available and you
-# want to use an alternate port.
-#
-# You may have to define an external DNS record for this IP. If you did, you also need to pass
-# the external domain name.
-#
-# For more information see:
-#   https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/ubi/index.md
-
 certmanager:
   install: false
 
@@ -56,16 +46,9 @@ global:
     tls:
       secretName: my-wildcard-cert-secret  # Your wildcard certificate.
 
-  # `global.hosts.ssh` is needed for `gitlab-shell` because `nginx-ingress` is disabled,
-  # and it needs to be exposed separately.
-  hosts:
-    ssh: ssh.gitlab.example.com
-  shell:
-    port: 222
-
   # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-db
   psql:
-    host: postgress.local
+    host: postgres.local
     password:
       secret: my-postgres-secret  # Your PostgreSQL credentials.
       key: secret
@@ -126,11 +109,6 @@ gitlab:
     image:
       tag: main-ubi8 # gitlab-shell's default branch is main, not master!
 
-    # This is needed for `gitlab-shell` because `nginx-ingress` is disabled.
-    service:
-      externalIPs:
-        - x.x.x.x # Your IP address for `gitlab-shell`.
-
   gitlab-mailroom:
     image:
       tag: master-ubi8
@@ -162,6 +140,8 @@ gitlab:
 
 # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
 registry:
+  image:
+    tag: v3.51.1-gitlab-ubi8
   storage:
     secret: my-objectstore-registry-secret # Registry storage secret.
     key: config

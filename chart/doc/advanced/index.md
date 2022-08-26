@@ -15,5 +15,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 - Using your own [NGINX Ingress Controller](external-nginx/index.md)
 - After install, [managing Persistent Volumes](persistent-volumes/index.md)
 - Using [Red Hat UBI-based images](ubi/index.md)
+- Using [FIPS-compliant images](fips/index.md)
 - Making use of [GitLab Geo functionality](geo/index.md)
 - Bringing your own [Docker images](custom-images/index.md)
+- Enabling [internal TLS between services](internal-tls/index.md)

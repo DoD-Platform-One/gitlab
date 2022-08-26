@@ -458,3 +458,38 @@ gitaly:
   # ERB
   token: <%= File.read('gitaly_token').strip.to_json %>
 ```
+
+## Templating Chart notes (NOTES.txt)
+
+Helm's [chart notes feature](https://helm.sh/docs/chart_template_guide/notes_files) provides
+helpful information and follow-up instructions after chart installations and upgrades.
+
+These notes are placed in
+[templates/NOTES.txt](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/templates/NOTES.txt).
+
+When working with these notes, there are a few things to keep in mind regarding style to ensure
+that the output is legible and actionable.
+
+### Choosing a note category
+
+Two categories, `WARNING` and `NOTICE`, signify each type of entry in the note output.
+
+- `WARNING` signifies that further action is required to optimize the installation
+- `NOTICE` highlights important reminders that do not necessarily require further action
+
+Each entry in `NOTES.txt` should start with one of these two categories. For example:
+
+```golang
+{{- if eq true .Values.some.setting }}
+{{ $WARNING }}
+This message is a warning.
+{{- end }}
+
+{{- if eq true .Values.some.other.setting }}
+{{ $NOTICE }}
+This message is a notice.
+{{- end }}
+```
+
+These examples use one of two predefined variables included at the top of the `NOTES.txt`
+file that ensure consistent titles and spacing between each entry in the output.

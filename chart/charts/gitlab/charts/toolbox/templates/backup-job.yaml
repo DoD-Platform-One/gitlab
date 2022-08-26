@@ -2,7 +2,11 @@
 {{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
 {{- $initImageCfg := dict "global" .Values.global.busybox.image "local" .Values.init.image -}}
 {{- include "database.datamodel.prepare" . -}}
+{{ if or ($.Capabilities.APIVersions.Has "batch/v1/CronJob") (eq $.Values.global.batch.cronJob.apiVersion "batch/v1") -}}
+apiVersion: batch/v1
+{{- else -}}
 apiVersion: batch/v1beta1
+{{- end }}
 kind: CronJob
 metadata:
   name: {{ template "fullname" . }}-backup

@@ -68,7 +68,6 @@ minio:
 
 nginx-ingress:
   controller: *custom
-  defaultBackend: *custom
 
 registry:
     <<: *custom

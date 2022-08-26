@@ -4,10 +4,9 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Installation command line options **(FREE SELF)**
+# GitLab Helm chart deployment options **(FREE SELF)**
 
-The tables below contain all the possible charts configurations that can be supplied
-to the `helm install` command using the `--set` flags.
+You can supply these configuration options to the `helm install` command by using the `--set` flags.
 
 The source of the default `values.yaml` file can be found [here](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/values.yaml).
 These contents change over releases, but you can use Helm itself to retrieve these on a per-version basis:
@@ -268,174 +267,173 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 
 ## Advanced GitLab configuration
 
-| Parameter                                                      | Description                                                          | Default                                                          |
-|----------------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------|
-| `gitlab-runner.checkInterval`                                  | polling interval                                                     | `30s`                                                            |
-| `gitlab-runner.concurrent`                                     | number of concurrent jobs                                            | `20`                                                             |
-| `gitlab-runner.imagePullPolicy`                                | image pull policy                                                    | `IfNotPresent`                                                   |
-| `gitlab-runner.image`                                          | runner image                                                         | `gitlab/gitlab-runner:alpine-v10.5.0`                            |
-| `gitlab-runner.gitlabUrl`                                      | URL that the Runner uses to register to GitLab Server                                         |
-GitLab external URL                                              |
-| `gitlab-runner.install`                                        | install the `gitlab-runner` chart                                    | true                                                             |
-| `gitlab-runner.rbac.clusterWideAccess`                         | deploy containers of jobs cluster-wide                               | false                                                            |
-| `gitlab-runner.rbac.create`                                    | whether to create RBAC service account                               | true                                                             |
-| `gitlab-runner.rbac.serviceAccountName`                        | name of the RBAC service account to create                           | `default`                                                        |
-| `gitlab-runner.resources.limits.cpu`                           | runner resources                                                     |                                                                  |
-| `gitlab-runner.resources.limits.memory`                        | runner resources                                                     |                                                                  |
-| `gitlab-runner.resources.requests.cpu`                         | runner resources                                                     |                                                                  |
-| `gitlab-runner.resources.requests.memory`                      | runner resources                                                     |                                                                  |
-| `gitlab-runner.runners.privileged`                             | run in privileged mode,needed for `dind`                            | false                                                            |
-| `gitlab-runner.runners.cache.secretName`                       | secret to get `accesskey` and `secretkey` from                       | `gitlab-minio`                                                   |
-| `gitlab-runner.runners.config`                                 | Runner configuration as string                                      | See [Chart documentation](../charts/gitlab/gitlab-runner/index.md#default-runner-configuration)|
-| `gitlab-runner.unregisterRunners`                              | unregister all runners before termination                            | true                                                             |
-| `gitlab.geo-logcursor.securityContext.fsGroup`                 | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.geo-logcursor.securityContext.runAsUser`               | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.gitaly.authToken.key`                                  | Key to Gitaly token in the secret                                    | `token`                                                          |
-| `gitlab.gitaly.authToken.secret`                               | Gitaly secret name                                                   | `{.Release.Name}-gitaly-secret`                                  |
-| `gitlab.gitaly.image.pullPolicy`                               | Gitaly image pull policy                                             |                                                                  |
-| `gitlab.gitaly.image.repository`                               | Gitaly image repository                                              | `registry.gitlab.com/gitlab-org/build/cng/gitaly`                |
-| `gitlab.gitaly.image.tag`                                      | Gitaly image tag                                                     | `master`                                                         |
-| `gitlab.gitaly.persistence.accessMode`                         | Gitaly persistence access mode                                       | `ReadWriteOnce`                                                  |
-| `gitlab.gitaly.persistence.enabled`                            | Gitaly enable persistence flag                                       | true                                                             |
-| `gitlab.gitaly.persistence.matchExpressions`                   | Label-expression matches to bind                                     |                                                                  |
-| `gitlab.gitaly.persistence.matchLabels`                        | Label-value matches to bind                                          |                                                                  |
-| `gitlab.gitaly.persistence.size`                               | Gitaly persistence volume size                                       | `50Gi`                                                           |
-| `gitlab.gitaly.persistence.storageClass`                       | storageClassName for provisioning                                    |                                                                  |
-| `gitlab.gitaly.persistence.subPath`                            | Gitaly persistence volume mount path                                 |                                                                  |
-| `gitlab.gitaly.persistence.volumeName`                         | Existing persistent volume name                                      |                                                                  |
-| `gitlab.gitaly.securityContext.fsGroup`                        | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.gitaly.securityContext.runAsUser`                      | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.gitaly.service.annotations`                            | Annotations to add to the `Service`                                  | `{}`                                                             |
-| `gitlab.gitaly.service.externalPort`                           | Gitaly service exposed port                                          | `8075`                                                           |
-| `gitlab.gitaly.service.internalPort`                           | Gitaly internal port                                                 | `8075`                                                           |
-| `gitlab.gitaly.service.name`                                   | Gitaly service name                                                  | `gitaly`                                                         |
-| `gitlab.gitaly.service.type`                                   | Gitaly service type                                                  | `ClusterIP`                                                      |
-| `gitlab.gitaly.serviceName`                                    | Gitaly service name                                                  | `gitaly`                                                         |
-| `gitlab.gitaly.shell.authToken.key`                            | Shell key                                                            | `secret`                                                         |
-| `gitlab.gitaly.shell.authToken.secret`                         | Shell secret                                                         | `{Release.Name}-gitlab-shell-secret`                             |
-| `gitlab.gitlab-exporter.securityContext.fsGroup`               | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.gitlab-exporter.securityContext.runAsUser`             | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.gitlab-shell.authToken.key`                            | Shell auth secret key                                                | `secret`                                                         |
-| `gitlab.gitlab-shell.authToken.secret`                         | Shell auth secret                                                    | `{Release.Name}-gitlab-shell-secret`                             |
-| `gitlab.gitlab-shell.enabled`                                  | Shell enable flag                                                    | true                                                             |
-| `gitlab.gitlab-shell.image.pullPolicy`                         | Shell image pull policy                                              |                                                                  |
-| `gitlab.gitlab-shell.image.repository`                         | Shell image repository                                               | `registry.gitlab.com/gitlab-org/build/cng/gitlab-shell`          |
-| `gitlab.gitlab-shell.image.tag`                                | Shell image tag                                                      | `master`                                                         |
-| `gitlab.gitlab-shell.replicaCount`                             | Shell replicas                                                       | `1`                                                              |
-| `gitlab.gitlab-shell.securityContext.fsGroup`                  | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.gitlab-shell.securityContext.runAsUser`                | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.gitlab-shell.service.annotations`                      | Annotations to add to the `Service`                                  | {}                                                               |
-| `gitlab.gitlab-shell.service.internalPort`                     | Shell internal port                                                  | `2222`                                                           |
-| `gitlab.gitlab-shell.service.name`                             | Shell service name                                                   | `gitlab-shell`                                                   |
-| `gitlab.gitlab-shell.service.type`                             | Shell service type                                                   | `ClusterIP`                                                      |
-| `gitlab.gitlab-shell.webservice.serviceName`                   | Webservice service name                                              | inherited from `global.webservice.serviceName`                                    |
-| `gitlab.mailroom.securityContext.fsGroup`                      | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.mailroom.securityContext.runAsUser`                    | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.migrations.bootsnap.enabled`                           | Migrations Bootsnap enable flag                                      | true                                                             |
-| `gitlab.migrations.enabled`                                    | Migrations enable flag                                               | true                                                             |
-| `gitlab.migrations.image.pullPolicy`                           | Migrations pull policy                                               |                                                                  |
-| `gitlab.migrations.image.repository`                           | Migrations image repository                                          | `registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ee`     |
-| `gitlab.migrations.image.tag`                                  | Migrations image tag                                                 | `master`                                                         |
-| `gitlab.migrations.psql.password.key`                          | key to psql password in psql secret                                  | `psql-password`                                                  |
-| `gitlab.migrations.psql.password.secret`                       | psql secret                                                          | `gitlab-postgres`                                                |
-| `gitlab.migrations.psql.port`                                  | Set PostgreSQL server port. Takes precedence over `global.psql.port` |                                                                  |
-| `gitlab.migrations.securityContext.fsGroup`                    | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.migrations.securityContext.runAsUser`                  | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.sidekiq.concurrency`                                   | Sidekiq default concurrency                                          | `10`                                                             |
-| `gitlab.sidekiq.enabled`                                       | Sidekiq enabled flag                                                 | true                                                             |
-| `gitlab.sidekiq.gitaly.authToken.key`                          | key to Gitaly token in Gitaly secret                                 | `token`                                                          |
-| `gitlab.sidekiq.gitaly.authToken.secret`                       | Gitaly secret                                                        | `{.Release.Name}-gitaly-secret`                                  |
-| `gitlab.sidekiq.gitaly.serviceName`                            | Gitaly service name                                                  | `gitaly`                                                         |
-| `gitlab.sidekiq.image.pullPolicy`                              | Sidekiq image pull policy                                            |                                                                  |
-| `gitlab.sidekiq.image.repository`                              | Sidekiq image repository                                             | `registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee`     |
-| `gitlab.sidekiq.image.tag`                                     | Sidekiq image tag                                                    | `master`                                                         |
-| `gitlab.sidekiq.psql.password.key`                             | key to psql password in psql secret                                  | `psql-password`                                                  |
-| `gitlab.sidekiq.psql.password.secret`                          | psql password secret                                                 | `gitlab-postgres`                                                |
-| `gitlab.sidekiq.psql.port`                                     | Set PostgreSQL server port. Takes precedence over `global.psql.port` |                                                                  |
-| `gitlab.sidekiq.replicas`                                      | Sidekiq replicas                                                     | `1`                                                              |
-| `gitlab.sidekiq.resources.requests.cpu`                        | Sidekiq minimum needed CPU                                           | `100m`                                                           |
-| `gitlab.sidekiq.resources.requests.memory`                     | Sidekiq minimum needed memory                                        | `600M`                                                           |
-| `gitlab.sidekiq.securityContext.fsGroup`                       | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.sidekiq.securityContext.runAsUser`                     | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.sidekiq.timeout`                                       | Sidekiq job timeout                                                  | `5`                                                              |
-| `gitlab.toolbox.annotations`                               | Annotations to add to the toolbox                                    | {}                                                               |
-| `gitlab.toolbox.backups.cron.enabled`                      | Backup CronJob enabled flag                                          | false                                                            |
-| `gitlab.toolbox.backups.cron.extraArgs`                    | String of arguments to pass to the backup utility                    |                                                                  |
-| `gitlab.toolbox.backups.cron.persistence.accessMode`       | Backup cron persistence access mode                                  | `ReadWriteOnce`                                                  |
-| `gitlab.toolbox.backups.cron.persistence.enabled`          | Backup cron enable persistence flag                                  | false                                                            |
-| `gitlab.toolbox.backups.cron.persistence.matchExpressions` | Label-expression matches to bind                                     |                                                                  |
-| `gitlab.toolbox.backups.cron.persistence.matchLabels`      | Label-value matches to bind                                          |                                                                  |
-| `gitlab.toolbox.backups.cron.persistence.size`             | Backup cron persistence volume size                                  | `10Gi`                                                           |
-| `gitlab.toolbox.backups.cron.persistence.storageClass`     | storageClassName for provisioning                                    |                                                                  |
-| `gitlab.toolbox.backups.cron.persistence.subPath`          | Backup cron persistence volume mount path                            |                                                                  |
-| `gitlab.toolbox.backups.cron.persistence.volumeName`       | Existing persistent volume name                                      |                                                                  |
-| `gitlab.toolbox.backups.cron.resources.requests.cpu`       | Backup cron minimum needed CPU                                       | `50m`                                                            |
-| `gitlab.toolbox.backups.cron.resources.requests.memory`    | Backup cron minimum needed memory                                    | `350M`                                                           |
-| `gitlab.toolbox.backups.cron.schedule`                     | Cron style schedule string                                           | `0 1 * * *`                                                      |
-| `gitlab.toolbox.backups.objectStorage.backend`             | Object storage provider to use (`s3` or `gcs`)                       | `s3`                                                             |
-| `gitlab.toolbox.backups.objectStorage.config.gcpProject`   | GCP Project to use when backend is `gcs`                             | ""                                                               |
-| `gitlab.toolbox.backups.objectStorage.config.key`          | key containing credentials in secret                                 | ""                                                               |
-| `gitlab.toolbox.backups.objectStorage.config.secret`       | Object storage credentials secret                                    | ""                                                               |
-| `gitlab.toolbox.backups.objectStorage.config`              | Authentication information for object storage                        | {}                                                               |
-| `gitlab.toolbox.bootsnap.enabled`                          | Enable Bootsnap cache in Toolbox                                     | true                                                             |
-| `gitlab.toolbox.enabled`                                   | Toolbox enabled flag                                                 | true                                                             |
-| `gitlab.toolbox.image.pullPolicy`                          | Toolbox image pull policy                                            | `IfNotPresent`                                                   |
-| `gitlab.toolbox.image.repository`                          | Toolbox image repository                                             | `registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ee` |
-| `gitlab.toolbox.image.tag`                                 | Toolbox image tag                                                    | `master`                                                         |
-| `gitlab.toolbox.init.image.repository`                     | Toolbox init image repository                                        |                                                                  |
-| `gitlab.toolbox.init.image.tag`                            | Toolbox init image tag                                               |                                                                  |
-| `gitlab.toolbox.init.resources.requests.cpu`               | Toolbox init minimum needed CPU                                      | `50m`                                                            |
-| `gitlab.toolbox.persistence.accessMode`                    | Toolbox persistence access mode                                      | `ReadWriteOnce`                                                  |
-| `gitlab.toolbox.persistence.enabled`                       | Toolbox enable persistence flag                                      | false                                                            |
-| `gitlab.toolbox.persistence.matchExpressions`              | Label-expression matches to bind                                     |                                                                  |
-| `gitlab.toolbox.persistence.matchLabels`                   | Label-value matches to bind                                          |                                                                  |
-| `gitlab.toolbox.persistence.size`                          | Toolbox persistence volume size                                      | `10Gi`                                                           |
-| `gitlab.toolbox.persistence.storageClass`                  | storageClassName for provisioning                                    |                                                                  |
-| `gitlab.toolbox.persistence.subPath`                       | Toolbox persistence volume mount path                                |                                                                  |
-| `gitlab.toolbox.persistence.volumeName`                    | Existing persistent volume name                                      |                                                                  |
-| `gitlab.toolbox.psql.port`                                 | Set PostgreSQL server port. Takes precedence over `global.psql.port` |                                                                  |
-| `gitlab.toolbox.resources.requests.cpu`                    | Toolbox minimum needed CPU                                           | `50m`                                                            |
-| `gitlab.toolbox.resources.requests.memory`                 | Toolbox minimum needed memory                                        | `350M`                                                           |
-| `gitlab.toolbox.securityContext.fsGroup`                   | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.toolbox.securityContext.runAsUser`                 | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.webservice.enabled`                                    | webservice enabled flag                                              | true                                                             |
-| `gitlab.webservice.gitaly.authToken.key`                       | Key to Gitaly token in Gitaly secret                                 | `token`                                                          |
-| `gitlab.webservice.gitaly.authToken.secret`                    | Gitaly secret name                                                   | `{.Release.Name}-gitaly-secret`                                  |
-| `gitlab.webservice.gitaly.serviceName`                         | Gitaly service name                                                  | `gitaly`                                                         |
-| `gitlab.webservice.image.pullPolicy`                           | webservice image pull policy                                         |                                                                  |
-| `gitlab.webservice.image.repository`                           | webservice image repository                                          | `registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee`  |
-| `gitlab.webservice.image.tag`                                  | webservice image tag                                                 | `master`                                                         |
-| `gitlab.webservice.psql.password.key`                          | Key to psql password in psql secret                                  | `psql-password`                                                  |
-| `gitlab.webservice.psql.password.secret`                       | psql secret name                                                     | `gitlab-postgres`                                                |
-| `gitlab.webservice.psql.port`                                  | Set PostgreSQL server port. Takes precedence over `global.psql.port` |                                                                  |
-| `gitlab.webservice.registry.api.port`                          | Registry port                                                        | `5000`                                                           |
-| `gitlab.webservice.registry.api.protocol`                      | Registry protocol                                                    | `http`                                                           |
-| `gitlab.webservice.registry.api.serviceName`                   | Registry service name                                                | `registry`                                                       |
-| `gitlab.webservice.registry.tokenIssuer`                       | Registry token issuer                                                | `gitlab-issuer`                                                  |
-| `gitlab.webservice.replicaCount`                               | webservice number of replicas                                        | `1`                                                              |
-| `gitlab.webservice.resources.requests.cpu`                     | webservice minimum CPU                                               | `200m`                                                           |
-| `gitlab.webservice.resources.requests.memory`                  | webservice minimum memory                                            | `1.4G`                                                           |
-| `gitlab.webservice.securityContext.fsGroup`                    | Group ID under which the pod should be started                       | `1000`                                                           |
-| `gitlab.webservice.securityContext.runAsUser`                  | User ID under which the pod should be started                        | `1000`                                                           |
-| `gitlab.webservice.service.annotations`                        | Annotations to add to the `Service`                                  | {}                                                               |
-| `gitlab.webservice.http.enabled`                               | webservice HTTP enabled                                              | true                                                             |
-| `gitlab.webservice.service.externalPort`                       | webservice exposed port                                              | `8080`                                                           |
-| `gitlab.webservice.service.internalPort`                       | webservice internal port                                             | `8080`                                                           |
-| `gitlab.webservice.tls.enabled`                                | webservice TLS enabled                                               | false                                                            |
-| `gitlab.webservice.tls.secretName`                             | webservice secret name of TLS key                                    | `{Release.Name}-webservice-tls`                                  |
-| `gitlab.webservice.service.tls.externalPort`                   | webservice TLS exposed port                                          | `8081`                                                           |
-| `gitlab.webservice.service.tls.internalPort`                   | webservice TLS internal port                                         | `8081`                                                           |
-| `gitlab.webservice.service.type`                               | webservice service type                                              | `ClusterIP`                                                      |
-| `gitlab.webservice.service.workhorseExternalPort`              | Workhorse exposed port                                               | `8181`                                                           |
-| `gitlab.webservice.service.workhorseInternalPort`              | Workhorse internal port                                              | `8181`                                                           |
-| `gitlab.webservice.shell.authToken.key`                        | Key to shell token in shell secret                                   | `secret`                                                         |
-| `gitlab.webservice.shell.authToken.secret`                     | Shell token secret                                                   | `{Release.Name}-gitlab-shell-secret`                             |
-| `gitlab.webservice.workerProcesses`                            | webservice number of workers                                         | `2`                                                              |
-| `gitlab.webservice.workerTimeout`                              | webservice worker timeout                                            | `60`                                                             |
-| `gitlab.webservice.workhorse.extraArgs`                        | String of extra parameters for workhorse                             | ""                                                               |
-| `gitlab.webservice.workhorse.image`                            | Workhorse image repository                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee`   |
-| `gitlab.webservice.workhorse.sentryDSN`                        | DSN for Sentry instance for error reporting                          | ""                                                               |
-| `gitlab.webservice.workhorse.tag`                              | Workhorse image tag                                                  |                                                                  |
+| Parameter | Description | Default |
+|---|---|---|
+| `gitlab-runner.checkInterval` | polling interval | `30s` |
+| `gitlab-runner.concurrent` | number of concurrent jobs | `20` |
+| `gitlab-runner.imagePullPolicy` | image pull policy | `IfNotPresent` |
+| `gitlab-runner.image` | runner image | `gitlab/gitlab-runner:alpine-v10.5.0` |
+| `gitlab-runner.gitlabUrl` | URL that the Runner uses to register to GitLab Server | GitLab external URL |
+| `gitlab-runner.install` | install the `gitlab-runner` chart | true |
+| `gitlab-runner.rbac.clusterWideAccess` | deploy containers of jobs cluster-wide | false |
+| `gitlab-runner.rbac.create` | whether to create RBAC service account | true |
+| `gitlab-runner.rbac.serviceAccountName` | name of the RBAC service account to create | `default` |
+| `gitlab-runner.resources.limits.cpu` | runner resources |  |
+| `gitlab-runner.resources.limits.memory` | runner resources |  |
+| `gitlab-runner.resources.requests.cpu` | runner resources |  |
+| `gitlab-runner.resources.requests.memory` | runner resources |  |
+| `gitlab-runner.runners.privileged` | run in privileged mode, needed for `dind` | false |
+| `gitlab-runner.runners.cache.secretName` | secret to get `accesskey` and `secretkey` from | `gitlab-minio` |
+| `gitlab-runner.runners.config` | Runner configuration as string | See [Chart documentation](../charts/gitlab/gitlab-runner/index.md#default-runner-configuration) |
+| `gitlab-runner.unregisterRunners` | unregister all runners before termination | true |
+| `gitlab.geo-logcursor.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.geo-logcursor.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.gitaly.authToken.key` | Key to Gitaly token in the secret | `token` |
+| `gitlab.gitaly.authToken.secret` | Gitaly secret name | `{.Release.Name}-gitaly-secret` |
+| `gitlab.gitaly.image.pullPolicy` | Gitaly image pull policy |  |
+| `gitlab.gitaly.image.repository` | Gitaly image repository | `registry.gitlab.com/gitlab-org/build/cng/gitaly` |
+| `gitlab.gitaly.image.tag` | Gitaly image tag | `master` |
+| `gitlab.gitaly.persistence.accessMode` | Gitaly persistence access mode | `ReadWriteOnce` |
+| `gitlab.gitaly.persistence.enabled` | Gitaly enable persistence flag | true |
+| `gitlab.gitaly.persistence.matchExpressions` | Label-expression matches to bind |  |
+| `gitlab.gitaly.persistence.matchLabels` | Label-value matches to bind |  |
+| `gitlab.gitaly.persistence.size` | Gitaly persistence volume size | `50Gi` |
+| `gitlab.gitaly.persistence.storageClass` | storageClassName for provisioning |  |
+| `gitlab.gitaly.persistence.subPath` | Gitaly persistence volume mount path |  |
+| `gitlab.gitaly.persistence.volumeName` | Existing persistent volume name |  |
+| `gitlab.gitaly.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.gitaly.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.gitaly.service.annotations` | Annotations to add to the `Service` | `{}` |
+| `gitlab.gitaly.service.externalPort` | Gitaly service exposed port | `8075` |
+| `gitlab.gitaly.service.internalPort` | Gitaly internal port | `8075` |
+| `gitlab.gitaly.service.name` | Gitaly service name | `gitaly` |
+| `gitlab.gitaly.service.type` | Gitaly service type | `ClusterIP` |
+| `gitlab.gitaly.serviceName` | Gitaly service name | `gitaly` |
+| `gitlab.gitaly.shell.authToken.key` | Shell key | `secret` |
+| `gitlab.gitaly.shell.authToken.secret` | Shell secret | `{Release.Name}-gitlab-shell-secret` |
+| `gitlab.gitlab-exporter.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.gitlab-exporter.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.gitlab-shell.authToken.key` | Shell auth secret key | `secret` |
+| `gitlab.gitlab-shell.authToken.secret` | Shell auth secret | `{Release.Name}-gitlab-shell-secret` |
+| `gitlab.gitlab-shell.enabled` | Shell enable flag | true |
+| `gitlab.gitlab-shell.image.pullPolicy` | Shell image pull policy |  |
+| `gitlab.gitlab-shell.image.repository` | Shell image repository | `registry.gitlab.com/gitlab-org/build/cng/gitlab-shell` |
+| `gitlab.gitlab-shell.image.tag` | Shell image tag | `master` |
+| `gitlab.gitlab-shell.replicaCount` | Shell replicas | `1` |
+| `gitlab.gitlab-shell.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.gitlab-shell.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.gitlab-shell.service.annotations` | Annotations to add to the `Service` | {} |
+| `gitlab.gitlab-shell.service.internalPort` | Shell internal port | `2222` |
+| `gitlab.gitlab-shell.service.name` | Shell service name | `gitlab-shell` |
+| `gitlab.gitlab-shell.service.type` | Shell service type | `ClusterIP` |
+| `gitlab.gitlab-shell.webservice.serviceName` | Webservice service name | inherited from `global.webservice.serviceName` |
+| `gitlab.mailroom.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.mailroom.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.migrations.bootsnap.enabled` | Migrations Bootsnap enable flag | true |
+| `gitlab.migrations.enabled` | Migrations enable flag | true |
+| `gitlab.migrations.image.pullPolicy` | Migrations pull policy |  |
+| `gitlab.migrations.image.repository` | Migrations image repository | `registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ee` |
+| `gitlab.migrations.image.tag` | Migrations image tag | `master` |
+| `gitlab.migrations.psql.password.key` | key to psql password in psql secret | `psql-password` |
+| `gitlab.migrations.psql.password.secret` | psql secret | `gitlab-postgres` |
+| `gitlab.migrations.psql.port` | Set PostgreSQL server port. Takes precedence over `global.psql.port` |  |
+| `gitlab.migrations.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.migrations.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.sidekiq.concurrency` | Sidekiq default concurrency | `10` |
+| `gitlab.sidekiq.enabled` | Sidekiq enabled flag | true |
+| `gitlab.sidekiq.gitaly.authToken.key` | key to Gitaly token in Gitaly secret | `token` |
+| `gitlab.sidekiq.gitaly.authToken.secret` | Gitaly secret | `{.Release.Name}-gitaly-secret` |
+| `gitlab.sidekiq.gitaly.serviceName` | Gitaly service name | `gitaly` |
+| `gitlab.sidekiq.image.pullPolicy` | Sidekiq image pull policy |  |
+| `gitlab.sidekiq.image.repository` | Sidekiq image repository | `registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ee` |
+| `gitlab.sidekiq.image.tag` | Sidekiq image tag | `master` |
+| `gitlab.sidekiq.psql.password.key` | key to psql password in psql secret | `psql-password` |
+| `gitlab.sidekiq.psql.password.secret` | psql password secret | `gitlab-postgres` |
+| `gitlab.sidekiq.psql.port` | Set PostgreSQL server port. Takes precedence over `global.psql.port` |  |
+| `gitlab.sidekiq.replicas` | Sidekiq replicas | `1` |
+| `gitlab.sidekiq.resources.requests.cpu` | Sidekiq minimum needed CPU | `100m` |
+| `gitlab.sidekiq.resources.requests.memory` | Sidekiq minimum needed memory | `600M` |
+| `gitlab.sidekiq.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.sidekiq.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.sidekiq.timeout` | Sidekiq job timeout | `5` |
+| `gitlab.toolbox.annotations` | Annotations to add to the toolbox | {} |
+| `gitlab.toolbox.backups.cron.enabled` | Backup CronJob enabled flag | false |
+| `gitlab.toolbox.backups.cron.extraArgs` | String of arguments to pass to the backup utility |  |
+| `gitlab.toolbox.backups.cron.persistence.accessMode` | Backup cron persistence access mode | `ReadWriteOnce` |
+| `gitlab.toolbox.backups.cron.persistence.enabled` | Backup cron enable persistence flag | false |
+| `gitlab.toolbox.backups.cron.persistence.matchExpressions` | Label-expression matches to bind |  |
+| `gitlab.toolbox.backups.cron.persistence.matchLabels` | Label-value matches to bind |  |
+| `gitlab.toolbox.backups.cron.persistence.size` | Backup cron persistence volume size | `10Gi` |
+| `gitlab.toolbox.backups.cron.persistence.storageClass` | storageClassName for provisioning |  |
+| `gitlab.toolbox.backups.cron.persistence.subPath` | Backup cron persistence volume mount path |  |
+| `gitlab.toolbox.backups.cron.persistence.volumeName` | Existing persistent volume name |  |
+| `gitlab.toolbox.backups.cron.resources.requests.cpu` | Backup cron minimum needed CPU | `50m` |
+| `gitlab.toolbox.backups.cron.resources.requests.memory` | Backup cron minimum needed memory | `350M` |
+| `gitlab.toolbox.backups.cron.schedule` | Cron style schedule string | `0 1 * * *` |
+| `gitlab.toolbox.backups.objectStorage.backend` | Object storage provider to use (`s3` or `gcs`) | `s3` |
+| `gitlab.toolbox.backups.objectStorage.config.gcpProject` | GCP Project to use when backend is `gcs` | "" |
+| `gitlab.toolbox.backups.objectStorage.config.key` | key containing credentials in secret | "" |
+| `gitlab.toolbox.backups.objectStorage.config.secret` | Object storage credentials secret | "" |
+| `gitlab.toolbox.backups.objectStorage.config` | Authentication information for object storage | {} |
+| `gitlab.toolbox.bootsnap.enabled` | Enable Bootsnap cache in Toolbox | true |
+| `gitlab.toolbox.enabled` | Toolbox enabled flag | true |
+| `gitlab.toolbox.image.pullPolicy` | Toolbox image pull policy | `IfNotPresent` |
+| `gitlab.toolbox.image.repository` | Toolbox image repository | `registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ee` |
+| `gitlab.toolbox.image.tag` | Toolbox image tag | `master` |
+| `gitlab.toolbox.init.image.repository` | Toolbox init image repository |  |
+| `gitlab.toolbox.init.image.tag` | Toolbox init image tag |  |
+| `gitlab.toolbox.init.resources.requests.cpu` | Toolbox init minimum needed CPU | `50m` |
+| `gitlab.toolbox.persistence.accessMode` | Toolbox persistence access mode | `ReadWriteOnce` |
+| `gitlab.toolbox.persistence.enabled` | Toolbox enable persistence flag | false |
+| `gitlab.toolbox.persistence.matchExpressions` | Label-expression matches to bind |  |
+| `gitlab.toolbox.persistence.matchLabels` | Label-value matches to bind |  |
+| `gitlab.toolbox.persistence.size` | Toolbox persistence volume size | `10Gi` |
+| `gitlab.toolbox.persistence.storageClass` | storageClassName for provisioning |  |
+| `gitlab.toolbox.persistence.subPath` | Toolbox persistence volume mount path |  |
+| `gitlab.toolbox.persistence.volumeName` | Existing persistent volume name |  |
+| `gitlab.toolbox.psql.port` | Set PostgreSQL server port. Takes precedence over `global.psql.port` |  |
+| `gitlab.toolbox.resources.requests.cpu` | Toolbox minimum needed CPU | `50m` |
+| `gitlab.toolbox.resources.requests.memory` | Toolbox minimum needed memory | `350M` |
+| `gitlab.toolbox.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.toolbox.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.webservice.enabled` | webservice enabled flag | true |
+| `gitlab.webservice.gitaly.authToken.key` | Key to Gitaly token in Gitaly secret | `token` |
+| `gitlab.webservice.gitaly.authToken.secret` | Gitaly secret name | `{.Release.Name}-gitaly-secret` |
+| `gitlab.webservice.gitaly.serviceName` | Gitaly service name | `gitaly` |
+| `gitlab.webservice.image.pullPolicy` | webservice image pull policy |  |
+| `gitlab.webservice.image.repository` | webservice image repository | `registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ee` |
+| `gitlab.webservice.image.tag` | webservice image tag | `master` |
+| `gitlab.webservice.psql.password.key` | Key to psql password in psql secret | `psql-password` |
+| `gitlab.webservice.psql.password.secret` | psql secret name | `gitlab-postgres` |
+| `gitlab.webservice.psql.port` | Set PostgreSQL server port. Takes precedence over `global.psql.port` |  |
+| `gitlab.webservice.registry.api.port` | Registry port | `5000` |
+| `gitlab.webservice.registry.api.protocol` | Registry protocol | `http` |
+| `gitlab.webservice.registry.api.serviceName` | Registry service name | `registry` |
+| `gitlab.webservice.registry.tokenIssuer` | Registry token issuer | `gitlab-issuer` |
+| `gitlab.webservice.replicaCount` | webservice number of replicas | `1` |
+| `gitlab.webservice.resources.requests.cpu` | webservice minimum CPU | `200m` |
+| `gitlab.webservice.resources.requests.memory` | webservice minimum memory | `1.4G` |
+| `gitlab.webservice.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
+| `gitlab.webservice.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
+| `gitlab.webservice.service.annotations` | Annotations to add to the `Service` | {} |
+| `gitlab.webservice.http.enabled` | webservice HTTP enabled | true |
+| `gitlab.webservice.service.externalPort` | webservice exposed port | `8080` |
+| `gitlab.webservice.service.internalPort` | webservice internal port | `8080` |
+| `gitlab.webservice.tls.enabled` | webservice TLS enabled | false |
+| `gitlab.webservice.tls.secretName` | webservice secret name of TLS key | `{Release.Name}-webservice-tls` |
+| `gitlab.webservice.service.tls.externalPort` | webservice TLS exposed port | `8081` |
+| `gitlab.webservice.service.tls.internalPort` | webservice TLS internal port | `8081` |
+| `gitlab.webservice.service.type` | webservice service type | `ClusterIP` |
+| `gitlab.webservice.service.workhorseExternalPort` | Workhorse exposed port | `8181` |
+| `gitlab.webservice.service.workhorseInternalPort` | Workhorse internal port | `8181` |
+| `gitlab.webservice.shell.authToken.key` | Key to shell token in shell secret | `secret` |
+| `gitlab.webservice.shell.authToken.secret` | Shell token secret | `{Release.Name}-gitlab-shell-secret` |
+| `gitlab.webservice.workerProcesses` | webservice number of workers | `2` |
+| `gitlab.webservice.workerTimeout` | webservice worker timeout | `60` |
+| `gitlab.webservice.workhorse.extraArgs` | String of extra parameters for workhorse | "" |
+| `gitlab.webservice.workhorse.image` | Workhorse image repository | `registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ee` |
+| `gitlab.webservice.workhorse.sentryDSN` | DSN for Sentry instance for error reporting | "" |
+| `gitlab.webservice.workhorse.tag` | Workhorse image tag |  |
 
 ## External Charts
 

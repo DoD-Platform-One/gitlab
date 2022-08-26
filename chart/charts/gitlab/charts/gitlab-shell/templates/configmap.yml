@@ -76,9 +76,10 @@ data:
       # The server disconnects after this time if the user has not successfully logged in
       login_grace_time: {{ .Values.config.loginGraceTime }}
       # SSH host key files.
+      # - Walking {% env.Getenv "KEYS_DIRECTORY" "/etc/ssh" %} for keys.
       host_key_files:
-      {%- range file.Walk "/etc/ssh" %}
-        {%- if filepath.Match "/etc/ssh/ssh_host_*_key" . %}
+      {%- range file.Walk ( env.Getenv "KEYS_DIRECTORY" "/etc/ssh" ) %}
+        {%- if filepath.Base . | filepath.Match "ssh_host_*_key" %}
         - {%.%}
         {%- end %}
       {%- end %}

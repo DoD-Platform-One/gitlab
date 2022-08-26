@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.51.1-gitlab'
+  tag: 'v3.57.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -178,7 +178,11 @@ init:
     if [ -f /config/database_password ] ; then
       sed -i -e 's@DB_PASSWORD_FILE@'"$(cat /config/database_password)"'@' /registry/config.yml
     fi
-     # Insert import notification secret, if migration is enabled
+    # Insert Redis password, if enabled
+    if [ -f /config/registry/redis-password ] ; then
+      sed -i -e 's@REDIS_CACHE_PASSWORD@'"$(cat /config/registry/redis-password)"'@' /registry/config.yml
+    fi
+    # Insert import notification secret, if migration is enabled
     if [ -f /config/registry/notificationSecret ] ; then
       sed -i -e 's@NOTIFICATION_SECRET@'"$(cat /config/registry/notificationSecret | tr -d '[]"')"'@' /registry/config.yml
     fi
@@ -357,6 +361,13 @@ database:
     enabled: true
     activeDeadlineSeconds: 3600
     backoffLimit: 6
+
+# Redis cache to be used in conjunction with the metadata database.
+# NOTE: This is an experimental feature and must not be used in production.
+# https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#cache-1
+redis:
+  cache:
+    enabled: false
 
 # Configuration settings to support the migration of large registries to the metadata database.
 # NOTE: This is an experimental feature and must not be used in production.

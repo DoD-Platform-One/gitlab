@@ -121,6 +121,22 @@ The GitLab global host settings for HPA are located under the `global.hpa` key:
 | :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
 | `apiVersion` | String    |         | API version to use in the HorizontalPodAutoscaler object definitions. |
 
+## Configure PodDisruptionBudget settings
+
+The GitLab global host settings for PDB are located under the `global.pdb` key:
+
+| Name         | Type      | Default | Description                                                           |
+| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
+| `apiVersion` | String    |         | API version to use in the PodDisruptionBudget object definitions. |
+
+## Configure CronJob settings
+
+The GitLab global host settings for CronJobs are located under the `global.batch.cronJob` key:
+
+| Name         | Type      | Default | Description                                                           |
+| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
+| `apiVersion` | String    |         | API version to use in the CronJob object definitions. |
+
 ## Configure Ingress settings
 
 The GitLab global host settings for Ingress are located under the `global.ingress` key:
@@ -303,8 +319,8 @@ This feature requires the use of an
 [external PostgreSQL](../advanced/external-db/), as this chart does not
 deploy PostgreSQL in an HA fashion.
 
-The Rails components in GitLab have the ability to [make use of PostgreSQL
-clusters to load balance read-only queries](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html).
+The Rails components in GitLab have the ability to
+[make use of PostgreSQL clusters to load balance read-only queries](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html).
 
 This feature can be configured in two fashions:
 
@@ -423,8 +439,8 @@ support using sentinels. If sentinel support is desired, a Redis cluster
 needs to be created separately from the GitLab chart install. This can be
 done inside or outside the Kubernetes cluster.
 
-An issue to track the [supporting of sentinels in a GitLab deployed
-Redis cluster](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/1810) has
+An issue to track the
+[supporting of sentinels in a GitLab deployed Redis cluster](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/1810) has
 been created for tracking purposes.
 
 ```yaml
@@ -1114,12 +1130,12 @@ You can use these defaults or configure the bucket names:
 
 > Introduced in GitLab 13.4.
 
-The `storage_options` are used to configure [S3 Server Side
-Encryption](https://docs.gitlab.com/ee/administration/object_storage.html#server-side-encryption-headers).
+The `storage_options` are used to configure
+[S3 Server Side Encryption](https://docs.gitlab.com/ee/administration/object_storage.html#server-side-encryption-headers).
 
 Setting a default encryption on an S3 bucket is the easiest way to
-enable encryption, but you may want to [set a bucket policy to ensure
-only encrypted objects are uploaded](https://aws.amazon.com/premiumsupport/knowledge-center/s3-bucket-store-kms-encrypted-objects/).
+enable encryption, but you may want to
+[set a bucket policy to ensure only encrypted objects are uploaded](https://aws.amazon.com/premiumsupport/knowledge-center/s3-bucket-store-kms-encrypted-objects/).
 To do this, you must configure GitLab to send the proper encryption headers
 in the `storage_options` configuration section:
 
@@ -1328,20 +1344,32 @@ To disable the use of LDAP for web sign-in, set `global.appConfig.ldap.preventSi
 
 If the LDAP server uses a custom CA or self-signed certificate, you must:
 
-1. Ensure that the custom CA/Self-Signed certificate is created as a secret in the cluster/namespace:
+1. Ensure that the custom CA/Self-Signed certificate is created as a Secret or ConfigMap in the cluster/namespace:
 
    ```shell
-   kubectl -n gitlab create secret generic my-custom-ca --from-file=my-custom-ca.pem
+   # Secret
+   kubectl -n gitlab create secret generic my-custom-ca-secret --from-file=unique_name=my-custom-ca.pem
+
+   # ConfigMap
+   kubectl -n gitlab create configmap my-custom-ca-configmap --from-file=unique_name=my-custom-ca.pem
    ```
 
 1. Then, specify:
 
    ```shell
-   --set global.certificates.customCAs[0].secret=my-custom-ca
-   --set global.appConfig.ldap.servers.main.ca_file=/etc/ssl/certs/ca-cert-my-custom-ca.pem
+   # Configure a custom CA from a Secret
+   --set global.certificates.customCAs[0].secret=my-custom-ca-secret
+
+   # Or from a ConfigMap
+   --set global.certificates.customCAs[0].configMap=my-custom-ca-configmap
+
+   # Configure the LDAP integration to trust the custom CA
+   --set global.appConfig.ldap.servers.main.ca_file=/etc/ssl/certs/ca-cert-unique_name.pem
    ```
 
-This will ensure that the CA is mounted in the relevant pods under `/etc/ssl/certs/ca-cert-my-custom-ca.pem` and specifies its use in the LDAP configuration.
+This will ensure that the CA certificate is mounted in the relevant pods at `/etc/ssl/certs/ca-cert-unique_name.pem` and specifies its use in the LDAP configuration.
+
+See [Custom Certificate Authorities](#custom-certificate-authorities) for more info.
 
 ### OmniAuth
 
@@ -1487,7 +1515,7 @@ kubectl create secret generic gitlab-rails-storage \
 
 Sidekiq includes maintenance jobs that can be configured to run on a periodic
 basis using cron style schedules. A few examples are included below. See the
-sample [`gitlab.yml`](https://gitlab.com/gitlab-org/gitlab/blob/master/config/gitlab.yml.example#L346-427)
+`cron_jobs` and `ee_cron_jobs` sections in the sample [`gitlab.yml`](https://gitlab.com/gitlab-org/gitlab/blob/master/config/gitlab.yml.example)
 for more job examples.
 
 These settings are shared between Sidekiq, Webservice (for showing tooltips in UI)
@@ -1694,7 +1722,7 @@ nginx-ingress:
 
 ### TCP proxy protocol
 
-You can enable handling [proxy protocol](https://www.haproxy.com/blog/haproxy/proxy-protocol/) on the SSH Ingress to properly handle a connection from an upstream proxy that adds the proxy protocol header.
+You can enable handling [proxy protocol](https://www.haproxy.com/blog/use-the-proxy-protocol-to-preserve-a-clients-ip-address/) on the SSH Ingress to properly handle a connection from an upstream proxy that adds the proxy protocol header.
 By doing so, this will prevent SSH from receiving the additional headers and not break SSH.
 
 One common environment where one needs to enable handling of proxy protocol is when using AWS with an ELB handling the inbound connections to the cluster. You can consult the [AWS layer 4 loadbalancer example](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/elb-layer4-loadbalancer.yaml) to properly set it up.
@@ -1781,33 +1809,39 @@ These settings do not affect charts from outside of this repository, via `requir
 
 Some users may need to add custom certificate authorities, such as when using internally
 issued SSL certificates for TLS services. To provide this functionality, we provide
-a mechanism for injecting these custom root certificate authorities into the application via secrets.
+a mechanism for injecting these custom root certificate authorities into the application through Secrets or ConfigMaps.
+
+To create a Secret or ConfigMap:
+
+```shell
+# Create a Secret from a certificate file
+kubectl create secret generic secret-custom-ca --from-file=unique_name=/path/to/cert
+
+# Create a ConfigMap from a certificate file
+kubectl create configmap cm-custom-ca --from-file=unique_name=/path/to/cert
+```
+
+To configure a Secret or ConfigMap, or both, specify them in globals:
 
 ```yaml
 global:
   certificates:
     customCAs:
-      - secret: internal-cas
-      - secret: other-custom-cas
+      - secret: secret-custom-CAs           # Mount all keys of a Secret
+      - secret: secret-custom-CAs           # Mount only the specified keys of a Secret
+        keys:
+          - unique_name
+      - configMap: cm-custom-CAs            # Mount all keys of a ConfigMap
+      - configMap: cm-custom-CAs            # Mount only the specified keys of a ConfigMap
+        keys:
+          - unique_name_1
+          - unique_name_2
 ```
 
-A user can provide any number of secrets, each containing any number of keys that hold
-PEM encoded CA certificates. These are configured as entries under `global.certificates.customCAs`.
-All keys within the secret will be mounted, so all keys across all secrets must be unique.
-These secrets can be named in any fashion, but they *must not* contain key names that collide.
-
-To create a secret:
-
-```shell
-kubectl create secret generic custom-ca --from-file=unique_name=/path/to/cert
-```
-
-To configure the secret:
-
-```shell
-helm install gitlab gitlab/gitlab \
-  --set global.certificates.customCAs[0].secret=custom-ca
-```
+You can provide any number of Secrets or ConfigMaps, each containing any number of keys that hold
+PEM-encoded CA certificates. These are configured as entries under `global.certificates.customCAs`.
+All keys are mounted unless `keys:` is provided with a list of specific keys to be mounted. All mounted keys across all Secrets and ConfigMaps must be unique.
+The Secrets and ConfigMaps can be named in any fashion, but they *must not* contain key names that collide.
 
 ## Application Resource
 

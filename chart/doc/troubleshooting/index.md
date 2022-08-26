@@ -609,3 +609,10 @@ Run the certificates container using Docker.
      lrwxrwxrwx   1 root root      20 Oct  7 11:34 28746b42.0 -> ca-cert-corporate_root.pem
      -rw-r--r--   1 root root    1948 Oct  7 11:34 ca-cert-corporate_root.pem
      ```
+
+## `308: Permanent Redirect` causing a redirect loop
+
+`308: Permanent Redirect` can happen if your Load Balancer is configured to send unencrypted traffic (HTTP) to NGINX. 
+Because NGINX defaults to redirecting `HTTP` to `HTTPS`, you may end up in a "redirect loop". 
+
+To fix this, [enable NGINX's `use-forward-headers` setting](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers). 

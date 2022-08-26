@@ -105,7 +105,6 @@ describe 'Strategy configuration' do
       'Deployment/test-certmanager',
       'Deployment/test-prometheus-server',
       'Deployment/test-nginx-ingress-controller',
-      'Deployment/test-nginx-ingress-defaultbackend',
       'Deployment/test-toolbox',
       'Deployment/test-minio',
       'Deployment/test-gitlab-runner',

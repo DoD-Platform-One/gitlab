@@ -56,8 +56,8 @@ Please refer to the [corresponding Azure example](https://gitlab.com/gitlab-org/
 Although Azure uses the word container to denote a collection of blobs,
 GitLab standardizes on the term bucket.
 
-Azure Blob storage requires the use of the [consolidated object storage
-settings](../../charts/globals.md#consolidated-object-storage). A
+Azure Blob storage requires the use of the
+[consolidated object storage settings](../../charts/globals.md#consolidated-object-storage). A
 single Azure storage account name and key must be used across multiple
 Azure blob containers. Customizing individual `connection` settings by
 object type (for example, `artifacts`, `uploads`, and so on) is not permitted.

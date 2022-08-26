@@ -17,7 +17,8 @@ describe "Restoring a backup" do
 
     # We run migrations once early to get the db into a place where we can set the runner token
     # Ignore errors, we will run the migrations again after the token
-    run_migrations
+    stdout, status = run_migrations
+    warn "WARNING: Migrations did not succeed:\n#{stdout}" unless status.success?
 
     stdout, status = set_runner_token
     fail stdout unless status.success?

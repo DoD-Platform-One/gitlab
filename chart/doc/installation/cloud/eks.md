@@ -14,6 +14,11 @@ deploying the `gitlab` chart.
 To get started easier, a script is provided to automate the cluster creation.
 Alternatively, a cluster can be created manually as well.
 
+Prerequisites:
+
+- Install the [prerequisites](../tools.md).
+- Install [`eksctl`](https://github.com/weaveworks/eksctl#installation).
+
 ### Scripted cluster creation
 
 A [bootstrap script](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/eks_bootstrap_script)
@@ -23,8 +28,6 @@ The script will:
 
 1. Create a new EKS cluster.
 1. Setup `kubectl`, and connect it to the cluster.
-
-The script uses [`eksctl`](https://eksctl.io) to initialize the cluster. If it cannot locate it in your PATH, you will need to download and install it manually.
 
 To authenticate, `eksctl` uses the same options as the AWS command line. See the AWS documentation for how to
 use [environment variables](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html), or [configuration files](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).

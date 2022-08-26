@@ -10,9 +10,6 @@ We provide a complete NGINX deployment to be used as an Ingress Controller. Not 
 Kubernetes providers natively support the NGINX [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls),
 to ensure compatibility.
 
-This chart provides two services: `nginx` and `nginx-default-backend`, which are `nginx-ingress-controller`
-and `defaultbackend` from the [Google Container Registry](https://gcr.io/google_containers).
-
 NOTE:
 Our [fork](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/nginx-ingress) of the NGINX chart was pulled from
 [GitHub](https://github.com/kubernetes/ingress-nginx). See [Our NGINX fork](fork.md) for details on what was modified in our fork.
