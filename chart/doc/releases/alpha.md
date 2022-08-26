@@ -6,8 +6,8 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # GitLab Cloud Native Chart Alpha
 
-> **Outdated**:
-The charts are now in beta. See the [beta documentation](beta.md) for more information
+WARNING:
+The charts are now in beta. See the [beta documentation](beta.md) for more information.
 
 We have been working hard on the chart and it's underlying containers, and are excited to reach alpha and share it with the GitLab community.
 

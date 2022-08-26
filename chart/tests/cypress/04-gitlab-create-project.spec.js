@@ -32,7 +32,7 @@ describe('Create Gitlab Project', () => {
             // For some reason, there are 2 other hidden elements with the same attributes but we only need the first one
             // Also use force: true for the click due to the label is covering the radio button (but can still be clicked) 
             cy.get('input[id="project_visibility_level_20"]').first().click({force: true})     
-            cy.get('input[id="project_initialize_with_readme"]').click()
+            cy.get('input[id="project_initialize_with_readme"]').click({force: true})
             cy.get('input[type="submit"]').first().click()                        // for some reason, there are 2 other hidden elements with the same attributes but we only need the first one
       }
     })

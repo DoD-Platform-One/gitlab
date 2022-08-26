@@ -11,6 +11,10 @@ deploying the `gitlab` chart to [Oracle Container Engine for Kubernetes (OKE)](h
 
 ## Creating the OKE cluster
 
+Prerequisites:
+
+- Install the [prerequisites](../tools.md).
+
 To provision the Kubernetes cluster manually, follow the
 [OKE instructions](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingclusterusingoke.htm). Check the list of compute [shapes](https://docs.oracle.com/en-us/iaas/Content/ContEng/Reference/contengimagesshapes.htm#shapes) available for worker nodes supported by OKE.
 

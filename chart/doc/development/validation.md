@@ -6,9 +6,9 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Validations of values using JSON Schema
 
-Helm 3 introduced support for validation of values using [schema
-files](https://helm.sh/docs/topics/charts/#schema-files) which follow [JSON
-Schema](https://json-schema.org/). Helm charts in this repository also makes use
+Helm 3 introduced support for validation of values using
+[schema files](https://helm.sh/docs/topics/charts/#schema-files) which follow
+[JSON Schema](https://json-schema.org/). Helm charts in this repository also makes use
 of this feature by defining `values.schema.json` file for each sub-chart.
 
 Guidelines for developers regarding usage of schema files:

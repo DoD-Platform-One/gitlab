@@ -222,7 +222,7 @@ all Kubernetes resources and dependent charts:
 ## Installation of minimal GitLab configuration via minikube on macOS
 
 This section is based on [Developing for Kubernetes with minikube](../development/minikube/index.md)
-and [Helm](../installation/tools.md#helm). Refer
+and [Helm](../installation/tools.md). Refer
 to those documents for details.
 
 - Install Kubectl via Homebrew:

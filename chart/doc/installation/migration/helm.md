@@ -20,8 +20,8 @@ From the standpoint of the application that is currently running, nothing is cha
 ## How to migrate from Helm v2 to Helm v3
 
 You can use the [Helm 2to3 plugin](https://github.com/helm/helm-2to3) to migrate GitLab releases from
-Helm v2 to Helm v3. For a more detailed explanation with some examples about this migration plugin, refer to Helm blog post: [How to migrate from Helm v2 to Helm v3](
-https://helm.sh/blog/migrate-from-helm-v2-to-helm-v3/).
+Helm v2 to Helm v3. For a more detailed explanation with some examples about this migration plugin, refer to Helm blog post:
+[How to migrate from Helm v2 to Helm v3](https://helm.sh/blog/migrate-from-helm-v2-to-helm-v3/).
 
 If you have multiple people managing your GitLab Helm installation, you may need to do `helm3 2to3 move config` on each local machine. You will only need to do `helm3 2to3 convert` once.
 

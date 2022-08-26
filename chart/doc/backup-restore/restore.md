@@ -6,9 +6,12 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Restoring a GitLab installation **(FREE SELF)**
 
-> To obtain a backup tarball of an existing GitLab instance that used other installation methods like an Omnibus GitLab package or Omnibus GitLab Helm chart, follow the instructions [given in documentation](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system)
->
-> **Note**: If you are restoring a backup taken from another instance, you must migrate your existing instance to using object storage before taking the backup. See [issue 646](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/646)
+To obtain a backup tarball of an existing GitLab instance that used other installation methods like an Omnibus GitLab
+package or Omnibus GitLab Helm chart, follow the instructions
+[given in documentation](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system).
+
+If you are restoring a backup taken from another instance, you must migrate your existing instance to using object storage
+before taking the backup. See [issue 646](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/646).
 
 It is recommended that you restore a backup to the same version of GitLab on which it was created.
 

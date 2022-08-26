@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Upgrade Guide **(FREE SELF)**
+# Upgrade the GitLab chart **(FREE SELF)**
 
 Before upgrading your GitLab installation, you need to check the
 [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md)
@@ -16,16 +16,6 @@ NOTE:
 **Zero-downtime upgrades** are not available with the GitLab charts.
 Ongoing work to support this feature can be tracked via
 [the GitLab Operator issue](https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/issues/59).
-
-WARNING:
-If you are upgrading from the `5.x` version of the chart to the latest `6.0` release, you need
-to first update to the latest `5.10.x` patch release in order for the upgrade to work.
-The [6.0 release notes](../releases/6_0.md) describe the supported upgrade path.
-
-WARNING:
-If you are upgrading from the `4.x` version of the chart to the latest `5.0` release, you need
-to first update to the latest `4.12.x` patch release in order for the upgrade to work.
-The [5.0 release notes](../releases/5_0.md) describe the supported upgrade path.
 
 We also recommend that you take a [backup](../backup-restore/index.md) first. Also note that you
 must provide all values using `helm upgrade --set key=value` syntax or `-f values.yaml` instead of
@@ -42,8 +32,8 @@ Mappings between chart versioning and GitLab versioning can be found [here](../i
 ## Steps
 
 NOTE:
-If you're upgrading to the `5.0` version of the chart, follow the [manual upgrade steps for 5.0](#upgrade-steps-for-50-release).
-If you're upgrading to the `4.0` version of the chart, follow the [manual upgrade steps for 4.0](#upgrade-steps-for-40-release).
+If you're upgrading to the `5.0` version of the chart, follow the [manual upgrade steps for 5.0](#upgrade-to-version-50).
+If you're upgrading to the `4.0` version of the chart, follow the [manual upgrade steps for 4.0](#upgrade-to-version-40).
 If you're upgrading to an older version of the chart, follow the [upgrade steps for older versions](upgrade_old.md).
 
 Before you upgrade, reflect on your set values and if you've possibly "over-configured" your settings. We expect you to maintain a small list of modified values, and leverage most of the chart defaults. If you've explicitly set a large number of settings by:
@@ -101,18 +91,23 @@ To upgrade the bundled PostgreSQL to version 13, the following steps are require
 
 As part of the `5.0.0` release of this chart, we upgraded the bundled PostgreSQL version from `11.9.0` to `12.7.0`. This is
  not a drop in replacement. Manual steps need to be performed to upgrade the database.
-The steps have been documented in the [5.0 upgrade steps](#upgrade-steps-for-50-release).
+The steps have been documented in the [5.0 upgrade steps](#upgrade-to-version-50).
 
 ### Upgrade the bundled PostgreSQL to version 11
 
 As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) from `7.7.0` to `8.9.4`. This is not a drop in replacement. Manual steps need to be performed to upgrade the database.
-The steps have been documented in the [4.0 upgrade steps](#upgrade-steps-for-40-release).
+The steps have been documented in the [4.0 upgrade steps](#upgrade-to-version-40).
 
-## Upgrade steps for the 6.0 release
+## Upgrade to version 6.0
+
+WARNING:
+If you are upgrading from the `5.x` version of the chart to the latest `6.0` release, you need
+to first update to the latest `5.10.x` patch release in order for the upgrade to work.
+The [6.0 release notes](../releases/6_0.md) describe the supported upgrade path.
 
 To upgrade to the `6.0` release you must first be on the latest `5.10.x` patch release. There isn't any additional manual changes required in `6.0` so you can [follow the regular release upgrade steps](#steps).
 
-## Upgrade steps for 5.9 release
+## Upgrade to version 5.9
 
 ### Sidekiq pod never becomes ready
 
@@ -128,7 +123,7 @@ This can be resolved from the **Admin Area**:
 
 There is additional conversation about this scenario in a [closed issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3198).
 
-## Upgrade steps for 5.5 release
+## Upgrade to version 5.5
 
 The `task-runner` chart [was renamed](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2099/diffs)
 to `toolbox` and removed in `5.5.0`. As a result, any mention of `task-runner`
@@ -150,7 +145,12 @@ configuration to fix this.
 
 There is an [open issue about clarifying the error message](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3004).
 
-## Upgrade steps for 5.0 release
+## Upgrade to version 5.0
+
+WARNING:
+If you are upgrading from the `4.x` version of the chart to the latest `5.0` release, you need
+to first update to the latest `4.12.x` patch release in order for the upgrade to work.
+The [5.0 release notes](../releases/5_0.md) describe the supported upgrade path.
 
 The `5.0.0` release requires manual steps in order to perform the upgrade. If you're using the
 bundled PostgreSQL, the best way to perform this upgrade is to back up your old database, and
@@ -175,7 +175,7 @@ If you are using the bundled PostgreSQL database, you should follow the [bundled
   kubectl describe pod <gitlab-upgrade-check-pod-full-name>
   ```
 
-## Upgrade steps for 4.0 release
+## Upgrade to version 4.0
 
 The `4.0.0` release requires manual steps in order to perform the upgrade. If you're using the
 bundled PostgreSQL, the best way to perform this upgrade is to back up your old database, and

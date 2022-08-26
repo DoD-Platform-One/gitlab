@@ -33,9 +33,6 @@ nginx-ingress:
     resources:
       requests:
         cpu: 20m
-  defaultBackend:
-    minAvailable: 1
-    replicaCount: 1
 gitlab:
   webservice:
     minReplicas: 1

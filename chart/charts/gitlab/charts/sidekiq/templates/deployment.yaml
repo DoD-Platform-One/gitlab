@@ -12,6 +12,7 @@
 {{- $timeout := .Values.timeout -}}
 {{- $resources := .Values.resources -}}
 {{- $nodeSelector := default .Values.global.nodeSelector .Values.nodeSelector -}}
+{{- $tolerations := .Values.tolerations -}}
 {{- $minioEnabled := .Values.global.minio.enabled -}}
 {{- $minioSecret := include "gitlab.minio.credentials.secret" . -}}
 {{- $railsSecretName := include "gitlab.rails-secrets.secret" . -}}
@@ -23,6 +24,7 @@
 {{- range .Values.pods -}}
 {{-   $queueName := printf "%s-%s" $fullname .name | trunc 63 }}
 {{-   $podNodeSelector := default $nodeSelector .nodeSelector -}}
+{{-   $tolerations := default $tolerations .tolerations -}}
 {{-   include "sidekiq.pod.common.labels" . }}
 {{-   $_ := set . "podLabels" (merge (default (dict) .podLabels) (default (dict) $.Values.podLabels) (default (dict) $.Values.global.pod.labels)) -}}
 apiVersion: apps/v1
@@ -74,9 +76,9 @@ spec:
       {{- end }}
       {{- end }}
     spec:
-      {{- if $.Values.tolerations }}
+      {{- with $tolerations }}
       tolerations:
-        {{- toYaml $.Values.tolerations | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if or $.Values.priorityClassName .priorityClassName }}
       priorityClassName: {{ default $.Values.priorityClassName .priorityClassName }}

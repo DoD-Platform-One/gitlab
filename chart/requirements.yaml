@@ -21,11 +21,11 @@ dependencies:
   repository: https://raw.githubusercontent.com/bitnami/charts/eb5f9a9513d987b519f0ecd732e7031241c50328/bitnami
   condition: postgresql.install
 - name: gitlab-runner
-  version: 0.43.0
+  version: 0.43.1
   repository: https://charts.gitlab.io/
   condition: gitlab-runner.install
 - name: grafana
-  version: 6.9.1
+  version: 6.11.0
   repository: https://grafana.github.io/helm-charts
   condition: global.grafana.enabled
 - name: redis

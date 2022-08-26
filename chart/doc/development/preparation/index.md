@@ -117,8 +117,7 @@ the use of OmniAuth. You will need to ensure that a set of
 **OAuth Client ID** credentials have been created for the hostname of the GitLab
 endpoint in your cluster.
 
-Cursory instructions for [creating a set of OAuth credentials can be found
-here](https://support.google.com/cloud/answer/6158849?hl=en).
+Cursory instructions for [creating a set of OAuth credentials can be found here](https://support.google.com/cloud/answer/6158849?hl=en).
 
 The credentials from GCP can be added per the
 [`globals` chart's `omniauth.providers` configuration documentation](../../charts/globals.md#omniauth).

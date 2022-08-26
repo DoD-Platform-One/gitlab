@@ -65,4 +65,41 @@ describe 'toolbox configuration' do
       expect(t.dig('ServiceAccount/test-toolbox', 'metadata', 'labels')).to include('global' => 'toolbox')
     end
   end
+
+  context 'cron job apiVersion' do
+    let(:api_version) { '' }
+
+    let(:values) do
+      YAML.safe_load %(
+      certmanager-issuer:
+        email: test@example.com
+      global:
+        batch:
+          cronJob:
+            apiVersion: "#{api_version}"
+      gitlab:
+        toolbox:
+          backups:
+            cron:
+              enabled: true
+          enabled: true
+      )
+    end
+
+    let(:template) { HelmTemplate.new(values) }
+
+    context 'default' do
+      it 'uses batch/v1beta1 CronJob' do
+        expect(template.dig('CronJob/test-toolbox-backup', 'apiVersion')).to eq 'batch/v1beta1'
+      end
+    end
+
+    context 'batch/v1' do
+      let(:api_version) { 'batch/v1' }
+
+      it 'uses batch/v1 CronJob' do
+        expect(template.dig('CronJob/test-toolbox-backup', 'apiVersion')).to eq 'batch/v1'
+      end
+    end
+  end
 end

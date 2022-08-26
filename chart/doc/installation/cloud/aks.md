@@ -14,12 +14,16 @@ deploying the `gitlab` chart to [Azure Kubernetes Service (AKS)](https://docs.mi
 To get started easier, a script is provided to automate the cluster creation.
 Alternatively, a cluster can be created manually as well.
 
+Prerequisites:
+
+- Install the [prerequisites](../tools.md).
+- Install the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+  and use it to [sign into Azure](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli#how-to-sign-into-the-azure-cli).
+- [Install `jq`](https://stedolan.github.io/jq/download/).
+
 ### Scripted cluster creation
 
 A [bootstrap script](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/aks_bootstrap_script.sh) has been created to automate much of the setup process for users on Azure.
-
-The script uses [`az`](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) to initialize the cluster. This is a prerequisite
-and should be installed before hand and [configured to your account](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli).
 
 It reads an argument of `up`, `down` or `creds`, with additional optional parameters
 from environment variables, or command line arguments:

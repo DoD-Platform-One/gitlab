@@ -24,6 +24,13 @@
 # `.buildpacks` that contains the URLs, one on each line, in order.
 # Note: Auto CI does not work with multiple buildpacks yet
 
+workflow:
+  rules:
+    # Prevent "detached" MR pipelines, not in use in this project.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - when: always
+
 default:
   image: registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base-helm-3.7
 
@@ -500,7 +507,8 @@ rubocop:
       - triggers
       - *com_auto_deploy_branch_ref
   script:
-    - bundle config set path 'gems'
+    - bundle config set --local path 'gems'
+    - bundle config set --local frozen 'true'
     - bundle install -j $(nproc)
     - bundle exec rubocop --parallel
   cache:
@@ -793,6 +801,7 @@ wait_for_dev_images:
   # publish chart into repo's Packages
   stage: package
   image: "registry.gitlab.com/gitlab-org/gitlab-build-images:gitlab-charts-build-base-helm-3.7"
+  dependencies: []
   variables:
     # **Required** variable to set channel to which chart will be published:
     # CHANNEL: "unstable"

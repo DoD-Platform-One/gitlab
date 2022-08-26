@@ -1,0 +1,151 @@
+# fips/values.yaml
+
+certmanager:
+  install: false
+
+postgresql:
+  install: false
+
+redis:
+  install: false
+
+nginx-ingress:
+  controller:
+    image:
+      # NGINX Ingress controller fork:
+      #   https://gitlab.com/gitlab-org/cloud-native/charts/gitlab-ingress-nginx:
+      repository: registry.gitlab.com/gitlab-org/cloud-native/charts/gitlab-ingress-nginx/controller
+      tag: v1.2.1-fips
+      digest: sha256:c4222b7ab3836b9be2a7649cff4b2e6ead34286dfdf3a7b04eb34fdd3abb0334
+
+prometheus:
+  install: false
+
+gitlab-runner:
+  install: false
+
+global:
+  minio:
+    enabled: false
+
+  grafana:
+    enabled: false
+
+  image:
+    pullPolicy: Always  # You can drop this if you're using release tags.
+
+  kubectl:
+    image:
+      tag: 1.18.20-fips
+
+  certificates:
+    image:
+      tag: master-fips
+
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/installation/tls.md#option-2-use-your-own-wildcard-certificate
+  ingress:
+    configureCertmanager: false
+    tls:
+      secretName: my-wildcard-cert-secret  # Your wildcard certificate.
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-ssl-protocols: "TLSv1.3 TLSv1.2" # restrict NGINX to TLSv1.2+
+
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-db
+  psql:
+    host: postgres.local
+    password:
+      secret: my-postgres-secret  # Your PostgreSQL credentials.
+      key: secret
+    port: 5432
+    database: my-db
+    username: my-username
+
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-redis
+  redis:
+    host: redis.local
+    password:
+      # enabled: false
+      secret: my-redis-secret  # Your PostgreSQL credentials.
+      key: secret
+    port: 6379
+
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
+  registry:
+    bucket: my-registry-storage  # Registry storage bucket.
+
+  appConfig:
+    lfs:
+      bucket: my-lfs-storage  # LFS storage bucket.
+      connection:
+        # See: https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/charts/globals.md#connection
+        secret: my-objectstore-lfs-secret # LFS storage secret.
+        key: connection
+    artifacts:
+      bucket: my-artifacts-storage # Artifacts storage bucket.
+      connection:
+        secret: my-objectstore-artifacts-secret # Artifacts storage secret.
+        key: connection
+    uploads:
+      bucket: my-uploads-storage # Uploads storage bucket.
+      connection:
+        secret: my-objectstore-uploads-secret # Uploads storage secret.
+        key: connection
+    packages:
+      bucket: my-packages-storage # Package storage bucket.
+      connection:
+        secret: my-objectstore-packages-secret # Package storage secret.
+        key: connection
+    backups:
+      bucket: my-backup-storage # Backup storage bucket.
+      tmpBucket: my-tmp-storage # Temp storage bucket.
+
+gitlab:
+
+  gitaly:
+    image:
+      tag: master-fips
+
+  gitlab-exporter:
+    image:
+      tag: master-fips
+
+  gitlab-shell:
+    image:
+      tag: main-fips # gitlab-shell's default branch is main, not master!
+
+  gitlab-mailroom:
+    image:
+      tag: master-fips
+
+  migrations:
+    image:
+      tag: master-fips
+
+  sidekiq:
+    image:
+      tag: master-fips
+
+  toolbox:
+    image:
+      tag: master-fips
+
+    # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
+    backups:
+      objectStorage:
+        config:
+          secret: my-s3cmd-config # You config for 's3cmd'.
+          key: config
+
+  webservice:
+    image:
+      tag: master-fips
+    workhorse:
+      tag: master-fips
+
+# See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
+registry:
+  image:
+    tag: v3.51.1-gitlab-fips
+  storage:
+    secret: my-objectstore-registry-secret # Registry storage secret.
+    key: config

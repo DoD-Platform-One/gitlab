@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.51.1-gitlab'
+    tag: 'v3.57.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -176,7 +176,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.51.1-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.57.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
 | `log`                                                                                                                                        | `{level: info, fields: {service: registry}}`                                   | Configure the logging options                                                                                                                                                                                                                                                                                                                |
@@ -245,6 +245,20 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `tokenIssuer`                                                                                                                                | `gitlab-issuer`                                                                | JWT token issuer                                                                                                                                                                                                                                                                                                                             |
 | `tolerations`                                                                                                                                | `[]`                                                                           | Toleration labels for pod assignment                                                                                                                                                                                                                                                                                                         |
 | `middleware.storage`                                                                                                                         |                                                                                | configuration layer for midleware storage ([s3 for instance](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#example-middleware-configuration))                                                                                                                                                         |
+| `redis.cache.enabled`                                                                                                                          | `false`                                                                        | When set to `true`, the Redis cache is enabled. This feature is dependent on the [metadata database](#database) being enabled. Repository metadata will be cached on the configured Redis instance.                                                                                              |
+| `redis.cache.addr`                                                                                                                          | `<Redis URL>`                                                                        | The address (host and port) of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`, or a comma separated list of Sentinel addresses if enabled.                                                                                            |
+| `redis.cache.mainName`                                                                                                                          |                                                                         | The main server name. Only applicable for Sentinel.                                                                                             |
+| `redis.cache.password.secret`                                                                                                                          | `gitlab-redis-secret`                                                                        | Name of the secret containing the Redis password.                                                                                              |
+| `redis.cache.password.key`                                                                                                                          | `redis-password`                                                                        | Secret key in which the Redis password is stored.                                                                                              |
+| `redis.cache.db`                                                                                                                          | `0`                                                                        | The name of the database to use for each connection.                                                                                              |
+| `redis.cache.dialtimeout`                                                                                                                          | `0s`                                                                        | The timeout for connecting to the Redis instance. Defaults to no timeout.                                                                                             |
+| `redis.cache.readtimeout`                                                                                                                          | `0s`                                                                        | The timeout for reading from the Redis instance. Defaults to no timeout.                                                                                             |
+| `redis.cache.writetimeout`                                                                                                                          | `0s`                                                                        | The timeout for writing to the Redis instance. Defaults to no timeout.                                                                                              |
+| `redis.cache.tls.enabled`                                                                                                                          | `false`                                                                        | Set to `true` to enable TLS.                                                                                               |
+| `redis.cache.tls.insecure`                                                                                                                          | `false`                                                                        | Set to `true` to disable server name verification when connecting over TLS.                                                                                              |
+| `redis.cache.pool.size`                                                                                                                          | `10`                                                                        | The maximum number of socket connections. Default is 10 connections.                                                                                              |
+| `redis.cache.pool.maxlifetime`                                                                                                                          | `1h`                                                                        | The connection age at which client retires a connection. Default is to not close aged connections.                                                                                              |
+| `redis.cache.pool.idletimeout`                                                                                                                          | `300s`                                                                        | How long to wait before closing inactive connections.                                                                                              |
 
 ## Chart configuration examples
 
@@ -312,7 +326,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.51.1-gitlab'`
+- `tag: 'v3.57.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -346,24 +360,30 @@ This section controls the registry Ingress.
 
 ## Configuring TLS
 
-Registry supports TLS. This will secure its communication with other components,
-including `nginx-ingress`. The TLS certificate should include the Registry
-Service host name (e.g. `RELEASE-registry.default.svc`) in the Common
-Name (CN) or Subject Alternate Name (SAN).
+Container Registry supports TLS which secures its communication with other components,
+including `nginx-ingress`.
 
-Once the TLS certificate is generated, create a [Kubernetes TLS Secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets)
-for it. You also need to create another Secret that only contains the CA
-certificate of the TLS certificate with `ca.crt` key.
+Prerequisites to configure TLS:
 
-TLS can be enabled for by setting `registry.tls.enabled` to `true`. You also
-need to tell other components that Registry is using HTTPS by setting
-`global.hosts.registry.protocol` to `https`. You also need to pass the Secret
-names to `registry.tls.secretName` and `global.certificates.customCAs` accordingly.
+- The TLS certificate must include the Registry Service host name
+  (for example, `RELEASE-registry.default.svc`) in the Common
+  Name (CN) or Subject Alternate Name (SAN).
+- After the TLS certificate generates:
+  - Create a [Kubernetes TLS Secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets)
+  - Create another Secret that only contains the CA certificate of the TLS certificate with `ca.crt` key.
 
-When `registry.tls.verify` is `true`, you need to pass the CA certificate Secret
+To enable TLS:
+
+1. Set `registry.tls.enabled` to `true`.
+1. Set `global.hosts.registry.protocol` to `https`.
+1. Pass the Secret names to `registry.tls.secretName` and `global.certificates.customCAs` accordingly.
+
+When `registry.tls.verify` is `true`, you must pass the CA certificate Secret
 name to `registry.tls.caSecretName`. This is necessary for self-signed
-certificates and custom CA. This Secret is used by NGINX to verify the TLS
+certificates and custom Certificate Authorities. This Secret is used by NGINX to verify the TLS
 certificate of Registry.
+
+For example:
 
 ```yaml
 global:
@@ -491,6 +511,15 @@ global:
 ```
 
 Ensuring the `secret` value is set to the name of the secret created above
+
+### Redis cache Secret
+
+The Redis cache Secret is used when `global.redis.password.enabled` is set to `true`.
+
+When the `shared-secrets` feature is enabled, the `gitlab-redis-secret` secret object
+is automatically created if not provided.
+
+To create this secret manually, see the [Redis password instructions](../../installation/secrets.md#redis-password).
 
 ### authEndpoint
 
@@ -943,6 +972,38 @@ gc:
     disabled: false
     interval: 5s
     storagetimeout: 5s
+```
+
+### Redis cache
+
+WARNING:
+This is an experimental feature and _must not_ be used in production.
+
+The `redis.cache` property is optional and provides options related to the
+[Redis cache](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#cache-1).
+To use `redis.cache` with the registry, the [metadata database](#database) must be enabled.
+
+For example:
+
+```yaml
+redis:
+  cache:
+    enabled: true
+    addr: localhost:16379
+    password:
+      secret: gitlab-redis-secret
+      key: redis-password
+    db: 0
+    dialtimeout: 10ms
+    readtimeout: 10ms
+    writetimeout: 10ms
+    tls:
+      enabled: true
+      insecure: true
+    pool:
+      size: 10
+      maxlifetime: 1h
+      idletimeout: 300s
 ```
 
 ## Garbage Collection

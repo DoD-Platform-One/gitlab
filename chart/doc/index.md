@@ -179,7 +179,7 @@ that would warrant a major version bump, and the requirement for these changes
 could completely block other development on these charts until completed.
 
 To quickly see the full list of the `gitlab` chart versions and the GitLab version
-they map to, issue the following command with [Helm](installation/tools.md#helm):
+they map to, issue the following command with [Helm](installation/tools.md):
 
 ```shell
 helm repo add gitlab https://charts.gitlab.io/
