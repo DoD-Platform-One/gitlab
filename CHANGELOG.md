@@ -3,8 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.3.2-bb.0] - 2022-09-14
+### Changed
+- Updated to helm chart to 6.3.2 and appVersion to 15.3.2
+
 ## [6.3.1-bb.0] - 2022-08-25
-### Updated
+### Changed
 - Updated to helm chart to 6.3.1 and appVersion to 15.3.1
 
 ## [6.2.1-bb.1] - 2022-08-18
@@ -12,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Remove ServiceMonitor created by BigBang and enable upstream ones.
 
 ## [6.2.1-bb.0] - 2022-08-18
-### Updated
+### Changed
 - Updated to helm chart to 6.2.1 and appVersion to 15.2.1
 
 ## [6.1.2-bb.2] - 2022-07-19
