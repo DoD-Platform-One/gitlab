@@ -16,7 +16,7 @@ There are two ways to configure a production external Postgres database.
 First you must disable the automatic Postgres install done by the chart.
 
 ```
-## Instllation & configuration of stable/prostgresql
+## Installation & configuration of stable/prostgresql
 ## See requirements.yaml for current version
 postgresql:
   postgresqlUsername: gitlab
@@ -56,4 +56,4 @@ postgresql:
     # preparedStatements: false
 ```
 
-[Gitlab](https://docs.gitlab.com/charts/advanced/external-db/) has documentation on doing this. 
+[Gitlab](https://docs.gitlab.com/charts/advanced/external-db/) has documentation on doing this.

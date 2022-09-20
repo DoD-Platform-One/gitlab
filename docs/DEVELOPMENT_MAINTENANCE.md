@@ -1,9 +1,9 @@
 # How to upgrade the Gitlab Package chart
-BigBang makes modifications to the upstream helm chart. The full list of changes is at the end of  this document. 
+BigBang makes modifications to the upstream helm chart. The full list of changes is at the end of  this document.
 1. Read release notes from upstream [Gitlab Releases](https://about.gitlab.com/releases/categories/releases/). Be aware of changes that are included in the upgrade. Take note of any manual upgrade steps that customers might need to perform, if any.
 1. Do diff of [upstream chart](https://gitlab.com/gitlab-org/charts/gitlab) between old and new release tags to become aware of any significant chart changes. A graphical diff tool such as [Meld](https://meldmerge.org/) is useful. You can see where the current helm chart came from by inspecting ```/chart/kptfile```
 1. Create a development branch and merge request from the Gitlab issue.
-1. Merge/Sync the new helm chart with the existing Gitlab package code. A graphical diff tool like [Meld](https://meldmerge.org/) is useful. Reference the "Modifications made to upstream chart" section below. Be careful not to overwrite Big Bang Package changes that need to be kept. Note that some files will have combinations of changes that you will overwite and changes that you keep. Stay alert. The hardest file to update is the ```/chart/values.yaml``` because the changes are many and complicated.
+1. Merge/Sync the new helm chart with the existing Gitlab package code. A graphical diff tool like [Meld](https://meldmerge.org/) is useful. Reference the "Modifications made to upstream chart" section below. Be careful not to overwrite Big Bang Package changes that need to be kept. Note that some files will have combinations of changes that you will overwrite and changes that you keep. Stay alert. The hardest file to update is the ```/chart/values.yaml``` because the changes are many and complicated.
 1. Delete all the ```/chart/charts/*.tgz``` files and the ```/requirements.lock``` file. You will replace these files in a later step.
 1. In ```/chart/requirements.yaml``` update the gluon library to the latest version.
 1. Run a helm dependency command to update the chart/charts/*.tgz archives and create a new requirements.lock file. You will commit the tar archives along with the requirements.lock that was generated.
@@ -24,7 +24,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
         - Gitlab: X.X.X
     ```
 1. Use a development environment to deploy and test Gitlab. See more detailed testing instructions below. Also test with gitlab-runner to make sure it still works with the new Gitlab version. Also test an upgrade by deploying the old version first and then deploying the new version.
-1. When the Package pipeline runs expect the cypress tests to fail due to UI changes. Note that most of the cypress test files are synced to the gitlab-runner Package to avoid having two different versions of the same tests. There is one place in particular that always fails because the button id number ```button[id="__BVID__66__BV_toggle_"]``` changes in ```/chart/tests/cypress/03-gitlab-login.spec.js```. It is usually necesary to run the cypress tests locally in order to troubleshoot a failing test. The following steps are about how to set up local cypress testing. There is not good documentation anywhere else so it is included here.
+1. When the Package pipeline runs expect the cypress tests to fail due to UI changes. Note that most of the cypress test files are synced to the gitlab-runner Package to avoid having two different versions of the same tests. There is one place in particular that always fails because the button id number ```button[id="__BVID__66__BV_toggle_"]``` changes in ```/chart/tests/cypress/03-gitlab-login.spec.js```. It is usually necessary to run the cypress tests locally in order to troubleshoot a failing test. The following steps are about how to set up local cypress testing. There is not good documentation anywhere else so it is included here.
     1. Install a current version of cypress on your workstation.
     1. Make a sibling directory named ```cypress``` next to where you have gitlab repo cloned.
         ```bash
@@ -87,7 +87,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 
     istio:
       enabled: true
-              
+
     jaeger:
       enabled: false
 
@@ -164,7 +164,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
     ```
 1. Access Gitlab UI from a browser and login with SSO
 1. Test changing your profile image.
-1. In your profile create an access token with all priveleges. Save the token for later use.
+1. In your profile create an access token with all privileges. Save the token for later use.
 1. Create a group called ```test```
 1. Create a project called ```test1``` with a README.md within the ```test``` group
 1. From your workstation git clone with https the test1 project
@@ -197,11 +197,11 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
       paths:
         - file.txt
     ```
-1. Perform a manual upgrade test. First deploy the current Gitlab version. Then delpoy your development branch. Verify that the upgrade is successfull.
+1. Perform a manual upgrade test. First deploy the current Gitlab version. Then deploy your development branch. Verify that the upgrade is successful.
 1. Retest with monitoring and logging enabled. Verify that the logging and monitoring are working.
 
 # Modifications made to upstream chart
-This is a high-level list of modifitations that Big Bang has made to the upstream helm chart. You can use this as as cross-check to make sure that no modifications were lost during the upgrade process.
+This is a high-level list of modifications that Big Bang has made to the upstream helm chart. You can use this as as cross-check to make sure that no modifications were lost during the upgrade process.
 
 ##  chart/charts/*.tgz
 - run ```helm dependency update ./chart``` and commit the downloaded archives
@@ -243,7 +243,7 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
 - add Secrets for DoD certificate authorities
 
 ## chart/templates/_certificates.tpl
-- hack to support pki certificate location within the RedHat UBI image. Is different than Debian based images. Add to definition of ```gitlab.certificates.volumeMount```  
+- hack to support pki certificate location within the RedHat UBI image. Is different than Debian based images. Add to definition of ```gitlab.certificates.volumeMount```
     the volumeMount definition is at the end of the file
     ```
     - name: etc-ssl-certs
@@ -256,12 +256,12 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
     ```
 
 ## chart/charts/minio/templates/_helper_create_buckets.sh
-- hack the MinIO sub-chart to work with newer mc version in IronBank image   
-    line 65  
+- hack the MinIO sub-chart to work with newer mc version in IronBank image
+    line 65
     ```
     /usr/bin/mc policy set $POLICY myminio/$BUCKET
     ```
-  
+
 ## chart/tests/*
 - add helm test scripts
 
@@ -274,7 +274,7 @@ This is a high-level list of modifitations that Big Bang has made to the upstrea
 ## chart/charts/gitlab/charts/toolbox/templates/backup-job.yaml
 - lines 33-35
   ```
-    {{- if .Values.global.istio.enabled }}  
+    {{- if .Values.global.istio.enabled }}
       sidecar.istio.io/inject: "false"
     {{- end }}
   ```
