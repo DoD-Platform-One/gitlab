@@ -11,7 +11,7 @@ GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manag
 The default values are intended for development, demo, and CI pipelines. For operational/production environments see the suggestions in [docs/operational-production-settings.md](./operational-production-settings.md).
 
 ## Kubernetes resource configuration
-The BigBang Gitlab Package has a default resource configuration for a minimal installation which is sufficient for development, demos, and CI pipelines. For larger operational deployments you must increase the CPU and memory as needed. See suggested production settings here [docs/operational-production-settings.md](./operational-production-settings.md). Consult the upstream Gitlab documentation and Gitlab Support for appropriate settings. See the [docs/k8s-resources.md](./k8s-resources.md) for a list of all possible configuration values. 
+The BigBang Gitlab Package has a default resource configuration for a minimal installation which is sufficient for development, demos, and CI pipelines. For larger operational deployments you must increase the CPU and memory as needed. See suggested production settings here [docs/operational-production-settings.md](./operational-production-settings.md). Consult the upstream Gitlab documentation and Gitlab Support for appropriate settings. See the [docs/k8s-resources.md](./k8s-resources.md) for a list of all possible configuration values.
 
 ## Keycloak SSO integration
 Gitlab SSO integration can be 100% configuration as code. No manual post-install actions are required if the configuration is correct.
@@ -32,7 +32,7 @@ Build filter for gitlab namespace
   }
 }
 ```
-There are more than 15 pods in a Gitlab delployment.
+There are more than 15 pods in a Gitlab deployment.
 ```
 [p1dev@p1dev-vm gitlab]$ kubectl get pods -n gitlab
 NAME                                           READY   STATUS      RESTARTS   AGE
@@ -56,10 +56,10 @@ gitlab-webservice-7ff8956d8b-8zcj2             2/2     Running     0          4h
 gitlab-webservice-7ff8956d8b-9l8sj             2/2     Running     0          143m
 global-shared-gitlab-runner-567cf8df54-8dzfw   1/1     Running     0          4h50m
 ```
-Here is a document that lists the Gitlab components and what each one does  
+Here is a document that lists the Gitlab components and what each one does
 https://docs.gitlab.com/ce/development/architecture.html#component-details
 
-Here are some an examples of a filter for a secific containers:  
+Here are some an examples of a filter for specific containers:
 front-end webservice
 ```
 {
