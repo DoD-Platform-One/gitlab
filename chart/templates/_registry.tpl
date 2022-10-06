@@ -8,6 +8,13 @@ Return the registry certificate secret name
 {{- end -}}
 
 {{/*
+Return the registry TLS secret name
+*/}}
+{{- define "gitlab.registry.tls.secret" -}}
+{{- default (printf "%s-registry-tls" .Release.Name) .Values.global.registry.tls.secretName | quote -}}
+{{- end -}}
+
+{{/*
 Return the registry's httpSecert secret name
 */}}
 {{- define "gitlab.registry.httpSecret.secret" -}}

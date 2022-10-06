@@ -15,21 +15,21 @@ Our [fork](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/nginx-
 [GitHub](https://github.com/kubernetes/ingress-nginx). See [Our NGINX fork](fork.md) for details on what was modified in our fork.
 
 NOTE:
-The version of the NGINX Ingress Helm Chart bundled with the GitLab Helm Charts
+The version of the NGINX Ingress Helm chart bundled with the GitLab Helm charts
 has been updated to support Kubernetes 1.22. As a result, the GitLab Helm
-Chart can not longer support Kubernetes versions prior to 1.19.
+chart can not longer support Kubernetes versions prior to 1.19.
 
 ## Configuring NGINX
 
 See [NGINX chart documentation](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/nginx-ingress/README.md#configuration)
 for configuration details.
 
-### Global Settings
+### Global settings
 
 We share some common global settings among our charts. See the [Globals Documentation](../globals.md)
 for common configuration options, such as GitLab and Registry hostnames.
 
-## Configure hosts using the Global Settings
+## Configure hosts using the Global settings
 
 The hostnames for the GitLab Server and the Registry Server can be configured using
-our [Global Settings](../globals.md) chart.
+our [Global settings](../globals.md) chart.

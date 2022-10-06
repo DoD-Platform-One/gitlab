@@ -4,11 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Test the GitLab chart on GKE
+# Test the GitLab chart on GKE or EKS
 
 This guide serves as a concise but complete documentation about how to install the
-Cloud Native GitLab chart with default values on Google Kubernetes Engine (GKE).
-For clarity, we focus exclusively on GKE.
+GitLab chart with default values on Google Kubernetes Engine (GKE)
+or Amazon Elastic Kubernetes Service (EKS).
 
 By default, the GitLab chart includes an in-cluster PostgreSQL, Redis, and
 MinIO deployment. Those are for trial purposes only and
@@ -32,17 +32,18 @@ a DNS record. This can be a sub-domain such as `poc.domain.com`, but the
 Let's Encrypt servers must be able to resolve the addresses in order to
 issue certificates.
 
-For the sake of this guide, we assume this is in Google's Cloud DNS. Other
-services can be used, but are not covered here.
-
 ### Create a Kubernetes cluster
 
-A cluster with a total of 8vCPU and 30GB of RAM, or more is recommended.
+A cluster with a total of at least eight virtual CPUs and 30GB of RAM is recommended.
 
 This guide is not intended to cover how to create or obtain a Kubernetes cluster.
-Instead, refer to the Google [GKE cluster creation guide](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster).
+We'll instead refer to the cloud providers' own instructions:
 
-### Instal kubectl
+- [Google GKE cluster creation guide](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster).
+- [Amazon AWS Getting started with Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
+  Use EC2 managed nodes for the EKS cluster, and not Fargate. Fargate [has a number of limitations](https://docs.aws.amazon.com/en_us/eks/latest/userguide/fargate.html) and is not supported for use with the GitLab Helm chart.
+
+### Install kubectl
 
 To install kubectl, see the [Kubernetes installation documentation](https://kubernetes.io/docs/tasks/tools/).
 The documentation covers most operating systems and the Google
@@ -109,12 +110,16 @@ gitlab-registry    registry.domain.tld   35.239.27.235   80, 443   118m
 gitlab-webservice  gitlab.domain.tld     35.239.27.235   80, 443   118m
 ```
 
-Notice there are three entries and they all have the same IP address.
-Take this IP address and add it to your DNS for the domain
-you have chosen to use. You can add 3 separate records of type `A`, but we
-suggest adding a single "wildcard" record for simplicity. In Google Cloud DNS,
-this is done by creating an `A` record, but with the name being `*`. We also
-suggest you set the TTL to `1` minute instead of `5` minutes.
+You'll notice that there are three entries, all with the same IP address.
+Take this IP address, and add it to your DNS for the domain
+you have chosen to use. You can add multiple records of type `A`, but for
+simplicity we recommend a single "wildcard" record:
+
+- In Google Cloud DNS, create an `A` record with the name `*`. We also
+  suggest setting the TTL to `1` minute instead of `5` minutes.
+- On AWS EKS, the address will be a URL rather than an IP address.
+  [Create a Route 53 alias record](https://aws.amazon.com/premiumsupport/knowledge-center/route-53-create-alias-records/)
+  `*.domain.tld` pointing to this URL.
 
 ## Sign in to GitLab
 

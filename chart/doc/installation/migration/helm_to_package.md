@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Migrate from the Helm Chart to the Linux package **(FREE SELF)**
+# Migrate from the Helm chart to the Linux package **(FREE SELF)**
 
 To migrate from a Helm installation to a Linux package (Omnibus) installation:
 
@@ -57,5 +57,5 @@ To migrate from a Helm installation to a Linux package (Omnibus) installation:
    [perform the restore](https://docs.gitlab.com/ee/raketasks/backup_restore.html#restore-for-omnibus-gitlab-installations).
 1. After the restore is complete, run the [doctor Rake tasks](https://docs.gitlab.com/ee/administration/raketasks/check.html)
    to make sure that the secrets are valid.
-1. After everything is verified, you may [uninstall](../../index.md#uninstall)
+1. After everything is verified, you may [uninstall](../uninstall.md)
    the GitLab Helm chart instance.

@@ -220,7 +220,7 @@ Users can use or refer that script to generate certificates with proper SAN attr
    kubectl create secret tls <secret name> --cert=praefect.crt --key=praefect.key
    ```
 
-1. Redeploy the Helm chart by passing the additional arguments `--set global.praefect.tls.enabled=true --set global.praefect.tls.secretName=<secret name>`
+1. Redeploy the Helm chart by passing `--set global.praefect.tls.enabled=true`.
 
 When running Gitaly over TLS, a secret name must be provided for each virtual storage.
 

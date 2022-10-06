@@ -48,7 +48,7 @@ Note that `kind` uses Docker to run local Kubernetes clusters, so be sure to [in
 
 ### Obtaining configuration examples
 
-The GitLab Charts repository contains every example referenced in the following steps. Clone the repository or update an existing checkout to get the latest versions:
+The GitLab charts repository contains every example referenced in the following steps. Clone the repository or update an existing checkout to get the latest versions:
 
 ```shell
 git clone https://gitlab.com/gitlab-org/charts/gitlab.git
@@ -68,7 +68,7 @@ helm repo update
 Select from one of the following deployment options based on your needs.
 
 NOTE:
-The first full deployment process may take around 10 minutes depending on network and system resources while the Cloud Native GitLab images are downloaded. Confirm GitLab is running with the following command:
+The first full deployment process may take around 10 minutes depending on network and system resources while the cloud-native GitLab images are downloaded. Confirm GitLab is running with the following command:
 
 ```shell
 kubectl --namespace YOUR_NAMESPACE get pods

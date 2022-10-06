@@ -449,6 +449,21 @@ global:
       providers: []
       # - secret: gitlab-google-oauth2
       #   key: provider
+
+    ## https://docs.gitlab.com/charts/charts/globals#kerberos
+    kerberos:
+      enabled: false
+      keytab:
+        # secret:
+        key: keytab
+      servicePrincipalName: ""
+      krb5Config: ""
+      dedicatedPort:
+        enabled: false
+        port: 8443
+        https: true
+      simpleLdapLinkingAllowedRealms: []
+
     ## https://docs.gitlab.com/charts/charts/globals#configure-appconfig-settings
     sentry:
       enabled: false
@@ -554,6 +569,9 @@ global:
     notificationSecret: {}
       # secret:
       # key:
+    tls:
+      enabled: false
+      # secretName:
     redis:
       cache:
         password: {}
@@ -665,8 +683,8 @@ global:
     ## https://docs.gitlab.com/charts/installation/secrets#gitlab-workhorse-secret
     # secret:
     # key:
-    tls: {}
-      # enabled: true
+    tls:
+      enabled: false
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-webservice
   webservice:
@@ -677,7 +695,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -720,7 +738,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1176,7 +1194,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.3.2
+    tag: 15.4.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1315,7 +1333,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1362,7 +1380,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1392,7 +1410,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1416,7 +1434,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1429,7 +1447,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1447,7 +1465,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1470,7 +1488,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1497,7 +1515,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1527,7 +1545,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.3.2
+      tag: 15.4.1
       pullSecrets:
         - name: private-registry
 
@@ -1541,7 +1559,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.3.2
+      tag: 15.4.1
     init:
       resources:
         limits:
@@ -1582,7 +1600,7 @@ minio:
     sidecar.istio.io/inject: "false"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-09-07T22-25-02Z
+  imageTag: RELEASE.2022-10-02T19-29-29Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1591,7 +1609,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-08-28T20-08-11Z
+    tag: RELEASE.2022-10-01T07-56-14Z
     pullSecrets:
     - name: private-registry
 

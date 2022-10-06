@@ -155,7 +155,7 @@ and they will assist you with any issues you are having.
   - Check the output of `kubectl get events -w --all-namespaces`.
   - Check the logs of pods within `gitlab-managed-apps` namespace.
   - On the side of GitLab check Sidekiq log and Kubernetes log. When GitLab is installed
-    via Helm Chart, `kubernetes.log` can be found inside the Sidekiq pod.
+    via Helm chart, `kubernetes.log` can be found inside the Sidekiq pod.
 
 - How to get your initial administrator password <https://docs.gitlab.com/charts/installation/deployment.html#initial-login>:
 
@@ -189,7 +189,7 @@ and they will assist you with any issues you are having.
   helm status name-of-installation
   ```
 
-- How to update GitLab installed using Helm Chart:
+- How to update GitLab installed using Helm chart:
 
   ```shell
   helm repo upgrade
@@ -201,7 +201,7 @@ and they will assist you with any issues you are having.
   helm upgrade <release name> <chart path> -f gitlab.yaml
   ```
 
-  See also [Updating GitLab using the Helm Chart](../installation/upgrade.md).
+  See also [Updating GitLab by using the Helm chart](../installation/upgrade.md).
 
 - How to apply changes to GitLab configuration:
 
@@ -261,7 +261,7 @@ to those documents for details.
 - Find the IP address in the output of `minikube ip` and update the YAML file with
   this IP address.
 
-- Install the GitLab Helm Chart:
+- Install the GitLab Helm chart:
 
   ```shell
   helm repo add gitlab https://charts.gitlab.io

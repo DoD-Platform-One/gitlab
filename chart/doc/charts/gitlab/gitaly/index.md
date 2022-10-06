@@ -29,7 +29,7 @@ and [chart settings](#chart-settings).
 Gitaly is by default deployed as a component when deploying the GitLab
 chart. If deploying Gitaly separately, `global.gitaly.enabled` needs to
 be set to `false` and additional configuration will need to be performed
-as described in the [external Gitaly documentation](../../../advanced/external-gitaly/).
+as described in the [external Gitaly documentation](../../../advanced/external-gitaly/index.md).
 
 ### Installation command line options
 
@@ -262,7 +262,7 @@ workhorse:
 | `port`        | Integer | `8181`       | The port on which to connect to the Workhorse server.                                                                                                                                                                                                                                                    |
 | `serviceName` | String  | `webservice` | The name of the `service` which is operating the Workhorse server. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Workhorse as a part of the overall GitLab chart. |
 
-## Chart Settings
+## Chart settings
 
 The following values are used to configure the Gitaly Pods.
 
@@ -349,7 +349,7 @@ SAN attributes.
    kubectl create secret tls gitaly-server-tls --cert=gitaly.crt --key=gitaly.key
    ```
 
-1. Redeploy the Helm chart by passing the additional arguments `--set global.gitaly.tls.enabled=true --set global.gitaly.tls.secretName=<secret name>`
+1. Redeploy the Helm chart by passing `--set global.gitaly.tls.enabled=true`.
 
 ### Global server hooks
 

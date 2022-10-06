@@ -166,5 +166,5 @@ The restoration process does not update the `gitlab-initial-root-password` secre
 
 ## Additional Information
 
-- [GitLab Chart Backup/Restore Introduction](index.md)
+- [GitLab chart Backup/Restore Introduction](index.md)
 - [Backing up a GitLab installation](backup.md)

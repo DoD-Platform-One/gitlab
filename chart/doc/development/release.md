@@ -41,7 +41,7 @@ We will bump it for:
 
 | Chart Version | GitLab Version | Release Scenario |
 | ------------- | -------------- | ---------------- |
-| `0.2.0`       | `11.0.0`       | GitLab 11 release, and Chart beta |
+| `0.2.0`       | `11.0.0`       | GitLab 11 release, and chart beta |
 | `0.2.1`       | `11.0.1`       | GitLab patch release |
 | `0.2.2`       | `11.0.1`       | Chart changes released |
 | `0.2.3`       | `11.0.2`       | GitLab patch release, with some accompanying chart changes |
@@ -51,7 +51,7 @@ We will bump it for:
 | ~~`0.3.1`~~   | ~~`11.1.1`~~   | ~~Security release~~ (*1*) |
 | `0.4.1`       | `11.1.1`       | Security release (*1*) |
 | ...           | ...            | ... |
-| `1.0.0`       | `11.x.0`       | GitLab minor release, along with Chart GA |
+| `1.0.0`       | `11.x.0`       | GitLab minor release, along with chart GA |
 | `2.0.0`       | `11.x.x`       | Introduced some breaking change to the chart |
 | `3.0.0`       | `12.0.0`       | GitLab 12 release |
 

@@ -15,7 +15,7 @@ group :test do
 end
 
 group :rubocop do
-  gem 'gitlab-styles', '~> 6.1', require: false
+  gem 'gitlab-styles', '~> 9.0', require: false
 end
 
 group :development, :test do

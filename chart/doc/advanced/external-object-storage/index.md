@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# External object storage
+# Configure the GitLab chart with an external object storage
 
 GitLab relies on object storage for highly-available persistent data in Kubernetes.
 By default, an S3-compatible storage solution named `minio` is deployed with the
@@ -193,12 +193,16 @@ Examples for [AWS](https://fog.io/storage/#using-amazon-s3-and-fog) (any S3 comp
 ## Backups
 
 Backups are also stored in object storage, and must be configured to point
-externally rather than the included MinIO service. The backup/restore procedure makes
-use of two separate buckets. A bucket for storing backups (`global.appConfig.backups.bucket`)
-and a temporary bucket for preserving existing data during the restore process (`global.appConfig.backups.tmpBucket`).
+externally rather than the included MinIO service. The backup/restore procedure uses two separate buckets:
+
+- A bucket for storing backups (`global.appConfig.backups.bucket`)
+- A temporary bucket for preserving existing data during the restore process (`global.appConfig.backups.tmpBucket`)
+
 AWS S3-compatible object storage systems and Google Cloud Storage are supported backends.
-The backend type is configurable by setting `global.appConfig.backups.objectStorage.backend` to `s3` and `gcs` respectively.
-A connection configuration through the `gitlab.toolbox.backups.objectStorage.config` key must also be provided.
+You can configure the backend type by setting `global.appConfig.backups.objectStorage.backend`
+to `s3` for AWS S3 or `gcs` for Google Cloud Storage.
+You must also provide a connection configuration through the `gitlab.toolbox.backups.objectStorage.config` key.
+
 When using Google Cloud Storage, the GCP project must be set with the `global.appConfig.backups.objectStorage.config.gcpProject` value.
 
 For S3-compatible storage:

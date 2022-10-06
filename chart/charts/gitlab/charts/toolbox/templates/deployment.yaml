@@ -152,6 +152,10 @@ spec:
             - name: toolbox-config
               mountPath: '/var/opt/gitlab/templates'
             - name: toolbox-config
+              mountPath: '/etc/krb5.conf'
+              subPath: krb5.conf
+            {{- include "gitlab.appConfig.kerberos.volumeMount" $ | nindent 12 }}
+            - name: toolbox-config
               mountPath: '/srv/gitlab/config/initializers/smtp_settings.rb'
               subPath: smtp_settings.rb
             - name: toolbox-secrets
@@ -178,6 +182,7 @@ spec:
       {{- include "gitlab.extraVolumes" . | nindent 6 }}
       {{- include "gitlab.psql.ssl.volume" . | nindent 6 }}
       {{- include "gitlab.geo.psql.ssl.volume" . | nindent 6 }}
+      {{- include "gitlab.appConfig.kerberos.volume" $ | nindent 6 }}
       - name: toolbox-config
         projected:
           sources:

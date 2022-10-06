@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab Webservice Chart **(FREE SELF)**
+# Using the GitLab Webservice chart **(FREE SELF)**
 
 The `webservice` sub-chart provides the GitLab Rails webserver with two Webservice workers
 per pod. (The minimum necessary for a single pod to be able to serve any web request in GitLab)
@@ -20,9 +20,9 @@ the Kubernetes cluster this chart is deployed onto.
 
 ## Configuration
 
-The `webservice` chart is configured as follows: [Global Settings](#global-settings),
-[Deployments settings](#deployments-settings), [Ingress Settings](#ingress-settings), [External Services](#external-services), and
-[Chart Settings](#chart-settings).
+The `webservice` chart is configured as follows: [Global settings](#global-settings),
+[Deployments settings](#deployments-settings), [Ingress settings](#ingress-settings), [External services](#external-services), and
+[Chart settings](#chart-settings).
 
 ## Installation command line options
 
@@ -152,7 +152,7 @@ to the `helm install` command using the `--set` flags.
 | `workhorse.imageScaler.maxProcs`                    | 2                                                               | The maximum number of image scaling processes that may run concurrently                                                                                                                                                                                                                                                         |
 | `workhorse.imageScaler.maxFileSizeBytes`            | 250000                                                          | The maximum file size in bytes for images to be processed by the scaler                                                                                                                                                                                                                                                         |
 | `workhorse.tls.verify` | `true` | When set to `true` forces NGINX Ingress to verify the TLS certificate of Workhorse. For custom CA you need to set `workhorse.tls.caSecretName` as well. Must be set to `false` for self-signed certificates. |
-| `workhorse.tls.secretName` |  | The name of the [TLS Secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets) that contains the TLS key and certificate pair. This is required when Workhorse TLS is enabled.  |
+| `workhorse.tls.secretName` | `{Release.Name}-workhorse-tls` | The name of the [TLS Secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets) that contains the TLS key and certificate pair. This is required when Workhorse TLS is enabled.  |
 | `workhorse.tls.caSecretName` |  | The name of the Secret that contains the CA certificate. This **is not** a [TLS Secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets), and must have only `ca.crt` key. This is used for TLS verification by NGINX. |
 | `webServer`                                         | `puma`                                                          | Selects web server (Webservice/Puma) that would be used for request handling                                                                                                                                                                                                                                                    |
 | `priorityClassName`                                 | `""`                                                            | Allow configuring pods `priorityClassName`, this is used to control pod priority in case of eviction                                                                                                                                                                                                                            |
@@ -298,7 +298,7 @@ another Secret that only contains the CA certificate of the TLS certificate
 with `ca.crt` key.
 
 The TLS can be enabled for `gitlab-workhorse` container by setting `global.workhorse.tls.enabled`
-to `true` as well as passing the Secret names to `gitlab.webservice.workhorse.tls.secretName` and
+to `true`. You can pass custom Secret names to `gitlab.webservice.workhorse.tls.secretName` and
 `global.certificates.customCAs` accordingly.
 
 When `gitlab.webservice.workhorse.tls.verify` is `true` (it is by default), you
@@ -319,7 +319,7 @@ gitlab:
     workhorse:
       tls:
         verify: true
-        secretName: gitlab-workhorse-tls
+        # secretName: gitlab-workhorse-tls
         caSecretName: gitlab-workhorse-ca
       monitoring:
         exporter:
@@ -342,17 +342,17 @@ hostname (ex: `RELEASE-webservice-default.default.svc`) in the Common
 Name (CN) or Subject Alternate Name (SAN).
 
 NOTE:
-[The Prometheus server bundled with the Chart](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3335) does not yet
+[The Prometheus server bundled with the chart](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3335) does not yet
 support scraping of HTTPS endpoints.
 
-TLS can be enabled on the `webservice` container by the settings `gitlab.webservice.tls.enabled` and `gitlab.webservice.tls.secretName`:
+TLS can be enabled on the `webservice` container by the settings `gitlab.webservice.tls.enabled`:
 
 ```yaml
 gitlab:
   webservice:
     tls:
       enabled: true
-      secretName: gitlab-webservice-tls
+      # secretName: gitlab-webservice-tls
 ```
 
 `secretName` must point to a [Kubernetes TLS secret](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets).
@@ -372,7 +372,7 @@ In order to use the Community Edition, set `image.repository` to
 `registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce` and `workhorse.image`
 to `registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce`.
 
-## Global Settings
+## Global settings
 
 We share some common global settings among our charts. See the [Globals Documentation](../../globals.md)
 for common configuration options, such as GitLab and Registry hostnames.
@@ -472,7 +472,7 @@ webservice:
        path:
 ```
 
-## Ingress Settings
+## Ingress settings
 
 | Name                              |  Type   | Default                   | Description                                                                                                                                                                                                                     |
 | :-------------------------------- | :-----: | :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -610,7 +610,7 @@ registry:
 | `port`               | Integer |                 | The external port used in the hostname. Using port `80` or `443` will result in the URLs being formed with `http`/`https`. Other ports will all use `http` and append the port to the end of hostname, for example `http://registry.example.com:8443`.                                                           |
 | `tokenIssuer`        | String  | `gitlab-issuer` | The name of the auth token issuer. This must match the name used in the Registry's configuration, as it incorporated into the token when it is sent. The default of `gitlab-issuer` is the same default we use in the Registry chart.                                                                            |
 
-## Chart Settings
+## Chart settings
 
 The following values are used to configure the Webservice Pods.
 

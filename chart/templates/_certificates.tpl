@@ -3,7 +3,7 @@
 {{- define "gitlab.certificates.initContainer" -}}
 {{- $customCAsEnabled := .Values.global.certificates.customCAs }}
 {{- $internalGitalyTLSEnabled := $.Values.global.gitaly.tls.enabled }}
-{{- $internalPraefectTLSEnabled := and $.Values.global.praefect.tls.enabled $.Values.global.praefect.tls.secretName }}
+{{- $internalPraefectTLSEnabled := $.Values.global.praefect.tls.enabled }}
 {{- $certmanagerDisabled := not (or $.Values.global.ingress.configureCertmanager $.Values.global.ingress.tls) }}
 {{- $imageCfg := dict "global" .Values.global.image "local" .Values.global.certificates.image -}}
 - name: certificates
@@ -31,7 +31,7 @@
 {{- define "gitlab.certificates.volumes" -}}
 {{- $customCAsEnabled := .Values.global.certificates.customCAs }}
 {{- $internalGitalyTLSEnabled := $.Values.global.gitaly.tls.enabled }}
-{{- $internalPraefectTLSEnabled := and $.Values.global.praefect.tls.enabled $.Values.global.praefect.tls.secretName }}
+{{- $internalPraefectTLSEnabled := $.Values.global.praefect.tls.enabled }}
 {{- $certmanagerDisabled := not (or $.Values.global.ingress.configureCertmanager $.Values.global.ingress.tls) }}
 - name: etc-ssl-certs
   emptyDir:

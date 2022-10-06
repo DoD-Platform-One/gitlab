@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Managing Persistent Volumes
+# Configure the GitLab chart with persistent volumes
 
 Some of the included services require persistent storage, configured through
 [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes) that specify which disks your cluster has access to.

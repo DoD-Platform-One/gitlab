@@ -277,6 +277,10 @@ spec:
               subPath: puma/puma.key
            {{- end }}
             - name: webservice-config
+              mountPath: '/etc/krb5.conf'
+              subPath: krb5.conf
+            {{- include "gitlab.appConfig.kerberos.volumeMount" $ | nindent 12 }}
+            - name: webservice-config
               mountPath: '/srv/gitlab/config/initializers/smtp_settings.rb'
               subPath: smtp_settings.rb
             - name: webservice-config
@@ -374,6 +378,7 @@ spec:
               mountPath: '/tmp'
               readOnly: false
             {{- include "gitlab.certificates.volumeMount" $ | nindent 12 }}
+            {{- include "gitlab.appConfig.kerberos.volumeMount" $ | nindent 12 }}
             {{- include "gitlab.extraVolumeMounts" $ | nindent 12 }}
           livenessProbe:
             exec:
@@ -405,6 +410,7 @@ spec:
       {{- include "gitlab.extraVolumes" $ | nindent 6 }}
       {{- include "gitlab.psql.ssl.volume" $ | nindent 6 }}
       {{- include "gitlab.geo.psql.ssl.volume" $ | nindent 6 }}
+      {{- include "gitlab.appConfig.kerberos.volume" $ | nindent 6 }}
       - name: shared-tmp
         {{- include "gitlab.volume.emptyDir" .sharedTmpDir | nindent 8 }}
       {{- if $.Values.metrics.enabled }}
@@ -443,7 +449,7 @@ spec:
           {{- end }}
           {{- if $.Values.global.workhorse.tls.enabled }}
           - secret:
-              name: {{ .workhorse.tls.secretName }}
+              name: {{ include "workhorse.tls.secret" $ }}
               items:
                 - key: "tls.crt"
                   path: "gitlab-workhorse/tls.crt"
@@ -513,7 +519,7 @@ spec:
                 - key: "ca.crt"
                   path: rails-secrets/smartcard-ca.crt
           {{- end }}
-     {{- if $.Values.global.email.smime.enabled }}
+      {{- if $.Values.global.email.smime.enabled }}
       - name: smime-creds
         secret:
           secretName: {{ $.Values.global.email.smime.secretName }}

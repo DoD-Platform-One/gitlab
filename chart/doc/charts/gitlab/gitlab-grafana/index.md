@@ -30,8 +30,8 @@ is used to inject the initial password into the Grafana container. That
 ConfigMap is named `gitlab-grafana-import-secret`.
 
 Both the initial password Secret and the import script ConfigMap are
-mounted into the Grafana container (`/tmp/initial` and `/tmp/scripts`
-respectively) and the container command line is augmented to use both
+mounted into the Grafana container (Script in `/tmp/initial` and Configmap in `/tmp/scripts`).
+The container command line is augmented to use both
 of these objects to securely expose the initial password to the
 Grafana server. Modification of the container command line will
 generally prevent the initial password from being injected into the

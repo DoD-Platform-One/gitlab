@@ -4,10 +4,10 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Preparing AKS resources **(FREE SELF)**
+# Preparing AKS resources for the GitLab chart **(FREE SELF)**
 
-For a fully functional GitLab instance, you will need a few resources before
-deploying the `gitlab` chart to [Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes).
+For a fully functional GitLab instance, you need a few resources before
+deploying the GitLab chart to [Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes).
 
 ## Creating the AKS cluster
 

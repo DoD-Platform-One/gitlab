@@ -224,6 +224,7 @@ spec:
             {{- end }}
             {{- include "gitlab.tracing.env" $ | nindent 12 }}
             {{- include "sidekiq.podExtraEnv" (dict "local" . "context" $) | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
         {{- if $metricsEnabled }}
           ports:
           - containerPort: {{ $metricsPort }}
@@ -245,6 +246,10 @@ spec:
           - name: sidekiq-secrets
             mountPath: /srv/gitlab/config/secrets.yml
             subPath: rails-secrets/secrets.yml
+          - name: sidekiq-config
+            mountPath: '/etc/krb5.conf'
+            subPath: krb5.conf
+          {{- include "gitlab.appConfig.kerberos.volumeMount" $ | nindent 10 }}
           - name: sidekiq-config
             mountPath: '/srv/gitlab/config/initializers/smtp_settings.rb'
             subPath: smtp_settings.rb
@@ -286,6 +291,7 @@ spec:
       {{- include "gitlab.extraVolumes" $ | nindent 6 }}
       {{- include "gitlab.psql.ssl.volume" $ | nindent 6 }}
       {{- include "gitlab.geo.psql.ssl.volume" $ | nindent 6 }}
+      {{- include "gitlab.appConfig.kerberos.volume" $ | nindent 6 }}
     {{- if $metricsEnabled }}
       - name: sidekiq-metrics
         emptyDir:

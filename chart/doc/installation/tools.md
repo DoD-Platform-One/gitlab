@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Prerequisites for installing the GitLab chart **(FREE SELF)**
+# GitLab chart prerequisites **(FREE SELF)**
 
 Before you deploy GitLab in a Kubernetes cluster, install the following
 prerequisites and gather the minimum required information.
@@ -84,6 +84,11 @@ For example, use the following with `helm install`:
 ```shell
 --set global.hosts.externalIP=10.10.10.10
 ```
+
+#### Compatibility with Istio protocol selection
+
+Service port names follow the convention that is compatible with Istio's [explicit port selection](https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/#explicit-protocol-selection).
+They look like `<protocol>-<suffix>`, for example `grpc-gitaly` or `https-metrics`.
 
 ### Persistence
 
@@ -273,7 +278,7 @@ Prometheus `tls_config.server_name`.
 | [GitLab Shell](../charts/gitlab/gitlab-shell/index.md)       | 9122  | NO  | The GitLab Shell metrics exporter is only enabled when using [`gitlab-sshd`](https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh). OpenSSH is recommended for environments that require TLS |
 | [KAS](../charts/gitlab/kas/index.md)                         | 8151  | NO  | [Issue - Add TLS Support for Metrics Endpoint](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent/-/issues/288) |
 | [Praefect](../charts/gitlab/praefect/index.md)               | 9236  | YES | Enabled using `global.praefect.tls.enabled=true` <br>Default Secret: `RELEASE-praefect-tls` <br>[Docs: Running Praefect over TLS](../charts/gitlab/praefect/index.md#running-praefect-over-tls) |
-| [Registry](../charts/registry/index.md)                      | 5100  | NO  | [Issue - Add support of TLS on `http.debug`](https://gitlab.com/gitlab-org/container-registry/-/issues/729) |
+| [Registry](../charts/registry/index.md)                      | 5100  | YES | Enabled using `registry.debug.tls.enabled=true` <br>[Docs: Registry - Configuring TLS for the debug port](../charts/registry/index.md#configuring-tls-for-the-debug-port) |
 | [Sidekiq](../charts/gitlab/sidekiq/index.md)                 | 3807  | YES | Enabled using `gitlab.sidekiq.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-sidekiq-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/sidekiq/index.md#installation-command-line-options) |
 | [Webservice](../charts/gitlab/sidekiq/index.md)              | 8083  | YES | Enabled using `gitlab.webservice.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-webservice-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/webservice/index.md#installation-command-line-options) |
 | [Ingress-NGINX](../charts/nginx/index.md)                    | 10254 | NO  | Does not support TLS on metrics/healthcheck port |

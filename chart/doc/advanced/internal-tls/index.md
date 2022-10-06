@@ -4,9 +4,9 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Using TLS between components
+# Use TLS between components of the GitLab chart
 
-The GitLab Helm charts can use transport-layer security (TLS) between the various
+The GitLab charts can use transport-layer security (TLS) between the various
 components. This requires you to provide certificates for the services
 you want to enable, and configure those services to make use of those
 certificates and the certificate authority (CA) that signed them.

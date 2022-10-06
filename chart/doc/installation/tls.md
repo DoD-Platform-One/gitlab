@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# TLS options **(FREE SELF)**
+# Configure TLS for the GitLab chart **(FREE SELF)**
 
 This chart is capable of doing TLS termination using the NGINX Ingress Controller. You have the choice of how to
 acquire the TLS certificates for your deployment. Extensive details can be found in [global Ingress settings](../charts/globals.md#configure-ingress-settings).

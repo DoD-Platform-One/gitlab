@@ -4,18 +4,40 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# GitLab version mappings **(FREE SELF)**
+# GitLab chart versions **(FREE SELF)**
+
+The GitLab chart doesn't have the same version number as GitLab itself.
+Breaking changes are anticipated that may have to be introduced to the chart
+that would warrant a major version bump, and the requirement for these changes
+could completely block other development on these charts until completed.
+
+To quickly see the full list of the `gitlab` chart versions and the GitLab version
+they map to, run the following command with [Helm](tools.md):
+
+```shell
+helm repo add gitlab https://charts.gitlab.io/
+helm search repo -l gitlab/gitlab
+```
+
+## Previous chart versions
 
 The table below maps some of the key previous chart versions and GitLab versions.
 
 | Chart version | GitLab version |
 |---------------|----------------|
+| 6.4.1 | 15.4.1 |
+| 6.4.0 | 15.4.0 |
+| 6.3.3 | 15.3.3 |
 | 6.3.2 | 15.3.2 |
 | 6.3.1 | 15.3.1 |
 | 6.3.0 | 15.3.0 |
+| 6.2.4 | 15.2.4 |
+| 6.2.3 | 15.2.3 |
 | 6.2.2 | 15.2.2 |
 | 6.2.1 | 15.2.1 |
 | 6.2.0 | 15.2.0 |
+| 6.1.6 | 15.1.6 |
+| 6.1.5 | 15.1.5 |
 | 6.1.4 | 15.1.4 |
 | 6.1.3 | 15.1.3 |
 | 6.1.2 | 15.1.2 |

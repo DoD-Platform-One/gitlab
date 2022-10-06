@@ -155,7 +155,7 @@ describe "Restoring a backup" do
           test_content = test_content.slice(test_content.index("PACK\u0000")..-1)
         end
 
-        expect(Digest::MD5.hexdigest(original_content)).to eq(Digest::MD5.hexdigest(test_content)),
+        expect(OpenSSL::Digest::SHA256.hexdigest(original_content)).to eq(OpenSSL::Digest::SHA256.hexdigest(test_content)),
           "Expected #{file} to equal #{test_counterpart}"
       end
     end

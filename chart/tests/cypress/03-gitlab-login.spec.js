@@ -1,3 +1,10 @@
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from
+  // failing the test
+  if (err.message.includes('Cannot read properties of null')) {
+    return false
+  }  
+})
 
 describe('Gitlab Login', () => {
   it('Check admin is able to login', () => {

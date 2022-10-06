@@ -6,14 +6,14 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Migrating from Helm v2 to Helm v3 **(FREE SELF)**
 
-[Helm v2 was officially deprecated](https://helm.sh/blog/helm-v2-deprecation-timeline/) in November of 2020. Starting from GitLab Helm Chart version 5.0 (GitLab App version 14.0), installation and upgrades using Helm v2.x are no longer supported. To get
+[Helm v2 was officially deprecated](https://helm.sh/blog/helm-v2-deprecation-timeline/) in November of 2020. Starting from GitLab Helm chart version 5.0 (GitLab App version 14.0), installation and upgrades using Helm v2.x are no longer supported. To get
 future GitLab updates, you will need to migrate to Helm v3.
 
 ## Changes between Helm v2 and Helm v3
 
 Helm v3 introduces a lot of changes that are not backwards compatible with Helm v2. Some of the major changes include the removal of Tiller requirements and how they store releases information on the cluster. Read more in the [Helm v3 changes overview](https://helm.sh/docs/topics/v2_v3_migration/#overview-of-helm-3-changes) and the [changes since Helm v2 FAQ](https://helm.sh/docs/faq/changes_since_helm2/).
 
-The Helm Chart you use to deploy the application might not be compatible with the newer / older versions of Helm. If you have multiple applications deployed and managed with Helm v2, you will need to find out if they are compatible with Helm v3 in case you want to convert them as well. GitLab Helm Chart supports Helm v3.0.2 or higher starting with version v3.0.0 of GitLab Helm Chart. Helm v2 is no longer supported.
+The Helm chart you use to deploy the application might not be compatible with the newer / older versions of Helm. If you have multiple applications deployed and managed with Helm v2, you will need to find out if they are compatible with Helm v3 in case you want to convert them as well. GitLab Helm chart supports Helm v3.0.2 or higher starting with version v3.0.0 of GitLab Helm chart. Helm v2 is no longer supported.
 
 From the standpoint of the application that is currently running, nothing is changed when you perform the migration from Helm v2 to v3. It's generally pretty safe to perform the Helm v2 to v3 migration, however, be sure to take backups of Helm v2 as a precaution.
 

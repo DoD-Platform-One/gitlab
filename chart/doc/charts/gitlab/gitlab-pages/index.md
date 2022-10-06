@@ -18,7 +18,7 @@ cluster this chart is deployed onto.
 ## Configuration
 
 The `gitlab-pages` chart is configured as follows:
-[Global Settings](#global-settings) and [Chart Settings](#chart-settings).
+[Global settings](#global-settings) and [Chart settings](#chart-settings).
 
 ## Global Settings
 

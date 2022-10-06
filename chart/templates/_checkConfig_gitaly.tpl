@@ -60,10 +60,6 @@ listen over TLS */}}
 {{-         $errorMsg = append $errorMsg (printf "global.praefect.virtualStorages[%d].tlsSecretName not specified ('%s')" $i $vs.name) -}}
 {{-       end }}
 {{-     end }}
-{{-   else }}
-{{-     if not $.Values.global.gitaly.tls.secretName -}}
-{{-       $errorMsg = append $errorMsg ("global.gitaly.tls.secretName not specified") -}}
-{{-     end }}
 {{-   end }}
 {{- end }}
 {{- if not (empty $errorMsg) }}
@@ -75,17 +71,6 @@ gitaly:
 {{- end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.gitaly.tls */}}
-
-{{/*
-Ensure a certificate is provided when Praefect is enabled and is instructed to listen over TLS
-*/}}
-{{- define "gitlab.checkConfig.praefect.tls" -}}
-{{- if and (and $.Values.global.praefect.enabled $.Values.global.praefect.tls.enabled) (not $.Values.global.praefect.tls.secretName) }}
-praefect: server enabled with TLS, no TLS certificate provided
-    It appears Praefect is specified to listen over TLS, but no certificate was specified.
-{{- end -}}
-{{- end -}}
-{{/* END gitlab.checkConfig.praefect.tls */}}
 
 {{/* Check configuration of Gitaly external repos*/}}
 {{- define "gitlab.checkConfig.gitaly.extern.repos" -}}

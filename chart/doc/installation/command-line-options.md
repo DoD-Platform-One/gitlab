@@ -435,7 +435,7 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 | `gitlab.webservice.workhorse.sentryDSN` | DSN for Sentry instance for error reporting | "" |
 | `gitlab.webservice.workhorse.tag` | Workhorse image tag |  |
 
-## External Charts
+## External charts
 
 GitLab makes use of several other charts. These are [treated as parent-child relationships](https://helm.sh/docs/topics/charts/#chart-dependencies).
 Ensure that any properties you wish to configure are provided as `chart-name.property`.
