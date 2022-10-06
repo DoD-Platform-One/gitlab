@@ -36,7 +36,7 @@ We will try to leverage standard Kubernetes features:
 
 Since we might be also using Consul, this may be utilized instead for consistency with other installation methods.
 
-## Helm Charts
+## Helm charts
 
 A Helm chart will be created to manage the deployment of each GitLab specific container/service. We will then also include bundled charts to make the overall deployment easier. This is particularly
 important for this effort, as there will be significantly more complexity in
@@ -44,6 +44,6 @@ the Docker and Kubernetes layers than the all-in-one Omnibus based solutions.
 Helm can help to manage this complexity, and provide an easy top level interface
 to manage settings via the `values.yaml` file.
 
-We plan to offer a three tiered set of Helm Charts
+We plan to offer a three tiered set of Helm charts:
 
-![Helm Chart Structure](../images/charts.png)
+![Helm chart Structure](../images/charts.png)

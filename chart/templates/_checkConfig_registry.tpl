@@ -103,5 +103,45 @@ registry:
     See https://docs.gitlab.com/charts/charts/registry#redis-cache
 {{-     end -}}
 {{- end -}}
+{{-   if and $.Values.registry.database.enabled $.Values.registry.redis.cache.enabled $.Values.registry.redis.cache.sentinels}}
+{{-     if  not $.Values.registry.redis.cache.host }}
+registry:
+    Enabling the Redis cache with sentinels requires the registry.redis.cache.host to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-cache
+{{-     end -}}
+{{- end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.registry.redis.cache */}}
+
+{{/*
+Ensure Registry TLS has a secret when enabled
+*/}}
+{{- define "gitlab.checkConfig.registry.tls" -}}
+{{-   if $.Values.registry.tls.enabled }}
+{{-     if  not (eq (default "http" $.Values.global.hosts.registry.protocol) "https") }}
+registry:
+    Enabling the service level TLS requires 'global.hosts.registry.protocol'
+    be set to 'https'.
+    See https://docs.gitlab.com/charts/charts/registry/#configuring-tls
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.registry.tls */}}
+
+{{/*
+Ensure a debug TLS secretName is provided if enabling debug TLS for the Registry
+*/}}
+{{- define "gitlab.checkConfig.registry.debug.tls" -}}
+{{-   if $.Values.registry.debug.tls.enabled }}
+{{-     if not $.Values.registry.debug.tls.secretName}}
+{{-       if not (and $.Values.registry.tls.enabled $.Values.registry.tls.secretName)}}
+registry:
+    When Registry debug TLS is enabled a `registry.debug.tls.secretName`
+    secret is required when not enabling TLS for the non-debug Registry endpoint.
+    You must provide a secret containing a TLS certificate and key pair.
+    See https://docs.gitlab.com/charts/charts/registry/index.html#configuring-tls-for-the-debug-port
+{{-       end -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+{{/* gitlab.checkConfig.registry.tls */}}

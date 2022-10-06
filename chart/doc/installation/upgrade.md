@@ -27,7 +27,7 @@ You can retrieve your previous `--set` arguments cleanly, with
 file via `-f`. Thus `helm upgrade gitlab gitlab/gitlab -f gitlab.yaml`.
 This safely replaces the behavior of `--reuse-values`
 
-Mappings between chart versioning and GitLab versioning can be found [here](../index.md#gitlab-version-mappings).
+Mappings between chart versioning and GitLab versioning can be found [here](../installation/version_mappings.md).
 
 ## Steps
 
@@ -115,9 +115,9 @@ Upgrading to `5.9.x` may lead to a situation where the Sidekiq pod does not beco
 
 This can be resolved from the **Admin Area**:
 
-  1. On the top bar, select **Menu > Admin**.
+  1. On the top bar, select **Main menu > Admin**.
   1. On the left sidebar, select **Settings > Metrics and profiling**.
-  1. Expand  **Metrics - Prometheus**.
+  1. Expand **Metrics - Prometheus**.
   1. Ensure that **Enable health and performance metrics endpoint** is enabled.
   1. Restart the affected pods.
 
@@ -217,8 +217,8 @@ appearing to be lost.
 Prior to upgrading, ensure that:
 
 - All your repositories are in sync across the Gitaly Cluster, and GitLab
-is not in use during the upgrade. To check whether the repositories are in sync,
-run the following command in one of your Praefect pods:
+  is not in use during the upgrade. To check whether the repositories are in sync,
+  run the following command in one of your Praefect pods:
 
   ```shell
   /usr/local/bin/praefect -config /etc/gitaly/config.toml dataloss
@@ -227,7 +227,7 @@ run the following command in one of your Praefect pods:
 - You have a complete and tested backup.
 
 Repository data can be restored by following the
-[managing persistent volumes documentation](../advanced/persistent-volumes/),
+[managing persistent volumes documentation](../advanced/persistent-volumes/index.md),
 which provides guidance on reconnecting existing PersistentVolumeClaims to previous
 PersistentVolumes.
 

@@ -196,7 +196,7 @@ init:
     if [ -d /config/tls ]; then
       cp -r /config/tls/ /registry/tls
       chmod 700 /registry/tls
-      chmod 600 /registry/tls/tls.*
+      chmod 600 /registry/tls/*
     fi
 
 # define some sane resource requests and limitations
@@ -293,6 +293,11 @@ log:
 debug:
   addr:
     port: 5001
+  tls:
+    enabled: false
+    secretName: # Kubernetes secret, type kubernetes.io/tls
+    clientCAs: []
+    minimumTLS: "tls1.2"
   # DEPRECATED in favor of `metrics`
   prometheus:
     enabled: false

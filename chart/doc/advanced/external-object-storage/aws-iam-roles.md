@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# IAM roles for AWS
+# IAM roles for AWS when using the GitLab chart
 
 The default configuration for external object storage in the charts uses access and secret keys.
 It is also possible to use IAM roles in combination with [`kube2iam`](https://github.com/jtblin/kube2iam),

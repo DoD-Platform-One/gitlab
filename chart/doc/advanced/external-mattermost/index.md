@@ -4,11 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Configure This Chart with Mattermost Team Edition
+# Configure the GitLab chart with Mattermost Team Edition
 
-This document describes how to install Mattermost Team Edition Helm Chart in proximity with an existing GitLab Helm Chart deployment.
+This document describes how to install Mattermost Team Edition Helm chart in proximity with an existing GitLab Helm chart deployment.
 
-As the Mattermost Helm Chart is installed in a separate namespace, it is recommended that
+As the Mattermost Helm chart is installed in a separate namespace, it is recommended that
 `cert-manager` and `nginx-ingress` be configured to manage cluster-wide Ingress and certificate resources. For additional configuration information,
 refer to the [Mattermost Helm configuration guide](https://github.com/mattermost/mattermost-helm/tree/master/charts/mattermost-team-edition#configuration).
 
@@ -20,9 +20,9 @@ refer to the [Mattermost Helm configuration guide](https://github.com/mattermost
 NOTE:
 For the Team Edition you can have just one replica running.
 
-## Deploy the Mattermost Team Edition Helm Chart
+## Deploy the Mattermost Team Edition Helm chart
 
-Once you have installed the Mattermost Team Edition Helm Chart, you can deploy it using the following command:
+Once you have installed the Mattermost Team Edition Helm chart, you can deploy it using the following command:
 
 ```shell
 helm repo add mattermost https://helm.mattermost.com
@@ -33,12 +33,12 @@ helm upgrade --install mattermost -f values.yaml mattermost/mattermost-team-edit
 Wait for the pods to run. Then, using the Ingress host you specified in the configuration, access your Mattermost server.
 
 For additional configuration information, refer to the [Mattermost Helm configuration guide](https://github.com/mattermost/mattermost-helm/tree/master/charts/mattermost-team-edition#configuration).
-you experience any issues with this, please view the [Mattermost Helm Chart issue repository](https://github.com/mattermost/mattermost-helm/issues) or
+you experience any issues with this, please view the [Mattermost Helm chart issue repository](https://github.com/mattermost/mattermost-helm/issues) or
 the [Mattermost Forum](https://forum.mattermost.com/search?q=helm).
 
-## Deploy GitLab Helm Chart
+## Deploy GitLab Helm chart
 
-To deploy the GitLab Helm Chart, follow the instructions described [here](../../index.md).
+To deploy the GitLab Helm chart, follow the instructions described [here](../../index.md).
 
 Here's a light way to install it:
 

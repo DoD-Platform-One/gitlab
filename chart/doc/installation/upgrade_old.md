@@ -6,7 +6,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Upgrade old versions **(FREE SELF)**
 
-If you are looking to upgrade a recent version of the Chart, see the [regular Upgrade Guide](upgrade.md).
+If you are looking to upgrade a recent version of the GitLab chart, see the [Upgrade Guide](upgrade.md).
 
 Upgrade instructions for older versions are available on this page.
 

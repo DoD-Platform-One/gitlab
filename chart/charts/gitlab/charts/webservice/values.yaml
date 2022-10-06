@@ -189,7 +189,8 @@ workhorse:
     exporter:
       enabled: false
       port: 9229
-      tls: {}
+      tls:
+        enabled: false
   metrics:
     enabled: false
     port: 9229

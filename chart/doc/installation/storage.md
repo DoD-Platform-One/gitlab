@@ -4,9 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Storage Guide **(FREE SELF)**
-
-## Overview
+# Configure storage for the GitLab chart **(FREE SELF)**
 
 The following applications within the GitLab chart require persistent storage to maintain state.
 
@@ -126,7 +124,7 @@ The `mount-name` for Gitaly is `repo-data`. The StatefulSet pod names are create
 <statefulset-name>-<pod-index>
 ```
 
-The GitLab Cloud Native Chart determines the `statefulset-name` using:
+The GitLab chart determines the `statefulset-name` using:
 
 ```plaintext
 <chart-release-name>-<service-name>
@@ -162,4 +160,4 @@ See the [managing persistent volumes documentation](../advanced/persistent-volum
 
 ## Optional volumes
 
-For larger installations, you may need to add persistent storage to the Toolbox to get backups/restores working. See our [troubleshooting documentation](../backup-restore/#pod-eviction-issues) for a guide on how to do this.
+For larger installations, you may need to add persistent storage to the Toolbox to get backups/restores working. See our [troubleshooting documentation](../backup-restore/index.md#pod-eviction-issues) for a guide on how to do this.

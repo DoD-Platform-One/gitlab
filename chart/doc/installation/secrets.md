@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Secrets **(FREE SELF)**
+# Configure secrets for the GitLab chart **(FREE SELF)**
 
 GitLab requires a variety of secrets to operate:
 

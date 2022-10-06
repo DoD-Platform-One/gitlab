@@ -6,7 +6,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Using certmanager-issuer for CertManager Issuer creation **(FREE SELF)**
 
-This chart is a helper for [Jetstack's CertManager Helm Chart](https://cert-manager.io/docs/installation/helm/).
+This chart is a helper for [Jetstack's CertManager Helm chart](https://cert-manager.io/docs/installation/helm/).
 It automatically provisions an Issuer object, used by CertManager when requesting TLS certificates for
 GitLab Ingresses.
 

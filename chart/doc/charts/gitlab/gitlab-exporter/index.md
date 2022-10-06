@@ -21,7 +21,7 @@ from the Kubernetes cluster on which this chart is deployed.
 ## Configuration
 
 The `gitlab-exporter` chart is configured as follows:
-[Global Settings](#global-settings) and [Chart Settings](#chart-settings).
+[Global settings](#global-settings) and [Chart settings](#chart-settings).
 
 ## Installation command line options
 
@@ -143,12 +143,12 @@ annotations:
   kubernetes.io/example-annotation: annotation-value
 ```
 
-## Global Settings
+## Global settings
 
 We share some common global settings among our charts. See the [Globals Documentation](../../globals.md)
 for common configuration options, such as GitLab and Registry hostnames.
 
-## Chart Settings
+## Chart settings
 
 The following values are used to configure the GitLab Exporter pod.
 

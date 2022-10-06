@@ -4,25 +4,29 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Preparation for installing on cloud based providers **(FREE SELF)**
+# Cloud provider setup for the GitLab chart **(FREE SELF)**
 
-The resource requests, and number of replicas for the GitLab components (not PostgreSQL, Redis, or MinIO) in the GitLab chart
-are set by default to be adequate for a small production deployment. This is intended to fit in a cluster with at least 8vCPU
-and 30gb of RAM. If you are trying to deploy a non-production instance, you can reduce the defaults in order to fit into
-a smaller cluster.
-Refer to the [Cloud Native Hybrid reference architectures](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures) for cluster topology recommendations for an environment.
-The [minimal GKE example values file](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/values-gke-minimum.yaml) provides an example of tuning the resources
-to fit within a 3vCPU 12gb cluster.
+Before you deploy the GitLab chart, you must configure resources for
+the cloud provider you choose.
 
-A Kubernetes cluster, version 1.16 through 1.21 is required due to the usage of certain
-Kubernetes features. Support for Kubernetes 1.22 is under active development, see
-[epic &6883](https://gitlab.com/groups/gitlab-org/-/epics/6883) for more information.
+The GitLab chart is intended to fit in a cluster with at least 8 vCPU
+and 30 GB of RAM. If you are trying to deploy a non-production instance,
+you can reduce the defaults to fit into a smaller cluster.
+
+A Kubernetes cluster, running version 1.16 through 1.21, is required because of certain
+Kubernetes features. Support for Kubernetes 1.22 is under active development. For more information,
+see [epic 6883](https://gitlab.com/groups/gitlab-org/-/epics/6883).
 
 NOTE:
-If using the in-chart NGINX Ingress Controller (`nginx-ingress.enabled=true`),
-then Kubernetes 1.19 or newer is required.
+If you use the in-chart NGINX Ingress Controller (`nginx-ingress.enabled=true`),
+then Kubernetes 1.19 or later is required.
 
-Create and connect to the Kubernetes cluster in the environment you choose:
+- For cluster topology recommendations for an environment, see the
+  [reference architectures](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures).
+- For an example of tuning the resources to fit in a 3 vCPU 12 GB cluster, see the
+  [minimal GKE example values file](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/values-gke-minimum.yaml).
+
+Create and connect to a Kubernetes cluster in your environment:
 
 - [Azure Kubernetes Service](aks.md)
 - [Amazon EKS](eks.md)

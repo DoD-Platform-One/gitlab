@@ -2,6 +2,44 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 6.4.1 (2022-09-29)
+
+No changes.
+
+## 6.4.0 (2022-09-21)
+
+### Added (5 changes)
+
+- [Add support for Kerberos settings](gitlab-org/charts/gitlab@09d14a62711de10cf6b493f01bb5d07c9ab3b90a) by @risson ([merge request](gitlab-org/charts/gitlab!2132))
+- [Registry: support defining a local set of sentinels](gitlab-org/charts/gitlab@dbaca1a0a0c58607b0380e134bc7748e56b3f7c8) ([merge request](gitlab-org/charts/gitlab!2729))
+- [Add AWS EKS-specific instructions in Quick Start](gitlab-org/charts/gitlab@33db1da75cd44cb0f93f6440123e2f8d710ee7c1) ([merge request](gitlab-org/charts/gitlab!2725))
+- [Registry: add checkConfig and RSpec for svc TLS](gitlab-org/charts/gitlab@3b7fc26280dda65606b41b2f85d6b16d84b01651) ([merge request](gitlab-org/charts/gitlab!2726))
+- [Add 1.22 cluster references](gitlab-org/charts/gitlab@58a6afff10c6d34997fb490f2d635a08c3cdea30) ([merge request](gitlab-org/charts/gitlab!2674))
+
+### Fixed (3 changes)
+
+- [Adds `gitlab.extraEnvFrom` to sidekiq main container](gitlab-org/charts/gitlab@cd76f7222c5e7ad6947653fe25192f9228f5138b) ([merge request](gitlab-org/charts/gitlab!2759))
+- [Fix digest of GitLab NGINX Ingress Controller](gitlab-org/charts/gitlab@2e387219e6f667d5e81173ec0b69463b77eb277c) ([merge request](gitlab-org/charts/gitlab!2744))
+- [gitlab.scripts.configure.secrets: handle duplicates, allow none](gitlab-org/charts/gitlab@c4f4d03a4275ace1d618330b46cf4b2316c918ac) ([merge request](gitlab-org/charts/gitlab!2703))
+
+### Changed (6 changes)
+
+- [Provide default secretName for Workhorse TLS](gitlab-org/charts/gitlab@de5e7378e6ecb2626031a7ee10ccbb8b9641c8d2) ([merge request](gitlab-org/charts/gitlab!2764))
+- [Add appProtocol prefix to Service port names](gitlab-org/charts/gitlab@5efcf454a38f39a8c8007c7e326eb254cb12e203) ([merge request](gitlab-org/charts/gitlab!2705))
+- [Create Pages metrics service if metrics enabled](gitlab-org/charts/gitlab@bf4c2232830ff129c8f886581b6bcbcff0cb8750) ([merge request](gitlab-org/charts/gitlab!2517))
+- [Update gitlab-org/gitlab-exporter from 11.18.0 to 11.18.1](gitlab-org/charts/gitlab@39ecf265ee419c7f8602038ffa39e0aed6e4e64b) ([merge request](gitlab-org/charts/gitlab!2745))
+- [Update gitlab-org/charts/gitlab-runner from 0.43.1 to 0.44.0](gitlab-org/charts/gitlab@4060504d10027abea3891b836a9556ed942756ea) ([merge request](gitlab-org/charts/gitlab!2739))
+- [Update gitlab-org/gitlab-exporter from 11.17.1 to 11.18.0](gitlab-org/charts/gitlab@5155e6cf07d9a353d09a8d6dbdc49e73b2394d6d) ([merge request](gitlab-org/charts/gitlab!2732))
+
+### Other (2 changes)
+
+- [Update rack from 2.2.3 to 3.0.0](gitlab-org/charts/gitlab@99c3a60596cc3f2c4d64b585a0900173b2c29691) ([merge request](gitlab-org/charts/gitlab!2779))
+- [Update gitlab-styles from 6.2.0 to 9.0.0](gitlab-org/charts/gitlab@3b5171699d4a181d2e7cdf95f52333f18f03be93) ([merge request](gitlab-org/charts/gitlab!2769))
+
+## 6.3.3 (2022-09-01)
+
+No changes.
+
 ## 6.3.2 (2022-08-30)
 
 No changes.
@@ -44,6 +82,14 @@ No changes.
 ### Other (1 change)
 
 - [Ensures that whitespace is chomped to the left](gitlab-org/charts/gitlab@0e65e3393b244bf8a5f04a631865a2f1487e34ab) ([merge request](gitlab-org/charts/gitlab!2651))
+
+## 6.2.4 (2022-08-30)
+
+No changes.
+
+## 6.2.3 (2022-08-22)
+
+No changes.
 
 ## 6.2.2 (2022-08-01)
 
@@ -88,6 +134,14 @@ No changes.
 
 - [config: Remove mentions of deprecated `self_signed_cert` config](gitlab-org/charts/gitlab@58bf47825841c482e874c13fd4e729b523fe99f4) ([merge request](gitlab-org/charts/gitlab!2664))
 - [Remove NGINX's `isControllerTagValid` helper](gitlab-org/charts/gitlab@f099651db6f1d57cdc9a78a2744ad6c36680fe0a) ([merge request](gitlab-org/charts/gitlab!2668))
+
+## 6.1.6 (2022-08-30)
+
+No changes.
+
+## 6.1.5 (2022-08-22)
+
+No changes.
 
 ## 6.1.4 (2022-07-28)
 

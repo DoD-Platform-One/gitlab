@@ -4,10 +4,10 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Preparing GKE resources **(FREE SELF)**
+# Preparing GKE resources for the GitLab chart **(FREE SELF)**
 
 For a fully functional GitLab instance, you will need a few resources before
-deploying the `gitlab` chart. The following is how these charts are deployed
+deploying the GitLab chart. The following is how these charts are deployed
 and tested within GitLab.
 
 ## Creating the GKE cluster
@@ -31,8 +31,8 @@ The script will:
 1. Allow the cluster to modify DNS records.
 1. Setup `kubectl`, and connect it to the cluster.
 
-The script reads various parameters from environment variables and an argument
-`up` or `down` for bootstrap and clean up respectively.
+The script reads various parameters from environment variables and the argument
+`up` for bootstrap or `down` for clean up.
 
 The table below describes all variables.
 

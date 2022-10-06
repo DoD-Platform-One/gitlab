@@ -4,35 +4,6 @@ require 'yaml'
 require 'hash_deep_merge'
 
 describe 'checkConfig gitaly' do
-  describe 'gitaly.tls without Praefect' do
-    let(:success_values) do
-      YAML.safe_load(%(
-        global:
-          gitaly:
-            enabled: true
-            tls:
-              enabled: true
-              secretName: example-tls
-      )).merge(default_required_values)
-    end
-
-    let(:error_values) do
-      YAML.safe_load(%(
-        global:
-          gitaly:
-            enabled: true
-            tls:
-              enabled: true
-      )).merge(default_required_values)
-    end
-
-    let(:error_output) { 'global.gitaly.tls.secretName not specified' }
-
-    include_examples 'config validation',
-                     success_description: 'when TLS is enabled correctly',
-                     error_description: 'when TLS is enabled but there is no certificate'
-  end
-
   describe 'gitaly.tls with Praefect' do
     let(:success_values) do
       YAML.safe_load(%(

@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Configure this chart with External Gitaly
+# Configure the GitLab chart with an external Gitaly
 
 This document intends to provide documentation on how to configure this Helm chart with an external Gitaly service.
 
@@ -15,7 +15,7 @@ NOTE:
 External Gitaly _services_ can be provided by Gitaly nodes, or
 [Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) clusters.
 
-## Configure the Chart
+## Configure the chart
 
 Disable the `gitaly` chart and the Gitaly service it provides, and point the other services to the external service.
 

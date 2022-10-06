@@ -139,7 +139,7 @@ Our [NGINX Ingress chart](../charts/nginx/index.md) was altered from the upstrea
 - Add feature to allow for the TCP ConfigMap to be external to the chart
 - Add feature to allow Ingress class to be templated based on release name
 
-## Kubernetes version used throughout Chart
+## Kubernetes version used throughout chart
 
 To maximize support for different Kubernetes versions, use a `kubectl` that's
 one minor version lower than the current stable release of Kubernetes.

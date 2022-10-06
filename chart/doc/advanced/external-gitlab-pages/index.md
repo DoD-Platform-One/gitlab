@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Configure this chart with External GitLab Pages
+# Configure the GitLab chart with external GitLab Pages
 
 This document intends to provide documentation on how to configure this Helm
 chart with a GitLab Pages instance, configured outside of the cluster, using an
@@ -44,7 +44,7 @@ Omnibus GitLab package.
 
 1. Apply the changes by running `sudo gitlab-ctl reconfigure`.
 
-## Configure the Chart
+## Configure the chart
 
 1. Create a bucket named `gitlab-pages` in the object storage for storing Pages
    deployments.

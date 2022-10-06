@@ -95,4 +95,4 @@ gitlab-runner:
           nameservers = ["8.8.8.8"]
 ```
 
-See the [Runner Chart additional configuration](https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration).
+See the [Runner chart additional configuration](https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration).

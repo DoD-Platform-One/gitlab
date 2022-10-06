@@ -4,14 +4,14 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# Configure this chart with External Redis
+# Configure the GitLab chart with an external Redis
 
 This document intends to provide documentation on how to configure this Helm chart with an external Redis service.
 
 If you don't have Redis configured, for on-premise or deployment to VM,
 consider using our [Omnibus GitLab package](external-omnibus-redis.md).
 
-## Configure the Chart
+## Configure the chart
 
 Disable the `redis` chart and the Redis service it provides, and point the other services to the external service.
 

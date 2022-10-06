@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# GitLab Geo
+# Configure the GitLab chart with GitLab Geo
 
 GitLab Geo provides the ability to have geographically distributed application
 deployments.
@@ -598,7 +598,7 @@ Now that both databases are configured and applications are deployed, we must te
 the Primary site that the Secondary site exists:
 
 1. Visit the **primary** site, and on the top bar, select
-   **Menu >** **{admin}** **Admin**.
+   **Main menu > Admin**.
 1. On the left sidebar, select **Geo**.
 1. Select **Add site**.
 1. Add the **secondary** site. Use the full GitLab URL for the URL.

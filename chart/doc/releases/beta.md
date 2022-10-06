@@ -4,7 +4,7 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
 ---
 
-# GitLab Cloud Native Chart Beta
+# GitLab Helm chart Beta
 
 We have been working hard on the chart and it's underlying containers, and are excited to reach beta and share it with the GitLab community.
 
@@ -45,7 +45,7 @@ We welcome any improvements contributed in the form of [Merge Requests](https://
 
 The chart and containers are a work in progress, and not all features are fully functional. Below is a list of the known issues and limitations, although it may not be exhaustive. We recommend also reviewing the [open issues](https://gitlab.com/gitlab-org/charts/gitlab/-/issues).
 
-Helm Chart Issues/Limitations:
+Helm chart issues/limitations:
 
 - No in-cluster HA database: <https://gitlab.com/gitlab-org/charts/gitlab/-/issues/48>
 - No GitLab Pages support: <https://gitlab.com/gitlab-org/charts/gitlab/-/issues/37>

@@ -12,7 +12,7 @@ We plan to support three tiers of components:
 1. Scheduler (Kubernetes)
 1. Higher level configuration tool (Helm)
 
-The main method customers would use to install would be the [Helm Chart](https://helm.sh/) in this repository.
+The main method customers would use to install would be the [Helm chart](https://helm.sh/) in this repository.
 At some point in the future, we may also offer other deployment methods like
 Amazon CloudFormation or Docker Swarm.
 
@@ -62,9 +62,9 @@ underlying services:
 - PostgreSQL
 - Grafana
 
-## The GitLab Chart
+## The GitLab chart
 
-This is the top level `gitlab` chart, which configures all necessary resources
+This is the top level GitLab chart (`gitlab`), which configures all necessary resources
 for a complete configuration of GitLab. This includes GitLab, PostgreSQL, Redis,
 Ingress, and certificate management charts.
 

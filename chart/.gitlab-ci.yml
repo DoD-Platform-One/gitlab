@@ -211,16 +211,16 @@ lint_package:
     - kubectl version
     - ensure_namespace
     - create_secret
-    - install_external_dns "${DNS_PROVIDER}" "${KUBE_INGRESS_BASE_DOMAIN}"
     - deploy
     - wait_for_deploy
     - restart_toolbox
-    - echo "export QA_ENVIRONMENT_URL=gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
+    - echo "export QA_ENVIRONMENT_URL=gitlab-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
     - echo "export GITLAB_ROOT_DOMAIN=$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN"        >> "${VARIABLES_FILE}"
-    - echo "export GITLAB_URL=gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN"         >> "${VARIABLES_FILE}"
-    - echo "export REGISTRY_URL=registry-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN"     >> "${VARIABLES_FILE}"
-    - echo "export S3_ENDPOINT=https://minio-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
+    - echo "export GITLAB_URL=gitlab-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN"         >> "${VARIABLES_FILE}"
+    - echo "export REGISTRY_URL=registry-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN"     >> "${VARIABLES_FILE}"
+    - echo "export S3_ENDPOINT=https://minio-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
   artifacts:
+    when: always
     paths:
     - variables
   only:
@@ -246,6 +246,17 @@ review_gke:
     on_stop: stop_review_gke
     auto_stop_in: 4 days
   resource_group: "gke-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+
+review_gke122:
+  variables:
+    DNS_PROVIDER: "google"
+  extends: .review_template
+  environment:
+    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke122
+    auto_stop_in: 4 days
+  resource_group: "gke122-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
 
 review_gke_dev:
   variables:
@@ -305,6 +316,12 @@ stop_review_gke:
   extends: .stop_review_template
   environment:
     name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    action: stop
+
+stop_review_gke122:
+  extends: .stop_review_template
+  environment:
+    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     action: stop
 
 stop_review_gke_dev:
@@ -518,7 +535,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.16-vale-2.17.0-markdownlint-0.31.1
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.16-vale-2.20.1-markdownlint-0.32.2
   stage: prepare
   cache: {}
   dependencies: []
@@ -649,6 +666,27 @@ review_specs_gke:
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke
   resource_group: "gke-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+  only:
+    refs:
+      - branches
+    variables:
+      - $KUBECONFIG && ($CI_PROJECT_PATH == "gitlab-org/charts/gitlab" || $CI_PROJECT_PATH == "gitlab/charts/gitlab")
+  except:
+    refs:
+      - master
+      - /(^docs[\/-].+|.+-docs$)/
+      - *com_auto_deploy_branch_ref
+
+review_specs_gke122:
+  extends: .specs
+  variables:
+    VARIABLES_FILE: "variables/review_gke122"
+    RSPEC_TAGS: type:feature
+  environment:
+    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke122
+  resource_group: "gke122-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
   only:
     refs:
       - branches
@@ -890,6 +928,15 @@ qa_gke:
   environment:
     name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke
+
+qa_gke122:
+  extends: .qa_branch
+  variables:
+    VARIABLES_FILE: "variables/review_gke122"
+    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+  environment:
+    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_gke122
 
 qa_eks:
   extends: .qa_branch

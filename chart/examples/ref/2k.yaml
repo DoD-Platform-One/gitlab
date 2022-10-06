@@ -4,9 +4,9 @@ gitlab:
   # - memory: 5507813Ki
   webservice:
     # Min pods recommended to be set to 75% of max to start
-    maxReplicas: 6
-    maxUnavailable: 3
-    minReplicas: 4
+    maxReplicas: 3
+    maxUnavailable: 1
+    minReplicas: 2
     # Increased to stabilise scaling and accommodate for higher CPU load on large environment
     hpa:
       cpu:
@@ -17,14 +17,14 @@ gitlab:
       workload: webservice
     resources:
       limits:
-        memory: 2.6G # roughly, 1.3GB/worker
+        memory: 5.25G # roughly, 1.3GB/worker
       requests:
-        cpu: 2 # requests.cpu <= workerProcesses
-        memory: 2.5G # roughly, 1.25GB/worker
-    workerProcesses: 2
+        cpu: 4 # requests.cpu <= workerProcesses
+        memory: 5G # roughly, 1.25GB/worker
+    workerProcesses: 4
   sidekiq:
-    maxReplicas: 2
-    minReplicas: 1
+    maxReplicas: 4
+    minReplicas: 3
     # Increased to stabilise scaling and accommodate for higher CPU load on large environment
     hpa:
       cpu:

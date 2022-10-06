@@ -150,6 +150,203 @@ describe 'Sidekiq configuration' do
     end
   end
 
+  context 'when setting extraEnvFrom' do
+    def deployment_name(pod)
+      "Deployment/test-sidekiq-#{pod}-v2"
+    end
+
+    context 'when the global value is set' do
+      let(:global_values) do
+        YAML.safe_load(%(
+          global:
+            extraEnvFrom:
+              EXTRA_ENV_VAR_B:
+                secretKeyRef:
+                  key: "keyB"
+                  name: "nameB"
+              EXTRA_ENV_VAR_C:
+                secretKeyRef:
+                  key: "keyC"
+                  name: "nameC"
+              EXTRA_ENV_VAR_D:
+                secretKeyRef:
+                  key: "keyD"
+                  name: "nameD"
+        )).deep_merge(default_values)
+      end
+
+      let(:global_template) { HelmTemplate.new(global_values) }
+
+      it 'sets those environment variables on each pod' do
+        expect(global_template.exit_code).to eq(0)
+
+        expect(global_template.env(deployment_name('pod-1'), 'sidekiq'))
+          .to include(
+                { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+                { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC", "key" => "keyC" } } },
+                { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD", "key" => "keyD" } } }
+              )
+
+        expect(global_template.env(deployment_name('pod-2'), 'sidekiq'))
+          .to include(
+                { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+                { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC", "key" => "keyC" } } },
+                { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD", "key" => "keyD" } } }
+              )
+      end
+
+      context 'when the chart-level value is set' do
+        let(:chart_values) do
+          YAML.safe_load(%(
+            gitlab:
+              sidekiq:
+                extraEnvFrom:
+                  EXTRA_ENV_VAR_A:
+                    secretKeyRef:
+                      key: "keyA-chart"
+                      name: "nameA-chart"
+                  EXTRA_ENV_VAR_C:
+                    secretKeyRef:
+                      key: "keyC-chart"
+                      name: "nameC-chart"
+                  EXTRA_ENV_VAR_D:
+                    secretKeyRef:
+                      key: "keyD-chart"
+                      name: "nameD-chart"
+          ))
+        end
+
+        let(:chart_template) { HelmTemplate.new(global_values.deep_merge(chart_values)) }
+
+        it 'sets those environment variables on each pod' do
+          expect(chart_template.exit_code).to eq(0)
+
+          expect(chart_template.env(deployment_name('pod-1'), 'sidekiq'))
+            .to include(
+                  { 'name' => 'EXTRA_ENV_VAR_A', 'valueFrom' => { "secretKeyRef" => { "name" => "nameA-chart", "key" => "keyA-chart" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-chart", "key" => "keyC-chart" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-chart", "key" => "keyD-chart" } } }
+                )
+
+          expect(chart_template.env(deployment_name('pod-2'), 'sidekiq'))
+            .to include(
+                  { 'name' => 'EXTRA_ENV_VAR_A', 'valueFrom' => { "secretKeyRef" => { "name" => "nameA-chart", "key" => "keyA-chart" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-chart", "key" => "keyC-chart" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-chart", "key" => "keyD-chart" } } }
+                )
+        end
+
+        it 'overrides global values' do
+          expect(chart_template.env(deployment_name('pod-1'), 'sidekiq'))
+            .to include(
+                  { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-chart", "key" => "keyC-chart" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-chart", "key" => "keyD-chart" } } }
+                )
+
+          expect(chart_template.env(deployment_name('pod-2'), 'sidekiq'))
+            .to include(
+                  { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-chart", "key" => "keyC-chart" } } },
+                  { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-chart", "key" => "keyD-chart" } } }
+                )
+        end
+
+        context 'when the pod-level value is set' do
+          let(:pod_values) do
+            YAML.safe_load(%(
+              gitlab:
+                sidekiq:
+                  pods:
+                  - name: pod-1
+                    queues: merge
+                    extraEnvFrom:
+                      EXTRA_ENV_VAR_A:
+                        secretKeyRef:
+                          key: "keyA-pod1"
+                          name: "nameA-pod1"
+                      EXTRA_ENV_VAR_D:
+                        secretKeyRef:
+                          key: "keyD-pod"
+                          name: "nameD-pod"
+                      EXTRA_ENV_VAR_E:
+                        secretKeyRef:
+                          key: "keyE-pod"
+                          name: "nameE-pod"
+                  - name: pod-2
+                    negateQueues: merge
+                    extraEnvFrom:
+                      EXTRA_ENV_VAR_A:
+                        secretKeyRef:
+                          key: "keyA-pod2"
+                          name: "nameA-pod2"
+                      EXTRA_ENV_VAR_C:
+                        secretKeyRef:
+                          key: "keyC-pod"
+                          name: "nameC-pod"
+                      EXTRA_ENV_VAR_F:
+                        secretKeyRef:
+                          key: "keyF-pod"
+                          name: "nameF-pod"
+            ))
+          end
+
+          let(:pod_template) do
+            HelmTemplate.new(global_values.deep_merge(chart_values).deep_merge(pod_values))
+          end
+
+          it 'sets those environment variables on the relevant pods' do
+            expect(pod_template.exit_code).to eq(0)
+
+            expect(pod_template.env(deployment_name('pod-1'), 'sidekiq'))
+              .to include(
+                    { 'name' => 'EXTRA_ENV_VAR_A', 'valueFrom' => { "secretKeyRef" => { "name" => "nameA-pod1", "key" => "keyA-pod1" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-chart", "key" => "keyC-chart" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-pod", "key" => "keyD-pod" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_E', 'valueFrom' => { "secretKeyRef" => { "name" => "nameE-pod", "key" => "keyE-pod" } } }
+                  )
+            expect(pod_template.env(deployment_name('pod-1'), 'sidekiq'))
+              .not_to include('name' => 'EXTRA_ENV_VAR_F', 'valueFrom' => { "secretKeyRef" => { "name" => "nameF-pod", "key" => "keyF-pod" } })
+
+            expect(pod_template.env(deployment_name('pod-2'), 'sidekiq'))
+              .not_to include('name' => 'EXTRA_ENV_VAR_E', 'valueFrom' => { "secretKeyRef" => { "name" => "nameE-pod", "key" => "keyE-pod" } })
+            expect(pod_template.env(deployment_name('pod-2'), 'sidekiq'))
+              .to include(
+                    { 'name' => 'EXTRA_ENV_VAR_A', 'valueFrom' => { "secretKeyRef" => { "name" => "nameA-pod2", "key" => "keyA-pod2" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-pod", "key" => "keyC-pod" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-chart", "key" => "keyD-chart" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_F', 'valueFrom' => { "secretKeyRef" => { "name" => "nameF-pod", "key" => "keyF-pod" } } }
+                  )
+          end
+
+          it 'overrides global values' do
+            expect(pod_template.env(deployment_name('pod-1'), 'sidekiq'))
+              .to include('name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-pod", "key" => "keyD-pod" } })
+
+            expect(pod_template.env(deployment_name('pod-2'), 'sidekiq'))
+              .to include('name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-pod", "key" => "keyC-pod" } })
+          end
+
+          it 'overrides chart-level values' do
+            expect(pod_template.env(deployment_name('pod-1'), 'sidekiq'))
+              .to include(
+                    { 'name' => 'EXTRA_ENV_VAR_A', 'valueFrom' => { "secretKeyRef" => { "name" => "nameA-pod1", "key" => "keyA-pod1" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-pod", "key" => "keyD-pod" } } }
+                  )
+
+            expect(pod_template.env(deployment_name('pod-2'), 'sidekiq'))
+              .to include(
+                    { 'name' => 'EXTRA_ENV_VAR_A', 'valueFrom' => { "secretKeyRef" => { "name" => "nameA-pod2", "key" => "keyA-pod2" } } },
+                    { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-pod", "key" => "keyC-pod" } } }
+                  )
+          end
+        end
+      end
+    end
+  end
+
   context 'when configuring monitoring' do
     let(:values) { default_values }
     let(:template) { HelmTemplate.new(values) }

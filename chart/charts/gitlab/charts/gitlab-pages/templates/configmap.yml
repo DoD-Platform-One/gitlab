@@ -165,7 +165,7 @@ data:
     server-keep-alive={{ .Values.serverKeepAlive }}
     {{- end }}
   configure: |
-    {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "pages") | nindent 4 -}}
+    {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "none") | nindent 4 }}
     {{- if $.Values.metrics.tls.enabled }}
       mkdir -p /init-secrets/pages-metrics
       cp -v -L /init-config/pages-metrics/pages-metrics.crt /init-secrets/pages-metrics/pages-metrics.crt

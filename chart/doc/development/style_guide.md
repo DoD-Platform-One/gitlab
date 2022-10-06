@@ -369,7 +369,7 @@ config:
 
 ## Templating Configuration Files
 
-These charts make use of the Cloud Native GitLab ("CNG") containers.
+These charts make use of cloud-native GitLab containers.
 Those containers support the use of either [ERB](https://docs.ruby-lang.org/en/2.7.0/ERB.html)
 or [gomplate](https://docs.gomplate.ca/).
 
@@ -459,7 +459,7 @@ gitaly:
   token: <%= File.read('gitaly_token').strip.to_json %>
 ```
 
-## Templating Chart notes (NOTES.txt)
+## Templating chart notes (NOTES.txt)
 
 Helm's [chart notes feature](https://helm.sh/docs/chart_template_guide/notes_files) provides
 helpful information and follow-up instructions after chart installations and upgrades.

@@ -31,6 +31,10 @@ spec:
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       {{- if and (or .Values.metrics.enabled .Values.debug.prometheus.enabled) (not .Values.metrics.serviceMonitor.enabled) }}
+        {{- if .Values.debug.tls.enabled }}
+        gitlab.com/prometheus_scheme: "https"
+        prometheus.io/scheme: "https"
+        {{- end }}
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: {{ .Values.debug.addr.port | quote }}
         gitlab.com/prometheus_path: {{ default .Values.metrics.path .Values.debug.prometheus.path | quote }}
@@ -131,7 +135,7 @@ spec:
             httpGet:
               path: {{ .Values.deployment.livenessProbe.path }}
               port: {{ if .Values.deployment.livenessProbe.port }}{{ .Values.deployment.livenessProbe.port }}{{ else }}debug{{ end }}
-              scheme: HTTP
+              scheme: {{ .Values.debug.tls.enabled | ternary "HTTPS" "HTTP" }}
             initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
@@ -143,7 +147,7 @@ spec:
             httpGet:
               path: {{ .Values.deployment.readinessProbe.path }}
               port: {{ if .Values.deployment.readinessProbe.port }}{{ .Values.deployment.readinessProbe.port }}{{ else }}debug{{ end }}
-              scheme: HTTP
+              scheme: {{ .Values.debug.tls.enabled | ternary "HTTPS" "HTTP" }}
             initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
@@ -218,12 +222,22 @@ spec:
           {{- if .Values.tls.enabled -}}
           # TLS secret for HTTPS service
           - secret:
-              name: {{ .Values.tls.secretName }}
+              name: {{ include "gitlab.registry.tls.secret" $ }}
               items:
                 - key: tls.crt
                   path: tls/tls.crt
                 - key: tls.key
                   path: tls/tls.key
+          {{- end -}}
+          {{- if and .Values.debug.tls.enabled .Values.debug.tls.secretName }}
+          # TLS secret for metrics/debug HTTPS service
+          - secret:
+              name: {{ .Values.debug.tls.secretName }}
+              items:
+                - key: tls.crt
+                  path: tls/tls-debug.crt
+                - key: tls.key
+                  path: tls/tls-debug.key
           {{- end -}}
           {{- if .Values.redis.cache.enabled -}}
           {{-   include "gitlab.registry.redisCacheSecret.mount" $ | nindent 10 -}}
