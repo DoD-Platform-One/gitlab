@@ -38,9 +38,6 @@ spec:
           {{- range $key, $value := .Values.annotations }}
             {{ $key }}: {{ $value | quote }}
           {{- end }}
-          {{- if .Values.global.istio.enabled }}
-            sidecar.istio.io/inject: "false"
-          {{- end }}
         spec:
           restartPolicy: {{ .Values.backups.cron.restartPolicy }}
           {{- if .Values.tolerations }}
@@ -85,9 +82,9 @@ spec:
                 - /bin/bash
                 - -c
                 {{- if eq .Values.backups.objectStorage.backend "s3" }}
-                - cp /etc/gitlab/.s3cfg $HOME/.s3cfg && backup-utility {{ .Values.backups.cron.extraArgs }} # alpine sleep has no infinity
+                - cp /etc/gitlab/.s3cfg $HOME/.s3cfg && backup-utility {{ .Values.backups.cron.extraArgs }} {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}{{ .Values.backups.cron.istioShutdown }}{{- end }} # alpine sleep has no infinity
                 {{- else if eq .Values.backups.objectStorage.backend "gcs" }}
-                - sh /var/opt/gitlab/templates/configure-gsutil && backup-utility {{ .Values.backups.cron.extraArgs }}
+                - sh /var/opt/gitlab/templates/configure-gsutil && backup-utility {{ .Values.backups.cron.extraArgs }} {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}{{ .Values.backups.cron.istioShutdown }}{{- end }}
                 {{- end }}
               image: "{{ coalesce .Values.image.repository (include "image.repository" .) }}:{{ coalesce .Values.image.tag (include "gitlab.versionTag" . ) }}"
               {{- include "gitlab.image.pullPolicy" $imageCfg | indent 14 }}

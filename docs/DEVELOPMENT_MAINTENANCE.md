@@ -222,11 +222,9 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 - add templates for CI helm tests
 
 ## chart/charts/gitlab/charts/toolbox/templates/backup-job.yaml
-- lines 41-43
+- added istio shutdown to command on lines 85 and 87
   ```
-    {{- if .Values.global.istio.enabled }}
-      sidecar.istio.io/inject: "false"
-    {{- end }}
+  {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}{{ .Values.backups.cron.istioShutdown }}{{- end }}
   ```
 
 ## chart/charts/minio/templates/_helper_create_buckets.sh

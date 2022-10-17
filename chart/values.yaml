@@ -1355,11 +1355,12 @@ gitlab:
       cron:
         resources:
           requests:
-            cpu: 350m
-            memory: 350Mi
+            cpu: 500m
+            memory: 768Mi
           limits:
-            cpu: 350m
-            memory: 350Mi
+            cpu: 500m
+            memory: 768Mi
+        istioShutdown: "&& echo \"Backup Complete\" && until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Istio sidecar proxy...\"; sleep 3; done && sleep 5 && echo \"Stopping the istio proxy...\" && curl -X POST http://localhost:15020/quitquitquit"
 
   gitlab-exporter:
     enabled: false
