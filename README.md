@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.4.1-bb.1](https://img.shields.io/badge/Version-6.4.1--bb.1-informational?style=flat-square) ![AppVersion: 15.4.1](https://img.shields.io/badge/AppVersion-15.4.1-informational?style=flat-square)
+![Version: 6.4.1-bb.2](https://img.shields.io/badge/Version-6.4.1--bb.2-informational?style=flat-square) ![AppVersion: 15.4.1](https://img.shields.io/badge/AppVersion-15.4.1-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -660,10 +660,11 @@ helm install gitlab chart/
 | gitlab.toolbox.resources.requests.memory | string | `"3.5Gi"` |  |
 | gitlab.toolbox.resources.limits.cpu | int | `2` |  |
 | gitlab.toolbox.resources.limits.memory | string | `"3.5Gi"` |  |
-| gitlab.toolbox.backups.cron.resources.requests.cpu | string | `"350m"` |  |
-| gitlab.toolbox.backups.cron.resources.requests.memory | string | `"350Mi"` |  |
-| gitlab.toolbox.backups.cron.resources.limits.cpu | string | `"350m"` |  |
-| gitlab.toolbox.backups.cron.resources.limits.memory | string | `"350Mi"` |  |
+| gitlab.toolbox.backups.cron.resources.requests.cpu | string | `"500m"` |  |
+| gitlab.toolbox.backups.cron.resources.requests.memory | string | `"768Mi"` |  |
+| gitlab.toolbox.backups.cron.resources.limits.cpu | string | `"500m"` |  |
+| gitlab.toolbox.backups.cron.resources.limits.memory | string | `"768Mi"` |  |
+| gitlab.toolbox.backups.cron.istioShutdown | string | `"&& echo \"Backup Complete\" && until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Istio sidecar proxy...\"; sleep 3; done && sleep 5 && echo \"Stopping the istio proxy...\" && curl -X POST http://localhost:15020/quitquitquit"` |  |
 | gitlab.gitlab-exporter.enabled | bool | `false` |  |
 | gitlab.gitlab-exporter.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitlab-exporter.init.resources.limits.memory | string | `"200Mi"` |  |
