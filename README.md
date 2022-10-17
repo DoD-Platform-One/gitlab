@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.4.1-bb.0](https://img.shields.io/badge/Version-6.4.1--bb.0-informational?style=flat-square) ![AppVersion: 15.4.1](https://img.shields.io/badge/AppVersion-15.4.1-informational?style=flat-square)
+![Version: 6.4.1-bb.1](https://img.shields.io/badge/Version-6.4.1--bb.1-informational?style=flat-square) ![AppVersion: 15.4.1](https://img.shields.io/badge/AppVersion-15.4.1-informational?style=flat-square)
 
 The One DevOps Platform
 
