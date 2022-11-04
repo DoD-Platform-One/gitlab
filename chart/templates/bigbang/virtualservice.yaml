@@ -27,14 +27,27 @@ spec:
     - "{{ .Values.global.hosts.gitlab.name }}"
   {{- end }}
   http:
-    - route:
+    - fault:
+        abort:
+          httpStatus: 403
+          percentage:
+            value: 100
+      match:
+      - uri:
+          prefix: /-/metrics
+      route:
       - destination:
           host: {{ .Release.Name }}-webservice-default.{{ .Release.Namespace }}.svc.cluster.local
           port:
             number: 8181
-      match:
+    - match:
       - uri:
           prefix: /
+      route:
+      - destination:
+          host: {{ .Release.Name }}-webservice-default.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: 8181
     - match:
       - uri:
           prefix: /admin/sidekiq

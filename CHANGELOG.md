@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.4.1-bb.3] - 2022-11-04
+### Changed
+- Modify Istio VirtualService to block metrics endpoint
+
 ## [6.4.1-bb.2] - 2022-10-12
 ### Changed
 - Enabled Istio injection for toolbox cron backup due to mTLS blocking repository dump
