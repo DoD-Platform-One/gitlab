@@ -170,6 +170,32 @@ describe 'kas configuration' do
         expect(config_yaml_data['gitlab']).not_to be_nil
       end
 
+      context 'when privateApi.tls is enabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  privateApi:
+                    tls:
+                      enabled: true
+            )))
+        end
+
+        it 'does not have redis config' do
+          expected_config = {
+            "listen" => {
+              "address" => :"8155",
+              "authentication_secret_file" => "/etc/kas/.gitlab_kas_private_api_secret",
+              "ca_certificate_file" => "/etc/ssl/certs/ca-certificates.crt",
+              "certificate_file" => "/etc/kas/tls.crt",
+              "key_file" => "/etc/kas/tls.key"
+            }
+          }
+
+          expect(config_yaml_data['private_api']).to eq(expected_config)
+        end
+      end
+
       context 'when customConfig is given' do
         let(:custom_config) do
           YAML.safe_load(%(
@@ -416,11 +442,59 @@ describe 'kas configuration' do
         expect(deployment['spec']).not_to have_key('minReadySeconds')
       end
 
+      it 'sets OWN_PRIVATE_API_URL to use grpc' do
+        expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
+          { "name" => "OWN_PRIVATE_API_URL", "value" => "grpc://$(POD_IP):8155" }
+        )
+      end
+
+      it 'sets OWN_PRIVATE_API_HOST to use its service host' do
+        expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
+          { "name" => "OWN_PRIVATE_API_HOST", "value" => "test-kas.default.svc" }
+        )
+      end
+
       context 'when deployment.minReadySeconds is given' do
         let(:deployment_values) { { 'minReadySeconds' => 60 } }
 
         it 'contains the minReadySeconds customization' do
           expect(deployment['spec']).to include('minReadySeconds' => 60)
+        end
+      end
+
+      context 'when privateApi.tls is enabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  privateApi:
+                    tls:
+                      enabled: true
+            )))
+        end
+
+        it 'sets OWN_PRIVATE_API_URL to use grpcs' do
+          expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
+            { "name" => "OWN_PRIVATE_API_URL", "value" => "grpcs://$(POD_IP):8155" }
+          )
+        end
+
+        it 'creates the TLS secret volume' do
+          init_etc_kas_volume = deployment['spec']['template']['spec']['volumes'].find do |volume|
+            volume['name'] == 'init-etc-kas'
+          end
+
+          expect(init_etc_kas_volume['projected']['sources']).to include(
+            {
+              "secret" => {
+                "name" => nil,
+                "items" => [
+                  { "key" => "tls.crt", "path" => "tls.crt" },
+                  { "key" => "tls.key", "path" => "tls.key" }
+                ]
+              }
+            }
+          )
         end
       end
     end

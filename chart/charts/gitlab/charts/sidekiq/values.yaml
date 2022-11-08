@@ -49,6 +49,7 @@ metrics:
   enabled: true
   port: 3807
   path: /metrics
+  log_enabled: false
   podMonitor:
     enabled: false
     additionalLabels: {}

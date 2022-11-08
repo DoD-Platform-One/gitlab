@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Configure the GitLab chart with an external object storage
@@ -285,10 +285,46 @@ configured to authenticate as a user with sufficient access to read/write to all
    kubectl create secret generic storage-config --from-file=config=storage.config
    ```
 
+## Google Cloud CDN
+
+> [Introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/98010) in GitLab 15.5.
+
+You can use [Google Cloud CDN](https://cloud.google.com/cdn) to cache
+and fetch data from the artifacts bucket. This can help improve
+performance and reduce network egress costs.
+
+Configuration of Cloud CDN is done via the following keys:
+
+- `global.appConfig.artifacts.cdn.secret`
+- `global.appConfig.artifacts.cdn.key` (default is `cdn`)
+
+To use Cloud CDN:
+
+1. Set up [Cloud CDN to use the artifacts bucket as the backend](https://cloud.google.com/cdn/docs/setting-up-cdn-with-bucket).
+1. Create a [key for signed URLs](https://cloud.google.com/cdn/docs/using-signed-urls).
+1. Give the [Cloud CDN service account permission to read from the bucket](https://cloud.google.com/cdn/docs/using-signed-urls#configuring_permissions).
+1. Prepare a YAML file with the parameters using the example in [`rails.googlecdn.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/cdn/rails.googlecdn.yaml).
+   You will need to fill in the following information:
+    - `url`: Base URL of the CDN host from step 1
+    - `key_name`: Key name from step 2
+    - `key`: The actual secret from step 2
+1. Load this YAML file into a Kubernetes secret under the `cdn` key. For example, to create a secret `gitlab-rails-cdn`:
+
+    ```shell
+    kubectl create secret generic gitlab-rails-cdn --from-file=cdn=rails.googlecdn.yml
+    ```
+
+1. Set `global.appConfig.artifacts.cdn.secret` to `gitlab-rails-cdn`. If you're setting this via a `helm`
+   parameter, use:
+
+    ```shell
+    --set global.appConfig.artifacts.cdn.secret=gitlab-rails-cdn
+    ```
+
 ## Troubleshooting
 
 ### Azure Blob: URL \[FILTERED] is blocked: Requests to the local network are not allowed
 
-This happens when the Azure Blob hostname is resolved to a [RFC1918 (local / private) IP address](https://docs.microsoft.com/en-us/azure/storage/common/storage-private-endpoints#dns-changes-for-private-endpoints). As a workaround,
+This happens when the Azure Blob hostname is resolved to a [RFC1918 (local / private) IP address](https://learn.microsoft.com/en-us/azure/storage/common/storage-private-endpoints#dns-changes-for-private-endpoints). As a workaround,
 allow [Outbound requests](https://docs.gitlab.com/ee/security/webhooks.html#allowlist-for-local-requests)
 for your Azure Blob hostname (`yourinstance.blob.core.windows.net`).

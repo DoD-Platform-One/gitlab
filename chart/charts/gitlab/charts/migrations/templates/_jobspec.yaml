@@ -10,14 +10,20 @@ metadata:
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
+  {{- if .Values.annotations }}
+  annotations:
+  {{- range $key, $value := .Values.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
 spec:
   activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
   backoffLimit: {{ .Values.backoffLimit }}
   template:
     metadata:
-      {{- if .Values.annotations }}
+      {{- if or .Values.PodAnnotations .Values.annotations}}
       annotations:
-      {{- range $key, $value := .Values.annotations }}
+      {{- range $key, $value := merge .Values.podAnnotations (deepCopy .Values.annotations) }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
       {{- end }}

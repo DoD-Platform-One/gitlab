@@ -47,7 +47,7 @@ variables:
   TEST_BACKUP_PREFIX: "14.9.2-incr"
   NAMESPACE: $KUBE_NAMESPACE
   REVIEW_REF_PREFIX: ""
-  ISSUE_BOT_LABELS_EXTRA: "group::distribution"
+  ISSUE_BOT_LABELS_EXTRA: "group::distribution,type::maintenance,maintenance::pipelines"
   SAST_EXCLUDED_PATHS: "/doc,/examples,/spec"
 
 stages:
@@ -508,7 +508,8 @@ danger-review:
       - *stable_branch_ref
   script:
     - git version
-    - danger --fail-on-errors=true
+    - danger_id=$(echo -n ${DANGER_GITLAB_API_TOKEN} | md5sum | awk '{print $1}' | cut -c5-10)
+    - danger --fail-on-errors=true --verbose --danger_id=${danger_id}
 
 rubocop:
   image: ruby:2.7.4-alpine
@@ -590,7 +591,7 @@ check_docs_links:
   - chmod 755 trigger-build.rb
   variables:
     GIT_STRATEGY: none
-    DOCS_REVIEW_APPS_DOMAIN: 35.193.151.162.nip.io
+    DOCS_REVIEW_APPS_DOMAIN: docs.gitlab-review-app
     DOCS_GITLAB_REPO_SUFFIX: charts
     # By default, deploy the Review App using the `main` branch of the `gitlab-org/gitlab-docs` project
     DOCS_BRANCH: main
@@ -795,6 +796,8 @@ production_specs_eks:
     QA_ARTIFACTS_DIR: $CI_PROJECT_DIR
     QA_CAN_TEST_PRAEFECT: "false"
   script:
+    - source scripts/ci/qa.sh
+    - qa_export_passwords
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
     - gem install gitlab-qa
     - source "${VARIABLES_FILE}"

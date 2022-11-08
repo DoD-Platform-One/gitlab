@@ -189,7 +189,6 @@ describe 'registry configuration' do
               cache:
                 enabled: true
                 addr: "global.redis.example.com:16379"
-                password: "REDIS_CACHE_PASSWORD"
             CONFIG
           )
         end
@@ -207,6 +206,10 @@ describe 'registry configuration' do
                   host: redis.example.com
                   port: 12345
                   db: 0
+                  password:
+                    enabled: true
+                    secret: registry-redis-cache-secret
+                    key: password
                   dialtimeout: 10ms
                   readtimeout: 10ms
                   writetimeout: 10ms
@@ -243,6 +246,9 @@ describe 'registry configuration' do
                   idletimeout: 300s
             CONFIG
           )
+
+          cache_secret = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'registry-redis-cache-secret', 'password')
+          expect(cache_secret).not_to be_empty
         end
       end
 
@@ -268,7 +274,6 @@ describe 'registry configuration' do
               cache:
                 enabled: true
                 addr: "redis.example.com:6379"
-                password: "REDIS_CACHE_PASSWORD"
             CONFIG
           )
         end
@@ -304,7 +309,6 @@ describe 'registry configuration' do
                 enabled: true
                 addr: "sentinel1.example.com:26379,sentinel2.example.com:26379"
                 mainname: redis.example.com
-                password: "REDIS_CACHE_PASSWORD"
             CONFIG
           )
         end
@@ -338,7 +342,6 @@ describe 'registry configuration' do
                 enabled: true
                 addr: "sentinel1.example.com:26379,sentinel2.example.com:26379"
                 mainname: redis.example.com
-                password: "REDIS_CACHE_PASSWORD"
             CONFIG
           )
         end
@@ -380,7 +383,6 @@ describe 'registry configuration' do
                 enabled: true
                 addr: "local1.example.com:26379,local2.example.com:26379"
                 mainname: local.example.com
-                password: "REDIS_CACHE_PASSWORD"
             CONFIG
           )
         end

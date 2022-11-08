@@ -1,14 +1,14 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Azure MinIO gateway when using the GitLab chart
 
 [MinIO](https://min.io/) is an object storage server that exposes S3-compatible APIs and it has a gateway feature that allows proxying requests to Azure Blob Storage. To setup our gateway, we will make use of Azure's Web App on Linux.
 
-To get started, make sure you have installed Azure CLI and you are logged in (`az login`). Proceed to create a [Resource group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups), if you don't have one already:
+To get started, make sure you have installed Azure CLI and you are logged in (`az login`). Proceed to create a [Resource group](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups), if you don't have one already:
 
 ```shell
 az group create --name "gitlab-azure-minio" --location "WestUS"

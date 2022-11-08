@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Configure charts using globals **(FREE SELF)**
@@ -840,7 +840,6 @@ global:
     enableSeatLink: true
     enableImpersonation: true
     applicationSettingsCacheSeconds: 60
-    defaultCanCreateGroup: true
     usernameChangingEnabled: true
     issueClosingPattern:
     defaultTheme:
@@ -978,7 +977,6 @@ application are described below:
 | `enableSeatLink`                    | Boolean | `true`  | A flag to disable the [seat link support](https://docs.gitlab.com/ee/subscriptions/#seat-link). |
 | `enableImpersonation`               |         | `nil`   | A flag to disable [user impersonation by Administrators](https://docs.gitlab.com/ee/api/index.html#disable-impersonation). |
 | `applicationSettingsCacheSeconds`   | Integer | 60      | An interval value (in seconds) to invalidate the [application settings cache](https://docs.gitlab.com/ee/administration/application_settings_cache.html). |
-| `defaultCanCreateGroup`             | Boolean | `true`  | A flag to decide if users are allowed to create groups. |
 | `usernameChangingEnabled`           | Boolean | `true`  | A flag to decide if users are allowed to change their username. |
 | `issueClosingPattern`               | String  | (empty) | [Pattern to close issues automatically](https://docs.gitlab.com/ee/administration/issue_closing_pattern.html). |
 | `defaultTheme`                      | Integer |         | [Numeric ID of the default theme for the GitLab instance](https://gitlab.com/gitlab-org/gitlab-foss/blob/master/lib/gitlab/themes.rb#L17-27). It takes a number, denoting the ID of the theme. |
@@ -1215,6 +1213,10 @@ kubectl create secret generic gitlab-rails-storage \
 [conditionally store specific diffs on object storage](https://docs.gitlab.com/ee/administration/merge_request_diffs.html#alternative-in-database-storage).
 This setting is left empty by default in the charts, for a default value to be
 assigned by the Rails code.
+
+#### cdn (only for CI Artifacts)
+
+`artifacts` setting has an additional key `cdn` [to configure Google CDN in front of a Google Cloud Storage bucket](../advanced/external-object-storage/index.md#google-cloud-cdn).
 
 ### Incoming email settings
 
@@ -1653,12 +1655,12 @@ global:
     port: 8181
 ```
 
-| Name | Type | | Default | Description |
-| :-- | :-- | :-- | :-- |
-| serviceName | String | `webservice-default` | Name of service to direct internal API traffic to. Do not include the Release name, as it will be templated in. Should match an entry in `gitlab.webservice.deployments`. See [`gitlab/webservice` chart](gitlab/webservice/index.md#deployments-settings) |
-| scheme | String | `http` | Scheme of the API endpoint |
-| host | String | | Fully qualified hostname or IP address of an API endpoint. Overrides the presence of `serviceName`. |
-| port | Integer | `8181` | Port number of associated API server. |
+| Name        | Type    | Default | Description |
+| :---------- | :------ | :------ | :---------- |
+| serviceName | String  | `webservice-default` | Name of service to direct internal API traffic to. Do not include the Release name, as it will be templated in. Should match an entry in `gitlab.webservice.deployments`. See [`gitlab/webservice` chart](gitlab/webservice/index.md#deployments-settings) |
+| scheme      | String  | `http` | Scheme of the API endpoint |
+| host        | String  | | Fully qualified hostname or IP address of an API endpoint. Overrides the presence of `serviceName`. |
+| port        | Integer | `8181` | Port number of associated API server. |
 | tls.enabled | Boolean | `false` | When set to `true`, enables TLS support for Workhorse. |
 
 ### Bootsnap Cache

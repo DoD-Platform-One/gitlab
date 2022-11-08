@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Using the GitLab Webservice chart **(FREE SELF)**
@@ -9,8 +9,12 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 The `webservice` sub-chart provides the GitLab Rails webserver with two Webservice workers
 per pod. (The minimum necessary for a single pod to be able to serve any web request in GitLab)
 
-Currently the container used in the chart also includes a copy of GitLab Workhorse,
-which we haven't split out yet.
+The pods of this chart make use of two containers: `gitlab-workhorse` and `webservice`.
+[GitLab Workhorse](https://gitlab.com/gitlab-org/gitlab/-/tree/master/workhorse) listens on
+port `8181`, and should _always_ be the destination for inbound traffic to the pod.
+The `webservice` houses the GitLab [Rails codebase](https://gitlab.com/gitlab-org/gitlab),
+listens on `8080`, and is accessible for metrics collection purposes.
+`webservice` should never recieve normal traffic directly.
 
 ## Requirements
 

@@ -117,4 +117,28 @@ describe 'global configuration' do
       expect(config_yaml['notifications']['endpoints'].count { |item| item['name'] == 'geo_event' }).to eq(1)
     end
   end
+
+  describe 'global.shell.port: SSH is to be use on an alternate port' do
+    let(:shell_values) do
+      YAML.safe_load(%(
+        global:
+          shell:
+            port: 9999
+      )).deep_merge(default_values)
+    end
+
+    # We need to look for any ConfigMap that has `gitlab.yml.erb` and ensure it contains the necessary strings
+    it 'configures all appropriate gitlab.yml entries' do
+      t = HelmTemplate.new(shell_values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+      # We need to look at any configmap that has `gitlab.yml.erb`
+      configmaps = t.resources_by_kind('ConfigMap').filter { |cm, content| content['data'].has_key? 'gitlab.yml.erb' }
+      # We can ignore `migrations`, as this does not handle API responses for URLs of any kind.
+      configmaps = configmaps.reject! { |cm, content| cm.eql? 'ConfigMap/test-migrations' }
+      configmaps.each do |cm, content|
+        expect(content['data']['gitlab.yml.erb']).to include("ssh_port: 9999"), "Expected #{cm}'s 'gitlab.yml.erb' to contain 'ssh_port: 9999'"
+      end
+    end
+  end
 end

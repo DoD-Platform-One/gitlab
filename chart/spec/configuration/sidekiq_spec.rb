@@ -359,6 +359,7 @@ describe 'Sidekiq configuration' do
           expect(monitoring).to include(
             'sidekiq_exporter' => {
               'enabled' => true,
+              'log_enabled' => false,
               'address' => '0.0.0.0',
               'port' => 3807
             }
@@ -388,6 +389,7 @@ describe 'Sidekiq configuration' do
               sidekiq:
                 metrics:
                   enabled: true
+                  log_enabled: true
                   port: 2222
           )).deep_merge(default_values)
         end
@@ -396,6 +398,7 @@ describe 'Sidekiq configuration' do
           expect(monitoring).to include(
             'sidekiq_exporter' => {
               'enabled' => true,
+              'log_enabled' => true,
               'address' => '0.0.0.0',
               'port' => 2222
             }

@@ -137,6 +137,12 @@ The in-chart NGINX Ingress Controller has the following requirements:
     - Ingress objects must be in group/version `networking.k8s.io/v1`.
 {{- end }}
 
+{{- /* Deprecation notice for `defaultCanCreateGroup` setting */}}
+{{- if eq false .Values.global.appConfig.defaultCanCreateGroup }}
+{{ $NOTICE }}
+`global.appConfig.defaultCanCreateGroup` setting has been deprecated. Starting with GitLab 15.5, this setting cannot be controlled via the configuration file anymore. Follow the steps at https://docs.gitlab.com/ee/user/admin_area/settings/account_and_limit_settings.html#prevent-users-from-creating-top-level-groups, to configure this setting via the Admin UI or the API.
+{{- end }}
+
 {{- /* run deprecations */}}
 {{ include "gitlab.deprecations" . }}
 {{- /* run checkConfig */}}

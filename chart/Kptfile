@@ -3,9 +3,9 @@ kind: Kptfile
 metadata:
     name: chart
 upstream:
-    type: git
-    git:
-        commit: cdd6384a5b10ae521b3798e52a29001ef30b4e65
-        repo: https://gitlab.com/gitlab-org/charts/gitlab
-        directory: /
-        ref: v6.4.1
+  type: git
+  git:
+    commit: 6eaf9a640cd1786223e465c1e7d9627ffef90748
+    repo: https://gitlab.com/gitlab-org/charts/gitlab
+    directory: /
+    ref: v6.5.0

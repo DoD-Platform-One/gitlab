@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Using the GitLab-Sidekiq chart **(FREE SELF)**
@@ -76,6 +76,7 @@ to the `helm install` command using the `--set` flags:
 | `metrics.enabled`                          | `true`                                                       | If a metrics endpoint should be made available for scraping                                                                                                                                        |
 | `metrics.port`                             | `3807`                                                       | Metrics endpoint port                                                                                                                                                                              |
 | `metrics.path`                             | `/metrics`                                                   | Metrics endpoint path                                                                                                                                                                              |
+| `metrics.log_enabled`                      | `false`                                                      | Enables or disables metrics server logs written to `sidekiq_exporter.log`                                                                                                                                                               |
 | `metrics.podMonitor.enabled`               | `false`                                                      | If a PodMonitor should be created to enable Prometheus Operator to manage the metrics scraping                                                                                                     |
 | `metrics.podMonitor.additionalLabels`      | `{}`                                                         | Additional labels to add to the PodMonitor                                                                                                                                                         |
 | `metrics.podMonitor.endpointConfig`        | `{}`                                                         | Additional endpoint configuration for the PodMonitor                                                                                                                                               |

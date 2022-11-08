@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.57.0-gitlab'
+  tag: 'v3.58.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -373,6 +373,8 @@ database:
 redis:
   cache:
     enabled: false
+    password:
+      enabled: false
 
 # Configuration settings to support the migration of large registries to the metadata database.
 # NOTE: This is an experimental feature and must not be used in production.

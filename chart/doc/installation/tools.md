@@ -1,42 +1,71 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # GitLab chart prerequisites **(FREE SELF)**
 
 Before you deploy GitLab in a Kubernetes cluster, install the following
-prerequisites and gather the minimum required information.
+prerequisites and decide on the options you'll use when you install.
 
-## `kubectl`
+## Prerequisites
+
+### `kubectl`
 
 Install `kubectl` 1.16 or later by following [the Kubernetes documentation](https://kubernetes.io/docs/tasks/tools/#kubectl).
-
 The version you install must be within one minor release of
 [the version running in your cluster](https://kubernetes.io/docs/tasks/tools/).
 
-## Helm
+### Helm
 
 Install Helm v3.3.1 or later by following [the Helm documentation](https://helm.sh/docs/intro/install/).
 
-## Select the configuration options
+### PostgreSQL
 
-In each of the following sections, collect the options that will be combined to
-use with `helm install` when you deploy GitLab.
+By default, the GitLab chart includes an in-cluster PostgreSQL deployment that
+is provided by [`bitnami/PostgreSQL`](https://artifacthub.io/packages/helm/bitnami/postgresql).
+This deployment is for trial purposes only and **not recommended for use in production**.
+
+You should set up an
+[external, production-ready PostgreSQL instance](../advanced/external-db/index.md).
+PostgreSQL 13 is the recommended default version since GitLab chart 6.0.
+
+As of GitLab chart 4.0.0, replication is available internally, but not enabled by default.
+Such functionality has not been load tested by GitLab.
+
+### Redis
+
+By default, the GitLab chart includes an in-cluster Redis deployment that
+is provided by [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/redis).
+This deployment is for trial purposes only and **not recommended for use in production**.
+
+You should set up an
+[external, production-ready Redis instance](../advanced/external-redis/index.md).
+For all the available configuration settings, see the
+[Redis globals documentation](../charts/globals.md#configure-redis-settings).
+
+As of GitLab chart 4.0.0, replication is available internally, but
+not enabled by default. Such functionality has not been load tested by GitLab.
+
+## Decide on other options
+
+You will use the following options with `helm install` when you deploy GitLab.
 
 ### Secrets
 
-There are some secrets that need to be created (for example SSH keys). By default
-they are generated automatically during the deployment, but if you want to
+You must create some secrets, like SSH keys. By default, these secrets
+are generated automatically during the deployment, but if you want to
 specify them, you can follow the [secrets documentation](secrets.md).
 
 ### Networking and DNS
 
-By default, the GitLab chart relies on Kubernetes `Service` objects of `type: LoadBalancer`
-to expose GitLab services using name-based virtual servers configured with`Ingress`
-objects. You must specify a domain which will contain records to resolve
-`gitlab`, `registry`, and `minio` (if enabled) to the appropriate IP for your chart.
+By default, to expose services, GitLab uses name-based virtual servers that are
+configured with `Ingress` objects. These objects are Kubernetes `Service` objects
+of `type: LoadBalancer`.
+
+You must specify a domain that contains records to resolve
+`gitlab`, `registry`, and `minio` (if enabled) to the appropriate IP address for your chart.
 
 For example, use the following with `helm install`:
 
@@ -44,40 +73,41 @@ For example, use the following with `helm install`:
 --set global.hosts.domain=example.com
 ```
 
-As an example, with custom domain support enabled, a `*.<pages domain>`
-sub-domain, which by default is `<pages domain>`, becomes `pages.<global.hosts.domain>`,
-and needs to resolve to the external IP assigned to Pages
-(by `--set global.pages.externalHttp` or `--set global.pages.externalHttps`).
-To use custom domains, GitLab Pages can use a CNAME record pointing the custom
+With custom domain support enabled, a `*.<pages domain>` sub-domain, which by default
+is `<pages domain>`, becomes `pages.<global.hosts.domain>`.
+The domain resolves to the external IP assigned to Pages
+by `--set global.pages.externalHttp` or `--set global.pages.externalHttps`.
+
+To use custom domains, GitLab Pages can use a CNAME record that points the custom
 domain to a corresponding `<namespace>.<pages domain>` domain.
 
-#### Dynamic IPs with `external-dns`
+#### Dynamic IP addresses with `external-dns`
 
 If you plan to use an automatic DNS registration service like
 [`external-dns`](https://github.com/kubernetes-sigs/external-dns),
-you don't need any additional DNS configuration for GitLab, but you must deploy
+you don't need any additional DNS configuration for GitLab. However, you must deploy
 `external-dns` to your cluster. The project page
 [has a comprehensive guide](https://github.com/kubernetes-sigs/external-dns#deploying-to-a-cluster)
 for each supported provider.
 
 NOTE:
-If you enable custom domain support for GitLab Pages, `external-dns` will no
-longer work for the Pages domain (`pages.<global.hosts.domain>` by default), and
-you must manually configure the DNS entry to point the domain to the
-external IP dedicated to Pages.
+If you enable custom domain support for GitLab Pages, `external-dns` no
+longer works for the Pages domain (`pages.<global.hosts.domain>` by default).
+You must manually configure the DNS entry to point the domain to the
+external IP address dedicated to Pages.
 
-If you provision a [GKE cluster](cloud/gke.md) using the provided script,
+If you provision a [GKE cluster](cloud/gke.md) by using the provided script,
 `external-dns` is automatically installed in your cluster.
 
-#### Static IP
+#### Static IP addresses
 
 If you plan to manually configure your DNS records, they should all point to a
-static IP. For example, if you choose `example.com` and you have a static IP
+static IP address. For example, if you choose `example.com` and you have a static IP address
 of `10.10.10.10`, then `gitlab.example.com`, `registry.example.com` and
 `minio.example.com` (if using MinIO) should all resolve to `10.10.10.10`.
 
 If you are using GKE, read more on [creating the external IP and DNS entry](cloud/gke.md#creating-the-external-ip).
-Consult your Cloud and/or DNS provider's documentation for more help on this process.
+Consult your cloud or DNS provider's documentation for more help on this process.
 
 For example, use the following with `helm install`:
 
@@ -88,12 +118,14 @@ For example, use the following with `helm install`:
 #### Compatibility with Istio protocol selection
 
 Service port names follow the convention that is compatible with Istio's [explicit port selection](https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/#explicit-protocol-selection).
-They look like `<protocol>-<suffix>`, for example `grpc-gitaly` or `https-metrics`.
+They look like `<protocol>-<suffix>`, for example `tls-gitaly` or `https-metrics`.
+
+Note, that Gitaly uses gRPC, but does not have this suffix due to findings in [Issue #3822](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3822).
 
 ### Persistence
 
-By default the GitLab chart creates Volume Claims with the expectation that a
-dynamic provisioner creates the underlying Persistent Volumes. If you would like
+By default the GitLab chart creates volume claims with the expectation that a
+dynamic provisioner creates the underlying persistent volumes. If you would like
 to customize the `storageClass` or manually create and assign volumes, review
 the [storage documentation](storage.md).
 
@@ -103,9 +135,10 @@ objects. Therefore, it's best to plan ahead before deploying your production ins
 
 ### TLS certificates
 
-You should be running GitLab using HTTPS which requires TLS certificates. By default, the
-GitLab chart will install and configure [`cert-manager`](https://github.com/jetstack/cert-manager)
+You should be running GitLab with HTTPS, which requires TLS certificates. By default, the
+GitLab chart installs and configures [`cert-manager`](https://github.com/jetstack/cert-manager)
 to obtain free TLS certificates.
+
 If you have your own wildcard certificate, or you already have `cert-manager` installed, or you
 have some other way of obtaining TLS certificates, read more about [TLS options](tls.md).
 
@@ -115,35 +148,6 @@ certificates. For example, use the following with `helm install`:
 ```shell
 --set certmanager-issuer.email=me@example.com
 ```
-
-### PostgreSQL
-
-It's recommended to set up an
-[external, production-ready PostgreSQL instance](../advanced/external-db/index.md).
-PostgreSQL 13 is the recommended default version since GitLab chart 6.0.
-
-As of GitLab chart 4.0.0, replication is available internally, but not enabled by default.
-Such functionality has not been load tested by GitLab.
-
-NOTE:
-By default, the GitLab chart includes an in-cluster PostgreSQL deployment that
-is provided by [`bitnami/PostgreSQL`](https://artifacthub.io/packages/helm/bitnami/postgresql).
-This is for trial purposes only and **not recommended for use in production**.
-
-### Redis
-
-It's recommended to set up an
-[external, production-ready Redis instance](../advanced/external-redis/index.md).
-For all the available configuration settings, see the
-[Redis globals documentation](../charts/globals.md#configure-redis-settings).
-
-As of GitLab chart 4.0.0, replication is available internally, but
-not enabled by default. Such functionality has not been load tested by GitLab.
-
-NOTE:
-By default, the GitLab chart includes an in-cluster Redis deployment that
-is provided by [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/redis).
-This is for trial purposes only and **not recommended for use in production**.
 
 ### Prometheus
 
@@ -159,8 +163,8 @@ the `gitlab.com/prometheus_path` and `gitlab.com/prometheus_port` annotations
 may be used to configure how metrics are discovered. Each of these annotations
 are comparable to the `prometheus.io/{scrape,path,port}` annotations.
 
-For users that may be monitoring or want to monitor the GitLab application
-with their installation of Prometheus, the original `prometheus.io/*`
+If you are monitoring or want to monitor the GitLab application
+with your installation of Prometheus, the original `prometheus.io/*`
 annotations are still added to the appropriate Pods and Services. This allows
 continuity of metrics collection for existing users and provides the ability
 to use the default Prometheus configuration to capture both the GitLab
@@ -325,4 +329,4 @@ have RBAC enabled, you must disable these settings:
 
 ## Next steps
 
-[Prepare your Kubernetes cluster](cloud/index.md).
+[Set up your cloud provider and create your cluster](cloud/index.md).

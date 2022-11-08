@@ -239,8 +239,6 @@ spec:
                 - key: tls.key
                   path: tls/tls-debug.key
           {{- end -}}
-          {{- if .Values.redis.cache.enabled -}}
-          {{-   include "gitlab.registry.redisCacheSecret.mount" $ | nindent 10 -}}
-          {{- end -}}
+          {{- include "gitlab.registry.redisCacheSecret.mount" $ | nindent 10 -}}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
 {{- end -}}
