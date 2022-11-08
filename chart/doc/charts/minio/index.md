@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Using MinIO for Object storage **(FREE SELF)**
@@ -273,5 +273,5 @@ for the following also applies completely to this chart:
 - `minioConfig`
 
 Further explanation of the `minioConfig` settings can be found in the
-[MinIO notify documentation](https://docs.min.io/docs/minio-bucket-notification-guide).
+[MinIO notify documentation](https://min.io/docs/minio/kubernetes/upstream/index.html).
 This includes details on publishing notifications when Bucket Objects are accessed or changed.

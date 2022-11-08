@@ -1,13 +1,13 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Preparing AKS resources for the GitLab chart **(FREE SELF)**
 
 For a fully functional GitLab instance, you need a few resources before
-deploying the GitLab chart to [Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/intro-kubernetes).
+deploying the GitLab chart to [Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/intro-kubernetes).
 
 ## Creating the AKS cluster
 
@@ -17,8 +17,8 @@ Alternatively, a cluster can be created manually as well.
 Prerequisites:
 
 - Install the [prerequisites](../tools.md).
-- Install the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-  and use it to [sign into Azure](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli#how-to-sign-into-the-azure-cli).
+- Install the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+  and use it to [sign into Azure](https://learn.microsoft.com/en-us/cli/azure/get-started-with-azure-cli#how-to-sign-into-the-azure-cli).
 - [Install `jq`](https://stedolan.github.io/jq/download/).
 
 ### Scripted cluster creation
@@ -81,12 +81,12 @@ The table below describes all available variables.
 A cluster with 8vCPU and 30GB of RAM is recommended.
 
 For the most up to date instructions, follow Microsoft's
-[AKS walkthrough](https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-portal).
+[AKS walkthrough](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-portal).
 
 ## External Access to GitLab
 
 An external IP is required so that your cluster can be reachable. For the most up to date instructions, follow Microsoft's
-[Create a static IP address](https://docs.microsoft.com/en-us/azure/aks/static-ip) guide.
+[Create a static IP address](https://learn.microsoft.com/en-us/azure/aks/static-ip) guide.
 
 ## Next Steps
 

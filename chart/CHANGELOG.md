@@ -2,6 +2,43 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 6.5.0 (2022-10-21)
+
+### Added (2 changes)
+
+- [Makes TLS communication between KAS pods possible](gitlab-org/charts/gitlab@d9af396d592f5003c922530fe5e5d78353570d78) ([merge request](gitlab-org/charts/gitlab!2803))
+- [Allow enabling sidekiq_exporter logs](gitlab-org/charts/gitlab@bf9d4bf6cc34807e9c7a3772be5d9c6ea40bd9da) ([merge request](gitlab-org/charts/gitlab!2774))
+
+### Fixed (2 changes)
+
+- [Gitaly: remove Istio prefixes for grpc](gitlab-org/charts/gitlab@bd20b431d0dfa2817a43e739787e8ad22c398942) ([merge request](gitlab-org/charts/gitlab!2811))
+- [Sidekiq/toolbox: add gitlab_shell.ssh_port to gitlab.yml](gitlab-org/charts/gitlab@f9c45bf50a20e9dcff0613ff4cc1414663a5ca29) ([merge request](gitlab-org/charts/gitlab!2782))
+
+### Changed (5 changes)
+
+- [Update gitlab-org/container-registry from 3.57.0-gitlab to 3.58.0-gitlab](gitlab-org/charts/gitlab@af4a7dd04075c820fc24731db3e08e25b07a3660) ([merge request](gitlab-org/charts/gitlab!2813))
+- [Document that Google Cloud CDN needs bucket permissions](gitlab-org/charts/gitlab@4adb9229a0583ae2bf4f3276e3e760edcd1a9720) ([merge request](gitlab-org/charts/gitlab!2799))
+- [Registry: use secret from redis cache configuration](gitlab-org/charts/gitlab@4ea66c7b3908b9feef9399ed0f2bd61848f16565) ([merge request](gitlab-org/charts/gitlab!2771))
+- [CI: Specify `type` labels for issue-bot](gitlab-org/charts/gitlab@a57455ad73d115d063c7977f0896f862c88cd724) ([merge request](gitlab-org/charts/gitlab!2796))
+- [Update gitlab-org/charts/gitlab-runner from 0.44.0 to 0.45.0](gitlab-org/charts/gitlab@2360a35e65df8719e5b4e1fe0c4da48ea9827225) ([merge request](gitlab-org/charts/gitlab!2790))
+
+### Deprecated (1 change)
+
+- [Deprecate `default_can_create_group` setting](gitlab-org/charts/gitlab@f1a26138682ffb1cb364752066ec23edf675d97a) ([merge request](gitlab-org/charts/gitlab!2763))
+
+### Other (2 changes)
+
+- [Update nokogiri from 1.11.2 to 1.13.8](gitlab-org/charts/gitlab@4ca05285a0120d69a708d6fb406c441199ea3d9e) ([merge request](gitlab-org/charts/gitlab!2780))
+- [Update activesupport from 6.0.3.4 to 7.0.4](gitlab-org/charts/gitlab@184a94790f7de95aec576ad273d4fb9a9ec2722e) ([merge request](gitlab-org/charts/gitlab!2781))
+
+## 6.4.3 (2022-10-19)
+
+No changes.
+
+## 6.4.2 (2022-10-04)
+
+No changes.
+
 ## 6.4.1 (2022-09-29)
 
 No changes.
@@ -35,6 +72,10 @@ No changes.
 
 - [Update rack from 2.2.3 to 3.0.0](gitlab-org/charts/gitlab@99c3a60596cc3f2c4d64b585a0900173b2c29691) ([merge request](gitlab-org/charts/gitlab!2779))
 - [Update gitlab-styles from 6.2.0 to 9.0.0](gitlab-org/charts/gitlab@3b5171699d4a181d2e7cdf95f52333f18f03be93) ([merge request](gitlab-org/charts/gitlab!2769))
+
+## 6.3.4 (2022-09-29)
+
+No changes.
 
 ## 6.3.3 (2022-09-01)
 
@@ -82,6 +123,10 @@ No changes.
 ### Other (1 change)
 
 - [Ensures that whitespace is chomped to the left](gitlab-org/charts/gitlab@0e65e3393b244bf8a5f04a631865a2f1487e34ab) ([merge request](gitlab-org/charts/gitlab!2651))
+
+## 6.2.5 (2022-09-29)
+
+No changes.
 
 ## 6.2.4 (2022-08-30)
 

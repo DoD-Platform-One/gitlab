@@ -54,4 +54,29 @@ describe 'migrations configuration' do
       expect(t.dig('ServiceAccount/test-migrations', 'metadata', 'labels')).to include('global' => 'migrations')
     end
   end
+
+  context 'When customer provides additional annotations' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          migrations:
+            annotations:
+              foo: bar
+              bar: foo
+            podAnnotations:
+              foo: foo
+              baz: baz
+      )).deep_merge(default_values)
+    end
+    it 'Populates the additional annotations in the expected manner' do
+      t = HelmTemplate.new(values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+      expect(t.dig('Job/test-migrations-1', 'metadata', 'annotations')).to include('foo' => 'bar')
+      expect(t.dig('Job/test-migrations-1', 'metadata', 'annotations')).to include('bar' => 'foo')
+      expect(t.dig('Job/test-migrations-1', 'metadata', 'annotations')).not_to include('baz' => 'baz')
+      expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'annotations')).to include('foo' => 'foo')
+      expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'annotations')).to include('bar' => 'foo')
+      expect(t.dig('Job/test-migrations-1', 'spec', 'template', 'metadata', 'annotations')).to include('baz' => 'baz')
+    end
+  end
 end

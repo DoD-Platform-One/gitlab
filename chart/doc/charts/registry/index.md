@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Using the Container Registry **(FREE SELF)**
@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.57.0-gitlab'
+    tag: 'v3.58.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -178,7 +178,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.57.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.58.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
 | `log`                                                                                                                                        | `{level: info, fields: {service: registry}}`                                   | Configure the logging options                                                                                                                                                                                                                                                                                                                |
@@ -252,7 +252,8 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `redis.cache.port` | `6379` | The port of the Redis instance. |
 | `redis.cache.sentinels` | `[]` | List sentinels with host and port. |
 | `redis.cache.mainname`                                                                                                                          |                                                                         | The main server name. Only applicable for Sentinel.                                                                                             |
-| `redis.cache.password.secret`                                                                                                                          | `gitlab-redis-secret`                                                                        | Name of the secret containing the Redis password.                                                                                              |
+| `redis.cache.password.enabled`                                                                                                                          | `false`                                                                        | Indicates whether the Redis cache used by the Registry is password protected.                                                                                            |
+| `redis.cache.password.secret`                                                                                                                          | `gitlab-redis-secret`                                                                        | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled.                                                                                            |
 | `redis.cache.password.key`                                                                                                                          | `redis-password`                                                                        | Secret key in which the Redis password is stored.                                                                                              |
 | `redis.cache.db`                                                                                                                          | `0`                                                                        | The name of the database to use for each connection.                                                                                              |
 | `redis.cache.dialtimeout`                                                                                                                          | `0s`                                                                        | The timeout for connecting to the Redis instance. Defaults to no timeout.                                                                                             |
@@ -330,7 +331,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.57.0-gitlab'`
+- `tag: 'v3.58.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`

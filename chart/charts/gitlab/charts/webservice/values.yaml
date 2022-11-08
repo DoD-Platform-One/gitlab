@@ -286,6 +286,9 @@ global:
       proxy_download: true
       bucket:
       connection: {}
+      # cdn:
+      #   secret:
+      #   key:
     uploads:
       enabled: true
       proxy_download: true

@@ -20,6 +20,8 @@ tolerations: []
 
 # Annotations for the job
 annotations: {}
+# Annotations for the pod
+podAnnotations: {}
 
 # Labels for the job
 podLabels: {}

@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Configure MinIO with the GitLab chart
@@ -9,14 +9,14 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 [MinIO](https://min.io/) is an object storage server that exposes S3-compatible APIs.
 
 MinIO can be deployed to several different platforms. To launch a new MinIO instance,
-follow their [Quickstart Guide](https://docs.min.io/docs/minio-quickstart-guide.html).
-Be sure to [secure access to the MinIO server with TLS](https://docs.min.io/docs/how-to-secure-access-to-minio-server-with-tls.html).
+follow their [Quickstart Guide](https://min.io/docs/minio/linux/index.html).
+Be sure to [secure access to the MinIO server with TLS](https://min.io/docs/minio/linux/operations/network-encryption.html).
 
 To connect GitLab to an external [MinIO](https://min.io/) instance,
 first create MinIO buckets for the GitLab application, using the bucket names
 in this [example configuration file](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/values-external-objectstorage.yaml).
 
-Using the [MinIO client](https://docs.min.io/docs/minio-client-complete-guide), create the necessary buckets before use:
+Using the [MinIO client](https://min.io/docs/minio/kubernetes/upstream/), create the necessary buckets before use:
 
 ```shell
 mc mb gitlab-registry-storage

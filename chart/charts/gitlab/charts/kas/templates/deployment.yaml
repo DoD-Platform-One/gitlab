@@ -84,12 +84,14 @@ spec:
           args:
             - "--configuration-file=/etc/kas/config.yaml"
           env:
+            - name: OWN_PRIVATE_API_HOST
+              value: {{ include "gitlab.kas.serviceHost" . }}
             - name: POD_IP
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
             - name: OWN_PRIVATE_API_URL
-              value: "grpc://$(POD_IP):{{ .Values.service.privateApiPort }}"
+              value: "{{ ternary "grpcs" "grpc" .Values.privateApi.tls.enabled }}://$(POD_IP):{{ .Values.service.privateApiPort }}"
           ports:
             - containerPort: {{ .Values.service.internalPort }}
               name: {{ template "name" . }}
@@ -138,6 +140,15 @@ spec:
                 items:
                   - key: {{ template "gitlab.kas.privateApi.key" . }}
                     path: .gitlab_kas_private_api_secret
+            {{- if $.Values.privateApi.tls.enabled }}
+            - secret:
+                name: {{ .Values.privateApi.tls.secretName }}
+                items:
+                  - key: tls.crt
+                    path: tls.crt
+                  - key: tls.key
+                    path: tls.key
+            {{- end }}
             {{- if .Values.redis.enabled -}}
             {{- include "gitlab.redis.secrets" . | nindent 12 }}
             {{- end }}

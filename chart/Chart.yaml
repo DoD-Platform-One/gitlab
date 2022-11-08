@@ -1,8 +1,8 @@
 ---
 apiVersion: v1
 name: gitlab
-version: 6.4.1-bb.3
-appVersion: 15.4.1
+version: 6.5.0-bb.0
+appVersion: 15.5.0
 description: The One DevOps Platform
 keywords:
 - gitlab
@@ -15,4 +15,4 @@ maintainers:
   email: support@gitlab.com
 annotations:
   bigbang.dev/applicationVersions: |
-    - Gitlab: 15.4.1
+    - Gitlab: 15.5.0

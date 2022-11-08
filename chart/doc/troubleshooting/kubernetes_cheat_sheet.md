@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 type: reference
 ---
 
@@ -192,7 +192,7 @@ and they will assist you with any issues you are having.
 - How to update GitLab installed using Helm chart:
 
   ```shell
-  helm repo upgrade
+  helm repo update
 
   # get current values and redirect them to yaml file (analogue of gitlab.rb values)
   helm get values <release name> > gitlab.yaml

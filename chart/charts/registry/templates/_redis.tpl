@@ -14,16 +14,14 @@ Expectation: input contents has .sentinels, which is a List of Dict
 
 
 {{- define "gitlab.registry.redisCacheSecret.mount" -}}
-{{- include "gitlab.redis.configMerge" . -}}
-{{- if .redisMergedConfig.password.enabled }}
+{{- if .Values.redis.cache.password.enabled }}
 - secret:
-    name: {{ template "gitlab.redis.password.secret" . }}
+    name: {{ default (include  "redis.secretName" . ) ( .Values.redis.cache.password.secret | quote) }}
     items:
-      - key: {{ template "gitlab.redis.password.key" . }}
-        path: registry/{{ printf "%s-password" (default "redis" .redisConfigName) }}
+      - key: {{ default (include "redis.secretPasswordKey" . ) ( .Values.redis.cache.password.key | quote) }}
+        path: registry/redis-password
 {{- end }}
 {{- end -}}
-
 
 {{/*
 Return migration configuration.
@@ -44,7 +42,7 @@ redis:
     {{- else }}
     addr: {{ printf "%s:%s" ( include "gitlab.redis.host" . ) ( include "gitlab.redis.port" . ) | quote }}
     {{- end }}
-    {{- if .redisMergedConfig.password.enabled }}
+    {{- if .Values.redis.cache.password.enabled }}
     password: "REDIS_CACHE_PASSWORD"
     {{- end }}
     {{- if hasKey .Values.redis.cache "db" }}

@@ -110,6 +110,18 @@ registry:
     See https://docs.gitlab.com/charts/charts/registry#redis-cache
 {{-     end -}}
 {{- end -}}
+{{-   if and $.Values.registry.redis.cache.enabled $.Values.registry.redis.cache.password.enabled }}
+{{-     if and (kindIs "string" $.Values.registry.redis.cache.password.secret) (empty $.Values.registry.redis.cache.password.secret) }}
+registry:
+    Enabling the Redis cache password requires 'registry.redis.cache.password.secret' to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-cache
+{{-     end -}}
+{{-     if and (kindIs "string" $.Values.registry.redis.cache.password.key) (empty $.Values.registry.redis.cache.password.key) }}
+registry:
+    Enabling the Redis cache password requires 'registry.redis.cache.password.key' to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-cache
+{{-     end -}}
+{{- end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.registry.redis.cache */}}
 

@@ -394,6 +394,101 @@ describe 'checkConfig registry' do
                      error_description: 'when redis cache is enabled, with sentinels and empty host'
   end
 
+  describe 'registry.redis.cache.password (secret)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          redis:
+            cache:
+              enabled: true
+              host: 'localhost'
+              password:
+                enabled: true
+                secret: registry-redis-cache-secret
+                key: password
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          redis:
+            cache:
+              enabled: true
+              host: ''
+              password:
+                enabled: true
+                secret: ''
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { ' Enabling the Redis cache password requires \'registry.redis.cache.password.secret\' to be set.' }
+
+    include_examples 'config validation',
+                     success_description: 'when redis cache password is enabled, with secret and key',
+                     error_description: 'when redis cache password is enabled, with empty secret'
+  end
+
+  describe 'registry.redis.cache.password (key)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          redis:
+            cache:
+              enabled: true
+              host: 'localhost'
+              password:
+                enabled: true
+                secret: registry-redis-cache-secret
+                key: password
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 12
+
+        registry:
+          database:
+            enabled: true
+          redis:
+            cache:
+              enabled: true
+              host: ''
+              password:
+                enabled: true
+                secret: registry-redis-cache-secret
+                key: ''
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { ' Enabling the Redis cache password requires \'registry.redis.cache.password.key\' to be set.' }
+
+    include_examples 'config validation',
+                     success_description: 'when redis cache password is enabled, with secret and key',
+                     error_description: 'when redis cache password is enabled, with empty key'
+  end
+
   describe 'registry.tls (hosts.protocol)' do
     let(:success_values) do
       YAML.safe_load(%(

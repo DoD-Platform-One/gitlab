@@ -1,7 +1,7 @@
 ---
-stage: Enablement
+stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#designated-technical-writers
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Style guide
@@ -158,7 +158,6 @@ Let's look at two snippet examples, which easily exemplify the reasoning:
         impersonation_enabled: {{ .enableImpersonation }}
         application_settings_cache_seconds: {{ .applicationSettingsCacheSeconds | int }}
         usage_ping_enabled: {{ eq .enableUsagePing true }}
-        default_can_create_group: {{ eq .defaultCanCreateGroup true }}
         username_changing_enabled: {{ eq .usernameChangingEnabled true }}
         issue_closing_pattern: {{ .issueClosingPattern | quote }}
         default_theme: {{ .defaultTheme }}
@@ -194,7 +193,6 @@ Let's look at two snippet examples, which easily exemplify the reasoning:
         max_request_duration_seconds: {{ default (include "gitlab.appConfig.maxRequestDurationSeconds" $) .maxRequestDurationSeconds }}
         impersonation_enabled: {{ .enableImpersonation }}
         usage_ping_enabled: {{ eq .enableUsagePing true }}
-        default_can_create_group: {{ eq .defaultCanCreateGroup true }}
         username_changing_enabled: {{ eq .usernameChangingEnabled true }}
         issue_closing_pattern: {{ .issueClosingPattern | quote }}
         default_theme: {{ .defaultTheme }}
@@ -461,7 +459,7 @@ gitaly:
 
 ## Templating chart notes (NOTES.txt)
 
-Helm's [chart notes feature](https://helm.sh/docs/chart_template_guide/notes_files) provides
+Helm's [chart notes feature](https://helm.sh/docs/chart_template_guide/notes_files/) provides
 helpful information and follow-up instructions after chart installations and upgrades.
 
 These notes are placed in

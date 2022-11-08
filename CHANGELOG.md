@@ -3,6 +3,24 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.5.0-bb.0] - 2022-11-07
+### Changed
+- Updated to helm chart to 6.5.0 and appVersion to 15.5.0
+- ironbank/gitlab/gitlab/gitlab-webservice minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter minor v1.44.0 -> v1.45.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl minor 15.4.1 -> 15.5.0
+- registry1.dso.mil/ironbank/opensource/minio/mc patch RELEASE.2022-10-01T07-56-14Z -> RELEASE.2022-10-29T10-09-23Z
+- registry1.dso.mil/ironbank/opensource/minio/minio patch RELEASE.2022-10-02T19-29-29Z -> RELEASE.2022-10-29T06-21-33Z
+
 ## [6.4.1-bb.3] - 2022-11-04
 ### Changed
 - Modify Istio VirtualService to block metrics endpoint
