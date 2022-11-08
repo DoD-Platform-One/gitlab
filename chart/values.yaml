@@ -695,7 +695,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -738,7 +738,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1194,7 +1194,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.5.0
+    tag: 15.5.2
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1333,7 +1333,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1381,7 +1381,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.4.1
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1411,7 +1411,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1435,7 +1435,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1448,7 +1448,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1466,7 +1466,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1489,7 +1489,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1516,7 +1516,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1546,7 +1546,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.5.0
+      tag: 15.5.2
       pullSecrets:
         - name: private-registry
 
@@ -1560,7 +1560,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.5.0
+      tag: 15.5.2
     init:
       resources:
         limits:
