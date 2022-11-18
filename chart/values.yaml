@@ -1351,6 +1351,9 @@ gitlab:
       limits:
         cpu: 2
         memory: 3.5Gi
+    annotations:
+      sidecar.istio.io/proxyMemory: 512Mi
+      sidecar.istio.io/proxyMemoryLimit: 512Mi
     backups:
       cron:
         resources:

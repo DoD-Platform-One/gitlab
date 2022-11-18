@@ -283,3 +283,4 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 - add shared-secrets.annotations: sidecar.istio.io/inject: "false"
 - add gitlab.migrations.annotations: sidecar.istio.io/inject: "false"
 - add minio.jobAnnotations: sidecar.istio.io/inject: "false"
+- add gitlab.toolbox.annotations: `sidecar.istio.io/proxyMemory: 512Mi` and `sidecar.istio.io/proxyMemoryLimit: 512Mi`
