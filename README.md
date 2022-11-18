@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.5.2-bb.0](https://img.shields.io/badge/Version-6.5.2--bb.0-informational?style=flat-square) ![AppVersion: 15.5.2](https://img.shields.io/badge/AppVersion-15.5.2-informational?style=flat-square)
+![Version: 6.5.2-bb.1](https://img.shields.io/badge/Version-6.5.2--bb.1-informational?style=flat-square) ![AppVersion: 15.5.2](https://img.shields.io/badge/AppVersion-15.5.2-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -660,6 +660,8 @@ helm install gitlab chart/
 | gitlab.toolbox.resources.requests.memory | string | `"3.5Gi"` |  |
 | gitlab.toolbox.resources.limits.cpu | int | `2` |  |
 | gitlab.toolbox.resources.limits.memory | string | `"3.5Gi"` |  |
+| gitlab.toolbox.annotations."sidecar.istio.io/proxyMemory" | string | `"512Mi"` |  |
+| gitlab.toolbox.annotations."sidecar.istio.io/proxyMemoryLimit" | string | `"768Mi"` |  |
 | gitlab.toolbox.backups.cron.resources.requests.cpu | string | `"500m"` |  |
 | gitlab.toolbox.backups.cron.resources.requests.memory | string | `"768Mi"` |  |
 | gitlab.toolbox.backups.cron.resources.limits.cpu | string | `"500m"` |  |

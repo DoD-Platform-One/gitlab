@@ -41,6 +41,9 @@ gitlab:
     image:
       pullSecrets:
       - name: private-registry
+    annotations:
+      sidecar.istio.io/proxyMemory: 256Mi
+      sidecar.istio.io/proxyMemoryLimit: 256Mi
   migrations:
     image:
       pullSecrets:
