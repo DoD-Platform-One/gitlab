@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.5.2-bb.1](https://img.shields.io/badge/Version-6.5.2--bb.1-informational?style=flat-square) ![AppVersion: 15.5.2](https://img.shields.io/badge/AppVersion-15.5.2-informational?style=flat-square)
+![Version: 6.5.2-bb.2](https://img.shields.io/badge/Version-6.5.2--bb.2-informational?style=flat-square) ![AppVersion: 15.5.2](https://img.shields.io/badge/AppVersion-15.5.2-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -349,7 +349,7 @@ helm install gitlab chart/
 | global.kubectl.securityContext.runAsUser | int | `65534` |  |
 | global.kubectl.securityContext.fsGroup | int | `65534` |  |
 | global.busybox.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
-| global.busybox.image.tag | string | `"8.6"` |  |
+| global.busybox.image.tag | string | `"8.7"` |  |
 | global.busybox.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.serviceAccount.enabled | bool | `false` |  |
 | global.serviceAccount.create | bool | `true` |  |
@@ -360,7 +360,7 @@ helm install gitlab chart/
 | global.extraEnvFrom | object | `{}` |  |
 | upgradeCheck.enabled | bool | `true` |  |
 | upgradeCheck.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
-| upgradeCheck.image.tag | string | `"8.6"` |  |
+| upgradeCheck.image.tag | string | `"8.7"` |  |
 | upgradeCheck.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | upgradeCheck.securityContext.runAsUser | int | `65534` |  |
 | upgradeCheck.securityContext.fsGroup | int | `65534` |  |
@@ -561,7 +561,7 @@ helm install gitlab chart/
 | postgresql.resources.requests.memory | string | `"500Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
 | postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql12"` |  |
-| postgresql.image.tag | string | `"12.12"` |  |
+| postgresql.image.tag | string | `"12.13"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.usePasswordFile | bool | `true` |  |
 | postgresql.existingSecret | string | `"bogus"` |  |
@@ -661,7 +661,7 @@ helm install gitlab chart/
 | gitlab.toolbox.resources.limits.cpu | int | `2` |  |
 | gitlab.toolbox.resources.limits.memory | string | `"3.5Gi"` |  |
 | gitlab.toolbox.annotations."sidecar.istio.io/proxyMemory" | string | `"512Mi"` |  |
-| gitlab.toolbox.annotations."sidecar.istio.io/proxyMemoryLimit" | string | `"768Mi"` |  |
+| gitlab.toolbox.annotations."sidecar.istio.io/proxyMemoryLimit" | string | `"512Mi"` |  |
 | gitlab.toolbox.backups.cron.resources.requests.cpu | string | `"500m"` |  |
 | gitlab.toolbox.backups.cron.resources.requests.memory | string | `"768Mi"` |  |
 | gitlab.toolbox.backups.cron.resources.limits.cpu | string | `"500m"` |  |
@@ -776,10 +776,10 @@ helm install gitlab chart/
 | minio.resources.requests.memory | string | `"300Mi"` |  |
 | minio.jobAnnotations."sidecar.istio.io/inject" | string | `"false"` |  |
 | minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
-| minio.imageTag | string | `"RELEASE.2022-10-29T06-21-33Z"` |  |
+| minio.imageTag | string | `"RELEASE.2022-11-11T03-44-20Z"` |  |
 | minio.pullSecrets[0].name | string | `"private-registry"` |  |
 | minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
-| minio.minioMc.tag | string | `"RELEASE.2022-10-29T10-09-23Z"` |  |
+| minio.minioMc.tag | string | `"RELEASE.2022-11-07T23-47-39Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | hostname | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` |  |

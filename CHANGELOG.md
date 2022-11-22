@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.5.2-bb.2] - 2022-11-18
+### Changed
+- registry1.dso.mil/ironbank/opensource/minio/mc minor RELEASE.2022-10-29T10-09-23Z -> RELEASE.2022-11-07T23-47-39Z
+- registry1.dso.mil/ironbank/opensource/minio/minio minor RELEASE.2022-10-29T06-21-33Z -> RELEASE.2022-11-11T03-44-20Z
+- registry1.dso.mil/ironbank/opensource/postgres/postgresql12 minor 12.12 -> 12.13
+- registry1.dso.mil/ironbank/redhat/ubi/ubi8 minor 8.6 -> 8.7
+
 ## [6.5.2-bb.1] - 2022-11-15
 ### Changed
 - toolbox container and jobs istio-proxy mem default and limit increased

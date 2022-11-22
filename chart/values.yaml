@@ -751,7 +751,7 @@ global:
       # tag: latest
       # Busybox can not be hardened with no STIGS. Replacing with UBI-8 container
       repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-      tag: "8.6"
+      tag: "8.7"
       pullSecrets:
       - name: private-registry
 
@@ -799,7 +799,7 @@ upgradeCheck:
   enabled: true
   image:
     repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-    tag: "8.6"
+    tag: "8.7"
     pullSecrets:
     - name: private-registry
   securityContext:
@@ -1140,7 +1140,7 @@ postgresql:
   image:
     registry: registry1.dso.mil
     repository: ironbank/opensource/postgres/postgresql12
-    tag: "12.12"
+    tag: "12.13"
     pullSecrets:
     - private-registry
   usePasswordFile: true
@@ -1604,7 +1604,7 @@ minio:
     sidecar.istio.io/inject: "false"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-10-29T06-21-33Z
+  imageTag: RELEASE.2022-11-11T03-44-20Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1613,7 +1613,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-10-29T10-09-23Z
+    tag: RELEASE.2022-11-07T23-47-39Z
     pullSecrets:
     - name: private-registry
 
