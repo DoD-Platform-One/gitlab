@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.5.2-bb.2](https://img.shields.io/badge/Version-6.5.2--bb.2-informational?style=flat-square) ![AppVersion: 15.5.2](https://img.shields.io/badge/AppVersion-15.5.2-informational?style=flat-square)
+![Version: 6.5.2-bb.3](https://img.shields.io/badge/Version-6.5.2--bb.3-informational?style=flat-square) ![AppVersion: 15.5.2](https://img.shields.io/badge/AppVersion-15.5.2-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -311,38 +311,36 @@ helm install gitlab chart/
 | global.certificates.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates"` |  |
 | global.certificates.image.tag | string | `"15.5.2"` |  |
 | global.certificates.image.pullSecrets[0].name | string | `"private-registry"` |  |
-| global.certificates.customCAs[0].secret | string | `"ca-certs-dod-intermediate-dod-email-ca"` |  |
-| global.certificates.customCAs[1].secret | string | `"ca-certs-dod-intermediate-dod-id-ca"` |  |
-| global.certificates.customCAs[2].secret | string | `"ca-certs-dod-intermediate-dod-sw-ca"` |  |
-| global.certificates.customCAs[3].secret | string | `"ca-certs-dod-intermediate-dod-derility-ca"` |  |
-| global.certificates.customCAs[4].secret | string | `"ca-certs-dod-trust-anchors"` |  |
-| global.certificates.customCAs[5].secret | string | `"ca-certs-eca"` |  |
-| global.certificates.customCAs[6].secret | string | `"ca-certs-ado-cc-chain"` |  |
-| global.certificates.customCAs[7].secret | string | `"ca-certs-ado-dt-chain"` |  |
-| global.certificates.customCAs[8].secret | string | `"ca-certs-boeing"` |  |
-| global.certificates.customCAs[9].secret | string | `"ca-certs-carillon-federal-services"` |  |
-| global.certificates.customCAs[10].secret | string | `"ca-certs-department-of-state-trust-chain-1"` |  |
-| global.certificates.customCAs[11].secret | string | `"ca-certs-department-of-state-trust-chain-2"` |  |
-| global.certificates.customCAs[12].secret | string | `"ca-certs-digicert-federal-ssp-trust-chain-1"` |  |
-| global.certificates.customCAs[13].secret | string | `"ca-certs-digicert-federal-ssp-trust-chain-2"` |  |
-| global.certificates.customCAs[14].secret | string | `"ca-certs-digicert-nfi"` |  |
-| global.certificates.customCAs[15].secret | string | `"ca-certs-entrust-federal-ssp-trust-chain-1"` |  |
-| global.certificates.customCAs[16].secret | string | `"ca-certs-entrust-federal-ssp-trust-chain-2"` |  |
-| global.certificates.customCAs[17].secret | string | `"ca-certs-entrust-managed-servcie-nfi"` |  |
-| global.certificates.customCAs[18].secret | string | `"ca-certs-exostar-llc"` |  |
-| global.certificates.customCAs[19].secret | string | `"ca-certs-identrust-nfi"` |  |
-| global.certificates.customCAs[20].secret | string | `"ca-certs-lockheed-martin"` |  |
-| global.certificates.customCAs[21].secret | string | `"ca-certs-netherlands-mod"` |  |
-| global.certificates.customCAs[22].secret | string | `"ca-certs-northrop-grumman"` |  |
-| global.certificates.customCAs[23].secret | string | `"ca-certs-raytheon-trust-chain-1"` |  |
-| global.certificates.customCAs[24].secret | string | `"ca-certs-raytheon-trust-chain-2"` |  |
-| global.certificates.customCAs[25].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-1"` |  |
-| global.certificates.customCAs[26].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-2"` |  |
-| global.certificates.customCAs[27].secret | string | `"ca-certs-verizon-cybertrust-federal-ssp"` |  |
-| global.certificates.customCAs[28].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-1"` |  |
-| global.certificates.customCAs[29].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-2"` |  |
-| global.certificates.customCAs[30].secret | string | `"ca-certs-widepoint-nfi-trust-chain-1"` |  |
-| global.certificates.customCAs[31].secret | string | `"ca-certs-widepoint-nfi-trust-chain-2"` |  |
+| global.certificates.customCAs[0].secret | string | `"ca-certs-australian-defence-organisation-cross-cert-chain"` |  |
+| global.certificates.customCAs[1].secret | string | `"ca-certs-australian-defence-organisation-direct-trust-chain"` |  |
+| global.certificates.customCAs[2].secret | string | `"ca-certs-boeing"` |  |
+| global.certificates.customCAs[3].secret | string | `"ca-certs-carillon-federal-services-trust-chain-1"` |  |
+| global.certificates.customCAs[4].secret | string | `"ca-certs-carillon-federal-services-trust-chain-2"` |  |
+| global.certificates.customCAs[5].secret | string | `"ca-certs-department-of-state-trust-chain-1"` |  |
+| global.certificates.customCAs[6].secret | string | `"ca-certs-department-of-state-trust-chain-2"` |  |
+| global.certificates.customCAs[7].secret | string | `"ca-certs-digicert-federal-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[8].secret | string | `"ca-certs-digicert-federal-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[9].secret | string | `"ca-certs-digicert-nfi-trust-chain-1"` |  |
+| global.certificates.customCAs[10].secret | string | `"ca-certs-digicert-nfi-trust-chain-2"` |  |
+| global.certificates.customCAs[11].secret | string | `"ca-certs-entrust-federal-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[12].secret | string | `"ca-certs-entrust-federal-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[13].secret | string | `"ca-certs-entrust-managed-service-nfi"` |  |
+| global.certificates.customCAs[14].secret | string | `"ca-certs-exostar-llc"` |  |
+| global.certificates.customCAs[15].secret | string | `"ca-certs-identrust-nfi"` |  |
+| global.certificates.customCAs[16].secret | string | `"ca-certs-lockheed-martin"` |  |
+| global.certificates.customCAs[17].secret | string | `"ca-certs-netherlands-ministry-of-defence"` |  |
+| global.certificates.customCAs[18].secret | string | `"ca-certs-northrop-grumman"` |  |
+| global.certificates.customCAs[19].secret | string | `"ca-certs-raytheon-trust-chain-1"` |  |
+| global.certificates.customCAs[20].secret | string | `"ca-certs-raytheon-trust-chain-2"` |  |
+| global.certificates.customCAs[21].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[22].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[23].secret | string | `"ca-certs-verizon-cybertrust-federal-ssp"` |  |
+| global.certificates.customCAs[24].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[25].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[26].secret | string | `"ca-certs-widepoint-nfi"` |  |
+| global.certificates.customCAs[27].secret | string | `"ca-certs-dod-intermediate-and-issuing-ca-certs"` |  |
+| global.certificates.customCAs[28].secret | string | `"ca-certs-dod-trust-anchors-self-signed"` |  |
+| global.certificates.customCAs[29].secret | string | `"ca-certs-eca"` |  |
 | global.kubectl.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kubectl"` |  |
 | global.kubectl.image.tag | string | `"15.5.2"` |  |
 | global.kubectl.image.pullSecrets[0].name | string | `"private-registry"` |  |

@@ -701,28 +701,24 @@ global:
     customCAs:
       # DoD approved certificates from https://public.cyber.mil/pki-pke/pkipke-document-library/
 
-      - secret: ca-certs-dod-intermediate-dod-email-ca
-      - secret: ca-certs-dod-intermediate-dod-id-ca
-      - secret: ca-certs-dod-intermediate-dod-sw-ca
-      - secret: ca-certs-dod-intermediate-dod-derility-ca
-      - secret: ca-certs-dod-trust-anchors
-      - secret: ca-certs-eca
-      - secret: ca-certs-ado-cc-chain
-      - secret: ca-certs-ado-dt-chain
+      - secret: ca-certs-australian-defence-organisation-cross-cert-chain
+      - secret: ca-certs-australian-defence-organisation-direct-trust-chain
       - secret: ca-certs-boeing
-      - secret: ca-certs-carillon-federal-services
+      - secret: ca-certs-carillon-federal-services-trust-chain-1
+      - secret: ca-certs-carillon-federal-services-trust-chain-2
       - secret: ca-certs-department-of-state-trust-chain-1
       - secret: ca-certs-department-of-state-trust-chain-2
       - secret: ca-certs-digicert-federal-ssp-trust-chain-1
       - secret: ca-certs-digicert-federal-ssp-trust-chain-2
-      - secret: ca-certs-digicert-nfi
+      - secret: ca-certs-digicert-nfi-trust-chain-1
+      - secret: ca-certs-digicert-nfi-trust-chain-2
       - secret: ca-certs-entrust-federal-ssp-trust-chain-1
       - secret: ca-certs-entrust-federal-ssp-trust-chain-2
-      - secret: ca-certs-entrust-managed-servcie-nfi
+      - secret: ca-certs-entrust-managed-service-nfi
       - secret: ca-certs-exostar-llc
       - secret: ca-certs-identrust-nfi
       - secret: ca-certs-lockheed-martin
-      - secret: ca-certs-netherlands-mod
+      - secret: ca-certs-netherlands-ministry-of-defence
       - secret: ca-certs-northrop-grumman
       - secret: ca-certs-raytheon-trust-chain-1
       - secret: ca-certs-raytheon-trust-chain-2
@@ -731,8 +727,10 @@ global:
       - secret: ca-certs-verizon-cybertrust-federal-ssp
       - secret: ca-certs-widepoint-federal-ssp-trust-chain-1
       - secret: ca-certs-widepoint-federal-ssp-trust-chain-2
-      - secret: ca-certs-widepoint-nfi-trust-chain-1
-      - secret: ca-certs-widepoint-nfi-trust-chain-2
+      - secret: ca-certs-widepoint-nfi
+      - secret: ca-certs-dod-intermediate-and-issuing-ca-certs
+      - secret: ca-certs-dod-trust-anchors-self-signed
+      - secret: ca-certs-eca
 
   ## kubectl image used by hooks to carry out specific jobs
   kubectl:

@@ -205,6 +205,13 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 
 ## chart/bigbang/*
 - add DoD approved CA certificates (recursive copy directory from previous release)
+- If updating new certificates from new bundle
+  - Check `Department_of_State/` certificates for spaces in name
+  - Check `DigiCert_Federal_SSP/Trust_Chain_2/` certificates for spaces in name
+  - Convert `Entrust_Federal_SSP/Trust_Chain_2/0-Entrust_Managed_Services_Root_CA_rekey3.cer` to pem format
+    - `openssl x509 -inform der -in 0-Entrust_Managed_Services_Root_CA_rekey3.cer -out 0-Entrust_Managed_Services_Root_CA_rekey3.pem`
+  - Remove non-certificate metadata from `Carillon_Federal_Services/Trust_Chain_1/1-Carillon_Federal_Services_PIVI_CA2.cer`
+  - Remove non-certificate metadata from `DigiCert_NFI/Trust_Chain_2/2-Senate_PIV-I_CA_G5.cer`
 
 ## chart/charts/gitlab/charts/gitaly/templates/_service_spec.yaml
 - Change gitaly service spec template. Port name prefix changed from 'grpc' to 'tcp' so that istio injection properly handles the backend communication.
@@ -278,6 +285,7 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 - add pullSecrets for each IronBank image
 - add default bigbag.dev hostnames at global.hosts
 - add customCAs (the cert files and secrets need to be added in the next 2 steps for this to work)
+  - Run `for i in $(helm template -s templates/bigbang/secrets/DoD_CA_certs.yaml . | grep "name:" | cut -d ":" -f 2); do echo "- secret: $i"; done` to get a list of the secrets
 - add `postgresqlInitdbArgs`, `securityContext`, `postgresqlDataDir` and `persistence` to get IB image working with postgres subchart
 - add upgradeCheck.annotations: sidecar.istio.io/inject: "false"
 - add shared-secrets.annotations: sidecar.istio.io/inject: "false"

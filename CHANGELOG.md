@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.5.2-bb.3] - 2022-12-1
+### Changed
+- Updated DoD Approved External PKI Certificate Trust Chains to Version 9.5
+- Shortened secrets creation template for the DoD certificates secret creation
+
 ## [6.5.2-bb.2] - 2022-11-18
 ### Changed
 - registry1.dso.mil/ironbank/opensource/minio/mc minor RELEASE.2022-10-29T10-09-23Z -> RELEASE.2022-11-07T23-47-39Z
