@@ -379,12 +379,50 @@ describe 'kas configuration' do
           end
         end
       end
+
+      context 'when observability.port is given' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+            gitlab:
+              kas:
+                observability:
+                  port: 4242
+          )))
+        end
+
+        it 'sets the correct observability address' do
+          expect(config_yaml_data['observability']['listen']['address']).to eq(:"4242")
+        end
+      end
+
+      context 'when observability probe endpoints are given' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+            gitlab:
+              kas:
+                observability:
+                  livenessProbe:
+                    path: '/lP'
+                  readinessProbe:
+                    path: '/rP'
+          )))
+        end
+
+        it 'sets the correct observability url paths' do
+          expect(config_yaml_data['observability']['liveness_probe']).to include(YAML.safe_load(%(
+            url_path: '/lP'
+          )))
+          expect(config_yaml_data['observability']['readiness_probe']).to include(YAML.safe_load(%(
+            url_path: '/rP'
+          )))
+        end
+      end
     end
 
     describe 'templates/service.yaml' do
-      context 'when type is LoadBalancer' do
-        subject(:service) { kas_enabled_template.resources_by_kind('Service')['Service/test-kas'] }
+      subject(:service) { kas_enabled_template.resources_by_kind('Service')['Service/test-kas'] }
 
+      context 'when type is LoadBalancer' do
         let(:service_values) { {} }
 
         let(:kas_values) do
@@ -418,6 +456,37 @@ describe 'kas configuration' do
 
           it 'contains the loadBalancerSourceRanges customization' do
             expect(service['spec']).to include('loadBalancerSourceRanges' => ['a', 'b', 'c'])
+          end
+        end
+      end
+
+      context 'when metrics.enabled is given' do
+        let(:metrics_enabled) { true }
+        let(:kas_values) do
+          default_kas_values.deep_merge!(
+            'gitlab' => {
+              'kas' => {
+                'metrics' => {
+                  'enabled' => metrics_enabled
+                }
+              }
+            }
+          )
+        end
+
+        context 'when metrics.enabled is true' do
+          let(:metrics_enabled) { true }
+
+          it 'exports metrics port' do
+            expect(service['spec']['ports']).to include(include("name" => "http-metrics"))
+          end
+        end
+
+        context 'when metrics.enabled is false' do
+          let(:metrics_enabled) { false }
+
+          it 'exports no metrics port' do
+            expect(service['spec']['ports']).not_to include(include("name" => "http-metrics"))
           end
         end
       end
@@ -495,6 +564,80 @@ describe 'kas configuration' do
               }
             }
           )
+        end
+      end
+
+      context 'when metrics.enabled is given' do
+        let(:metrics_enabled) { true }
+        let(:service_monitor_enabled) { false }
+
+        let(:kas_values) do
+          default_kas_values.deep_merge!(
+            'gitlab' => {
+              'kas' => {
+                'metrics' => {
+                  'enabled' => metrics_enabled,
+                  'serviceMonitor' => {
+                    'enabled' => service_monitor_enabled
+                  }
+                }
+              }
+            }
+          )
+        end
+
+        context 'when metrics.enabled is true' do
+          let(:metrics_enabled) { true }
+
+          context 'when metrics.serviceMonitor.enabled is true' do
+            let(:service_monitor_enabled) { true }
+
+            it 'does not set prometheus annotations' do
+              expect(deployment['spec']['template']['metadata']['annotations'].keys).not_to include(include("prometheus"))
+            end
+          end
+
+          context 'when metrics.serviceMonitor.enabled is false' do
+            let(:service_monitor_enabled) { false }
+
+            it 'does set prometheus annotations' do
+              expect(deployment['spec']['template']['metadata']['annotations'].keys).to include(include("prometheus"))
+            end
+          end
+        end
+
+        context 'when metrics.enabled is false' do
+          let(:metrics_enabled) { true }
+
+          context 'when metrics.serviceMonitor.enabled is true' do
+            let(:service_monitor_enabled) { true }
+
+            it 'does not set prometheus annotations' do
+              expect(deployment['spec']['template']['metadata']['annotations'].keys).not_to include(include("prometheus"))
+            end
+          end
+        end
+      end
+
+      context 'when observability probe endpoints are given' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+            gitlab:
+              kas:
+                observability:
+                  livenessProbe:
+                    path: '/lP'
+                  readinessProbe:
+                    path: '/rP'
+          )))
+        end
+
+        it 'configures livenessProbe' do
+          expect(deployment['spec']['template']['spec']['containers'].first['livenessProbe']['httpGet']).to eq({ "path" => "/lP", "port" => 8151 })
+        end
+
+        it 'configures readinessProbe' do
+          expect(deployment['spec']['template']['spec']['containers'].first['readinessProbe']['httpGet']).to eq({ "path" => "/rP", "port" => 8151 })
         end
       end
     end

@@ -8,12 +8,13 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 Install GitLab on Kubernetes by using the cloud native GitLab Helm chart.
 
-The default Helm chart configuration is not intended for production.
+WARNING:
+The default Helm chart configuration is **not intended for production**.
 The default chart creates a proof of concept (PoC) implementation where all GitLab
-services are deployed in the cluster.
+services are deployed in the cluster. For production deployments, additional setup and configuration is required.
 
-For a production deployment, you must do advanced configuration, and you should
-have strong working knowledge of Kubernetes.
+For a production deployment, you should have strong working knowledge of Kubernetes.
+This method of deployment has different management, observability, and concepts than traditional deployments.
 
 In a production deployment:
 

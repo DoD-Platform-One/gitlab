@@ -11,7 +11,11 @@ gitlab:
   authentication_secret_file: "/etc/kas/.gitlab_kas_secret"
 observability:
   listen:
-    address: ":{{ .Values.metrics.port }}"
+    address: ":{{ default .Values.observability.port .Values.metrics.port }}"
+  liveness_probe:
+    url_path: "{{ .Values.observability.livenessProbe.path }}"
+  readiness_probe:
+    url_path: "{{ .Values.observability.readinessProbe.path }}"
 redis:
   {{- include "kas.redis" . | nindent 2 }}
 api:

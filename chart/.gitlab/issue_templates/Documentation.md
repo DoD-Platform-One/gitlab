@@ -40,4 +40,4 @@
 
 <!-- E.g. related GitLab issues/MRs -->
 
-/label ~documentation ~"devops::enablement" ~"group::distribution"
+/label ~documentation ~"section::enablement" ~"devops::systems" ~"group::distribution"

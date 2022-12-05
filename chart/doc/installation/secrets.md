@@ -24,6 +24,7 @@ Optional External Services:
 - IMAP for Service Desk emails (via mail_room service)
 - Microsoft Graph with OAuth2 for incoming emails (via mail_room service)
 - Microsoft Graph with OAuth2 for Service Desk email (via mail_room service)
+- Microsoft Graph with OAuth2 for outgoing emails
 - S/MIME certificate
 - Smartcard authentication
 - OAuth integration
@@ -69,6 +70,7 @@ documentation.
   - [IMAP Password for Service Desk](#imap-password-for-service-desk-emails)
   - [Microsoft Graph client secret for incoming emails](#microsoft-graph-client-secret-for-incoming-emails)
   - [Microsoft Graph client secret for Service Desk](#microsoft-graph-client-secret-for-service-desk-emails)
+  - [Microsoft Graph client secret for outgoing emails](#microsoft-graph-client-secret-for-outgoing-emails)
   - [S/MIME Certificate](#smime-certificate)
   - [Smartcard Authentication](#smartcard-authentication)
 
@@ -463,6 +465,20 @@ kubectl create secret generic service-desk-email-client-secret --from-literal=se
 
 Then, use `--set global.appConfig.serviceDeskEmail.clientSecret.secret=service-desk-email-client-secret`
 in your Helm command along with other required settings as specified [in the docs](command-line-options.md#service-desk-email-configuration).
+
+NOTE:
+Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+### Microsoft Graph client secret for outgoing emails
+
+Store the password in a Kubernetes secret:
+
+```shell
+kubectl create secret generic microsoft-graph-mailer-client-secret --from-literal=secret=your-secret-here
+```
+
+Then, use `--set global.appConfig.microsoft_graph_mailer.client_secret.secret=microsoft-graph-mailer-client-secret`
+in your Helm command.
 
 NOTE:
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.

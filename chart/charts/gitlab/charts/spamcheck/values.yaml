@@ -62,6 +62,9 @@ logging:
 ## For PodDisruptionBudget, how many pods can be unavailable at one time
 maxUnavailable: 1
 
+# Priority class assigned to pods
+priorityClassName: ""
+
 podLabels: {}
 common:
   labels: {}

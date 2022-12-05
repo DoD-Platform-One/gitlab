@@ -29,6 +29,9 @@ spec:
       tolerations:
         {{- toYaml $sharedSecretValues.tolerations | nindent 8 }}
       {{- end }}
+      {{- if or $.Values.global.priorityClassName $sharedSecretValues.priorityClassName }}
+      priorityClassName: {{ default $.Values.global.priorityClassName $sharedSecretValues.priorityClassName }}
+      {{- end }}
       securityContext:
         runAsUser: {{ $sharedSecretValues.securityContext.runAsUser }}
         fsGroup: {{ $sharedSecretValues.securityContext.fsGroup }}

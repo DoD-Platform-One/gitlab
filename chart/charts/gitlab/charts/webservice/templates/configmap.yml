@@ -64,6 +64,9 @@ data:
       {{- if eq .contentSecurityPolicy.enabled true }}
       {{-   include "gitlab.appConfig.content_security_policy" . | nindent 8 }}
       {{- end }}
+      {{-   if .microsoft_graph_mailer.enabled }}
+      {{-     include "gitlab.appConfig.microsoft_graph_mailer" . | nindent 6 }}
+      {{-   end }}
       {{-   if .incomingEmail.enabled }}
       {{-     include "gitlab.appConfig.incoming_email" . | nindent 6 }}
       {{-   end }}

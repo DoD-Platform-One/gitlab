@@ -48,6 +48,9 @@ spec:
       {{- else }}
       {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- end }}
+      {{- if or $.Values.global.priorityClassName .Values.upgradeCheck.priorityClassName }}
+      priorityClassName: {{ default $.Values.global.priorityClassName .Values.upgradeCheck.priorityClassName }}
+      {{- end }}
       {{- if .Values.upgradeCheck.tolerations }}
       tolerations:
         {{- toYaml .Values.upgradeCheck.tolerations | nindent 8 }}

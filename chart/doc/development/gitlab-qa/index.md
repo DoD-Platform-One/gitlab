@@ -82,14 +82,37 @@ Items needed for execution, which
 
 Retrieve the above items, and export them as environment variables.
 
+### Select test suite
+
+GitLab QA has multiple test suites to run against the standalone environment. Suite consists of subset of tests
+when end-to-end tests are grouped by various [RSpec metadata](https://docs.gitlab.com/ee/development/testing_guide/end_to_end/rspec_metadata_tests.html):
+
+- _Smoke suite_: small [subset of fast end-to-end functional tests](https://docs.gitlab.com/ee/development/testing_guide/smoke.html)
+to quickly ensure that basic functionality is working
+  - Enable this suite via `export QA_OPTIONS="--tag smoke"`
+- _Smoke and Reliable suite_: subset of smoke and reliable tests to verify that the
+major functionality is working
+  - Enable this suite via `export QA_OPTIONS="--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated"`
+- _Full suite_: running all tests against the environment. Test run will take more than an hour.
+  - Enable this suite via `--tag ~skip_live_env --tag ~orchestrated --tag ~requires_praefect --tag ~github --tag ~requires_git_protocol_v2 --tag ~transient`
+
+Selecting a test suite depends on the use case. In the majority of cases, running
+Smoke and Reliable suite should give quick and consistent test results
+as well as a good test coverage. This suite is being used as a sanity
+check in [GitLab.com deployments](https://about.gitlab.com/handbook/engineering/releases/#gitlabcom-deployments-process).
+
+Full suite should be used to get full test results on the environment. It can be resource
+intensive to run this suite from a local machine. Use `export CHROME_DISABLE_DEV_SHM=true`
+when running Full suite from a single machine.
+
 ## Execution
 
 Assuming you have set the environment variables from the
-[Configuration](#configuration) step, the following command will perform the
-tests against the deployed GitLab instance:
+[Configuration](#configuration) step and selected [test suite](#select-test-suite),
+the following command will perform the tests against the deployed GitLab instance:
 
 ```shell
-gitlab-qa Test::Instance::Any EE:$GITLAB_VERSION $GITLAB_URL
+gitlab-qa Test::Instance::Any EE:$GITLAB_VERSION $GITLAB_URL -- $QA_OPTIONS
 ```
 
 NOTE:

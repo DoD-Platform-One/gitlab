@@ -112,6 +112,7 @@ serviceAccount:
 | `serviceAccount.create`                | Flag for creating a ServiceAccount                                                                                                                                                                 | `false`                                                    |
 | `serviceAccount.name`                  | Name of ServiceAccount to use                                                                                                                                                                      |                                                            |
 | `tolerations`                          | Tolerations to add to the Mailroom                                                                                                                                                                 |                                                            |
+| `priorityClassName`                    | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods.                                                                               |                                                            |
 
 ## Incoming email
 

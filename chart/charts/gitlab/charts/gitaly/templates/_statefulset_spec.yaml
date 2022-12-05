@@ -52,9 +52,7 @@ spec:
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
-      {{- if .Values.priorityClassName }}
-      priorityClassName: "{{ .Values.priorityClassName }}"
-      {{- end }}
+      {{- include "gitlab.priorityClassName" . | nindent 6 }}
       terminationGracePeriodSeconds: 30
       initContainers:
         {{- include "gitlab.extraInitContainers" . | nindent 8 }}
@@ -86,6 +84,9 @@ spec:
         {{- end }}
         {{- if not (empty .Values.securityContext.fsGroup) }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
+        {{- if not (empty .Values.securityContext.fsGroupChangePolicy) }}
+        fsGroupChangePolicy: {{ .Values.securityContext.fsGroupChangePolicy }}
+        {{- end }}
         {{- end }}
       {{- end }}
       {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
@@ -173,16 +174,20 @@ spec:
             exec:
               command:
               - /scripts/healthcheck
-            initialDelaySeconds: 30
-            timeoutSeconds: 3
-            periodSeconds: 10
+            initialDelaySeconds: {{ .Values.statefulset.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.statefulset.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.statefulset.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.statefulset.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.statefulset.livenessProbe.failureThreshold }}
           readinessProbe:
             exec:
               command:
               - /scripts/healthcheck
-            initialDelaySeconds: 10
-            timeoutSeconds: 3
-            periodSeconds: 10
+            initialDelaySeconds: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.statefulset.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.statefulset.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.statefulset.readinessProbe.failureThreshold }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:

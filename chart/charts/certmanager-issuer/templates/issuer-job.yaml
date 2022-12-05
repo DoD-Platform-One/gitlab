@@ -25,6 +25,7 @@ spec:
       {{- end }}
       restartPolicy: OnFailure
       {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6}}
+      {{- include "gitlab.priorityClassName" . | nindent 6 }}
       containers:
         - name: create-issuer
           image: {{ include "gitlab.kubectl.image" . | quote }}

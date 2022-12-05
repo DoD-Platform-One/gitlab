@@ -9,9 +9,11 @@ REGION=${REGION-us-central1}
 ZONE_EXTENSION=${ZONE_EXTENSION-b}
 ZONE=${REGION}-${ZONE_EXTENSION}
 CLUSTER_NAME=${CLUSTER_NAME-gitlab-cluster}
-MACHINE_TYPE=${MACHINE_TYPE-n1-standard-4}
+MACHINE_TYPE=${MACHINE_TYPE-n2d-standard-4}
 RBAC_ENABLED=${RBAC_ENABLED-true}
 NUM_NODES=${NUM_NODES-2}
+AUTOSCALE_MIN_NODES=${AUTOSCALE_MIN_NODES-0}
+AUTOSCALE_MAX_NODES=${AUTOSCALE_MAX_NODES-${NUM_NODES}}
 INT_NETWORK=${INT_NETWORK-default}
 SUBNETWORK=${SUBNETWORK-default}
 PREEMPTIBLE=${PREEMPTIBLE-false}
@@ -46,6 +48,7 @@ function bootstrap(){
     --cluster-version $CLUSTER_VERSION --machine-type $MACHINE_TYPE \
     --scopes "https://www.googleapis.com/auth/ndev.clouddns.readwrite","https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
     --node-version $CLUSTER_VERSION --num-nodes $NUM_NODES \
+    --enable-autoscaling --min-nodes=${AUTOSCALE_MIN_NODES} --max-nodes=${AUTOSCALE_MAX_NODES} \
     --enable-ip-alias \
     --network $INT_NETWORK \
     --subnetwork $SUBNETWORK \
@@ -87,7 +90,7 @@ function bootstrap(){
 
   if ! ${USE_STATIC_IP}; then
     helm install dns --namespace kube-system bitnami/external-dns \
-      --version '^5.4.1' \
+      --version '^6.5.3' \
       --set provider=google \
       --set google.project=$PROJECT \
       --set txtOwnerId=$CLUSTER_NAME \

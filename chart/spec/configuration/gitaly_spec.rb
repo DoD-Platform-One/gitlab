@@ -112,16 +112,16 @@ describe 'Gitaly configuration' do
   context 'when rendering gitaly securityContexts' do
     context 'when the administrator changes or deletes values' do
       using RSpec::Parameterized::TableSyntax
-      where(:fsGroup, :runAsUser, :expectedContext) do
-        nil | nil | { 'fsGroup' => 1000, 'runAsUser' => 1000 }
-        nil | ""  | { 'fsGroup' => 1000 }
-        nil | 24  | { 'fsGroup' => 1000, 'runAsUser' => 24 }
-        42  | nil | { 'fsGroup' => 42, 'runAsUser' => 1000 }
-        42  | ""  | { 'fsGroup' => 42 }
-        42  | 24  | { 'fsGroup' => 42, 'runAsUser' => 24 }
-        ""  | nil | { 'runAsUser' => 1000 }
-        ""  | ""  | nil
-        ""  | 24  | { 'runAsUser' => 24 }
+      where(:fsGroup, :runAsUser, :fsGroupChangePolicy, :expectedContext) do
+        nil | nil | "OnRootMismatch" | { 'fsGroup' => 1000, 'runAsUser' => 1000, 'fsGroupChangePolicy' => "OnRootMismatch" }
+        nil | ""  | nil              | { 'fsGroup' => 1000 }
+        nil | 24  | ""               | { 'fsGroup' => 1000, 'runAsUser' => 24 }
+        42  | nil | "OnRootMismatch" | { 'fsGroup' => 42, 'runAsUser' => 1000, 'fsGroupChangePolicy' => "OnRootMismatch" }
+        42  | ""  | nil              | { 'fsGroup' => 42 }
+        42  | 24  | ""               | { 'fsGroup' => 42, 'runAsUser' => 24 }
+        ""  | nil | "OnRootMismatch" | { 'runAsUser' => 1000 }
+        ""  | ""  | nil              | nil
+        ""  | 24  | ""               | { 'runAsUser' => 24 }
       end
 
       with_them do
@@ -131,6 +131,7 @@ describe 'Gitaly configuration' do
               gitaly:
                 securityContext:
                   #{"fsGroup: #{fsGroup}" unless fsGroup.nil?}
+                  #{"fsGroupChangePolicy: #{fsGroupChangePolicy}" unless fsGroupChangePolicy.nil?}
                   #{"runAsUser: #{runAsUser}" unless runAsUser.nil?}
           )).deep_merge(default_values)
         end

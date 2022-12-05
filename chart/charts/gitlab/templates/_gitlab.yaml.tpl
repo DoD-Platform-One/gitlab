@@ -14,6 +14,17 @@ repositories:
 {{- end -}}
 
 
+{{- define "gitlab.appConfig.microsoft_graph_mailer" -}}
+microsoft_graph_mailer:
+  enabled: {{ eq .microsoft_graph_mailer.enabled true }}
+  user_id: {{ .microsoft_graph_mailer.user_id | quote }}
+  tenant: {{ .microsoft_graph_mailer.tenant | quote }}
+  client_id: {{ .microsoft_graph_mailer.client_id | quote }}
+  client_secret: <%= File.read('/etc/gitlab/microsoft_graph_mailer/client_secret').strip.to_json %>
+  azure_ad_endpoint: {{ .microsoft_graph_mailer.azure_ad_endpoint | quote }}
+  graph_endpoint: {{ .microsoft_graph_mailer.graph_endpoint | quote }}
+{{- end -}}
+
 {{- define "gitlab.appConfig.incoming_email" -}}
 incoming_email:
   enabled: {{ eq .incomingEmail.enabled true }}

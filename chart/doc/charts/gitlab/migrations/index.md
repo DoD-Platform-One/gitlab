@@ -60,6 +60,7 @@ Table below contains all the possible charts configurations that can be supplied
 | `extraEnv`                  | List of extra environment variables to expose |              |
 | `extraEnvFrom`              | List of extra environment variables from other data sources to expose|                              |
 | `bootsnap.enabled`          | Enable the Bootsnap cache for Rails      | `true`            |
+| `priorityClassName`         | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |                   |
 
 ## Chart configuration examples
 

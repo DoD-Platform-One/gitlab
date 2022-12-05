@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.58.0-gitlab'
+  tag: 'v3.61.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -48,6 +48,9 @@ service:
 
 ## Support for tolerations for pod scheduling
 tolerations: []
+
+# Priority class assigned to pods
+priorityClassName: ""
 
 ## Enable/Disable Chart
 enabled: true
@@ -382,7 +385,6 @@ redis:
 migration:
   enabled: false
   disablemirrorfs: false
-  testslowimport: "0s"
   # rootdirectory:
   # tagconcurrency: 1
   # maxconcurrentimports: 1

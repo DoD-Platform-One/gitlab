@@ -106,6 +106,7 @@ gitlab:
 | `persistence.subPath`                       | Toolbox persistence volume mount path    |                              |
 | `persistence.volumeName`                    | Existing PersistentVolume name               |                              |
 | `podLabels`                                 | Labels for running Toolbox Pods          | {}                           |
+| `priorityClassName`                         | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |                              |
 | `replicas`                                  | Number of Toolbox Pods to run            | `1`                          |
 | `resources.requests`                        | Toolbox minimum requested resources      | { `cpu`: `50m`, `memory`: `350M` |
 | `securityContext.fsGroup`                   | Group ID under which the pod should be started | `1000`                     |

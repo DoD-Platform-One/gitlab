@@ -431,6 +431,10 @@
       "title": "Tolerations labels for pod assignment",
       "type": "array"
     },
+    "priorityClassName": {
+      "title": "Priority class assigned to pods",
+      "type": "string"
+    },
     "workhorse": {
       "properties": {
         "host": {

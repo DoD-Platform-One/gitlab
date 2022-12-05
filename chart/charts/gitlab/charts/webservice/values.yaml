@@ -260,6 +260,8 @@ global:
   webservice: {}
     # workerTimeout: 60
   appConfig:
+    microsoft_graph_mailer:
+      enabled: false
     incomingEmail:
       enabled: false
       address:

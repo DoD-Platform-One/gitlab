@@ -2,6 +2,55 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 6.6.1 (2022-11-30)
+
+No changes.
+
+## 6.6.0 (2022-11-21)
+
+### Added (8 changes)
+
+- [Make it possible to choose which nginx-ingress generated service will expose gitlab-shell](gitlab-org/charts/gitlab@5be723580bcaf78c2071a0024785261b33a24f91) by @mike554 ([merge request](gitlab-org/charts/gitlab!2730))
+- [Add global priorityClassName](gitlab-org/charts/gitlab@a79bd8e508352fd7dedd5fe4fe2de8a05c058812) by @robinelfrink ([merge request](gitlab-org/charts/gitlab!2603))
+- [Add auth-cookie-session-timeout flag](gitlab-org/charts/gitlab@04d7859daa17213f03e6f28c7c59f62231955f33) ([merge request](gitlab-org/charts/gitlab!2838))
+- [Allow setting load_balancing.discover.max_replica_pools](gitlab-org/charts/gitlab@7615476dcd686696472894763aa7f441969d6e3f) ([merge request](gitlab-org/charts/gitlab!2841))
+- [Add microsoft_graph_mailer settings](gitlab-org/charts/gitlab@5398a0f8ebd7468201cc3e54c1e58a7a1296fbea) ([merge request](gitlab-org/charts/gitlab!2784))
+- [Allow to set securityContext.fsGroupChangePolicy on Gitaly StatefulSet](gitlab-org/charts/gitlab@fc45b560a8366b9c56459a30c173510ea8d8cc0c) by @ngourdon ([merge request](gitlab-org/charts/gitlab!2786))
+- [Add the ntp host option for praefect](gitlab-org/charts/gitlab@2de143ff6e05cf4ca6a4328c2ea875f3425473c2) by @julien.godin ([merge request](gitlab-org/charts/gitlab!2833))
+- [Support terminationGracePeriodSeconds for kas](gitlab-org/charts/gitlab@591c38e467e39381f98e4880b4070f15fb933b18) ([merge request](gitlab-org/charts/gitlab!2823))
+
+### Fixed (1 change)
+
+- [Remove duplicate labels from geo-logcursor deployment](gitlab-org/charts/gitlab@2b9837a575bb3a096b99b92b2db4e3204f4770fd) by @matthijs.galesloot ([merge request](gitlab-org/charts/gitlab!2848))
+
+### Changed (9 changes)
+
+- [Use HTTP readiness and liveness probes in KAS service](gitlab-org/charts/gitlab@82d46004f1926f2d80f3000b237ff653937ec061) ([merge request](gitlab-org/charts/gitlab!2839))
+- [GKE cluster setup: Use more cost efficient defaults](gitlab-org/charts/gitlab@6ca2dfa9050f071c7ea0e6dd03c53c9934b65dbb) ([merge request](gitlab-org/charts/gitlab!2846))
+- [upgrade-check: fix link to upgrade paths](gitlab-org/charts/gitlab@92546240d859b22a4e74c34e534a41aa8f2cc790) ([merge request](gitlab-org/charts/gitlab!2860))
+- [Update gitlab-org/container-registry from 3.60.2-gitlab to 3.61.0-gitlab](gitlab-org/charts/gitlab@b4f333f9d1d625fba757efb2b30bf2dccdd660c3) ([merge request](gitlab-org/charts/gitlab!2858))
+- [Update gitlab-org/charts/gitlab-runner from 0.46.0 to 0.46.1](gitlab-org/charts/gitlab@df9042dc4670e68d58133ff2c0df91d64d7312fb) ([merge request](gitlab-org/charts/gitlab!2857))
+- [Update gitlab-org/container-registry from 3.60.1-gitlab to 3.60.2-gitlab](gitlab-org/charts/gitlab@241c6e7b2ea0f3519e196ff1d8665dd3db798075) ([merge request](gitlab-org/charts/gitlab!2853))
+- [Reference NGINX Ingress Controller v1.2.1](gitlab-org/charts/gitlab@16806386287fe15c50d7f1cb784f5969f3cc94dc) ([merge request](gitlab-org/charts/gitlab!2843))
+- [Update gitlab-org/container-registry from 3.58.0-gitlab to 3.60.0-gitlab](gitlab-org/charts/gitlab@5704dd87f8b727fcfc4a4a95598963b73a9def9f) ([merge request](gitlab-org/charts/gitlab!2832))
+- [Update gitlab-org/charts/gitlab-runner from 0.45.0 to 0.46.0](gitlab-org/charts/gitlab@c87b340719a325e1dc83a5487ec6478e7664f4a2) ([merge request](gitlab-org/charts/gitlab!2824))
+
+### Removed (1 change)
+
+- [Container Registry: remove testslowimport migration setting](gitlab-org/charts/gitlab@b433267a4a406dc7dbfd22c72de930cf62994eea) ([merge request](gitlab-org/charts/gitlab!2818))
+
+## 6.5.5 (2022-11-11)
+
+No changes.
+
+## 6.5.4 (2022-11-09)
+
+No changes.
+
+## 6.5.3 (2022-11-07)
+
+No changes.
+
 ## 6.5.2 (2022-11-02)
 
 No changes.
@@ -38,6 +87,14 @@ No changes.
 
 - [Update nokogiri from 1.11.2 to 1.13.8](gitlab-org/charts/gitlab@4ca05285a0120d69a708d6fb406c441199ea3d9e) ([merge request](gitlab-org/charts/gitlab!2780))
 - [Update activesupport from 6.0.3.4 to 7.0.4](gitlab-org/charts/gitlab@184a94790f7de95aec576ad273d4fb9a9ec2722e) ([merge request](gitlab-org/charts/gitlab!2781))
+
+## 6.4.5 (2022-11-15)
+
+No changes.
+
+## 6.4.4 (2022-11-02)
+
+No changes.
 
 ## 6.4.3 (2022-10-19)
 
@@ -80,6 +137,10 @@ No changes.
 
 - [Update rack from 2.2.3 to 3.0.0](gitlab-org/charts/gitlab@99c3a60596cc3f2c4d64b585a0900173b2c29691) ([merge request](gitlab-org/charts/gitlab!2779))
 - [Update gitlab-styles from 6.2.0 to 9.0.0](gitlab-org/charts/gitlab@3b5171699d4a181d2e7cdf95f52333f18f03be93) ([merge request](gitlab-org/charts/gitlab!2769))
+
+## 6.3.5 (2022-11-02)
+
+No changes.
 
 ## 6.3.4 (2022-09-29)
 

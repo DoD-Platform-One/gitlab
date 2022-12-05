@@ -51,3 +51,13 @@ nodeSelector:
   {{- toYaml $nodeSelector | nindent 2 }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Return priorityClassName for Pod definitions
+*/}}
+{{- define "gitlab.priorityClassName" -}}
+{{- $pcName := default .Values.global.priorityClassName .Values.priorityClassName -}}
+{{- if $pcName }}
+priorityClassName: {{ $pcName }}
+{{- end -}}
+{{- end -}}

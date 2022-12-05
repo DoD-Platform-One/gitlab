@@ -133,6 +133,8 @@ global:
     enabled:
     credentials: {}
   appConfig:
+    microsoft_graph_mailer:
+      enabled: false
     incomingEmail:
       enabled: false
       address:

@@ -52,6 +52,9 @@ data:
         time_zone: {{ .Values.global.time_zone | quote }}
         {{- include "gitlab.outgoing_email_settings" . | indent 8 }}
       {{- with .Values.global.appConfig }}
+      {{-   if .microsoft_graph_mailer.enabled }}
+      {{-     include "gitlab.appConfig.microsoft_graph_mailer" . | nindent 6 }}
+      {{-   end }}
       {{-   if .incomingEmail.enabled }}
       {{-     include "gitlab.appConfig.incoming_email" . | nindent 6 }}
       {{-   end }}

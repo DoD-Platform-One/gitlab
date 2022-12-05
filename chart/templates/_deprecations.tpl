@@ -461,5 +461,3 @@ gitlab.{{ $chart }}:
 {{-     end -}}
 {{-   end -}}
 {{- end -}}
-
-{{/* END gitlab.deprecate.local.kubectl */}}

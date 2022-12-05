@@ -168,6 +168,7 @@ global:
 
   praefect:
     enabled: false
+    ntpHost: pool.ntp.org
     replaceInternalGitaly: true
     authToken: {}
     autoMigrate: true
@@ -364,6 +365,20 @@ global:
     backups:
       bucket: gitlab-backups
       tmpBucket: tmp
+
+    ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
+    ## Microsoft Graph Mailer settings
+    microsoft_graph_mailer:
+      enabled: false
+      user_id: ""
+      tenant: ""
+      client_id: ""
+      client_secret: ""
+      client_secret:
+        secret: ""
+        key: secret
+      azure_ad_endpoint: "https://login.microsoftonline.com"
+      graph_endpoint: "https://graph.microsoft.com"
 
     ## https://docs.gitlab.com/charts/installation/command-line-options.html#incoming-email-configuration
     ## https://docs.gitlab.com/charts/charts/gitlab/mailroom/index.html#incoming-email
@@ -626,7 +641,7 @@ global:
     registrationToken: {}
       # secret:
 
-  ## https://docs.gitlab.com/charts/installation/deployment#outgoing-email
+  ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
   ## Outgoing email server settings
   smtp:
     enabled: false
@@ -643,7 +658,7 @@ global:
     openssl_verify_mode: "peer"
     pool: false
 
-  ## https://docs.gitlab.com/charts/installation/deployment#outgoing-email
+  ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
   ## Email persona used in email sent by GitLab
   email:
     from: ""
@@ -673,6 +688,10 @@ global:
     podAntiAffinity:
       topologyKey: "kubernetes.io/hostname"
 
+  # Priority class assigned to pods, may be overridden for individual components
+  # https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
+  priorityClassName: ""
+
   ## https://docs.gitlab.com/charts/charts/globals#configure-workhorse-settings
   ## Global settings related to Workhorse
   workhorse:
@@ -695,7 +714,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -736,7 +755,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -843,7 +862,6 @@ nginx-ingress:
   controller:
     addHeaders:
       Referrer-Policy: strict-origin-when-cross-origin
-    allowSnippetAnnotations: false
     config:
       hsts: "false"
       hsts-include-subdomains: "false"
@@ -1192,7 +1210,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.5.2
+    tag: 15.6.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1331,7 +1349,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1382,7 +1400,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1412,7 +1430,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1436,7 +1454,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1449,7 +1467,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1467,7 +1485,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1490,7 +1508,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1517,7 +1535,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1547,7 +1565,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.5.2
+      tag: 15.6.1
       pullSecrets:
         - name: private-registry
 
@@ -1561,7 +1579,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.5.2
+      tag: 15.6.1
     init:
       resources:
         limits:
@@ -1602,7 +1620,7 @@ minio:
     sidecar.istio.io/inject: "false"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-11-11T03-44-20Z
+  imageTag: RELEASE.2022-11-26T22-43-32Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1611,7 +1629,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-11-07T23-47-39Z
+    tag: RELEASE.2022-11-17T21-20-39Z
     pullSecrets:
     - name: private-registry
 
