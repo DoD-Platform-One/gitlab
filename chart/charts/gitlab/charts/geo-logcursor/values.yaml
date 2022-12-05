@@ -94,6 +94,9 @@ podLabels: {}
 common:
   labels: {}
 
+# Priority class assigned to pods
+priorityClassName: ""
+
 ## Allow to overwrite under which User and Group we're running.
 securityContext:
   runAsUser: 1000

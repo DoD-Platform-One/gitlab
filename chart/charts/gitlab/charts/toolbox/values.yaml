@@ -33,6 +33,9 @@ replicas: 1
 annotations: {}
 podLabels: {}
 
+# Priority class assigned to pods
+priorityClassName: ""
+
 psql: {}
   # port: 5432
 

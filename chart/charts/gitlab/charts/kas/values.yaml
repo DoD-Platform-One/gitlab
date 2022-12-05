@@ -72,12 +72,18 @@ service:
   # loadBalancerSourceRanges:
 metrics:
   enabled: true
-  port: 8151
+  # port: 8151  # DEPRECATED: in favor of `observability.port` below
   path: /metrics
   serviceMonitor:
     enabled: false
     additionalLabels: {}
     endpointConfig: {}
+observability:
+  port: 8151
+  livenessProbe:
+    path: /liveness
+  readinessProbe:
+    path: /readiness
 serviceAccount:
   enabled: false
   create: false
@@ -100,6 +106,7 @@ privateApi:
     enabled: false
       # secretName:
 deployment:
+  terminationGracePeriodSeconds: 300
   strategy: {}
   # minReadySeconds: 0
 
@@ -124,3 +131,6 @@ networkpolicy:
 affinity:
   podAntiAffinity:
     topologyKey:
+
+# Priority class assigned to pods
+priorityClassName: ""

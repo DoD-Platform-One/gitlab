@@ -11,6 +11,14 @@ Options can be specified using Helm's `--set option.name=value` command-line opt
 This guide will cover required values and common options.
 For a complete list of options, read [Installation command line options](command-line-options.md).
 
+WARNING:
+The default Helm chart configuration is **not intended for production**.
+The default chart creates a proof of concept (PoC) implementation where all GitLab
+services are deployed in the cluster. For production deployments, additional setup and configuration is required.
+
+For a production deployment, you should have strong working knowledge of Kubernetes.
+This method of deployment has different management, observability, and concepts than traditional deployments.
+
 ## Deploy using Helm
 
 Once you have all of your configuration options collected, we can get any dependencies and

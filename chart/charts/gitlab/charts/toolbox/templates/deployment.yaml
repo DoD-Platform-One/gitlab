@@ -44,6 +44,7 @@ spec:
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
       {{- end }}
       automountServiceAccountToken: false
+      {{- include "gitlab.priorityClassName" . | nindent 6 }}
       initContainers:
         {{- include "gitlab.extraInitContainers" . | nindent 8 }}
         {{- include "gitlab.certificates.initContainer" . | nindent 8 }}
@@ -256,6 +257,13 @@ spec:
           {{- include "gitlab.appConfig.objectStorage.mountSecrets" (dict "name" "pages" "config" $.Values.global.pages.objectStore) | nindent 10 }}
           {{- include "gitlab.appConfig.ldap.servers.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.appConfig.omniauth.mountSecrets" $ | nindent 10 }}
+          {{- if $.Values.global.appConfig.microsoft_graph_mailer.enabled }}
+          - secret:
+              name: {{ $.Values.global.appConfig.microsoft_graph_mailer.client_secret.secret | required "Missing required secret containing the OAuth2 Client ID for outgoing email. Make sure to set `global.appConfig.microsoft_graph_mailer.client_secret.secret`" }}
+              items:
+                - key: {{ $.Values.global.appConfig.microsoft_graph_mailer.client_secret.key }}
+                  path: microsoft_graph_mailer/client_secret
+          {{- end }}
           {{- if and $.Values.global.smtp.enabled $.Values.global.smtp.authentication }}
           - secret:
               name: {{ $.Values.global.smtp.password.secret | required "Missing required secret containing the SMTP password. Make sure to set `global.smtp.password.secret`" }}

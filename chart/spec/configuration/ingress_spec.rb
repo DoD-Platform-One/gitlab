@@ -24,6 +24,10 @@ describe 'GitLab Ingress configuration(s)' do
     template.dig("Ingress/#{ingress_name}", 'spec', 'ingressClassName')
   end
 
+  def get_ingress_service_ports(template, service_name)
+    template.dig("Service/#{service_name}", 'spec', 'ports')
+  end
+
   let(:default_values) do
     YAML.safe_load(%(
       certmanager-issuer:
@@ -370,6 +374,112 @@ describe 'GitLab Ingress configuration(s)' do
         expected_name = 'specified'
         name = get_ingress_class_name(template, expected_name)
         expect(name).to eq(expected_name)
+      end
+    end
+  end
+
+  describe 'nginx ingress gitlab shell toggles' do
+    let(:gitlab_shell_disabled) do
+      default_values.deep_merge(YAML.safe_load(%(
+        nginx-ingress:
+          controller:
+            service:
+              enableShell: false
+      )))
+    end
+
+    let(:internal_ingress_enabled) do
+      default_values.deep_merge(YAML.safe_load(%(
+        nginx-ingress:
+          controller:
+            service:
+              internal:
+                enabled: true
+                annotations:
+                  foo: bar
+      )))
+    end
+
+    let(:internal_ingress_gitlab_shell_enabled) do
+      default_values.deep_merge(YAML.safe_load(%(
+        nginx-ingress:
+          controller:
+            service:
+              internal:
+                enabled: true
+                enableShell: true
+                annotations:
+                  foo: bar
+      )))
+    end
+
+    context 'with the defaults' do
+      it 'has gitlab shell enabled on the nginx ingress service' do
+        template = HelmTemplate.new(default_values)
+        expect(template.exit_code).to eq(0)
+
+        service_name = 'test-nginx-ingress-controller'
+        ports = get_ingress_service_ports(template, service_name)
+        expect(ports.length).to eq(3)
+        ports_expected = Set['http', 'https', 'gitlab-shell']
+        ports_exposed = [
+          ports[0]['name'],
+          ports[1]['name'],
+          ports[2]['name']
+        ].to_set
+        expect(ports_exposed).to eq(ports_expected)
+      end
+    end
+
+    context 'with gitlab shell disabled' do
+      it 'gitlab shell is not present on the nginx ingress service' do
+        template = HelmTemplate.new(gitlab_shell_disabled)
+        expect(template.exit_code).to eq(0)
+
+        service_name = 'test-nginx-ingress-controller'
+        ports = get_ingress_service_ports(template, service_name)
+        expect(ports.length).to eq(2)
+        ports_expected = Set['http', 'https']
+        ports_exposed = [
+          ports[0]['name'],
+          ports[1]['name']
+        ].to_set
+        expect(ports_exposed).to eq(ports_expected)
+      end
+    end
+
+    context 'with the internal nginx ingress service enabled' do
+      it 'does not have gitlab shell enabled by default' do
+        template = HelmTemplate.new(internal_ingress_enabled)
+        expect(template.exit_code).to eq(0)
+
+        service_name = 'test-nginx-ingress-controller-internal'
+        ports = get_ingress_service_ports(template, service_name)
+        expect(ports.length).to eq(2)
+        ports_expected = Set['http', 'https']
+        ports_exposed = [
+          ports[0]['name'],
+          ports[1]['name']
+        ].to_set
+        expect(ports_exposed).to eq(ports_expected)
+      end
+    end
+
+    context 'with the internal nginx ingress service with gitlab shell enabled' do
+      it 'does have gitlab shell enabled' do
+        template = HelmTemplate.new(internal_ingress_gitlab_shell_enabled)
+        expect(template.exit_code).to eq(0)
+
+        service_name = 'test-nginx-ingress-controller-internal'
+        ports = get_ingress_service_ports(template, service_name)
+        expect(ports.length).to eq(3)
+        ports_expected = Set['http', 'https', 'gitlab-shell']
+        ports_exposed = [
+          ports[0]['name'],
+          ports[1]['name'],
+          ports[2]['name']
+        ].to_set
+        expect(ports_exposed).to eq(ports_expected)
       end
     end
   end

@@ -95,6 +95,9 @@ load_balancing:
     {{-   if index . "use_tcp" }}
     use_tcp: {{ empty .use_tcp | not }}
     {{-   end -}}
+    {{-   if index . "max_replica_pools" }}
+    max_replica_pools: {{ .max_replica_pools | int }}
+    {{- end }}
     {{- end -}}
   {{-   end }}
   {{-   if index .load_balancing "max_replication_difference" }}

@@ -70,7 +70,7 @@ spec:
       nodePort: {{ .Values.controller.service.nodePorts.https }}
     {{- end }}
   {{- end }}
-  {{- if include "gitlab.shell.port" $ }}
+  {{- if (and .Values.controller.service.enableShell (include "gitlab.shell.port" $)) }}
     - name: gitlab-shell
       port: {{ include "gitlab.shell.port" $ | int }}
       protocol: TCP

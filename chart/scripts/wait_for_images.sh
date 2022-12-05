@@ -21,7 +21,7 @@ is_autodeploy() {
 CNG_REGISTRY=${CNG_REGISTRY:-"registry.gitlab.com/gitlab-org/build/cng"}
 
 GITLAB_VERSION=$(awk '/^appVersion:/ {print $2}' Chart.yaml)
-if [ "${GITLAB_VERSION}" == "master" || "${GITLAB_VERSION}" == "main" ]; then
+if [ "${GITLAB_VERSION}" == "master" ] || [ "${GITLAB_VERSION}" == "main" ]; then
   echo "Chart specifies master or main as GitLab version. Hence not waiting for images."
   exit 0
 elif is_autodeploy "${GITLAB_VERSION}"; then

@@ -358,6 +358,7 @@ global:
         # interval: 60
         # disconnect_timeout: 120
         # use_tcp: false
+        # max_replica_pools: 30
 ```
 
 Further tuning is also available, in regards to the
@@ -907,6 +908,16 @@ global:
       connection: {}
     backups:
       bucket: gitlab-backups
+    microsoft_graph_mailer:
+      enabled: false
+      user_id: "YOUR-USER-ID"
+      tenant: "YOUR-TENANT-ID"
+      client_id: "YOUR-CLIENT-ID"
+      client_secret:
+        secret:
+        key: secret
+      azure_ad_endpoint: "https://login.microsoftonline.com"
+      graph_endpoint: "https://graph.microsoft.com"
     incomingEmail:
       enabled: false
       address: ""
@@ -2181,7 +2192,7 @@ The `global.appConfig.kerberos.simpleLdapLinkingAllowedRealms` can be used to sp
 
 ## Outgoing email
 
-Outgoing email configuration is available via `global.smtp.*` and `global.email.*`.
+Outgoing email configuration is available via `global.smtp.*`, `global.appConfig.microsoft_graph_mailer.*` and `global.email.*`.
 
 ```yaml
 global:
@@ -2198,10 +2209,21 @@ global:
     password:
       secret: 'smtp-password'
       key: 'password'
+  appConfig:
+    microsoft_graph_mailer:
+      enabled: false
+      user_id: "YOUR-USER-ID"
+      tenant: "YOUR-TENANT-ID"
+      client_id: "YOUR-CLIENT-ID"
+      client_secret:
+        secret:
+        key: secret
+      azure_ad_endpoint: "https://login.microsoftonline.com"
+      graph_endpoint: "https://graph.microsoft.com"
 ```
 
 More information on the available configuration options is available in the
-[outgoing email documentation](../installation/command-line-options.md#outgoing-email-configuration)
+[outgoing email documentation](../installation/command-line-options.md#outgoing-email-configuration).
 
 More detailed examples can be found in the
 [Omnibus SMTP settings documentation](https://docs.gitlab.com/omnibus/settings/smtp.html).
@@ -2238,3 +2260,17 @@ global:
   - `topology.kubernetes.io/region`
 
 Kubernetes references on [Inter-pod affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity)
+
+## Pod Priority and Preemption
+
+Pod priorities can be configured either via `global.priorityClassName` or per sub-chart via `priorityClassName`.
+Setting pod priority allows you to tell the scheduler to evict lower priority pods to make scheduling of pendings pods possible.
+
+```yaml
+global:
+  priorityClassName: system-cluster-critical
+```
+
+| Name                | Type   | Default | Description                      |
+| :-------------------| :--:   | :------ | :------------------------------- |
+| `priorityClassName` | String |         | Priority class assigned to pods. |

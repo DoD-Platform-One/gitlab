@@ -35,6 +35,9 @@ tolerations: []
 
 annotations: {}
 
+# Priority class assigned to pods
+priorityClassName: ""
+
 podLabels: {}
 common:
   labels: {}

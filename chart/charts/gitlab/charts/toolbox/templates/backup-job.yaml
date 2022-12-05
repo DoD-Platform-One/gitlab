@@ -50,6 +50,7 @@ spec:
           {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
           serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
           {{- end }}
+          {{- include "gitlab.priorityClassName" . | nindent 6 }}
           initContainers:
             {{- include "gitlab.extraInitContainers" . | nindent 12 }}
             {{- include "gitlab.certificates.initContainer" . | nindent 12 }}

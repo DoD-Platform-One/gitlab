@@ -87,6 +87,7 @@ The table below contains all the possible charts configurations that can be supp
 | `serviceAccount.create`                         | Flag for creating a ServiceAccount                                                                   | `false`                                                                                                                                                                                            |
 | `tolerations`                                   | `[]`                                                                                                 | Toleration labels for pod assignment                                                                                                                                                               |
 | `extraEnvFrom`                                  | `{}`                                                                                                 | List of extra environment variables from other data sources to expose                                                                                                                              |
+| `priorityClassName`                             |                                                                                                      | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods.                                                                               |
 
 ## Chart configuration examples
 

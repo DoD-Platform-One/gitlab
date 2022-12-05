@@ -22,11 +22,6 @@ The Container Registry filesystem metadata has been disabled. Please note that i
 {{ $WARNING }}
 The Container Registry migration mode has been enabled. Please note that it is an experimental feature and must not be used in production.
 
-{{- if ne .Values.registry.migration.testslowimport "0s" }}
-{{ $WARNING }}
-The Container Registry test slow import has been enabled. Please note that it is an experimental feature used for testing purposes only and must not be used in production.
-{{- end }}
-
 {{- end }}
 
 {{- /* If the Container Registry online garbage collection is enabled, note it is not production ready */}}
@@ -141,6 +136,14 @@ The in-chart NGINX Ingress Controller has the following requirements:
 {{- if eq false .Values.global.appConfig.defaultCanCreateGroup }}
 {{ $NOTICE }}
 `global.appConfig.defaultCanCreateGroup` setting has been deprecated. Starting with GitLab 15.5, this setting cannot be controlled via the configuration file anymore. Follow the steps at https://docs.gitlab.com/ee/user/admin_area/settings/account_and_limit_settings.html#prevent-users-from-creating-top-level-groups, to configure this setting via the Admin UI or the API.
+{{- end }}
+
+{{/* Deprecation notice for `gitlab.deprecate.kas.metrics.port` setting */}}
+{{- if hasKey $.Values.gitlab.kas.metrics "port" }}
+{{ $NOTICE }}
+kas:
+    The configuration of `gitlab.kas.metrics.port` has moved. Please use `gitlab.kas.observability.port` instead.
+    This port is used for more observability features than just the metrics, e.g. the liveness and readiness probe endpoints.
 {{- end }}
 
 {{- /* run deprecations */}}

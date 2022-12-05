@@ -507,6 +507,7 @@ describe 'GitLab Pages' do
                 serverReadHeaderTimeout: 2h
                 serverWriteTimeout: 3h
                 serverKeepAlive: 4h
+                authCookieSessionTimeout: 1h
           ))
         end
 
@@ -543,6 +544,7 @@ describe 'GitLab Pages' do
             auth-client-secret={% file.Read "/etc/gitlab-secrets/pages/gitlab_appsecret" %}
             auth-secret={% file.Read "/etc/gitlab-secrets/pages/auth_secret" %}
             auth-scope=read_api
+            auth-cookie-session-timeout=1h
             zip-cache-refresh=60s
             zip-http-client-timeout=30m
             rate-limit-source-ip=100.5

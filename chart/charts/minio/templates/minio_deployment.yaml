@@ -44,6 +44,7 @@ spec:
       securityContext:
         runAsUser: {{ .Values.securityContext.runAsUser }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- include "gitlab.priorityClassName" . | nindent 6 }}
       volumes:
         - name: podinfo
           downwardAPI:

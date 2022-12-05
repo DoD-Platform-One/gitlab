@@ -71,6 +71,7 @@ spec:
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
       {{- end }}
       automountServiceAccountToken: false
+      {{- include "gitlab.priorityClassName" . | nindent 6 }}
       initContainers:
         {{- include "gitlab.extraInitContainers" . | nindent 8 }}
         {{- include "gitlab.certificates.initContainer" . | nindent 8 }}

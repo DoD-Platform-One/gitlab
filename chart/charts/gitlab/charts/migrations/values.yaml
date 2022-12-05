@@ -23,6 +23,9 @@ annotations: {}
 # Annotations for the pod
 podAnnotations: {}
 
+# Priority class assigned to pods
+priorityClassName: ""
+
 # Labels for the job
 podLabels: {}
 common:

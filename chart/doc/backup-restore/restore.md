@@ -107,7 +107,7 @@ The steps for restoring a GitLab installation are
    kubectl exec <Toolbox pod name> -it -- backup-utility --restore -f <URL>
    ```
 
-    You can provide a local path as a URL as long as it's in the format: `file://<path>`
+    You can provide a local path as a URL as long as it's in the format: `file:///<path>`
 
 1. This process will take time depending on the size of the tarball.
 1. The restoration process will erase the existing contents of database, move existing repositories to temporary locations and extract the contents of the tarball. Repositories will be moved to their corresponding locations on the disk and other data, like artifacts, uploads, LFS etc. will be uploaded to corresponding buckets in Object Storage.

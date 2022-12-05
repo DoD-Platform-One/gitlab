@@ -34,3 +34,7 @@ The following adjustments were made to the NGINX fork:
   extended HPA settings to support memory and custom metrics, as well as
   behavior configuration.
 - Added conditional support for API version of PodDisruptionBudget.
+- Add the following booleans to enable/disable GitLab Shell (SSH access) independently for the external and internal (if enabled with `controller.service.internal.enabled`) services:
+  - `controller.service.enableShell`.
+  - `controller.service.internal.enableShell`.
+  (follows the exisiting chart pattern of `controller.service.enableHttp(s)`)

@@ -32,6 +32,7 @@ the `helm install` command using the `--set` flag:
 | `image.pullSecrets`        |                     | Secrets for the image repository    |
 | `image.repository`         | `registry.gitlab.com/gitlab-org/build/cng/kubectl` | Gitaly image repository |
 | `image.tag`                | `1f8690f03f7aeef27e727396927ab3cc96ac89e7` | Gitaly image tag |
+| `priorityClassName`        |                     | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods |
 | `rbac.create`              | `true`              | Create RBAC roles and bindings      |
 | `resources`                |                     | resource requests, limits           |
 | `securitContext.fsGroup`   | `65534`             | User ID to mount filesystems as     |

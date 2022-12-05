@@ -7,7 +7,7 @@ gitlab:
     maxReplicas: 20
     maxUnavailable: 10
     minReplicas: 15
-    # Increased to stabilise scaling and accommodate for higher CPU load on large environment
+    # Increased to stabilize scaling and accommodate for higher CPU load on large environment
     hpa:
       cpu:
         targetAverageValue: 1600m
@@ -25,7 +25,7 @@ gitlab:
   sidekiq:
     maxReplicas: 14
     minReplicas: 10
-    # Increased to stabilise scaling and accommodate for higher CPU load on large environment
+    # Increased to stabilize scaling and accommodate for higher CPU load on large environment
     hpa:
       cpu:
         targetAverageValue: 700m
@@ -154,23 +154,23 @@ prometheus:
   install: true
   alertmanager:
     nodeSelector:
-      workload: "support"
+      workload: support
   kubeStateMetrics:
     nodeSelector:
-      workload: "support"
+      workload: support
   nodeExporter:
     nodeSelector:
-      workload: "support"
+      workload: support
   pushgateway:
     nodeSelector:
-      workload: "support"
+      workload: support
   server:
     nodeSelector:
-      workload: "support"
+      workload: support
 
 grafana:
   nodeSelector:
-    workload: "support"
+    workload: support
 
 # https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
 gitlab-runner:

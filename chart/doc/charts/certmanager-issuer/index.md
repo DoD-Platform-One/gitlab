@@ -30,6 +30,9 @@ certmanager-issuer:
     requests:
       cpu: 50m
 
+  # Priority class assigned to pods
+  priorityClassName: ""
+
   common:
     labels: {}
 ```
@@ -46,3 +49,4 @@ to the `helm install` command using the `--set` flags:
 | `rbac.create` | `true` | When `true`, creates RBAC-related resources to allow for manipulation of CertManager Issuer objects. |
 | `resources.requests.cpu` | `50m` | Requested CPU resources for the Issuer creation Job. |
 | `common.labels` | | Common labels to apply to the ServiceAccount, Job, ConfigMap, and Issuer. |
+| `priorityClassName` | | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |

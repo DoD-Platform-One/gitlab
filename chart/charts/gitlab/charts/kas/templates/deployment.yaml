@@ -31,10 +31,10 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
       {{- if and .Values.metrics.enabled (not .Values.metrics.serviceMonitor.enabled) }}
         gitlab.com/prometheus_scrape: "true"
-        gitlab.com/prometheus_port: {{ .Values.metrics.port | quote }}
+        gitlab.com/prometheus_port: {{ default .Values.observability.port .Values.metrics.port | quote }}
         gitlab.com/prometheus_path: {{ .Values.metrics.path }}
         prometheus.io/scrape: "true"
-        prometheus.io/port: {{ .Values.metrics.port | quote }}
+        prometheus.io/port: {{ default .Values.observability.port .Values.metrics.port | quote }}
         prometheus.io/path: {{ .Values.metrics.path }}
       {{- end }}
       {{- range $key, $value := .Values.annotations }}
@@ -74,6 +74,7 @@ spec:
         runAsGroup: {{ .Values.securityContext.runAsGroup }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
       {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
+      {{- include "gitlab.priorityClassName" . | nindent 6 }}
       initContainers:
         {{- include "gitlab.certificates.initContainer" . | nindent 8 }}
       containers:
@@ -99,18 +100,18 @@ spec:
               name: {{ template "name" . }}-k8s-api
             - containerPort: {{ .Values.service.privateApiPort }}
               name: {{ template "name" . }}-private-api
-          {{- if .Values.metrics.enabled }}
-            - containerPort: {{ .Values.metrics.port }}
+            - containerPort: {{ default .Values.observability.port .Values.metrics.port }}
               name: http-metrics
-          {{- end }}
           readinessProbe:
-            tcpSocket:
-              port: {{ .Values.service.internalPort }}
+            httpGet:
+              path: {{ .Values.observability.readinessProbe.path }}
+              port: {{ .Values.observability.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
-            tcpSocket:
-              port: {{ .Values.service.internalPort }}
+            httpGet:
+              path: {{ .Values.observability.livenessProbe.path }}
+              port: {{ .Values.observability.port }}
             initialDelaySeconds: 15
             periodSeconds: 20
           resources:
@@ -121,6 +122,7 @@ spec:
               readOnly: true
             {{- include "gitlab.extraVolumeMounts" . | nindent 12 }}
             {{- include "gitlab.certificates.volumeMount" . | nindent 12 }}
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds | int }}
       volumes:
       {{- include "gitlab.extraVolumes" . | nindent 6 }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}

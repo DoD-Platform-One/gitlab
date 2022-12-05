@@ -536,7 +536,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.16-vale-2.20.1-markdownlint-0.32.2
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.16-vale-2.20.2-markdownlint-0.32.2-markdownlint2-0.5.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -545,7 +545,7 @@ check_docs_markdown:
     # Lint prose
     - vale --minAlertLevel error doc
     # Lint Markdown
-    - markdownlint --config .markdownlint.yml 'doc/**/*.md'
+    - markdownlint-cli2-config .markdownlint.yml 'doc/**/*.md'
   except:
     variables:
       - $DEPS_PIPELINE
@@ -555,7 +555,7 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.16-ruby-2.7.6-0bc327a4
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.16-ruby-2.7.6-0088e238
   stage: prepare
   cache: {}
   dependencies: []
@@ -591,7 +591,7 @@ check_docs_links:
   - chmod 755 trigger-build.rb
   variables:
     GIT_STRATEGY: none
-    DOCS_REVIEW_APPS_DOMAIN: docs.gitlab-review-app
+    DOCS_REVIEW_APPS_DOMAIN: docs.gitlab-review.app
     DOCS_GITLAB_REPO_SUFFIX: charts
     # By default, deploy the Review App using the `main` branch of the `gitlab-org/gitlab-docs` project
     DOCS_BRANCH: main
@@ -614,7 +614,7 @@ review-docs-deploy:
   - .review-docs
   environment:
     name: review-docs/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    url: http://${DOCS_BRANCH}-${DOCS_GITLAB_REPO_SUFFIX}-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}.${DOCS_REVIEW_APPS_DOMAIN}/${DOCS_GITLAB_REPO_SUFFIX}
+    url: https://${DOCS_BRANCH}-${DOCS_GITLAB_REPO_SUFFIX}-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}.${DOCS_REVIEW_APPS_DOMAIN}/${DOCS_GITLAB_REPO_SUFFIX}
     on_stop: review-docs-cleanup
   script:
   - ./trigger-build.rb docs deploy
@@ -803,7 +803,7 @@ production_specs_eks:
     - source "${VARIABLES_FILE}"
     - app_version=$(ruby -e "require 'yaml'; puts YAML.safe_load(File.read('Chart.yaml'))['appVersion']")
     - qa_version="nightly"
-    - if [ "$app_version" != "master" && "$app_version" != "main" ]; then
+    - if [ "$app_version" != "master" ] && [ "$app_version" != "main" ]; then
     -   qa_version="${app_version}-ee"
     - fi
     - SIGNUP_DISABLED=true QA_DEBUG=true GITLAB_USERNAME=root GITLAB_PASSWORD=$ROOT_PASSWORD GITLAB_ADMIN_USERNAME=root GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD EE_LICENSE=$REVIEW_APPS_EE_LICENSE gitlab-qa Test::Instance::Any EE:$qa_version https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
