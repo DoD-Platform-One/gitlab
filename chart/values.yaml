@@ -1673,6 +1673,9 @@ networkPolicies:
     istio: ingressgateway
   # See `kubectl cluster-info` and then resolve to IP
   controlPlaneCidr: 0.0.0.0/0
+  gitalyEgress:
+    enabled: false
+
 
 openshift: false
 

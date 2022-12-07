@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.6.1-bb.0](https://img.shields.io/badge/Version-6.6.1--bb.0-informational?style=flat-square) ![AppVersion: 15.6.1](https://img.shields.io/badge/AppVersion-15.6.1-informational?style=flat-square)
+![Version: 6.6.1-bb.1](https://img.shields.io/badge/Version-6.6.1--bb.1-informational?style=flat-square) ![AppVersion: 15.6.1](https://img.shields.io/badge/AppVersion-15.6.1-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -809,6 +809,7 @@ helm install gitlab chart/
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
+| networkPolicies.gitalyEgress.enabled | bool | `false` |  |
 | openshift | bool | `false` |  |
 | use_iam_profile | bool | `false` |  |
 | bbtests.enabled | bool | `false` |  |
