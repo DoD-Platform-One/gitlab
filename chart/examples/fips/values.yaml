@@ -15,8 +15,7 @@ nginx-ingress:
       # NGINX Ingress controller fork:
       #   https://gitlab.com/gitlab-org/cloud-native/charts/gitlab-ingress-nginx:
       repository: registry.gitlab.com/gitlab-org/cloud-native/charts/gitlab-ingress-nginx/controller
-      tag: v1.2.1-fips
-      digest: sha256:c4222b7ab3836b9be2a7649cff4b2e6ead34286dfdf3a7b04eb34fdd3abb0334
+      digest: "" #empty to use the tag rather than the digest
 
 prometheus:
   install: false
@@ -33,11 +32,29 @@ global:
 
   image:
     pullPolicy: Always  # You can drop this if you're using release tags.
+    tagSuffix: -fips
 
+  # Override the busybox image to use gitlab-base, it does not support tagSuffix
+  # and an explicit tag must be specified.
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3432
+  # It is recommended to use a specific GitLab version here e.g. v15.6.2-fips
+  busybox:
+    image:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-base
+      tag: master-fips
+
+  # The kubectl image doesn't currently support tagSuffix due to a digest
+  # reference in the default vaults - an explicit tag must be specified.
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3717
+  # It is recommended to use a specific GitLab version here e.g. v15.6.2-fips
   kubectl:
     image:
-      tag: 1.18.20-fips
+      tag: master-fips
 
+  # The certificates image doesn't currently support tagSuffix due to a digest
+  # reference in the default vaults - an explicit tag must be specified.
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3717
+  # It is recommended to use a specific GitLab version here e.g. v15.6.2-fips
   certificates:
     image:
       tag: master-fips
@@ -101,34 +118,7 @@ global:
 
 gitlab:
 
-  gitaly:
-    image:
-      tag: master-fips
-
-  gitlab-exporter:
-    image:
-      tag: master-fips
-
-  gitlab-shell:
-    image:
-      tag: main-fips # gitlab-shell's default branch is main, not master!
-
-  gitlab-mailroom:
-    image:
-      tag: master-fips
-
-  migrations:
-    image:
-      tag: master-fips
-
-  sidekiq:
-    image:
-      tag: master-fips
-
   toolbox:
-    image:
-      tag: master-fips
-
     # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
     backups:
       objectStorage:
@@ -136,16 +126,9 @@ gitlab:
           secret: my-s3cmd-config # You config for 's3cmd'.
           key: config
 
-  webservice:
-    image:
-      tag: master-fips
-    workhorse:
-      tag: master-fips
-
 # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
 registry:
-  image:
-    tag: v3.51.1-gitlab-fips
   storage:
     secret: my-objectstore-registry-secret # Registry storage secret.
     key: config
+

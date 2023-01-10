@@ -352,7 +352,7 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 | `gitlab.migrations.psql.port` | Set PostgreSQL server port. Takes precedence over `global.psql.port` |  |
 | `gitlab.migrations.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
 | `gitlab.migrations.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
-| `gitlab.sidekiq.concurrency` | Sidekiq default concurrency | `10` |
+| `gitlab.sidekiq.concurrency` | Sidekiq default concurrency | `20` |
 | `gitlab.sidekiq.enabled` | Sidekiq enabled flag | true |
 | `gitlab.sidekiq.gitaly.authToken.key` | key to Gitaly token in Gitaly secret | `token` |
 | `gitlab.sidekiq.gitaly.authToken.secret` | Gitaly secret | `{.Release.Name}-gitaly-secret` |

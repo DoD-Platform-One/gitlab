@@ -141,4 +141,99 @@ describe 'global configuration' do
       end
     end
   end
+
+  describe 'global.image.tagSuffix: add a string to the end of all image tags' do
+    let(:shell_values) do
+      YAML.safe_load(%(
+        certmanager:
+          install: false
+        global:
+          image:
+            tagSuffix: -fips
+          busybox:
+            image:
+              tag: fixed-version
+          certificates:
+            image:
+              tag: fixed-version
+          kubectl:
+            image:
+              tag: fixed-version
+          praefect:
+            enabled: true
+          spamcheck:
+            enabled: true
+          pages:
+            enabled: true
+          ingress:
+            configureCertmanager: false
+        nginx-ingress:
+          controller:
+            kind: Both
+            image:
+              tag: fixed-version
+      )).deep_merge(default_values)
+    end
+
+    let(:ignored_deployments) do
+      [
+        'Deployment/test-gitlab-runner',
+        'Deployment/test-prometheus-server',
+        'Deployment/test-minio'
+      ]
+    end
+
+    let(:ignored_initContainers) do
+      [
+        'certificates',
+        'configure'
+      ]
+    end
+
+    let(:ignored_statefulsets) do
+      [
+        'StatefulSet/test-postgresql',
+        'StatefulSet/test-redis-master'
+      ]
+    end
+
+    let(:ignored_jobs) do
+      [
+        'Job/test-minio-create-buckets-1',
+        'Job/test-shared-secrets-1',
+        'Job/test-gitlab-upgrade-check'
+      ]
+    end
+
+    it 'adds the provided suffix to all image tags' do
+      t = HelmTemplate.new(shell_values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+      objects = t.resources_by_kind('Deployment').reject { |key, _| ignored_deployments.include? key }
+      objects.merge! t.resources_by_kind('StatefulSet').reject { |key, _| ignored_statefulsets.include? key }
+      # shared secrets jobs come out as test-shared-secrets-1-xxx, need to .match those
+      objects.merge! t.resources_by_kind('Job').reject { |key, _| ignored_jobs.any? { |ij| key.match(ij) } }
+      objects.merge! t.resources_by_kind('DaemonSet')
+
+      objects.each do |o, content|
+        content['spec']['template']['spec']['containers'].each do |c|
+          # we are currently only using sha256 digests, but this match
+          # will need to be more flexible in the future
+          expect(c['image']).to match('-fips(@sha256:[a-fA-F0-9]{64})?$'), "Expected #{o}'s 'containers' image tags to have suffix '-fips'. Container is #{c}"
+          expect(c['image']).not_to end_with("-fips-fips"), "Unexpected double suffix in #{o}'s 'container' images."
+        end
+
+        next unless content['spec']['template']['spec'].key?('initContainers')
+
+        content['spec']['template']['spec']['initContainers'].each do |ic|
+          next if ignored_initContainers.include? ic['name']
+
+          # we are currently only using sha256 digests, but this match
+          # will need to be more flexible in the future
+          expect(ic['image']).to match('-fips\b(@sha256:[a-fA-F0-9]{64})?$'), "Expected #{o}'s 'initContainers' image tags to have suffix '-fips'. initContainer is #{ic}"
+          expect(ic['image'].strip).not_to end_with("-fips-fips"), "Unexpected double suffix in #{o}'s 'initContainer' images."
+        end
+      end
+    end
+  end
 end

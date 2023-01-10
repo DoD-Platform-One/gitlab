@@ -20,11 +20,14 @@
 .idea/
 *.tmproj
 # Project/CI/CD related items
+.*
 .gitlab
 .gitlab-ci.yml
+.markdownlint.json
 .dockerignore
 .helmignore
 Dangerfile
+Rakefile
 Gemfile
 Gemfile.lock
 gems/
@@ -42,5 +45,5 @@ bin/
 spec/
 # dependencies.io
 dependencies.yml
+deps.yml
 dependencies_io/
-.markdownlint.json

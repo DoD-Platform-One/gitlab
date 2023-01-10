@@ -178,12 +178,13 @@ Various cloud providers' LoadBalancer implementations have an impact on configur
 
 | Provider | Layer | Example snippet |
 | :-- | --: | :-- |
-| AWS | 4 | [aws/elb-layer4-loadbalancer](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/aws/elb-layer4-loadbalancer.yaml) |
-| AWS | 7 | [aws/elb-layer7-loadbalancer](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/aws/elb-layer7-loadbalancer.yaml) |
+| AWS | 4 | [`aws/elb-layer4-loadbalancer`](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/aws/elb-layer4-loadbalancer.yaml) |
+| AWS | 7 | [`aws/elb-layer7-loadbalancer`](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/aws/elb-layer7-loadbalancer.yaml) |
+| AWS | 7 | [`aws/alb-full`](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/aws/alb-full.yaml) |
 
 ### `global.ingress.configureCertmanager`
 
-Global setting that controls the automatic configuration of [cert-manager](https://artifacthub.io/packages/helm/jetstack/cert-manager)
+Global setting that controls the automatic configuration of [cert-manager](https://cert-manager.io/docs/installation/helm/)
 for Ingress objects. If `true`, relies on `certmanager-issuer.email` being set.
 
 If `false` and `global.ingress.tls.secretName` is not set, this will activate automatic
@@ -214,6 +215,16 @@ the `global.gitlabVersion` key:
 This impacts the default image tag used in the `webservice`, `sidekiq`, and `migration`
 charts. Note that the `gitaly`, `gitlab-shell` and `gitlab-runner` image tags should
 be separately updated to versions compatible with the GitLab version.
+
+## Adding suffix to all image tags
+
+If you wish to add a suffix to the name of all images used in the Helm chart, you can use the `global.image.tagSuffix` key.
+An example of this use case might be if you wish to use fips compliant container images from GitLab, which are all built
+with the `-fips` extension to the image tag.
+
+```shell
+--set global.image.tagSuffix="-fips"
+```
 
 ## Configure PostgreSQL settings
 
@@ -1237,7 +1248,7 @@ The incoming email settings are explained in the [command line options page](../
 
 #### Custom secret
 
-One can optionally customize the KAS `secret` name as well and `key`, either by
+One can optionally customize the KAS `secret` name as well as `key`, either by
 using Helm's `--set variable` option:
 
 ```shell
@@ -1299,6 +1310,30 @@ global:
       externalUrl: "wss://custom-kas-url.example.com"
       internalUrl: "grpc://custom-internal-url"
 ```
+
+### Suggested Reviewers settings
+
+#### Custom secret
+
+One can optionally customize the Suggested Reviewers `secret` name as well as
+`key`, either by using Helm's `--set variable` option:
+
+```shell
+--set global.appConfig.suggested_reviewers.secret=custom-secret-name \
+--set global.appConfig.suggested_reviewers.key=custom-secret-key \
+```
+
+or by configuring your `values.yaml`:
+
+```yaml
+global:
+  appConfig:
+    suggested_reviewers:
+      secret: "custom-secret-name"
+      key: "custom-secret-key"
+```
+
+If you'd like to customize the secret value, refer to the [secrets documentation](../installation/secrets.md#gitlab-suggested-reviewers-secret).
 
 ### LDAP
 
@@ -1623,7 +1658,7 @@ corresponding queue:
 
 - The query is following the
   [worker matching query](https://docs.gitlab.com/ee/administration/operations/extra_sidekiq_processes.html#queue-selector) syntax.
-- The `<queue_name>` must be a valid Sidekiq queue name. If the queue name
+- The `<queue_name>` must match a valid Sidekiq queue name `sidekiq.pods[].queues` defined under [`sidekiq.pods`](gitlab/sidekiq/index.md#per-pod-settings). If the queue name
   is `nil`, or an empty string, the worker is routed to the queue generated
   by the name of the worker instead.
 
@@ -1636,7 +1671,7 @@ global:
   appConfig:
     sidekiq:
       routingRules:
-      - ["resource_boundary=cpu", "cpu_boundary"]
+      - ["resource_boundary=cpu", "cpu-boundary"]
       - ["feature_category=pages", null]
       - ["feature_category=search", "search"]
       - ["feature_category=memory|resource_boundary=memory", "memory-bound"]

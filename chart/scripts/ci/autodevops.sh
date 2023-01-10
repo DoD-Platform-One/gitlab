@@ -74,10 +74,10 @@ function deploy() {
 
   #ROOT_PASSWORD=$(cat /dev/urandom | LC_TYPE=C tr -dc "[:alpha:]" | head -c 16)
   #echo "Generated root login: $ROOT_PASSWORD"
-  kubectl create secret generic "${RELEASE_NAME}-gitlab-initial-root-password" --from-literal=password=$ROOT_PASSWORD -o yaml --dry-run | kubectl replace --force -f -
+  kubectl create secret generic "${RELEASE_NAME}-gitlab-initial-root-password" --from-literal=password=$ROOT_PASSWORD -o yaml --dry-run=client | kubectl replace --force -f -
 
   echo "${REVIEW_APPS_EE_LICENSE}" > /tmp/license.gitlab
-  kubectl create secret generic "${RELEASE_NAME}-gitlab-license" --from-file=license=/tmp/license.gitlab -o yaml --dry-run | kubectl replace --force -f -
+  kubectl create secret generic "${RELEASE_NAME}-gitlab-license" --from-file=license=/tmp/license.gitlab -o yaml --dry-run=client | kubectl replace --force -f -
 
   # YAML_FILE=""${KUBE_INGRESS_BASE_DOMAIN//\./-}.yaml"
 
@@ -304,7 +304,7 @@ function create_secret() {
     --docker-username="$CI_REGISTRY_USER" \
     --docker-password="$CI_REGISTRY_PASSWORD" \
     --docker-email="$GITLAB_USER_EMAIL" \
-    -o yaml --dry-run | kubectl replace -n "$NAMESPACE" --force -f -
+    -o yaml --dry-run=client | kubectl replace -n "$NAMESPACE" --force -f -
 }
 
 function delete() {
