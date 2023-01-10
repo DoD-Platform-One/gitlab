@@ -1,2 +1,2 @@
-registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:15.6.1
-registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:15.6.1
+registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:15.7.0
+registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:15.7.0

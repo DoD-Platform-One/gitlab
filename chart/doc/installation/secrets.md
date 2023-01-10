@@ -276,6 +276,16 @@ You can leave it to the chart to auto-generate the secret, or you can create thi
 kubectl create secret generic <name>-kas-private-api --from-literal=kas_private_api_secret=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
 ```
 
+### GitLab Suggested Reviewers secret
+
+GitLab Rails requires that a secret for Suggested Reviewers is present. You can
+leave it to the chart to auto-generate the secret, or you can create this secret
+manually (replace `<name>` with the name of the release):
+
+```shell
+kubectl create secret generic <name>-gitlab-suggested-reviewers --from-literal=suggested_reviewers_secret=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
+```
+
 ### MinIO secret
 
 Generate a set of random 20 & 64 character alpha-numeric keys for MinIO.

@@ -13,8 +13,7 @@ nginx-ingress:
   controller:
     image:
       repository: registry.gitlab.com/gitlab-org/cloud-native/charts/gitlab-ingress-nginx/controller
-      tag: v1.2.1-ubi8
-      digest: sha256:ac77552a7ace8645eaccd8ffa23129a427ec3373e14836f8790a92616a0ec817
+      digest: "" #empty to use the tag rather than the digest
 
 prometheus:
   install: false
@@ -31,11 +30,29 @@ global:
 
   image:
     pullPolicy: Always  # You can drop this if you're using release tags.
+    tagSuffix: -ubi8
 
+  # Override the busybox image to use gitlab-base, it does not support tagSuffix
+  # and an explicit tag must be specified.
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3432
+  # It is recommended to use a specific GitLab version here e.g. v15.6.2-ubi8
+  busybox:
+    image:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-base
+      tag: master-ubi8
+
+  # The kubectl image doesn't currently support tagSuffix due to a digest
+  # reference in the default vaults - an explicit tag must be specified.
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3717
+  # It is recommended to use a specific GitLab version here e.g. v15.6.2-ubi8
   kubectl:
     image:
-      tag: 1.12.10-ubi8
+      tag: master-ubi8
 
+  # The certificates image doesn't currently support tagSuffix due to a digest
+  # reference in the default vaults - an explicit tag must be specified.
+  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3717
+  # It is recommended to use a specific GitLab version here e.g. v15.6.2-ubi8
   certificates:
     image:
       tag: master-ubi8
@@ -97,34 +114,7 @@ global:
 
 gitlab:
 
-  gitaly:
-    image:
-      tag: master-ubi8
-
-  gitlab-exporter:
-    image:
-      tag: master-ubi8
-
-  gitlab-shell:
-    image:
-      tag: main-ubi8 # gitlab-shell's default branch is main, not master!
-
-  gitlab-mailroom:
-    image:
-      tag: master-ubi8
-
-  migrations:
-    image:
-      tag: master-ubi8
-
-  sidekiq:
-    image:
-      tag: master-ubi8
-
   toolbox:
-    image:
-      tag: master-ubi8
-
     # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
     backups:
       objectStorage:
@@ -132,16 +122,8 @@ gitlab:
           secret: my-s3cmd-config # You config for 's3cmd'.
           key: config
 
-  webservice:
-    image:
-      tag: master-ubi8
-    workhorse:
-      tag: master-ubi8
-
 # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-object-storage
 registry:
-  image:
-    tag: v3.51.1-gitlab-ubi8
   storage:
     secret: my-objectstore-registry-secret # Registry storage secret.
     key: config

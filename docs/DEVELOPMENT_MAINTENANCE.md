@@ -8,7 +8,6 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 1. In ```/chart/requirements.yaml``` update the gluon library to the latest version.
 1. Run a helm dependency command to update the chart/charts/*.tgz archives and create a new requirements.lock file. You will commit the tar archives along with the requirements.lock that was generated.
     ```bash
-    export HELM_EXPERIMENTAL_OCI=1
     helm dependency update ./chart
     ```
 1. In ```/chart/values.yaml``` update all the gitlab image tags to the new version. There are about 12 of them. Renovate might have arleady done this for you.
@@ -213,12 +212,6 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
   - Remove non-certificate metadata from `Carillon_Federal_Services/Trust_Chain_1/1-Carillon_Federal_Services_PIVI_CA2.cer`
   - Remove non-certificate metadata from `DigiCert_NFI/Trust_Chain_2/2-Senate_PIV-I_CA_G5.cer`
 
-## chart/charts/gitlab/charts/gitaly/templates/_service_spec.yaml
-- Change gitaly service spec template. Port name prefix changed from 'grpc' to 'tcp' so that istio injection properly handles the backend communication.
-  ```
-  name: tcp-{{ coalesce .Values.service.name .Values.global.gitaly.service.name }}
-  ```
-
 ## chart/templates/bigbang/*
 - add istio virtual service
 - add networkpolicies
@@ -292,3 +285,7 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 - add gitlab.migrations.annotations: sidecar.istio.io/inject: "false"
 - add minio.jobAnnotations: sidecar.istio.io/inject: "false"
 - add gitlab.toolbox.annotations: `sidecar.istio.io/proxyMemory: 512Mi` and `sidecar.istio.io/proxyMemoryLimit: 512Mi`
+
+# chart/Chart.yaml
+- change version key to Big Bang composite version
+- add Big Bang annotations.bigbang.dev/applicationVersions key to support release automation

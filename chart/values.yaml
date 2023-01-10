@@ -36,6 +36,7 @@ global:
   image: {}
     # pullPolicy: IfNotPresent
     # pullSecrets: []
+    # tagSuffix: ""
 
   ## Supplemental Pod labels. Will not be used for selectors.
   pod:
@@ -448,6 +449,11 @@ global:
       # externalUrl:
       # internalUrl:
 
+    ## https://docs.gitlab.com/charts/charts/globals#suggested-reviewers-settings
+    suggested_reviewers: {}
+      # secret:
+      # key:
+
     ## https://docs.gitlab.com/charts/charts/globals#omniauth
     omniauth:
       enabled: false
@@ -714,7 +720,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -755,7 +761,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -863,7 +869,8 @@ nginx-ingress:
     addHeaders:
       Referrer-Policy: strict-origin-when-cross-origin
     config:
-      hsts: "false"
+      annotation-value-word-blocklist: "load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""
+      hsts: "true"
       hsts-include-subdomains: "false"
       hsts-max-age: "63072000"
       server-name-hash-bucket-size: "256"
@@ -1210,7 +1217,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.6.1
+    tag: 15.7.0
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1349,7 +1356,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1400,7 +1407,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1430,7 +1437,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1454,7 +1461,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1467,7 +1474,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1481,11 +1488,11 @@ gitlab:
       port: 8083
       serviceMonitor:
         enabled: true
-## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
+  ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1508,7 +1515,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1535,7 +1542,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1565,7 +1572,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.6.1
+      tag: 15.7.0
       pullSecrets:
         - name: private-registry
 
@@ -1579,7 +1586,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.6.1
+      tag: 15.7.0
     init:
       resources:
         limits:
@@ -1620,7 +1627,7 @@ minio:
     sidecar.istio.io/inject: "false"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-11-26T22-43-32Z
+  imageTag: RELEASE.2022-12-12T19-27-27Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -1629,7 +1636,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-11-17T21-20-39Z
+    tag: RELEASE.2022-12-13T00-23-28Z
     pullSecrets:
     - name: private-registry
 
@@ -1691,7 +1698,7 @@ bbtests:
       cypress_gitlab_first_name: "test"
       cypress_gitlab_last_name: "user"
       cypress_gitlab_username: "testuser"
-      cypress_gitlab_password: "12345678"
+      cypress_gitlab_password: "Password123h56a78"
       cypress_gitlab_email: "testuser@example.com"
       cypress_gitlab_project: "my-awesome-project"
     secretEnvs:
@@ -1704,9 +1711,9 @@ bbtests:
     image: "registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.4"
     envs:
       GITLAB_USER: "testuser"
-      GITLAB_PASS: "12345678"
+      GITLAB_PASS: "Password123h56a78"
       GITLAB_EMAIL: "testuser@example.com"
       GITLAB_PROJECT: "my-awesome-project"
       GITLAB_REPOSITORY: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
-      GITLAB_ORIGIN: http://testuser:12345678@gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      GITLAB_ORIGIN: http://testuser:Password123h56a78@gitlab-webservice-default.gitlab.svc.cluster.local:8181
       GITLAB_REGISTRY: gitlab-registry-test-svc.gitlab.svc.cluster.local:80

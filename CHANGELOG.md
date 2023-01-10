@@ -3,6 +3,24 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.7.0-bb.0] - 2023-01-05
+### Changed
+- Updated to helm chart to 6.7.0 and appVersion to 15.7.0
+- ironbank/gitlab/gitlab/gitlab-webservice minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl minor 15.6.1 -> 15.7.0
+- registry1.dso.mil/ironbank/opensource/minio/mc patch RELEASE.2022-11-17T21-20-39Z -> RELEASE.2022-12-13T00-23-28Z
+- registry1.dso.mil/ironbank/opensource/minio/minio patch RELEASE.2022-11-26T22-43-32Z -> RELEASE.2022-12-12T19-27-27Z
+
 ## [6.6.1-bb.1] - 2022-12-06
 ### Changed
 - updated gitaly networkPolicies to allow for gitlab mirroring
@@ -24,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - registry1.dso.mil/ironbank/gitlab/gitlab/kubectl minor 15.5.2 -> 15.6.1
 - registry1.dso.mil/ironbank/opensource/minio/mc patch RELEASE.2022-11-07T23-47-39Z -> RELEASE.2022-11-17T21-20-39Z
 - registry1.dso.mil/ironbank/opensource/minio/minio patch RELEASE.2022-11-11T03-44-20Z -> RELEASE.2022-11-26T22-43-32Z
+
 ## [6.5.2-bb.3] - 2022-12-1
 ### Changed
 - Updated DoD Approved External PKI Certificate Trust Chains to Version 9.5
