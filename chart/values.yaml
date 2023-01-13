@@ -1708,7 +1708,7 @@ bbtests:
             name: gitlab-gitlab-initial-root-password
             key: password
   scripts:
-    image: "registry.dso.mil/platform-one/big-bang/apps/developer-tools/gitlab/bbtests:0.0.4"
+    image: "registry1.dso.mil/bigbang-ci/gitlab-tester:0.0.4"
     envs:
       GITLAB_USER: "testuser"
       GITLAB_PASS: "Password123h56a78"
