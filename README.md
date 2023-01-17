@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.7.0-bb.1](https://img.shields.io/badge/Version-6.7.0--bb.1-informational?style=flat-square) ![AppVersion: 15.7.0](https://img.shields.io/badge/AppVersion-15.7.0-informational?style=flat-square)
+![Version: 6.7.0-bb.2](https://img.shields.io/badge/Version-6.7.0--bb.2-informational?style=flat-square) ![AppVersion: 15.7.0](https://img.shields.io/badge/AppVersion-15.7.0-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -766,6 +766,9 @@ helm install gitlab chart/
 | gitlab.mailroom.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom"` |  |
 | gitlab.mailroom.image.tag | string | `"15.7.0"` |  |
 | gitlab.mailroom.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| gitlab.gitlab-pages.service.customDomains.type | string | `"ClusterIP"` |  |
+| gitlab.gitlab-pages.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages"` |  |
+| gitlab.gitlab-pages.image.tag | string | `"15.7.0"` |  |
 | gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
 | gitlab.praefect.image.tag | string | `"15.7.0"` |  |
 | gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |
@@ -804,6 +807,13 @@ helm install gitlab chart/
 | istio.registry.labels | object | `{}` |  |
 | istio.registry.gateways[0] | string | `"istio-system/main"` |  |
 | istio.registry.hosts | string | `nil` |  |
+| istio.pages.enabled | bool | `false` |  |
+| istio.pages.annotations | object | `{}` |  |
+| istio.pages.ingressLabels.app | string | `"pages-ingressgateway"` |  |
+| istio.pages.ingressLabels.istio | string | `"ingressgateway"` |  |
+| istio.pages.labels | object | `{}` |  |
+| istio.pages.gateways[0] | string | `"istio-system/pages"` |  |
+| istio.pages.hosts[0] | string | `"*.pages.bigbang.dev"` |  |
 | istio.mtls | object | `{"mode":"STRICT"}` | Default peer authentication |
 | istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
 | monitoring.enabled | bool | `false` |  |
