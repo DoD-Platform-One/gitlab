@@ -69,6 +69,7 @@ global:
     smartcard: {}
     kas: {}
     pages: {}
+    #  name: 'pages.bigbang.dev'
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
   ingress:
@@ -1579,7 +1580,13 @@ gitlab:
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
   #   gitlab-grafana:
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-pages
-  #   gitlab-pages:
+  gitlab-pages:
+    service:
+      customDomains:
+        type: ClusterIP
+    image:
+      repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
+      tag: 15.7.0
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
   ## https://docs.gitlab.com/charts/charts/gitlab/praefect
@@ -1664,6 +1671,19 @@ istio:
       - istio-system/main
     # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
     hosts: null
+  pages:
+    # Toggle vs creation
+    enabled: false
+    annotations: {}
+    ingressLabels:
+      app: pages-ingressgateway
+      istio: ingressgateway
+    labels: {}
+    gateways:
+      - istio-system/pages
+    #only affects the Istio VirtualService ingress. Does not affect Gitlab configuration. Must be populated as a wildcard.
+    hosts:
+    - '*.pages.bigbang.dev'
   # -- Default peer authentication
   mtls:
     # -- STRICT = Allow only mutual TLS traffic,

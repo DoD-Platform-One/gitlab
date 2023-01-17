@@ -1,0 +1,36 @@
+{{- if and .Values.istio.enabled .Values.istio.pages.enabled .Values.global.pages.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-pages
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- if .Values.istio.pages.labels }}
+      {{ toYaml .Values.istio.pages.labels | indent 4 }}
+    {{- end }}
+    app.kubernetes.io/component: "gitlab"
+  {{- if .Values.istio.pages.annotations }}
+  annotations:
+    {{ toYaml .Values.istio.pages.annotations | indent 4 }}
+  {{- end }}
+spec:
+  gateways:
+  {{- range .Values.istio.pages.gateways }}
+    - {{ . }}
+  {{- end }}
+  hosts:
+  {{- if .Values.istio.pages.hosts }}
+  {{- range .Values.istio.pages.hosts }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+    - "{{ .Values.global.hosts.pages.name }}"
+  {{- end }}
+  http:
+    - name: "pages"
+      route:
+      - destination:
+          host: {{ .Release.Name }}-gitlab-pages-custom-domains.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: 80
+{{- end }}

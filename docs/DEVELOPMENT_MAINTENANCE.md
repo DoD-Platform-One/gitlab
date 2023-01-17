@@ -227,6 +227,18 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
   {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}{{ .Values.backups.cron.istioShutdown }}{{- end }}
   ```
 
+## chart/charts/gitlab/charts/gitlab-pages/templates/service-custom-domains.yaml
+- Ensure the conditional checking for empty `$externalAddresses` is removed from above the entirety of the template, and instead above the first use of it where it checks if the length of the value is `>1`. Add a closing `{{- end }}` after the existing `{{- else }}` and `{{- end }}` around the `loadBalancerIP:` & `externalIPs:` entries.
+  ```
+  {{- if not (empty ($externalAddresses)) -}}
+  {{-   if len $externalAddresses | eq 1 }}
+  ...
+  {{- end }}
+  ```
+- Remove the un-indented `{{- end }}` from the very bottom of the template (to complete the removal of the if statement being around the entire template).
+- Remove the `{{- if not (empty $.Values.global.pages.externalHttp) }}` and closing `{{- end }}` from around the `80` port definition so it is always present.
+- Remove the `{{- if not (empty $.Values.global.pages.externalHttps) }}` and closing `{{- end }}` from around the `443` port definition so it is always present.
+
 ## chart/charts/minio/templates/_helper_create_buckets.sh
 - hack the MinIO sub-chart to work with newer mc version in IronBank image
     line 65
