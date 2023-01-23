@@ -1,8 +1,8 @@
 ---
 apiVersion: v1
 name: gitlab
-version: 6.7.0-bb.3
-appVersion: 15.7.0
+version: 6.7.5-bb.0
+appVersion: 15.7.5
 description: The One DevOps Platform
 keywords:
 - gitlab
@@ -15,7 +15,7 @@ maintainers:
   email: support@gitlab.com
 annotations:
   bigbang.dev/applicationVersions: |
-    - Gitlab: 15.7.0
+    - Gitlab: 15.7.5
   helm.sh/images: |
     - name: redis-exporter
       condition: redis.metrics.enabled
@@ -24,27 +24,29 @@ annotations:
       condition: redis.install
       image: registry1.dso.mil/ironbank/bitnami/redis:7.0.0-debian-10-r3
     - name: alpine-certificates
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates:15.7.5
     - name: cfssl-self-sign
       condition: shared-secrets.enabled
       image: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign:1.6.1
     - name: gitaly
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:15.7.5
     - name: gitlab-container-registry
       condition: registry.enabled
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry:15.7.5
     - name: gitlab-shell
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell:15.7.5
     - name: gitlab-sidekiq
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq:15.7.5
     - name: gitlab-toolbox
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox:15.7.5
     - name: gitlab-webservice
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice:15.7.5
     - name: gitlab-workhorse
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse:15.7.5
+    - name: gitlab-pages
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages:15.7.3
     - name: kubectl
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:15.7.5
     - name: mc
       image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2022-12-13T00-23-28Z
     - name: minio
@@ -57,7 +59,7 @@ annotations:
       image: registry1.dso.mil/ironbank/redhat/ubi/ubi8:8.7
     - name: gitlab-exporter
       condition: gitlab-exporter.enabled
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:15.7.0
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:15.7.5
     - name: bbtests
       condition: bbtests.enabled
       image: registry1.dso.mil/bigbang-ci/gitlab-tester:0.0.4
