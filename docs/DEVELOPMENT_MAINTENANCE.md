@@ -22,6 +22,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
       bigbang.dev/applicationVersions: |
         - Gitlab: X.X.X
     ```
+1. Update /chart/Chart.yaml ```annotations.helm.sh/images``` section to fix references to updated packages (if needed)
 1. Use a development environment to deploy and test Gitlab. See more detailed testing instructions below. Also test with gitlab-runner to make sure it still works with the new Gitlab version. Also test an upgrade by deploying the old version first and then deploying the new version.
 1. When the Package pipeline runs expect the cypress tests to fail due to UI changes. Note that most of the cypress test files are synced to the gitlab-runner Package to avoid having two different versions of the same tests. There is one place in particular that frequently fails because the button id number ```button[id="__BVID__XX__BV_toggle_"]``` changes in ```/chart/tests/cypress/03-gitlab-login.spec.js```. It is usually necessary to run the cypress tests locally in order to troubleshoot a failing test. The following steps are about how to set up local cypress testing. There is not good documentation anywhere else so it is included here.
     1. Install a current version of cypress on your workstation.
@@ -300,4 +301,4 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 
 # chart/Chart.yaml
 - change version key to Big Bang composite version
-- add Big Bang annotations.bigbang.dev/applicationVersions key to support release automation
+- add Big Bang annotations.bigbang.dev/applicationVersions and annotations.helm.sh/images keys to support release automation
