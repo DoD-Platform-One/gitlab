@@ -170,29 +170,82 @@ describe 'kas configuration' do
         expect(config_yaml_data['gitlab']).not_to be_nil
       end
 
-      context 'when privateApi.tls is enabled' do
-        let(:kas_values) do
-          default_kas_values.deep_merge!(YAML.safe_load(%(
-              gitlab:
-                kas:
-                  privateApi:
-                    tls:
-                      enabled: true
-            )))
+      describe 'tls config' do
+        shared_context 'privateApi with tls' do
+          it 'configures the privateApi with certificate files' do
+            expected_config = {
+              "listen" => {
+                "address" => :"8155",
+                "authentication_secret_file" => "/etc/kas/.gitlab_kas_private_api_secret",
+                "ca_certificate_file" => "/etc/ssl/certs/ca-certificates.crt",
+                "certificate_file" => "/etc/kas/tls.crt",
+                "key_file" => "/etc/kas/tls.key"
+              }
+            }
+
+            expect(config_yaml_data['private_api']).to eq(expected_config)
+          end
         end
 
-        it 'does not have redis config' do
-          expected_config = {
-            "listen" => {
-              "address" => :"8155",
-              "authentication_secret_file" => "/etc/kas/.gitlab_kas_private_api_secret",
-              "ca_certificate_file" => "/etc/ssl/certs/ca-certificates.crt",
-              "certificate_file" => "/etc/kas/tls.crt",
-              "key_file" => "/etc/kas/tls.key"
-            }
-          }
+        context 'when global.kas.tls is enabled' do
+          let(:kas_values) do
+            default_kas_values.deep_merge!(YAML.safe_load(%(
+                global:
+                  kas:
+                    tls:
+                      enabled: true
+              )))
+          end
 
-          expect(config_yaml_data['private_api']).to eq(expected_config)
+          it 'configures agent servers with certificate files' do
+            expected_config = {
+              "listen" => {
+                "address" => :"8150",
+                "websocket" => true,
+                "certificate_file" => "/etc/kas/tls.crt",
+                "key_file" => "/etc/kas/tls.key"
+              },
+              "kubernetes_api" => {
+                "listen" => {
+                  "address" => :"8154",
+                  "certificate_file" => "/etc/kas/tls.crt",
+                  "key_file" => "/etc/kas/tls.key"
+                },
+                "url_path_prefix" => "/k8s-proxy"
+              }
+            }
+
+            expect(config_yaml_data['agent']).to eq(expected_config)
+          end
+
+          it 'configures the server for GitLab requests with certificate files' do
+            expected_config = {
+              "listen" => {
+                "address" => :"8153",
+                "authentication_secret_file" => "/etc/kas/.gitlab_kas_secret",
+                "certificate_file" => "/etc/kas/tls.crt",
+                "key_file" => "/etc/kas/tls.key"
+              }
+            }
+
+            expect(config_yaml_data['api']).to eq(expected_config)
+          end
+
+          it_behaves_like 'privateApi with tls'
+        end
+
+        context 'when privateApi.tls is enabled' do
+          let(:kas_values) do
+            default_kas_values.deep_merge!(YAML.safe_load(%(
+                gitlab:
+                  kas:
+                    privateApi:
+                      tls:
+                        enabled: true
+              )))
+          end
+
+          it_behaves_like 'privateApi with tls'
         end
       end
 
@@ -531,39 +584,60 @@ describe 'kas configuration' do
         end
       end
 
-      context 'when privateApi.tls is enabled' do
-        let(:kas_values) do
-          default_kas_values.deep_merge!(YAML.safe_load(%(
-              gitlab:
-                kas:
-                  privateApi:
-                    tls:
-                      enabled: true
-            )))
-        end
-
-        it 'sets OWN_PRIVATE_API_URL to use grpcs' do
-          expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
-            { "name" => "OWN_PRIVATE_API_URL", "value" => "grpcs://$(POD_IP):8155" }
-          )
-        end
-
-        it 'creates the TLS secret volume' do
-          init_etc_kas_volume = deployment['spec']['template']['spec']['volumes'].find do |volume|
-            volume['name'] == 'init-etc-kas'
+      describe 'tls' do
+        shared_context 'a deployment with tls' do
+          it 'sets OWN_PRIVATE_API_URL to use grpcs' do
+            expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
+              { "name" => "OWN_PRIVATE_API_URL", "value" => "grpcs://$(POD_IP):8155" }
+            )
           end
 
-          expect(init_etc_kas_volume['projected']['sources']).to include(
-            {
-              "secret" => {
-                "name" => nil,
-                "items" => [
-                  { "key" => "tls.crt", "path" => "tls.crt" },
-                  { "key" => "tls.key", "path" => "tls.key" }
-                ]
+          it 'creates the TLS secret volume' do
+            init_etc_kas_volume = deployment['spec']['template']['spec']['volumes'].find do |volume|
+              volume['name'] == 'init-etc-kas'
+            end
+
+            expect(init_etc_kas_volume['projected']['sources']).to include(
+              {
+                "secret" => {
+                  "name" => "example-tls",
+                  "items" => [
+                    { "key" => "tls.crt", "path" => "tls.crt" },
+                    { "key" => "tls.key", "path" => "tls.key" }
+                  ]
+                }
               }
-            }
-          )
+            )
+          end
+        end
+
+        context 'when privateApi.tls is enabled' do
+          let(:kas_values) do
+            default_kas_values.deep_merge!(YAML.safe_load(%(
+                gitlab:
+                  kas:
+                    privateApi:
+                      tls:
+                        enabled: true
+                        secretName: example-tls
+              )))
+          end
+
+          it_behaves_like 'a deployment with tls'
+        end
+
+        context 'when global.kas.tls is enabled' do
+          let(:kas_values) do
+            default_kas_values.deep_merge!(YAML.safe_load(%(
+                global:
+                  kas:
+                    tls:
+                      enabled: true
+                      secretName: example-tls
+              )))
+          end
+
+          it_behaves_like 'a deployment with tls'
         end
       end
 

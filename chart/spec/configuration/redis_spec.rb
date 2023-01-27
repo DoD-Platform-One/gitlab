@@ -46,6 +46,70 @@ describe 'Redis configuration' do
     end
   end
 
+  describe 'redis.yml override' do
+    context 'when redisYmlOverride is not set' do
+      let(:values) { default_values }
+
+      it 'does not render a file' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        expect(t.dig('ConfigMap/test-webservice','data')).not_to include('redis.yml.erb')
+      end
+    end
+
+    context 'When redis.install is true' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              redisYmlOverride:
+                foo: bar
+          redis:
+            install: true
+        )).merge(default_values)
+      end
+
+      it 'fails to template (checkConfig)' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).not_to eq(0)
+      end
+    end
+
+    context 'when redis.install is false' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              redisYmlOverride:
+                foo: bar
+                baz: [1, 2, 3]
+                deeply:
+                  nested: value
+                # ERB should pass through Helm without being evaluated
+                password: <%= File.read('/path/to/password').chomp %>
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'renders arbitrary values' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        actual = YAML.safe_load(t.dig('ConfigMap/test-webservice','data','redis.yml.erb'))
+        expect(actual).to eq(
+          {
+            'production' => {
+              'foo' => 'bar',
+              'baz' => [1, 2, 3],
+              'deeply' => { 'nested' => 'value' },
+              'password' => %q(<%= File.read('/path/to/password').chomp %>)
+            }
+          }
+        )
+      end
+    end
+  end
+
   describe 'Split Redis queues' do
     context 'When redis.install is true' do
       let(:values) do

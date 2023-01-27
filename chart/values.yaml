@@ -375,7 +375,6 @@ global:
       user_id: ""
       tenant: ""
       client_id: ""
-      client_secret: ""
       client_secret:
         secret: ""
         key: secret
@@ -395,6 +394,7 @@ global:
       password:
         secret: ""
         key: password
+      deleteAfterDelivery: true
       expungeDeleted: false
       logger:
         logPath: "/dev/stdout"
@@ -421,6 +421,7 @@ global:
       password:
         secret: ""
         key: password
+      deleteAfterDelivery: true
       expungeDeleted: false
       logger:
         logPath: "/dev/stdout"
@@ -553,6 +554,11 @@ global:
     enabled: false
     service:
       apiExternalPort: 8153 # port for connections from the GitLab backend
+    tls:
+      enabled: false
+      verify: true
+      # secretName:
+      # caSecretName:
 
   ## https://docs.gitlab.com/charts/charts/gitlab/spamcheck/
   spamcheck:
@@ -721,7 +727,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -762,7 +768,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1218,7 +1224,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.7.5
+    tag: 15.8.0
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1357,7 +1363,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1408,7 +1414,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1438,7 +1444,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1462,7 +1468,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1475,7 +1481,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1493,7 +1499,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1516,7 +1522,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1543,7 +1549,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1573,7 +1579,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.7.5
+      tag: 15.8.0
       pullSecrets:
         - name: private-registry
 
@@ -1586,14 +1592,14 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 15.7.3
+      tag: 15.8.0
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
   ## https://docs.gitlab.com/charts/charts/gitlab/praefect
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.7.5
+      tag: 15.8.0
     init:
       resources:
         limits:

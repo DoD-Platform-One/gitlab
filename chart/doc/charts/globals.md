@@ -489,15 +489,16 @@ continue to apply with the Sentinel support unless re-specified in the table abo
 The GitLab chart includes support for running with separate Redis instances
 for different persistence classes, currently:
 
-| Instance       | Purpose                                                         |
-|:---------------|:----------------------------------------------------------------|
-| `cache`        | Store cached data                                               |
-| `queues`       | Store Sidekiq background jobs                                   |
-| `sharedState`  | Store various persistent data such as distributed locks         |
-| `actioncable`  | Pub/Sub queue backend for ActionCable                           |
-| `traceChunks`  | Store job traces temporarily                                    |
-| `rateLimiting` | Store rate-limiting usage for RackAttack and Application Limits |
-| `sessions`     | Store user session data                                         |
+| Instance          | Purpose                                                         |
+|:------------------|:----------------------------------------------------------------|
+| `cache`           | Store cached data                                               |
+| `queues`          | Store Sidekiq background jobs                                   |
+| `sharedState`     | Store various persistent data such as distributed locks         |
+| `actioncable`     | Pub/Sub queue backend for ActionCable                           |
+| `traceChunks`     | Store job traces temporarily                                    |
+| `rateLimiting`    | Store rate-limiting usage for RackAttack and Application Limits |
+| `sessions`        | Store user session data                                         |
+| `repositoryCache` | Store repository related data                                   |
 
 Any number of the instances may be specified. Any instances not specified
 will be handled by the primary Redis instance specified
@@ -564,6 +565,13 @@ global:
         enabled: true
         secret: sessions-secret
         key: sessions-password
+    repositoryCache:
+      host: repositoryCache.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: repositoryCache-secret
+        key: repositoryCache-password
 ```
 
 The following table describes the attributes for each dictionary of the
@@ -585,16 +593,27 @@ configurations **are not shared** and needs to be specified for each
 instance that uses Sentinels. Please refer to the [Sentinel configuration](#redis-sentinel-support)
 for the attributes that are used to configure Sentinel servers.
 
-### Specifying secure Redis scheme (SSL)
+### Specify secure Redis scheme (SSL)
 
-In order to connect to Redis using SSL, the `rediss` (note the double `s`) scheme parameter is required:
+To connect to Redis with SSL:
 
-```yaml
-global:
-  redis:
-    scheme: rediss
-  --set global.redis.scheme=rediss
-```
+1. Update your configuration to use the `rediss` (double `s`) scheme parameter.
+1. In your configuration, set `authClients` to `false`:
+
+   ```yaml
+   global:
+     redis:
+       scheme: rediss
+   redis:
+     tls:
+       enabled: true
+       authClients: false
+   ```
+
+   This configuration is required because [Redis defaults to mutual TLS](https://redis.io/docs/management/security/encryption/#client-certificate-authentication), which not all chart components support.
+
+1. Follow Bitnami's [steps to enable TLS](https://docs.bitnami.com/kubernetes/infrastructure/redis/administration/enable-tls/). Make sure the chart components trust the certificate authority used to create Redis certificates.
+1. Optional. If you use a custom certificate authority, see the [Custom Certificate Authorities](#custom-certificate-authorities) global configuration.
 
 ### Password-less Redis Servers
 
@@ -1309,6 +1328,44 @@ global:
       enabled: true
       externalUrl: "wss://custom-kas-url.example.com"
       internalUrl: "grpc://custom-internal-url"
+```
+
+#### TLS settings
+
+KAS supports TLS communication between its `kas` pods and other GitLab chart components.
+
+Prerequisites:
+
+- Use [GitLab 15.5.1 or later](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/101571#note_1146419137).
+  You can set your GitLab version with `global.gitlabVersion: <version>`. If you need to force an image update
+  after an initial deployment, also set `global.image.pullPolicy: Always`.
+- [Create the certificate authority](../advanced/internal-tls/index.md) and certificates that your `kas` pods will trust.
+
+To configure `kas` to use the certificates you created, set the following values.
+
+| Value                                    | Description                                                                      |
+|------------------------------------------|----------------------------------------------------------------------------------|
+| `global.kas.tls.enabled`                 | Mounts the certificates volume and enables TLS communication to `kas` endpoints. |
+| `global.kas.tls.secretName`    | Specifies which Kubernetes TLS secret stores your certificates.                  |
+| `global.kas.tls.caSecretName`    | Specifies which Kubernetes TLS secret stores your custom CA.                     |
+
+For example, you could use the following in your `values.yaml` file to deploy your chart:
+
+```yaml
+.internal-ca: &internal-ca gitlab-internal-tls-ca # The secret name you used to share your TLS CA.
+.internal-tls: &internal-tls gitlab-internal-tls # The secret name you used to share your TLS certificate.
+
+global:
+  certificates:
+    customCAs:
+    - secret: *internal-ca
+  hosts:
+    domain: gitlab.example.com # Your gitlab domain 
+  kas:
+    tls:
+      enabled: true
+      secretName: *internal-tls
+      caSecretName: *internal-ca
 ```
 
 ### Suggested Reviewers settings

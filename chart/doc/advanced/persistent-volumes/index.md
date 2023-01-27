@@ -278,9 +278,13 @@ If you want to switch to using a new volume, using a disk that has a copy of the
 appropriate data from the old volume, then first you need to create the new
 [Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes) in Kubernetes.
 
-In order to create a [Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes) for your disk, you will need to
+In order to create a Persistent Volume for your disk, you will need to
 locate the [driver specific documentation](https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes)
-for your storage type.
+for your storage type. You may want to use an existing Persistent Volume of the same [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) as a starting point:
+
+```shell
+kubectl --namespace <namespace> get PersistentVolume <volume name> -o yaml > <volume name>.bak.yaml
+```
 
 There are a couple of things to keep in mind when following the driver documentation:
 
@@ -390,7 +394,7 @@ status:
   phase: Bound
 ```
 
-Create a new YAML file for a new PVC object. Have it use the same `metadata.name`, `metadata.labels`, `metadata,namespace`, and `spec` fields. (With your updates applied). And drop the other settings:
+Create a new YAML file for a new PVC object. Have it use the same `metadata.name`, `metadata.labels`, `metadata.namespace`, and `spec` fields (with your updates applied) and drop the other settings:
 
 Example:
 
@@ -420,10 +424,16 @@ Now delete the old [claim](https://kubernetes.io/docs/concepts/storage/persisten
 kubectl --namespace <namespace> delete PersistentVolumeClaim <claim name>
 ```
 
+You may need to clear `finalizers` to allow deletion to finish:
+
+```shell
+kubectl --namespace <namespace> patch PersistentVolumeClaim <claim name> -p '{"metadata":{"finalizers":null}}'
+```
+
 Create the new claim:
 
 ```shell
-kubectl --namespace <namespace> create PersistentVolumeClaim -f <new claim yaml file>
+kubectl --namespace <namespace> create -f <new claim yaml file>
 ```
 
 If you are binding to the same [PersistentVolume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes) that was previous bound to
