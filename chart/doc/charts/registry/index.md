@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.63.0-gitlab'
+    tag: 'v3.65.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -178,7 +178,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.63.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.65.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
 | `log`                                                                                                                                        | `{level: info, fields: {service: registry}}`                                   | Configure the logging options                                                                                                                                                                                                                                                                                                                |
@@ -332,7 +332,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.63.0-gitlab'`
+- `tag: 'v3.65.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`

@@ -70,8 +70,6 @@ to the `helm install` command using the `--set` flags.
 
 ## Chart configuration examples
 
-### image.pullSecrets
-
 ### extraEnv
 
 `extraEnv` allows you to expose additional environment variables in all containers in the pods.
@@ -118,6 +116,8 @@ extraEnvFrom:
       key: some-string
       # optional: boolean
 ```
+
+### image.pullSecrets
 
 `pullSecrets` allows you to authenticate to a private registry to pull images for a pod.
 

@@ -88,6 +88,16 @@ By default, the Helm charts use the Enterprise Edition of GitLab. The Enterprise
 --set global.edition=ce
 ```
 
+## Convert Community Edition to Enterprise Edition
+
+If you [deployed the Community Edition](#deploy-the-community-edition) and you
+want to convert to the Enterprise Edition, you need to redeploy GitLab without
+specifying `--set global.edition=ce`. If you also specified
+individual images (for example, `--set gitlab.unicorn.image.repository=registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ce`),
+you need to omit any occurrence of those images.
+
+After the deployment, you can [activate your Enterprise Edition license](https://docs.gitlab.com/ee/user/admin_area/license.html).
+
 ## Install the product documentation
 
 This is an optional step. See how to [self-host the product documentation](https://docs.gitlab.com/ee/administration/docs_self_host.html).

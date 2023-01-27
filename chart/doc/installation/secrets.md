@@ -311,9 +311,10 @@ kubectl create secret generic <name>-postgresql-password \
 ### Grafana password
 
 If configuring [Grafana integration](../charts/globals.md#configure-grafana-integration), generate a random 64 character alpha-numeric password.
+Replace `<name>` with the name of the release.
 
 ```shell
-generate_secret_if_needed "gitlab-grafana-initial-password" --from-literal=password=$(gen_random 'a-zA-Z0-9' 64)
+kubectl create secret generic <name>-grafana-initial-password --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 ```
 
 ### GitLab Pages secret

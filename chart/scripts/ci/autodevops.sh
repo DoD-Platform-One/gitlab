@@ -236,6 +236,16 @@ function ensure_namespace() {
   kubectl describe namespace "$NAMESPACE" || kubectl create namespace "$NAMESPACE"
 }
 
+function set_context() {
+  if [ -z ${AGENT_NAME+x} ] || [ -z ${AGENT_PROJECT_PATH+x} ]; then
+    echo "No AGENT_NAME or AGENT_PROJECT_PATH set, using the default"
+  else
+    kubectl config get-contexts
+    kubectl config use-context ${AGENT_PROJECT_PATH}:${AGENT_NAME}
+    kubectl config set-context --current --namespace=${NAMESPACE}
+  fi
+}
+
 function check_kube_domain() {
   if [ -z ${KUBE_INGRESS_BASE_DOMAIN+x} ]; then
     echo "ERROR: In order to deploy, KUBE_INGRESS_BASE_DOMAIN must be set as a variable at the group or project level, or manually added in .gitlab-cy.yml"

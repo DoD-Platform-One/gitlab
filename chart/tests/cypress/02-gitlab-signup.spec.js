@@ -19,7 +19,7 @@ describe('Gitlab Signup', () => {
     cy.get('.validation-error').then(($userexist) => {
       if ($userexist.hasClass('hide')) {
         cy.get('input[id="new_user_password"]').type(Cypress.env('gitlab_password'))
-        cy.get('input[type="submit"]').click()
+        cy.get('button[data-qa-selector="new_user_register_button"]').click()
       }
     })
   })

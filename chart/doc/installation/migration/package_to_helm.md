@@ -33,52 +33,13 @@ JUnit test report artifact (`junit.xml.gz`) migration
 [was not supported until GitLab 12.8](https://gitlab.com/gitlab-org/gitlab/-/issues/27698#note_317190991)
 by the `gitlab:artifacts:migrate` script below.
 
-1. Migrate any existing files (uploads, artifacts, LFS objects) from the package-based
+1. Migrate any existing data from the package-based
    installation to object storage:
 
-   1. Modify `/etc/gitlab/gitlab.rb` file and configure object storage for:
-      - [Uploads](https://docs.gitlab.com/ee/administration/uploads.html#s3-compatible-connection-settings)
-      - [Artifacts](https://docs.gitlab.com/ee/administration/job_artifacts.html#s3-compatible-connection-settings)
-      - [LFS](https://docs.gitlab.com/ee/administration/lfs/index.html#s3-for-omnibus-installations)
-      - [Packages](https://docs.gitlab.com/ee/administration/packages/#using-object-storage)
-
-      This **must** be the same object storage service that the Helm charts based deployment is
-      connected to.
-
-   1. Run reconfigure to apply the changes:
-
-      ```shell
-      sudo gitlab-ctl reconfigure
-      ```
-
-   1. Migrate existing artifacts to object storage:
-
-      ```shell
-      sudo gitlab-rake gitlab:artifacts:migrate
-      ```
-
-   1. Migrate existing LFS objects to object storage:
-
-      ```shell
-      sudo gitlab-rake gitlab:lfs:migrate
-      ```
-
-   1. Migrate existing Packages to object storage:
-
-      ```shell
-      gitlab-rake gitlab:packages:migrate
-      ```
-
-   1. Migrate existing uploads to object storage:
-
-      ```shell
-      sudo gitlab-rake gitlab:uploads:migrate:all
-      ```
-
-      See [documentation](https://docs.gitlab.com/ee/administration/raketasks/uploads/migrate.html#migrate-to-object-storage).
+   1. [Migrate to object storage](https://docs.gitlab.com/ee/administration/object_storage.html#migrate-to-object-storage).
 
    1. Visit the package-based GitLab instance and make sure the
-      uploads are available. For example check if user, group and project
+      migrated data are available. For example check if user, group and project
       avatars are rendered fine, image and other files added to issues load
       correctly, etc.
 
