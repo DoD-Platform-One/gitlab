@@ -1,4 +1,5 @@
 {{- $externalAddresses := concat $.Values.global.pages.externalHttp $.Values.global.pages.externalHttps | uniq }}
+{{- if not (empty ($externalAddresses)) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,15 +14,14 @@ metadata:
 spec:
   type: {{ .Values.service.customDomains.type }}
   {{- if eq .Values.service.customDomains.type "LoadBalancer" }}
-  {{- if not (empty ($externalAddresses)) -}}
   {{-   if len $externalAddresses | eq 1 }}
   loadBalancerIP: {{ $externalAddresses | first }}
   {{-   else }}
   externalIPs: {{ toJson $externalAddresses }}
   {{-   end }}
   {{- end }}
-  {{- end }}
   ports:
+    {{- if not (empty $.Values.global.pages.externalHttp) }}
     - port: 80
       targetPort: {{ .Values.service.internalPort | int }}
       protocol: TCP
@@ -29,6 +29,8 @@ spec:
       {{- if and (eq .Values.service.customDomains.type "NodePort") .Values.service.customDomains.nodePort.http }}
       nodePort: {{ .Values.service.customDomains.nodePort.http | int }}
       {{- end }}
+    {{- end -}}
+    {{- if not (empty $.Values.global.pages.externalHttps) }}
     - port: 443
       targetPort: {{ .Values.service.customDomains.internalHttpsPort | int }}
       protocol: TCP
@@ -36,6 +38,8 @@ spec:
       {{- if and (eq .Values.service.customDomains.type "NodePort") .Values.service.customDomains.nodePort.https }}
       nodePort: {{ .Values.service.customDomains.nodePort.https | int }}
       {{- end }}
+    {{- end }}
   selector:
     app: {{ template "name" . }}
     release: {{ .Release.Name }}
+{{- end -}}
