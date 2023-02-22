@@ -3,6 +3,23 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.8.2-bb.0] - 2023-02-20
+### Changed
+- Updated to helm chart to 6.8.2 and appVersion to 15.8.2
+- ironbank/gitlab/gitlab/gitlab-webservice minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages minor 15.7.3 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse minor 15.8.1 -> 15.8.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl minor 15.8.1 -> 15.8.2
+
 ## [6.8.1-bb.0] - 2023-02-06
 ### Changed
 - Updated to helm chart to 6.8.1 and appVersion to 15.8.1
