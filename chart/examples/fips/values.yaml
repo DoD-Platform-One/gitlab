@@ -34,31 +34,6 @@ global:
     pullPolicy: Always  # You can drop this if you're using release tags.
     tagSuffix: -fips
 
-  # Override the busybox image to use gitlab-base, it does not support tagSuffix
-  # and an explicit tag must be specified.
-  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3432
-  # It is recommended to use a specific GitLab version here e.g. v15.6.2-fips
-  busybox:
-    image:
-      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-base
-      tag: master-fips
-
-  # The kubectl image doesn't currently support tagSuffix due to a digest
-  # reference in the default vaults - an explicit tag must be specified.
-  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3717
-  # It is recommended to use a specific GitLab version here e.g. v15.6.2-fips
-  kubectl:
-    image:
-      tag: master-fips
-
-  # The certificates image doesn't currently support tagSuffix due to a digest
-  # reference in the default vaults - an explicit tag must be specified.
-  # See: https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3717
-  # It is recommended to use a specific GitLab version here e.g. v15.6.2-fips
-  certificates:
-    image:
-      tag: master-fips
-
   # See: https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/installation/tls.md#option-2-use-your-own-wildcard-certificate
   ingress:
     configureCertmanager: false

@@ -111,6 +111,7 @@ gitlab:
 | `resources.requests`                        | Toolbox minimum requested resources      | { `cpu`: `50m`, `memory`: `350M` |
 | `securityContext.fsGroup`                   | Group ID under which the pod should be started | `1000`                     |
 | `securityContext.runAsUser`                 | User ID under which the pod should be started  | `1000`                     |
+| `securityContext.fsGroupChangePolicy`       | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) | |
 | `serviceAccount.annotations`                | Annotations for ServiceAccount               | {}                           |
 | `serviceAccount.enabled`                    | Flag for using ServiceAccount                | false                        |
 | `serviceAccount.create`                     | Flag for creating a ServiceAccount           | false                        |
@@ -177,6 +178,22 @@ mindful that as the size of the GitLab installation grows the size of the
 restoration disk space also needs to grow accordingly. In most cases the
 size of the restoration disk space should be the same size as the backup
 disk space.
+
+### Large backup volumes
+
+Toolbox volume mount may fail for large backup volumes. Starting from
+Kubernetes 1.23 you can set the `fsGroupChangePolicy` to `OnRootMismatch`
+to mitigate the issue.
+
+```yaml
+gitlab:
+  toolbox:
+    securityContext:
+      fsGroupChangePolicy: "OnRootMismatch"
+```
+
+From the [documentation](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#configure-volume-permission-and-ownership-change-policy-for-pods),
+this setting "could help shorten the time it takes to change ownership and permission of a volume."
 
 ## Toolbox included tools
 

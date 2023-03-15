@@ -291,3 +291,32 @@ questions that you know someone might ask.
 Each scenario can be a third-level heading, e.g. `### Getting error message X`.
 If you have none to add when creating a doc, leave this section in place
 but commented out to help encourage others to add to it in the future. -->
+
+## Patching the Rails code in the `toolbox` pod
+
+WARNING:
+This task is not something that should be regularly performed. Use it at your own risk.
+
+Patching operational GitLab service pods requires building new images, with the modified source code inside. These can _not_ be directly patched.
+The [`toolbox` / `task-runner` pod](../charts/gitlab/toolbox/index.md) has everything needed to operate as a Rails-based pod, without interfering with other normal service operations. You can use it to run independent tasks, and to modify the source code temporarily to perform some tasks.
+
+NOTE:
+If you make any changes using the `toolbox` pod, those will not be persisted if the pod is restarted. They're only present for the life of the container's operation.
+
+To patch the source code in the `toolbox` pod:
+
+1. Fetch the desired `.patch` file to be applied:
+  
+   - Either download the diff of a merge request directly as a [patch file](https://docs.gitlab.com/ee/user/project/merge_requests/reviews/#download-merge-request-changes-as-a-patch-file).
+   - Or, fetch the diff directly using `curl`. Replace `<mr_iid>` below with the IID of the merge request, or change the URL to point to a raw snippet:
+  
+     ```shell
+     curl --output ~/<mr_iid>.patch "https://gitlab.com/gitlab-org/gitlab/-/merge_requests/<mr_iid>.patch"
+     ```
+
+1. Patch the local files on the `toolbox` pod:
+  
+    ```shell
+    cd /srv/gitlab
+    busybox patch -p1 -f < ~/<mr_iid>.patch
+    ```

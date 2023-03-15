@@ -28,6 +28,11 @@ describe 'GitLab Ingress configuration(s)' do
     template.dig("Service/#{service_name}", 'spec', 'ports')
   end
 
+  def get_certmanager_http01_solver_ingress_class_spec(template, issuer_config_name)
+    issuer = YAML.safe_load(template.dig("ConfigMap/#{issuer_config_name}", 'data', 'issuer.yml'))
+    issuer.dig('spec', 'acme', 'solvers', 0, 'http01', 'ingress', 'class')
+  end
+
   let(:default_values) do
     YAML.safe_load(%(
       certmanager-issuer:
@@ -480,6 +485,34 @@ describe 'GitLab Ingress configuration(s)' do
           ports[2]['name']
         ].to_set
         expect(ports_exposed).to eq(ports_expected)
+      end
+    end
+  end
+
+  describe 'certmanager issuer ingress config' do
+    context 'when ingress class is configured' do
+      using RSpec::Parameterized::TableSyntax
+      where(:class_name, :expected_spec) do
+        [
+          [nil,    'test-nginx'],
+          ['none', nil],
+          ['foo',  'foo']
+        ]
+      end
+
+      with_them do
+        it 'populates expected ingress class to http01 solver' do
+          values = default_values.deep_merge(YAML.safe_load(%(
+              global:
+                ingress:
+                  class: #{class_name}
+            )))
+
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0)
+          issuer_class_spec = get_certmanager_http01_solver_ingress_class_spec(t, "test-certmanager-issuer-certmanager")
+          expect(issuer_class_spec).to eq(expected_spec)
+        end
       end
     end
   end

@@ -151,6 +151,41 @@ describe 'Praefect configuration' do
       end
     end
 
+    context 'with custom defaultReplicationFactors' do
+      let(:values_custom_defaultreplicationfactor) do
+        YAML.safe_load(%(
+          global:
+            praefect:
+              virtualStorages:
+              - name: default
+                gitalyReplicas: 5
+                maxUnavailable: 2
+                defaultReplicationFactor: 3
+              - name: secondary
+                gitalyReplicas: 4
+                maxUnavailable: 1
+                defaultReplicationFactor: 2
+        )).deep_merge(values_praefect_enabled)
+      end
+
+      let(:template) { HelmTemplate.new(values_custom_defaultreplicationfactor) }
+
+      it 'templates successfully' do
+        expect(template.exit_code).to eq(0)
+      end
+
+      it 'correctly specifies the defaultReplicationFactors' do
+        vs1_selection = "name = 'default'\n" \
+                        "default_replication_factor = 3"
+
+        vs2_selection = "name = 'secondary'\n" \
+                        "default_replication_factor = 2"
+
+        expect(template.dig('ConfigMap/test-praefect', 'data', 'config.toml.erb')).to include(vs1_selection)
+        expect(template.dig('ConfigMap/test-praefect', 'data', 'config.toml.erb')).to include(vs2_selection)
+      end
+    end
+
     context 'with separate_database_metrics false' do
       let(:values_separate_db_metrics) do
         YAML.safe_load(%(

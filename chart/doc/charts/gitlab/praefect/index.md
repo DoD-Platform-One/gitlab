@@ -93,6 +93,25 @@ global:
         storageClass: storageclass2
 ```
 
+## defaultReplicationFactor
+
+`defaultReplicationFactor` can be configured on each virtual storages. (see [configure replication-factor](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#configure-replication-factor) documentation).
+
+```yaml
+global:
+  praefect:
+    enabled: true
+    virtualStorages:
+    - name: default
+      gitalyReplicas: 5
+      maxUnavailable: 2
+      defaultReplicationFactor: 3
+    - name: secondary
+      gitalyReplicas: 4
+      maxUnavailable: 1
+      defaultReplicationFactor: 2
+```
+
 ### Migrating to Praefect
 
 NOTE:
@@ -256,7 +275,6 @@ the `helm install` command using the `--set` flags.
 | failover.enabled                          | true                                              | Whether Praefect should perform failover on node failure                                                                                                                   |
 | failover.readonlyAfter                    | false                                             | Whether the nodes should be in read-only mode after failover                                                                                                               |
 | autoMigrate                               | true                                              | Automatically run migrations on startup                                                                                                                                    |
-| electionStrategy                          | `sql`                                             | See [election strategy](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#automatic-failover-and-leader-election)                                             |
 | image.repository                          | `registry.gitlab.com/gitlab-org/build/cng/gitaly` | The default image repository to use. Praefect is bundled as part of the Gitaly image                                                                                       |
 | podLabels                                 | `{}`                                              | Supplemental Pod labels. Will not be used for selectors.                                                                                                                   |
 | ntpHost                                   | `pool.ntp.org`                                    | Configure the NTP server Praefect should ask the for the current time.

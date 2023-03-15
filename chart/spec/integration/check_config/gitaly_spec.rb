@@ -233,4 +233,36 @@ describe 'checkConfig gitaly' do
                      success_description: 'when Gitaly and Praefect are enabled and one storage is named "default"',
                      error_description: 'when Gitaly and Praefect are enabled and no storages are named "default"'
   end
+
+  describe 'praefect with defaultReplicationFactor' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        global:
+          praefect:
+            enabled: true
+            virtualStorages:
+            - name: default
+              gitalyReplicas: 3
+              defaultReplicationFactor: 2
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        global:
+          praefect:
+            enabled: true
+            virtualStorages:
+            - name: default
+              gitalyReplicas: 2
+              defaultReplicationFactor: 3
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { '\'defaultReplicationFactor\' is not correct.' }
+
+    include_examples 'config validation',
+                     success_description: 'when Praefect is enabled and defaultReplicationFactor is equal to or lower than than gitalyReplicas',
+                     error_description: 'when Praefect is enabled and defaultReplicationFactor is greater than than gitalyReplicas'
+  end
 end

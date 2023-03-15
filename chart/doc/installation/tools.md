@@ -11,11 +11,11 @@ prerequisites and decide on the options you'll use when you install.
 
 ## Prerequisites
 
-### `kubectl`
+### kubectl
 
-Install `kubectl` 1.16 or later by following [the Kubernetes documentation](https://kubernetes.io/docs/tasks/tools/#kubectl).
-The version you install must be within one minor release of
-[the version running in your cluster](https://kubernetes.io/docs/tasks/tools/).
+Install `kubectl` by following [the Kubernetes documentation](https://kubernetes.io/docs/tasks/tools/#kubectl).
+The version you install must be [within one minor release](https://kubernetes.io/releases/version-skew-policy/#kubectl)
+of the version running in your cluster.
 
 ### Helm
 
@@ -279,7 +279,7 @@ Prometheus `tls_config.server_name`.
 | [GitLab Exporter](../charts/gitlab/gitlab-exporter/index.md) | 9168  | YES | Enabled using `gitlab.gitlab-exporter.tls.enabled=true` <br>Default Secret: `RELEASE-gitlab-exporter-tls` |
 | [GitLab Pages](../charts/gitlab/gitlab-pages/index.md)       | 9235  | YES | Enabled using `gitlab.gitlab-pages.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-pages-metrics-tls` <br>[Docs: General settings](../charts/gitlab/gitlab-pages/index.md#general-settings) |
 | [GitLab Runner](../charts/gitlab/gitlab-runner/index.md)     | 9252  | NO  | [Issue - Add TLS Support for Metrics Endpoint](https://gitlab.com/gitlab-org/gitlab-runner/-/issues/29176) |
-| [GitLab Shell](../charts/gitlab/gitlab-shell/index.md)       | 9122  | NO  | The GitLab Shell metrics exporter is only enabled when using [`gitlab-sshd`](https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh). OpenSSH is recommended for environments that require TLS |
+| [GitLab Shell](../charts/gitlab/gitlab-shell/index.md)       | 9122  | NO  | The GitLab Shell metrics exporter is only enabled when using [`gitlab-sshd`](https://docs.gitlab.com/ee/administration/operations/gitlab_sshd.html). OpenSSH is recommended for environments that require TLS |
 | [KAS](../charts/gitlab/kas/index.md)                         | 8151  | NO  | [Issue - Add TLS Support for Metrics Endpoint](https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent/-/issues/288) |
 | [Praefect](../charts/gitlab/praefect/index.md)               | 9236  | YES | Enabled using `global.praefect.tls.enabled=true` <br>Default Secret: `RELEASE-praefect-tls` <br>[Docs: Running Praefect over TLS](../charts/gitlab/praefect/index.md#running-praefect-over-tls) |
 | [Registry](../charts/registry/index.md)                      | 5100  | YES | Enabled using `registry.debug.tls.enabled=true` <br>[Docs: Registry - Configuring TLS for the debug port](../charts/registry/index.md#configuring-tls-for-the-debug-port) |

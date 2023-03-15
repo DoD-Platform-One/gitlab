@@ -102,4 +102,34 @@ describe 'toolbox configuration' do
       end
     end
   end
+
+  context 'cron and deployment securityContext' do
+    context 'default' do
+      it 'fsGroupChangePolicy should not be set by default' do
+        t = HelmTemplate.new(default_values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        expect(t.dig('Deployment/test-toolbox', 'spec', 'template', 'spec', 'securityContext', 'fsGroupChangePolicy')).to eq(nil)
+        expect(t.dig('CronJob/test-toolbox-backup', 'spec', 'jobTemplate', 'spec', 'template', 'spec', 'securityContext', 'fsGroupChangePolicy')).to eq(nil)
+      end
+    end
+
+    context 'on custom fsGroupChangePolicy' do
+      let(:fs_gc_policy) { 'OnRootMismatch' }
+      let(:values) do
+        YAML.safe_load(%(
+          gitlab:
+            toolbox:
+              securityContext:
+                fsGroupChangePolicy: #{fs_gc_policy}
+        )).deep_merge(default_values)
+      end
+
+      it 'fsGroupChangePolicy should be populated' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        expect(t.dig('Deployment/test-toolbox', 'spec', 'template', 'spec', 'securityContext', 'fsGroupChangePolicy')).to eq(fs_gc_policy)
+        expect(t.dig('CronJob/test-toolbox-backup', 'spec', 'jobTemplate', 'spec', 'template', 'spec', 'securityContext', 'fsGroupChangePolicy')).to eq(fs_gc_policy)
+      end
+    end
+  end
 end

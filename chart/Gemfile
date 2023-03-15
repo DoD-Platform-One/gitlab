@@ -21,3 +21,7 @@ end
 group :development, :test do
   gem 'pry'
 end
+
+group :development do
+  gem 'solargraph'
+end

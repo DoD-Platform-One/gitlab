@@ -42,7 +42,7 @@ Privileged containers have extended capabilities, for example they can mount arb
 | `gitlab-runner.init.image.tag`                 | `initContainer` image tag                  |                                       |
 | `gitlab-runner.pullSecrets`                    | Secrets for the image repository           |                                       |
 | `gitlab-runner.unregisterRunners`              | Unregister all runners before termination  | `true`                                |
-| `gitlab-runner.concurrent`                     | Number of concurrent jobs                  | `20`                                  |
+| `gitlab-runner.concurrent`                     | Number of concurrent jobs                  | `10`                                  |
 | `gitlab-runner.checkInterval`                  | Polling interval                           | `30s`                                 |
 | `gitlab-runner.rbac.create`                    | Whether to create RBAC service account     | `true`                                |
 | `gitlab-runner.rbac.clusterWideAccess`         | Deploy containers of jobs cluster-wide     | `false`                               |

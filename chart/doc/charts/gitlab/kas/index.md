@@ -41,7 +41,7 @@ helm upgrade --install kas --set global.kas.enabled=false
 
 When you use the chart's Ingress with the default configuration,
 the service for the agent server is reachable on a subdomain.
-For example, for`global.hosts.domain: example.com`, the agent server
+For example, for `global.hosts.domain: example.com`, the agent server
 is reachable at `kas.example.com`.
 
 The [KAS Ingress](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/charts/gitlab/charts/kas/templates/ingress.yaml)
