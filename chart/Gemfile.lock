@@ -32,6 +32,8 @@ GEM
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.2)
+    backport (1.2.0)
+    benchmark (0.2.1)
     binding_ninja (0.2.3)
     capybara (3.33.0)
       addressable
@@ -54,6 +56,7 @@ GEM
     docker-api (1.34.2)
       excon (>= 0.47.0)
       multi_json
+    e2mmap (0.1.0)
     equalizer (0.0.11)
     excon (0.62.0)
     gitlab-styles (9.0.0)
@@ -67,10 +70,15 @@ GEM
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
+    jaro_winkler (1.5.4)
     jmespath (1.4.0)
     json (2.6.2)
     knapsack (4.0.0)
       rake
+    kramdown (2.4.0)
+      rexml
+    kramdown-parser-gfm (1.1.0)
+      kramdown (~> 2.0)
     launchy (2.4.3)
       addressable (~> 2.3)
     memoizable (0.4.2)
@@ -109,6 +117,8 @@ GEM
     rainbow (3.0.0)
     rake (13.0.1)
     regexp_parser (1.8.2)
+    reverse_markdown (2.1.1)
+      nokogiri
     rexml (3.2.5)
     rspec (3.7.0)
       rspec-core (~> 3.7.0)
@@ -161,7 +171,23 @@ GEM
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
+    solargraph (0.41.2)
+      backport (~> 1.1)
+      benchmark
+      bundler (>= 1.17.2)
+      e2mmap
+      jaro_winkler (~> 1.5)
+      kramdown (~> 2.3)
+      kramdown-parser-gfm (~> 1.1)
+      parser (~> 3.0)
+      reverse_markdown (>= 1.0.5, < 3)
+      rubocop (>= 0.52)
+      thor (~> 1.0)
+      tilt (~> 2.0)
+      yard (~> 0.9, >= 0.9.24)
+    thor (1.2.1)
     thread_safe (0.3.6)
+    tilt (2.0.11)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     unicode-display_width (1.7.0)
@@ -175,8 +201,11 @@ GEM
       mprelude (~> 0.1.0)
       parser (>= 2.6.5)
       procto (~> 0.0.2)
+    webrick (1.7.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    yard (0.9.28)
+      webrick (~> 1.7.0)
 
 PLATFORMS
   ruby
@@ -195,6 +224,7 @@ DEPENDENCIES
   rspec-parameterized
   rspec-retry
   selenium-webdriver
+  solargraph
 
 BUNDLED WITH
    2.3.22

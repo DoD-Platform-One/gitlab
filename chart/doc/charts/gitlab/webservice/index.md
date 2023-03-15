@@ -341,13 +341,12 @@ listener uses the same TLS certificate that is specified by `gitlab.webservice.w
 
 The primary use case for enabling TLS is to provide encryption via HTTPS
 for [scraping Prometheus metrics](https://docs.gitlab.com/ee/administration/monitoring/prometheus/gitlab_metrics.html).
-For this reason, the TLS certificate should include the Webservice
-hostname (ex: `RELEASE-webservice-default.default.svc`) in the Common
-Name (CN) or Subject Alternate Name (SAN).
 
-NOTE:
-[The Prometheus server bundled with the chart](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3335) does not yet
-support scraping of HTTPS endpoints.
+For Prometheus to scrape the `/metrics/` endpoint using HTTPS, additional
+configuration is required for the certificate's `CommonName` attribute or
+a `SubjectAlternativeName` entry. See
+[Configuring Prometheus to scrape TLS-enabled endpoints](../../../installation/tools.md#configure-prometheus-to-scrape-tls-enabled-endpoints)
+for those requirements.
 
 TLS can be enabled on the `webservice` container by the settings `gitlab.webservice.tls.enabled`:
 

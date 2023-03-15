@@ -154,3 +154,9 @@ confirm that all buckets in your environment have been created, and that the GCP
    # Write
    gsutil cp -n <local-file> gs://<bucket-to-validate>/
    ```
+
+### "ERROR: `/home/git/.s3cfg`: None" error when running `backup-utility` with `--backend s3`
+
+This error happens when a Kubernetes secret containing a `.s3cfg` file was not specified through the `gitlab.toolbox.backups.objectStorage.config.secret` value.
+
+To fix this, follow the instructions in [backups to S3](index.md#backups-to-s3).

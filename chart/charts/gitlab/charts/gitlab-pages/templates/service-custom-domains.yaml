@@ -40,3 +40,4 @@ spec:
   selector:
     app: {{ template "name" . }}
     release: {{ .Release.Name }}
+{{- end -}}

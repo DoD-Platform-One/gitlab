@@ -16,6 +16,31 @@ The minimum tools required for charts development are documented on the [Require
 We recommend using [`asdf`](https://github.com/asdf-vm/asdf) to install these tools.
 This allows us to easily switch between versions, Helm 3.4 and 3.5 for example.
 
+We provide a [`.tool-versions` file](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/.tool-versions)
+that specifies these tools with their recommended versions. To install or update them:
+
+1. Clone the charts repository and change directory:
+
+   ```shell
+   git clone https://gitlab.com/gitlab-org/charts/gitlab.git charts-gitlab
+   cd charts-gitlab/
+   ```
+
+1. Add each plugin repository. This only has to be done once:
+
+   ```shell
+   asdf plugin add minikube
+   asdf plugin add kubectl
+   asdf plugin add helm
+   asdf plugin add stern
+   ```
+
+1. Install or update the tools:
+
+   ```shell
+   asdf install
+   ```
+
 ### Additional developer tools
 
 Developers working on charts also often use the following tools:
@@ -29,6 +54,7 @@ Tool name | Benefits | Example use case | Link(s)
 `lens` | Highly visual management and navigation of clusters. | Navigate and manage cluster resources quickly in a standalone desktop application. | [Homepage](https://k8slens.dev/)
 `stern` | Easily follow logs from multiple pods. | See logs from a set of GitLab pods together. | [GitHub](https://github.com/wercker/stern)
 `dive` | Explore container layers. | A tool for exploring a container image, layer contents, and discovering ways to shrink the size of your Docker/OCI image. | [GitHub](https://github.com/wagoodman/dive), [GitLab Unfiltered](https://youtu.be/9kdE-ye6vlc)
+`container-diff` | Explore container layers. | A tool for analyzing and comparing container images. | [GitHub](https://github.com/GoogleContainerTools/container-diff)
 
 ## Kubernetes cluster
 

@@ -15,7 +15,7 @@ version.
 NOTE:
 **Zero-downtime upgrades** are not available with the GitLab charts.
 Ongoing work to support this feature can be tracked via
-[the GitLab Operator issue](https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/issues/59).
+[the GitLab Operator epic](https://gitlab.com/groups/gitlab-org/cloud-native/-/epics/52).
 
 We also recommend that you take a [backup](../backup-restore/index.md) first. Also note that you
 must provide all values using `helm upgrade --set key=value` syntax or `-f values.yaml` instead of

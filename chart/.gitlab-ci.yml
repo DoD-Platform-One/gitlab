@@ -55,6 +55,7 @@ stages:
   - canary
   - stable
   - specs
+  - qa-manual
   - qa
   - staging-release
   - package
@@ -321,11 +322,11 @@ stop_review_eks:
     - mkdir -p $(dirname "${VARIABLES_FILE}")
     - set_context
     - check_kube_domain
-    - check_domain_ip
     - ensure_namespace
     - create_secret
     - deploy
     - wait_for_deploy
+    - check_domain_ip
     - restart_toolbox
     - echo "export QA_ENVIRONMENT_URL=gitlab.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
     - echo "export GITLAB_ROOT_DOMAIN=$KUBE_INGRESS_BASE_DOMAIN"        >> "${VARIABLES_FILE}"
@@ -350,6 +351,15 @@ stable_gke:
     KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
     KUBE_NAMESPACE: "helm-charts-win"
   resource_group: "gke-production"
+
+stable_gke122:
+  extends: .stable
+  environment:
+    name: k8s122_production
+    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
+  variables:
+    VARIABLES_FILE: "variables/stable_gke122"
+  resource_group: "gke122-production"
 
 stable_eks:
   extends: .stable
@@ -474,7 +484,7 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.16-ruby-2.7.7-8ae1f7da
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.16-ruby-3.0.5-869cfc5d
   stage: prepare
   cache: {}
   dependencies: []
@@ -569,7 +579,6 @@ review-docs-cleanup:
     paths:
     - gems
   rules:
-    - !reference [.rule:skip_if_no_cluster]
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
@@ -588,6 +597,9 @@ review_specs_gke:
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke
   resource_group: "gke-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
 
 review_specs_gke122:
   extends: .specs
@@ -599,6 +611,9 @@ review_specs_gke122:
     url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke122
   resource_group: "gke122-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
 
 # Bring back when https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2457 is fixed
 # review_specs_gke_dev:
@@ -625,6 +640,9 @@ review_specs_eks:
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_eks
   resource_group: "eks-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
 
 specs_without_cluster:
   extends: .specs
@@ -633,11 +651,7 @@ specs_without_cluster:
   needs: []
   parallel: 6
   rules:
-    - !reference [.rule:skip_if_no_cluster]
-    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
-    - if: '$PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/'
-    - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
-    - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
+    - !reference [.specs, rules]
     - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
     - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
 
@@ -652,6 +666,9 @@ production_specs_without_cluster:
   variables:
     RSPEC_TAGS: ~type:feature
   parallel: 6
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
 
 production_specs_gke:
   extends: .production_specs
@@ -665,6 +682,16 @@ production_specs_gke:
     name: gke_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   resource_group: "gke-production"
+
+production_specs_gke122:
+  extends: .production_specs
+  variables:
+    VARIABLES_FILE: "variables/stable_gke122"
+    RSPEC_TAGS: type:feature
+  environment:
+    name: k8s122_production
+    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
+  resource_group: "gke122-production"
 
 production_specs_eks:
   extends: .production_specs
@@ -840,6 +867,14 @@ qa_gke_production:
   environment:
     name: gke_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
 
+qa_gke122_production:
+  extends: .qa_production
+  variables:
+    VARIABLES_FILE: "variables/stable_gke122"
+    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+  environment:
+    name: k8s122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+
 qa_eks_production:
   extends: .qa_production
   variables:
@@ -850,27 +885,92 @@ qa_eks_production:
 
 # QA jobs for Full E2E suites
 
+.qa_production_full_suite_manual_trigger:
+  extends: .qa_production
+  when: manual
+
+.qa_full_suite_manual_trigger:
+  image: alpine
+  stage: qa-manual
+  when: manual
+  artifacts:
+    paths:
+    - variables
+
+qa_gke_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against GKE'
+
 qa_gke_manual_full_suite:
   extends: .qa_branch
-  parallel: 6
+  parallel: 7
   variables:
     VARIABLES_FILE: "variables/review_gke"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
   environment:
     name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke
-  when: manual
+  needs: [ "qa_gke_full_suite_manual_trigger"]
+
+qa_gke_manual_full_suite_production:
+  extends: .qa_production_full_suite_manual_trigger
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/stable_gke"
+    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+  environment:
+    name: gke_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  needs: [ "qa_gke_full_suite_manual_trigger"]
+
+qa_gke122_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against GKE122'
+
+qa_gke122_manual_full_suite:
+  extends: .qa_branch
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/review_gke122"
+    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~orchestrated --tag ~transient'
+  environment:
+    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_gke122
+  needs: [ "qa_gke122_full_suite_manual_trigger"]
+
+qa_gke122_manual_full_suite_production:
+  extends: .qa_production_full_suite_manual_trigger
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/stable_gke122"
+    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+  environment:
+    name: k8s122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  needs: [ "qa_gke122_full_suite_manual_trigger"]
+
+qa_eks_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against EKS'
 
 qa_eks_manual_full_suite:
   extends: .qa_branch
-  parallel: 6
+  parallel: 7
   variables:
     VARIABLES_FILE: "variables/review_eks"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
   environment:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_eks
-  when: manual
+  needs: [ "qa_eks_full_suite_manual_trigger"]
+
+qa_eks_manual_full_suite_production:
+  extends: .qa_production_full_suite_manual_trigger
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/stable_eks"
+    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+  environment:
+    name: eks_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  needs: [ "qa_eks_full_suite_manual_trigger"]
 
 knapsack-qa-report:
   image:

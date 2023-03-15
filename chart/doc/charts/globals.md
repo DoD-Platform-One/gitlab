@@ -417,6 +417,7 @@ global:
 | `host`             | String  |         | The hostname of the Redis server with the database to use. This can be omitted in lieu of `serviceName`. |
 | `serviceName`      | String  | `redis` | The name of the `service` which is operating the Redis database. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Redis as a part of the overall GitLab chart. |
 | `port`             | Integer | `6379`  | The port on which to connect to the Redis server. |
+| `user`             | String  |         | The user used to authenticate against Redis (Redis 6.0+). |
 | `password.enabled` | Boolean    | true    | The `password.enabled` provides a toggle for using a password with the Redis instance. |
 | `password.key`     | String  |         | The `password.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
 | `password.secret`  | String  |         | The `password.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
@@ -1559,6 +1560,17 @@ args:
   name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient'
 ```
 
+Microsoft Azure OAuth 2.0 OmniAuth provider configuration example:
+
+```yaml
+name: azure_activedirectory_v2
+label: Azure
+args:
+  client_id: '<CLIENT_ID>'
+  client_secret: '<CLIENT_SECRET>'
+  tenant_id: '<TENANT_ID>'
+```
+
 [Group SAML](https://docs.gitlab.com/ee/integration/saml.html#configuring-group-saml-on-a-self-managed-gitlab-instance) configuration example:
 
 ```yaml
@@ -1578,6 +1590,7 @@ shown below:
 omniauth:
   providers:
     - secret: gitlab-google-oauth2
+    - secret: azure_activedirectory_v2
     - secret: gitlab-azure-oauth2
     - secret: gitlab-cas3
 ```
@@ -1590,32 +1603,6 @@ Example configuration `--set` items, when using the global chart:
 
 Due to the complexity of using `--set` arguments, a user may wish to use a YAML snippet,
 passed to `helm` with `-f omniauth.yaml`.
-
-#### connection
-
-Details of the Kubernetes secret that contains the connection information for the
-object storage provider. The contents of this secret should be a YAML formatted file.
-
-Defaults to `{}` and will be ignored if `global.minio.enabled` is `true`.
-
-This property has two sub-keys: `secret` and `key`:
-
-- `secret` is the name of a Kubernetes Secret. This value is required to use external object storage.
-- `key` is the name of the key in the secret which houses the YAML block. Defaults to `connection`.
-
-Examples for [AWS (s3)](https://fog.io/storage/#using-amazon-s3-and-fog) and [Google (GCS)](https://fog.io/storage/#google-cloud-storage)
-providers can be found in [`examples/objectstorage`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage):
-
-- [`rails.s3.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.s3.yaml)
-- [`rails.gcs.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.gcs.yaml)
-
-Once a YAML file containing the contents of the `connection` has been created, create
-the secret in Kubernetes:
-
-```shell
-kubectl create secret generic gitlab-rails-storage \
-    --from-file=connection=rails.yaml
-```
 
 ### Cron jobs related settings
 

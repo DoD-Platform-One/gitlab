@@ -259,6 +259,31 @@ describe 'Redis configuration' do
       end
     end
 
+    context 'When global defines user' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              user: resque-user
+              password:
+                enabled: true
+                secret: rspec-resque
+              cache:
+                host: cache.redis
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'global uses user' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        # check that it gets correct hosts & port are used
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).to include("resque-user")
+      end
+    end
+
     context 'When sub-queue defines port, but not host' do
       let(:values) do
         YAML.safe_load(%(
@@ -343,6 +368,101 @@ describe 'Redis configuration' do
         expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).not_to include("sentinels:")
         expect(t.dig('ConfigMap/test-webservice','data','redis.cache.yml.erb')).to include("sentinels:")
         expect(t.dig('ConfigMap/test-webservice','data','redis.cache.yml.erb')).to include("s1.cache.redis")
+      end
+    end
+  end
+
+  describe 'Redis Cluster' do
+    context 'When only nested redis defines cluster' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              cache:
+                host: cache.redis
+                sentinels:
+                - host: s1.cache.redis
+                - host: s2.cache.redis
+              clusterCache:
+                cluster:
+                - host: s1.cluster-cache.redis
+                - host: s2.cluster-cache.redis
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'Only nested redis cluster is populated' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cache.yml.erb')).to include("sentinels:")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cache.yml.erb')).to include("s1.cache.redis")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("cluster:")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("s1.cluster-cache.redis")
+      end
+    end
+
+    context 'When only nested redis defines cluster, user, and password' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              password:
+                enabled: false
+              clusterCache:
+                user: cluster-cache-user
+                password:
+                  enabled: true
+                cluster:
+                - host: s1.cluster-cache.redis
+                - host: s2.cluster-cache.redis
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'Only nested redis cluster is populated' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).not_to include("cluster-cache-user")
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).not_to include("redis/redis-password")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("cluster:")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("s1.cluster-cache.redis")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("cluster-cache-user")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("redis/clusterCache-password")
+      end
+    end
+
+    context 'When top level user and password are defined' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              user: resque-user
+              password:
+                enabled: true
+              clusterCache:
+                cluster:
+                - host: s1.cluster-cache.redis
+                - host: s2.cluster-cache.redis
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'No values are inherited by nested redis cluster' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).to include("resque-user")
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).to include("redis/redis-password")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("cluster:")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).to include("s1.cluster-cache.redis")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).not_to include("resque-user")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).not_to include("redis/redis-password")
+        expect(t.dig('ConfigMap/test-webservice','data','redis.cluster_cache.yml.erb')).not_to include("redis/cluster-cache-password")
       end
     end
   end

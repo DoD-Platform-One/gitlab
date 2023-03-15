@@ -48,7 +48,8 @@ port 22 in addition to 80 and 443.
 
 ### Helm deployment
 
-If you have installed or will install the NGINX Ingress Controller via it's [Helm chart](https://github.com/kubernetes/ingress-nginx), then you will need to add a value to the chart via the command line:
+If you have installed or plan to install the NGINX Ingress Controller using it's [Helm chart](https://github.com/kubernetes/ingress-nginx),
+then you have to add a value to the chart using the command line:
 
 ```shell
 --set tcp.22="gitlab/mygitlab-gitlab-shell:22"

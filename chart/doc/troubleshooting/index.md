@@ -315,14 +315,14 @@ You may face this error when restoring a backup on your Helm chart instance. Use
 1. Drop the extension:
 
    ```shell
-   DROP EXTENSION pg_stat_statements
+   DROP EXTENSION pg_stat_statements;
    ```
 
 1. Perform the restoration process.
 1. After the restoration is complete, re-create the extension in the DB console:
 
    ```shell
-   CREATE EXTENSION pg_stat_statements
+   CREATE EXTENSION pg_stat_statements;
    ```
 
 If you encounter the same issue with the `pg_buffercache` extension,
@@ -616,3 +616,27 @@ Run the certificates container using Docker.
 Because NGINX defaults to redirecting `HTTP` to `HTTPS`, you may end up in a "redirect loop".
 
 To fix this, [enable NGINX's `use-forward-headers` setting](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers).
+
+## "Invalid Word" errors in the `nginx-controller` logs and `404` errors
+
+After upgrading to Helm chart 6.6 or later, you might experience `404` return
+codes when visiting your GitLab or third-party domains for applications installed
+in your cluster and are also seeing "invalid word" errors in the
+`gitlab-nginx-ingress-controller` logs:
+
+```console
+gitlab-nginx-ingress-controller-899b7d6bf-688hr controller W1116 19:03:13.162001       7 store.go:846] skipping ingress gitlab/gitlab-minio: nginx.ingress.kubernetes.io/configuration-snippet annotation contains invalid word proxy_pass
+gitlab-nginx-ingress-controller-899b7d6bf-688hr controller W1116 19:03:13.465487       7 store.go:846] skipping ingress gitlab/gitlab-registry: nginx.ingress.kubernetes.io/configuration-snippet annotation contains invalid word proxy_pass
+gitlab-nginx-ingress-controller-899b7d6bf-lqcks controller W1116 19:03:12.233577       6 store.go:846] skipping ingress gitlab/gitlab-kas: nginx.ingress.kubernetes.io/configuration-snippet annotation contains invalid word proxy_pass
+gitlab-nginx-ingress-controller-899b7d6bf-lqcks controller W1116 19:03:12.536534       6 store.go:846] skipping ingress gitlab/gitlab-webservice-default: nginx.ingress.kubernetes.io/configuration-snippet annotation contains invalid word proxy_pass
+gitlab-nginx-ingress-controller-899b7d6bf-lqcks controller W1116 19:03:12.848844       6 store.go:846] skipping ingress gitlab/gitlab-webservice-default-smartcard: nginx.ingress.kubernetes.io/configuration-snippet annotation contains invalid word proxy_pass
+gitlab-nginx-ingress-controller-899b7d6bf-lqcks controller W1116 19:03:13.161640       6 store.go:846] skipping ingress gitlab/gitlab-minio: nginx.ingress.kubernetes.io/configuration-snippet annotation contains invalid word proxy_pass
+gitlab-nginx-ingress-controller-899b7d6bf-lqcks controller W1116 19:03:13.465425       6 store.go:846] skipping ingress gitlab/gitlab-registry: nginx.ingress.kubernetes.io/configuration-snippet annotation contains invalid word proxy_pass
+```
+
+In that case, review your GitLab values and any third-party Ingress objects for the use
+of [configuration snippets](https://kubernetes.github.io/ingress-nginx/examples/customization/configuration-snippets/).
+You may need to adjust or modify the `nginx-ingress.controller.config.annotation-value-word-blocklist`
+setting.
+
+See [Annotation value word blocklist](../charts/nginx/index.md#annotation-value-word-blocklist) for additional details.
