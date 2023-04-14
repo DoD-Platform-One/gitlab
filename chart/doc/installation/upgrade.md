@@ -9,7 +9,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 Before upgrading your GitLab installation, you need to check the
 [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md)
 corresponding to the specific release you want to upgrade to and look for any
-[release notes](../releases/index.md) that might pertain to the new GitLab chart
+[release notes](version_mappings.md#release-notes-for-each-version) that might pertain to the new GitLab chart
 version.
 
 NOTE:
@@ -27,7 +27,7 @@ You can retrieve your previous `--set` arguments cleanly, with
 file via `-f`. Thus `helm upgrade gitlab gitlab/gitlab -f gitlab.yaml`.
 This safely replaces the behavior of `--reuse-values`
 
-Mappings between chart versioning and GitLab versioning can be found [here](../installation/version_mappings.md).
+See [mappings](../installation/version_mappings.md) between chart versioning and GitLab versioning.
 
 ## Steps
 

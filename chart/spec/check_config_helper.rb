@@ -15,10 +15,7 @@ RSpec.shared_context "check config setup", shared_context: :metadata do
   let(:exit_code) { check[2].to_i }
 
   let(:default_required_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 end
 

@@ -5,9 +5,7 @@ require 'hash_deep_merge'
 
 describe 'Labels configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
+    HelmTemplate.with_defaults(%(
       global:
         pod:
           labels:
@@ -86,7 +84,7 @@ describe 'Labels configuration' do
 
   context 'When only local labels present' do
     let(:local_template) do
-      HelmTemplate.new(chart_values.deep_merge({'certmanager-issuer' => { 'email' => 'test@example.com' }}))
+      HelmTemplate.new(HelmTemplate.with_defaults(chart_values))
     end
 
     it 'Are only present on configured chart' do

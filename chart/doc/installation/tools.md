@@ -50,7 +50,7 @@ not enabled by default. Such functionality has not been load tested by GitLab.
 
 ## Decide on other options
 
-You will use the following options with `helm install` when you deploy GitLab.
+You use the following options with `helm install` when you deploy GitLab.
 
 ### Secrets
 

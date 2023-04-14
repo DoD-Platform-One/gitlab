@@ -5,9 +5,7 @@ require 'hash_deep_merge'
 
 describe 'geo-logcursor configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
+    HelmTemplate.with_defaults(%(
       global:
         geo:
           enabled: true

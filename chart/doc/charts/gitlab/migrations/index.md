@@ -53,6 +53,7 @@ Table below contains all the possible charts configurations that can be supplied
 | `resources.requests.memory` | `200Mi`                                  | GitLab Migrations minimum memory |
 | `securityContext.fsGroup`   | `1000`                                   | Group ID under which the pod should be started |
 | `securityContext.runAsUser` | `1000`                                   | User ID under which the pod should be started |
+| `securityContext.fsGroupChangePolicy` |                                | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |
 | `extraInitContainers`       | List of extra init containers to include |                   |
 | `extraContainers`           | List of extra containers to include      |                   |
 | `extraVolumes`              | List of extra volumes to create          |                   |

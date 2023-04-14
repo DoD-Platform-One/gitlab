@@ -65,11 +65,11 @@ line. This dictionary mirrors the YAML structure of the `values.yaml` file.
 ```ruby
 describe 'some feature' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email:
-          test@example.com
-    ))
+    HelmTemplate.defaults
+    # or: 
+    # HelmTemplate.with_defaults(%(
+    #  yourCustom: values
+    #))
   end
 
   describe 'global.feature.enabled' do

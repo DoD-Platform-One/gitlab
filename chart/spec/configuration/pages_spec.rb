@@ -7,10 +7,7 @@ require 'yaml'
 
 describe 'GitLab Pages' do
   let(:values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   let(:required_resources) do

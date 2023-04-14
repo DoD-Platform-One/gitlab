@@ -51,12 +51,16 @@ the `helm install` command using the `--set` flags.
 | `extraEnv`                                       |                                                   | List of extra environment variables to expose                                                                                                                                  |
 | `extraEnvFrom`                                   |                                                   | List of extra environment variables from other data sources to expose                                                                                                          |
 | `gitaly.serviceName`                             |                                                   | The name of the generated Gitaly service. Overrides `global.gitaly.serviceName`, and defaults to `<RELEASE-NAME>-gitaly`                                                       |
+| `gpgSigning.enabled`                             | `false`                                           | If [Gitaly GPG signing](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#configure-commit-signing-for-gitlab-ui-commits) should be used.                 |
+| `gpgSigning.secret`                              |                                                   | The name of the secret used for Gitaly GPG signing.                                                                                                                            |
+| `gpgSigning.key`                                 |                                                   | The key in the GPG secret containing Gitaly's GPG signing key.                                                                                                                 |
 | `image.pullPolicy`                               | `Always`                                          | Gitaly image pull policy                                                                                                                                                       |
 | `image.pullSecrets`                              |                                                   | Secrets for the image repository                                                                                                                                               |
 | `image.repository`                               | `registry.com/gitlab-org/build/cng/gitaly`        | Gitaly image repository                                                                                                                                                        |
 | `image.tag`                                      | `master`                                          | Gitaly image tag                                                                                                                                                               |
 | `init.image.repository`                          |                                                   | initContainer image                                                                                                                                                            |
 | `init.image.tag`                                 |                                                   | initContainer image tag                                                                                                                                                        |
+| `init.containerSecurityContext`                  |                                                   | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                         |
 | `internal.names[]`                               | `- default`                                       | Ordered names of StatefulSet storages                                                                                                                                          |
 | `serviceLabels`                                  | `{}`                                              | Supplemental service labels                                                                                                                                                    |
 | `service.externalPort`                           | `8075`                                            | Gitaly service exposed port                                                                                                                                                    |
@@ -66,6 +70,8 @@ the `helm install` command using the `--set` flags.
 | `securityContext.fsGroup`                        | `1000`                                            | Group ID under which the pod should be started                                                                                                                                 |
 | `securityContext.fsGroupChangePolicy`            |                                                   | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23)                                                                                          |
 | `securityContext.runAsUser`                      | `1000`                                            | User ID under which the pod should be started                                                                                                                                  |
+| `containerSecurityContext`             |                                             | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the Gitaly container is started                                                                                                                                  |
+| `containerSecurityContext.runAsUser`             | `1000`                                            | Allow to overwrite the specific security context under which the Gitaly container is started                                                                                                                                  |
 | `tolerations`                                    | `[]`                                              | Toleration labels for pod assignment                                                                                                                                           |
 | `persistence.accessMode`                         | `ReadWriteOnce`                                   | Gitaly persistence access mode                                                                                                                                                 |
 | `persistence.annotations`                        |                                                   | Gitaly persistence annotations                                                                                                                                                 |
@@ -234,38 +240,6 @@ git:
       value: ignore
 ```
 
-### Altering security contexts
-
-Gitaly `StatefulSet` performance may suffer when repositories have large
-amounts of files.
-Mitigate the issue by changing or fully deleting the settings for the
-`securityContext`.
-
-```yaml
-gitlab:
-  gitaly:
-    securityContext:
-      fsGroup: ""
-      runAsUser: ""
-```
-
-NOTE:
-The example syntax eliminates the `securityContext` setting entirely.
-Setting `securityContext: {}` or `securityContext:` does not work due
-to the way Helm merges default values with user provided configuration.
-
-Starting from Kubernetes 1.23 you can instead set the `fsGroupChangePolicy` to `OnRootMismatch` to mitigate the issue.
-
-```yaml
-gitlab:
-  gitaly:
-    securityContext:
-      fsGroupChangePolicy: "OnRootMismatch"
-```
-
-From the [documentation](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#configure-volume-permission-and-ownership-change-policy-for-pods),
-this setting "could help shorten the time it takes to change ownership and permission of a volume."
-
 ## External Services
 
 This chart should be attached the Workhorse service.
@@ -389,3 +363,25 @@ To populate the ConfigMap, you can point `kubectl` to a directory of scripts:
 ```shell
 kubectl create configmap MAP_NAME --from-file /PATH/TO/SCRIPT/DIR
 ```
+
+### GPG signing commits created by GitLab
+
+Gitaly has the ability to [GPG sign all commits](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#configure-commit-signing-for-gitlab-ui-commits) created via the GitLab UI, e.g. the WebIDE,
+as well as commits created by GitLab, such as merge commits and squashes.
+
+1. Create a k8s secret using your GPG private key.
+
+   ```shell
+   kubectl create secret generic gitaly-gpg-signing-key --from-file=signing_key=/path/to/gpg_signing_key.gpg
+   ```
+
+1. Enable GPG signing in your `values.yaml`.
+
+   ```yaml
+   gitlab:
+     gitaly:
+       gpgSigning:
+         enabled: true
+         secret: gitaly-gpg-signing-key
+         key: signing_key
+   ```

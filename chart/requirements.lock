@@ -16,13 +16,13 @@ dependencies:
   version: v1.5.4
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
-  version: 15.0.4
+  version: 15.18.0
 - name: postgresql
   repository: https://raw.githubusercontent.com/bitnami/charts/eb5f9a9513d987b519f0ecd732e7031241c50328/bitnami
   version: 8.9.4
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
-  version: 0.50.1
+  version: 0.51.0
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.11.0
@@ -35,5 +35,5 @@ dependencies:
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.3.2
-digest: sha256:91adca195a061704ea60611bd8998aedf57431a1617c439b7fc52ec4baf0c08e
-generated: "2023-03-13T10:24:10.158566552-06:00"
+digest: sha256:53c93e8a77cc356e1661cd9ec40e66441f2bf3d32c6409d9492ef648c59fd2cd
+generated: "2023-04-13T14:25:01.760281-05:00"

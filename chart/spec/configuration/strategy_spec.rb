@@ -5,10 +5,7 @@ require 'hash_deep_merge'
 
 describe 'Strategy configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   let(:chart_values) do

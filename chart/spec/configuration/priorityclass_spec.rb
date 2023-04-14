@@ -7,7 +7,7 @@ require 'hash_deep_merge'
 
 describe 'global priorityClass configuration' do
   let(:default_values) do
-    HelmTemplate.certmanager_issuer.deep_merge(YAML.safe_load(%(
+    HelmTemplate.with_defaults(%(
       global:
         priorityClassName: system-cluster-critical
       gitlab:
@@ -20,7 +20,7 @@ describe 'global priorityClass configuration' do
       prometheus:
         server:
           priorityClassName: system-cluster-critical
-    )))
+    ))
   end
 
   context 'When setting global priorityClassName' do
@@ -45,7 +45,7 @@ end
 
 describe 'local priorityClass configuration' do
   let(:default_values) do
-    HelmTemplate.certmanager_issuer.deep_merge(YAML.safe_load(%(
+    HelmTemplate.with_defaults(%(
       global:
         priorityClassName: system-cluster-critical
       certmanager:
@@ -98,7 +98,7 @@ describe 'local priorityClass configuration' do
         priorityClassName: system-cluster-noncritical
       upgradeCheck:
         priorityClassName: system-cluster-noncritical
-    )))
+    ))
   end
 
   let(:ignored_deployments) do

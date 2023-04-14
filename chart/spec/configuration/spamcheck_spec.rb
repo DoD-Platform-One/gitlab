@@ -6,10 +6,7 @@ require 'yaml'
 
 describe 'spamcheck configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   let(:required_resources) do

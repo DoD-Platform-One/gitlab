@@ -6,10 +6,7 @@ require 'yaml'
 
 describe 'Node Selector configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-
+    HelmTemplate.with_defaults(%(
       global:
         # the values we test for presence of NodeSelectors across components
         nodeSelector:

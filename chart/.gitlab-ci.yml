@@ -45,6 +45,8 @@ variables:
   CANONICAL_PROJECT_PATH: 'gitlab-org/charts/gitlab'
   SECURITY_PROJECT_PATH: 'gitlab-org/security/charts/gitlab'
   DEV_PROJECT_PATH: 'gitlab/charts/gitlab'
+  QA_FULL_SUITE_OPTIONS: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+  QA_SANITY_SUITE_OPTIONS: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
 
 stages:
   - prepare
@@ -196,6 +198,8 @@ lint_package:
     - echo "export GITLAB_URL=gitlab-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN"         >> "${VARIABLES_FILE}"
     - echo "export REGISTRY_URL=registry-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN"     >> "${VARIABLES_FILE}"
     - echo "export S3_ENDPOINT=https://minio-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
+    - kubectl wait pods -n $NAMESPACE -l app=toolbox,release=$RELEASE_NAME  --for condition=Ready --timeout=60s
+    - echo "export QA_GITLAB_REVISION=`kubectl exec -i $(kubectl get pods -lrelease=$RELEASE_NAME,app=toolbox -o custom-columns=":metadata.name") -c toolbox -- cat /srv/gitlab/REVISION`" >> "${VARIABLES_FILE}"
   artifacts:
     when: always
     paths:
@@ -231,6 +235,20 @@ review_gke122:
     on_stop: stop_review_gke122
     auto_stop_in: 4 days
   resource_group: "gke122-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+
+review_gke125:
+  variables:
+    DNS_PROVIDER: "google"
+    AGENT_NAME: "gke125-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
+  extends: .review_template
+  environment:
+    name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke125
+    auto_stop_in: 4 days
+  resource_group: "gke125-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
 
 review_gke_dev:
   variables:
@@ -293,6 +311,16 @@ stop_review_gke122:
   extends: .stop_review_template
   environment:
     name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    action: stop
+
+stop_review_gke125:
+  variables:
+    AGENT_NAME: "gke125-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
+  extends: .stop_review_template
+  environment:
+    name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     action: stop
 
 stop_review_gke_dev:
@@ -360,6 +388,18 @@ stable_gke122:
   variables:
     VARIABLES_FILE: "variables/stable_gke122"
   resource_group: "gke122-production"
+
+stable_gke125:
+  extends: .stable
+  environment:
+    name: gke125_production
+    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
+  variables:
+    VARIABLES_FILE: "variables/stable_gke125"
+    AGENT_NAME: "gke125-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
+  resource_group: "gke125-production"
 
 stable_eks:
   extends: .stable
@@ -466,7 +506,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.16-vale-2.22.0-markdownlint-0.32.2-markdownlint2-0.6.0
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.17-vale-2.24.0-markdownlint-0.33.0-markdownlint2-0.6.0
   stage: prepare
   cache: {}
   dependencies: []
@@ -484,11 +524,12 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.16-ruby-3.0.5-869cfc5d
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.17-ruby-3.2.1-f53af000
   stage: prepare
   cache: {}
   dependencies: []
   before_script: []
+  tags: [ gitlab-org ]
   script:
     - mv doc/ /tmp/gitlab-docs/content/charts
     - cd /tmp/gitlab-docs
@@ -615,6 +656,20 @@ review_specs_gke122:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
 
+review_specs_gke125:
+  extends: .specs
+  variables:
+    VARIABLES_FILE: "variables/review_gke125"
+    RSPEC_TAGS: type:feature
+    AGENT_NAME: "gke125-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
+  environment:
+    name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke125
+  resource_group: "gke125-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+
 # Bring back when https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2457 is fixed
 # review_specs_gke_dev:
 #   extends: .specs
@@ -693,6 +748,19 @@ production_specs_gke122:
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   resource_group: "gke122-production"
 
+production_specs_gke125:
+  extends: .production_specs
+  variables:
+    VARIABLES_FILE: "variables/stable_gke125"
+    RSPEC_TAGS: type:feature
+    AGENT_NAME: "gke125-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
+  environment:
+    name: gke125_production
+    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
+  resource_group: "gke125-production"
+
 production_specs_eks:
   extends: .production_specs
   allow_failure: true
@@ -719,12 +787,13 @@ production_specs_eks:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
     - gem install gitlab-qa
     - source "${VARIABLES_FILE}"
-    - app_version=$(ruby -e "require 'yaml'; puts YAML.safe_load(File.read('Chart.yaml'))['appVersion']")
-    - qa_version="nightly"
-    - if [ "$app_version" != "master" ] && [ "$app_version" != "main" ]; then
-    -   qa_version="${app_version}-ee"
-    - fi
-    - SIGNUP_DISABLED=true QA_DEBUG=true GITLAB_USERNAME=root GITLAB_PASSWORD=$ROOT_PASSWORD GITLAB_ADMIN_USERNAME=root GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD EE_LICENSE=$REVIEW_APPS_EE_LICENSE gitlab-qa Test::Instance::Any EE:$qa_version https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
+    - if [ -n "$QA_GITLAB_REVISION" ]; then
+    -   QA_IMAGE="registry.gitlab.com/gitlab-org/gitlab/gitlab-ee-qa:$QA_GITLAB_REVISION"
+    - else
+    -   QA_IMAGE="gitlab/gitlab-ee-qa:nightly" # this will default to use nightly https://gitlab.com/gitlab-org/gitlab-qa/-/blob/master/docs/what_tests_can_be_run.md#specifying-the-gitlab-version
+    - fi;
+    - echo "Running - 'gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE'"
+    - SIGNUP_DISABLED=true QA_DEBUG=true GITLAB_USERNAME=root GITLAB_PASSWORD=$ROOT_PASSWORD GITLAB_ADMIN_USERNAME=root GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD EE_LICENSE=$REVIEW_APPS_EE_LICENSE gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
   artifacts:
     when: always
     expire_in: 7d
@@ -836,7 +905,7 @@ qa_gke:
   extends: .qa_branch
   variables:
     VARIABLES_FILE: "variables/review_gke"
-    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke
@@ -845,16 +914,25 @@ qa_gke122:
   extends: .qa_branch
   variables:
     VARIABLES_FILE: "variables/review_gke122"
-    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke122
+
+qa_gke125:
+  extends: .qa_branch
+  variables:
+    VARIABLES_FILE: "variables/review_gke125"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  environment:
+    name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_gke125
 
 qa_eks:
   extends: .qa_branch
   variables:
     VARIABLES_FILE: "variables/review_eks"
-    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_eks
@@ -863,7 +941,7 @@ qa_gke_production:
   extends: .qa_production
   variables:
     VARIABLES_FILE: "variables/stable_gke"
-    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: gke_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
 
@@ -871,15 +949,23 @@ qa_gke122_production:
   extends: .qa_production
   variables:
     VARIABLES_FILE: "variables/stable_gke122"
-    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: k8s122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+
+qa_gke125_production:
+  extends: .qa_production
+  variables:
+    VARIABLES_FILE: "variables/stable_gke125"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  environment:
+    name: gke125_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
 
 qa_eks_production:
   extends: .qa_production
   variables:
     VARIABLES_FILE: "variables/stable_eks"
-    TEST_SUITE: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: eks_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
 
@@ -906,7 +992,7 @@ qa_gke_manual_full_suite:
   parallel: 7
   variables:
     VARIABLES_FILE: "variables/review_gke"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
     name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke
@@ -917,7 +1003,7 @@ qa_gke_manual_full_suite_production:
   parallel: 7
   variables:
     VARIABLES_FILE: "variables/stable_gke"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
     name: gke_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
   needs: [ "qa_gke_full_suite_manual_trigger"]
@@ -931,7 +1017,7 @@ qa_gke122_manual_full_suite:
   parallel: 7
   variables:
     VARIABLES_FILE: "variables/review_gke122"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
     name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke122
@@ -942,10 +1028,25 @@ qa_gke122_manual_full_suite_production:
   parallel: 7
   variables:
     VARIABLES_FILE: "variables/stable_gke122"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
     name: k8s122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
   needs: [ "qa_gke122_full_suite_manual_trigger"]
+
+qa_gke125_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against GKE125'
+
+qa_gke125_manual_full_suite:
+  extends: .qa_branch
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/review_gke125"
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
+  environment:
+    name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_gke125
+  needs: [ "qa_gke125_full_suite_manual_trigger"]
 
 qa_eks_full_suite_manual_trigger:
   extends: .qa_full_suite_manual_trigger
@@ -956,7 +1057,7 @@ qa_eks_manual_full_suite:
   parallel: 7
   variables:
     VARIABLES_FILE: "variables/review_eks"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_eks
@@ -967,7 +1068,7 @@ qa_eks_manual_full_suite_production:
   parallel: 7
   variables:
     VARIABLES_FILE: "variables/stable_eks"
-    TEST_SUITE: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
     name: eks_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
   needs: [ "qa_eks_full_suite_manual_trigger"]

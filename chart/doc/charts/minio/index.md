@@ -88,6 +88,7 @@ to the `helm install` command using the `--set` flags:
 | `resources.requests.memory`    | `256Mi`                       | MinIO minimum memory requested          |
 | `securityContext.fsGroup`      | `1000`                        | Group ID to start the pod with          |
 | `securityContext.runAsUser`    | `1000`                        | User ID to start the pod with           |
+| `securityContext.fsGroupChangePolicy` |                        | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |
 | `servicePort`                  | `9000`                        | MinIO service port                      |
 | `serviceType`                  | `ClusterIP`                   | MinIO service type                      |
 | `tolerations`                  | `[]`                          | Toleration labels for pod assignment    |

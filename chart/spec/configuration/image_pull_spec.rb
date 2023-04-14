@@ -83,7 +83,28 @@ describe 'image configuration' do
 
   context 'global imagePullPolicy and imagePullSecrets' do
     begin
-      template = HelmTemplate.from_file 'spec/fixtures/global-image-config.yaml'
+      template = HelmTemplate.new(HelmTemplate.with_defaults(%(
+        global:
+          geo:
+            enabled: true
+            role: secondary
+            psql:
+              host: foo
+              password:
+                secret: bar
+          psql:
+            host: foo
+            password:
+              secret: bar
+
+          image:
+            pullPolicy: pp-global
+            pullSecrets:
+            - name: ps-global
+          busybox:
+            image:
+              pullPolicy: pp-busybox
+      )))
     rescue StandardError
       # Skip these examples when helm or chart dependencies are missing
       next
@@ -127,7 +148,8 @@ describe 'image configuration' do
 
   context 'local imagePullPolicy and imagePullSecrets' do
     begin
-      template = HelmTemplate.from_file 'spec/fixtures/local-image-config.yaml'
+      values = open('spec/fixtures/local-image-config.yaml', 'r').read
+      template = HelmTemplate.new(HelmTemplate.with_defaults(values))
     rescue StandardError
       # Skip these examples when helm or chart dependencies are missing
       next

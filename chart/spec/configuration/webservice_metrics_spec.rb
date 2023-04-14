@@ -5,7 +5,7 @@ require 'hash_deep_merge'
 
 describe 'Webservice monitoring/metrics configuration' do
   context 'web_exporter configuration' do
-    let(:values) { HelmTemplate.certmanager_issuer }
+    let(:values) { HelmTemplate.defaults }
     let(:template) { HelmTemplate.new(values) }
     let(:gitlab_yml) { YAML.safe_load(template.dig('ConfigMap/test-webservice', 'data', 'gitlab.yml.erb')) }
     let(:monitoring) { gitlab_yml.dig('production', 'monitoring') }
@@ -24,12 +24,12 @@ describe 'Webservice monitoring/metrics configuration' do
 
     context 'when disabled' do
       let(:values) do
-        YAML.safe_load(%(
+        HelmTemplate.with_defaults(%(
           gitlab:
             webservice:
               metrics:
                 enabled: false
-        )).deep_merge(HelmTemplate.certmanager_issuer)
+        ))
       end
 
       it 'sets enabled to false' do
@@ -45,14 +45,14 @@ describe 'Webservice monitoring/metrics configuration' do
 
     context 'when TLS support is enabled' do
       let(:values) do
-        YAML.safe_load(%(
+        HelmTemplate.with_defaults(%(
           gitlab:
             webservice:
               metrics:
                 enabled: true
                 tls:
                   enabled: true
-        )).deep_merge(HelmTemplate.certmanager_issuer)
+        ))
       end
       let(:tls_cert_path) { '/etc/gitlab/webservice-metrics/webservice-metrics.crt' }
       let(:tls_key_path) { '/etc/gitlab/webservice-metrics/webservice-metrics.key' }

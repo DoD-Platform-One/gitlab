@@ -42,19 +42,14 @@ class HelmTemplate
     { "certmanager-issuer" => { "email" => "test@example.com" } }
   end
 
-  def self.yaml_values(yaml_str)
-    (YAML.safe_load(yaml_str) || {}).merge!(HelmTemplate.certmanager_issuer)
+  def self.defaults
+    HelmTemplate.certmanager_issuer
   end
 
-  # Parses the specified YAML string and renders the template with it.
-  def self.from_string(yaml_str = '')
-    HelmTemplate.new(HelmTemplate.yaml_values(yaml_str))
-  end
-
-  # Reads the specified YAML file and renders the template with it.
-  def self.from_file(file_path)
-    HelmTemplate.from_string(
-      File.read(file_path))
+  def self.with_defaults(yaml)
+    yaml ||= {}
+    hash = yaml.is_a?(Hash) ? yaml : YAML.safe_load(yaml)
+    hash.deep_merge!(HelmTemplate.defaults)
   end
 
   attr_reader :mapped

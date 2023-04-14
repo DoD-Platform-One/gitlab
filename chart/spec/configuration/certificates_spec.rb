@@ -18,7 +18,7 @@ describe 'Certificates configuration' do
   end
 
   let(:default_values) do
-    HelmTemplate.certmanager_issuer
+    HelmTemplate.defaults
   end
 
   context 'Custom CA certificates' do

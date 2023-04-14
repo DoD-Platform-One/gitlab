@@ -3,6 +3,25 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.10.0-bb.0] - 2023-04-13
+### Changed
+- Updated gitlab helm chart to 6.10.0 and appVersion to 15.10.0
+- ironbank/gitlab/gitlab/gitlab-webservice minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/alpine-certificates minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly minor  15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq minor 15.9.2 -> 15.10.0 
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl minor 15.9.2 -> 15.10.0
+- registry1.dso.mil/ironbank/opensource/minio/mc RELEASE.2022-12-24T15-21-38Z -> RELEASE.2023-04-06T16-51-10Z
+- registry1.dso.mil/ironbank/opensource/minio/minio RELEASE.2022-12-12T19-27-27Z -> RELEASE.2023-04-07T05-28-58Z
+
 ## [6.9.2-bb.1] - 2023-03-21
 ### Changed
 - Corrected conditionals on Chart.yaml image annotations

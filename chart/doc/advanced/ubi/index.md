@@ -32,12 +32,3 @@ The services must be disabled are:
 
 We provide an example for GitLab chart values in [`examples/ubi/values.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/ubi/values.yaml)
 which can help you to build a pure UBI GitLab deployment.
-
-## Known Limitations
-
-- Currently there is no UBI version of GitLab Runner. Therefore we disable it.
-  However, that does not prevent attaching your own runner to your UBI-based
-  GitLab deployment.
-- GitLab relies on the official image of Docker Registry which is based on `alpine`.
-  At the moment we do not maintain or release a UBI-based version of Registry. Since
-  this functionality is _crucial_, we do not disable this service.

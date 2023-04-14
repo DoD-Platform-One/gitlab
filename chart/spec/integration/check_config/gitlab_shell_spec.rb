@@ -31,4 +31,32 @@ describe 'checkConfig gitlab-shell' do
                      success_description: 'when proxyProtocol and proxyPolicy are compatible',
                      error_description: 'when proxyProtocol and proxyPolicy are incompatible'
   end
+
+  describe 'gitlabShell.metrics' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitlab-shell:
+            metrics:
+              enabled: true
+            sshDaemon: gitlab-sshd
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitlab-shell:
+            metrics:
+              enabled: true
+            sshDaemon: openssh
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Either disable metrics or set sshDaemon to "gitlab-sshd".' }
+
+    include_examples 'config validation',
+                     success_description: 'when metrics.enabled and sshDaemon are compatible',
+                     error_description: 'when metrics.enabled and sshDaemon are compatible'
+  end
 end
