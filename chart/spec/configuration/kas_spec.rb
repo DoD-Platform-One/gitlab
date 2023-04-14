@@ -6,10 +6,7 @@ require 'yaml'
 
 describe 'kas configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   let(:custom_secret_key) { 'kas_custom_secret_key' }
@@ -168,6 +165,10 @@ describe 'kas configuration' do
 
       it 'uses the default configuration' do
         expect(config_yaml_data['gitlab']).not_to be_nil
+      end
+
+      it 'sets the external url for GitLab' do
+        expect(config_yaml_data['gitlab']['external_url']).to eq('https://gitlab.example.com')
       end
 
       describe 'tls config' do
@@ -548,10 +549,12 @@ describe 'kas configuration' do
     describe 'templates/deployment.yaml' do
       subject(:deployment) { kas_enabled_template.resources_by_kind('Deployment')['Deployment/test-kas'] }
 
+      let(:global_values) { {} }
       let(:deployment_values) { {} }
 
       let(:kas_values) do
         default_kas_values.deep_merge!(
+          **global_values,
           'gitlab' => {
             'kas' => {
               'deployment' => {}.merge!(deployment_values)
@@ -564,16 +567,62 @@ describe 'kas configuration' do
         expect(deployment['spec']).not_to have_key('minReadySeconds')
       end
 
-      it 'sets OWN_PRIVATE_API_URL to use grpc' do
-        expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
-          { "name" => "OWN_PRIVATE_API_URL", "value" => "grpc://$(POD_IP):8155" }
-        )
-      end
+      context 'env' do
+        let(:env) { deployment['spec']['template']['spec']['containers'].first['env'] }
 
-      it 'sets OWN_PRIVATE_API_HOST to use its service host' do
-        expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
-          { "name" => "OWN_PRIVATE_API_HOST", "value" => "test-kas.default.svc" }
-        )
+        it 'sets OWN_PRIVATE_API_URL to use grpc' do
+          expect(env).to include(
+            { "name" => "OWN_PRIVATE_API_URL", "value" => "grpc://$(POD_IP):8155" }
+          )
+        end
+
+        it 'sets OWN_PRIVATE_API_HOST to use its service host' do
+          expect(env).to include(
+            { "name" => "OWN_PRIVATE_API_HOST", "value" => "test-kas.default.svc" }
+          )
+        end
+
+        context 'extraEnv is set' do
+          let(:global_values) do
+            YAML.safe_load(%(
+              global:
+                extraEnv:
+                  EXTRA_ENV_VAR_A: global-a
+                  EXTRA_ENV_VAR_B: global-b
+            ))
+          end
+
+          it 'inherits global values' do
+            expect(env).to include(
+              { 'name' => 'EXTRA_ENV_VAR_A', 'value' => 'global-a' },
+              { 'name' => 'EXTRA_ENV_VAR_B', 'value' => 'global-b' }
+            )
+          end
+        end
+
+        context 'extraEnvFrom is set' do
+          let(:global_values) do
+            YAML.safe_load(%(
+              global:
+                extraEnvFrom:
+                  EXTRA_ENV_VAR_C:
+                    secretKeyRef:
+                      key: "keyC"
+                      name: "nameC"
+                  EXTRA_ENV_VAR_D:
+                    secretKeyRef:
+                      key: "keyD"
+                      name: "nameD"
+            ))
+          end
+
+          it 'inherites global values' do
+            expect(env).to include(
+              { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC", "key" => "keyC" } } },
+              { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD", "key" => "keyD" } } }
+            )
+          end
+        end
       end
 
       context 'when deployment.minReadySeconds is given' do

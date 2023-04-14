@@ -21,10 +21,7 @@ describe 'ObjectStorage configuration' do
   end
 
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   let(:artifacts_cdn_file) { '/etc/gitlab/objectstorage/cdn/artifacts' }

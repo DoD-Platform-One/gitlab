@@ -11,9 +11,7 @@ describe 'PodDisruptionBudget configuration' do
   let(:template) { HelmTemplate.new(default_values.deep_merge(values), 'test', helm_args) }
 
   let :default_values do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
+    HelmTemplate.with_defaults(%(
       global:
         pages:
           enabled: true

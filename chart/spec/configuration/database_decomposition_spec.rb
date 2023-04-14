@@ -14,7 +14,7 @@ describe 'Database configuration' do
   end
 
   let(:default_values) do
-    HelmTemplate.certmanager_issuer.deep_merge(YAML.safe_load(%(
+    HelmTemplate.with_defaults(%(
       global:
         psql:
           host: ''
@@ -34,7 +34,7 @@ describe 'Database configuration' do
           tcpUserTimeout: nil
       postgresql:
         install: true
-    )))
+    ))
   end
 
   describe 'No decomposition' do
@@ -187,6 +187,20 @@ describe 'Database configuration' do
             ci:
               foo: bar
       )))
+    end
+
+    it 'can be disabled' do
+      decompose_ci_with_enabled_false = decompose_ci.deep_merge(YAML.safe_load(%(
+        global:
+          psql:
+            ci:
+              enabled: false
+      )))
+
+      t = HelmTemplate.new(decompose_ci_with_enabled_false)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+      db_config = database_config(t, 'webservice')
+      expect(db_config['production'].keys).to contain_exactly('main')
     end
 
     context 'With minimal configuration' do

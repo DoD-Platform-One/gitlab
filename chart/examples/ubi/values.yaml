@@ -19,7 +19,11 @@ prometheus:
   install: false
 
 gitlab-runner:
-  install: false
+  image:
+    # Replace 'X.Y.Z' with desired GitLab version.
+    # `skopeo` can be used to find available tags:
+    #   skopeo list-tags docker://registry.gitlab.com/gitlab-org/gitlab-runner | jq '.Tags' | grep 'ubi-fips-v'
+    tag: ubi-fips-vX.Y.Z
 
 global:
   minio:

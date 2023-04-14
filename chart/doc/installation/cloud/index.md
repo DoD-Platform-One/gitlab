@@ -14,8 +14,8 @@ and 30 GB of RAM. If you are trying to deploy a non-production instance,
 you can reduce the defaults to fit into a smaller cluster.
 
 A Kubernetes cluster, running version 1.19 through 1.22, is required because of certain
-Kubernetes features. Support for Kubernetes 1.23 is under active development. For more information,
-see [epic 7456](https://gitlab.com/groups/gitlab-org/-/epics/7456).
+Kubernetes features. Support for Kubernetes up to 1.25 is under active development. For more information,
+see [epic 7599](https://gitlab.com/groups/gitlab-org/-/epics/7599).
 
 NOTE:
 Disabling the in-chart NGINX Ingress Controller (`nginx-ingress.enabled=false`),

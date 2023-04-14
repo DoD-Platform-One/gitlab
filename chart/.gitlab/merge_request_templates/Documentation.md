@@ -8,15 +8,16 @@
 
 ## Author's checklist
 
+- [ ] Ensure the branch name starts with `docs-` or ends with `-docs`, so only the docs-related CI jobs are included
 - [ ] Consider taking [the GitLab Technical Writing Fundamentals course](https://gitlab.edcast.com/pathways/ECL-02528ee2-c334-4e16-abf3-e9d8b8260de4)
 - [ ] Follow the:
   - [Documentation process](https://docs.gitlab.com/ee/development/documentation/workflow.html).
   - [Documentation guidelines](https://docs.gitlab.com/ee/development/documentation/).
   - [Style Guide](https://docs.gitlab.com/ee/development/documentation/styleguide/).
-- [ ] Ensure that the [product tier badge](https://docs.gitlab.com/ee/development/documentation/styleguide/index.html#product-tier-badges) is added to topic's `h1`.
-- [ ] [Request a review](https://docs.gitlab.com/ee/development/code_review.html#dogfooding-the-reviewers-feature) based on:
-  - The documentation page's [metadata](https://docs.gitlab.com/ee/development/documentation/#metadata).
-  - The [associated Technical Writer](https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments).
+- [ ] Merge Request Title and Description are up to date, accurate, and descriptive
+- [ ] MR targeting the appropriate branch
+- [ ] MR has a green pipeline on GitLab.com
+- [ ] When ready for review, MR is labeled "~workflow::ready for review" per the [Distribution MR workflow](https://about.gitlab.com/handbook/engineering/development/enablement/systems/distribution/merge_requests.html)
 
 If you are only adding documentation, do not add any of the following labels:
 

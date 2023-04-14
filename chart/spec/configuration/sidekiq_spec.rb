@@ -5,10 +5,7 @@ require 'hash_deep_merge'
 
 describe 'Sidekiq configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-
+    HelmTemplate.with_defaults(%(
       # required to activate mailroom
       gitlab:
         sidekiq:
@@ -468,10 +465,7 @@ describe 'Sidekiq configuration' do
 
   context 'when configuring memoryKiller' do
     let(:default_values) do
-      YAML.safe_load(%(
-        certmanager-issuer:
-          email: test@example.com
-      ))
+      HelmTemplate.defaults
     end
 
     let(:hard_limit) do
@@ -618,10 +612,7 @@ describe 'Sidekiq configuration' do
 
     context 'using the all-in-one' do
       let(:default_values) do
-        YAML.safe_load(%(
-          certmanager-issuer:
-            email: test@example.com
-        )).deep_merge(labels)
+        HelmTemplate.with_defaults labels
       end
 
       it 'Populates the additional labels in the expected manner' do
@@ -642,9 +633,7 @@ describe 'Sidekiq configuration' do
 
     context 'using the multiple deployments' do
       let(:default_values) do
-        YAML.safe_load(%(
-          certmanager-issuer:
-            email: test@example.com
+        HelmTemplate.with_defaults(%(
           gitlab:
             sidekiq:
               pods:
@@ -702,10 +691,7 @@ describe 'Sidekiq configuration' do
 
   describe 'terminationGracePeriodSeconds' do
     let(:default_values) do
-      YAML.safe_load(%(
-        certmanager-issuer:
-          email: 'test@example.com'
-      ))
+      HelmTemplate.defaults
     end
 
     context 'with default deployment-global value and no pod-local value' do

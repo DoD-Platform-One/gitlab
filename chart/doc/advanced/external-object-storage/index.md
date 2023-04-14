@@ -46,9 +46,6 @@ for more details.
 Direct support for Azure Blob storage is available for
 [uploaded attachments, CI job artifacts, LFS, and other object types supported via the consolidated settings](https://docs.gitlab.com/ee/administration/object_storage.html#storage-specific-configuration). In previous GitLab versions, an [Azure MinIO gateway](azure-minio-gateway.md) was needed.
 
-The Azure MinIO gateway is still needed for backups. Follow [this issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2298)
-for more details.
-
 NOTE:
 GitLab [does not support](https://github.com/minio/minio/issues/9978) the Azure MinIO gateway as the storage for the Docker Registry.
 Please refer to the [corresponding Azure example](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/registry.azure.yaml) when [setting up the Docker Registry](#docker-registry-images).
@@ -118,7 +115,7 @@ Examples for [S3](https://docs.docker.com/registry/storage-drivers/s3/)(S3 compa
 ## LFS, Artifacts, Uploads, Packages, External Diffs, Terraform State, Dependency Proxy
 
 Configuration of object storage for LFS, artifacts, uploads, packages, external
-diffs, and pseudonymizer is done via the following keys:
+diffs, Terraform state, and pseudonymizer is done via the following keys:
 
 - `global.appConfig.lfs`
 - `global.appConfig.artifacts`
@@ -126,9 +123,11 @@ diffs, and pseudonymizer is done via the following keys:
 - `global.appConfig.packages`
 - `global.appConfig.externalDiffs`
 - `global.appConfig.dependencyProxy`
+- `global.appConfig.terraformState`
 
 Note also that:
 
+- You must create buckets for the [default names or custom names in the bucket configuration](../../charts/globals.md#specify-buckets).
 - A different bucket is needed for each, otherwise performing a restore from
   backup doesn't function properly.
 - Storing MR diffs on external storage is not enabled by default, so,
@@ -198,9 +197,9 @@ externally rather than the included MinIO service. The backup/restore procedure 
 - A bucket for storing backups (`global.appConfig.backups.bucket`)
 - A temporary bucket for preserving existing data during the restore process (`global.appConfig.backups.tmpBucket`)
 
-AWS S3-compatible object storage systems and Google Cloud Storage are supported backends.
-You can configure the backend type by setting `global.appConfig.backups.objectStorage.backend`
-to `s3` for AWS S3 or `gcs` for Google Cloud Storage.
+AWS S3-compatible object storage systems, Google Cloud Storage, and Azure Blob Storage
+are supported backends. You can configure the backend type by setting `global.appConfig.backups.objectStorage.backend`
+to `s3` for AWS S3, `gcs` for Google Cloud Storage, or `azure` for Azure Blob Storage.
 You must also provide a connection configuration through the `gitlab.toolbox.backups.objectStorage.config` key.
 
 When using Google Cloud Storage, the GCP project must be set with the `global.appConfig.backups.objectStorage.config.gcpProject` value.
@@ -221,6 +220,16 @@ For Google Cloud Storage (GCS):
 --set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
 --set gitlab.toolbox.backups.objectStorage.backend=gcs
 --set gitlab.toolbox.backups.objectStorage.config.gcpProject=my-gcp-project-id
+--set gitlab.toolbox.backups.objectStorage.config.secret=storage-config
+--set gitlab.toolbox.backups.objectStorage.config.key=config
+```
+
+For Azure Blob Storage:
+
+```shell
+--set global.appConfig.backups.bucket=gitlab-backup-storage
+--set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
+--set gitlab.toolbox.backups.objectStorage.backend=azure
 --set gitlab.toolbox.backups.objectStorage.config.secret=storage-config
 --set gitlab.toolbox.backups.objectStorage.config.key=config
 ```

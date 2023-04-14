@@ -274,6 +274,7 @@ global:
 | `keepalivesCount`    | Integer   |                        | The number of TCP keepalives that can be lost before the client's connection to the server is considered dead. A value of zero uses the system default.                                        |
 | `tcpUserTimeout`     | Integer   |                        | The number of milliseconds that transmitted data may remain unacknowledged before a connection is forcibly closed. A value of zero uses the system default.                                    |
 | `applicationName`    | String    |                        | The name of the application connecting to the database. Set to a blank string (`""`) to disable. By default, this will be set to the name of the running process (e.g. `sidekiq`, `puma`).     |
+| `ci.enabled`         | Boolean   | Not defined            | Enables [two database connections](#configure-multiple-database-connections).                                                                                                                  |
 
 ### PostgreSQL per chart
 
@@ -384,6 +385,28 @@ global:
       max_replication_difference: # See documentation
       max_replication_lag_time:   # See documentation
       replica_check_interval:     # See documentation
+```
+
+### Configure multiple database connections
+
+In GitLab 16.0, GitLab will default to using two database connections
+that point to the same PostgreSQL database.
+
+This feature can be enabled by adding a `ci.enabled` key. If you want to
+disable the feature, you need to remove this key.
+
+NOTE:
+The value of the key is not important: we will also configure two
+connection if the value is for example set to `false` or `foo` for example.
+This will be addressed by
+[issue 4264](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/4264)
+which will ensure that the value is properly treated as a boolean.
+
+```yaml
+global:
+  psql:
+    ci:
+      enabled: true
 ```
 
 ## Configure Redis settings
@@ -1455,10 +1478,10 @@ If the LDAP server uses a custom CA or self-signed certificate, you must:
 
    ```shell
    # Secret
-   kubectl -n gitlab create secret generic my-custom-ca-secret --from-file=unique_name=my-custom-ca.pem
+   kubectl -n gitlab create secret generic my-custom-ca-secret --from-file=unique_name.crt=my-custom-ca.pem
 
    # ConfigMap
-   kubectl -n gitlab create configmap my-custom-ca-configmap --from-file=unique_name=my-custom-ca.pem
+   kubectl -n gitlab create configmap my-custom-ca-configmap --from-file=unique_name.crt=my-custom-ca.pem
    ```
 
 1. Then, specify:
@@ -1908,10 +1931,10 @@ To create a Secret or ConfigMap:
 
 ```shell
 # Create a Secret from a certificate file
-kubectl create secret generic secret-custom-ca --from-file=unique_name=/path/to/cert
+kubectl create secret generic secret-custom-ca --from-file=unique_name.crt=/path/to/cert
 
 # Create a ConfigMap from a certificate file
-kubectl create configmap cm-custom-ca --from-file=unique_name=/path/to/cert
+kubectl create configmap cm-custom-ca --from-file=unique_name.crt=/path/to/cert
 ```
 
 To configure a Secret or ConfigMap, or both, specify them in globals:
@@ -1923,13 +1946,23 @@ global:
       - secret: secret-custom-CAs           # Mount all keys of a Secret
       - secret: secret-custom-CAs           # Mount only the specified keys of a Secret
         keys:
-          - unique_name
+          - unique_name.crt
       - configMap: cm-custom-CAs            # Mount all keys of a ConfigMap
       - configMap: cm-custom-CAs            # Mount only the specified keys of a ConfigMap
         keys:
-          - unique_name_1
-          - unique_name_2
+          - unique_name_1.crt
+          - unique_name_2.crt
 ```
+
+NOTE:
+The `.crt` extension in the Secret's key name is important for the
+[Debian update-ca-certificates package](https://manpages.debian.org/bullseye/ca-certificates/update-ca-certificates.8.en.html).
+This step ensures that the custom CA file is mounted with that extension and is processed
+in the Certificates initContainers.
+Previously, when the certificates helper image was Alpine-based, the file extension was not actually required
+even though the [documentation](https://gitlab.alpinelinux.org/alpine/ca-certificates/-/blob/master/update-ca-certificates.8)
+says that it is.
+The UBI-based `update-ca-trust` utility does not seem to have the same requirement.
 
 You can provide any number of Secrets or ConfigMaps, each containing any number of keys that hold
 PEM-encoded CA certificates. These are configured as entries under `global.certificates.customCAs`.

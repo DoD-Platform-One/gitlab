@@ -81,6 +81,56 @@ when restoring a backup.
 --set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
 ```
 
+### Backups to Azure blob storage
+
+Azure blob storage can be used to store backups by setting
+`gitlab.toolbox.backups.objectStorage.backend` to `azure`. This will enable
+Toolbox to use the included copy of `azcopy` to transmit and retrieve the
+backup files to the Azure blob storage.
+
+To use Azure blob storage, one will need to create a storage account
+in an existing resource group. Create a config secret with your storage
+account's name, access key and blob host.
+
+Create a config file containing the paramters:
+
+```yaml
+# azure-backup-conf.yaml
+azure_storage_account_name: <storage account>
+azure_storage_access_key: <access key value>
+azure_storage_domain: blob.core.windows.net # optional
+```
+
+The following `kubectl` command can be used to create the Kubernetes Secret:
+
+```shell
+kubectl create secret generic backup-azure-creds \
+  --from-file=config=azure-backup-conf.yaml
+```
+
+Once the Secret has been created, the GitLab Helm chart can be
+configured by adding the backup settings to your deployed values or by supplying
+the settings on the Helm command line. For example:
+
+```shell
+helm install gitlab gitlab/gitlab \
+  --set gitlab.toolbox.backups.objectStorage.config.secret=backup-azure-creds \
+  --set gitlab.toolbox.backups.objectStorage.config.key=config \
+  --set gitlab.toolbox.backups.objectStorage.backend=azure
+```
+
+The access key from the Secret is used to generate and refresh shorter-lived shared
+access signature (SAS) tokens to access the storage account.
+
+In addition, two buckets/containers need to be created beforehand, one for storing the
+backups, and one temporary bucket that is used when restoring a backup. Add the
+bucket names to your values or settings. For example:
+
+```shell
+--set global.appConfig.backups.bucket=gitlab-backup-storage
+--set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
+```
+
 ## Troubleshooting
 
 ### Pod eviction issues

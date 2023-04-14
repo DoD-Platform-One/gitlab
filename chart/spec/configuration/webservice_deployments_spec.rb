@@ -13,10 +13,7 @@ describe 'Webservice Deployments configuration' do
   end
 
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   context 'When customer provides additional labels' do

@@ -5,10 +5,7 @@ require 'hash_deep_merge'
 
 describe 'registry configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   context 'When customer provides additional labels' do
@@ -113,6 +110,62 @@ describe 'registry configuration' do
 
         container_ports = t.find_container('Deployment/test-registry', 'registry')['ports']
         expect(container_ports).to include({ 'containerPort' => 5000, 'name' => 'https' })
+      end
+    end
+
+    context 'when provided internal TLS configuration' do
+      let(:values) do
+        YAML.safe_load(%(
+          registry:
+            tls:
+              secretName: internal-hosts-tls
+        )).deep_merge(tls_values)
+      end
+
+      it 'renders deployment as expected' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        expect(t.find_projected_secret('Deployment/test-registry', 'registry-secrets', 'internal-hosts-tls')).to be true
+      end
+    end
+
+    context 'when provided global TLS configuration' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            registry:
+              tls:
+                secretName: global-tls
+        )).deep_merge(tls_values)
+      end
+
+      it 'renders deployment with global TLS configuration' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        expect(t.find_projected_secret('Deployment/test-registry', 'registry-secrets', 'global-tls')).to be true
+      end
+    end
+
+    context 'when provided global and internal TLS configuration' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            registry:
+              tls:
+                secretName: global-tls
+          registry:
+            tls:
+              secretName: internal-hosts-tls
+        )).deep_merge(tls_values)
+      end
+
+      it 'renders deployment with internal TLS configuration' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        expect(t.find_projected_secret('Deployment/test-registry', 'registry-secrets', 'internal-hosts-tls')).to be true
       end
     end
 
@@ -448,7 +501,7 @@ describe 'registry configuration' do
           DEBUG_TLS_CONFIG
         )
 
-        tls_crt = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'test-registry-tls', 'tls.crt')
+        tls_crt = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'registry-service-tls', 'tls.crt')
         expect(tls_crt).not_to be_empty
 
         liveness_probe = t.find_container('Deployment/test-registry', 'registry')['livenessProbe']['httpGet']

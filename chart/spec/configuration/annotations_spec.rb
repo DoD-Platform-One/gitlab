@@ -7,7 +7,7 @@ require 'hash_deep_merge'
 
 describe 'Annotations configuration' do
   let(:default_values) do
-    HelmTemplate.certmanager_issuer.deep_merge(YAML.safe_load(%(
+    HelmTemplate.with_defaults(%(
       global:
         deployment:
           annotations:
@@ -17,7 +17,7 @@ describe 'Annotations configuration' do
           enabled: true  # DELETE THIS WHEN KAS BECOMES ENABLED BY DEFAULT
         spamcheck:
           enabled: true  # DELETE THIS WHEN SPAMCHECK BECOMES ENABLED BY DEFAULT
-    )))
+    ))
   end
 
   let(:ignored_charts) do

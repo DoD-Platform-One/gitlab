@@ -13,7 +13,7 @@ describe 'Microsoft Graph Mailer configuration' do
   end
 
   let(:values) do
-    YAML.safe_load(%(
+    HelmTemplate.with_defaults(%(
         global:
           appConfig:
             microsoft_graph_mailer:
@@ -26,7 +26,7 @@ describe 'Microsoft Graph Mailer configuration' do
                 key: secret
               azure_ad_endpoint: "https://login.microsoftonline.com"
               graph_endpoint: "https://graph.microsoft.com"
-    )).deep_merge(HelmTemplate.certmanager_issuer)
+    ))
   end
 
   let(:template) { HelmTemplate.new(values) }

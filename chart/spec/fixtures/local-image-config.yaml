@@ -1,6 +1,3 @@
-certmanager-issuer:
-  email: test@example.com
-
 global:
   geo:
     enabled: true

@@ -385,7 +385,7 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 | `gitlab.toolbox.backups.cron.resources.requests.cpu` | Backup cron minimum needed CPU | `50m` |
 | `gitlab.toolbox.backups.cron.resources.requests.memory` | Backup cron minimum needed memory | `350M` |
 | `gitlab.toolbox.backups.cron.schedule` | Cron style schedule string | `0 1 * * *` |
-| `gitlab.toolbox.backups.objectStorage.backend` | Object storage provider to use (`s3` or `gcs`) | `s3` |
+| `gitlab.toolbox.backups.objectStorage.backend` | Object storage provider to use (`s3`, `gcs`, or `azure`) | `s3` |
 | `gitlab.toolbox.backups.objectStorage.config.gcpProject` | GCP Project to use when backend is `gcs` | "" |
 | `gitlab.toolbox.backups.objectStorage.config.key` | key containing credentials in secret | "" |
 | `gitlab.toolbox.backups.objectStorage.config.secret` | Object storage credentials secret | "" |

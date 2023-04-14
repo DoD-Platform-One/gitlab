@@ -9,10 +9,7 @@ describe 'GitLab HPA configuration(s)' do
   end
 
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   let(:hpa_names) do

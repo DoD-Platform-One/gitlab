@@ -94,16 +94,13 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
     kiali:
       enabled: false
 
-    logging:
+    elasticsearchKibana:
       enabled: false
 
-    eckoperator:
+    eckOperator:
       enabled: false
 
     fluentbit:
-      enabled: false
-
-    monitoring:
       enabled: false
 
     twistlock:

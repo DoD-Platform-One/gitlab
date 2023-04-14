@@ -5,9 +5,7 @@ require 'hash_deep_merge'
 
 describe 'Mailroom configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
+    HelmTemplate.with_defaults(%(
       global:
         appConfig:
           incomingEmail:
@@ -51,9 +49,7 @@ describe 'Mailroom configuration' do
     let(:app_config) { incoming_email_settings }
 
     let(:values) do
-      YAML.safe_load(%(
-        certmanager-issuer:
-          email: test@example.com
+      HelmTemplate.with_defaults(%(
         global:
           appConfig: #{app_config.to_json}
       ))
@@ -145,9 +141,7 @@ describe 'Mailroom configuration' do
     let(:app_config) { incoming_email_settings }
 
     let(:values) do
-      YAML.safe_load(%(
-        certmanager-issuer:
-          email: test@example.com
+      HelmTemplate.with_defaults(%(
         global:
           appConfig: #{app_config.to_json}
       ))
@@ -435,9 +429,7 @@ describe 'Mailroom configuration' do
       let(:app_config) { incoming_email_settings }
 
       let(:values) do
-        YAML.safe_load(%(
-          certmanager-issuer:
-            email: test@example.com
+        HelmTemplate.with_defaults(%(
           global:
             appConfig: #{app_config.to_json}
         ))
@@ -577,9 +569,7 @@ describe 'Mailroom configuration' do
       let(:auth_token_secret_key) { "test-mailroom-auth-token-key" }
 
       let(:values) do
-        YAML.safe_load(%(
-          certmanager-issuer:
-            email: test@example.com
+        HelmTemplate.with_defaults(%(
           global:
             appConfig: #{app_config.to_json}
         ))

@@ -5,10 +5,7 @@ require 'hash_deep_merge'
 
 describe 'Workhorse configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
   let(:template) { HelmTemplate.new(default_values) }
 
@@ -41,15 +38,13 @@ describe 'Workhorse configuration' do
 
   context 'with custom values' do
     let(:custom_values) do
-      YAML.safe_load(%(
+      HelmTemplate.with_defaults(%(
         gitlab:
           webservice:
             workhorse:
               shutdownTimeout: "30s"
               trustedCIDRsForPropagation: ["127.0.0.1/32", "192.168.0.1/32"]
               trustedCIDRsForXForwardedFor: ["1.2.3.4/32", "5.6.7.8/32"]
-        certmanager-issuer:
-          email: test@example.com
      ))
     end
 
@@ -74,7 +69,7 @@ describe 'Workhorse configuration' do
     let(:tls_custom_ca) {}
 
     let(:tls_values) do
-      YAML.safe_load(%(
+      HelmTemplate.with_defaults(%(
         global:
           certificates:
             customCAs: [#{tls_custom_ca}]
@@ -93,8 +88,6 @@ describe 'Workhorse configuration' do
                 verify: #{tls_verify}
                 secretName: #{tls_secret_name}
                 caSecretName: #{tls_ca_secret_name}
-        certmanager-issuer:
-          email: test@example.com
       ))
     end
 

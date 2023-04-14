@@ -4,10 +4,7 @@ require 'yaml'
 
 describe 'Redis configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
-      certmanager-issuer:
-        email: test@example.com
-    ))
+    HelmTemplate.defaults
   end
 
   describe 'global.redis.password.enabled' do

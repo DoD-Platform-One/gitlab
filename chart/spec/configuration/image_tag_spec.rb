@@ -72,7 +72,7 @@ end
 describe 'image tag configuration' do
   context 'no global.gitlabVersion configured' do
     begin
-      template = HelmTemplate.from_string %(
+      values = HelmTemplate.with_defaults %(
         global:
           pages:
             enabled: true
@@ -83,7 +83,8 @@ describe 'image tag configuration' do
           ingress:
             # To ensure the cfsl-self-sign image is used
             configureCertmanager: false
-      )
+        )
+      template = HelmTemplate.new values
     rescue StandardError
       # Skip these examples when helm or chart dependencies are missing
       next
@@ -103,7 +104,7 @@ describe 'image tag configuration' do
   context 'global.gitlabVersion' do
     context 'without local tags configured' do
       begin
-        template = HelmTemplate.from_string %(
+        values = HelmTemplate.with_defaults %(
           global:
             gitlabVersion: 1.2.3
             pages:
@@ -116,6 +117,7 @@ describe 'image tag configuration' do
               # To ensure the cfsl-self-sign image is used
               configureCertmanager: false
         )
+        template = HelmTemplate.new values
       rescue StandardError
         # Skip these examples when helm or chart dependencies are missing
         next
@@ -136,7 +138,7 @@ describe 'image tag configuration' do
 
     context 'with local tags configured' do
       begin
-        template = HelmTemplate.from_string %(
+        values = HelmTemplate.with_defaults %(
           global:
             gitlabVersion: 1.2.3
             pages:
@@ -162,6 +164,7 @@ describe 'image tag configuration' do
               image:
                 tag: local-tag
         )
+        template = HelmTemplate.new values
       rescue StandardError
         # Skip these examples when helm or chart dependencies are missing
         next

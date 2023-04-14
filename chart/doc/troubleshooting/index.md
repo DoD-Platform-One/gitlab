@@ -640,3 +640,39 @@ You may need to adjust or modify the `nginx-ingress.controller.config.annotation
 setting.
 
 See [Annotation value word blocklist](../charts/nginx/index.md#annotation-value-word-blocklist) for additional details.
+
+### Volume mount takes a long time
+
+Mounting large volumes, such as the `gitaly` or `toolbox` chart volumes, can take a long time because Kubernetes
+recursively changes the permissions of the volume's contents to match the Pod's `securityContext`.
+
+Starting with Kubernetes 1.23 you can set the `securityContext.fsGroupChangePolicy` to `OnRootMismatch` to mitigate
+this issue. This flag is supported by all GitLab subcharts.
+
+For example for the Gitaly subchart:
+
+```yaml
+gitlab:
+  gitaly:
+    securityContext:
+      fsGroupChangePolicy: "OnRootMismatch"
+```
+
+See the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#configure-volume-permission-and-ownership-change-policy-for-pods),
+for more details.
+
+For Kubernetes versions not supporting `fsGroupChangePolicy` you can mitigate the
+issue by changing or fully deleting the settings for the `securityContext`.
+
+```yaml
+gitlab:
+  gitaly:
+    securityContext:
+      fsGroup: ""
+      runAsUser: ""
+```
+
+NOTE:
+The example syntax eliminates the `securityContext` setting entirely.
+Setting `securityContext: {}` or `securityContext:` does not work due
+to the way Helm merges default values with user provided configuration.

@@ -5,13 +5,13 @@ require 'hash_deep_merge'
 
 describe 'Suggested Reviewers configuration' do
   let(:default_values) do
-    YAML.safe_load(%(
+    HelmTemplate.with_defaults(%(
         global:
           appConfig:
             suggested_reviewers:
               secret: #{custom_secret_name}
               key: #{custom_secret_key}
-    )).deep_merge(HelmTemplate.certmanager_issuer)
+    ))
   end
 
   let(:custom_secret_key) { 'suggested_reviewers_custom_secret_key' }
