@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.10.0-bb.1] - 2023-04-26
+### Changed
+- Corrected bug on ./chart/charts/gitlab/charts/toolbox/templates/backup-job.yaml
+
 ## [6.10.0-bb.0] - 2023-04-13
 ### Changed
 - Updated gitlab helm chart to 6.10.0 and appVersion to 15.10.0
