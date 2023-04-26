@@ -89,9 +89,9 @@ spec:
                 - cp /etc/gitlab/.s3cfg $HOME/.s3cfg && backup-utility {{ .Values.backups.cron.extraArgs }} {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}{{ .Values.backups.cron.istioShutdown }}{{- end }} # alpine sleep has no infinity
                 {{- else if eq .Values.backups.objectStorage.backend "gcs" }}
                 - sh /var/opt/gitlab/templates/configure-gsutil && backup-utility {{ .Values.backups.cron.extraArgs }} {{ .Values.backups.cron.extraArgs }}  {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}{{ .Values.backups.cron.istioShutdown }}{{- end }}
-                {{- end }}
                 {{- else if eq .Values.backups.objectStorage.backend "azure" }} 
                 - backup-utility {{ .Values.backups.cron.extraArgs }} {{ .Values.backups.cron.extraArgs }}  {{- if and .Values.global.istio.enabled (eq .Values.global.istio.injection "enabled") }}{{ .Values.backups.cron.istioShutdown }}{{- end }}
+                {{- end }}
               image: "{{ coalesce .Values.image.repository (include "image.repository" .) }}:{{ coalesce .Values.image.tag (include "gitlab.versionTag" . ) }}{{ include "gitlab.image.tagSuffix" . }}"
               {{- include "gitlab.image.pullPolicy" $imageCfg | indent 14 }}
               env:
