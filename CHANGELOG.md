@@ -3,6 +3,22 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.10.2-bb.0] - 2023-04-25
+### Changed
+- ironbank/gitlab/gitlab/gitlab-webservice patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse patch 15.10.0 -> 15.10.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl patch 15.10.0 -> 15.10.2
+
 ## [6.10.0-bb.1] - 2023-04-26
 ### Changed
 - Corrected bug on ./chart/charts/gitlab/charts/toolbox/templates/backup-job.yaml
@@ -23,8 +39,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice minor 15.9.2 -> 15.10.0
 - registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse minor 15.9.2 -> 15.10.0
 - registry1.dso.mil/ironbank/gitlab/gitlab/kubectl minor 15.9.2 -> 15.10.0
-- registry1.dso.mil/ironbank/opensource/minio/mc RELEASE.2022-12-24T15-21-38Z -> RELEASE.2023-04-06T16-51-10Z
-- registry1.dso.mil/ironbank/opensource/minio/minio RELEASE.2022-12-12T19-27-27Z -> RELEASE.2023-04-07T05-28-58Z
 
 ## [6.9.2-bb.1] - 2023-03-21
 ### Changed

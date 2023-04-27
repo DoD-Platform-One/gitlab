@@ -2,7 +2,7 @@
     "baseBranches": ["main"],
     "configWarningReuseIssue": false,
     "dependencyDashboard": true,
-    "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies. \n - [ ] Update synker file in bigbang with gitlab-exporter version. ", 
+    "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.", 
     "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
     "draftPR": true,
     "enabledManagers": ["helm-values", "regex"],

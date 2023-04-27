@@ -7,7 +7,7 @@ export CI_APPLICATION_TAG=$CI_COMMIT_SHA
 export CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}
 
 # Derive the Helm RELEASE argument from CI_ENVIRONMENT_SLUG
-if [[ $CI_ENVIRONMENT_SLUG =~ ^.{3}-review ]]; then
+if [[ $CI_ENVIRONMENT_SLUG =~ ^[^-]+-review ]]; then
   # if a "review", use $REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
   RELEASE_NAME=rvw-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}
   # Trim release name to leave room for prefixes/suffixes
@@ -42,6 +42,11 @@ function previousDeployFailed() {
   return $status
 }
 
+function get_gitlab_app_version_for_branch() {
+  git fetch origin "${1}"
+  git show origin/"${1}":Chart.yaml | grep 'appVersion:' | awk '{print $2}'
+}
+
 function deploy() {
   # Use the gitlab version from the environment or use stable images when on the stable branch
   gitlab_app_version=$(grep 'appVersion:' Chart.yaml | awk '{ print $2}')
@@ -49,6 +54,9 @@ function deploy() {
     image_branch=$GITLAB_VERSION
   elif [[ "${CI_COMMIT_BRANCH}" =~ -stable$ ]] && [[ "${gitlab_app_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     image_branch=$(echo "${gitlab_app_version%.*}-stable" | tr '.' '-')
+  elif [[ "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" =~ -stable$ ]]; then
+    stable_gitlab_app_version=$(get_gitlab_app_version_for_branch "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}")
+    image_branch=$(echo "${stable_gitlab_app_version%.*}-stable" | tr '.' '-')
   fi
 
   gitlab_version_args=()
