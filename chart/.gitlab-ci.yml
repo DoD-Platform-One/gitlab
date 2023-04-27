@@ -228,9 +228,12 @@ review_gke:
 review_gke122:
   variables:
     DNS_PROVIDER: "google"
+    AGENT_NAME: "gke122-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
   extends: .review_template
   environment:
-    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke122
     auto_stop_in: 4 days
@@ -309,8 +312,11 @@ stop_review_gke:
 
 stop_review_gke122:
   extends: .stop_review_template
+  variables:
+    AGENT_NAME: "gke122-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
   environment:
-    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     action: stop
 
 stop_review_gke125:
@@ -383,10 +389,13 @@ stable_gke:
 stable_gke122:
   extends: .stable
   environment:
-    name: k8s122_production
+    name: gke122_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   variables:
     VARIABLES_FILE: "variables/stable_gke122"
+    AGENT_NAME: "gke122-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
   resource_group: "gke122-production"
 
 stable_gke125:
@@ -647,8 +656,11 @@ review_specs_gke122:
   variables:
     VARIABLES_FILE: "variables/review_gke122"
     RSPEC_TAGS: type:feature
+    AGENT_NAME: "gke122-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
   environment:
-    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke122
   resource_group: "gke122-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
@@ -669,6 +681,9 @@ review_specs_gke125:
     url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke125
   resource_group: "gke125-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
 
 # Bring back when https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2457 is fixed
 # review_specs_gke_dev:
@@ -743,8 +758,11 @@ production_specs_gke122:
   variables:
     VARIABLES_FILE: "variables/stable_gke122"
     RSPEC_TAGS: type:feature
+    AGENT_NAME: "gke122-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
   environment:
-    name: k8s122_production
+    name: gke122_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   resource_group: "gke122-production"
 
@@ -916,7 +934,7 @@ qa_gke122:
     VARIABLES_FILE: "variables/review_gke122"
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
-    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke122
 
 qa_gke125:
@@ -951,7 +969,7 @@ qa_gke122_production:
     VARIABLES_FILE: "variables/stable_gke122"
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
-    name: k8s122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
 
 qa_gke125_production:
   extends: .qa_production
@@ -1019,7 +1037,7 @@ qa_gke122_manual_full_suite:
     VARIABLES_FILE: "variables/review_gke122"
     TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
-    name: k8s122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke122
   needs: [ "qa_gke122_full_suite_manual_trigger"]
 
@@ -1030,7 +1048,7 @@ qa_gke122_manual_full_suite_production:
     VARIABLES_FILE: "variables/stable_gke122"
     TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
-    name: k8s122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
   needs: [ "qa_gke122_full_suite_manual_trigger"]
 
 qa_gke125_full_suite_manual_trigger:
