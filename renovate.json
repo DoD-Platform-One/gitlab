@@ -39,15 +39,6 @@
             "datasourceTemplate": "docker"
         },
         {
-            "fileMatch": ["^chart/values\\.yaml$"],
-            "matchStrings": [
-                "image:[^\\S\\r\\n]+(?<depName>.+)\\s+tag:[^\\S\\r\\n]+(?<currentValue>RELEASE.+)",
-                "image:[^\\S\\r\\n]+(?<depName>.+)\\s+imageTag:[^\\S\\r\\n]+(?<currentValue>RELEASE.+)"
-            ],
-            "datasourceTemplate": "docker",
-            "versioningTemplate": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$"
-        },
-        {
             "fileMatch": ["^tests/images\\.txt$"],
             "matchStrings": [
               "s*(?<depName>.+):(?<currentValue>.+)"
