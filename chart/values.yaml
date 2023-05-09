@@ -1075,6 +1075,10 @@ prometheus:
 ## https://docs.gitlab.com/charts/architecture/decisions#redis
 ## https://docs.gitlab.com/charts/installation/deployment.html#redis
 redis:
+  global:
+    imagePullSecrets:
+    - private-registry
+
   install: true
   existingSecret: gitlab-redis-secret
   existingSecretKey: redis-password
@@ -1087,8 +1091,7 @@ redis:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
       tag: v1.50.0
-      pullSecrets:
-      - private-registry
+      pullSecrets: []
     resources:
       limits: 
         cpu: 250m
@@ -1108,8 +1111,7 @@ redis:
     registry: registry1.dso.mil/ironbank/bitnami
     repository: redis
     tag: 7.0.0-debian-10-r3
-    pullSecrets:
-    - private-registry
+    pullSecrets: []
   master:
     command: "redis-server"
     resources: 

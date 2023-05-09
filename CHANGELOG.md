@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.10.2-bb.1] - 2023-05-09
+### Changed
+- Fixed redis values to deduplicate imagePullSecrets
+
 ## [6.10.2-bb.0] - 2023-04-25
 ### Changed
 - ironbank/gitlab/gitlab/gitlab-webservice patch 15.10.0 -> 15.10.2
