@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.10.2-bb.0](https://img.shields.io/badge/Version-6.10.2--bb.0-informational?style=flat-square) ![AppVersion: 15.10.2](https://img.shields.io/badge/AppVersion-15.10.2-informational?style=flat-square)
+![Version: 6.10.2-bb.1](https://img.shields.io/badge/Version-6.10.2--bb.1-informational?style=flat-square) ![AppVersion: 15.10.2](https://img.shields.io/badge/AppVersion-15.10.2-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -520,6 +520,7 @@ helm install gitlab chart/
 | prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[5].target_label | string | `"kubernetes_namespace"` |  |
 | prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[6].source_labels[0] | string | `"__meta_kubernetes_service_name"` |  |
 | prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[6].target_label | string | `"kubernetes_name"` |  |
+| redis.global.imagePullSecrets[0].name | string | `"private-registry"` |  |
 | redis.install | bool | `true` |  |
 | redis.existingSecret | string | `"gitlab-redis-secret"` |  |
 | redis.existingSecretKey | string | `"redis-password"` |  |
@@ -529,7 +530,7 @@ helm install gitlab chart/
 | redis.metrics.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.metrics.image.repository | string | `"analytics/redis-exporter"` |  |
 | redis.metrics.image.tag | string | `"v1.50.0"` |  |
-| redis.metrics.image.pullSecrets[0] | string | `"private-registry"` |  |
+| redis.metrics.image.pullSecrets | list | `[]` |  |
 | redis.metrics.resources.limits.cpu | string | `"250m"` |  |
 | redis.metrics.resources.limits.memory | string | `"256Mi"` |  |
 | redis.metrics.resources.requests.cpu | string | `"250m"` |  |
@@ -543,7 +544,7 @@ helm install gitlab chart/
 | redis.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.image.repository | string | `"redis"` |  |
 | redis.image.tag | string | `"7.0.0-debian-10-r3"` |  |
-| redis.image.pullSecrets[0] | string | `"private-registry"` |  |
+| redis.image.pullSecrets | list | `[]` |  |
 | redis.master.command | string | `"redis-server"` |  |
 | redis.master.resources.limits.cpu | string | `"250m"` |  |
 | redis.master.resources.limits.memory | string | `"256Mi"` |  |
@@ -794,10 +795,10 @@ helm install gitlab chart/
 | minio.resources.requests.memory | string | `"300Mi"` |  |
 | minio.jobAnnotations."sidecar.istio.io/inject" | string | `"false"` |  |
 | minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
-| minio.imageTag | string | `"RELEASE.2023-04-20T17-56-55Z"` |  |
+| minio.imageTag | string | `"RELEASE.2022-12-12T19-27-27Z"` |  |
 | minio.pullSecrets[0].name | string | `"private-registry"` |  |
 | minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
-| minio.minioMc.tag | string | `"RELEASE.2023-04-12T02-21-51Z"` |  |
+| minio.minioMc.tag | string | `"RELEASE.2022-12-24T15-21-38Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | hostname | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` |  |

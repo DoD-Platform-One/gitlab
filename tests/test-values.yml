@@ -17,12 +17,8 @@ global:
       pullSecrets:
       - name: private-registry
 redis:
-  metrics:
-    image:
-      pullSecrets:
-      - private-registry
-  image:
-    pullSecrets:
+  global:
+    imagePullSecrets:
     - private-registry
 registry:
   hpa:
