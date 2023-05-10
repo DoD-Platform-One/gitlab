@@ -111,7 +111,7 @@ variables. All options have defaults, no options are required.
 
 ## Next steps
 
-When the cluster is up and running, you can continue [installing GitLab](../operator.md).
+When the cluster is up and running, you can continue [installing GitLab](https://docs.gitlab.com/operator/).
 
 ## Resources
 

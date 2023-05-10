@@ -79,3 +79,18 @@ The following cloud cluster options are supported:
 ## Installing from repository
 
 Details on installing the chart from the Git repository can be found in the [developer deployment](deploy.md) documentation.
+
+## Developer license
+
+A [developer license](https://about.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee-developer-licenses) can
+be used for chart development to test features that are only functional in a licensed environment.
+
+To use a developer license follow the [instructions for Enterprise licenses](../installation/secrets.md#initial-enterprise-license)
+and connect your instance to the Staging Customers Portal.
+
+```yaml
+global:
+  extraEnv:
+    GITLAB_LICENSE_MODE: test
+    CUSTOMER_PORTAL_URL: https://customers.staging.gitlab.com
+```

@@ -291,6 +291,10 @@ This secret is referenced by the `gitlab.kas.privateApi.secret` setting.
 
 ### GitLab Suggested Reviewers secret
 
+NOTE:
+The Suggested Reviewers secret is created automatically and only used on GitLab SaaS.
+This secret is not needed on self-managed GitLab instances.
+
 GitLab Rails requires that a secret for Suggested Reviewers is present. You can
 leave it to the chart to auto-generate the secret, or you can create this secret
 manually (replace `<name>` with the name of the release):

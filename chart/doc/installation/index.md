@@ -14,7 +14,8 @@ you can [deploy GitLab](deployment.md) with the `helm` command.
 WARNING:
 The default Helm chart configuration is **not intended for production**.
 The default chart creates a proof of concept (PoC) implementation where all GitLab
-services are deployed in the cluster. For production deployments, additional setup and [advanced configuration](../advanced/index.md) is required.
+services are deployed in the cluster. For production deployments, you must follow the
+[Cloud Native Hybrid reference architecture](#use-the-reference-architectures).
 
 For a production deployment, you should have strong working knowledge of Kubernetes.
 This method of deployment has different management, observability, and concepts than traditional deployments.
@@ -43,7 +44,11 @@ point to prebuilt, externalized state stores that align with the chosen
 
 ### Use the reference architectures
 
-The reference architecture for deploying GitLab instances to Kubernetes is called cloud native hybrid specifically because not all GitLab services can run in the cluster for production-grade implementations. Each cloud native hybrid reference architecture is detailed within the overall architecture page. For instance, here is the [cloud native hybrid reference architecture](https://docs.gitlab.com/ee/administration/reference_architectures/3k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) alternative for the 3,000 user count.
+The reference architecture for deploying GitLab instances to Kubernetes is called [Cloud Native Hybrid](https://docs.gitlab.com/ee/administration/reference_architectures/#cloud-native-hybrid) specifically because not all GitLab services can run in the cluster for production-grade implementations. All stateful GitLab components must be deployed outside the Kubernetes cluster.
+
+Available Cloud Native Hybrid reference architectures sizes
+are listed at [Reference architectures](https://docs.gitlab.com/ee/administration/reference_architectures/#cloud-native-hybrid) page.
+For example, here is the [Cloud Native Hybrid reference architecture](https://docs.gitlab.com/ee/administration/reference_architectures/3k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) for the 3,000 user count.
 
 ### Use Infrastructure as Code (IaC) and builder resources
 

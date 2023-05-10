@@ -7,7 +7,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 # Design Decisions
 
 This documentation collects reasoning and decisions made
-regarding the design of the Helm charts in this repository.
+regarding the design of the Helm charts in this repository. Proposals welcome, see [Decision Making](decision-making.md) for how we apply decisions.
 
 ## Attempt to catch problematic configurations
 

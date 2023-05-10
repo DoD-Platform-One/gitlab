@@ -6,6 +6,10 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Configure the GitLab chart with GitLab Geo
 
+WARNING:
+The following guide describes how to set up Geo with a unified URL, but it does not work yet.
+For more information, see [issue 3522](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3522).
+
 GitLab Geo provides the ability to have geographically distributed application
 deployments.
 

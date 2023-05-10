@@ -389,18 +389,19 @@ global:
 
 ### Configure multiple database connections
 
+> The `gitlab:db:decomposition:connection_status` Rake task was [introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/111927) in GitLab 15.11.
+
 In GitLab 16.0, GitLab will default to using two database connections
 that point to the same PostgreSQL database.
 
-This feature can be enabled by adding a `ci.enabled` key. If you want to
-disable the feature, you need to remove this key.
+To opt-in for this feature, you first need to ensure PostgreSQL `max_connections` is high enough (using more than 50% of the available max connections).
+You can verify this by running the following Rake task using [the Toolbox container](gitlab/toolbox/index.md#toolbox-included-tools):
 
-NOTE:
-The value of the key is not important: we will also configure two
-connection if the value is for example set to `false` or `foo` for example.
-This will be addressed by
-[issue 4264](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/4264)
-which will ensure that the value is properly treated as a boolean.
+```shell
+gitlab-rake gitlab:db:decomposition:connection_status
+```
+
+If the task indicates that `max_connections` is high enough, you can enable this feature by setting the `ci.enabled` key to `true`:
 
 ```yaml
 global:
@@ -408,6 +409,8 @@ global:
     ci:
       enabled: true
 ```
+
+If you want to disable the feature, set the `ci.enabled` key to `false`.
 
 ## Configure Redis settings
 
@@ -1384,7 +1387,7 @@ global:
     customCAs:
     - secret: *internal-ca
   hosts:
-    domain: gitlab.example.com # Your gitlab domain 
+    domain: gitlab.example.com # Your gitlab domain
   kas:
     tls:
       enabled: true
@@ -1394,7 +1397,9 @@ global:
 
 ### Suggested Reviewers settings
 
-#### Custom secret
+NOTE:
+The Suggested Reviewers secret is created automatically and only used on GitLab SaaS.
+This secret is not needed on self-managed GitLab instances.
 
 One can optionally customize the Suggested Reviewers `secret` name as well as
 `key`, either by using Helm's `--set variable` option:
@@ -1500,6 +1505,39 @@ If the LDAP server uses a custom CA or self-signed certificate, you must:
 This will ensure that the CA certificate is mounted in the relevant pods at `/etc/ssl/certs/ca-cert-unique_name.pem` and specifies its use in the LDAP configuration.
 
 See [Custom Certificate Authorities](#custom-certificate-authorities) for more info.
+
+### DuoAuth
+
+Use these settings to enable [two-factor authentication (2FA) with Duo](https://docs.gitlab.com/ee/user/profile/account/two_factor_authentication.html#enable-one-time-password).
+
+```yaml
+global:
+  appConfig:
+    duoAuth:
+      enabled:
+      hostname:
+      integrationKey:
+      secretKey:
+      #  secret:
+      #  key:
+```
+
+| Name              | Type    | Default | Description                                |
+|:----------------- |:-------:|:------- |:------------------------------------------ |
+| `enabled`         | Boolean | `false` | Enable or disable the integration with Duo |
+| `hostname`        | String  |         | Duo API hostname                           |
+| `integrationKey` | String  |         | Duo API integration key                    |
+| `secretKey`      |         |         | Duo API secret key that must be [configured with the name of secret and key name](#configure-the-duo-secret-key) |
+
+### Configure the Duo secret key
+
+To configure Duo auth integration in the GitLab Helm chart you must provide a secret in the `global.appConfig.duoAuth.secretKey.secret` setting containing Duo auth secret_key value.
+
+To create a Kubernetes secret object to store your Duo account `secretKey`, from the command line, run:
+
+```shell
+kubectl create secret generic <secret_object_name> --from-literal=secretKey=<duo_secret_key_value>
+```
 
 ### OmniAuth
 
@@ -2036,9 +2074,14 @@ global:
     # name:
 ```
 
-- Setting `global.serviceAccount.enabled` to `true` will create a custom service account for each deployment.
-- Setting `global.serviceAccount.create` to `false` will disable automatic service account creation.
-- Setting `global.serviceAccount.name` will use that name in the deployment for either auto-generated or manually created service accounts.
+- Setting `global.serviceAccount.enabled` controls reference to a ServiceAccount for each component via `spec.serviceAccountName`.
+- Setting `global.serviceAccount.create` controls ServiceAccount object creation via Helm.
+- Setting `global.serviceAccount.name` controls the ServiceAccount object name and the name referenced by each component.
+
+NOTE:
+Do not use `global.serviceAccount.create=true` with `global.serviceAccount.name`, as it instructs the charts
+to create multiple ServiceAccount objects with the same name. Instead, use `global.serviceAccount.create=false` if specifying
+a global name.
 
 ## Annotations
 

@@ -39,7 +39,7 @@ The GitLab chart expects rails secrets to be provided as a Kubernetes Secret wit
 1. Run the following command to convert your `gitlab-secrets.json` to YAML format:
 
    ```shell
-   yq -P '{"production": .gitlab_rails}' gitlab-secrets.json >> gitlab-secrets.yaml
+   yq -P '{"production": .gitlab_rails}' gitlab-secrets.json -o yaml >> gitlab-secrets.yaml
    ```
 
 1. Check that the new `gitlab-secrets.yaml` file has the following contents:
@@ -95,6 +95,23 @@ The steps for restoring a GitLab installation are
    ```
 
 1. Get the tarball ready in any of the above locations. Make sure it is named in the `<timestamp>_gitlab_backup.tar` format. Read what the [backup timestamp](https://docs.gitlab.com/ee/raketasks/backup_restore.html#backup-timestamp) is about.
+
+1. Note the current number of replicas for database clients for subsequent restart:
+
+   ```shell
+   kubectl get deploy -n <namespace> -lapp=sidekiq,release=<helm release name> -o jsonpath='{.items[].spec.replicas}{"\n"}'
+   kubectl get deploy -n <namespace> -lapp=webservice,release=<helm release name> -o jsonpath='{.items[].spec.replicas}{"\n"}'
+   kubectl get deploy -n <namespace> -lapp=prometheus,release=<helm release name> -o jsonpath='{.items[].spec.replicas}{"\n"}'
+   ```
+
+1. Stop the clients of the database to prevent locks interfering with the restore process:
+
+   ```shell
+   kubectl scale deploy -lapp=sidekiq,release=<helm release name> -n <namespace> --replicas=0
+   kubectl scale deploy -lapp=webservice,release=<helm release name> -n <namespace> --replicas=0
+   kubectl scale deploy -lapp=prometheus,release=<helm release name> -n <namespace> --replicas=0
+   ```
+
 1. Run the backup utility to restore the tarball
 
    ```shell
@@ -111,6 +128,14 @@ The steps for restoring a GitLab installation are
 
 1. This process will take time depending on the size of the tarball.
 1. The restoration process will erase the existing contents of database, move existing repositories to temporary locations and extract the contents of the tarball. Repositories will be moved to their corresponding locations on the disk and other data, like artifacts, uploads, LFS etc. will be uploaded to corresponding buckets in Object Storage.
+
+1. Restart the application:
+
+   ```shell
+   kubectl scale deploy -lapp=sidekiq,release=<helm release name> -n <namespace> --replicas=<value>
+   kubectl scale deploy -lapp=webservice,release=<helm release name> -n <namespace> --replicas=<value>
+   kubectl scale deploy -lapp=prometheus,release=<helm release name> -n <namespace> --replicas=<value>
+   ```
 
 NOTE:
 During restoration, the backup tarball needs to be extracted to disk.

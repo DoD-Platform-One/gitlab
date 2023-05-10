@@ -356,7 +356,7 @@ To address this, ensure the Kubernetes version is 1.21 or older. See
 [#2852](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2852) for
 more information regarding NGINX Ingress support for Kubernetes 1.22 or later.
 
-## Increased load on `/api/v4/jobs/requests` endpoint
+## Increased load on `/api/v4/jobs/request` endpoint
 
 You may face this issue if the option `workhorse.keywatcher` was set to `false` for the deployment servicing `/api/*`.
 Use the following steps to verify:
@@ -374,7 +374,7 @@ Use the following steps to verify:
    ```
 
 If the `[redis]` configuration is not present, the `workhorse.keywatcher` flag was set to `false` during deployment
-thus causing the extra load in the `/api/v4/jobs/requests` endpoint. To fix this, enable the `keywatcher` in the
+thus causing the extra load in the `/api/v4/jobs/request` endpoint. To fix this, enable the `keywatcher` in the
 `webservice` chart:
 
 ```yaml

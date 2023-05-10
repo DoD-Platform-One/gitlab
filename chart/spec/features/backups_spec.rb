@@ -12,13 +12,16 @@ describe "Restoring a backup" do
     stdout, status = gitaly_purge_storage
     fail stdout unless status.success?
 
-    stdout, status = restore_from_backup
+    stdout, status = restore_from_backup(skip: 'repositories')
     fail stdout unless status.success?
 
-    # We run migrations once early to get the db into a place where we can set the runner token
+    # We run migrations once early to get the db into a place where we can set the runner token and restore repos
     # Ignore errors, we will run the migrations again after the token
     stdout, status = run_migrations
     warn "WARNING: Migrations did not succeed:\n#{stdout}" unless status.success?
+
+    stdout, status = restore_from_backup(skip: 'db')
+    fail stdout unless status.success?
 
     stdout, status = set_runner_token
     fail stdout unless status.success?

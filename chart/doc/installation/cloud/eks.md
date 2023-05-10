@@ -19,6 +19,9 @@ Prerequisites:
 - Install the [prerequisites](../tools.md).
 - Install [`eksctl`](https://github.com/weaveworks/eksctl#installation).
 
+To create the cluster manually, see [Amazon AWS Getting started with Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
+Use EC2 managed nodes for the EKS cluster, and not [Fargate](https://docs.aws.amazon.com/en_us/eks/latest/userguide/fargate.html). Fargate has a number of limitations and is not supported for use with the GitLab Helm chart.
+
 ### Scripted cluster creation
 
 A [bootstrap script](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/scripts/eks_bootstrap_script)
@@ -85,11 +88,27 @@ We currently recommend using manual provisioning of persistent volumes. Amazon E
 clusters default to spanning multiple zones. Dynamic provisioning, if not configured
 to use a storage class locked to a particular zone leads to a scenario where pods may
 exist in a different zone from storage volumes and be unable to access data.
+For more information, see how to [provision persistent volumes](../storage.md).
 
-Administrators who need to deploy in multiple zones should familiarize themselves
-with [how to set up cluster storage](../storage.md) and review
-[Amazon's own documentation on storage classes](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html)
-when defining their storage solution.
+In the Amazon EKS 1.23 and later clusters, regardless of whether manual or dynamic provisioning,
+you need to install the [Amazon EBS CSI add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html#adding-ebs-csi-eks-add-on) on the cluster.
+
+```shell
+eksctl utils associate-iam-oidc-provider --cluster **CLUSTER_NAME** --approve
+
+eksctl create iamserviceaccount \
+    --name ebs-csi-controller-sa \
+    --namespace kube-system \
+    --cluster **CLUSTER_NAME** \
+    --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+    --approve \
+    --role-only \
+    --role-name *ROLE_NAME*
+
+eksctl create addon --name aws-ebs-csi-driver --cluster **CLUSTER_NAME** --service-account-role-arn arn:aws:iam::*AWS_ACCOUNT_ID*:role/*ROLE_NAME* --force
+
+kubectl annotate serviceaccount ebs-csi-controller-sa -n kube-system eks.amazonaws.com/role-arn=arn:aws:iam::*AWS_ACCOUNT_ID*:role/*ROLE_NAME*
+```
 
 ## External Access to GitLab
 

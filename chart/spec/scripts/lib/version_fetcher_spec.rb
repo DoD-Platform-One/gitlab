@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'stringio'
 require_relative '../../../scripts/lib/version_fetcher.rb'
 
 describe VersionFetcher do
@@ -13,26 +14,22 @@ describe VersionFetcher do
   describe 'detecting API URL' do
     it 'works correctly gitlab.com registry' do
       version_fetcher = VersionFetcher.new('v11.8.0', 'gitlab-org/gitlab-foss')
-      allow(version_fetcher).to receive_message_chain(:open, :read).and_return("1.2.3\n")
-
-      expect(version_fetcher).to receive(:open).with("https://gitlab.com/api/v4/projects/#{com_path}", { 'PRIVATE-TOKEN' => nil })
+      expect(URI).to receive(:open).with("https://gitlab.com/api/v4/projects/#{com_path}", { 'PRIVATE-TOKEN' => nil }).and_return(StringIO.new("1.2.3\n"))
       version_fetcher.fetch('gitlab-shell')
     end
 
     it 'works correctly dev registry' do
       allow(ENV).to receive(:[]).with('FETCH_DEV_ARTIFACTS_PAT').and_return('myrandomtoken')
       version_fetcher = VersionFetcher.new('v11.8.0', 'gitlab/gitlabhq')
-      allow(version_fetcher).to receive_message_chain(:open, :read).and_return("1.2.3\n")
 
-      expect(version_fetcher).to receive(:open).with("https://dev.gitlab.org/api/v4/projects/#{dev_path}", { 'PRIVATE-TOKEN' => 'myrandomtoken'})
+      expect(URI).to receive(:open).with("https://dev.gitlab.org/api/v4/projects/#{dev_path}", { 'PRIVATE-TOKEN' => 'myrandomtoken'}).and_return(StringIO.new("1.2.3\n"))
       version_fetcher.fetch('gitlab-shell')
     end
 
     it 'falls back correctly to current registry for unknown projects' do
       version_fetcher = VersionFetcher.new('v11.8.0', 'johndoe/gitlab-ee')
-      allow(version_fetcher).to receive_message_chain(:open, :read).and_return("1.2.3\n")
 
-      expect(version_fetcher).to receive(:open).with("#{ENV['CI_API_V4_URL']}/projects/#{custom_path}", { 'PRIVATE-TOKEN' => nil})
+      expect(URI).to receive(:open).with("#{ENV['CI_API_V4_URL']}/projects/#{custom_path}", { 'PRIVATE-TOKEN' => nil}).and_return(StringIO.new("1.2.3\n"))
       version_fetcher.fetch('gitlab-shell')
     end
   end
@@ -42,7 +39,7 @@ describe VersionFetcher do
     let(:version_fetcher) { VersionFetcher.new('v11.8.0', 'gitlab-org/gitlab-foss', auto_deploy: auto_deploy) }
 
     before do
-      allow(version_fetcher).to receive_message_chain(:open, :read).and_return("1.2.3\n")
+      allow(URI).to receive(:open).and_return(StringIO.new("1.2.3\n"))
       allow(version_fetcher).to receive(:gitlab_shell).and_call_original
       allow(version_fetcher).to receive(:gitaly).and_call_original
     end

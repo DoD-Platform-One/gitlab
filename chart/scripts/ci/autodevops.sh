@@ -82,7 +82,7 @@ function deploy() {
   #echo "Generated root login: $ROOT_PASSWORD"
   kubectl create secret generic "${RELEASE_NAME}-gitlab-initial-root-password" --from-literal=password=$ROOT_PASSWORD -o yaml --dry-run=client | kubectl replace --force -f -
 
-  echo "${REVIEW_APPS_EE_LICENSE}" > /tmp/license.gitlab
+  echo "${QA_EE_LICENSE}" > /tmp/license.gitlab
   kubectl create secret generic "${RELEASE_NAME}-gitlab-license" --from-file=license=/tmp/license.gitlab -o yaml --dry-run=client | kubectl replace --force -f -
 
   # YAML_FILE=""${KUBE_INGRESS_BASE_DOMAIN//\./-}.yaml"
@@ -173,12 +173,14 @@ CIYAML
     --set global.ingress.tls.secretName=helm-charts-win-tls \
     --set global.ingress.configureCertmanager=false \
     --set global.appConfig.initialDefaults.signupEnabled=false \
-    --set nginx-ingress.controller.electionID="$RELEASE_NAME" \
+    --set nginx-ingress.controller.electionID="$RELEASE_NAME-nginx-election" \
     --set nginx-ingress.controller.ingressClassByName=true \
     --set nginx-ingress.controller.ingressClassResource.controllerValue="ci.gitlab.com/$RELEASE_NAME" \
     --set certmanager.install=false \
     --set prometheus.install=$PROMETHEUS_INSTALL \
     --set prometheus.server.retention="4d" \
+    --set global.extraEnv.GITLAB_LICENSE_MODE="test" \
+    --set global.extraEnv.CUSTOMER_PORTAL_URL="https://customers.staging.gitlab.com" \
     --set global.gitlab.license.secret="$RELEASE_NAME-gitlab-license" \
     --namespace="$NAMESPACE" \
     "${gitlab_version_args[@]}" \
@@ -322,7 +324,7 @@ function delete() {
 }
 
 function cleanup() {
-  kubectl -n "$NAMESPACE" get ingress,svc,pdb,hpa,deploy,statefulset,job,pod,secret,configmap,pvc,secret,clusterrole,clusterrolebinding,role,rolebinding,sa 2>&1 \
+  kubectl -n "$NAMESPACE" get ingress,svc,pdb,hpa,deploy,statefulset,replicaset,job,pod,secret,configmap,pvc,pv,clusterrole,clusterrolebinding,role,rolebinding,sa 2>&1 \
     | grep "$RELEASE_NAME" \
     | awk '{print $1}' \
     | xargs kubectl -n "$NAMESPACE" delete \
