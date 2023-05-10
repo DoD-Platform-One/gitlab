@@ -32,8 +32,11 @@ dependencies:
 - name: nginx-ingress
   repository: ""
   version: '*.*.*'
+- name: gitlab-zoekt
+  repository: https://charts.gitlab.io/
+  version: 0.3.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.3.2
-digest: sha256:ce9bf390fb87e860bf587929c9306b3f521915c90f11e55428f751dae351d692
-generated: "2023-04-26T16:51:45.53954-05:00"
+digest: sha256:8eb1ec21df26c169be9524705a818d8d5d9dea590c3c65fe8379e53fe69f7dd9
+generated: "2023-05-10T10:55:22.995382-04:00"

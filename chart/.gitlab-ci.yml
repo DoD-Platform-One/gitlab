@@ -37,7 +37,7 @@ variables:
   # AUTO_DEVOPS_DOMAIN: domain.example.com
   GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab
   HELM_MAX_HISTORY: 20
-  TEST_BACKUP_PREFIX: "14.9.2-incr"
+  TEST_BACKUP_PREFIX: "15.10.0"
   NAMESPACE: $KUBE_NAMESPACE
   REVIEW_REF_PREFIX: ""
   ISSUE_BOT_LABELS_EXTRA: "group::distribution,type::maintenance,maintenance::pipelines"
@@ -47,6 +47,8 @@ variables:
   DEV_PROJECT_PATH: 'gitlab/charts/gitlab'
   QA_FULL_SUITE_OPTIONS: '--tag ~smoke --tag ~reliable --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
   QA_SANITY_SUITE_OPTIONS: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
+  DEBIAN_VERSION: bullseye
+  RUBY_VERSION: "3.0"
 
 stages:
   - prepare
@@ -151,7 +153,14 @@ lint_package:
     - helm repo add gitlab https://charts.gitlab.io
     - helm repo add jetstack https://charts.jetstack.io
     - helm dependency update
-    - helm kubeval . --force-color --strict --kube-version $KUBE_VERSION --set certmanager-issuer.email=support@gitlab.com $HELM_EXTRAS --skip-kinds "CustomResourceDefinition" -v $KUBE_VERSION
+    - >
+      helm kubeval . --force-color --strict
+      --kube-version $KUBE_VERSION
+      --set certmanager-issuer.email=support@gitlab.com
+      --set gitlab.toolbox.backups.cron.enabled=true
+      $HELM_EXTRAS
+      --skip-kinds "CustomResourceDefinition"
+      -v $KUBE_VERSION
   rules:
     - if: '$PIPELINE_TYPE =~ /_MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /_BRANCH_PIPELINE$/'
@@ -175,6 +184,17 @@ lint_package:
     KUBE_VERSION: "1.22.3"
     KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
     HELM_EXTRAS: "--set global.ingress.apiVersion=networking.k8s.io/v1"
+
+"Validate 1.25.7":
+  extends: .kubeval
+  variables:
+    KUBE_VERSION: "1.25.7"
+    KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
+    HELM_EXTRAS: >-
+      --set global.ingress.apiVersion=networking.k8s.io/v1
+      --set global.pdb.apiVersion=policy/v1
+      --set global.hpa.apiVersion=autoscaling/v2
+      --set global.batch.cronJob.apiVersion=batch/v1
 
 .review_template:
   stage: review
@@ -222,7 +242,7 @@ review_gke:
     name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke
-    auto_stop_in: 4 days
+    auto_stop_in: 2 days
   resource_group: "gke-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
 
 review_gke122:
@@ -236,7 +256,7 @@ review_gke122:
     name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke122
-    auto_stop_in: 4 days
+    auto_stop_in: 2 days
   resource_group: "gke122-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
 
 review_gke125:
@@ -250,7 +270,7 @@ review_gke125:
     name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke125
-    auto_stop_in: 4 days
+    auto_stop_in: 2 days
   resource_group: "gke125-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
 
 review_gke_dev:
@@ -262,7 +282,7 @@ review_gke_dev:
     name: dev_gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke_dev
-    auto_stop_in: 4 days
+    auto_stop_in: 2 days
   resource_group: "gke-review-app-dev-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
   rules:
     - !reference [.rule:skip_if_no_cluster]
@@ -276,7 +296,7 @@ review_eks:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_eks
-    auto_stop_in: 4 days
+    auto_stop_in: 2 days
   resource_group: "eks-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
 
 .stop_review_template:
@@ -494,7 +514,7 @@ danger-review:
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
 
 rubocop:
-  image: ruby:2.7.4-alpine
+  image: ruby:3.0-alpine
   stage: prepare
   dependencies: []
   before_script:
@@ -505,7 +525,7 @@ rubocop:
     - bundle install -j $(nproc)
     - bundle exec rubocop --parallel
   cache:
-    key: "${CI_JOB_NAME}"
+    key: "debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-${CI_JOB_NAME}"
     paths:
     - gems
   rules:
@@ -554,7 +574,7 @@ check_docs_links:
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
 .review-docs:
-  image: ruby:2.7-alpine
+  image: ruby:3.0-alpine
   stage: review
   cache: {}
   dependencies: []
@@ -604,7 +624,7 @@ review-docs-cleanup:
 # ---------------------------------------------------------------------------
 
 .specs: &specs
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images:debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}.patched-golang-1.16-git-2.33-lfs-2.9-chrome-97-node-16.14-yarn-1.22-postgresql-11-graphicsmagick-1.3.36
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}.patched-golang-${GO_VERSION}-rust-${RUST_VERSION}-node-16.14-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.36-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36
   stage: specs
   services:
   - docker:dind
@@ -612,8 +632,11 @@ review-docs-cleanup:
     DOCKER_HOST: tcp://docker:2375
     GITLAB_PASSWORD: $ROOT_PASSWORD
     S3_CONFIG_PATH: /etc/gitlab/minio
-    DEBIAN_VERSION: bullseye
-    RUBY_VERSION: "2.7"
+    RUBYGEMS_VERSION: "3.4"
+    GO_VERSION: "1.19"
+    RUST_VERSION: "1.65"
+    PG_VERSION: "13"
+    CHROME_VERSION: "109"
   extends: .source_autodevops
   script:
     - ./scripts/ci/install_spec_dependencies
@@ -811,7 +834,7 @@ production_specs_eks:
     -   QA_IMAGE="gitlab/gitlab-ee-qa:nightly" # this will default to use nightly https://gitlab.com/gitlab-org/gitlab-qa/-/blob/master/docs/what_tests_can_be_run.md#specifying-the-gitlab-version
     - fi;
     - echo "Running - 'gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE'"
-    - SIGNUP_DISABLED=true QA_DEBUG=true GITLAB_USERNAME=root GITLAB_PASSWORD=$ROOT_PASSWORD GITLAB_ADMIN_USERNAME=root GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD EE_LICENSE=$REVIEW_APPS_EE_LICENSE gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
+    - SIGNUP_DISABLED=true QA_DEBUG=true GITLAB_USERNAME=root GITLAB_PASSWORD=$ROOT_PASSWORD GITLAB_ADMIN_USERNAME=root GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
   artifacts:
     when: always
     expire_in: 7d

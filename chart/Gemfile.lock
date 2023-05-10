@@ -17,21 +17,22 @@ GEM
       adamantium (~> 0.2)
       equalizer (~> 0.0.11)
     ast (2.4.2)
-    aws-eventstream (1.0.0)
-    aws-partitions (1.91.0)
-    aws-sdk-core (3.21.2)
-      aws-eventstream (~> 1.0)
-      aws-partitions (~> 1.0)
-      aws-sigv4 (~> 1.0)
-      jmespath (~> 1.0)
-    aws-sdk-kms (1.5.0)
-      aws-sdk-core (~> 3)
-      aws-sigv4 (~> 1.0)
-    aws-sdk-s3 (1.13.0)
-      aws-sdk-core (~> 3, >= 3.21.2)
+    aws-eventstream (1.2.0)
+    aws-partitions (1.742.0)
+    aws-sdk-core (3.171.0)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.651.0)
+      aws-sigv4 (~> 1.5)
+      jmespath (~> 1, >= 1.6.1)
+    aws-sdk-kms (1.63.0)
+      aws-sdk-core (~> 3, >= 3.165.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-s3 (1.120.1)
+      aws-sdk-core (~> 3, >= 3.165.0)
       aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.0)
-    aws-sigv4 (1.0.2)
+      aws-sigv4 (~> 1.4)
+    aws-sigv4 (1.5.2)
+      aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
     benchmark (0.2.1)
     binding_ninja (0.2.3)
@@ -71,7 +72,7 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     jaro_winkler (1.5.4)
-    jmespath (1.4.0)
+    jmespath (1.6.2)
     json (2.6.2)
     knapsack (4.0.0)
       rake
@@ -99,7 +100,7 @@ GEM
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     parallel (1.20.1)
-    parser (3.1.2.1)
+    parser (3.2.2.0)
       ast (~> 2.4.1)
     proc_to_ast (0.1.0)
       coderay
@@ -188,6 +189,7 @@ GEM
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.11)
+    tomlrb (2.0.3)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     unicode-display_width (1.7.0)
@@ -211,7 +213,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-sdk-s3
+  aws-sdk-s3 (>= 1.120)
   capybara
   capybara-screenshot
   docker-api
@@ -225,6 +227,7 @@ DEPENDENCIES
   rspec-retry
   selenium-webdriver
   solargraph
+  tomlrb
 
 BUNDLED WITH
    2.3.22

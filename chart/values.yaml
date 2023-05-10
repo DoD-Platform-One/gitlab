@@ -46,7 +46,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "15.10.2"
+  gitlabVersion: "15.11.2"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -443,6 +443,14 @@ global:
       servers: {}
       ## See documentation for complete example of a configured LDAP server
 
+    duoAuth:
+      enabled: false
+      # hostname:
+      # integrationKey:
+      # secretKey:
+      #   secret:
+      #   key:
+
     ## https://docs.gitlab.com/charts/charts/globals#kas-settings
     gitlab_kas: {}
       # secret:
@@ -727,7 +735,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -768,7 +776,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1188,6 +1196,13 @@ postgresql:
       postgresql.gitlab/init-revision: "1"
   metrics:
     enabled: false
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9187"
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_port: "9187"
+
     ## Optionally define additional custom metrics
     ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
 
@@ -1227,7 +1242,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.10.2
+    tag: 15.11.2
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1366,7 +1381,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1417,7 +1432,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1447,7 +1462,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1471,7 +1486,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1484,7 +1499,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1502,7 +1517,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1525,7 +1540,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1552,7 +1567,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1582,7 +1597,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.10.2
+      tag: 15.11.2
       pullSecrets:
         - name: private-registry
 
@@ -1595,14 +1610,14 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 15.10.2
+      tag: 15.11.0
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
   ## https://docs.gitlab.com/charts/charts/gitlab/praefect
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.10.2
+      tag: 15.11.2
     init:
       resources:
         limits:
@@ -1619,6 +1634,9 @@ gitlab:
         cpu: 1
         memory: 1Gi
 
+## Installation & configuration of gitlab/gitlab-zoekt
+gitlab-zoekt:
+  install: false
 
 ## Override minio sub-chart values
 minio:
@@ -1745,3 +1763,5 @@ bbtests:
       GITLAB_REPOSITORY: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
       GITLAB_ORIGIN: http://testuser:Password123h56a78@gitlab-webservice-default.gitlab.svc.cluster.local:8181
       GITLAB_REGISTRY: gitlab-registry-test-svc.gitlab.svc.cluster.local:80
+
+

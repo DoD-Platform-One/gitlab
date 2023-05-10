@@ -41,4 +41,32 @@ describe 'checkConfig template' do
                      success_description: 'when Redis is set to install with a single Redis instance',
                      error_description: 'when Redis is set to install with multiple Redis instances'
   end
+
+  describe 'serviceAccount' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        global:
+          serviceAccount:
+            enabled: true
+            create: false
+            name: myaccount
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        global:
+          serviceAccount:
+            enabled: true
+            create: true
+            name: myaccount
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Please set `global.serviceAccount.create=false`' }
+
+    include_examples 'config validation',
+                     success_description: 'when global ServiceAccount name is provided with `create=false`',
+                     error_description: 'when global ServiceAccount name is provided with `create=true`'
+  end
 end

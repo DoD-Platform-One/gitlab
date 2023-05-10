@@ -4,7 +4,7 @@ group :test do
   gem 'rspec'
   gem 'rspec-retry'
   gem 'rspec-parameterized', require: false
-  gem 'aws-sdk-s3'
+  gem 'aws-sdk-s3', '>= 1.120'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'capybara-screenshot'
@@ -12,6 +12,7 @@ group :test do
   gem 'rake'
   gem 'hash-deep-merge'
   gem 'knapsack'
+  gem 'tomlrb'
 end
 
 group :rubocop do

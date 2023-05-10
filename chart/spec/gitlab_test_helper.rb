@@ -98,8 +98,14 @@ module Gitlab
       return [stdout, status]
     end
 
-    def restore_from_backup
-      cmd = full_command("backup-utility --restore -t original", { GITLAB_ASSUME_YES: "1" })
+    def restore_from_backup(skip: [])
+      skip_flags=''
+
+      [skip].flatten.each do |skipped|
+        skip_flags += " --skip #{skipped}"
+      end
+
+      cmd = full_command("backup-utility --restore -t original #{skip_flags}", { GITLAB_ASSUME_YES: "1" })
       stdout, status = Open3.capture2e(cmd)
 
       return [stdout, status]
@@ -146,7 +152,7 @@ module Gitlab
       cmd = full_command(
         "gitlab-rails runner \"" \
         "settings = ApplicationSetting.current_without_cache; " \
-        "settings.update_columns(encrypted_customers_dot_jwt_signing_key_iv: nil, encrypted_customers_dot_jwt_signing_key: nil, encrypted_ci_jwt_signing_key_iv: nil, encrypted_ci_jwt_signing_key: nil); " \
+        "settings.update_columns(encrypted_customers_dot_jwt_signing_key_iv: nil, encrypted_customers_dot_jwt_signing_key: nil, encrypted_ci_jwt_signing_key_iv: nil, encrypted_ci_jwt_signing_key: nil, error_tracking_access_token_encrypted: nil); " \
         "settings.set_runners_registration_token('#{runner_registration_token}'); " \
         "settings.save!; " \
         "Ci::Runner.delete_all" \

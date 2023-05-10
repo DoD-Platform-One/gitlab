@@ -36,12 +36,8 @@ issue certificates.
 
 A cluster with a total of at least eight virtual CPUs and 30GB of RAM is recommended.
 
-This guide is not intended to cover how to create or obtain a Kubernetes cluster.
-We'll instead refer to the cloud providers' own instructions:
-
-- [Google GKE cluster creation guide](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster).
-- [Amazon AWS Getting started with Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
-  Use EC2 managed nodes for the EKS cluster, and not Fargate. Fargate [has a number of limitations](https://docs.aws.amazon.com/en_us/eks/latest/userguide/fargate.html) and is not supported for use with the GitLab Helm chart.
+You can either refer to your cloud providers' instructions on how to create a Kubernetes cluster,
+or use the GitLab-provided scripts to [automate the cluster creation](../installation/cloud/index.md).
 
 ### Install kubectl
 

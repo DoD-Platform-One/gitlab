@@ -4,6 +4,7 @@ set -e
 export DEBIAN_FRONTEND=noninteractive
 KUBECTL_VERSION=${KUBECTL_VERSION:-v1.16.15}
 HELM_VERSION=${HELM_VERSION:-3.1.2}
+GOMPLATE_VERSION=${GOMPLATE_VERSION:-v3.11.4}
 
 apt-get update -qq
 apt-get install -y --no-install-recommends \
@@ -23,3 +24,6 @@ rm -rf linux-amd64/
 curl -LsO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 chmod +x kubectl
 mv kubectl /usr/local/bin/kubectl
+
+curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/${GOMPLATE_VERSION}/gomplate_linux-amd64
+chmod +x /usr/local/bin/gomplate

@@ -99,6 +99,7 @@ gitlab:
 | `init.image.repository`                     | Toolbox init image repository            |                              |
 | `init.image.tag`                            | Toolbox init image tag                   |                              |
 | `init.resources`                            | Toolbox init container resource requirements | { `requests`: { `cpu`: `50m` }} |
+| `init.containerSecurityContext`             | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) | {} |
 | `nodeSelector`                              | Toolbox and backup job node selection    |                              |
 | `persistence.accessMode`                    | Toolbox persistence access mode          | `ReadWriteOnce`              |
 | `persistence.enabled`                       | Toolbox enable persistence flag          | false                        |
@@ -116,6 +117,8 @@ gitlab:
 | `securityContext.fsGroup`                   | Group ID under which the pod should be started | `1000`                     |
 | `securityContext.runAsUser`                 | User ID under which the pod should be started  | `1000`                     |
 | `securityContext.fsGroupChangePolicy`       | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) | |
+| `containerSecurityContext`                  | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started | |
+| `containerSecurityContext.runAsUser`        | Allow to overwrite the specific security context under which the container is started | `1000` |
 | `serviceAccount.annotations`                | Annotations for ServiceAccount               | {}                           |
 | `serviceAccount.enabled`                    | Flag for using ServiceAccount                | false                        |
 | `serviceAccount.create`                     | Flag for creating a ServiceAccount           | false                        |

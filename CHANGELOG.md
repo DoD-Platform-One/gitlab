@@ -3,6 +3,23 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.11.2-bb.0] - 2023-05-10
+
+### Changed
+- "upgrade Gitlab to app version 15.11.2 chart version 6.11.2-bb.0"
+- ironbank/gitlab/gitlab/gitlab-webservice patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse patch 15.10.2 -> 15.11.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl patch 15.10.2 -> 15.11.2
 ## [6.10.2-bb.1] - 2023-05-09
 ### Changed
 - Fixed redis values to deduplicate imagePullSecrets

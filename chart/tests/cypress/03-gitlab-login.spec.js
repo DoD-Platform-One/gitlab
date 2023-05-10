@@ -19,20 +19,9 @@ describe('Gitlab Login', () => {
     cy.get('a[data-qa-selector="pending_approval_tab"]').click()
 
     cy.get('body').then($body => {
-      if ($body.find('button[id="__BVID__55__BV_toggle_"]').length > 0 ) {
-        // version 14.8.2
-        // cy.get('button[id="__BVID__35__BV_toggle_"]').click()
-        // cy.get('button[data-qa-selector="approve_user_button"]').click()
-        // cy.get('button[data-qa-selector="approve_user_confirm_button"]').click()
-
-        // version 14.9.2
-        //cy.get('button[id="__BVID__65__BV_toggle_"]').click()
-        //cy.get('button[data-qa-selector="approve_user_button"]').click()
-        //cy.get('button[data-qa-selector="approve_user_confirm_button"]').click()
-
-        // version 15.5.0
-        cy.get('button[id="__BVID__55__BV_toggle_"]').click()
-        cy.get('button[data-qa-selector="approve_user_button"]').click()
+      if ($body.find('div[data-qa-selector="user_actions_dropdown_toggle"] > button').length > 0 ) {
+        cy.get('div[data-qa-selector="user_actions_dropdown_toggle"] > button').click()
+        cy.get('li[data-testid="approve"] > button').click()
         cy.get('button[data-qa-selector="approve_user_confirm_button"]').click()
       }
     })
