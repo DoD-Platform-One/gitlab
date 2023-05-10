@@ -3,7 +3,7 @@
     "configWarningReuseIssue": false,
     "dependencyDashboard": true,
     "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.", 
-    "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
+    "dependencyDashboardTitle": "Renovate: Upgrade Gitlab to version (?<currentValue>.+)",
     "draftPR": true,
     "enabledManagers": ["helm-values", "regex"],
     "ignorePaths": ["chart/charts/**", "chart/examples/**", "chart/scripts/**"],
