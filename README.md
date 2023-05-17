@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 6.11.2-bb.0](https://img.shields.io/badge/Version-6.11.2--bb.0-informational?style=flat-square) ![AppVersion: 15.11.2](https://img.shields.io/badge/AppVersion-15.11.2-informational?style=flat-square)
+![Version: 6.11.2-bb.1](https://img.shields.io/badge/Version-6.11.2--bb.1-informational?style=flat-square) ![AppVersion: 15.11.2](https://img.shields.io/badge/AppVersion-15.11.2-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -806,7 +806,7 @@ helm install gitlab chart/
 | minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
 | minio.minioMc.tag | string | `"RELEASE.2022-12-24T15-21-38Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
-| hostname | string | `"bigbang.dev"` |  |
+| domain | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` |  |
 | istio.injection | string | `"disabled"` |  |
 | istio.gitlab.enabled | bool | `true` |  |
