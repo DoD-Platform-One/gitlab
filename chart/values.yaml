@@ -1675,7 +1675,7 @@ minio:
     - name: private-registry
 
 # Big Bang Additions
-hostname: bigbang.dev
+domain: bigbang.dev
 istio:
   # Toggle istio integration
   enabled: false
