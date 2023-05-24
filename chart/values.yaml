@@ -46,7 +46,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "15.11.2"
+  gitlabVersion: "15.11.3"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -735,7 +735,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -776,7 +776,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -789,7 +789,7 @@ global:
       # tag: latest
       # Busybox can not be hardened with no STIGS. Replacing with UBI-8 container
       repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-      tag: "8.7"
+      tag: "8.8"
       pullSecrets:
       - name: private-registry
 
@@ -837,7 +837,7 @@ upgradeCheck:
   enabled: true
   image:
     repository: registry1.dso.mil/ironbank/redhat/ubi/ubi8
-    tag: "8.7"
+    tag: "8.8"
     pullSecrets:
     - name: private-registry
   securityContext:
@@ -1181,7 +1181,7 @@ postgresql:
   image:
     registry: registry1.dso.mil
     repository: ironbank/opensource/postgres/postgresql12
-    tag: "12.14"
+    tag: "12.15"
     pullSecrets:
     - private-registry
   usePasswordFile: true
@@ -1242,7 +1242,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 15.11.2
+    tag: 15.11.3
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1381,7 +1381,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     init:
@@ -1432,7 +1432,7 @@ gitlab:
         memory: 200Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1462,7 +1462,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1486,7 +1486,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1499,7 +1499,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1517,7 +1517,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     init:
@@ -1540,7 +1540,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     init:
@@ -1567,7 +1567,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
       - name: private-registry
     init:
@@ -1597,7 +1597,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 15.11.2
+      tag: 15.11.3
       pullSecrets:
         - name: private-registry
 
@@ -1610,14 +1610,14 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 15.11.0
+      tag: 15.11.3
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
   ## https://docs.gitlab.com/charts/charts/gitlab/praefect
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 15.11.2
+      tag: 15.11.3
     init:
       resources:
         limits:

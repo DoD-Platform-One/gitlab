@@ -2,6 +2,25 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.11.3-bb.0] - 2023-05-24
+### Changed
+- "upgrade Gitlab to app version 15.11.3 chart version 6.11.3-bb.0"
+- ironbank/gitlab/gitlab/gitlab-webservice	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages	15.11.0 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl	15.11.2 -> 15.11.3
+- registry1.dso.mil/ironbank/opensource/postgres/postgresql12	12.14 -> 12.15
+- registry1.dso.mil/ironbank/redhat/ubi/ubi8	8.7 -> 8.8
+
 ## [6.11.2-bb.1] - 2023-05-17
 ### Updated
 - Update chat/values.yaml hostname key to domain

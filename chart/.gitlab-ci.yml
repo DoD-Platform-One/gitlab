@@ -834,7 +834,15 @@ production_specs_eks:
     -   QA_IMAGE="gitlab/gitlab-ee-qa:nightly" # this will default to use nightly https://gitlab.com/gitlab-org/gitlab-qa/-/blob/master/docs/what_tests_can_be_run.md#specifying-the-gitlab-version
     - fi;
     - echo "Running - 'gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE'"
-    - SIGNUP_DISABLED=true QA_DEBUG=true GITLAB_USERNAME=root GITLAB_PASSWORD=$ROOT_PASSWORD GITLAB_ADMIN_USERNAME=root GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
+    - |
+      SIGNUP_DISABLED=true \
+      QA_DEBUG=true \
+      GITHUB_ACCESS_TOKEN=$QA_GITHUB_ACCESS_TOKEN \
+      GITLAB_USERNAME=root \
+      GITLAB_PASSWORD=$ROOT_PASSWORD \
+      GITLAB_ADMIN_USERNAME=root \
+      GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD \
+      gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
   artifacts:
     when: always
     expire_in: 7d
