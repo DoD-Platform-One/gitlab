@@ -12,6 +12,14 @@ describe 'Microsoft Graph Mailer configuration' do
     ]
   end
 
+  let(:charts_with_msgraph_init_secret_mounts) do
+    {
+      'test-sidekiq-all-in-1-v2' => 'init-sidekiq-secrets',
+      'test-webservice-default' => 'init-webservice-secrets',
+      'test-toolbox' => 'init-toolbox-secrets'
+    }
+  end
+
   let(:values) do
     HelmTemplate.with_defaults(%(
         global:
@@ -47,6 +55,36 @@ describe 'Microsoft Graph Mailer configuration' do
       # check that the configure script includes `microsoft_graph_mailer`
       configure = template.dig("ConfigMap/test-#{chart}", 'data', 'configure')
       expect(configure).to match(/# optional\nfor secret in .* microsoft_graph_mailer .*; do/m)
+    end
+  end
+
+  it 'populates microsoft-graph-mailer-client-secret into deployments' do
+    charts_with_msgraph_init_secret_mounts.each do |deployment, mount|
+      expect(template.find_projected_secret("Deployment/#{deployment}", mount, 'microsoft-graph-mailer-client-secret')).to be true
+    end
+  end
+
+  describe "when toolbox backup cronjob is enabled" do
+    let(:values_with_backup_cronjob) do
+      YAML.safe_load(%(
+        gitlab:
+          toolbox:
+            backups:
+              cron:
+                enabled: true
+      )).deep_merge(values)
+    end
+
+    let(:template) { HelmTemplate.new(values_with_backup_cronjob) }
+
+    it 'populates microsoft-graph-mailer-client-secret into cronjob'  do
+      job_template_spec = template.dig('CronJob/test-toolbox-backup', 'spec', 'jobTemplate')
+      job_pod_volumes = job_template_spec.dig('spec', 'template', 'spec', 'volumes')
+      init_secret = job_pod_volumes.find { |s| s['name'] == 'init-toolbox-secrets' }
+      secret_names = init_secret["projected"]["sources"].map do |item|
+        item['secret']['name']
+      end
+      expect(secret_names).to include('microsoft-graph-mailer-client-secret')
     end
   end
 end

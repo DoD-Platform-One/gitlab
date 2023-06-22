@@ -25,7 +25,6 @@ The services must be disabled are:
 
 - CertManager (Let's Encrypt integration)
 - Prometheus
-- Grafana
 - GitLab Runner
 
 ## Sample values

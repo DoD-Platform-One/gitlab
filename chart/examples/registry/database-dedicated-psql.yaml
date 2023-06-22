@@ -1,6 +1,6 @@
 postgresql:
   image:
-    tag: 12
+    tag: 14
 
 registry:
   database:

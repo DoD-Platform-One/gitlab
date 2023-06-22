@@ -7,12 +7,12 @@ describe 'Redis configuration' do
     HelmTemplate.defaults
   end
 
-  describe 'global.redis.password.enabled' do
+  describe 'global.redis.auth.enabled' do
     let(:values) do
       YAML.safe_load(%(
         global:
           redis:
-            password:
+            auth:
               enabled: true
       )).merge(default_values)
     end
@@ -30,7 +30,7 @@ describe 'Redis configuration' do
         YAML.safe_load(%(
           global:
             redis:
-              password:
+              auth:
                 enabled: false
         )).merge(default_values)
       end
@@ -133,7 +133,7 @@ describe 'Redis configuration' do
           global:
             redis:
               host: resque.redis
-              password:
+              auth:
                 secret: rspec-resque
               cache:
                 host: cache.redis
@@ -162,7 +162,7 @@ describe 'Redis configuration' do
           global:
             redis:
               host: resque.redis
-              password:
+              auth:
                 secret: rspec-resque
               cache:
                 host: cache.redis
@@ -194,7 +194,7 @@ describe 'Redis configuration' do
           global:
             redis:
               host: resque.redis
-              password:
+              auth:
                 enabled: false
                 secret: rspec-resque
               cache:
@@ -228,7 +228,7 @@ describe 'Redis configuration' do
           global:
             redis:
               host: resque.redis
-              password:
+              auth:
                 enabled: true
                 secret: rspec-resque
               cache:
@@ -263,7 +263,7 @@ describe 'Redis configuration' do
             redis:
               host: resque.redis
               user: resque-user
-              password:
+              auth:
                 enabled: true
                 secret: rspec-resque
               cache:
@@ -406,7 +406,7 @@ describe 'Redis configuration' do
           global:
             redis:
               host: resque.redis
-              password:
+              auth:
                 enabled: false
               clusterCache:
                 user: cluster-cache-user
@@ -439,7 +439,7 @@ describe 'Redis configuration' do
             redis:
               host: resque.redis
               user: resque-user
-              password:
+              auth:
                 enabled: true
               clusterCache:
                 cluster:

@@ -39,6 +39,7 @@ Table below contains all the possible charts configurations that can be supplied
 | `image.pullSecrets`         | Secrets for the image repository         |                   |
 | `init.image`                | initContainer image                      | `busybox`         |
 | `init.tag`                  | initContainer image tag                  | `latest`          |
+| `init.containerSecurityContext` | Mailroom init container securityContext overrides | `{}`   |
 | `enabled`                   | Migrations enable flag                   | `true`            |
 | `tolerations`               | Toleration labels for pod assignment     | `[]`              |
 | `annotations`               | Annotations for the job spec             | `{}`              |
@@ -54,6 +55,7 @@ Table below contains all the possible charts configurations that can be supplied
 | `securityContext.fsGroup`   | `1000`                                   | Group ID under which the pod should be started |
 | `securityContext.runAsUser` | `1000`                                   | User ID under which the pod should be started |
 | `securityContext.fsGroupChangePolicy` |                                | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |
+| `containerSecurityContext.runAsUser`  | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started | `1000` |
 | `extraInitContainers`       | List of extra init containers to include |                   |
 | `extraContainers`           | List of extra containers to include      |                   |
 | `extraVolumes`              | List of extra volumes to create          |                   |

@@ -19,9 +19,9 @@ You must set the following parameters:
 
 - `redis.install`: Set to `false` to disable including the Redis chart.
 - `global.redis.host`: Set to the hostname of the external Redis, can be a domain or an IP address.
-- `global.redis.password.enabled`: Set to `false` if the external Redis does not require a password.
-- `global.redis.password.secret`: The name of the [secret which contains the token for authentication](../../installation/secrets.md#redis-password).
-- `global.redis.password.key`: The key in the secret, which contains the token content.
+- `global.redis.auth.enabled`: Set to `false` if the external Redis does not require a password.
+- `global.redis.auth.secret`: The name of the [secret which contains the token for authentication](../../installation/secrets.md#redis-password).
+- `global.redis.auth.key`: The key in the secret, which contains the token content.
 
 Items below can be further customized if you are not using the defaults:
 
@@ -33,8 +33,8 @@ For example, pass these values via Helm's `--set` flag while deploying:
 helm install gitlab gitlab/gitlab  \
   --set redis.install=false \
   --set global.redis.host=redis.example \
-  --set global.redis.password.secret=gitlab-redis \
-  --set global.redis.password.key=redis-password \
+  --set global.redis.auth.secret=gitlab-redis \
+  --set global.redis.auth.key=redis-password \
 ```
 
 If you are connecting to a Redis HA cluster that has Sentinel servers

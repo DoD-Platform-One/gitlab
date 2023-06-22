@@ -5,7 +5,7 @@ require 'yaml'
 TARGET_KINDS = %w[Deployment StatefulSet Job].freeze
 CONTAINER_TYPES = %w[initContainers containers].freeze
 EXTERNAL_CHARTS = %w[
-  gitlab-runner grafana postgresql prometheus redis nginx-ingress
+  gitlab-runner postgresql prometheus redis nginx-ingress
 ].freeze
 
 def targeted_resource_kind?(resource)

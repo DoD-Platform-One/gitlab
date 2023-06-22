@@ -92,6 +92,9 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.gracePeriod" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.loadBalancer" .) -}}
 
+{{/* _checkConfig_workhorse.tpl*/}}
+{{- $messages = append $messages (include "gitlab.checkConfig.workhorse.exporter.tls.enabled" .) -}}
+
 {{/* _checkConfig_gitlab_shell.tpl*/}}
 {{- $messages = append $messages (include "gitlab.checkConfig.gitlabShell.proxyPolicy" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.gitlabShell.metrics" .) -}}
@@ -106,6 +109,7 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.sentry" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.gitlab_docs" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.smtp.openssl_verify_mode" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.smtp.tls_kind" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.globalServiceAccount" .) -}}
 {{- $messages = append $messages (include "gitlab.duoAuth.checkConfig" .) -}}
 
@@ -204,6 +208,18 @@ smtp:
 {{-   end }}
 {{- end -}}
 {{/* END gitlab.checkConfig.smtp.openssl_verify_mode */}}
+
+{{/*
+Ensure that either `global.smtp.tls` or `global.smtp.enable_starttls_auto` is set to true, but not both.
+*/}}
+{{- define "gitlab.checkConfig.smtp.tls_kind" -}}
+{{-   if and .Values.global.smtp.tls .Values.global.smtp.enable_starttls_auto -}}
+smtp:
+    global.smtp.tls and global.smtp.enable_starttls_auto are mutually exclusive.
+    Set one of them to false. SMTP providers usually use port 465 for TLS and port 587 for STARTTLS.
+{{-     end }}
+{{-   end }}
+{{/* END gitlab.checkConfig.smtp.tls_kind */}}
 
 {{/*
 Ensure that global service account settings are correct.

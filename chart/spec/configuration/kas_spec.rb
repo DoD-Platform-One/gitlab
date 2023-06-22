@@ -531,7 +531,7 @@ describe 'kas configuration' do
         context 'when metrics.enabled is true' do
           let(:metrics_enabled) { true }
 
-          it 'exports metrics port' do
+          it 'exports observability port' do
             expect(service['spec']['ports']).to include(include("name" => "http-metrics"))
           end
         end
@@ -539,7 +539,7 @@ describe 'kas configuration' do
         context 'when metrics.enabled is false' do
           let(:metrics_enabled) { false }
 
-          it 'exports no metrics port' do
+          it 'exports no observability port' do
             expect(service['spec']['ports']).not_to include(include("name" => "http-metrics"))
           end
         end

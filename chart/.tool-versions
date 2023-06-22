@@ -3,3 +3,4 @@ minikube 1.29.0
 helm 3.11.0
 stern 1.23.0
 yq 4.30.8
+gomplate v3.11.5

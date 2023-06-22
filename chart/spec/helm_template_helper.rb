@@ -7,13 +7,14 @@ class HelmTemplate
 
   def self.helm_major_version
     if @_helm_major_version.nil?
-      parts = `helm version -c`.match('Ver(sion)?:"v(\d)\.(\d+)')
+      parts = `helm version -c`.match('Ver(sion)?:"v(\d)\.(\d+)\.(\d+)')
       @_helm_major_version = parts[2].to_i
       @_helm_minor_version = parts[3].to_i
+      @_helm_patch_version = parts[4].to_i
 
       # Check for Helm version below minimum supported version
-      if @_helm_major_version < 3 || (@_helm_major_version == 3 && @_helm_minor_version < 3)
-        puts "ERROR: Helm version needs to be greater than 3.3.1"
+      if @_helm_major_version < 3 || (@_helm_major_version == 3 && @_helm_minor_version < 5 && @_helm_patch_version < 2)
+        puts "ERROR: Helm version needs to be greater than 3.5.2"
         exit(1)
       end
     end
@@ -90,6 +91,10 @@ class HelmTemplate
 
   def dig(*args)
     @mapped.dig(*args)
+  end
+
+  def resource_exists?(item)
+    @mapped.has_key?(item)
   end
 
   def volumes(item)
@@ -182,7 +187,7 @@ class HelmTemplate
   end
 
   def resources_by_kind(kind)
-    @mapped.select{ |key, hash| hash['kind'] == kind }
+    @mapped.select{ |_, hash| hash['kind'] == kind }
   end
 
   def exit_code()

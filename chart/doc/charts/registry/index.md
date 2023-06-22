@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.71.0-gitlab'
+    tag: 'v3.73.1-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -97,9 +97,6 @@ registry:
     secret:
     key: storage
     extraKey:
-  compatibility:
-    schema1:
-      enabled: false
   validation:
     disabled: true
     manifests:
@@ -147,7 +144,6 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `authAutoRedirect`                                                                                                                           | `true`                                                                         | Auth auto-redirect (must be true for Windows clients to work)                                                                                                                                                                                                                                                                                |
 | `authEndpoint`                                                                                                                               | `global.hosts.gitlab.name`                                                     | Auth endpoint (only host and port)                                                                                                                                                                                                                                                                                                           |
 | `certificate.secret`                                                                                                                         | `gitlab-registry`                                                              | JWT certificate                                                                                                                                                                                                                                                                                                                              |
-| `compatiblity`                                                                                                                               |                                                                                | Configuration of compatibility settings                                                                                                                                                                                                                                                                                                      |
 | `debug.addr.port`                                                                                                                            | `5001`                                                                         | Debug port                                                                                                                                                                                                                                                                                                                                   |
 | `debug.tls.enabled`                                                                                                                          | false                                                                          | Enable TLS for the debug port for the registry. Impacts liveness and readiness probes, as well as the metrics endpoint (if enabled)                                                                                                                                                                                                          |
 | `debug.tls.secretName`                                                                                                                       |                                                                                | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry debug endpoint. When not set and `debug.tls.enabled=true` - the debug TLS configuration will default to the registry's TLS certificate.                                                                 |
@@ -178,9 +174,10 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.71.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.73.1-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
+| `init.containerSecurityContext`            |                                                              | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                                                      |
 | `log`                                                                                                                                        | `{level: info, fields: {service: registry}}`                                   | Configure the logging options                                                                                                                                                                                                                                                                                                                |
 | `minio.bucket`                                                                                                                               | `global.registry.bucket`                                                       | Legacy registry bucket name                                                                                                                                                                                                                                                                                                                  |
 | `maintenance.readonly.enabled`                                                                                                               | `false`                                                                        | Enable registry's read-only mode                                                                                                                                                                                                                                                                                                             |
@@ -219,6 +216,11 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `database.migrations.enabled`                                                                                                                | `true`                                                                         | Enable the migrations job to automatically run migrations upon initial deployment and upgrades of the Chart. Note that migrations can also be run manually from within any running Registry pods.                                                                                                                                            |
 | `database.migrations.activeDeadlineSeconds`                                                                                                  | `3600`                                                                         | Set the [activeDeadlineSeconds](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job.                                                                                                                                                                                           |
 | `database.migrations.backoffLimit`                                                                                                           | `6`                                                                            | Set the [backoffLimit](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job.                                                                                                                                                                                                    |
+| `database.discovery.enabled`                                                                                                                 | `false`                                                                        | Enable service discovery for the database. This is an experimental feature for the Registry metadata database. Do not use in production.                                                                                                                                                                                                     |
+| `database.discovery.nameserver`                                                                                                              |                                                                                | Set the server address or FQDN of the nameserver (DNS) for service discovery. Required when `database.discovery.enabled` is set to `true`.                                                                                                                                                                                                   |
+| `database.discovery.port`                                                                                                                    | `53`                                                                           | Set the nameserver's port. Defaults to `53`.                                                                                                                                                                                                                                                                                                 |
+| `database.discovery.primaryrecord`                                                                                                           |                                                                                | The SRV resource record that needs to be obtained from the `nameserver`. The `primaryrecord` will be used to run `database.migrations` on.                                                                                                                                                                                                   |
+| `database.discovery.tcp`                                                                                                                     | `false`                                                                        | Set to `true` when a TCP connection is needed instead of UDP.                                                                                                                                                                                                                                                                                |
 | `gc.disabled`                                                                                                                                | `true`                                                                         | When set to `true`, the online GC workers are disabled.                                                                                                                                                                                                                                                                                      |
 | `gc.maxbackoff`                                                                                                                              | `24h`                                                                          | The maximum exponential backoff duration used to sleep between worker runs when an error occurs. Also applied when there are no tasks to be processed unless `gc.noidlebackoff` is `true`. Please note that this is not the absolute maximum, as a randomized jitter factor of up to 33% is always added.                                    |
 | `gc.noidlebackoff`                                                                                                                           | `false`                                                                        | When set to `true`, disables exponential backoffs between worker runs when there are no tasks to be processed.                                                                                                                                                                                                                               |
@@ -244,6 +246,8 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `securityContext.fsGroup`                                                                                                                    | `1000`                                                                         | Group ID under which the pod should be started                                                                                                                                                                                                                                                                                               |
 | `securityContext.runAsUser`                                                                                                                  | `1000`                                                                         | User ID under which the pod should be started                                                                                                                                                                                                                                                                                                |
 | `securityContext.fsGroupChangePolicy`                                                                                                        |                                                                                | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |
+| `containerSecurityContext`                 |                                                              | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started                                                                                                                                                               |
+| `containerSecurityContext.runAsUser`       | `1000`                                                       | Allow to overwrite the specific security context under which the container is started                                                                                                              |
 | `serviceLabels`                                                                                                                              | `{}`                                                                           | Supplemental service labels                                                                                                                                                                                                                                                                                                                  |
 | `tokenService`                                                                                                                               | `container_registry`                                                           | JWT token service                                                                                                                                                                                                                                                                                                                            |
 | `tokenIssuer`                                                                                                                                | `gitlab-issuer`                                                                | JWT token issuer                                                                                                                                                                                                                                                                                                                             |
@@ -333,7 +337,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.71.0-gitlab'`
+- `tag: 'v3.73.1-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -360,7 +364,7 @@ This section controls the registry Ingress.
 | :--------------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `apiVersion`           | String  |         | Value to use in the `apiVersion` field.                                                                                                                                                                                               |
 | `annotations`          | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).                                                                                |
-| `configureCertmanager` | Boolean |         | Toggles Ingress annotation `cert-manager.io/issuer`. For more information see the [TLS requirement for GitLab Pages](../../installation/tls.md).                                                                                      |
+| `configureCertmanager` | Boolean |         | Toggles Ingress annotation `cert-manager.io/issuer` and `acme.cert-manager.io/http01-edit-in-place`. For more information see the [TLS requirement for GitLab Pages](../../installation/tls.md).                                      |
 | `enabled`              | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used.                                                                                    |
 | `tls.enabled`          | Boolean | `true`  | When set to `false`, you disable TLS for the Registry subchart. This is mainly useful for cases in which you cannot use TLS termination at `ingress-level`, like when you have a TLS-terminating proxy before the Ingress Controller. |
 | `tls.secretName`       | String  |         | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry URL. When not set, the `global.ingress.tls.secretName` is used instead. Defaults to not being set.                                   |
@@ -540,7 +544,7 @@ Ensuring the `secret` value is set to the name of the secret created above
 
 ### Redis cache Secret
 
-The Redis cache Secret is used when `global.redis.password.enabled` is set to `true`.
+The Redis cache Secret is used when `global.redis.auth.enabled` is set to `true`.
 
 When the `shared-secrets` feature is enabled, the `gitlab-redis-secret` secret object
 is automatically created if not provided.
@@ -578,33 +582,10 @@ certificate:
   key: registry-auth.crt
 ```
 
-### compatibility
-
-The `compatibility` field is a map relating directly to the configuration file's
-[compatibility](https://github.com/docker/distribution/blob/master/docs/configuration.md#compatibility)
-section.
-
-Default contents:
-
-```yaml
-compatibility:
-  schema1:
-    enabled: false
-```
-
 ### readiness and liveness probe
 
 By default there is a readiness and liveness probe configured to
 check `/debug/health` on port `5001` which is the debug port.
-
-#### schema1
-
-The `schema1` section controls the compatibility of the service with version 1
-of the Docker manifest schema. This setting is provide as a means of supporting
-Docker clients earlier than `1.10`, after which schema v2 is used by default.
-
-If you _must_ support older versions of Docker clients, you can do so by setting
-`registry.compatbility.schema1.enabled: true`.
 
 ### validation
 
@@ -882,6 +863,12 @@ database:
     enabled: true
     activeDeadlineSeconds: 3600
     backoffLimit: 6
+  discovery:
+    enabled: true
+    nameserver: 'nameserver.fqdn'
+    port: 53
+    primaryrecord: 'primary.record.fqdn.'
+    tcp: false
 ```
 
 #### Creating the database

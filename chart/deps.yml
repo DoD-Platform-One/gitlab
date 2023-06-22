@@ -3,9 +3,6 @@ dependencies:
 - type: git
   manifest_updates:
     filters:
-    - name: ".*minio.*" # minio/mc
-      group: true
-      enabled: true
     - name: .* # everything else
       enabled: true
   settings:
@@ -16,7 +13,7 @@ dependencies:
       - 5727219 # @mnielsen (mnielsen)
     gitlab_labels:
       - dependencies.io
-      - "Distribution:Deploy"
+      - group::distribution::deploy
       - group::distribution
       - section::enablement
       - devops::systems
@@ -48,24 +45,6 @@ dependencies:
           pattern: "tag: 'v(\\S+)'"
           range: '>= 2.x.x'
           prereleases: true
-      # Minio chart / minio container
-      https://github.com/minio/minio.git:
-        replace_in_files:
-        - filename: charts/minio/values.yaml
-          tag_prefix: 'RELEASE.20'
-          pattern: 'imageTag: "RELEASE.20(\d\d-\d\d-\d\dT\d\d-\d\d-\d\dZ)"'
-          semver: false
-        - filename: doc/charts/minio/index.md
-          tag_prefix: 'RELEASE.20'
-          pattern: '`RELEASE.20(\d\d-\d\d-\d\dT\d\d-\d\d-\d\dZ)`'
-          semver: false
-      # Minio chart / mc container
-      https://github.com/minio/mc.git:
-        replace_in_files:
-        - filename: charts/minio/values.yaml
-          tag_prefix: 'RELEASE.20'
-          pattern: 'tag: "RELEASE.20(\d\d-\d\d-\d\dT\d\d-\d\d-\d\dZ)"'
-          semver: false
       # GitLab Exporter
       https://gitlab.com/gitlab-org/gitlab-exporter.git:
         replace_in_files:

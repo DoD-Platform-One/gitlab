@@ -63,7 +63,7 @@ describe "Restoring a backup" do
     end
 
     it 'Issue attachments should load correctly' do
-      visit '/root/testproject1/issues/1'
+      visit '/root/testproject1/-/issues/1'
 
       image_selector = 'div.md > p > a > img.js-lazy-loaded'
 

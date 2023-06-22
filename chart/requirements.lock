@@ -13,22 +13,19 @@ dependencies:
   version: '*.*.*'
 - name: cert-manager
   repository: https://charts.jetstack.io/
-  version: v1.5.4
+  version: v1.11.1
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 15.18.0
 - name: postgresql
-  repository: https://raw.githubusercontent.com/bitnami/charts/eb5f9a9513d987b519f0ecd732e7031241c50328/bitnami
-  version: 8.9.4
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.2
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
-  version: 0.51.1
-- name: grafana
-  repository: https://grafana.github.io/helm-charts
-  version: 6.11.0
+  version: 0.52.0
 - name: redis
-  repository: https://raw.githubusercontent.com/bitnami/charts/eb5f9a9513d987b519f0ecd732e7031241c50328/bitnami
-  version: 11.3.4
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.13.2
 - name: nginx-ingress
   repository: ""
   version: '*.*.*'
@@ -38,5 +35,5 @@ dependencies:
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.3.2
-digest: sha256:8eb1ec21df26c169be9524705a818d8d5d9dea590c3c65fe8379e53fe69f7dd9
-generated: "2023-05-23T15:44:03.656598-05:00"
+digest: sha256:00e306d64d6cc032205fdb3df82c0b763dbf021b3026e0bb21aa76be817105de
+generated: "2023-06-14T14:54:10.3625246-05:00"

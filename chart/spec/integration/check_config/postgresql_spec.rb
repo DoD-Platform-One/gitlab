@@ -154,7 +154,7 @@ describe 'checkConfig postgresql' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 12
+            tag: 13
       )).merge(default_required_values)
     end
 
@@ -162,14 +162,14 @@ describe 'checkConfig postgresql' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 11
+            tag: 12
       )).merge(default_required_values)
     end
 
-    let(:error_output) { 'The minimum required version is PostgreSQL 12.' }
+    let(:error_output) { 'The minimum required version is PostgreSQL 13.' }
 
     include_examples 'config validation',
-                     success_description: 'when postgresql.image.tag is >= 12',
-                     error_description: 'when postgresql.image.tag is < 12'
+                     success_description: 'when postgresql.image.tag is >= 13',
+                     error_description: 'when postgresql.image.tag is < 13'
   end
 end

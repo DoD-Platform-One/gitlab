@@ -6,7 +6,12 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # GitLab Helm chart deployment options **(FREE SELF)**
 
-You can supply these configuration options to the `helm install` command by using the `--set` flags.
+This page lists commonly used values of the GitLab chart. For a complete list of the available options, refer
+to the documentation for each subchart.
+
+You can pass values to the `helm install` command by using a YAML file and the `--values <values file>`
+flag or by using multiple `--set` flags. It is recommended to use a values file that contains only the
+overrides needed for your release.
 
 The source of the default `values.yaml` file can be found [here](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/values.yaml).
 These contents change over releases, but you can use Helm itself to retrieve these on a per-version basis:
@@ -77,6 +82,8 @@ helm inspect values gitlab/gitlab
 | `global.smtp.starttls_auto`       | Use STARTTLS if enabled on the mail server                                              | false                 |
 | `global.smtp.tls`                 | Enables SMTP/TLS (SMTPS: SMTP over direct TLS connection)                               | _none_                |
 | `global.smtp.user_name`           | Username for SMTP authentication https                                                  | ""                    |
+| `global.smtp.open_timeout`        | Seconds to wait while attempting to open a connection.                                  | `30`                  |
+| `global.smtp.read_timeout`        | Seconds to wait while reading one block.                                                | `60`                  |
 | `global.smtp.pool`                | Enables SMTP connection pooling                                                         | false                 |
 
 ### Microsoft Graph Mailer settings
@@ -421,10 +428,11 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 | `gitlab.webservice.psql.password.key` | Key to psql password in psql secret | `psql-password` |
 | `gitlab.webservice.psql.password.secret` | psql secret name | `gitlab-postgres` |
 | `gitlab.webservice.psql.port` | Set PostgreSQL server port. Takes precedence over `global.psql.port` |  |
-| `gitlab.webservice.registry.api.port` | Registry port | `5000` |
-| `gitlab.webservice.registry.api.protocol` | Registry protocol | `http` |
-| `gitlab.webservice.registry.api.serviceName` | Registry service name | `registry` |
-| `gitlab.webservice.registry.tokenIssuer` | Registry token issuer | `gitlab-issuer` |
+| `global.registry.enabled` | Enable registry. Mirrors `registry.enabled` | `true` |
+| `global.registry.api.port` | Registry port | `5000` |
+| `global.registry.api.protocol` | Registry protocol | `http` |
+| `global.registry.api.serviceName` | Registry service name | `registry` |
+| `global.registry.tokenIssuer` | Registry token issuer | `gitlab-issuer` |
 | `gitlab.webservice.replicaCount` | webservice number of replicas | `1` |
 | `gitlab.webservice.resources.requests.cpu` | webservice minimum CPU | `200m` |
 | `gitlab.webservice.resources.requests.memory` | webservice minimum memory | `1.4G` |
@@ -455,13 +463,24 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 GitLab makes use of several other charts. These are [treated as parent-child relationships](https://helm.sh/docs/topics/charts/#chart-dependencies).
 Ensure that any properties you wish to configure are provided as `chart-name.property`.
 
-## Prometheus
+### Prometheus
 
 Prefix Prometheus values with `prometheus`. For example, set the persistence
 storage value using `prometheus.server.persistentVolume.size`. To disable Prometheus set `prometheus.install=false`.
 
 Refer to the [Prometheus chart documentation](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus)
 for the exhaustive list of configuration options.
+
+### PostgreSQL
+
+Prefix PostgreSQL values with `postgresql`. For example, set the storage class value
+using `postgresql.persitence.storageClass`.
+
+Refer to the default values file for a list of the available configuration options.
+
+```shell
+helm inspect values https://charts.bitnami.com/bitnami/postgresql-8.9.4.tgz
+```
 
 ## Bringing your own images
 

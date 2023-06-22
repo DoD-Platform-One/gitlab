@@ -85,8 +85,8 @@ to the `helm install` command using the `--set` flags.
 | `metrics.serviceMonitor.additionalLabels`           | `{}`                                                            | Additional labels to add to the ServiceMonitor                                                                                                                                                                                                                                                                                  |
 | `metrics.serviceMonitor.endpointConfig`             | `{}`                                                            | Additional endpoint configuration for the ServiceMonitor                                                                                                                                                                                                                                                                        |
 | `metrics.annotations`                               |                                                                 | **DEPRECATED** Set explicit metrics annotations. Replaced by template content.                                                                                                                                                                                                                                                  |
-| `metrics.tls.enabled`                               | `false`                                                         | TLS enabled for the metrics/web_exporter endpoint                                                                                                                                                                                                                                                                               |
-| `metrics.tls.secretName`                            | `{Release.Name}-webservice-metrics-tls`                         | Secret for the metrics/web_exporter endpoint TLS cert and key                                                                                                                                                                                                                                                                   |
+| `metrics.tls.enabled`                               |                                                                 | TLS enabled for the metrics/web_exporter endpoint. Defaults to `tls.enabled`.                                                                                                                                                                                                                                                   |
+| `metrics.tls.secretName`                            |                                                                 | Secret for the metrics/web_exporter endpoint TLS cert and key. Defaults to `tls.secretName`.                                                                                                                                                                                                                                    |
 | `minio.bucket`                                      | `git-lfs`                                                       | Name of storage bucket, when using MinIO                                                                                                                                                                                                                                                                                        |
 | `minio.port`                                        | `9000`                                                          | Port for MinIO service                                                                                                                                                                                                                                                                                                          |
 | `minio.serviceName`                                 | `minio-svc`                                                     | Name of MinIO service                                                                                                                                                                                                                                                                                                           |
@@ -102,11 +102,11 @@ to the `helm install` command using the `--set` flags.
 | `puma.threads.max`                                  | `4`                                                             | The maximum amount of Puma threads                                                                                                                                                                                                                                                                                              |
 | `rack_attack.git_basic_auth`                        | `{}`                                                            | See [GitLab documentation](https://docs.gitlab.com/ee/user/admin_area/settings/protected_paths.html) for details                                                                                                                                                                                                                |
 | `redis.serviceName`                                 | `redis`                                                         | Redis service name                                                                                                                                                                                                                                                                                                              |
-| `registry.api.port`                                 | `5000`                                                          | Registry port                                                                                                                                                                                                                                                                                                                   |
-| `registry.api.protocol`                             | `http`                                                          | Registry protocol                                                                                                                                                                                                                                                                                                               |
-| `registry.api.serviceName`                          | `registry`                                                      | Registry service name                                                                                                                                                                                                                                                                                                           |
-| `registry.enabled`                                  | `true`                                                          | Add/Remove registry link in all projects menu                                                                                                                                                                                                                                                                                   |
-| `registry.tokenIssuer`                              | `gitlab-issuer`                                                 | Registry token issuer                                                                                                                                                                                                                                                                                                           |
+| `global.registry.api.port`                                 | `5000`                                                          | Registry port                                                                                                                                                                                                                                                                                                                   |
+| `global.registry.api.protocol`                             | `http`                                                          | Registry protocol                                                                                                                                                                                                                                                                                                               |
+| `global.registry.api.serviceName`                          | `registry`                                                      | Registry service name                                                                                                                                                                                                                                                                                                           |
+| `global.registry.enabled`                                  | `true`                                                          | Add/Remove registry link in all projects menu                                                                                                                                                                                                                                                                                   |
+| `global.registry.tokenIssuer`                              | `gitlab-issuer`                                                 | Registry token issuer                                                                                                                                                                                                                                                                                                           |
 | `replicaCount`                                      | `1`                                                             | Webservice number of replicas                                                                                                                                                                                                                                                                                                   |
 | `resources.requests.cpu`                            | `300m`                                                          | Webservice minimum CPU                                                                                                                                                                                                                                                                                                          |
 | `resources.requests.memory`                         | `1.5G`                                                          | Webservice minimum memory                                                                                                                                                                                                                                                                                                       |
@@ -189,6 +189,7 @@ SOME_OTHER_KEY=some_other_value
 ### extraEnvFrom
 
 `extraEnvFrom` allows you to expose additional environment variables from other data sources in all containers in the pods.
+Subsequent variables can be overridden per [deployment](#deployments-settings).
 
 Below is an example use of `extraEnvFrom`:
 
@@ -206,11 +207,14 @@ extraEnvFrom:
       name: special-secret
       key: special_token
       # optional: boolean
-  CONFIG_STRING:
-    configMapKeyRef:
-      name: useful-config
-      key: some-string
-      # optional: boolean
+deployments:
+  default:
+    extraEnvFrom:
+      CONFIG_STRING:
+        configMapKeyRef:
+          name: useful-config
+          key: some-string
+          # optional: boolean
 ```
 
 ### image.pullSecrets
@@ -335,10 +339,14 @@ gitlab:
             enabled: true
 ```
 
-TLS can be enabled on metrics endpoints for `gitlab-workhorse` container by setting
-`gitlab.webservice.workhorse.monitoring.tls.enabled` to `true`. Note that TLS on
-metrics endpoint is only available when TLS is enabled for Workhorse. The metrics
-listener uses the same TLS certificate that is specified by `gitlab.webservice.workhorse.tls.secretName`.
+TLS on the metrics endpoints of the `gitlab-workhorse` container is inherited from
+`global.workhorse.tls.enabled`. Note that TLS on metrics endpoint is only available
+when TLS is enabled for Workhorse. The metrics listener uses the same TLS certificate
+that is specified by `gitlab.webservice.workhorse.tls.secretName`.
+
+TLS certificates used for metrics endpoints may require additional considerations for
+the included subject alternative names (SANs), particularly if using the included Prometheus
+Helm chart. For more information, see [Configure Prometheus to scrape TLS-enabled endpoints](../../../installation/tools.md#configure-prometheus-to-scrape-tls-enabled-endpoints).
 
 #### `webservice`
 
@@ -484,7 +492,7 @@ webservice:
 | :-------------------------------- | :-----: | :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `ingress.apiVersion`              | String  |                           | Value to use in the `apiVersion` field.                                                                                                                                                                                         |
 | `ingress.annotations`             |   Map   | See [below](#annotations) | These annotations will be used for every Ingress. For example: `ingress.annotations."nginx\.ingress\.kubernetes\.io/enable-access-log"=true`.                                                                                   |
-| `ingress.configureCertmanager`    | Boolean |                           | Toggles Ingress annotation `cert-manager.io/issuer`. For more information see the [TLS requirement for GitLab Pages](../../../installation/tls.md).                                                                             |
+| `ingress.configureCertmanager`    | Boolean |                           | Toggles Ingress annotation `cert-manager.io/issuer` and `acme.cert-manager.io/http01-edit-in-place`. For more information see the [TLS requirement for GitLab Pages](../../../installation/tls.md).                             |
 | `ingress.enabled`                 | Boolean | `false`                   | Setting that controls whether to create Ingress objects for services that support them. When `false`, the `global.ingress.enabled` setting value is used.                                                                       |
 | `ingress.proxyBodySize`           | String  | `512m`                    | [See Below](#proxybodysize).                                                                                                                                                                                                    |
 | `ingress.tls.enabled`             | Boolean | `true`                    | When set to `false`, you disable TLS for GitLab Webservice. This is mainly useful for cases in which you cannot use TLS termination at Ingress-level, like when you have a TLS-terminating proxy before the Ingress Controller. |

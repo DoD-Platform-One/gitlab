@@ -1,3 +1,4 @@
+require 'active_support'
 require 'open-uri'
 require "base64"
 
@@ -58,6 +59,8 @@ module Gitlab
 
       # Return if already signed in
       return if has_selector?(qa_avatar_selector)
+      raise 'GITLAB_PASSWORD environment variable not set' if ENV['GITLAB_PASSWORD'].blank?
+
       # Operate specifically within the user login form, avoiding registation form
       within('div#login-pane') do
         fill_in 'Username or email', with: 'root'

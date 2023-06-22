@@ -43,17 +43,7 @@ describe 'Webservice monitoring/metrics configuration' do
       end
     end
 
-    context 'when TLS support is enabled' do
-      let(:values) do
-        HelmTemplate.with_defaults(%(
-          gitlab:
-            webservice:
-              metrics:
-                enabled: true
-                tls:
-                  enabled: true
-        ))
-      end
+    shared_examples 'TLS is enabled' do
       let(:tls_cert_path) { '/etc/gitlab/webservice-metrics/webservice-metrics.crt' }
       let(:tls_key_path) { '/etc/gitlab/webservice-metrics/webservice-metrics.key' }
 
@@ -64,6 +54,56 @@ describe 'Webservice monitoring/metrics configuration' do
           'tls_key_path' => tls_key_path.to_s
         )
       end
+    end
+
+    shared_examples 'TLS is disabled' do
+      it 'does not populates the gitlab.yml.erb web_exporter tls settings' do
+        expect(monitoring['web_exporter']).to_not include(
+          'tls_enabled' => true
+        )
+      end
+    end
+
+    context 'TLS is directly enabled' do
+      let(:values) do
+        HelmTemplate.with_defaults(%(
+          gitlab:
+            webservice:
+              metrics:
+                enabled: true
+                tls:
+                  enabled: true
+        ))
+      end
+      it_behaves_like 'TLS is enabled'
+    end
+
+    context 'TLS is enabled via inheritance' do
+      let(:values) do
+        HelmTemplate.with_defaults(%(
+          gitlab:
+            webservice:
+              tls:
+                enabled: true
+              metrics:
+                enabled: true
+        ))
+      end
+      it_behaves_like 'TLS is enabled'
+    end
+
+    context 'TLS is disabled via inheritance' do
+      let(:values) do
+        HelmTemplate.with_defaults(%(
+          gitlab:
+            webservice:
+              tls:
+                enabled: false
+              metrics:
+                enabled: true
+        ))
+      end
+      it_behaves_like 'TLS is disabled'
     end
   end
 end

@@ -9,7 +9,7 @@ spec:
     mode: {{ .Values.istio.mtls.mode }}
   selector:
     matchLabels:
-      app: redis
+      app.kubernetes.io/name: redis
   portLevelMtls:
     "6379":
       mode: PERMISSIVE

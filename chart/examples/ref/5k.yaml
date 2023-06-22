@@ -116,8 +116,6 @@ global:
   gitlab:
     license:
       secret: example-gitlab-license
-  grafana:
-    enabled: true
   hosts:
     domain: example.com
   minio:
@@ -130,7 +128,7 @@ global:
     port:  example-postgresql-port
   redis:
     host: example-redis-queue-1
-    password:
+    auth:
       key: password
       secret: example-redis-secret
     sentinels:
@@ -158,10 +156,6 @@ prometheus:
   server:
     nodeSelector:
       workload: support
-
-grafana:
-  nodeSelector:
-    workload: support
 
 # https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
 gitlab-runner:

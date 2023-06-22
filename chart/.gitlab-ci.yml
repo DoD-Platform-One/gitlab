@@ -30,7 +30,7 @@ default:
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
   KUBECTL_VERSION: "v1.16.15"
-  HELM_VERSION: "3.3.1"
+  HELM_VERSION: "3.5.2"
   STABLE_REPO_URL: "https://charts.helm.sh/stable"
   GOOGLE_APPLICATION_CREDENTIALS: ${CI_PROJECT_DIR}/.google_keyfile.json
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
@@ -131,6 +131,8 @@ lint_package:
   stage: preflight
   when: always
   script:
+    - kubectl version --client=true
+    - helm version --template='Helm Version - {{.Version}}'
     - helm repo add gitlab https://charts.gitlab.io
     - helm repo add jetstack https://charts.jetstack.io
     - helm dependency update
@@ -150,6 +152,9 @@ lint_package:
   stage: preflight
   when: always
   script:
+    - kubectl version --client=true
+    - helm version --template='{{.Version}}'
+    - helm kubeval --version
     - helm repo add gitlab https://charts.gitlab.io
     - helm repo add jetstack https://charts.jetstack.io
     - helm dependency update
@@ -335,6 +340,7 @@ stop_review_gke122:
   variables:
     AGENT_NAME: "gke122-ci-cluster"
     KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
+    KUBE_NAMESPACE: "helm-charts-win"
   environment:
     name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     action: stop
@@ -508,7 +514,14 @@ danger-review:
   script:
     - git version
     - danger_id=$(echo -n ${DANGER_GITLAB_API_TOKEN} | md5sum | awk '{print $1}' | cut -c5-10)
+    - |
+      if [ -v DANGER_GITLAB_API_TOKEN ] && [ "${PIPELINE_TYPE}" = "FORK_MR_PIPELINE" ]; then
+        echo "Danger token not configured. As this is from a fork, failing danger gracefully."
+        exit 202
+      fi
     - danger --fail-on-errors=true --verbose --danger_id=${danger_id}
+  allow_failure:
+    exit_codes: 202
   rules:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'

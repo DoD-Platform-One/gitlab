@@ -2,7 +2,7 @@
 set -e
 
 # Set the timestamp to something predictable so we can use it between backup and restore
-fake_timestamp="database_upgrade_5"
+fake_timestamp="database_upgrade_6"
 script_name="database-upgrade"
 
 usage() {
@@ -21,7 +21,7 @@ selector() {
 # Run command in the toolbox pod
 in_toolbox() {
     task_pod=$(kubectl ${namespace} get pods -l "$(selector toolbox)" --field-selector status.phase=Running  -o custom-columns=N:.metadata.name --no-headers | grep -v backup | head -n 1)
-    kubectl ${namespace} exec -it "${task_pod}" -- env GITLAB_ASSUME_YES=1 "${@}"
+    kubectl ${namespace} exec -it "${task_pod}" -c toolbox -- env GITLAB_ASSUME_YES=1 "${@}"
 }
 
 database_service() {
@@ -36,7 +36,7 @@ patch_replicas() {
 }
 
 pre() {
-    in_toolbox backup-utility -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,ci_secure_files,repositories
+    in_toolbox backup-utility -t "${fake_timestamp}" --skip registry,uploads,artifacts,lfs,packages,external_diffs,terraform_state,ci_secure_files,repositories,pages
 }
 
 post() {

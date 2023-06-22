@@ -60,7 +60,6 @@ underlying services:
 - cert-manager
 - Redis
 - PostgreSQL
-- Grafana
 
 ## The GitLab chart
 
@@ -91,7 +90,6 @@ component services are documented under the [GitLab](../charts/gitlab/index.md) 
 - [Registry](../charts/registry/index.md)
 - GitLab/[Gitaly](../charts/gitlab/gitaly/index.md)
 - GitLab/[GitLab Exporter](../charts/gitlab/gitlab-exporter/index.md)
-- GitLab/[GitLab Grafana](../charts/gitlab/gitlab-grafana/index.md)
 - GitLab/[GitLab Shell](../charts/gitlab/gitlab-shell/index.md)
 - GitLab/[Migrations](../charts/gitlab/migrations/index.md)
 - GitLab/[Sidekiq](../charts/gitlab/sidekiq/index.md)
