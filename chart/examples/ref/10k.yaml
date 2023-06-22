@@ -116,8 +116,6 @@ global:
   gitlab:
     license:
       secret: example-gitlab-license
-  grafana:
-    enabled: true
   hosts:
     domain: example.com
   minio:
@@ -139,7 +137,7 @@ global:
       - host: cache.sentinel2.example.com
       - host: cache.sentinel3.example.com
     host: example-redis-queue-1
-    password:
+    auth:
       key: password
       secret: example-redis-secret
     sentinels:
@@ -167,10 +165,6 @@ prometheus:
   server:
     nodeSelector:
       workload: support
-
-grafana:
-  nodeSelector:
-    workload: support
 
 # https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
 gitlab-runner:

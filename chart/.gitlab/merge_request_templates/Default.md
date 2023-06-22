@@ -12,7 +12,7 @@
 
 ## Checklist
 
-See [Definition of done](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/CONTRIBUTING.md#definition-of-done).
+See [Definition of done](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CONTRIBUTING.md#definition-of-done).
 
 For anything in this list which will not be completed, please provide a reason in the MR discussion.
 

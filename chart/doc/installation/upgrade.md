@@ -32,6 +32,7 @@ See [mappings](../installation/version_mappings.md) between chart versioning and
 ## Steps
 
 NOTE:
+If you're upgrading to the `7.0` version of the chart, follow the [manual upgrade steps for 7.0](#upgrade-to-version-70).
 If you're upgrading to the `5.0` version of the chart, follow the [manual upgrade steps for 5.0](#upgrade-to-version-50).
 If you're upgrading to the `4.0` version of the chart, follow the [manual upgrade steps for 4.0](#upgrade-to-version-40).
 If you're upgrading to an older version of the chart, follow the [upgrade steps for older versions](upgrade_old.md).
@@ -97,6 +98,63 @@ The steps have been documented in the [5.0 upgrade steps](#upgrade-to-version-50
 
 As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) from `7.7.0` to `8.9.4`. This is not a drop in replacement. Manual steps need to be performed to upgrade the database.
 The steps have been documented in the [4.0 upgrade steps](#upgrade-to-version-40).
+
+## Upgrade to version 7.0
+
+WARNING:
+If you are upgrading from the `6.x` version of the chart to the latest `7.0` release, you need
+to first update to the latest `6.11.x` patch release in order for the upgrade to work.
+The [7.0 release notes](../releases/7_0.md) describe the supported upgrade path.
+
+The `7.0.x` release may require manual steps in order to perform the upgrade.
+
+- If using the bundled [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/redis) sub-chart
+  to provide an in-cluster Redis service - you'll need to manually delete the StatefulSet for
+  Redis prior to upgrading to version 7.0 of the GitLab chart. Follow the setups in [Upgrade the bundled Redis sub-chart](#update-the-bundled-redis-sub-chart) below.
+
+### Update the bundled Redis sub-chart
+
+Release 7.0 of the GitLab chart updates the bundled [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/redis)
+sub-chart to version `16.13.2` from the previously installed `11.3.4`. Due to
+changes in `matchLabels` applied to the `redis-master` StatefulSet in the sub-chart,
+upgrading without manually deleting the StatefulSet will result in the following error:
+
+```shell
+Error: UPGRADE FAILED: cannot patch "gitlab-redis-master" with kind StatefulSet: StatefulSet.apps "gitlab-redis-master" is invalid: spec: Forbidden: updates to statefulset spec for fields other than 'replicas', 'template', 'updateStrategy' and 'minReadySeconds' are forbidden
+```
+
+To delete the StatefulSet for `RELEASE-redis-master`:
+
+1. Scale down the replicas to `0` for the `webservice`, `sidekiq`, `kas`, and `gitlab-exporter` deployments:
+
+   ```shell
+   kubectl scale deployment --replicas 0 --selector 'app in (webservice, sidekiq, kas, gitlab-exporter)' --namespace <namespace>
+   ```
+
+1. Delete the `RELEASE-redis-master` StatefulSet:
+
+   ```shell
+   kubectl delete statefulset RELEASE-redis-master --namespace <namespace>
+   ```
+
+   - `<namespace>` should be replaced with the namespace where you installed the GitLab chart.
+
+Then follow the [normal upgrade steps](#steps). Due to how Helm merges changes, you may need to scale up the deployments
+you scaled down in step one manually.
+
+### Use of `global.redis.password`
+
+In order to mitigate a configuration type conflict with the use of `global.redis.password`
+we've deprecated the use of `global.redis.password` in favor of `global.redis.auth`.
+
+In addition to displaying a deprecation notice - if you see the following warning
+message from `helm upgrade`:
+
+```plaintext
+coalesce.go:199: warning: destination for password is a table. Ignoring non-table value
+```
+
+This is an indication that you are setting `global.redis.password` in your values file.
 
 ## Upgrade to version 6.0
 

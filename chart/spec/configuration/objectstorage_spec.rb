@@ -40,12 +40,38 @@ describe 'ObjectStorage configuration' do
                 key: connection
             artifacts:
               bucket: artifacts-bucket
+              proxy_download: false
               cdn:
                 secret: gitlab-cdn-storage
                 key: cdn
             lfs:
               bucket: lfs-bucket
+              proxy_download: true
+            uploads:
+              bucket: uploads-bucket
       )).deep_merge(default_values)
+    end
+
+    context 'with proxy_download configured' do
+      it 'enables proxy_download for LFS' do
+        t = HelmTemplate.new(values_object_store_connection)
+        expect(t.exit_code).to eq(0)
+
+        services.each do |cm|
+          raw_config = t.dig("ConfigMap/test-#{cm}", 'data', 'gitlab.yml.erb')
+          config = YAML.safe_load(raw_config)
+          object_store_config = config.dig('production', 'object_store')
+
+          expect(object_store_config['enabled']).to be true
+          expect(object_store_config.dig('objects', 'proxy_download')).to be_nil
+          expect(object_store_config.dig('objects', 'artifacts', 'proxy_download')).to be false
+          expect(object_store_config.dig('objects', 'artifacts', 'bucket')).to eq('artifacts-bucket')
+          expect(object_store_config.dig('objects', 'lfs', 'proxy_download')).to be true
+          expect(object_store_config.dig('objects', 'lfs', 'bucket')).to eq('lfs-bucket')
+          expect(object_store_config.dig('objects', 'uploads', 'proxy_download')).to be true
+          expect(object_store_config.dig('objects', 'uploads', 'bucket')).to eq('uploads-bucket')
+        end
+      end
     end
 
     context 'with CDN and connection configuration provided' do

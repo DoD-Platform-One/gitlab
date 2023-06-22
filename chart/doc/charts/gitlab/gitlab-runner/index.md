@@ -65,7 +65,7 @@ gitlab-runner:
     config: |
       [[runners]]
         [runners.kubernetes]
-        image = "ubuntu:18.04"
+        image = "ubuntu:22.04"
         {{- if .Values.global.minio.enabled }}
         [runners.cache]
           Type = "s3"
@@ -89,7 +89,7 @@ gitlab-runner:
     config: |
       [[runners]]
         [runners.kubernetes]
-          image = "ubuntu:18.04"
+          image = "ubuntu:22.04"
           dns_policy = "none"
         [runners.kubernetes.dns_config]
           nameservers = ["8.8.8.8"]

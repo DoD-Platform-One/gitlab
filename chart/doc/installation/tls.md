@@ -61,12 +61,6 @@ helm install gitlab gitlab/gitlab \
   --set gitlab.kas.ingress.tls.secretName=RELEASE-kas-tls
 ```
 
-Additionally, if Grafana is enabled:
-
-```shell
-  --set gitlab.gitlab-grafana.ingress.tls.secretName=grafana-tls
-```
-
 ## Option 2: Use your own wildcard certificate
 
 Add your full chain certificate and key to the cluster as a `Secret`, e.g.:
@@ -111,12 +105,6 @@ helm install gitlab gitlab/gitlab \
   --set registry.ingress.tls.secretName=RELEASE-registry-tls \
   --set minio.ingress.tls.secretName=RELEASE-minio-tls \
   --set gitlab.kas.ingress.tls.secretName=RELEASE-kas-tls
-```
-
-Additionally, if Grafana is enabled:
-
-```shell
-  --set gitlab.gitlab-grafana.ingress.tls.secretName=grafana-tls
 ```
 
 NOTE:

@@ -43,11 +43,7 @@ by the `gitlab:artifacts:migrate` script below.
       avatars are rendered fine, image and other files added to issues load
       correctly, etc.
 
-1. [Create a backup tarball](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system) and exclude the already migrated uploads:
-
-   ```shell
-   sudo gitlab-rake gitlab:backup:create SKIP=artifacts,lfs,packages,uploads
-   ```
+1. [Create a backup tarball](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system) and [exclude all the already migrated directories](https://docs.gitlab.com/ee/raketasks/backup_gitlab.html#excluding-specific-directories-from-the-backup).
 
    The backup file will be stored under `/var/opt/gitlab/backups`, unless you
    [explicitly changed](https://docs.gitlab.com/omnibus/settings/backups.html#manually-manage-backup-directory)

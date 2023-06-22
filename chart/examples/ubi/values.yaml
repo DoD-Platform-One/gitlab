@@ -29,9 +29,6 @@ global:
   minio:
     enabled: false
 
-  grafana:
-    enabled: false
-
   image:
     pullPolicy: Always  # You can drop this if you're using release tags.
     tagSuffix: -ubi8
@@ -55,7 +52,7 @@ global:
   # See: https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/advanced/external-redis
   redis:
     host: redis.local
-    password:
+    auth:
       # enabled: false
       secret: my-redis-secret  # Your PostgreSQL credentials.
       key: secret

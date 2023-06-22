@@ -590,12 +590,12 @@ Run the certificates container using Docker.
    docker run -ti --rm \
         -v $(pwd)/etc/ssl/certs:/etc/ssl/certs \
         -v $(pwd)/usr/local/share/ca-certificates:/usr/local/share/ca-certificates \
-        registry.gitlab.com/gitlab-org/build/cng/alpine-certificates:20191127-r2
+        registry.gitlab.com/gitlab-org/build/cng/gitlab-base:v15.10.3
    ```
 
 1. Check your certificates have been correctly built:
 
-   - `etc/ssl/certs/ca-cert-corporate_root.pem` should have been created.
+   - `etc/ssl/certs/corporate_root.pem` should have been created.
    - There should be a hashed filename, which is a symlink to the certificate itself (such as `etc/ssl/certs/1234abcd.0`).
    - The file and the symbolic link should display with:
 
@@ -606,8 +606,8 @@ Run the certificates container using Docker.
      For example:
 
      ```plaintext
-     lrwxrwxrwx   1 root root      20 Oct  7 11:34 28746b42.0 -> ca-cert-corporate_root.pem
-     -rw-r--r--   1 root root    1948 Oct  7 11:34 ca-cert-corporate_root.pem
+     lrwxrwxrwx   1 root root      20 Oct  7 11:34 28746b42.0 -> corporate_root.pem
+     -rw-r--r--   1 root root    1948 Oct  7 11:34 corporate_root.pem
      ```
 
 ## `308: Permanent Redirect` causing a redirect loop
@@ -615,7 +615,7 @@ Run the certificates container using Docker.
 `308: Permanent Redirect` can happen if your Load Balancer is configured to send unencrypted traffic (HTTP) to NGINX.
 Because NGINX defaults to redirecting `HTTP` to `HTTPS`, you may end up in a "redirect loop".
 
-To fix this, [enable NGINX's `use-forward-headers` setting](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers).
+To fix this, [enable NGINX's `use-forwarded-headers` setting](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers).
 
 ## "Invalid Word" errors in the `nginx-controller` logs and `404` errors
 

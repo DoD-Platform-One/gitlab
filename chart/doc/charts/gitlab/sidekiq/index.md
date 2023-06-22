@@ -72,12 +72,12 @@ to the `helm install` command using the `--set` flags:
 | `image.tag`                                |                                                              | Sidekiq image tag                                                                                                                                                                                  |
 | `init.image.repository`                    |                                                              | initContainer image                                                                                                                                                                                |
 | `init.image.tag`                           |                                                              | initContainer image tag                                                                                                                                                                            |
-| `init.containerSecurityContext`            |                                                              | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                                                      |
-| `logging.format`                           | `default`                                                    | Set to `json` for JSON-structured logs                                                                                                                                                             |
+| `init.containerSecurityContext`            |                                                              | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                   |
+| `logging.format`                           | `json`                                                       | Set to `text` for non-JSON logs                                                                                                                                                                    |
 | `metrics.enabled`                          | `true`                                                       | If a metrics endpoint should be made available for scraping                                                                                                                                        |
 | `metrics.port`                             | `3807`                                                       | Metrics endpoint port                                                                                                                                                                              |
 | `metrics.path`                             | `/metrics`                                                   | Metrics endpoint path                                                                                                                                                                              |
-| `metrics.log_enabled`                      | `false`                                                      | Enables or disables metrics server logs written to `sidekiq_exporter.log`                                                                                                                                                               |
+| `metrics.log_enabled`                      | `false`                                                      | Enables or disables metrics server logs written to `sidekiq_exporter.log`                                                                                                                          |
 | `metrics.podMonitor.enabled`               | `false`                                                      | If a PodMonitor should be created to enable Prometheus Operator to manage the metrics scraping                                                                                                     |
 | `metrics.podMonitor.additionalLabels`      | `{}`                                                         | Additional labels to add to the PodMonitor                                                                                                                                                         |
 | `metrics.podMonitor.endpointConfig`        | `{}`                                                         | Additional endpoint configuration for the PodMonitor                                                                                                                                               |
@@ -179,6 +179,7 @@ pod. Pod-level `extraEnv` settings are not added to [init containers](https://ku
 ### extraEnvFrom
 
 `extraEnvFrom` allows you to expose additional environment variables from other data sources in all containers in the pods.
+Subsequent variables can be overridden per Sidekiq pod.
 
 Below is an example use of `extraEnvFrom`:
 
@@ -196,11 +197,14 @@ extraEnvFrom:
       name: special-secret
       key: special_token
       # optional: boolean
-  CONFIG_STRING:
-    configMapKeyRef:
-      name: useful-config
-      key: some-string
-      # optional: boolean
+pods:
+  - name: immediate
+    extraEnvFrom:
+      CONFIG_STRING:
+        configMapKeyRef:
+          name: useful-config
+          key: some-string
+          # optional: boolean
 ```
 
 ### extraVolumes

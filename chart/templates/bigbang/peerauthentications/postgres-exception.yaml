@@ -9,7 +9,7 @@ spec:
     mode: {{ .Values.istio.mtls.mode }}
   selector:
     matchLabels:
-      app: postgresql
+      app.kubernetes.io/name: postgresql
   portLevelMtls:
     "5432":
       mode: PERMISSIVE

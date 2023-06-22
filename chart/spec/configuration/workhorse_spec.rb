@@ -137,60 +137,84 @@ describe 'Workhorse configuration' do
   end
 
   context 'TLS support' do
-    let(:tls_enabled) { false }
+    let(:global_workhorse_tls_enabled) { false }
     let(:tls_verify) {}
     let(:monitoring_enabled) { true }
-    let(:monitoring_tls_enabled) { false }
+    let(:monitoring_tls_enabled) {}
     let(:tls_secret_name) {}
     let(:tls_ca_secret_name) {}
     let(:tls_custom_ca) {}
 
     let(:tls_values) do
-      HelmTemplate.with_defaults(%(
+      values = HelmTemplate.with_defaults(%(
         global:
           certificates:
             customCAs: [#{tls_custom_ca}]
           workhorse:
             tls:
-              enabled: #{tls_enabled}
+              enabled: #{global_workhorse_tls_enabled}
         gitlab:
           webservice:
             workhorse:
               monitoring:
                 exporter:
                   enabled: #{monitoring_enabled}
-                  tls:
-                    enabled: #{monitoring_tls_enabled}
               tls:
                 verify: #{tls_verify}
                 secretName: #{tls_secret_name}
                 caSecretName: #{tls_ca_secret_name}
       ))
+
+      values.deep_merge!(YAML.safe_load(%(
+        gitlab:
+          webservice:
+            workhorse:
+              monitoring:
+                exporter:
+                  tls:
+                    enabled: #{monitoring_tls_enabled}
+      ))) unless monitoring_tls_enabled.nil?
+
+      values
     end
 
-    context 'when TLS is disabled' do
-      let(:template) { HelmTemplate.new(tls_values) }
+    let(:template) { HelmTemplate.new(tls_values) }
 
+    shared_examples 'TLS is enabled' do
       it 'renders a TOML configuration file' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
         expect(raw_toml).to include %([[listeners]]\n)
         expect(raw_toml).to include %(addr = "0.0.0.0:8181"\n)
-        expect(raw_toml).not_to include %([listeners.tls]\n)
+        expect(raw_toml).to include %([listeners.tls]\n)
+      end
+      it 'annotates Ingress for TLS backend' do
+        ingress_annotations = template.dig('Ingress/test-webservice-default', 'metadata', 'annotations')
+
+        expect(ingress_annotations).to include('nginx.ingress.kubernetes.io/backend-protocol' => 'https')
+      end
+    end
+
+    shared_examples 'monitoring TLS is enabled' do
+      it 'renders a TOML configuration file' do
         expect(raw_toml).to include %([metrics_listener]\n)
         expect(raw_toml).to include %(addr = "0.0.0.0:9229"\n)
+        expect(raw_toml).to include %([metrics_listener.tls]\n)
+      end
+    end
+
+    shared_examples 'TLS is disabled' do
+      it 'renders a TOML configuration file without TLS listener' do
+        expect(raw_toml).not_to include %([listeners.tls]\n)
+      end
+    end
+
+    shared_examples 'monitoring TLS is disabled' do
+      it 'renders a TOML configuration file without TLS listener' do
         expect(raw_toml).not_to include %([metrics_listener.tls]\n)
       end
     end
 
-    context 'when TLS is enabled and verified' do
-      let(:tls_enabled) { true }
-      let(:tls_verify) { true }
-      let(:tls_secret_name) { 'webservice-tls-secret' }
-      let(:tls_ca_secret_name) { 'custom-ca-secret' }
-      let(:tls_custom_ca) { 'secret: custom-ca-secret' }
-      let(:monitoring_tls_enabled) { true }
-
-      let(:template) { HelmTemplate.new(tls_values) }
-
+    shared_examples 'TLS is verified' do
       it 'uses specified secret in the volumes' do
         webservice_secret_volumes = template
           .dig('Deployment/test-webservice-default', 'spec', 'template', 'spec', 'volumes')
@@ -199,34 +223,38 @@ describe 'Workhorse configuration' do
         expect(webservice_secret_volumes).to include('webservice-tls-secret')
         expect(webservice_secret_volumes).to include('custom-ca-secret')
       end
-
-      it 'renders a TOML configuration file' do
-        expect(raw_toml).to include %([[listeners]]\n)
-        expect(raw_toml).to include %(addr = "0.0.0.0:8181"\n)
-        expect(raw_toml).to include %([listeners.tls]\n)
-        expect(raw_toml).to include %([metrics_listener]\n)
-        expect(raw_toml).to include %(addr = "0.0.0.0:9229"\n)
-        expect(raw_toml).to include %([metrics_listener.tls]\n)
-      end
-
       it 'annotates Ingress for TLS backend' do
         ingress_annotations = template.dig('Ingress/test-webservice-default', 'metadata', 'annotations')
 
-        expect(ingress_annotations).to include('nginx.ingress.kubernetes.io/backend-protocol' => 'https')
         expect(ingress_annotations).to include('nginx.ingress.kubernetes.io/proxy-ssl-verify' => 'on')
         expect(ingress_annotations).to include('nginx.ingress.kubernetes.io/proxy-ssl-secret' => 'default/custom-ca-secret')
       end
     end
 
-    context 'when TLS is enabled but not verified' do
-      let(:tls_enabled) { true }
+    context 'when TLS is enabled and verified' do
+      let(:global_workhorse_tls_enabled) { true }
+      let(:tls_verify) { true }
+      let(:tls_secret_name) { 'webservice-tls-secret' }
+      let(:tls_ca_secret_name) { 'custom-ca-secret' }
+      let(:tls_custom_ca) { 'secret: custom-ca-secret' }
+      let(:monitoring_tls_enabled) { true }
+
+      it_behaves_like 'TLS is enabled'
+      it_behaves_like 'monitoring TLS is enabled'
+      it_behaves_like 'TLS is verified'
+    end
+
+    context 'when TLS is enabled but not verified and monitoring is disabled' do
+      let(:global_workhorse_tls_enabled) { true }
       let(:tls_verify) { false }
       let(:tls_secret_name) { 'webservice-tls-secret' }
       let(:tls_ca_secret_name) { 'custom-ca-secret' }
       let(:tls_custom_ca) { 'secret: custom-ca-secret' }
       let(:monitoring_enabled) { false }
+      let(:monitoring_tls_enabled) { false }
 
-      let(:template) { HelmTemplate.new(tls_values) }
+      it_behaves_like 'TLS is enabled'
+      it_behaves_like 'monitoring TLS is disabled'
 
       it 'renders a TOML configuration file' do
         toml = render_toml(raw_toml)
@@ -239,12 +267,35 @@ describe 'Workhorse configuration' do
         expect(listeners.first['addr']).to eq('0.0.0.0:8181')
       end
 
-      it 'annotates Ingress for TLS backend' do
+      it 'does not annotate Ingress for TLS verify' do
         ingress_annotations = template.dig('Ingress/test-webservice-default', 'metadata', 'annotations')
 
-        expect(ingress_annotations).to include('nginx.ingress.kubernetes.io/backend-protocol' => 'https')
         expect(ingress_annotations).not_to include('nginx.ingress.kubernetes.io/proxy-ssl-verify')
       end
+    end
+
+    context 'when monitoring TLS inherits disabled TLS' do
+      let(:global_workhorse_tls_enabled) { false }
+      let(:monitoring_tls_enabled) { nil }
+
+      it_behaves_like 'TLS is disabled'
+      it_behaves_like 'monitoring TLS is disabled'
+    end
+
+    context 'when monitoring inherits enabled TLS' do
+      let(:global_workhorse_tls_enabled) { true }
+      let(:monitoring_tls_enabled) { nil }
+
+      it_behaves_like 'TLS is enabled'
+      it_behaves_like 'monitoring TLS is enabled'
+    end
+
+    context 'TLS is enabled and monitoring TLS is disabled' do
+      let(:global_workhorse_tls_enabled) { true }
+      let(:monitoring_tls_enabled) { false }
+
+      it_behaves_like 'TLS is enabled'
+      it_behaves_like 'monitoring TLS is disabled'
     end
   end
 end

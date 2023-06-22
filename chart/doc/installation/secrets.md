@@ -58,7 +58,6 @@ documentation.
   - [MinIO secret](#minio-secret)
   - [Registry HTTP secret](#registry-http-secret)
   - [Registry notification secret](#registry-notification-secret)
-  - [Grafana password](#grafana-password)
   - [GitLab Pages secret](#gitlab-pages-secret)
   - [GitLab incoming email auth token](#gitlab-incoming-email-auth-token)
   - [GitLab Service Desk email auth token](#gitlab-service-desk-email-auth-token)
@@ -183,7 +182,7 @@ If deploying with an already existing Redis cluster, please use the password
 for accessing the Redis cluster that has been base64 encoded instead of a
 randomly generated one.
 
-This secret is referenced by the `global.redis.password.secret` setting.
+This secret is referenced by the `global.redis.auth.secret` setting.
 
 ### GitLab Shell secret
 
@@ -360,15 +359,6 @@ To rotate the PostgreSQL secret:
 1. Delete the `gitlab-exporter`, `postgresql`, `toolbox`, `sidekiq` and `webservice` pods using the `kubectl delete pod`
 command so the new pods are loaded with the new secret and allow them to connect to the
 database.
-
-### Grafana password
-
-If configuring [Grafana integration](../charts/globals.md#configure-grafana-integration), generate a random 64 character alpha-numeric password.
-Replace `<name>` with the name of the release.
-
-```shell
-kubectl create secret generic <name>-grafana-initial-password --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
-```
 
 ### GitLab Pages secret
 
@@ -587,11 +577,11 @@ The key name inside the secret where the certificate is stored MUST BE
 
 ### OAuth integration
 
-For configuring OAuth integration of various services like GitLab Pages and
-Grafana with GitLab, secrets containing OAuth credentials are required. The
-secret should contain an App ID (by default, stored under the `appid` key),
-and an App Secret (by default, stored under the `appsecret` key), both of which are
-recommended to be alphanumeric strings, at least 64 characters long.
+For configuring OAuth integration of various services like GitLab Pages, secrets
+containing OAuth credentials are required. The secret should contain an App ID
+(by default, stored under the `appid` key), and an App Secret (by default,
+stored under the `appsecret` key), both of which are recommended to be
+alphanumeric strings, at least 64 characters long.
 
 ```shell
 kubectl create secret generic oauth-gitlab-pages-secret --from-literal=appid=<app id> --from-literal=appsecret=<app secret>
