@@ -600,7 +600,7 @@ Once all secrets have been generated and stored, you can proceed [deploying GitL
 
 The secrets can be rotated if required for security purposes.
 
-1. [Backup your current secrets](../backup-restore/backup.md#backup-the-secrets).
+1. [Back up your current secrets](../backup-restore/backup.md#back-up-the-secrets).
 1. For your convenience, create new secrets that are suffixed with `-v2` (for example `gitlab-shell-host-keys-v2`)
    by following the [manual secret creation](#manual-secret-creation-optional) steps for each secret you wish to rotate.
 1. Update the secret keys in your `values.yaml` file to point to the new secret names. Most secret

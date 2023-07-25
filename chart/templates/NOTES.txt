@@ -3,7 +3,7 @@
 
 {{/* PostgreSQL minimum version change */}}
 {{ $NOTICE }}
-The minimum required version of PostgreSQL is now 12. See https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/doc/installation/upgrade.md for more details.
+The minimum required version of PostgreSQL is now 13. See https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/doc/installation/upgrade.md for more details.
 
 {{- /* If the Container Registry metadata database is enabled, note it is not production ready */}}
 {{- if eq .Values.registry.database.enabled true }}
@@ -198,6 +198,15 @@ redis:
     `globa.redis.auth` instead. This is the source of the `coalesce.go` warning
     message from Helm as well. For more details, please see:
     https://docs.gitlab.com/charts/installation/upgrade.html#use-of-globalredispassword
+{{- end -}}
+
+{{- /* Deprecation notice for global.busybox */}}
+{{- if hasKey .Values.global "busybox" }}
+{{ $NOTICE }}
+global.busybox:
+    The configuration key `global.busybox` is deprecated in favor of `global.gitlabBase`.
+    For more details, please see:
+    https://docs.gitlab.com/charts/charts/globals#gitlab-base-image
 {{- end -}}
 
 {{- /* run deprecations */}}

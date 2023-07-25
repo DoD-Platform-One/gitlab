@@ -1,6 +1,6 @@
 {{- if and .Values.enabled .Values.backups.cron.enabled }}
 {{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
-{{- $initImageCfg := dict "global" .Values.global.busybox.image "local" .Values.init.image -}}
+{{- $initImageCfg := include "gitlab.configure.config" .Values | fromYaml -}}
 {{- include "database.datamodel.prepare" . -}}
 {{ if or ($.Capabilities.APIVersions.Has "batch/v1/CronJob") (eq $.Values.global.batch.cronJob.apiVersion "batch/v1") -}}
 apiVersion: batch/v1
@@ -59,7 +59,7 @@ spec:
             {{- include "gitlab.certificates.initContainer" . | nindent 12 }}
             - name: configure
               command: ['sh', '/config/configure']
-              image: {{ include "gitlab.busybox.image" (dict "local" .Values.init "global" $.Values.global) | quote }}
+              image: {{ include "gitlab.configure.image" (dict "root" $ "image" .Values.init.image) | quote }}
               {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 14 }}
               env:
                 {{- include "gitlab.extraEnv" $ | nindent 16 }}

@@ -344,52 +344,6 @@ Defaults to nil
 {{ pluck "tcpUserTimeout" $local .Values.global.psql | first -}}
 {{- end -}}
 
-{{/* ######### ingress templates */}}
-
-{{/*
-Return the appropriate apiVersion for Ingress.
-
-It expects a dictionary with three entries:
-  - `global` which contains global ingress settings, e.g. .Values.global.ingress
-  - `local` which contains local ingress settings, e.g. .Values.ingress
-  - `context` which is the parent context (either `.` or `$`)
-
-Example usage:
-{{- $ingressCfg := dict "global" .Values.global.ingress "local" .Values.ingress "context" . -}}
-kubernetes.io/ingress.provider: "{{ template "gitlab.ingress.provider" $ingressCfg }}"
-*/}}
-{{- define "gitlab.ingress.apiVersion" -}}
-{{-   if .local.apiVersion -}}
-{{-     .local.apiVersion -}}
-{{-   else if .global.apiVersion -}}
-{{-     .global.apiVersion -}}
-{{-   else if .context.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
-{{-     print "networking.k8s.io/v1" -}}
-{{-   else if .context.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
-{{-     print "networking.k8s.io/v1beta1" -}}
-{{-   else -}}
-{{-     print "extensions/v1beta1" -}}
-{{-   end -}}
-{{- end -}}
-
-{{/*
-Returns the ingress provider
-
-It expects a dictionary with two entries:
-  - `global` which contains global ingress settings, e.g. .Values.global.ingress
-  - `local` which contains local ingress settings, e.g. .Values.ingress
-*/}}
-{{- define "gitlab.ingress.provider" -}}
-{{- default .global.provider .local.provider -}}
-{{- end -}}
-
-{{/*
-Overrides the ingress-nginx template to make sure gitlab-shell name matches
-*/}}
-{{- define "ingress-nginx.tcp-configmap" -}}
-{{ .Release.Name}}-nginx-ingress-tcp
-{{- end -}}
-
 {{/* ######### annotations */}}
 
 {{/*
@@ -553,7 +507,7 @@ Constructs selfsign image value.
 {{- end -}}
 
 {{/*
-Constructs busybox image name.
+DEPRECATED: Constructs busybox image name.
 */}}
 {{- define "gitlab.busybox.image" -}}
 {{/*
@@ -567,13 +521,51 @@ Constructs busybox image name.
     # be used.
     # TODO: consider tagSuffix here, since we took it out of example
 */}}
-{{- if kindIs "map" .local.image }}
-{{- $image := default .global.busybox.image.repository .local.image.repository }}
-{{- $tag := coalesce .local.image.tag .global.busybox.image.tag "latest" }}
+{{- if kindIs "map" .image }}
+{{- $image := coalesce .image.repository .global.busybox.image.repository "registry.gitlab.com/gitlab-org/cloud-native/mirror/images/busybox" }}
+{{- $tag := coalesce .image.tag .global.busybox.image.tag "latest" }}
 {{- printf "%s:%s" $image $tag -}}
 {{- else }}
 {{- printf "DEPRECATED:DEPRECATED" -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Constructs the image value used for the configure container.
+
+Defaults to GitLab Base image and falls back to the deprecated busybox image,
+when custom global busybox values are defined.
+
+It expects a dictionary with two entries:
+  - `root` which contains the root context
+  - `image` which contains overrides for the GitLab base image
+
+Format:
+  {{ include "gitlab.configure.image" (dict "root" $ "image" "<override image context>") }}
+*/}}
+{{- define "gitlab.configure.image" -}}
+{{/* Fall back to deprecated busybox */}}
+{{- if hasKey .root.Values.global "busybox" }}
+{{-   include "gitlab.busybox.image" (dict "global" .root.Values.global "image" .image) -}}
+{{- else }}
+{{-   $image := mergeOverwrite (deepCopy .root.Values.global.gitlabBase.image) .image }}
+{{-   include "gitlab.helper.image" (dict "context" .root "image" $image) -}}
+{{- end }}
+{{- end -}}
+
+{{/*
+Constructs the image configuration for the `configure` container.
+
+Defaults to the GitLab Base values and falls back to the deprecated busybox values,
+when custom global busybox values are defined.
+*/}}
+{{- define "gitlab.configure.config" -}}
+{{- $global := .global.gitlabBase.image }}
+{{/* Fall back to deprecated busybox */}}
+{{- if hasKey .global "busybox" }}
+{{-   $global := .global.busybox.image }}
+{{- end }}
+{{- dict "global" $global "local" .init.image | toYaml }}
 {{- end -}}
 
 {{/*

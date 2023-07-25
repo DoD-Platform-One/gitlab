@@ -85,12 +85,7 @@ the `helm install` command using the `--set` flags.
 | `logging.level`                                  |                                                   | Log level                                                                                                                                                                      |
 | `logging.format`                                 | `json`                                            | Log format                                                                                                                                                                     |
 | `logging.sentryDsn`                              |                                                   | Sentry DSN URL - Exceptions from Go server                                                                                                                                     |
-| `logging.rubySentryDsn`                          |                                                   | Sentry DSN URL - Exceptions from `gitaly-ruby`                                                                                                                                 |
 | `logging.sentryEnvironment`                      |                                                   | Sentry environment to be used for logging                                                                                                                                      |
-| `ruby.maxRss`                                    |                                                   | Gitaly-Ruby resident set size (RSS) that triggers a memory restart (bytes)                                                                                                     |
-| `ruby.gracefulRestartTimeout`                    |                                                   | Graceful period before a force restart after exceeding Max RSS                                                                                                                 |
-| `ruby.restartDelay`                              |                                                   | Time that Gitaly-Ruby memory must remain high before a restart (seconds)                                                                                                       |
-| `ruby.numWorkers`                                |                                                   | Number of Gitaly-Ruby worker processes                                                                                                                                         |
 | `shell.concurrency[]`                            |                                                   | Concurrency of each RPC endpoint Specified using keys `rpc` and `maxPerRepo`                                                                                                   |
 | `packObjectsCache.enabled`                       | `false`                                           | Enable the Gitaly pack-objects cache                                                                                                                                           |
 | `packObjectsCache.dir`                           | `/home/git/repositories/+gitaly/PackObjectsCache` | Directory where cache files get stored                                                                                                                                         |
@@ -295,7 +290,7 @@ persistence:
   size: 50Gi
   matchLabels: {}
   matchExpressions: []
-  subPath: "/data"
+  subPath: "data"
   annotations: {}
 ```
 

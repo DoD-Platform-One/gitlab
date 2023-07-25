@@ -7,7 +7,7 @@ class HelmTemplate
 
   def self.helm_major_version
     if @_helm_major_version.nil?
-      parts = `helm version -c`.match('Ver(sion)?:"v(\d)\.(\d+)\.(\d+)')
+      parts = `helm version -c`.match('Ver(sion)?:"v(\d)\.(\d+)(?:\.(\d+))?')
       @_helm_major_version = parts[2].to_i
       @_helm_minor_version = parts[3].to_i
       @_helm_patch_version = parts[4].to_i

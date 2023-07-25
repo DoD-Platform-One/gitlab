@@ -28,14 +28,15 @@ helm upgrade --force --install gitlab . \
 
 ### Configure GitLab to use Spamcheck
 
-1. On the top bar, select `Menu` > `Admin`.
-1. On the left sidebar, select `Settings` > `Reporting`.
-1. Expand `Spam and Anti-bot Protection`.
+1. On the left sidebar, expand the top-most chevron (**{chevron-down}**).
+1. Select **Admin Area**.
+1. Select **Settings > Reporting**
+1. Expand **Spam and Anti-bot Protection**.
 1. Update the Spam Check settings:
-    1. Check the `Enable Spam Check via external API endpoint` checkbox
-    1. For URL of the external Spam Check endpoint use `grpc://gitlab-spamcheck.default.svc:8001`, where `default` is replaced with the Kubernetes namespace where GitLab is deployed.
-    1. Leave `Spam Check API key` blank.
-1. Select `Save changes`.
+   1. Check the "Enable Spam Check via external API endpoint" checkbox
+   1. For URL of the external Spam Check endpoint use `grpc://gitlab-spamcheck.default.svc:8001`, where `default` is replaced with the Kubernetes namespace where GitLab is deployed.
+   1. Leave "Spam Check API key" blank.
+1. Select **Save changes**.
 
 ## Installation command line options
 

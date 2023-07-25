@@ -236,20 +236,6 @@ lint_package:
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
 
-review_gke:
-  variables:
-    DNS_PROVIDER: "google"
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
-  extends: .review_template
-  environment:
-    name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-    on_stop: stop_review_gke
-    auto_stop_in: 2 days
-  resource_group: "gke-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
-
 review_gke122:
   variables:
     DNS_PROVIDER: "google"
@@ -277,21 +263,6 @@ review_gke125:
     on_stop: stop_review_gke125
     auto_stop_in: 2 days
   resource_group: "gke125-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
-
-review_gke_dev:
-  variables:
-    DNS_PROVIDER: "google"
-    HELM_EXTRA_ARGS: "-f scripts/ci/values-dev-images.yaml"
-  extends: .review_template
-  environment:
-    name: dev_gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-    on_stop: stop_review_gke_dev
-    auto_stop_in: 2 days
-  resource_group: "gke-review-app-dev-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
-  rules:
-    - !reference [.rule:skip_if_no_cluster]
-    - if: '$PIPELINE_TYPE == "BUILD_STABLE_BRANCH_PIPELINE"'
 
 review_eks:
   variables:
@@ -325,16 +296,6 @@ review_eks:
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
 
-stop_review_gke:
-  extends: .stop_review_template
-  variables:
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
-  environment:
-    name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    action: stop
-
 stop_review_gke122:
   extends: .stop_review_template
   variables:
@@ -354,15 +315,6 @@ stop_review_gke125:
   environment:
     name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     action: stop
-
-stop_review_gke_dev:
-  extends: .stop_review_template
-  environment:
-    name: dev_gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    action: stop
-  rules:
-    - !reference [.rule:skip_if_no_cluster]
-    - if: '$PIPELINE_TYPE == "BUILD_STABLE_BRANCH_PIPELINE"'
 
 stop_review_eks:
   extends: .stop_review_template
@@ -400,18 +352,6 @@ stop_review_eks:
     - !reference [.rule:skip_if_no_cluster]
     - if: '$PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/'
 
-stable_gke:
-  extends: .stable
-  environment:
-    name: gke_production
-    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
-  variables:
-    VARIABLES_FILE: "variables/stable_gke"
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
-  resource_group: "gke-production"
-
 stable_gke122:
   extends: .stable
   environment:
@@ -445,18 +385,19 @@ stable_eks:
     VARIABLES_FILE: "variables/stable_eks"
   resource_group: "eks-production"
 
-review_helm_test:
+review_helm_test_gke122:
   stage: qa
   variables:
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
+    AGENT_NAME: "gke122-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
     KUBE_NAMESPACE: "helm-charts-win"
   environment:
-    name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-    on_stop: stop_review_gke
+    on_stop: stop_review_gke122
   extends: .source_autodevops
   script:
+    - set_context
     - helm test "$RELEASE_NAME"
   rules:
     - !reference [.rule:skip_if_no_cluster]
@@ -464,23 +405,24 @@ review_helm_test:
     - if: '$PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
 
-production_helm_test:
+production_helm_test_gke122:
   stage: qa
   variables:
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
+    AGENT_NAME: "gke122-ci-cluster"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
     KUBE_NAMESPACE: "helm-charts-win"
   environment:
-    name: gke_production
+    name: gke122_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   extends: .source_autodevops
   script:
+    - set_context
     - helm test "$RELEASE_NAME"
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - if: '$PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/'
 
-debug_review:
+debug_review_gke122:
   stage: qa
   when: on_failure
   extends: .source_autodevops
@@ -492,14 +434,14 @@ debug_review:
     paths:
     - variables
   environment:
-    name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-    on_stop: stop_review_gke
+    on_stop: stop_review_gke122
   variables:
     HOST_SUFFIX: "$CI_ENVIRONMENT_SLUG"
+    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
     DOMAIN: "-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN"
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
+    AGENT_NAME: "gke122-ci-cluster"
     KUBE_NAMESPACE: "helm-charts-win"
   rules:
     - !reference [.rule:skip_if_no_cluster]
@@ -515,7 +457,7 @@ danger-review:
     - git version
     - danger_id=$(echo -n ${DANGER_GITLAB_API_TOKEN} | md5sum | awk '{print $1}' | cut -c5-10)
     - |
-      if [ -v DANGER_GITLAB_API_TOKEN ] && [ "${PIPELINE_TYPE}" = "FORK_MR_PIPELINE" ]; then
+      if [ ! -v DANGER_GITLAB_API_TOKEN ] && [ "${PIPELINE_TYPE}" = "FORK_MR_PIPELINE" ]; then
         echo "Danger token not configured. As this is from a fork, failing danger gracefully."
         exit 202
       fi
@@ -548,7 +490,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.17-vale-2.24.0-markdownlint-0.33.0-markdownlint2-0.6.0
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.17-vale-2.25.2-markdownlint-0.34.0-markdownlint2-0.7.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -566,12 +508,11 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.17-ruby-3.2.1-f53af000
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.17-ruby-3.2.2-b8f266e8
   stage: prepare
   cache: {}
   dependencies: []
   before_script: []
-  tags: [ gitlab-org ]
   script:
     - mv doc/ /tmp/gitlab-docs/content/charts
     - cd /tmp/gitlab-docs
@@ -670,23 +611,6 @@ review-docs-cleanup:
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
 
-review_specs_gke:
-  extends: .specs
-  variables:
-    VARIABLES_FILE: "variables/review_gke"
-    RSPEC_TAGS: type:feature
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
-  environment:
-    name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-    on_stop: stop_review_gke
-  resource_group: "gke-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
-  rules:
-    - !reference [.rule:skip_if_no_cluster]
-    - !reference [.specs, rules]
-
 review_specs_gke122:
   extends: .specs
   variables:
@@ -720,21 +644,6 @@ review_specs_gke125:
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
-
-# Bring back when https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2457 is fixed
-# review_specs_gke_dev:
-#   extends: .specs
-#   variables:
-#     VARIABLES_FILE: "variables/review_gke_dev"
-#     RSPEC_TAGS: type:feature
-#   environment:
-#     name: dev_gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-#     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-#     on_stop: stop_review_gke_dev
-#   resource_group: "gke-review-app-dev-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
-#   rules:
-#     - !reference [.rule:skip_if_no_cluster]
-#     - if: '$PIPELINE_TYPE == "BUILD_STABLE_BRANCH_PIPELINE"'
 
 review_specs_eks:
   extends: .specs
@@ -775,19 +684,6 @@ production_specs_without_cluster:
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
-
-production_specs_gke:
-  extends: .production_specs
-  variables:
-    VARIABLES_FILE: "variables/stable_gke"
-    RSPEC_TAGS: type:feature
-    AGENT_NAME: "gke-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
-  environment:
-    name: gke_production
-    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
-  resource_group: "gke-production"
 
 production_specs_gke122:
   extends: .production_specs
@@ -963,15 +859,6 @@ release_package:
 
 # QA jobs for Smoke and Reliable E2E suites
 
-qa_gke:
-  extends: .qa_branch
-  variables:
-    VARIABLES_FILE: "variables/review_gke"
-    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
-  environment:
-    name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    on_stop: stop_review_gke
-
 qa_gke122:
   extends: .qa_branch
   variables:
@@ -998,14 +885,6 @@ qa_eks:
   environment:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_eks
-
-qa_gke_production:
-  extends: .qa_production
-  variables:
-    VARIABLES_FILE: "variables/stable_gke"
-    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
-  environment:
-    name: gke_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
 
 qa_gke122_production:
   extends: .qa_production
@@ -1044,31 +923,6 @@ qa_eks_production:
   artifacts:
     paths:
     - variables
-
-qa_gke_full_suite_manual_trigger:
-  extends: .qa_full_suite_manual_trigger
-  script: echo 'The job will trigger Full E2E suite against GKE'
-
-qa_gke_manual_full_suite:
-  extends: .qa_branch
-  parallel: 7
-  variables:
-    VARIABLES_FILE: "variables/review_gke"
-    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
-  environment:
-    name: gke_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    on_stop: stop_review_gke
-  needs: [ "qa_gke_full_suite_manual_trigger"]
-
-qa_gke_manual_full_suite_production:
-  extends: .qa_production_full_suite_manual_trigger
-  parallel: 7
-  variables:
-    VARIABLES_FILE: "variables/stable_gke"
-    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
-  environment:
-    name: gke_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-  needs: [ "qa_gke_full_suite_manual_trigger"]
 
 qa_gke122_full_suite_manual_trigger:
   extends: .qa_full_suite_manual_trigger

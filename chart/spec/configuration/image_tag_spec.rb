@@ -24,10 +24,11 @@ end
 def is_helper_image?(container_image)
   container_image.include?('/kubectl:') ||
     container_image.include?('/alpine-certificates:') ||
-    container_image.include?('/cfssl-self-sign:')
+    container_image.include?('/cfssl-self-sign:') ||
+    container_image.include?('/gitlab-base:')
 end
 
-def test_helper_images(template, description, expectation, expectation_busybox)
+def test_helper_images(template, description, expectation)
   template.mapped.select { |_, resource| targeted_resource_kind?(resource) && !should_be_ignored?(resource) }.each do |key, resource|
     context "resource: #{key}" do
       let(:resource) { resource }
@@ -41,12 +42,6 @@ def test_helper_images(template, description, expectation, expectation_busybox)
             if is_helper_image?(container_image)
               it description do
                 expect(container_image).to end_with(expectation)
-              end
-            end
-
-            if container_image.include?('/busybox:')
-              it "uses #{expectation_busybox} for the busybox image tag" do
-                expect(container_image).to end_with(expectation_busybox)
               end
             end
           end
@@ -98,7 +93,7 @@ describe 'image tag configuration' do
       expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
     end
 
-    test_helper_images(template, 'should use the default image tag', fetch_default_gitlab_version, ':latest')
+    test_helper_images(template, 'should use the default image tag', fetch_default_gitlab_version)
   end
 
   context 'global.gitlabVersion' do
@@ -131,9 +126,7 @@ describe 'image tag configuration' do
         expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
       end
 
-      # Expect busybox to use its default tag ('latest') since it doesn't consider `global.gitlabVersion`.
-      # This will align better with https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3432.
-      test_helper_images(template, 'should use the global gitlabVersion for the image tag', ':v1.2.3', 'latest')
+      test_helper_images(template, 'should use the global gitlabVersion for the image tag', ':v1.2.3')
     end
 
     context 'with local tags configured' do
@@ -156,7 +149,7 @@ describe 'image tag configuration' do
             certificates:
               image:
                 tag: local-tag
-            busybox:
+            gitlabBase:
               image:
                 tag: local-tag
           shared-secrets:
@@ -178,7 +171,77 @@ describe 'image tag configuration' do
         expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
       end
 
-      test_helper_images(template, 'should use the local value for the image tag, not global.gitlabVersion', ':local-tag', ':local-tag')
+      test_helper_images(template, 'should use the local value for the image tag, not global.gitlabVersion', ':local-tag')
+    end
+
+    context 'init image override' do
+      begin
+        values = HelmTemplate.with_defaults %(
+          global:
+            gitlabVersion: 1.2.3
+            gitlabBase:
+              tag: global-tag
+          gitlab:
+            sidekiq:
+              init:
+                image:
+                  tag: init-tag
+        )
+        template = HelmTemplate.new values
+      rescue StandardError
+        # Skip these examples when helm or chart dependencies are missing
+        next
+      end
+
+      let(:template) { template }
+
+      it 'should render the template without error' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      end
+
+      it 'should override the gitlab-base init image tag' do
+        configure = template.find_container('Deployment/test-sidekiq-all-in-1-v2', 'configure', true)
+        expect(configure['image']).to end_with(':init-tag')
+      end
+    end
+
+    context 'init Image busybox fallback' do
+      begin
+        values = HelmTemplate.with_defaults %(
+          global:
+            gitlabVersion: 1.2.3
+            busybox:
+              image:
+                tag: bb-tag
+          gitlab:
+            sidekiq:
+              init:
+                image:
+                  tag: init-tag
+        )
+        template = HelmTemplate.new values
+      rescue StandardError
+        # Skip these examples when helm or chart dependencies are missing
+        next
+      end
+
+      let(:template) { template }
+
+      it 'should render the template without error' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      end
+
+      it 'should use the busybox image/tag' do
+        configure = template.find_container('Deployment/test-webservice-default', 'configure', true)
+        expect(configure['image']).to include('busybox')
+        expect(configure['image']).to end_with(':bb-tag')
+      end
+
+      it 'should override the busybox image/tag' do
+        configure = template.find_container('Deployment/test-sidekiq-all-in-1-v2', 'configure', true)
+        expect(configure['image']).to include('busybox')
+        expect(configure['image']).to end_with(':init-tag')
+      end
     end
   end
 end

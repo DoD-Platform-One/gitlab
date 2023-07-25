@@ -22,10 +22,12 @@ Capybara.register_driver :headless_chrome do |app|
   options.add_argument("headless") unless ENV['CHROME_HEADLESS'] =~ /^(false|no|0)$/i
 
   # Disable /dev/shm use in CI. See https://gitlab.com/gitlab-org/gitlab/-/issues/4252
-  options.add_argument("disable-dev-shm-usage") if ENV['CI'] || ENV['CI_SERVER']
+  options.add_argument("disable-dev-shm-usage") if ci?
 
   # Explicitly set user-data-dir to prevent crashes. See https://gitlab.com/gitlab-org/gitlab-foss/-/issues/58882#note_179811508
-  options.add_argument("user-data-dir=/tmp/chrome") if ENV['CI'] || ENV['CI_SERVER']
+  options.add_argument("user-data-dir=/tmp/chrome") if ci?
+
+  options.add_argument("window-size=1200,800") if ci?
 
   Capybara::Selenium::Driver.new app,
     browser: :chrome,
@@ -82,4 +84,10 @@ RSpec.configure do |config|
     puts 'Excluding specs that require access to k8s cluster'
     config.filter_run_excluding :type => 'feature'
   end
+end
+
+private
+
+def ci?
+  ENV['CI'] || ENV['CI_SERVER']
 end

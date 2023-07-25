@@ -161,6 +161,7 @@ internalGitlabServer:
 logFormat: 'json'
 logVerbose: false
 maxConnections:
+#  maxURILength:
 #  propagateCorrelationId:
 redirectHttp: false
 sentry:
@@ -179,8 +180,10 @@ useProxyV2: false
 #   expiration:
 #   refresh:
 
+# zipOpenTimeout:
 # zipHTTPClientTimeout:
 
+# serverShutdownTimeout:
 # serverReadTimeout:
 # serverReadHeaderTimeout:
 # serverWriteTimeout:
@@ -209,3 +212,14 @@ workhorse: {}
 affinity:
   podAntiAffinity:
     topologyKey:
+
+# authCookieSessionTimeout:
+
+# rateLimitSourceIP:
+# rateLimitSourceIPBurst:
+# rateLimitDomain:
+# rateLimitDomainBurst:
+# rateLimitTLSSourceIP:
+# rateLimitTLSSourceIPBurst:
+# rateLimitTLSDomain:
+# rateLimitTLSDomainBurst:

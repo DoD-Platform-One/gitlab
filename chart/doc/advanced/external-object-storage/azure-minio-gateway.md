@@ -69,7 +69,7 @@ az webapp create \
 
 The Web app should now be accessible at `https://gitlab-minio-app.azurewebsites.net`.
 
-Lastly, we need to set up the startup command and create environment variables that will store our storage account name and key for use by the web app, MINIO_ACCESS_KEY & MINIO_SECRET_KEY.
+Lastly, we need to set up the startup command and create environment variables that will store our storage account name and key for use by the web app, `MINIO_ACCESS_KEY` and `MINIO_SECRET_KEY`.
 
 ```shell
 az webapp config appsettings set \

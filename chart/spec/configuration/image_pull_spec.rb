@@ -101,9 +101,9 @@ describe 'image configuration' do
             pullPolicy: pp-global
             pullSecrets:
             - name: ps-global
-          busybox:
+          gitlabBase:
             image:
-              pullPolicy: pp-busybox
+              pullPolicy: pp-gl-base
       )))
     rescue StandardError
       # Skip these examples when helm or chart dependencies are missing
@@ -134,7 +134,7 @@ describe 'image configuration' do
               it 'should use the global imagePullPolicy' do
                 pull_policy = 'pp-global'
 
-                pull_policy = 'pp-busybox' if container_type == 'initContainers' &&
+                pull_policy = 'pp-gl-base' if container_type == 'initContainers' &&
                   container&.dig('name') == 'configure'
 
                 expect(container&.dig('imagePullPolicy')).to eq(pull_policy)

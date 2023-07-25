@@ -1,11 +1,32 @@
 require 'spec_helper'
 require 'helm_template_helper'
+require 'tomlrb'
 require 'yaml'
 require 'hash_deep_merge'
 
 describe 'Gitaly configuration' do
   let(:default_values) do
     HelmTemplate.defaults
+  end
+
+  def render_toml(raw_template, env = {})
+    Dir.mktmpdir do |tmpdir|
+      raw_template.gsub!(%r{/etc/gitlab-secrets}, tmpdir)
+      input_file = File.join(tmpdir, 'input.tpl')
+      File.write(input_file, raw_template)
+
+      # Write bogus gitaly_token
+      FileUtils.mkdir(File.join(tmpdir, 'gitaly'))
+      File.write(File.join(tmpdir, "gitaly", "gitaly_token"), SecureRandom.hex)
+
+      cmd = "gomplate --left-delim '{%' --right-delim '%}' --file #{input_file}"
+      result = Open3.capture3(env, cmd)
+      stdout, stderr, exit_code = result
+
+      raise "Unable to call gomplate: #{stderr}" if exit_code != 0
+
+      Tomlrb.parse(stdout)
+    end
   end
 
   context 'When disabled and provided external instances' do
@@ -173,7 +194,7 @@ describe 'Gitaly configuration' do
       t = HelmTemplate.new(values)
       expect(t.exit_code).to eq(0)
 
-      config = t.dig('ConfigMap/test-gitaly', 'data', 'config.toml.erb')
+      config = t.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl')
       expect(config).to include(
         <<~CONFIG
         [[git.config]]
@@ -240,6 +261,16 @@ describe 'Gitaly configuration' do
         expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
         expect(t.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
       end
+
+      it 'renders a TOML configuration file' do
+        t = HelmTemplate.new(labeled_values)
+        config = t.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl')
+        toml = render_toml(config, 'HOSTNAME' => 'default')
+
+        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage])
+        expect(toml['storage']).to eq([{ 'name' => 'default', 'path' => '/home/git/repositories' }])
+        expect(toml['auth']['token'].length).to eq(32)
+      end
     end
 
     context 'with praefect enabled' do
@@ -250,6 +281,7 @@ describe 'Gitaly configuration' do
               enabled: true
               virtualStorages:
               - name: default
+                gitalyReplicas: 3
         )).deep_merge(default_values).deep_merge(labeled_values)
       end
 
@@ -273,6 +305,16 @@ describe 'Gitaly configuration' do
         expect(t.dig('Service/test-gitaly-default', 'metadata', 'labels')).not_to include('global' => 'global')
         expect(t.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
       end
+
+      it 'renders a TOML configuration file' do
+        t = HelmTemplate.new(praefect_labeled_values)
+        config = t.dig('ConfigMap/test-gitaly-praefect', 'data', 'config.toml.tpl')
+        toml = render_toml(config, 'HOSTNAME' => 'test-gitaly-default-0')
+
+        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage])
+        expect(toml['storage']).to eq([{ 'name' => 'test-gitaly-default-0', 'path' => '/home/git/repositories' }])
+        expect(toml['auth']['token'].length).to eq(32)
+      end
     end
   end
 
@@ -295,8 +337,8 @@ describe 'Gitaly configuration' do
 
       let(:template) { HelmTemplate.new(values) }
 
-      it 'populates a pack_objects_cache section in config.toml.erb' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.erb')
+      it 'populates a pack_objects_cache section in config.toml.tpl' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
 
         pack_objects_cache_section = "[pack_objects_cache]\n" \
                                      "enabled = #{pack_objects_cache_enabled}\n" \
@@ -314,8 +356,8 @@ describe 'Gitaly configuration' do
 
       let(:template) { HelmTemplate.new(values) }
 
-      it 'does not populate a pack_objects_cache section in config.toml.erb' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.erb')
+      it 'does not populate a pack_objects_cache section in config.toml.tpl' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
 
         expect(config_toml).not_to match /^\[pack_objects_cache\]/
       end
@@ -341,8 +383,8 @@ describe 'Gitaly configuration' do
 
       let(:template) { HelmTemplate.new(values) }
 
-      it 'populates a signing_key field in config.toml.erb' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.erb')
+      it 'populates a signing_key field in config.toml.tpl' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
 
         expect(config_toml).to include "signing_key = '/etc/gitlab-secrets/gitaly/signing_key.gpg'"
       end
@@ -355,8 +397,8 @@ describe 'Gitaly configuration' do
 
       let(:template) { HelmTemplate.new(values) }
 
-      it 'does not populate a signing_key field in config.toml.erb' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.erb')
+      it 'does not populate a signing_key field in config.toml.tpl' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
 
         expect(config_toml).not_to match /^signing_key = /
       end

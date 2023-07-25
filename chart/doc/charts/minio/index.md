@@ -158,9 +158,9 @@ init:
 
 The initContainer image settings are just as with a normal image configuration.
 By default, chart-local values are left empty, and the global settings
-`global.busybox.image.repository` and `global.busybox.image.tag` will be used to
-populate initContainer image. If chart-local values are specified, they get
-used instead of the global setting's values.
+`global.gitlabBase.image.repository` and the image tag associated with the current
+`global.gitlabVersion` will be used to populate the initContainer image.
+The global configuration can be overridden by chart-local values (e.g. `minio.init.image.tag`).
 
 ### initContainer script
 

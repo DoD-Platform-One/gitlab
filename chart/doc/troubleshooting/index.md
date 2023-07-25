@@ -467,7 +467,7 @@ Partial trust of certificates signed by private certificate authorities can occu
 - The supplied certificates are not in separate files.
 - The certificates init container doesn't perform all the required steps.
 
-Also, GitLab is mostly written in Ruby on Rails and Golang, and each language's
+Also, GitLab is mostly written in Ruby on Rails and Go, and each language's
 TLS libraries work differently. This difference can result in issues like job logs
 failing to render in the GitLab UI but raw job logs downloading without issue.
 

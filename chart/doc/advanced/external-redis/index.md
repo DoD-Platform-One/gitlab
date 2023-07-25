@@ -82,6 +82,12 @@ redis:
 global:
   redis:
     redisYmlOverride:
+      raredis:
+        host: rare-redis.example.com:6379
+        password:
+          enabled: true
+          secret: secretname
+          key: password
       exotic_redis:
         host: redis.example.com:6379
         password: <%= File.read('/path/to/secret').strip.to_json %>
@@ -90,11 +96,14 @@ global:
           nested: value
 ```
 
-Assuming `/path/to/secret` contains `THE SECRET`, his will cause the
+Assuming `/path/to/secret` contains `THE SECRET` and `/path/to/secret/raredis-override-password` contains `RARE SECRET`, his will cause the
 following to be rendered in `redis.yml`:
 
 ```yaml
 production:
+  raredis:
+    host: rare-redis.example.com:6379
+    password: "RARE SECRET"
   exotic_redis:
     host: redis.example.com:6379
     password: "THE SECRET"
@@ -107,9 +116,11 @@ production:
 
 The flip side of the flexibility of `redisYmlOverride` is that it is less user friendly. For example:
 
-1. To insert passwords into `redis.yml` you must write correct ERB
-   `<%= File.read('/path/to/secret').strip.to_json %>` statements yourself, using
-   whatever path the secret is mounted in the container at.
+1. To insert passwords into `redis.yml` you may either:
+   - Use the existing [password definition](../../charts/globals.md#multiple-redis-support)
+     and let Helm replace it with an ERB statement.
+   - Write correct ERB `<%= File.read('/path/to/secret').strip.to_json %>` statements yourself,
+     using whatever path the secret is mounted in the container at.
 1. In `redisYmlOverride` you must follow the naming conventions of
    GitLab Rails. For example, the "SharedState" instance is not called
    `sharedState` but `shared_state`.

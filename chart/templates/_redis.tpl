@@ -8,12 +8,19 @@ Build a dict of redis configuration
 */}}
 {{- define "gitlab.redis.configMerge" -}}
 {{-   $_ := set $ "redisConfigName" (default "" $.redisConfigName) -}}
+{{-   $_ := set $ "usingOverride" (default false $.usingOverride) -}}
 {{-   $_ := unset $ "redisMergedConfig" -}}
 {{-   $_ := set $ "redisMergedConfig" (dict "redisConfigName" $.redisConfigName) -}}
+{{-   $hasOverrideSecret := false -}}
+{{-   if and $.Values.global.redis.redisYmlOverride $.redisConfigName -}}
+{{-     $hasOverrideSecret = (kindIs "map" (dig $.redisConfigName "password" "" $.Values.global.redis.redisYmlOverride)) -}}
+{{-   end -}}
 {{-   range $want := list "host" "port" "scheme" "user" -}}
 {{-     $_ := set $.redisMergedConfig $want (pluck $want (index $.Values.global.redis $.redisConfigName) $.Values.global.redis | first) -}}
 {{-   end -}}
-{{-   if kindIs "map" (get (index $.Values.global.redis $.redisConfigName) "password")  -}}
+{{-   if and $hasOverrideSecret $.usingOverride -}}
+{{-     $_ := set $.redisMergedConfig "password" (get (index $.Values.global.redis.redisYmlOverride $.redisConfigName) "password") -}}
+{{-   else if kindIs "map" (get (index $.Values.global.redis $.redisConfigName) "password")  -}}
 {{-     $_ := set $.redisMergedConfig "password" (get (index $.Values.global.redis $.redisConfigName) "password") -}}
 {{-   else if (kindIs "map" (get $.Values.global.redis "password")) -}}
 {{-     $_ := set $.redisMergedConfig "password" (get $.Values.global.redis "password") -}}

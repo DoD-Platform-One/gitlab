@@ -15,6 +15,9 @@ describe "Restoring a backup" do
     stdout, status = restore_from_backup(skip: 'repositories')
     fail stdout unless status.success?
 
+    # scale the Rails deployments to 0
+    scale_rails_down
+
     # We run migrations once early to get the db into a place where we can set the runner token and restore repos
     # Ignore errors, we will run the migrations again after the token
     stdout, status = run_migrations
@@ -32,8 +35,8 @@ describe "Restoring a backup" do
     stdout, status = enforce_root_password(ENV['GITLAB_PASSWORD']) if ENV['GITLAB_PASSWORD']
     fail stdout unless status.success?
 
-    stdout, status = restart_webservice
-    fail stdout unless status.success?
+    # scale the Rails code deployments up
+    scale_rails_up
 
     # Wait for the site to come up after the restore/migrations
     wait_until_app_ready

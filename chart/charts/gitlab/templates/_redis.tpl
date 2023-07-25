@@ -65,7 +65,8 @@ Return the password section of the Redis URI, if needed.
 */}}
 {{- define "gitlab.redis.url.password" -}}
 {{- include "gitlab.redis.configMerge" . -}}
-{{- if .redisMergedConfig.password.enabled -}}:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/{{ printf "%s-password" (default "redis" .redisConfigName) }}").strip) %>@{{- end -}}
+{{- $password := printf "%s-%spassword" (default "redis" .redisConfigName) (ternary "override-" "" (default false .usingOverride)) -}}
+{{- if .redisMergedConfig.password.enabled -}}:<%= ERB::Util::url_encode(File.read("/etc/gitlab/redis/{{ $password }}").strip) %>@{{- end -}}
 {{- end -}}
 
 {{/*
@@ -118,6 +119,16 @@ Note: Workhorse only uses the primary Redis (global.redis)
 {{      include "gitlab.redis.secret" $ }}
 {{-   end }}
 {{- end -}}
+{{/* reset 'redisConfigName', to get global.redis.redisYmlOverride's Secret item */}}
+{{- $_ := set . "redisConfigName" "" }}
+{{- if .Values.global.redis.redisYmlOverride -}}
+{{-   $_ := set $ "usingOverride" true }}
+{{-   range $key, $redis := .Values.global.redis.redisYmlOverride }}
+{{-     $_ := set $ "redisConfigName" $key }}
+{{      include "gitlab.redis.secret" $ }}
+{{-   end }}
+{{- end -}}
+{{- $_ := set $ "usingOverride" false }}
 {{/* reset 'redisConfigName', to get global.redis.auth's Secret item */}}
 {{- $_ := set . "redisConfigName" "" }}
 {{- if eq (include "gitlab.redis.password.enabled" $) "true" }}
@@ -128,10 +139,12 @@ Note: Workhorse only uses the primary Redis (global.redis)
 {{- define "gitlab.redis.secret" -}}
 {{- include "gitlab.redis.configMerge" . -}}
 {{- if .redisMergedConfig.password.enabled }}
+{{-   $passwordPath := printf "%s-%spassword" (default "redis" .redisConfigName) (ternary "override-" "" (default false .usingOverride)) -}}
 - secret:
     name: {{ template "gitlab.redis.password.secret" . }}
     items:
       - key: {{ template "gitlab.redis.password.key" . }}
-        path: redis/{{ printf "%s-password" (default "redis" .redisConfigName) }}
+        path: redis/{{ $passwordPath }}
 {{- end }}
 {{- end -}}
+
