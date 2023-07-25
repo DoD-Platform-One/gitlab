@@ -2,6 +2,25 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.2-bb.0] - 2023-07-20
+### Changed
+- ironbank/gitlab/gitlab/gitlab-webservice  16.0.4 -> 16.1.2
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter  v1.50.0 -> v1.51.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice  v16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl  16.0.3 -> 16.1.2
+- registry1.dso.mil/ironbank/opensource/postgres/postgresql  14.8 -> 15.3
+
 ## [7.0.4-bb.0] - 2023-06-22
 ### Changed
 - "upgrade Gitlab to app version v16.0.3 chart version 7.0.4-bb.0"

@@ -26,11 +26,11 @@ global:
       pullPolicy: pp-certificates
       pullSecrets:
       - name: ps-certificates
-  busybox:
+  gitlabBase:
     image:
-      pullPolicy: pp-busybox
+      pullPolicy: pp-gl-base
       pullSecrets:
-      - name: ps-busybox
+      - name: ps-gl-base
 
 gitlab:
   geo-logcursor:

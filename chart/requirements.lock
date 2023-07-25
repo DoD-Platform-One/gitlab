@@ -31,9 +31,9 @@ dependencies:
   version: '*.*.*'
 - name: gitlab-zoekt
   repository: https://charts.gitlab.io/
-  version: 0.3.0
+  version: 0.4.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.3.2
-digest: sha256:00e306d64d6cc032205fdb3df82c0b763dbf021b3026e0bb21aa76be817105de
-generated: "2023-06-14T14:54:10.3625246-05:00"
+digest: sha256:51a1279e788c291ec8e2dccdf7ff1074f0618d71a73cb9e9f69b82d3394a89ab
+generated: "2023-07-20T12:01:10.28605381-06:00"

@@ -109,8 +109,26 @@ If no `global.redis.actioncable`, use `global.redis`
 
 {{- define "gitlab.rails.redisYmlOverride" -}}
 {{- if .Values.global.redis.redisYmlOverride -}}
+{{-   $redisYmlOverride := deepCopy .Values.global.redis.redisYmlOverride -}}
+{{-   range $redis, $settings := $redisYmlOverride -}}
+{{-     if kindIs "map" $settings -}}
+{{-       $_ := set $ "redisConfigName" $redis -}}
+{{-       $_ := set $ "usingOverride" true -}}
+{{-       $password := include "gitlab.redis.url.password" $ | trimPrefix ":" | trimSuffix "@" -}}
+{{-       if kindIs "map" (dig $.redisConfigName "password" "" $.Values.global.redis.redisYmlOverride) -}}
+{{-         if dig "password" "enabled" true $settings -}}
+{{-           $_ := set $settings "password" $password -}}
+{{-         else -}}
+{{-           $_ := unset $settings "password" -}}
+{{-         end -}}
+{{-       end -}}
+{{-       $_ := set $redisYmlOverride $redis $settings -}}
+{{-       $_ := set $ "redisConfigName" "" -}}
+{{-       $_ := set $ "usingOverride" false -}}
+{{-     end -}}
+{{-   end -}}
 redis.yml.erb: |
-  production: {{ toYaml .Values.global.redis.redisYmlOverride | nindent 4 }}
+  production: {{ toYaml $redisYmlOverride | nindent 4 }}
 {{- end -}}
 {{- end -}}
 

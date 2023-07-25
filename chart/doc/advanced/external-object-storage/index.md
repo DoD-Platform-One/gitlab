@@ -112,10 +112,10 @@ Examples for [S3](https://docs.docker.com/registry/storage-drivers/s3/)(S3 compa
 1. Follow [registry chart documentation on storage](../../charts/registry/index.md#storage) for creating the secret.
 1. Configure the chart as documented.
 
-## LFS, Artifacts, Uploads, Packages, External Diffs, Terraform State, Dependency Proxy
+## LFS, Artifacts, Uploads, Packages, External Diffs, Terraform State, Dependency Proxy, Secure Files
 
 Configuration of object storage for LFS, artifacts, uploads, packages, external
-diffs, Terraform state, and pseudonymizer is done via the following keys:
+diffs, Terraform state, Secure Files, and pseudonymizer is done via the following keys:
 
 - `global.appConfig.lfs`
 - `global.appConfig.artifacts`
@@ -124,6 +124,7 @@ diffs, Terraform state, and pseudonymizer is done via the following keys:
 - `global.appConfig.externalDiffs`
 - `global.appConfig.dependencyProxy`
 - `global.appConfig.terraformState`
+- `global.appConfig.ciSecureFiles`
 
 Note also that:
 
@@ -167,6 +168,10 @@ Below is an example of the configuration options:
 --set global.appConfig.dependencyProxy.bucket=gitlab-dependencyproxy-storage
 --set global.appConfig.dependencyProxy.connection.secret=object-storage
 --set global.appConfig.dependencyProxy.connection.key=connection
+
+--set global.appConfig.ciSecureFiles.bucket=gitlab-ci-secure-files
+--set global.appConfig.ciSecureFiles.connection.secret=object-storage
+--set global.appConfig.ciSecureFiles.connection.key=connection
 ```
 
 See the [charts/globals documentation on appConfig](../../charts/globals.md#configure-appconfig-settings) for full details.

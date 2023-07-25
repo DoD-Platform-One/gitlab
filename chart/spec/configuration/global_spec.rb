@@ -148,7 +148,7 @@ describe 'global configuration' do
         global:
           image:
             tagSuffix: -fips
-          busybox:
+          gitlabBase:
             image:
               tag: fixed-version
           certificates:
@@ -178,13 +178,6 @@ describe 'global configuration' do
         'Deployment/test-gitlab-runner',
         'Deployment/test-prometheus-server',
         'Deployment/test-minio'
-      ]
-    end
-
-    let(:ignored_initContainers) do
-      [
-        'certificates',
-        'configure'
       ]
     end
 
@@ -224,8 +217,6 @@ describe 'global configuration' do
         next unless content['spec']['template']['spec'].key?('initContainers')
 
         content['spec']['template']['spec']['initContainers'].each do |ic|
-          next if ignored_initContainers.include? ic['name']
-
           # we are currently only using sha256 digests, but this match
           # will need to be more flexible in the future
           expect(ic['image']).to match('-fips\b(@sha256:[a-fA-F0-9]{64})?$'), "Expected #{o}'s 'initContainers' image tags to have suffix '-fips'. initContainer is #{ic}"

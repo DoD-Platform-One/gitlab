@@ -12,7 +12,8 @@ describe('Gitlab Login', () => {
     cy.visit('/users/sign_in')
     cy.get('input[id="user_login"]').type('root')
     cy.get('input[id="user_password"]').type(Cypress.env('adminpassword'))
-    cy.get('button[type="submit"][name="button"]').click()
+    // Old: cy.get('button[type="submit"][name="button"]').click()
+    cy.get('button[type="submit"]').click()
 
     // approve new user
     cy.visit('/admin/users')

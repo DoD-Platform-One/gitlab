@@ -16,7 +16,7 @@ To migrate from a Helm installation to a Linux package (Omnibus) installation:
 1. [Verify the integrity of Git repositories](https://docs.gitlab.com/ee/administration/raketasks/check.html)
    on your GitLab Helm chart instance before the migration.
 1. Create [a backup of your GitLab Helm chart instance](../../backup-restore/backup.md),
-   and make sure to [back up the secrets](../../backup-restore/backup.md#backup-the-secrets)
+   and make sure to [back up the secrets](../../backup-restore/backup.md#back-up-the-secrets)
    as well.
 1. Back up `/etc/gitlab/gitlab-secrets.json` on your Omnibus GitLab instance.
 1. Install the [yq](https://github.com/mikefarah/yq) tool (version 4.21.1 or later) on the workstation where you run `kubectl` commands.

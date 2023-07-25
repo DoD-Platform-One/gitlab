@@ -139,7 +139,7 @@ To delete the StatefulSet for `RELEASE-redis-master`:
 
    - `<namespace>` should be replaced with the namespace where you installed the GitLab chart.
 
-Then follow the [normal upgrade steps](#steps). Due to how Helm merges changes, you may need to scale up the deployments
+Then follow the [standard upgrade steps](#steps). Due to how Helm merges changes, you may need to scale up the deployments
 you scaled down in step one manually.
 
 ### Use of `global.redis.password`
@@ -173,11 +173,12 @@ Upgrading to `5.9.x` may lead to a situation where the Sidekiq pod does not beco
 
 This can be resolved from the **Admin Area**:
 
-  1. On the top bar, select **Main menu > Admin**.
-  1. On the left sidebar, select **Settings > Metrics and profiling**.
-  1. Expand **Metrics - Prometheus**.
-  1. Ensure that **Enable health and performance metrics endpoint** is enabled.
-  1. Restart the affected pods.
+1. On the left sidebar, expand the top-most chevron (**{chevron-down}**).
+1. Select **Admin Area**.
+1. Select **Settings > Metrics and profiling**.
+1. Expand **Metrics - Prometheus**.
+1. Ensure that **Enable health and performance metrics endpoint** is enabled.
+1. Restart the affected pods.
 
 There is additional conversation about this scenario in a [closed issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3198).
 
@@ -220,7 +221,7 @@ before proceeding with the upgrade. Failure to perform these steps as documented
 the loss of your database. Ensure you have a separate backup.
 
 If you are using an external PostgreSQL database, you should first upgrade the database to version 12 or greater. Then
-follow the [normal upgrade steps](#steps).
+follow the [standard upgrade steps](#steps).
 
 If you are using the bundled PostgreSQL database, you should follow the [bundled database upgrade steps](database_upgrade.md#steps-for-upgrading-the-bundled-postgresql).
 
@@ -245,7 +246,7 @@ before proceeding with the upgrade. Failure to perform these steps as documented
 the loss of your database. Ensure you have a separate backup.
 
 If you are using an external PostgreSQL database, you should first upgrade the database to version 11 or greater. Then
-follow the [normal upgrade steps](#steps).
+follow the [standard upgrade steps](#steps).
 
 If you are using the bundled PostgreSQL database, you should follow the [bundled database upgrade steps](database_upgrade.md#steps-for-upgrading-the-bundled-postgresql).
 

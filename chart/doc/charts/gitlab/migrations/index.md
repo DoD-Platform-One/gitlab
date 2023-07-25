@@ -37,9 +37,9 @@ Table below contains all the possible charts configurations that can be supplied
 | `image.tag`                 | Migrations image tag                     |                   |
 | `image.pullPolicy`          | Migrations pull policy                   | `Always`          |
 | `image.pullSecrets`         | Secrets for the image repository         |                   |
-| `init.image`                | initContainer image                      | `busybox`         |
-| `init.tag`                  | initContainer image tag                  | `latest`          |
-| `init.containerSecurityContext` | Mailroom init container securityContext overrides | `{}`   |
+| `init.image.repository`     | initContainer image repository           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-base` |
+| `init.image.tag`            | initContainer image tag                  | `master`          |
+| `init.image.containerSecurityContext` | init container securityContext overrides | `{}`    |
 | `enabled`                   | Migrations enable flag                   | `true`            |
 | `tolerations`               | Toleration labels for pod assignment     | `[]`              |
 | `annotations`               | Annotations for the job spec             | `{}`              |

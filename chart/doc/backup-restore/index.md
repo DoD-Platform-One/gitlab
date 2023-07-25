@@ -210,3 +210,15 @@ confirm that all buckets in your environment have been created, and that the GCP
 This error happens when a Kubernetes secret containing a `.s3cfg` file was not specified through the `gitlab.toolbox.backups.objectStorage.config.secret` value.
 
 To fix this, follow the instructions in [backups to S3](index.md#backups-to-s3).
+
+### "PermissionError: File not writable" errors using S3
+
+An error like `[Error] WARNING: <file> not writable: Operation not permitted` happens if the toolbox user does not have
+permissions to write files that match the stored permissions of the bucket items.
+
+To prevent this, configure `s3cmd` not to preserve file owner, mode and timestamps by adding the
+following flag to your `.s3cfg` file referenced via `gitlab.toolbox.backups.objectStorage.config.secret`.
+
+```toml
+preserve_attrs = False
+```
