@@ -36,9 +36,11 @@ Use these charts for optional dependencies:
 
 - [MinIO](../minio/index.md)
 - [NGINX](../nginx/index.md)
+- [HAProxy](../haproxy/index.md)
 - [PostgreSQL](https://artifacthub.io/packages/helm/bitnami/postgresql)
 - [Redis](https://artifacthub.io/packages/helm/bitnami/redis)
 - [Registry](../registry/index.md)
+- [Traefik](../traefik/index.md)
 
 Use these charts as optional additions:
 

@@ -64,7 +64,7 @@ workflow:
       variables:
         PIPELINE_TYPE: BUILD_DEFAULT_BRANCH_PIPELINE
     ## Feature branch pipelines
-    - if: '$PIPELINE_TYPE == null && $CI_PROJECT_PATH == $CANONICAL_PROJECT_PATH && $CI_COMMIT_BRANCH'
+    - if: '$PIPELINE_TYPE == null && $CI_PROJECT_PATH == $CANONICAL_PROJECT_PATH && $CI_COMMIT_BRANCH && $TEST_BRANCH == "true"'
       variables:
         PIPELINE_TYPE: CANONICAL_FEATURE_BRANCH_PIPELINE
     - if: '$PIPELINE_TYPE == null && $CI_PROJECT_PATH == $SECURITY_PROJECT_PATH && $CI_COMMIT_BRANCH'
@@ -73,7 +73,7 @@ workflow:
     - if: '$PIPELINE_TYPE == null && $CI_PROJECT_PATH == $DEV_PROJECT_PATH && $CI_COMMIT_BRANCH'
       variables:
         PIPELINE_TYPE: BUILD_FEATURE_BRANCH_PIPELINE
-    - if: '$PIPELINE_TYPE == null && $CI_COMMIT_BRANCH'
+    - if: '$PIPELINE_TYPE == null && $CI_COMMIT_BRANCH && $TEST_BRANCH == "true"'
       variables:
         PIPELINE_TYPE: FORK_FEATURE_BRANCH_PIPELINE
     # Support Merge Request pipelines

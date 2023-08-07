@@ -2,6 +2,22 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.0-bb.0] - 2023-07-28
+### Changed
+- ironbank/gitlab/gitlab/gitlab-webservice  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse  16.1.2 -> 16.2.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl  16.1.2 -> 16.2.0
+
 ## [7.1.2-bb.0] - 2023-07-20
 ### Changed
 - ironbank/gitlab/gitlab/gitlab-webservice  16.0.4 -> 16.1.2

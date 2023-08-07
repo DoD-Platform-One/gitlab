@@ -61,6 +61,7 @@ documentation.
   - [GitLab Pages secret](#gitlab-pages-secret)
   - [GitLab incoming email auth token](#gitlab-incoming-email-auth-token)
   - [GitLab Service Desk email auth token](#gitlab-service-desk-email-auth-token)
+  - [Zoekt basic auth password](#zoekt-basic-auth-password)
 - [External Services](#external-services)
   - [OmniAuth](#omniauth)
   - [LDAP Password](#ldap-password)
@@ -496,6 +497,17 @@ kubectl create secret generic <name>-service-desk-email-auth-token --from-litera
 ```
 
 This secret is referenced by the `global.serviceDeskEmail.authToken` setting.
+
+### Zoekt basic auth password
+
+You can leave it to the chart to auto-generate the secret, or you can create this secret manually (replace `<name>` with the name of the release):
+
+```shell
+password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32 | base64)
+kubectl create secret generic <name>-zoekt-basicauth --from-literal=gitlab_username=gitlab --from-literal=gitlab_password="$password"
+```
+
+This secret is referenced by the `gitlab.zoekt.gateway.basicAuth.secretName` setting.
 
 ### Microsoft Graph client secret for incoming emails
 

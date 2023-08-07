@@ -48,7 +48,7 @@ module Gitlab
 
     def sign_in
       # DRY CSS selector for finding the user avatar
-      qa_avatar_selector = 'img[data-qa-selector="user_avatar_content"]'
+      qa_avatar_selector = 'img[data-testid="user_avatar_content"],img[data-qa-selector="user_avatar_content"]'
 
       visit '/users/sign_in'
 

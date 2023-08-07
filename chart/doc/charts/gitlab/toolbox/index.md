@@ -39,6 +39,7 @@ gitlab:
         persistence:
           enabled: false
           accessMode: ReadWriteOnce
+          useGenericEphemeralVolume: false
           size: 10Gi
       objectStorage:
         backend: s3
@@ -46,7 +47,6 @@ gitlab:
     persistence:
       enabled: false
       accessMode: 'ReadWriteOnce'
-      useGenericEphemeralVolume: false
       size: '10Gi'
     resources:
       requests:
@@ -73,6 +73,7 @@ gitlab:
 | `backups.cron.persistence.enabled`          | Backup cron enable persistence flag          | false                        |
 | `backups.cron.persistence.matchExpressions` | Label-expression matches to bind             |                              |
 | `backups.cron.persistence.matchLabels`      | Label-value matches to bind                  |                              |
+| `backups.cron.persistence.useGenericEphemeralVolume` | Use a [generic ephemeral volume](https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes) | false |
 | `backups.cron.persistence.size`             | Backup cron persistence volume size          | `10Gi`                       |
 | `backups.cron.persistence.storageClass`     | StorageClass name for provisioning           |                              |
 | `backups.cron.persistence.subPath`          | Backup cron persistence volume mount path    |                              |
@@ -105,7 +106,6 @@ gitlab:
 | `persistence.enabled`                       | Toolbox enable persistence flag          | false                        |
 | `persistence.matchExpressions`              | Label-expression matches to bind             |                              |
 | `persistence.matchLabels`                   | Label-value matches to bind                  |                              |
-| `persistence.useGenericEphemeralVolume`     | Use a [generic ephemeral volume](https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes) | false |
 | `persistence.size`                          | Toolbox persistence volume size          | `10Gi`                       |
 | `persistence.storageClass`                  | StorageClass name for provisioning           |                              |
 | `persistence.subPath`                       | Toolbox persistence volume mount path    |                              |

@@ -62,7 +62,7 @@ metrics:
   port: 8083
   path: /metrics
   tls: {}
-    # enabled: 
+    # enabled:
     # secretName:
   serviceMonitor:
     enabled: false
@@ -139,6 +139,22 @@ hpa:
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
+
+keda:
+  enabled: false
+  ## See https://keda.sh/docs/2.10/concepts/scaling-deployments/#scaledobject-spec
+  pollingInterval: 30
+  cooldownPeriod: 300
+  # minReplicaCount: 2
+  # maxReplicaCount: 10
+  # fallback:
+  #   failureThreshold: 3
+  #   replicas: 6
+  # hpaName: keda-hpa-{scaled-object-name}
+  # restoreToOriginalReplicaCount: false
+  # behavior: {}
+  # triggers: []
+
 
 deployment:
   # terminationGracePeriodSeconds: 30

@@ -215,3 +215,8 @@ generate_secret_if_needed {{ template "gitlab.praefect.dbSecret.secret" . }} --f
 # Praefect auth token
 generate_secret_if_needed {{ template "gitlab.praefect.authToken.secret" . }} --from-literal={{ template "gitlab.praefect.authToken.key" . }}=$(gen_random 'a-zA-Z0-9' 64)
 {{ end }}
+
+{{ if (index .Values "gitlab-zoekt" "gateway" "basicAuth" "enabled") -}}
+# Zoekt basic auth credentials
+generate_secret_if_needed {{ template "gitlab.zoekt.gateway.basicAuth.secretName" . }}  --from-literal=gitlab_username=gitlab --from-literal=gitlab_password=$(gen_random 'a-zA-Z0-9' 64)
+{{ end }}

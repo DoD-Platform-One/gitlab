@@ -11,19 +11,6 @@ The minimum required version of PostgreSQL is now 13. See https://gitlab.com/git
 The Container Registry metadata database has been enabled. Please note that it is an experimental feature and must not be used in production.
 {{- end }}
 
-{{- /* If the Container Registry filesystem metadata is disabled, note it is not production ready */}}
-{{- if eq true .Values.registry.migration.disablemirrorfs }}
-{{ $WARNING }}
-The Container Registry filesystem metadata has been disabled. Please note that it is an experimental feature and must not be used in production.
-{{- end }}
-
-{{- /* If the Container Registry migration mode is enabled, note it is not production ready */}}
-{{- if eq .Values.registry.migration.enabled true }}
-{{ $WARNING }}
-The Container Registry migration mode has been enabled. Please note that it is an experimental feature and must not be used in production.
-
-{{- end }}
-
 {{- /* If the Container Registry online garbage collection is enabled, note it is not production ready */}}
 {{- if eq false .Values.registry.gc.disabled }}
 {{ $WARNING }}
@@ -136,12 +123,14 @@ Using `PAGES_UPDATE_LEGACY_STORAGE` environment variable with bundled Pages serv
 {{- if eq true (index $.Values "nginx-ingress").enabled }}
 {{ $NOTICE }}
 The in-chart NGINX Ingress Controller has the following requirements:
-    - Kubernetes version must be 1.19 or newer.
+    - Kubernetes version must be 1.20 or newer (unless NGINX version is set
+      to v1.2.1 via `nginx-ingress.controller.image.tag=v1.2.1`, which will
+      restore Kubernetes 1.19 compatibility).
     - Ingress objects must be in group/version `networking.k8s.io/v1`.
 {{- end }}
 
 {{- /* Deprecation notice for `gitlab.deprecate.kas.privateApi.tls.enabled` setting */}}
-{{- if hasKey $.Values.gitlab.kas.privateApi.tls "enabled" }}
+{{- if eq true $.Values.gitlab.kas.privateApi.tls.enabled }}
 {{ $NOTICE }}
 kas:
     The configuration of `gitlab.kas.privateApi.tls.enabled` has moved. Please use `global.kas.tls.enabled` instead.

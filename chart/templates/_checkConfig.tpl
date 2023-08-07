@@ -53,6 +53,10 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.praefect.storageNames" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.praefect.defaultReplicationFactor" .) -}}
 
+{{/* _checkConfig_ingress.tpl*/}}
+{{- $messages = append $messages (include "gitlab.checkConfig.ingress.alternatives" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.ingress.class" .) -}}
+
 {{/* _checkConfig_nginx.tpl*/}}
 {{- $messages = append $messages (include "gitlab.checkConfig.nginx.controller.extraArgs" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.nginx.clusterrole.scope" .) -}}
@@ -72,7 +76,6 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.notifications" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.database" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.gc" .) -}}
-{{- $messages = append $messages (include "gitlab.checkConfig.registry.migration" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.redis.cache" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.tls" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.debug.tls" .) -}}
@@ -211,12 +214,12 @@ smtp:
 {{/* END gitlab.checkConfig.smtp.openssl_verify_mode */}}
 
 {{/*
-Ensure that either `global.smtp.tls` or `global.smtp.enable_starttls_auto` is set to true, but not both.
+Ensure that either `global.smtp.tls` or `global.smtp.starttls_auto` is set to true, but not both.
 */}}
 {{- define "gitlab.checkConfig.smtp.tls_kind" -}}
-{{-   if and .Values.global.smtp.tls .Values.global.smtp.enable_starttls_auto -}}
+{{-   if and .Values.global.smtp.tls .Values.global.smtp.starttls_auto -}}
 smtp:
-    global.smtp.tls and global.smtp.enable_starttls_auto are mutually exclusive.
+    global.smtp.tls and global.smtp.starttls_auto are mutually exclusive.
     Set one of them to false. SMTP providers usually use port 465 for TLS and port 587 for STARTTLS.
 {{-     end }}
 {{-   end }}

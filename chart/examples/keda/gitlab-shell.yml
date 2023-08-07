@@ -1,0 +1,26 @@
+---
+gitlab:
+  gitlab-shell:
+    resources:
+      requests:
+        cpu: 500m
+        memory: 25M
+    minReplicas: 2
+    maxReplicas: 12
+    keda:
+      enabled: true
+      triggers:
+        - type: cron
+          metadata:
+            timezone: UTC
+            start: 0 9 * * *
+            end: 0 16 * * *
+            desiredReplicas: 10
+        - type: cpu
+          metricType: AverageValue
+          metadata:
+            value: "350m"
+        - type: memory
+          metricType: AverageValue
+          metadata:
+            value: "200"

@@ -58,6 +58,16 @@ configurations that can be supplied to the `helm install` command using the
 | `init.image.repository`                   |                                                            | initContainer image                                                                                                                                                                                |
 | `init.image.tag`                          |                                                            | initContainer image tag                                                                                                                                                                            |
 | `init.containerSecurityContext`           | `{}`                                                       | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                   |
+| `keda.enabled`                            | `false`                                                    | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers`                                                                                                                 |
+| `keda.pollingInterval`                    | `30`                                                       | The interval to check each trigger on                                                                                                                                                              |
+| `keda.cooldownPeriod`                     | `300`                                                      | The period to wait after the last trigger reported active before scaling the resource back to 0                                                                                                    |
+| `keda.minReplicaCount`                    |                                                            | Minimum number of replicas KEDA will scale the resource down to, defaults to `hpa.minReplicas`                                                                                                     |
+| `keda.maxReplicaCount`                    |                                                            | Maximum number of replicas KEDA will scale the resource up to, defaults to `hpa.maxReplicas`                                                                                                       |
+| `keda.fallback`                           |                                                            | KEDA fallback configuration, see the [documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/#fallback)                                                                             |
+| `keda.hpaName`                            |                                                            | The name of the HPA resource KEDA will create, defaults to `keda-hpa-{scaled-object-name}`                                                                                                         |
+| `keda.restoreToOriginalReplicaCount`      |                                                            | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted                                                                         |
+| `keda.behavior`                           |                                                            | The specifications for up- and downscaling behavior, defaults to `hpa.behavior`                                                                                                                    |
+| `keda.triggers`                           |                                                            | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory`                                                                         |
 | `metrics.enabled`                         | `true`                                                     | If a metrics endpoint should be made available for scraping                                                                                                                                        |
 | `metrics.port`                            | `9235`                                                     | Metrics endpoint port                                                                                                                                                                              |
 | `metrics.path`                            | `/metrics`                                                 | Metrics endpoint path                                                                                                                                                                              |
@@ -261,3 +271,32 @@ To have TLS access to the GitLab Pages feature you must:
 
 1. Create a DNS entry in your DNS provider with the name `*.pages.<yourdomaindomain>`
    pointing to your LoadBalancer.
+
+### Configuring KEDA
+
+This `keda` section enables the installation of [KEDA](https://keda.sh/) `ScaledObjects` instead of regular `HorizontalPodAutoscalers`.
+This configuration is optional and can be used when there is a need for autoscaling based on custom or external metrics.
+
+Most settings default to the values set in the `hpa` section where applicable.
+
+If the following are true, CPU and memory triggers are added automatically based on the CPU and memory thresholds set in the `hpa` section:
+
+- `triggers` is not set.
+- The corresponding `request.cpu.request` or `request.memory.request` setting is also set to a non-zero value.
+
+If no triggers are set, the `ScaledObject` is not created.
+
+Refer to the [KEDA documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/) for more details about those settings.
+
+| Name                            | Type    | Default | Description                                                                                                                                                                     |
+| :----------------------------   | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `enabled`                       | Boolean | `false` | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers`                                                                                              |
+| `pollingInterval`               | Integer | `30`    | The interval to check each trigger on                                                                                                                                           |
+| `cooldownPeriod`                | Integer | `300`   | The period to wait after the last trigger reported active before scaling the resource back to 0                                                                                 |
+| `minReplicaCount`               | Integer |         | Minimum number of replicas KEDA will scale the resource down to, defaults to `hpa.minReplicas`                                                                                  |
+| `maxReplicaCount`               | Integer |         | Maximum number of replicas KEDA will scale the resource up to, defaults to `hpa.maxReplicas`                                                                                    |
+| `fallback`                      | Map     |         | KEDA fallback configuration, see the [documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/#fallback)                                                          |
+| `hpaName`                       | String  |         | The name of the HPA resource KEDA will create, defaults to `keda-hpa-{scaled-object-name}`                                                                                      |
+| `restoreToOriginalReplicaCount` | Boolean |         | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted                                                      |
+| `behavior`                      | Map     |         | The specifications for up- and downscaling behavior, defaults to `hpa.behavior`                                                                                                 |
+| `triggers`                      | Array   |         | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory`                                                      |

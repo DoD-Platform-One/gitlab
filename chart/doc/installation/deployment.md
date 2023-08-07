@@ -99,6 +99,8 @@ you need to omit any occurrence of those images.
 
 After the deployment, you can [activate your Enterprise Edition license](https://docs.gitlab.com/ee/user/admin_area/license.html).
 
-## Install the product documentation
+## Recommended next steps
 
-This is an optional step. See how to [self-host the product documentation](https://docs.gitlab.com/ee/administration/docs_self_host.html).
+After completing your installation, consider taking the
+[recommended next steps](https://docs.gitlab.com/ee/install/next_steps.html),
+including authentication options and sign-up restrictions.

@@ -410,4 +410,34 @@ describe 'gitlab.yml.erb configuration' do
       end
     end
   end
+
+  context 'GraphQL timeout' do
+    let(:values) { HelmTemplate.defaults }
+    let(:template) { HelmTemplate.new(values) }
+    let(:renderedGraphQlTimeout) do
+      YAML.safe_load(
+        template.dig('ConfigMap/test-sidekiq', 'data', 'gitlab.yml.erb')
+      )['production']['gitlab']['graphql_timeout']
+    end
+
+    context 'is not configured' do
+      it 'populates no value to gitlab.yml.erb' do
+        expect(renderedGraphQlTimeout).to eq(nil)
+      end
+    end
+
+    context 'not configured' do
+      let(:values) do
+        HelmTemplate.with_defaults(%(
+        global:
+          appConfig:
+            graphQlTimeout: 120
+        ))
+      end
+
+      it 'populates the value to gitlab.yml.erb' do
+        expect(renderedGraphQlTimeout).to eq(120)
+      end
+    end
+  end
 end

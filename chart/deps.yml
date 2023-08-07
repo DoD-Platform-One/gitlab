@@ -55,3 +55,8 @@ dependencies:
         replace_in_files:
         - filename: requirements.yaml
           pattern: 'name: gitlab-runner\n  version: (\S+)'
+      # GitLab QA Gem
+      https://gitlab.com/gitlab-org/gitlab-qa.git:
+        replace_in_files:
+        - filename: .gitlab-ci.yml
+          pattern: 'GITLAB_QA_VERSION: "(\S+)"'
