@@ -14,6 +14,50 @@ We will also make use of [nip.io](https://nip.io), which lets us map any IP addr
 NOTE:
 With the SSL-enabled installation options below, if you want to clone repositories and push changes, you will have to do so over HTTPS instead of SSH. We are planning to address this with an update to GitLab Shell's service exposure via NodePorts.
 
+## Apple silicon (M1/M2)
+
+`kind` can be used with [`colima`](https://github.com/abiosoft/colima) to provide a local Kubernetes development environment on macOS, including `M1` and `M2` variants.
+
+### Installing dependencies
+
+- Make sure that you're running MacOS >= 13 (Ventura).
+- Install [`colima`](https://github.com/abiosoft/colima#installation).
+- Install [`Rosetta`](https://support.apple.com/en-us/HT211861):
+
+  ```shell
+  softwareupdate --install-rosetta
+  ```
+
+### Building the VM
+
+Create the `colima` VM:
+
+```shell
+colima start --cpu 4 --memory 16 --disk 40 --profile docker --arch aarch64 --vm-type=vz --vz-rosetta
+```
+
+When ready, you can follow the [preparation](#preparation) below to install GitLab with `kind`.
+
+### Managing the VM
+
+To stop the `colima` VM:
+
+```shell
+colima stop --profile docker
+```
+
+To start again the VM:
+
+```shell
+colima start --profile docker
+```
+
+To remove and clean up the local system:
+
+```shell
+colima delete --profile docker
+```
+
 ## Preparation
 
 ### Required information

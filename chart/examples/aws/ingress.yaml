@@ -9,9 +9,15 @@ nginx-ingress:
 # Option 1: Use built-in AWS Load Balancer Controller IngressClass
 global:
   ingress:
-    class: none
-    annotations:
-      kubernetes.io/ingress.class: alb
+    # Configure `spec.ingressClassName` on Ingress objects.
+    # Supported as of AWS Load Balancer Controller v2.4:
+    #  https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/guide/ingress/spec
+    class: alb
+    # Alternatively, the annotation can be used. Note that use of the
+    # annotation is deprecated in favor of `spec.ingressClassName`.
+    # https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/ingress/ingress_class/#deprecated-kubernetesioingressclass-annotation
+    # annotations:
+    #   kubernetes.io/ingress.class: alb
 
 # Option 2: Create a custom IngressClass
 #   1. Create an IngressClass with a given name

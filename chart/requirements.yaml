@@ -32,9 +32,18 @@ dependencies:
   condition: nginx-ingress.enabled
   version: '*.*.*'
 - name: gitlab-zoekt
-  version: 0.4.0
+  version: 0.5.4
   repository: https://charts.gitlab.io/
   condition: gitlab-zoekt.install
 - name: gluon
   version: "0.3.2"
   repository: "oci://registry1.dso.mil/bigbang"
+- name: traefik
+  repository: https://helm.traefik.io/traefik
+  condition: traefik.install
+  version: 10.19.4
+- name: kubernetes-ingress
+  alias: haproxy
+  version: 1.32.0
+  condition: haproxy.install
+  repository: https://haproxytech.github.io/helm-charts

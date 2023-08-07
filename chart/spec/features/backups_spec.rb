@@ -56,13 +56,13 @@ describe "Restoring a backup" do
 
     it 'Navigating to testproject1 repo should work' do
       visit '/root/testproject1'
-      expect(find('table[data-qa-selector="file_tree_table"]'))
+      expect(find('[data-testid="file_tree_table"],[data-qa-selector="file_tree_table"]'))
         .to have_content('Dockerfile')
     end
 
     it 'Should have runner registered' do
       visit '/admin/runners'
-      expect(page).to have_css('#content-body [data-testid^=\'runner-row-\']', minimum: 1)
+      expect(page).to have_css('#content-body [data-testid^="runner-row-"],[data-qa-selector^="runner-row-"]', minimum: 1)
     end
 
     it 'Issue attachments should load correctly' do

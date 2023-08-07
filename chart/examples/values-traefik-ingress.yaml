@@ -1,7 +1,33 @@
 # Example configuration of using an external Traefik Ingress provider.
+
 global:
   ingress:
-    enabled: true  # Default, present here to be explicit.
-    class: traefik # Alter the `kubernetes.io/ingress.class` annotation chart wide.
+    # Default, present here to be explicit.
+    enabled: true
+    # Toggle the TCP configuration and annotations to Traefik.
+    provider: traefik
+    # Alter the `kubernetes.io/ingress.class` annotation or
+    # `spec.ingressClassName` value chart-wide.
+    class: traefik
+    annotations:
+      # Tell Traefik that we've configured TLS
+      # NOTE: disable this if `global.ingress.tls.enabled=false`.
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      # Ensure the HTTP Routes only listen on 443, rather than all entrypoints.
+      # NOTE: set the value to `web` if `global.ingress.tls.enabled=false`.
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+
 nginx-ingress:
-  enabled: false   # Disable the deployment of the in-chart NGINX Ingress provider.
+  # Disable the deployment of the in-chart NGINX Ingress provider.
+  enabled: false
+
+traefik:
+  install: true
+  # Ensure the IngressClass name and `global.ingress.class` value match.
+  # This can be removed if `global.ingress.class` is set to `$releaseName-traefik`.
+  fullnameOverride: traefik
+  ingressClass:
+    # Create an IngressClass object for Traefik.
+    enabled: true
+    # Helps an avoid error when making local templates.
+    fallbackApiVersion: v1

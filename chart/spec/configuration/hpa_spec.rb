@@ -117,6 +117,14 @@ describe 'GitLab HPA configuration(s)' do
     expect(all_hpas).to match_array(hpa_names)
   end
 
+  it 'No ScaledObjects are created' do
+    template = HelmTemplate.new(enable_all_hpas)
+    expect(template.exit_code).to eq(0)
+
+    all_scaledobjects = template.resources_by_kind("ScaledObject").keys
+    expect(all_scaledobjects).to be_empty
+  end
+
   describe 'api version' do
     let(:api_version_specified) do
       enable_all_hpas.deep_merge(YAML.safe_load(%(

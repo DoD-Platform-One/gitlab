@@ -29,15 +29,15 @@ default:
 
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
-  KUBECTL_VERSION: "v1.16.15"
   HELM_VERSION: "3.5.2"
+  KUBECTL_VERSION: "1.23.0"
   STABLE_REPO_URL: "https://charts.helm.sh/stable"
   GOOGLE_APPLICATION_CREDENTIALS: ${CI_PROJECT_DIR}/.google_keyfile.json
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
   # AUTO_DEVOPS_DOMAIN: domain.example.com
   GIT_CLONE_PATH: $CI_BUILDS_DIR/gitlab
   HELM_MAX_HISTORY: 20
-  TEST_BACKUP_PREFIX: "15.10.0"
+  TEST_BACKUP_PREFIX: "16.1.0"
   NAMESPACE: $KUBE_NAMESPACE
   REVIEW_REF_PREFIX: ""
   ISSUE_BOT_LABELS_EXTRA: "group::distribution,type::maintenance,maintenance::pipelines"
@@ -49,6 +49,10 @@ variables:
   QA_SANITY_SUITE_OPTIONS: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
   DEBIAN_VERSION: bullseye
   RUBY_VERSION: "3.0"
+  BUILDER_RUBY_DOCKER_VERSION: "4.18.0"
+  GITLAB_QA_VERSION: "12.2.0"
+  # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
+  STRICT_VERSIONS: "true"
 
 stages:
   - prepare
@@ -119,7 +123,7 @@ update-trigger-branch:
     - if: '$TRIGGER_UPDATE'  # Allow us to manually trigger this job in a pipeline if we wish using this CI variable
 
 dependency_update:
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:2.15.0
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
   stage: prepare
   script:
     - curl https://deps.app/install.sh | bash -s -- -b $HOME/bin
@@ -147,6 +151,8 @@ lint_package:
     - if: '$PIPELINE_TYPE =~ /_MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "NIGHTLY_PIPELINE"'
+    - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
+    - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
 
 .kubeval:
   stage: preflight
@@ -170,6 +176,7 @@ lint_package:
     - if: '$PIPELINE_TYPE =~ /_MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "NIGHTLY_PIPELINE"'
+  needs: ['lint_package']
 
 "Validate 1.19.16":
   extends: .kubeval
@@ -404,6 +411,7 @@ review_helm_test_gke122:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
+  needs: ['review_specs_gke122']
 
 production_helm_test_gke122:
   stage: qa
@@ -421,6 +429,7 @@ production_helm_test_gke122:
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - if: '$PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/'
+  needs: ['production_specs_gke122']
 
 debug_review_gke122:
   stage: qa
@@ -490,7 +499,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.17-vale-2.25.2-markdownlint-0.34.0-markdownlint2-0.7.1
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.18-vale-2.27.0-markdownlint-0.35.0-markdownlint2-0.8.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -508,7 +517,7 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.17-ruby-3.2.2-b8f266e8
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.18-ruby-3.2.2-4207821e
   stage: prepare
   cache: {}
   dependencies: []
@@ -517,11 +526,9 @@ check_docs_links:
     - mv doc/ /tmp/gitlab-docs/content/charts
     - cd /tmp/gitlab-docs
     # Build HTML from Markdown
-    - bundle exec nanoc
-    # Check the internal links
-    - bundle exec nanoc check internal_links
-    # Check the internal anchor links
-    - bundle exec nanoc check internal_anchors
+    - make compile
+    # Check the internal links and anchors (in parallel)
+    - "parallel time bundle exec nanoc check ::: internal_links internal_anchors"
   rules:
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
@@ -551,6 +558,9 @@ check_docs_links:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+  needs:
+    - check_docs_links
+    - check_docs_markdown
 
 # Trigger a docs build in gitlab-docs
 # Useful to preview the docs changes live
@@ -578,7 +588,7 @@ review-docs-cleanup:
 # ---------------------------------------------------------------------------
 
 .specs: &specs
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}.patched-golang-${GO_VERSION}-rust-${RUST_VERSION}-node-16.14-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.36-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-2.7.patched-golang-1.18-node-16.14-postgresql-11:git-2.33-lfs-2.9-chrome-109-yarn-1.22-graphicsmagick-1.3.36-kubectl-1.23-helm-3.5
   stage: specs
   services:
   - docker:dind
@@ -627,6 +637,7 @@ review_specs_gke122:
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
+  needs: ['review_gke122']
 
 review_specs_gke125:
   extends: .specs
@@ -644,6 +655,7 @@ review_specs_gke125:
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
+  needs: ['review_gke125']
 
 review_specs_eks:
   extends: .specs
@@ -658,17 +670,18 @@ review_specs_eks:
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
+  needs: ['review_eks']
 
 specs_without_cluster:
   extends: .specs
   variables:
     RSPEC_TAGS: ~type:feature
-  needs: []
   parallel: 6
   rules:
     - !reference [.specs, rules]
     - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
     - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
+  needs: ['lint_package']
 
 .production_specs:
   extends: .specs
@@ -684,6 +697,7 @@ production_specs_without_cluster:
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
+  needs: ['lint_package']
 
 production_specs_gke122:
   extends: .production_specs
@@ -697,6 +711,7 @@ production_specs_gke122:
     name: gke122_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   resource_group: "gke122-production"
+  needs: ['stable_gke122']
 
 production_specs_gke125:
   extends: .production_specs
@@ -710,6 +725,7 @@ production_specs_gke125:
     name: gke125_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   resource_group: "gke125-production"
+  needs: ['stable_gke125']
 
 production_specs_eks:
   extends: .production_specs
@@ -721,9 +737,10 @@ production_specs_eks:
     name: eks_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   resource_group: "eks-production"
+  needs: ['stable_eks']
 
 .qa:
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:2.15.0
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
   stage: qa
   services:
   - docker:dind
@@ -735,7 +752,7 @@ production_specs_eks:
     - source scripts/ci/qa.sh
     - qa_export_passwords
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
-    - gem install gitlab-qa
+    - gem install gitlab-qa -v "${GITLAB_QA_VERSION}"
     - source "${VARIABLES_FILE}"
     - if [ -n "$QA_GITLAB_REVISION" ]; then
     -   QA_IMAGE="registry.gitlab.com/gitlab-org/gitlab/gitlab-ee-qa:$QA_GITLAB_REVISION"
@@ -763,7 +780,7 @@ production_specs_eks:
 wait_for_dev_images:
   # Remove after https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2370 is complete
   timeout: 2h
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:2.15.0
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
   stage: prepare
   services:
   - docker:dind
@@ -819,7 +836,7 @@ publish_devel_package:
 release_package:
   stage: release-package
   timeout: 2h
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:2.15.0
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
   script:
     - |
       if [[ $CI_COMMIT_REF_NAME =~ $AUTO_DEPLOY_TAG_REGEX ]]; then
@@ -867,6 +884,10 @@ qa_gke122:
   environment:
     name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke122
+  needs:
+    - review_gke122
+    - job: review_specs_gke122
+      artifacts: false
 
 qa_gke125:
   extends: .qa_branch
@@ -876,6 +897,10 @@ qa_gke125:
   environment:
     name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke125
+  needs:
+    - review_gke125
+    - job: review_specs_gke125
+      artifacts: false
 
 qa_eks:
   extends: .qa_branch
@@ -885,6 +910,10 @@ qa_eks:
   environment:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_eks
+  needs:
+    - review_eks
+    - job: review_specs_eks
+      artifacts: false
 
 qa_gke122_production:
   extends: .qa_production
@@ -893,6 +922,10 @@ qa_gke122_production:
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: gke122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  needs:
+    - stable_gke122
+    - job: production_specs_gke122
+      artifacts: false
 
 qa_gke125_production:
   extends: .qa_production
@@ -901,6 +934,11 @@ qa_gke125_production:
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: gke125_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  needs:
+    - stable_gke125
+    - job: production_specs_gke125
+      artifacts: false
+
 
 qa_eks_production:
   extends: .qa_production
@@ -909,6 +947,10 @@ qa_eks_production:
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
     name: eks_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+  needs:
+    - stable_eks
+    - job: production_specs_eks
+      artifacts: false
 
 # QA jobs for Full E2E suites
 

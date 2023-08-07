@@ -1,0 +1,16 @@
+global:
+  ingress:
+    # Default, present here to be explicit
+    enabled: true
+    # Toggle the TCP configurations and annotations to HAProxy.
+    provider: haproxy
+    # Alter the `kubernetes.io/ingress.class` annotation or
+    # `spec.ingressClassName` value chart-wide.
+    class: haproxy
+
+nginx-ingress:
+  # Disable the deployment of the in-chart NGINX Ingress provider.
+  enabled: false
+
+haproxy:
+  install: true

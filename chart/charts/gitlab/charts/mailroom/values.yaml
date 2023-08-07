@@ -102,6 +102,21 @@ hpa:
     scaleDown:
       stabilizationWindowSeconds: 300
 
+keda:
+  enabled: false
+  ## See https://keda.sh/docs/2.10/concepts/scaling-deployments/#scaledobject-spec
+  pollingInterval: 30
+  cooldownPeriod: 300
+  # minReplicaCount: 2
+  # maxReplicaCount: 10
+  # fallback:
+  #   failureThreshold: 3
+  #   replicas: 6
+  # hpaName: keda-hpa-{scaled-object-name}
+  # restoreToOriginalReplicaCount: false
+  # behavior: {}
+  # triggers: []
+
 # Mailroom does not require inbound connections
 # This service only requires outgoing connections to the
 # IMAP service of choice, the provided or self hosted redis

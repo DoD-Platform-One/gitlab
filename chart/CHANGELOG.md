@@ -2,6 +2,35 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 7.2.0 (2023-07-21)
+
+### Added (3 changes)
+
+- [Add HAProxy Ingress Controller](gitlab-org/charts/gitlab@fd3c65c3e55df754f85be059fb7f69c9d57879ca) ([merge request](gitlab-org/charts/gitlab!2612))
+- [Add flag to configure graphql_timeout](gitlab-org/charts/gitlab@f8bf1bd31ee542c8bc945f14239ebce4b5991109) ([merge request](gitlab-org/charts/gitlab!3247))
+- [Add support for KEDA ScaledObjects as an alternative to regular HPAs](gitlab-org/charts/gitlab@f0f9ed0f4b2a2117dfe0cb811caa3132a1476c73) ([merge request](gitlab-org/charts/gitlab!3212))
+
+### Fixed (3 changes)
+
+- [Alphabetically sort DB list when creating database.yaml config](gitlab-org/charts/gitlab@9cade68dee1f1f46f31a5bcc4a6ebfbb6de3cfc3) ([merge request](gitlab-org/charts/gitlab!3285))
+- [Fix config name from values.yaml](gitlab-org/charts/gitlab@550f7b119237511792ac7656ffca098c82dad091) ([merge request](gitlab-org/charts/gitlab!3272))
+- [Change ciSecureFiles to type-specific storage form](gitlab-org/charts/gitlab@fc07905f502a567b52f945a220973b3e4c74e941) ([merge request](gitlab-org/charts/gitlab!3241))
+
+### Changed (8 changes)
+
+- [Update gitlab-org/gitlab-qa from 12.1.0 to 12.2.0](gitlab-org/charts/gitlab@a39dab11ece3f8d33af6a90341324de07cc48783) ([merge request](gitlab-org/charts/gitlab!3290))
+- [Add Traefik as a dependency](gitlab-org/charts/gitlab@f947512937e53fff8d8406441f09467a00b6b3ab) ([merge request](gitlab-org/charts/gitlab!2539))
+- [Update gitlab-org/gitlab-qa from 12.0.0 to 12.1.0](gitlab-org/charts/gitlab@953ec4142370d52c34593c256c1cec8843c760a4) ([merge request](gitlab-org/charts/gitlab!3287))
+- [Update gitlab-org/container-registry from 3.77.0-gitlab to 3.78.0-gitlab](gitlab-org/charts/gitlab@b60e9b38926b1ace03f321ae373b7ec17f459643) ([merge request](gitlab-org/charts/gitlab!3274))
+- [Update gitlab-org/gitlab-exporter from 13.0.3 to 13.1.0](gitlab-org/charts/gitlab@0aef6099fbce13f08f89063e95306031e9baace0) ([merge request](gitlab-org/charts/gitlab!3249))
+- [Bump gitlab-zoekt to 0.4.2](gitlab-org/charts/gitlab@a25c5742c6b5ec26c652e94cd2b6d26c4c8cb681) ([merge request](gitlab-org/charts/gitlab!3257))
+- [Update gitlab-org/container-registry from 3.76.0-gitlab to 3.77.0-gitlab](gitlab-org/charts/gitlab@33cae354983e9671a8962cac40d712f37642f338) ([merge request](gitlab-org/charts/gitlab!3246))
+- [Repairs deprecation notice for KAS privateApi](gitlab-org/charts/gitlab@d81630fd7a525eb3e029ff5183043f04210cf22c) ([merge request](gitlab-org/charts/gitlab!3242))
+
+### Removed (1 change)
+
+- [Remove registry migration configuration](gitlab-org/charts/gitlab@7593db8956336c56f038542e6e89d5c8690f03de) ([merge request](gitlab-org/charts/gitlab!3280))
+
 ## 7.1.2 (2023-07-04)
 
 ### Fixed (1 change)
@@ -44,6 +73,16 @@ No changes.
 - [Bump gitlab-zoekt to 0.4.0](gitlab-org/charts/gitlab@75046bd4e827b39a0c8c12f8f58f7d32c7230547) ([merge request](gitlab-org/charts/gitlab!3233))
 - [Add troubleshooting docs on s3cmd PermissionError](gitlab-org/charts/gitlab@fb92de457cd14c19218db9c8f37a8672051becdf) ([merge request](gitlab-org/charts/gitlab!3198))
 - [Postgres: correct minimum version in NOTES](gitlab-org/charts/gitlab@5ea24b44e59236bd82b3a81f6c9f0601159778d7) by @jouve ([merge request](gitlab-org/charts/gitlab!3213))
+
+## 7.0.7 (2023-07-04)
+
+### Fixed (1 change)
+
+- [Change ciSecureFiles to type-specific storage form](gitlab-org/security/charts/gitlab@5f6a2257d383480579fb1f30b18535d0e383c85f)
+
+## 7.0.6 (2023-06-28)
+
+No changes.
 
 ## 7.0.5 (2023-06-16)
 
@@ -114,6 +153,20 @@ No changes.
 - [Consolidate webservice TLS configuration](gitlab-org/charts/gitlab@7412c984cda3683c60ba3c3e48bf2474ec88209e) ([merge request](gitlab-org/charts/gitlab!3135))
 - [Update extraEnvFrom docs](gitlab-org/charts/gitlab@994ab9824f518701ed7059e28c7fdf1b2c97e446) ([merge request](gitlab-org/charts/gitlab!3025))
 - [Add tests for Webservice ConfigMap name](gitlab-org/charts/gitlab@6d51d3fe5475a84166f23d5c5a0f23a1b38ce489) ([merge request](gitlab-org/charts/gitlab!3091))
+
+## 6.11.12 (2023-07-14)
+
+No changes.
+
+## 6.11.11 (2023-07-04)
+
+### Fixed (1 change)
+
+- [Change ciSecureFiles to type-specific storage form](gitlab-org/security/charts/gitlab@c7aea069666f0ba258a6da4ad4219ee288247572)
+
+## 6.11.10 (2023-06-28)
+
+No changes.
 
 ## 6.11.9 (2023-06-15)
 

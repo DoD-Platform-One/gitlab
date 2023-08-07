@@ -13,14 +13,15 @@ The GitLab chart is intended to fit in a cluster with at least 8 vCPU
 and 30 GB of RAM. If you are trying to deploy a non-production instance,
 you can reduce the defaults to fit into a smaller cluster.
 
-A Kubernetes cluster, running version 1.19 through 1.25, is required because of certain
+A Kubernetes cluster, running version 1.20 through 1.25, is required because of certain
 Kubernetes features. 1.25 is supported as of Chart 6.6 (GitLab 15.6).
 [Epic 10785](https://gitlab.com/groups/gitlab-org/-/epics/10785) tracks progress towards supporting 1.26.
 For some components, like the [agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/#gitlab-agent-for-kubernetes-supported-cluster-versions), GitLab might support different cluster versions.
 
 NOTE:
 Disabling the in-chart NGINX Ingress Controller (`nginx-ingress.enabled=false`),
-allows the use of Kubernetes 1.16 or later.
+allows the use of Kubernetes 1.16 or later. Alternatively, using version 1.2.1
+(`nginx-ingress.controller.image.tag=v1.2.1`) allows the use of Kubernetes 1.19 or later.
 
 - For cluster topology recommendations for an environment, see the
   [reference architectures](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures).

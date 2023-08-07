@@ -1,7 +1,19 @@
+# Because the NGINX Ingress Controller is enabled by default, we follow the configuration
+# for a custom ingress controller in GKE:
 # https://cloud.google.com/kubernetes-engine/docs/how-to/custom-ingress-controller#ingress_class
-# If needed, annotations can be provided via `global.ingress.annotations`.
+# This involves setting `spec.ingressClassName` in each Ingress object, and omitting the annotation.
+#
+# If you wish instead to disable NGINX and use GKE's Ingress Controller, follow the
+# documentation and recommended values below.
+# - https://cloud.google.com/kubernetes-engine/docs/concepts/ingress#controller_summary
+# - https://cloud.google.com/kubernetes-engine/docs/how-to/load-balance-ingress#create-ingress
 nginx-ingress:
   enabled: false
 global:
   ingress:
-    class: none # or ""
+    # Disable `spec.ingressClassName` field, since GKE's Ingress Controller ignores it.
+    class: none
+    # When `spec.ingressClassName` is not configured, as in this example, the annotation can either be configured
+    # explicitly or not configured at all; either way, GKE's Ingress Controller will manage the Ingress.
+    annotations:
+      kubernetes.io/ingress.class: gce # or gce-internal

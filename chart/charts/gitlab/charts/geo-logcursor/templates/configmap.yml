@@ -39,6 +39,7 @@ data:
         {{- if hasKey .initialDefaults "signupEnabled" }}
         signup_enabled: {{ .initialDefaults.signupEnabled }}
         {{- end }}
+        graphql_timeout: {{ .graphQlTimeout }}
         webhook_timeout: {{ .webhookTimeout }}
         {{- end }}
         trusted_proxies:
