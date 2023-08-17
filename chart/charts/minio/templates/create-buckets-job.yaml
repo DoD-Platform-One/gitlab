@@ -48,6 +48,8 @@ spec:
       - name: minio-mc
         image: {{ .Values.minioMc.image }}:{{ .Values.minioMc.tag }}
         {{- include "gitlab.image.pullPolicy" $imageCfg | indent 8 }}
+        securityContext:
+          {{- toYaml $.Values.containerSecurityContext | nindent 10 }}
         command: ["/bin/sh", "/config/initialize"]
         env:
           - name: MINIO_ENDPOINT
