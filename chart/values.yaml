@@ -142,6 +142,18 @@ global:
   redis:
     auth:
       enabled: true
+    securityContext:
+      runAsUser: 1001
+      fsGroup: 1001
+      runAsNonRoot: true
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsNonRoot: true
+      capabilities:
+          drop:
+          - ALL
+
       # secret:
       # key:
     # host: redis.hostedsomewhere.else
@@ -854,6 +866,12 @@ global:
   #       # optional: boolean
 ## End of global
 
+# Needed for upgradeCheck containerSecurityContext values
+containerSecurityContext:
+  runAsUser: 65534
+  capabilities:
+    drop:
+      - ALL
 upgradeCheck:
   enabled: true
   image:
@@ -865,6 +883,11 @@ upgradeCheck:
     # in alpine/debian/busybox based images, this is `nobody:nogroup`
     runAsUser: 65534
     fsGroup: 65534
+  #The below values are used above not nested under upgradeCheck
+  #containerSecurityContext:
+  #  capabilities:
+  #    drop:
+  #      - ALL
   tolerations: []
   annotations:
     sidecar.istio.io/inject: "false"
@@ -1149,13 +1172,16 @@ redis:
       requests: 
         cpu: 250m
         memory: 256Mi
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop: 
+          - ALL
   securityContext:
     runAsUser: 1001
     fsGroup: 1001
-    runAsNonRoot: true
-  containerSecurityContext:
-    enabled: true
-    runAsUser: 1001
     runAsNonRoot: true
   image:
     registry: registry1.dso.mil/ironbank/bitnami
@@ -1169,7 +1195,14 @@ redis:
         memory: 256Mi
       requests: 
         cpu: 250m
-        memory: 256Mi
+        memory: 256Mi    
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop: 
+          - ALL
   slave:
     resources: 
       limits: 
@@ -1178,6 +1211,13 @@ redis:
       requests: 
         cpu: 250m
         memory: 256Mi
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop: 
+          - ALL
   sentinel:
     resources: 
       limits: 
@@ -1237,6 +1277,13 @@ postgresql:
     initdb:
       scriptsConfigMap: '{{ include "gitlab.psql.initdbscripts" $}}'
       user: gitlab
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      fsGroup: 1001
+      capabilities:
+        drop: 
+          - ALL
   master:
     extraVolumeMounts:
       - name: custom-init-scripts
@@ -1270,6 +1317,9 @@ postgresql:
     mountPath: /var/lib/postgresql
   postgresqlDataDir: /var/lib/postgresql/pgdata/data
 
+  volumePermissions:
+    enabled: false
+
 ## Installation & configuration charts/registry
 ## https://docs.gitlab.com/charts/architecture/decisions#registry
 ## https://docs.gitlab.com/charts/charts/registry/
@@ -1283,6 +1333,10 @@ registry:
       requests:
         cpu: 200m
         memory: 200Mi
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
   resources:
     limits:
       cpu: 200m
@@ -1303,6 +1357,10 @@ registry:
     path: /metrics
     serviceMonitor:
       enabled: true
+  containerSecurityContext:
+    capabilities:
+      drop: 
+        - ALL
 
 ## Automatic shared secret generation
 ## https://docs.gitlab.com/charts/installation/secrets
@@ -1337,6 +1395,10 @@ shared-secrets:
     # in debian/alpine based images, this is `nobody:nogroup`
     runAsUser: 65534
     fsGroup: 65534
+  containerSecurityContext:
+    capabilities:
+      drop: 
+        - ALL
   tolerations: []
   podLabels: {}
   annotations:
@@ -1368,6 +1430,10 @@ gitlab-runner:
   podAnnotations:
     gitlab.com/prometheus_scrape: "true"
     gitlab.com/prometheus_port: 9252
+  securityContext:
+    capabilities:
+      drop: 
+        - ALL
 
 traefik:
   install: false
@@ -1380,6 +1446,15 @@ traefik:
 ## Settings for individual sub-charts under GitLab
 ## Note: Many of these settings are configurable via globals
 gitlab:
+  containerSecurityContext:
+    capabilities:
+      drop: 
+        - ALL
+  init:
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
   ## https://docs.gitlab.com/charts/charts/gitlab/toolbox
   toolbox:
     replicas: 1
@@ -1399,6 +1474,10 @@ gitlab:
         limits:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     resources:
       requests:
         cpu: 2
@@ -1419,6 +1498,10 @@ gitlab:
             cpu: 500m
             memory: 768Mi
         istioShutdown: "&& echo \"Backup Complete\" && until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Istio sidecar proxy...\"; sleep 3; done && sleep 5 && echo \"Stopping the istio proxy...\" && curl -X POST http://localhost:15020/quitquitquit"
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
 
   gitlab-exporter:
     enabled: false
@@ -1430,6 +1513,10 @@ gitlab:
         requests:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     resources:
       limits:
         cpu: 150m
@@ -1437,6 +1524,9 @@ gitlab:
       requests:
         cpu: 150m
         memory: 200Mi
+    capabilities:
+      drop: 
+        - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
       tag: 16.2.2
@@ -1447,6 +1537,11 @@ gitlab:
       port: 9168
       serviceMonitor:
         enabled: true
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
+
   ## https://docs.gitlab.com/charts/charts/gitlab/migrations
   migrations:
     # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
@@ -1460,6 +1555,10 @@ gitlab:
         requests:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     resources:
       limits:
         cpu: 500m
@@ -1472,6 +1571,11 @@ gitlab:
       tag: 16.2.2
       pullSecrets:
       - name: private-registry
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
+
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
   webservice:
     init:
@@ -1483,6 +1587,14 @@ gitlab:
         requests:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
     resources:
       # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
       limits:
@@ -1513,6 +1625,10 @@ gitlab:
         enabled: true
         serviceMonitor:
           enabled: true
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     ingress:
       enabled: false  # Local setting in subchart must be overridden
     metrics:
@@ -1535,6 +1651,10 @@ gitlab:
         requests:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     resources:
       requests:
         memory: 3G
@@ -1542,6 +1662,10 @@ gitlab:
       limits:
         memory: 3G
         cpu: 1500m
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
   gitaly:
@@ -1558,6 +1682,10 @@ gitlab:
         requests:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     resources:
       requests:
         cpu: 400m
@@ -1569,6 +1697,10 @@ gitlab:
       enabled: true
       serviceMonitor:
         enabled: true
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
@@ -1585,6 +1717,10 @@ gitlab:
         requests:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     resources:
       limits:
         cpu: 300m
@@ -1592,6 +1728,10 @@ gitlab:
       requests:
         cpu: 300m
         memory: 300Mi
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
     # metrics:
     #   enabled: true
     #   serviceMonitor:
@@ -1607,6 +1747,10 @@ gitlab:
       tag: 16.2.2
       pullSecrets:
         - name: private-registry
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
   #   gitlab-grafana:
@@ -1618,6 +1762,10 @@ gitlab:
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
       tag: 16.2.2
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
   ## https://docs.gitlab.com/charts/charts/gitlab/praefect
@@ -1633,6 +1781,10 @@ gitlab:
         requests:
           cpu: 200m
           memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
     resources:
       requests:
         cpu: 1
@@ -1640,6 +1792,10 @@ gitlab:
       limits:
         cpu: 1
         memory: 1Gi
+    containerSecurityContext:
+      capabilities:
+        drop: 
+          - ALL
 
 ## Installation & configuration of gitlab/gitlab-zoekt
 gitlab-zoekt:
@@ -1656,6 +1812,10 @@ minio:
       requests:
         cpu: 200m
         memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop: 
+            - ALL
   resources:
     limits:
       cpu: 200m
@@ -1663,6 +1823,10 @@ minio:
     requests:
       cpu: 200m
       memory: 300Mi
+  containerSecurityContext:
+    capabilities:
+      drop: 
+        - ALL
   # Additional job annotations
   jobAnnotations:
     sidecar.istio.io/inject: "false"

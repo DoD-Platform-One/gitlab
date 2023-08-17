@@ -44,6 +44,8 @@ spec:
         - name: {{ .Chart.Name }}
           image: {{ include "gitlab.kubectl.image" . }}
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
+          securityContext:
+            {{- toYaml $sharedSecretValues.containerSecurityContext | nindent 12 }}
           command: ['/bin/bash', '/scripts/generate-secrets']
           volumeMounts:
             - name: scripts
