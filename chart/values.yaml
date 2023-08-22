@@ -1274,6 +1274,9 @@ postgresql:
       adminPasswordKey: postgresql-postgres-password
       userPasswordKey: '{{ include "gitlab.psql.password.key" $ }}'
   primary:
+    ## Sets persistence to work with the IB image
+    persistence:
+      mountPath: /var/lib/postgresql
     initdb:
       scriptsConfigMap: '{{ include "gitlab.psql.initdbscripts" $}}'
       user: gitlab
@@ -1313,8 +1316,6 @@ postgresql:
     runAsUser: 26
     runAsGroup: 26
   ## Sets persistence to work with the IB image
-  persistence:
-    mountPath: /var/lib/postgresql
   postgresqlDataDir: /var/lib/postgresql/pgdata/data
 
   volumePermissions:
