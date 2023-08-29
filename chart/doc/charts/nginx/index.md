@@ -34,6 +34,32 @@ for common configuration options, such as GitLab and Registry hostnames.
 The hostnames for the GitLab Server and the Registry Server can be configured using
 our [Global settings](../globals.md) chart.
 
+## GitLab Geo
+
+A second NGINX subchart is bundled and preconfigured for GitLab Geo traffic,
+which supports the same settings as the default controller. The controller can be
+enabled with `nginx-ingress-geo.enabled=true`.
+
+This controller is configured to not modify any incoming `X-Forwarded-*` headers.
+Make sure to do the same if you want to use a different provider for Geo traffic.
+
+The default controller value (`nginx-ingress-geo.controller.ingressClassResource.controllerValue`)
+is set to `k8s.io/nginx-ingress-geo` and the IngressClass name to `{ReleaseName}-nginx-geo`
+to avoid interference with the default controller. The IngressClass name can be overridden
+with `global.geo.ingressClass`.
+
+The custom header handling is only required for primary Geo sites to handle traffic
+forwarded from secondary sites. It only needs to be used on secondaries if the
+site is about to be promoted to a primary.
+
+Note, that changing the IngressClass during a failover will cause the other controller
+to handle incoming traffic. Since the other controller has a different loadbalancer IP
+assigned, this may require additional changes to your DNS configuration.
+
+This can be avoided by enabling the Geo Ingress controller on all Geo sites and
+by configuring default and extra webservice Ingresses to use the associated
+IngressClass (`useGeoClass=true`).
+
 ## Annotation value word blocklist
 
 > Introduced in [GitLab Helm chart 6.6](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2713).

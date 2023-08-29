@@ -17,6 +17,8 @@ describe "Restoring a backup" do
 
     # scale the Rails deployments to 0
     scale_rails_down
+    # wait for rollout to complete (change in replicas)
+    wait_for_rails_rollout
 
     # We run migrations once early to get the db into a place where we can set the runner token and restore repos
     # Ignore errors, we will run the migrations again after the token
@@ -37,6 +39,8 @@ describe "Restoring a backup" do
 
     # scale the Rails code deployments up
     scale_rails_up
+    # wait for rollout to complete (change in replicas)
+    wait_for_rails_rollout
 
     # Wait for the site to come up after the restore/migrations
     wait_until_app_ready

@@ -6,8 +6,8 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Restoring a GitLab installation **(FREE SELF)**
 
-To obtain a backup tarball of an existing GitLab instance that used other installation methods like an Omnibus GitLab
-package or Omnibus GitLab Helm chart, follow the instructions
+To obtain a backup tarball of an existing GitLab instance that used other installation methods like the Linux
+package or GitLab Helm chart, follow the instructions
 [given in documentation](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system).
 
 If you are restoring a backup taken from another instance, you must migrate your existing instance to using object storage
@@ -30,7 +30,8 @@ The backup utility provided by GitLab Helm chart supports restoring a tarball fr
 
 ### Restore the rails secrets
 
-The GitLab chart expects rails secrets to be provided as a Kubernetes Secret with content in YAML. If you are restoring the rails secret from an Omnibus GitLab instance, secrets are stored in JSON format in the `/etc/gitlab/gitlab-secrets.json` file. To convert the file and create the secret in YAML format:
+The GitLab chart expects rails secrets to be provided as a Kubernetes Secret with content in YAML. If you are restoring
+the rails secret from a Linux package instance, secrets are stored in JSON format in the `/etc/gitlab/gitlab-secrets.json` file. To convert the file and create the secret in YAML format:
 
 1. Copy the file `/etc/gitlab/gitlab-secrets.json` to the workstation where you run `kubectl` commands.
 

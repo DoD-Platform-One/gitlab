@@ -93,3 +93,18 @@ email_smime:
         path: microsoft_graph_mailer/client_secret
 {{- end }}
 {{- end -}}{{/* "gitlab.appConfig.microsoftGraphMailer.mountSecrets" "*/}}
+
+{{/* SMTP authentication secret */}}
+{{- define "gitlab.smtp.mountSecrets" -}}
+# mount secrets for SMTP
+{{- with $.Values.global.smtp }}
+{{-   $isNoneAuth := eq "none" (.authentication | default "none") }}
+{{-   if and .enabled (not $isNoneAuth) }}
+- secret:
+    name: {{ .password.secret | required "Missing required secret containing the SMTP password. Make sure to set `global.smtp.password.secret`" }}
+    items:
+      - key: {{ .password.key }}
+        path: smtp/smtp-password
+{{-   end }}
+{{- end }}
+{{- end }}

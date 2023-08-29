@@ -40,3 +40,8 @@ helm upgrade --install gitlab . \
   --set global.hosts.externalIP=10.10.10.10 \
   --set certmanager-issuer.email=me@example.com
 ```
+
+## Clean up
+
+When testing is complete, follow the [uninstall documentation](../installation/uninstall.md)
+to clean up the development environment.

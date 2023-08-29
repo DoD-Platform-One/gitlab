@@ -97,7 +97,7 @@ specifying `--set global.edition=ce`. If you also specified
 individual images (for example, `--set gitlab.unicorn.image.repository=registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ce`),
 you need to omit any occurrence of those images.
 
-After the deployment, you can [activate your Enterprise Edition license](https://docs.gitlab.com/ee/user/admin_area/license.html).
+After the deployment, you can [activate your Enterprise Edition license](https://docs.gitlab.com/ee/administration/license.html).
 
 ## Recommended next steps
 

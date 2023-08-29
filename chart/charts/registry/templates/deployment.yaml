@@ -217,8 +217,8 @@ spec:
           {{- if .Values.database.enabled -}}
           {{-   include "gitlab.registry.database.password.projectedVolume" . | nindent 10 }}
           {{-   include "gitlab.registry.psql.ssl" . | nindent 10 }}
-          {{- end -}}
-          {{- if .Values.tls.enabled -}}
+          {{- end }}
+          {{- if .Values.tls.enabled }}
           # TLS secret for HTTPS service
           - secret:
               name: {{ include "gitlab.registry.tls.secret" $ }}
@@ -227,7 +227,7 @@ spec:
                   path: tls/tls.crt
                 - key: tls.key
                   path: tls/tls.key
-          {{- end -}}
+          {{- end }}
           {{- if and .Values.debug.tls.enabled .Values.debug.tls.secretName }}
           # TLS secret for metrics/debug HTTPS service
           - secret:
@@ -237,7 +237,7 @@ spec:
                   path: tls/tls-debug.crt
                 - key: tls.key
                   path: tls/tls-debug.key
-          {{- end -}}
-          {{- include "gitlab.registry.redisCacheSecret.mount" $ | nindent 10 -}}
+          {{- end }}
+          {{- include "gitlab.registry.redisCacheSecret.mount" $ | nindent 10 }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
 {{- end -}}

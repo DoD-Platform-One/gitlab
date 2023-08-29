@@ -32,3 +32,9 @@ The PVCs and Secrets have the `release` label set, so you can find these with:
 ```shell
 kubectl get pvc,secret -lrelease=gitlab
 ```
+
+WARNING:
+If you do not manually delete the secret `RELEASE-gitlab-initial-root-password`, it will be
+reused in the next release. You must manually delete this password if it is exposed in any way,
+for example in a recorded demo. This ensures that the exposed password can not be used to sign
+into the instance in future releases.

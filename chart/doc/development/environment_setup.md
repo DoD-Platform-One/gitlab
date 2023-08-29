@@ -13,7 +13,7 @@ Kubernetes cluster are required.
 
 The minimum tools required for charts development are documented on the [Required tools page](../installation/tools.md).
 
-We recommend using [`asdf`](https://github.com/asdf-vm/asdf) to install these tools.
+You should use [`asdf`](https://github.com/asdf-vm/asdf) to install these tools.
 This allows us to easily switch between versions, Helm 3.4 and 3.5 for example.
 
 We provide a [`.tool-versions` file](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/.tool-versions)
@@ -33,6 +33,7 @@ that specifies these tools with their recommended versions. To install or update
    asdf plugin add kubectl
    asdf plugin add helm
    asdf plugin add stern
+   asdf plugin add vale
    ```
 
 1. Install or update the tools:

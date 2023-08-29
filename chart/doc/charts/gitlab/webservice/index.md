@@ -14,7 +14,7 @@ The pods of this chart make use of two containers: `gitlab-workhorse` and `webse
 port `8181`, and should _always_ be the destination for inbound traffic to the pod.
 The `webservice` houses the GitLab [Rails codebase](https://gitlab.com/gitlab-org/gitlab),
 listens on `8080`, and is accessible for metrics collection purposes.
-`webservice` should never recieve normal traffic directly.
+`webservice` should never receive normal traffic directly.
 
 ## Requirements
 
@@ -110,7 +110,7 @@ to the `helm install` command using the `--set` flags.
 | `puma.workerMaxMemory`                              |                                                                                                                                                                         | The maximum memory (in megabytes) for the Puma worker killer                                                                                                                                                                                                                                                                    |
 | `puma.threads.min`                                  | `4`                                                                                                                                                                     | The minimum amount of Puma threads                                                                                                                                                                                                                                                                                              |
 | `puma.threads.max`                                  | `4`                                                                                                                                                                     | The maximum amount of Puma threads                                                                                                                                                                                                                                                                                              |
-| `rack_attack.git_basic_auth`                        | `{}`                                                                                                                                                                    | See [GitLab documentation](https://docs.gitlab.com/ee/user/admin_area/settings/protected_paths.html) for details                                                                                                                                                                                                                |
+| `rack_attack.git_basic_auth`                        | `{}`                                                                                                                                                                    | See [GitLab documentation](https://docs.gitlab.com/ee/administration/settings/protected_paths.html) for details                                                                                                                                                                                                                |
 | `redis.serviceName`                                 | `redis`                                                                                                                                                                 | Redis service name                                                                                                                                                                                                                                                                                                              |
 | `global.registry.api.port`                          | `5000`                                                                                                                                                                  | Registry port                                                                                                                                                                                                                                                                                                                   |
 | `global.registry.api.protocol`                      | `http`                                                                                                                                                                  | Registry protocol                                                                                                                                                                                                                                                                                                               |
@@ -508,6 +508,7 @@ webservice:
 | `ingress.tls.enabled`             | Boolean | `true`                    | When set to `false`, you disable TLS for GitLab Webservice. This is mainly useful for cases in which you cannot use TLS termination at Ingress-level, like when you have a TLS-terminating proxy before the Ingress Controller. |
 | `ingress.tls.secretName`          | String  | (empty)                   | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the GitLab URL. When not set, the `global.ingress.tls.secretName` value is used instead.                                                    |
 | `ingress.tls.smardcardSecretName` | String  | (empty)                   | The name of the Kubernetes TLS SEcret that contains a valid certificate and key for the GitLab smartcard URL if enabled. When not set, the `global.ingress.tls.secretName` value is used instead.                               |
+| `ingress.tls.useGeoClass`         | Boolean | false                     | Override the IngressClass with the Geo Ingress class (`global.geo.ingressClass`). Required for primary Geo sites.                                                                                                              |
 
 ### annotations
 
@@ -532,13 +533,19 @@ gitlab:
 
 `proxyBodySize` is used to set the NGINX proxy maximum body size. This is commonly
 required to allow a larger Docker image than the default.
-It is equivalent to the `nginx['client_max_body_size']` configuration in an
-[Omnibus installation](https://docs.gitlab.com/omnibus/settings/nginx.html#request-entity-too-large).
+It is equivalent to the `nginx['client_max_body_size']` configuration in a
+[Linux package installation](https://docs.gitlab.com/omnibus/settings/nginx.html#request-entity-too-large).
 As an alternative option,
 you can set the body size with either of the following two parameters too:
 
 - `gitlab.webservice.ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"`
 - `global.ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"`
+
+### Extra Ingress
+
+An extra Ingress can be deployed by setting `extraIngress.enabled=true`. The Ingress
+is named as the default Ingress with the `-extra` suffix and supports the same
+settings as the default Ingress.
 
 ## Resources
 

@@ -62,7 +62,7 @@ suggested_reviewers:
 # Zoekt secrets are present, load them.
 zoekt:
   username_file: /etc/gitlab/zoekt/.gitlab_zoekt_username
-  secret_file: /etc/gitlab/zoekt/.gitlab_zoekt_password
+  password_file: /etc/gitlab/zoekt/.gitlab_zoekt_password
 {{- end -}}
 
 {{- define "gitlab.appConfig.shell" -}}

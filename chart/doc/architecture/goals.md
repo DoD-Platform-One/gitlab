@@ -40,7 +40,7 @@ Since we might be also using Consul, this may be utilized instead for consistenc
 
 A Helm chart will be created to manage the deployment of each GitLab specific container/service. We will then also include bundled charts to make the overall deployment easier. This is particularly
 important for this effort, as there will be significantly more complexity in
-the Docker and Kubernetes layers than the all-in-one Omnibus based solutions.
+the Docker and Kubernetes layers than the all-in-one Omnibus-based solutions.
 Helm can help to manage this complexity, and provide an easy top level interface
 to manage settings via the `values.yaml` file.
 

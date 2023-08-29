@@ -62,12 +62,18 @@ service:
   type: ClusterIP
   externalPort: 8090
   internalPort: 8090
+  annotations: {}
   customDomains:
     type: LoadBalancer
     internalHttpsPort: 8091
     nodePort: {}
       # http
       # https
+    annotations: {}
+  metrics:
+    annotations: {}
+  primary:
+    annotations: {}
   # Set `sessionAffinity` to `ClientIP` to configure gitlab-pages with session affinity.
   # Note that this setting only affects traffic originating within the cluster.
   # To enable session affinity for traffic originating from outside the cluster

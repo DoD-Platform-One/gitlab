@@ -16,7 +16,7 @@ you can reduce the defaults to fit into a smaller cluster.
 A Kubernetes cluster, running version 1.20 through 1.25, is required because of certain
 Kubernetes features. 1.25 is supported as of Chart 6.6 (GitLab 15.6).
 [Epic 10785](https://gitlab.com/groups/gitlab-org/-/epics/10785) tracks progress towards supporting 1.26.
-For some components, like the [agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/#gitlab-agent-for-kubernetes-supported-cluster-versions), GitLab might support different cluster versions.
+For some components, like the [agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/#gitlab-agent-for-kubernetes-supported-cluster-versions) and [GitLab Operator](https://docs.gitlab.com/operator/installation.html#kubernetes), GitLab might support different cluster versions.
 
 NOTE:
 Disabling the in-chart NGINX Ingress Controller (`nginx-ingress.enabled=false`),

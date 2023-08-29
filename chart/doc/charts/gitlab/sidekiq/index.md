@@ -413,7 +413,7 @@ on a per-pod basis.
 
 NOTE:
 [Detailed documentation of the Sidekiq memory killer is available](https://docs.gitlab.com/ee/administration/operations/sidekiq_memory_killer.html#sidekiq-memorykiller)
-in the Omnibus documentation.
+in the Linux package documentation.
 
 ## Per-pod Settings
 

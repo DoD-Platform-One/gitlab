@@ -46,7 +46,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "16.2.2"
+  gitlabVersion: "16.3.0"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -553,6 +553,7 @@ global:
     ## Geo Secondary only
     # nodeName allows multiple instances behind a load balancer.
     nodeName: # defaults to `gitlab.gitlab.host`
+    # ingressClass: 
     # PostgreSQL connection details only needed for `secondary`
     psql:
       password: {}
@@ -764,7 +765,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -805,7 +806,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -922,13 +923,13 @@ certmanager:
 ## https://docs.gitlab.com/charts/charts/nginx/
 ## https://docs.gitlab.com/charts/architecture/decisions#nginx-ingress
 ## Installation & configuration of charts/ingress-nginx:
-nginx-ingress:
+nginx-ingress: &nginx-ingress
   enabled: false
   tcpExternalConfig: "true"
-  controller:
+  controller: &nginx-ingress-controller
     addHeaders:
       Referrer-Policy: strict-origin-when-cross-origin
-    config:
+    config: &nginx-ingress-controller-config
       annotation-value-word-blocklist: "load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""
       hsts: "true"
       hsts-include-subdomains: "false"
@@ -982,6 +983,26 @@ nginx-ingress:
     scope: false
   serviceAccount:
     create: true
+
+# Ingress controller to handle requests forwarded from other Geo sites.
+# Configuration differences compared to the main nginx ingress:
+#   - Pass X-Forwarded-For headers as is
+#   - Use a different IngressClass name
+nginx-ingress-geo:
+  <<: *nginx-ingress
+  enabled: false
+  controller:
+    <<: *nginx-ingress-controller
+    config:
+      <<: *nginx-ingress-controller-config
+      # Pass incoming X-Forwarded-* headers to upstream. Required to handle requests
+      # from other Geo sites.
+      # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers
+      use-forwarded-headers: true
+    electionID: ingress-controller-leader-geo
+    ingressClassResource:
+      name: '{{ include "gitlab.geo.ingress.class.name" $ | quote }}'
+      controllerValue: 'k8s.io/nginx-ingress-geo'
 
 haproxy:
   install: false
@@ -1347,7 +1368,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 16.2.2
+    tag: 16.3.0
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1464,7 +1485,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1530,7 +1551,7 @@ gitlab:
         - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1569,7 +1590,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     containerSecurityContext:
@@ -1606,7 +1627,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1619,7 +1640,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1641,7 +1662,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1672,7 +1693,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1707,7 +1728,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1745,7 +1766,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 16.2.2
+      tag: 16.3.0
       pullSecrets:
         - name: private-registry
     containerSecurityContext:
@@ -1762,7 +1783,7 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 16.2.2
+      tag: 16.3.0
     containerSecurityContext:
       capabilities:
         drop: 
@@ -1773,7 +1794,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.2.2
+      tag: 16.3.0
     init:
       resources:
         limits:

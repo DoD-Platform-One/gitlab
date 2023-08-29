@@ -26,6 +26,19 @@ In order to continue to expand their expertise maintainers are empowered to merg
 
 When urgent changes are required, maintainers should have a bias-for action, and can make decisions as long as the decisions are later reversible and compliant with known project process requirements.
 
+### Dependency Maintainers
+
+A dependency maintainer has the same responsibilities as a regular maintainer, but the ability to merge is tightly scoped to changes related to dependency versioning only for a specific domain. If any change aside from a dependency versioning is present in the merge request, a regular maintainer is required to perform the maintainer review.
+
+All changes need to result in a working chart, and the impact of the change in dependency versions needs to be fully understood by the dependency maintainer. Individuals that are already chart reviewers are good candidates to become dependency maintainers.
+
+| Username | Scope |
+| -- | -- |
+| @DylanGriffith | `gitlab-zoekt` |
+| @dgruzd | `gitlab-zoekt` |
+| @terrichu | `gitlab-zoekt` |
+| @johnmason | `gitlab-zoekt` |
+
 ## Project Leadership
 
 | Username | Role |

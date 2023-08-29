@@ -1,22 +1,34 @@
 ### Geo Primary
-global:
-  # See docs.gitlab.com/charts/charts/globals
-  # Configure host & domain
-  hosts:
-    hostSuffix: gitlab
-    domain: example.com
-  # configure DB connection
-  psql:
-    host: geo-1.db.example.com
-    port: 5432
-    password:
-      secret: geo
-      key: postgresql-password
-  # configure geo (primary)
-  geo:
-    nodeName: London Office
-    enabled: true
-    role: primary
-# External DB, disable
-postgresql:
-  install: false
+ global:
+   # See docs.gitlab.com/charts/charts/globals
+   # Configure host & domain
+   hosts:
+     domain: example.com
+   # configure DB connection
+   psql:
+     host: geo-1.db.example.com
+     port: 5432
+     password:
+       secret: geo
+       key: postgresql-password
+   # configure geo (primary)
+   geo:
+     nodeName: London Office
+     enabled: true
+     role: primary
+ # configure Geo Nginx Controller for internal Geo site traffic
+ nginx-ingress-geo:
+   enabled: true
+ gitlab:
+   webservice:
+     # Use the Geo NGINX controller.
+     ingress:
+       useGeoClass: true
+     # Configure an Ingress for internal Geo traffic
+     extraIngress:
+       enabled: true
+       hostname: gitlab.london.example.com
+       useGeoClass: true
+ # External DB, disable
+ postgresql:
+   install: false

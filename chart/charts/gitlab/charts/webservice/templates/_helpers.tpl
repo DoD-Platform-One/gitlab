@@ -14,15 +14,19 @@ Unless `ingress.path: /` or `name: default`
 Returns the secret name for the Secret containing the TLS certificate and key.
 Uses `ingress.tls.secretName` first and falls back to `global.ingress.tls.secretName`
 if there is a shared tls secret for all ingresses.
+
+It expects a dictionary with two entries:
+  `root`: the root context
+  `local`: the ingress context
 */}}
 {{- define "webservice.tlsSecret" -}}
 {{- $defaultName := (dict "secretName" "") -}}
-{{- if $.Values.global.ingress.configureCertmanager -}}
-{{- $_ := set $defaultName "secretName" (printf "%s-gitlab-tls" $.Release.Name) -}}
+{{- if .root.Values.global.ingress.configureCertmanager -}}
+{{-   $_ := set $defaultName "secretName" (printf "%s-gitlab-tls" .root.Release.Name) -}}
 {{- else -}}
-{{- $_ := set $defaultName "secretName" (include "gitlab.wildcard-self-signed-cert-name" .) -}}
+{{-   $_ := set $defaultName "secretName" (include "gitlab.wildcard-self-signed-cert-name" .root) -}}
 {{- end -}}
-{{- pluck "secretName" $.Values.ingress.tls $.Values.global.ingress.tls $defaultName | first -}}
+{{- pluck "secretName" .local.tls .root.Values.global.ingress.tls $defaultName | first -}}
 {{- end -}}
 
 {{/*

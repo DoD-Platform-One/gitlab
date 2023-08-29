@@ -78,7 +78,7 @@ labels is available in #{SEE_DOC_WORKTYPE}.
 
 MSG
 
-changelog_needed = (gitlab.mr_labels & NO_CHANGELOG_LABELS).empty?
+changelog_needed = (helper.mr_labels & NO_CHANGELOG_LABELS).empty?
 
 if changelog_needed
   checked = 0

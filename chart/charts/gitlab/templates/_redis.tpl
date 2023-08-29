@@ -112,27 +112,46 @@ Note: Workhorse only uses the primary Redis (global.redis)
 {{- $sentinelList | join "," }}
 {{- end -}}
 
+
+{{/*
+Takes a dict with `globalContext` and `instances` as keys. The former specifies
+the root context `$`, and the latter a list of instances to mount secrets for.
+If instances is not specified, we mount secrets for all enabled Redis
+instances.
+*/}}
 {{- define "gitlab.redis.secrets" -}}
-{{- range $redis := list "cache" "clusterCache" "sharedState" "queues" "actioncable" "traceChunks" "rateLimiting" "clusterRateLimiting" "sessions" "repositoryCache" -}}
+{{- $ := .globalContext }}
+{{- $mountRedisYmlOverrideSecrets := true }}
+{{- if hasKey . "mountRedisYmlOverrideSecrets" }}
+{{- $mountRedisYmlOverrideSecrets = .mountRedisYmlOverrideSecrets }}
+{{- end }}
+{{- $redisInstances := list "cache" "clusterCache" "sharedState" "queues" "actioncable" "traceChunks" "rateLimiting" "clusterRateLimiting" "sessions" "repositoryCache"}}
+{{- if .instances }}
+{{- $redisInstances = splitList " " .instances }}
+{{- end }}
+{{- range $redis := $redisInstances -}}
 {{-   if index $.Values.global.redis $redis -}}
 {{-     $_ := set $ "redisConfigName" $redis }}
 {{      include "gitlab.redis.secret" $ }}
 {{-   end }}
 {{- end -}}
+
+{{/* Include `global.redis.redisYmlOverride`'s secrets */}}
 {{/* reset 'redisConfigName', to get global.redis.redisYmlOverride's Secret item */}}
-{{- $_ := set . "redisConfigName" "" }}
-{{- if .Values.global.redis.redisYmlOverride -}}
+{{- $_ := set $ "redisConfigName" "" }}
+{{- if and $mountRedisYmlOverrideSecrets $.Values.global.redis.redisYmlOverride -}}
 {{-   $_ := set $ "usingOverride" true }}
-{{-   range $key, $redis := .Values.global.redis.redisYmlOverride }}
+{{-   range $key, $redis := $.Values.global.redis.redisYmlOverride }}
 {{-     $_ := set $ "redisConfigName" $key }}
 {{      include "gitlab.redis.secret" $ }}
 {{-   end }}
 {{- end -}}
 {{- $_ := set $ "usingOverride" false }}
+{{/* Include global Redis secrets */}}
 {{/* reset 'redisConfigName', to get global.redis.auth's Secret item */}}
-{{- $_ := set . "redisConfigName" "" }}
+{{- $_ := set $ "redisConfigName" "" }}
 {{- if eq (include "gitlab.redis.password.enabled" $) "true" }}
-{{    include "gitlab.redis.secret" . }}
+{{    include "gitlab.redis.secret" $ }}
 {{- end }}
 {{- end -}}
 

@@ -1002,5 +1002,78 @@ describe 'GitLab Pages' do
         end
       end
     end
+
+    describe 'service annotations' do
+      let(:values) do
+        HelmTemplate.with_defaults(%(
+          gitlab:
+            gitlab-pages:
+              service:
+                annotations:
+                  custom/type: pages-service
+                  custom/env: bar
+        )).deep_merge(pages_enabled_values)
+      end
+      let(:template) { HelmTemplate.new values }
+
+      context 'primary service' do
+        let(:values) do
+          HelmTemplate.with_defaults(%(
+            gitlab:
+              gitlab-pages:
+                service:
+                  primary:
+                    annotations:
+                      custom/type: primary-pages-service
+          )).deep_merge(super())
+        end
+
+        it 'configures the primary service annotations' do
+          annotations = template.dig('Service/test-gitlab-pages', 'metadata', 'annotations')
+          expect(annotations).to include({ 'custom/env' => 'bar', 'custom/type' => 'primary-pages-service' })
+        end
+      end
+
+      context 'metrics service' do
+        let(:values) do
+          HelmTemplate.with_defaults(%(
+            gitlab:
+              gitlab-pages:
+                service:
+                  metrics:
+                    annotations:
+                      custom/type: metrics-pages-service
+          )).deep_merge(super())
+        end
+
+        it 'configures the metric service annotations' do
+          annotations = template.dig('Service/test-gitlab-pages-metrics', 'metadata', 'annotations')
+          expect(annotations).to include({ 'custom/env' => 'bar', 'custom/type' => 'metrics-pages-service' })
+        end
+      end
+
+      context 'custom domains service' do
+        let(:values) do
+          HelmTemplate.with_defaults(%(
+            global:
+              pages:
+                externalHttp: ['1.2.3.4']
+                externalHttps: ['1.2.3.4']
+            gitlab:
+              gitlab-pages:
+                service:
+                  customDomains:
+                    annotations:
+                      custom/type: cd-pages-service
+          )).deep_merge(super())
+        end
+
+        it 'configures the custom domains service annotations' do
+          expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+          annotations = template.dig('Service/test-gitlab-pages-custom-domains', 'metadata', 'annotations')
+          expect(annotations).to include({ 'custom/env' => 'bar', 'custom/type' => 'cd-pages-service' })
+        end
+      end
+    end
   end
 end
