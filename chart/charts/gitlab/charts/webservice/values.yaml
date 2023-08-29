@@ -99,6 +99,7 @@ service:
   # loadBalancerIP:
   # loadBalancerSourceRanges:
 enabled: true
+
 ingress:
   apiVersion:
   enabled:
@@ -114,6 +115,25 @@ ingress:
   configureCertmanager:
   # Use this in combination of .deployments below
   requireBasePath: true
+  useGeoClass: false
+
+extraIngress:
+  enabled: false
+  apiVersion:
+  proxyConnectTimeout: 15
+  proxyReadTimeout: 600
+  proxyBodySize: "512m"
+  # hostname: 
+  tls: {}
+    # secretName:
+    # smartcardSecretName:
+    # enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+  configureCertmanager:
+  # Use this in combination of .deployments below
+  requireBasePath: true
+  useGeoClass: false
 
 workerProcesses: 2
 

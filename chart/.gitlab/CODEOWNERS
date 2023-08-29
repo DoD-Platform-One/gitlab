@@ -1,0 +1,40 @@
+# When adding a group as a code owner, make sure to invite the group to the
+# project here: https://gitlab.com/gitlab-org/charts/gitlab/-/project_members
+# As described in https://docs.gitlab.com/ee/user/project/code_owners.html
+
+* @gitlab-org/maintainers/helm-charts-gitlab @gitlab-org/delivery @gitlab-org/tw-leadership
+
+# TODO: Remove @gitlab-org/maintainers/helm-charts-gitlab from being a codeowner
+# of the CODEOWNERS file once we have confirmed the rest of the process is working
+.gitlab/CODEOWNERS @gitlab-org/development-leaders @gitlab-org/tw-leadership @gitlab-org/maintainers/helm-charts-gitlab
+
+## Files that are excluded from required approval
+## These rules override the * rule above, so that changes to docs and templates
+## can be merged by any user who has maintainer rights, but is not included in
+## the * rule (usually technical writers).
+/.gitlab/issue_templates/*.md
+/.gitlab/merge_request_templates/*.md
+/doc/*.md
+/doc/**/*.md
+/doc/**/*.jpg
+/doc/**/*.png
+
+## Technical writing files that do not need `*` rule approval,
+## but still require an approval from a TW team DRI for each file.
+.markdownlint.yml @eread @axil @aqualls @gitlab-org/tw-leadership
+/doc/.vale/ @eread @axil @aqualls @gitlab-org/tw-leadership
+
+^[Distribution CI/CD] @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
+.gitlab/ci/*
+/scripts/ci/*
+.gitlab-ci.yml
+
+^[Documentation Directories] @gl-docsteam
+/doc/
+
+^[Chart Dependency] @gitlab-org/maintainers/helm-charts-gitlab @DylanGriffith @dgruzd @terrichu @johnmason
+/requirements.yaml
+
+[Charts Architecture] @WarheadsSE @twk3 @ayufan @stanhu
+/doc/architecture/*
+

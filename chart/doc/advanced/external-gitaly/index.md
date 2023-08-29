@@ -9,7 +9,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 This document intends to provide documentation on how to configure this Helm chart with an external Gitaly service.
 
 If you don't have Gitaly configured, for on-premise or deployment to VM,
-consider using our [Omnibus GitLab package](external-omnibus-gitaly.md).
+consider using our [Linux package](external-omnibus-gitaly.md).
 
 NOTE:
 External Gitaly _services_ can be provided by Gitaly nodes, or

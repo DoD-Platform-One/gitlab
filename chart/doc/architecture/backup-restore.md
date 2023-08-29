@@ -77,7 +77,7 @@ of your artifacts by setting the `BACKUP_BACKEND` environment variable to `gcs`.
 ### Restore
 
 The backup utility when given an argument `--restore` attempts to restore from an existing backup to the running instance. This
-backup can be from either an Omnibus GitLab or a CNG Helm chart installation given that both the instance that was
+backup can be from either a Linux package installation or a CNG Helm chart installation given that both the instance that was
 backed up and the running instance runs the same version of GitLab. The restore expects a file in backup bucket using `-t <backup-name>` or a remote URL using `-f <url>`.
 
 When given a `-t` parameter it looks into backup bucket in object storage for a backup tar with such name. When

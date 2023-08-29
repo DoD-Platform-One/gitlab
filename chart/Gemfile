@@ -23,6 +23,10 @@ group :development, :test do
   gem 'pry'
 end
 
+group :development, :test, :danger do
+  gem 'gitlab-dangerfiles', '~> 3.12.0', require: false
+end
+
 group :development do
   gem 'solargraph'
 end

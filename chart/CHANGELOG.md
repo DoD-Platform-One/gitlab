@@ -2,6 +2,35 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 7.3.0 (2023-08-21)
+
+### Added (2 changes)
+
+- [Add Ingress controller for Geo traffic](gitlab-org/charts/gitlab@aa6b6a7ecef8363392a623423899ff16cd7ba36e) ([merge request](gitlab-org/charts/gitlab!3253))
+- [Add service-level annotations for Pages](gitlab-org/charts/gitlab@f50ee77f113f7a0af9f47d95b35352c49955edd7) ([merge request](gitlab-org/charts/gitlab!3324))
+
+### Fixed (4 changes)
+
+- [Use tcp prefix for KAS service port names](gitlab-org/charts/gitlab@a03b00d64577c51f6ad77668d3ccff273ceff2ba) ([merge request](gitlab-org/charts/gitlab!3327))
+- [Fix SMTP authentication mount](gitlab-org/charts/gitlab@ca343d8c83bf8483002775a04e9dd5cc4cf9fb39) ([merge request](gitlab-org/charts/gitlab!3311))
+- [Registry: fix newline chomping](gitlab-org/charts/gitlab@2c84bfb6524c1b37f61b58c36959df5b4763b674) by @connornasdaq ([merge request](gitlab-org/charts/gitlab!3295))
+- [Fix Zoekt config key password_file](gitlab-org/charts/gitlab@e4f6e0de6cf384ebab75ebb3c710cb7f627a7fa7) ([merge request](gitlab-org/charts/gitlab!3300))
+
+### Changed (4 changes)
+
+- [Update gitlab-org/gitlab-exporter from 13.1.0 to 13.2.0](gitlab-org/charts/gitlab@86042b91f07ecc736d9a6b4b2420fe2be3e5fbc0) ([merge request](gitlab-org/charts/gitlab!3331))
+- [Update gitlab-org/container-registry from 3.78.0-gitlab to 3.79.0-gitlab](gitlab-org/charts/gitlab@1c63ea70ad695118c0a4dc1861f3400e3b8186e0) ([merge request](gitlab-org/charts/gitlab!3310))
+- [Update gitlab-org/gitlab-qa from 12.2.0 to 12.2.1](gitlab-org/charts/gitlab@eff824a0b05538a9d648e21601ac444fc578a701) ([merge request](gitlab-org/charts/gitlab!3299))
+- [Update gitlab-org/charts/gitlab-runner from 0.52.0 to 0.53.0](gitlab-org/charts/gitlab@44694d066d142a42600fd152cc7ce2ca532ab72b) ([merge request](gitlab-org/charts/gitlab!3192))
+
+## 7.2.4 (2023-08-11)
+
+No changes.
+
+## 7.2.3 (2023-08-03)
+
+No changes.
+
 ## 7.2.2 (2023-08-01)
 
 No changes.
@@ -38,6 +67,14 @@ No changes.
 ### Removed (1 change)
 
 - [Remove registry migration configuration](gitlab-org/charts/gitlab@7593db8956336c56f038542e6e89d5c8690f03de) ([merge request](gitlab-org/charts/gitlab!3280))
+
+## 7.1.4 (2023-08-03)
+
+No changes.
+
+## 7.1.3 (2023-08-01)
+
+No changes.
 
 ## 7.1.2 (2023-07-04)
 
@@ -81,6 +118,10 @@ No changes.
 - [Bump gitlab-zoekt to 0.4.0](gitlab-org/charts/gitlab@75046bd4e827b39a0c8c12f8f58f7d32c7230547) ([merge request](gitlab-org/charts/gitlab!3233))
 - [Add troubleshooting docs on s3cmd PermissionError](gitlab-org/charts/gitlab@fb92de457cd14c19218db9c8f37a8672051becdf) ([merge request](gitlab-org/charts/gitlab!3198))
 - [Postgres: correct minimum version in NOTES](gitlab-org/charts/gitlab@5ea24b44e59236bd82b3a81f6c9f0601159778d7) by @jouve ([merge request](gitlab-org/charts/gitlab!3213))
+
+## 7.0.8 (2023-08-01)
+
+No changes.
 
 ## 7.0.7 (2023-07-04)
 
@@ -161,6 +202,10 @@ No changes.
 - [Consolidate webservice TLS configuration](gitlab-org/charts/gitlab@7412c984cda3683c60ba3c3e48bf2474ec88209e) ([merge request](gitlab-org/charts/gitlab!3135))
 - [Update extraEnvFrom docs](gitlab-org/charts/gitlab@994ab9824f518701ed7059e28c7fdf1b2c97e446) ([merge request](gitlab-org/charts/gitlab!3025))
 - [Add tests for Webservice ConfigMap name](gitlab-org/charts/gitlab@6d51d3fe5475a84166f23d5c5a0f23a1b38ce489) ([merge request](gitlab-org/charts/gitlab!3091))
+
+## 6.11.13 (2023-07-27)
+
+No changes.
 
 ## 6.11.12 (2023-07-14)
 

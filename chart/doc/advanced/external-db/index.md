@@ -13,7 +13,7 @@ Prerequisites:
 - A deployment of PostgreSQL 12 or later. If you do not have one, consider
   a cloud provided solution like [AWS RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/)
   or [GCP Cloud SQL](https://cloud.google.com/sql/). For a self-managed solution,
-  consider [the Omnibus GitLab package](external-omnibus-psql.md).
+  consider [the Linux package](external-omnibus-psql.md).
 - An empty database named `gitlabhq_production` by default.
 - A user with full database access. See the
   [external database documentation](https://docs.gitlab.com/ee/administration/postgresql/external.html) for details.

@@ -15,9 +15,9 @@ yourself.
 
 WARNING:
 The default Helm chart configuration is **not intended for production**.
-The default chart creates a proof of concept (PoC) implementation where all GitLab
-services are deployed in the cluster. For production deployments, you must follow the
-[Cloud Native Hybrid reference architecture](installation/index.md#use-the-reference-architectures).
+The default values will create an implementation where _all_ GitLab services are
+deployed in the cluster, which is **not suitable for production workloads**.
+For production deployments, you **must** follow the [Cloud Native Hybrid reference architectures](installation/index.md#use-the-reference-architectures).
 
 For a production deployment, you should have strong working knowledge of Kubernetes.
 This method of deployment has different management, observability, and concepts than traditional deployments.
@@ -28,7 +28,7 @@ each of which can be installed separately.
 ## Learn more
 
 - [Test the GitLab chart on GKE or EKS](quickstart/index.md)
-- [Migrate from Omnibus to the GitLab chart](installation/migration/index.md)
+- [Migrate from using the Linux package to the GitLab chart](installation/migration/index.md)
 - [Prepare to deploy](installation/index.md)
 - [Deploy](installation/deployment.md)
 - [View deployment options](installation/command-line-options.md)

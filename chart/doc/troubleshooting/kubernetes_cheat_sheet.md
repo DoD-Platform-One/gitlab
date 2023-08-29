@@ -104,8 +104,7 @@ and they will assist you with any issues you are having.
   kubectl logs -f -l app=webservice -c webservice --max-log-requests=50
   ```
 
-- One can stream logs from all containers at once, similar to the Omnibus
-  command `gitlab-ctl tail`:
+- One can stream logs from all containers at once, similar to the command `gitlab-ctl tail` in a Linux package installation:
 
   ```shell
   kubectl logs -f -l release=gitlab --all-containers=true --max-log-requests=100

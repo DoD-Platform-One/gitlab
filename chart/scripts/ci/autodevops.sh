@@ -151,6 +151,14 @@ CIYAML
         cpu: 100m
 CIYAML
 
+  # PostgreSQL max_connection defaults to 100, which is apparently not enough to pass QA.
+  cat << CIYAML > ci.psql.yaml
+  postgresql:
+    primary:
+      extendedConfiguration: |-
+        max_connections = 200
+CIYAML
+
   if [ -n "${REVIEW_APPS_SENTRY_DSN}" ] && [ -n "${REVIEW_APPS_SENTRY_ENVIRONMENT}" ]; then
     echo "REVIEW_APPS_SENTRY_* detected, enabling Sentry"
     cat << CIYAML > ci.sentry.yaml
@@ -170,6 +178,7 @@ CIYAML
     ${SENTRY_CONFIGURATION} \
     -f ci.details.yaml \
     -f ci.scale.yaml \
+    -f ci.psql.yaml \
     --set releaseOverride="$RELEASE_NAME" \
     --set global.image.pullPolicy="Always" \
     --set global.hosts.hostSuffix="$HOST_SUFFIX" \

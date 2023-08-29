@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'helm_template_helper'
+require 'runtime_template_helper'
 require 'tomlrb'
 require 'yaml'
 require 'hash_deep_merge'
@@ -10,23 +11,17 @@ describe 'Gitaly configuration' do
   end
 
   def render_toml(raw_template, env = {})
-    Dir.mktmpdir do |tmpdir|
-      raw_template.gsub!(%r{/etc/gitlab-secrets}, tmpdir)
-      input_file = File.join(tmpdir, 'input.tpl')
-      File.write(input_file, raw_template)
+    # provide the gitaly_token
+    files = { '/etc/gitlab-secrets/gitaly/gitaly_token' => RuntimeTemplate::JUNK_TOKEN }
 
-      # Write bogus gitaly_token
-      FileUtils.mkdir(File.join(tmpdir, 'gitaly'))
-      File.write(File.join(tmpdir, "gitaly", "gitaly_token"), SecureRandom.hex)
+    toml = RuntimeTemplate.gomplate(raw_template: raw_template, files: files, env: env)
 
-      cmd = "gomplate --left-delim '{%' --right-delim '%}' --file #{input_file}"
-      result = Open3.capture3(env, cmd)
-      stdout, stderr, exit_code = result
+    Tomlrb.parse(toml)
+  end
 
-      raise "Unable to call gomplate: #{stderr}" if exit_code != 0
-
-      Tomlrb.parse(stdout)
-    end
+  def render_erb(raw_template)
+    yaml = RuntimeTemplate.erb(raw_template: raw_template, files: RuntimeTemplate.mock_files)
+    YAML.safe_load(yaml)
   end
 
   context 'When disabled and provided external instances' do
@@ -45,8 +40,8 @@ describe 'Gitaly configuration' do
       t = HelmTemplate.new(values)
       expect(t.exit_code).to eq(0)
       # check that gitlab.yml.erb contains production.repositories.storages
-      gitlab_yml = t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb')
-      storages = YAML.load(gitlab_yml)['production']['repositories']['storages']
+      gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
+      storages = gitlab_yml['production']['repositories']['storages']
       expect(storages).to have_key('default')
       expect(storages['default']['gitaly_address']).to eq('tcp://git.example.com:8075')
     end
@@ -68,8 +63,8 @@ describe 'Gitaly configuration' do
         t = HelmTemplate.new(values)
         expect(t.exit_code).to eq(0)
         # check that gitlab.yml.erb contains production.repositories.storages
-        gitlab_yml = t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb')
-        storages = YAML.load(gitlab_yml)['production']['repositories']['storages']
+        gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
+        storages = gitlab_yml['production']['repositories']['storages']
         expect(storages).to have_key('default')
         expect(storages['default']['gitaly_address']).to eq('tls://git.example.com:8076')
       end
@@ -93,8 +88,8 @@ describe 'Gitaly configuration' do
         t = HelmTemplate.new(values)
         expect(t.exit_code).to eq(0)
         # check that gitlab.yml.erb contains production.repositories.storages
-        gitlab_yml = t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb')
-        storages = YAML.load(gitlab_yml)['production']['repositories']['storages']
+        gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
+        storages = gitlab_yml['production']['repositories']['storages']
         expect(storages).to have_key('default')
         expect(storages['default']['gitaly_address']).to eq('tls://git.example.com:8076')
       end
@@ -119,8 +114,8 @@ describe 'Gitaly configuration' do
         t = HelmTemplate.new(values)
         expect(t.exit_code).to eq(0)
         # check that gitlab.yml.erb contains production.repositories.storages
-        gitlab_yml = t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb')
-        storages = YAML.load(gitlab_yml)['production']['repositories']['storages']
+        gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
+        storages = gitlab_yml['production']['repositories']['storages']
         expect(storages).to have_key('default')
         expect(storages['default']['gitaly_address']).to eq('tcp://git.example.com:8075')
       end

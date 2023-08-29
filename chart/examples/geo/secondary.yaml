@@ -1,28 +1,36 @@
-## Geo Secondary
-global:
-  # See docs.gitlab.com/charts/charts/globals
-  # Configure host & domain
-  hosts:
-    hostSuffix: gitlab
-    domain: example.com
-  # configure DB connection
-  psql:
-    host: geo-2.db.example.com
-    port: 5432
-    password:
-      secret: geo
-      key: postgresql-password
-  # configure geo (secondary)
-  geo:
-    nodeName: Shanghai Office
-    enabled: true
-    role: secondary
-    psql:
-      host: geo-2.db.example.com
-      port: 5431
-      password:
-        secret: geo
-        key: geo-postgresql-password
-# External DB, disable
-postgresql:
-  install: false
+ ## Geo Secondary
+ global:
+   # See docs.gitlab.com/charts/charts/globals
+   # Configure host & domain
+   hosts:
+     domain: shanghai.example.com
+     # use a unified URL (same external URL as the primary site)
+     gitlab:
+       name: gitlab.example.com
+   # configure DB connection
+   psql:
+     host: geo-2.db.example.com
+     port: 5432
+     password:
+       secret: geo
+       key: postgresql-password
+   # configure geo (secondary)
+   geo:
+     enabled: true
+     role: secondary
+     nodeName: Shanghai Office
+     psql:
+       host: geo-2.db.example.com
+       port: 5431
+       password:
+         secret: geo
+         key: geo-postgresql-password
+ gitlab:
+   webservice:
+     # Configure a Ingress for internal Geo traffic
+     extraIngress:
+       enabled: true
+       hostname: shanghai.gitlab.example.com
+ # External DB, disable
+ postgresql:
+   install: false

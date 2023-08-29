@@ -20,7 +20,7 @@ For anything in this list which will not be completed, please provide a reason i
 - [ ] Merge Request Title and Description are up to date, accurate, and descriptive
 - [ ] MR targeting the appropriate branch
 - [ ] MR has a green pipeline on GitLab.com
-- [ ] When ready for review, MR is labeled "~workflow::ready for review" per the [Distribution MR workflow](https://about.gitlab.com/handbook/engineering/development/enablement/systems/distribution/merge_requests.html)
+- [ ] When ready for review, follow the instructions in the "Reviewer Roulette" section of the Danger Bot MR comment, as per the [Distribution experimental MR workflow](https://about.gitlab.com/handbook/engineering/development/enablement/systems/distribution/merge_requests.html)
 
 ### Expected (please provide an explanation if not completing)
 - [ ] Test plan indicating conditions for success has been posted and passes

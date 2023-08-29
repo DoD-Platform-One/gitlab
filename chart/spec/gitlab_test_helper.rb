@@ -142,6 +142,19 @@ module Gitlab
       end
     end
 
+    def wait_for_rails_rollout(timeout: "120s")
+      wait_for_rollout(timeout: timeout)
+    end
+
+    def wait_for_rollout(type: "deployment", filters: "app in (webservice, sidekiq)", timeout: "120s")
+      if ENV['RELEASE_NAME']
+        filters="#{filters},release=#{ENV['RELEASE_NAME']}"
+      end
+
+      stdout, status = Open3.capture2e("kubectl rollout status #{type} -l'#{filters}' --timeout=#{timeout}")
+      raise stdout unless status.success?
+    end
+
     def restore_from_backup(skip: [])
       skip_flags=''
 

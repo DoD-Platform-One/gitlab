@@ -476,11 +476,8 @@ for the exhaustive list of configuration options.
 Prefix PostgreSQL values with `postgresql`. For example, set the storage class value
 using `postgresql.persitence.storageClass`.
 
-Refer to the default values file for a list of the available configuration options.
-
-```shell
-helm inspect values https://charts.bitnami.com/bitnami/postgresql-8.9.4.tgz
-```
+Refer to the [Bitnami PostgreSQL chart documentation](https://artifacthub.io/packages/helm/bitnami/postgresql)
+for the exhaustive list of configuration options.
 
 ## Bringing your own images
 

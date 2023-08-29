@@ -155,7 +155,7 @@ spec:
                 - key: secrets.yml
                   path: rails-secrets/secrets.yml
           {{- include "gitlab.gitaly.clientSecrets" . | nindent 10 }}
-          {{- include "gitlab.redis.secrets" . | nindent 10 }}
+          {{- include "gitlab.redis.secrets" (dict "globalContext" $) | nindent 10 }}
           {{- range $.Values.local.psql }}
           {{-   include "gitlab.psql.secret" . | nindent 10 }}
           {{- end }}

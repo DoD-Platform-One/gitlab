@@ -89,6 +89,10 @@ class HelmTemplate
     }
   end
 
+  def [](arg)
+    dig(arg)
+  end
+
   def dig(*args)
     @mapped.dig(*args)
   end

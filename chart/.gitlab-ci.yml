@@ -30,7 +30,7 @@ default:
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
   HELM_VERSION: "3.5.2"
-  KUBECTL_VERSION: "1.23.0"
+  KUBECTL_VERSION: "1.26.7"
   STABLE_REPO_URL: "https://charts.helm.sh/stable"
   GOOGLE_APPLICATION_CREDENTIALS: ${CI_PROJECT_DIR}/.google_keyfile.json
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
@@ -49,8 +49,8 @@ variables:
   QA_SANITY_SUITE_OPTIONS: '--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated'
   DEBIAN_VERSION: bullseye
   RUBY_VERSION: "3.0"
-  BUILDER_RUBY_DOCKER_VERSION: "4.18.0"
-  GITLAB_QA_VERSION: "12.2.0"
+  CI_TOOLS_VERSION: "4.22.0"
+  GITLAB_QA_VERSION: "12.2.1"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
 
@@ -77,6 +77,12 @@ include:
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
   - template: Jobs/SAST.latest.gitlab-ci.yml
   - template: Jobs/SAST-IaC.latest.gitlab-ci.yml
+  - project: 'gitlab-org/quality/pipeline-common'
+    file:
+      - '/ci/danger-review.yml'
+    rules:
+      - if: $CI_SERVER_HOST == "gitlab.com"
+
 dependency_scanning:
   needs: []
   before_script: []
@@ -123,7 +129,7 @@ update-trigger-branch:
     - if: '$TRIGGER_UPDATE'  # Allow us to manually trigger this job in a pipeline if we wish using this CI variable
 
 dependency_update:
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}
   stage: prepare
   script:
     - curl https://deps.app/install.sh | bash -s -- -b $HOME/bin
@@ -458,25 +464,6 @@ debug_review_gke122:
     - if: '$PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
 
-danger-review:
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images:danger
-  stage: prepare
-  cache: {}
-  script:
-    - git version
-    - danger_id=$(echo -n ${DANGER_GITLAB_API_TOKEN} | md5sum | awk '{print $1}' | cut -c5-10)
-    - |
-      if [ ! -v DANGER_GITLAB_API_TOKEN ] && [ "${PIPELINE_TYPE}" = "FORK_MR_PIPELINE" ]; then
-        echo "Danger token not configured. As this is from a fork, failing danger gracefully."
-        exit 202
-      fi
-    - danger --fail-on-errors=true --verbose --danger_id=${danger_id}
-  allow_failure:
-    exit_codes: 202
-  rules:
-    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
-
 rubocop:
   image: ruby:3.0-alpine
   stage: prepare
@@ -517,7 +504,7 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.18-ruby-3.2.2-4207821e
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.18-ruby-3.2.2-6a53d93b
   stage: prepare
   cache: {}
   dependencies: []
@@ -740,7 +727,7 @@ production_specs_eks:
   needs: ['stable_eks']
 
 .qa:
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}
   stage: qa
   services:
   - docker:dind
@@ -780,7 +767,7 @@ production_specs_eks:
 wait_for_dev_images:
   # Remove after https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2370 is complete
   timeout: 2h
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}
   stage: prepare
   services:
   - docker:dind
@@ -836,7 +823,7 @@ publish_devel_package:
 release_package:
   stage: release-package
   timeout: 2h
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/ruby_docker:${BUILDER_RUBY_DOCKER_VERSION}
+  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}
   script:
     - |
       if [[ $CI_COMMIT_REF_NAME =~ $AUTO_DEPLOY_TAG_REGEX ]]; then
@@ -921,7 +908,7 @@ qa_gke122_production:
     VARIABLES_FILE: "variables/stable_gke122"
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
-    name: gke122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_production
   needs:
     - stable_gke122
     - job: production_specs_gke122
@@ -933,12 +920,11 @@ qa_gke125_production:
     VARIABLES_FILE: "variables/stable_gke125"
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
-    name: gke125_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke125_production
   needs:
     - stable_gke125
     - job: production_specs_gke125
       artifacts: false
-
 
 qa_eks_production:
   extends: .qa_production
@@ -946,7 +932,7 @@ qa_eks_production:
     VARIABLES_FILE: "variables/stable_eks"
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
-    name: eks_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: eks_production
   needs:
     - stable_eks
     - job: production_specs_eks
@@ -988,7 +974,7 @@ qa_gke122_manual_full_suite_production:
     VARIABLES_FILE: "variables/stable_gke122"
     TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
-    name: gke122_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: gke122_production
   needs: [ "qa_gke122_full_suite_manual_trigger"]
 
 qa_gke125_full_suite_manual_trigger:
@@ -1028,7 +1014,7 @@ qa_eks_manual_full_suite_production:
     VARIABLES_FILE: "variables/stable_eks"
     TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
-    name: eks_production/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: eks_production
   needs: [ "qa_eks_full_suite_manual_trigger"]
 
 knapsack-qa-report:

@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.78.0-gitlab'
+    tag: 'v3.79.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -174,7 +174,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.78.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.79.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
 | `init.containerSecurityContext`                                                                                                              |                                                                                | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                                                             |
@@ -335,7 +335,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.78.0-gitlab'`
+- `tag: 'v3.79.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -787,7 +787,7 @@ external service, such as `s3`, `gcs`, `azure` or other compatible Object Storag
 NOTE:
 The chart will populate `delete.enabled: true` into this configuration
 by default if not specified by the user. This keeps expected behavior in line with
-the default use of MinIO, as well as the Omnibus GitLab. Any user provided value
+the default use of MinIO, as well as the Linux package. Any user provided value
 will supersede this default.
 
 ### middleware.storage
@@ -951,11 +951,11 @@ there will be some variation in how you connect.
 1. Log into your database instance:
 
    ```shell
-   kubectl exec -it $(kubectl get pods -l app=postgresql -o custom-columns=NAME:.metadata.name --no-headers) -- bash
+   kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name=postgresql -o custom-columns=NAME:.metadata.name --no-headers) -- bash
    ```
 
    ```shell
-   PGPASSWORD=$(cat $POSTGRES_POSTGRES_PASSWORD_FILE) psql -U postgres -d template1
+   PGPASSWORD=${POSTGRES_POSTGRES_PASSWORD} psql -U postgres -d template1
    ```
 
 1. Create the database user:
@@ -991,16 +991,16 @@ there will be some variation in how you connect.
    ...@gitlab-postgresql-0/$ exit
    ```
 
-### gc
+### `gc` property
 
-The `gc` property is optional and provides options related to
-[online garbage collection](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc).
+The `gc` property provides [online garbage collection](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc)
+options.
 
 WARNING:
 This is an experimental feature and _must not_ be used in production.
 
-NOTE:
-This feature requires the [metadata database](#database) to be enabled.
+Online garbage collection requires the [metadata database](#database) to be enabled. You must use online garbage collection when using the database, though
+you can temporarily disable online garbage collection for maintenance and debugging.
 
 ```yaml
 gc:
@@ -1075,6 +1075,11 @@ The Docker Registry will build up extraneous data over time which can be freed u
 As of [now](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/1586) there is no
 fully automated or scheduled way to run the garbage collection with this Chart.
 
+WARNING:
+You must use [online garbage collection](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc) with the
+[metadata database](#database). Using manual garbage collection with the metadata database will lead to data loss.
+Online garbage collection fully replaces the need to manually run garbage collection.
+
 ### Manual Garbage Collection
 
 Manual garbage collection requires the registry to be in read-only mode first. Let's assume that you've already
@@ -1086,7 +1091,7 @@ Replace these values in the commands below according to your actual configuratio
 helm get values mygitlab > mygitlab.yml
 # Upgrade Helm installation and configure the registry to be read-only.
 # The --wait parameter makes Helm wait until all ressources are in ready state, so we are safe to continue.
-helm upgrade mygitlab gitlab/gitlab -f mygitlab.yml --set registry.maintenance.readOnly.enabled=true --wait
+helm upgrade mygitlab gitlab/gitlab -f mygitlab.yml --set registry.maintenance.readonly.enabled=true --wait
 # Our registry is in r/o mode now, so let's get the name of one of the registry Pods.
 # Note down the Pod name and replace the '<registry-pod>' placeholder below with that value.
 # Replace the single quotes to double quotes (' => ") if you are using this with Windows' cmd.exe.
