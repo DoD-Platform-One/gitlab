@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.2.2-bb.2](https://img.shields.io/badge/Version-7.2.2--bb.2-informational?style=flat-square) ![AppVersion: 16.2.2](https://img.shields.io/badge/AppVersion-16.2.2-informational?style=flat-square)
+![Version: 7.2.2-bb.3](https://img.shields.io/badge/Version-7.2.2--bb.3-informational?style=flat-square) ![AppVersion: 16.2.2](https://img.shields.io/badge/AppVersion-16.2.2-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -390,6 +390,8 @@ helm install gitlab chart/
 | global.zoekt.gateway.basicAuth | object | `{}` |  |
 | global.extraEnv | object | `{}` |  |
 | global.extraEnvFrom | object | `{}` |  |
+| containerSecurityContext.runAsUser | int | `65534` |  |
+| containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | upgradeCheck.enabled | bool | `true` |  |
 | upgradeCheck.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
 | upgradeCheck.image.tag | string | `"8.8"` |  |
@@ -565,13 +567,13 @@ helm install gitlab chart/
 | redis.metrics.resources.limits.memory | string | `"256Mi"` |  |
 | redis.metrics.resources.requests.cpu | string | `"250m"` |  |
 | redis.metrics.resources.requests.memory | string | `"256Mi"` |  |
+| redis.metrics.containerSecurityContext.enabled | bool | `true` |  |
+| redis.metrics.containerSecurityContext.runAsUser | int | `1001` |  |
+| redis.metrics.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| redis.metrics.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | redis.securityContext.runAsUser | int | `1001` |  |
 | redis.securityContext.fsGroup | int | `1001` |  |
 | redis.securityContext.runAsNonRoot | bool | `true` |  |
-| redis.containerSecurityContext.enabled | bool | `true` |  |
-| redis.containerSecurityContext.runAsUser | int | `1001` |  |
-| redis.containerSecurityContext.runAsNonRoot | bool | `true` |  |
-| redis.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | redis.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.image.repository | string | `"redis"` |  |
 | redis.image.tag | string | `"7.0.0-debian-10-r3"` |  |
@@ -580,10 +582,18 @@ helm install gitlab chart/
 | redis.master.resources.limits.memory | string | `"256Mi"` |  |
 | redis.master.resources.requests.cpu | string | `"250m"` |  |
 | redis.master.resources.requests.memory | string | `"256Mi"` |  |
+| redis.master.containerSecurityContext.enabled | bool | `true` |  |
+| redis.master.containerSecurityContext.runAsUser | int | `1001` |  |
+| redis.master.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| redis.master.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | redis.slave.resources.limits.cpu | string | `"250m"` |  |
 | redis.slave.resources.limits.memory | string | `"256Mi"` |  |
 | redis.slave.resources.requests.cpu | string | `"250m"` |  |
 | redis.slave.resources.requests.memory | string | `"256Mi"` |  |
+| redis.slave.containerSecurityContext.enabled | bool | `true` |  |
+| redis.slave.containerSecurityContext.runAsUser | int | `1001` |  |
+| redis.slave.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| redis.slave.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | redis.sentinel.resources.limits.cpu | string | `"250m"` |  |
 | redis.sentinel.resources.limits.memory | string | `"256Mi"` |  |
 | redis.sentinel.resources.requests.cpu | string | `"250m"` |  |
@@ -613,8 +623,13 @@ helm install gitlab chart/
 | postgresql.auth.existingSecret | string | `"{{ include \"gitlab.psql.password.secret\" . }}"` |  |
 | postgresql.auth.secretKeys.adminPasswordKey | string | `"postgresql-postgres-password"` |  |
 | postgresql.auth.secretKeys.userPasswordKey | string | `"{{ include \"gitlab.psql.password.key\" $ }}"` |  |
+| postgresql.primary.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
 | postgresql.primary.initdb.scriptsConfigMap | string | `"{{ include \"gitlab.psql.initdbscripts\" $}}"` |  |
 | postgresql.primary.initdb.user | string | `"gitlab"` |  |
+| postgresql.primary.containerSecurityContext.enabled | bool | `true` |  |
+| postgresql.primary.containerSecurityContext.runAsUser | int | `1001` |  |
+| postgresql.primary.containerSecurityContext.fsGroup | int | `1001` |  |
+| postgresql.primary.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | postgresql.master.extraVolumeMounts[0].name | string | `"custom-init-scripts"` |  |
 | postgresql.master.extraVolumeMounts[0].mountPath | string | `"/docker-entrypoint-preinitdb.d/init_revision.sh"` |  |
 | postgresql.master.extraVolumeMounts[0].subPath | string | `"init_revision.sh"` |  |
@@ -629,11 +644,6 @@ helm install gitlab chart/
 | postgresql.securityContext.fsGroup | int | `26` |  |
 | postgresql.securityContext.runAsUser | int | `26` |  |
 | postgresql.securityContext.runAsGroup | int | `26` |  |
-| postgresql.containerSecurityContext.enabled | bool | `true` |  |
-| postgresql.containerSecurityContext.runAsUser | int | `1001` |  |
-| postgresql.containerSecurityContext.runAsGroup | int | `1001` |  |
-| postgresql.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| postgresql.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
 | postgresql.postgresqlDataDir | string | `"/var/lib/postgresql/pgdata/data"` |  |
 | postgresql.volumePermissions.enabled | bool | `false` |  |
 | registry.enabled | bool | `true` |  |
