@@ -30,7 +30,16 @@ spec:
     - name: "pages"
       route:
       - destination:
+          {{- if .Values.istio.pages.customDomains.enabled }}
           host: {{ .Release.Name }}-gitlab-pages-custom-domains.{{ .Release.Namespace }}.svc.cluster.local
+          {{- else }}
+          host: {{ .Release.Name }}-gitlab-pages.{{ .Release.Namespace }}.svc.cluster.local
+          {{- end }}
           port:
+            {{- if .Values.istio.pages.port }}
+            number: {{ .Values.istio.pages.port }}
+            {{- else }}
             number: 80
+            {{- end }}
 {{- end }}
+

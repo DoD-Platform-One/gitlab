@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.3.0-bb.1] - 2023-98-30
+### Changed
+- Enabled GitLab Pages support without user custom domains
+- Enabled customization of the GitLab Pages virtual service port
+
 ## [7.3.0-bb.0] - 2023-08-29
 ### Changed
 - registry1.dso.mil/ronbank/gitlab/gitlab/gitlab-webservice 16.2.2 -> 16.3.0

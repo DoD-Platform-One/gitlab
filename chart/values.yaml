@@ -1901,6 +1901,9 @@ istio:
     labels: {}
     gateways:
       - istio-system/pages
+    # Enable or disable custom domains 
+    customDomains:
+      enabled: true
     #only affects the Istio VirtualService ingress. Does not affect Gitlab configuration. Must be populated as a wildcard.
     hosts:
     - '*.pages.bigbang.dev'
