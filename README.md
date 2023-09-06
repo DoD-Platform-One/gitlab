@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.3.0-bb.1](https://img.shields.io/badge/Version-7.3.0--bb.1-informational?style=flat-square) ![AppVersion: 16.3.0](https://img.shields.io/badge/AppVersion-16.3.0-informational?style=flat-square)
+![Version: 7.3.0-bb.2](https://img.shields.io/badge/Version-7.3.0--bb.2-informational?style=flat-square) ![AppVersion: 16.3.0](https://img.shields.io/badge/AppVersion-16.3.0-informational?style=flat-square)
 
 The One DevOps Platform
 
@@ -983,6 +983,8 @@ helm install gitlab chart/
 | bbtests.cypress.envs.cypress_gitlab_password | string | `"Password123h56a78"` |  |
 | bbtests.cypress.envs.cypress_gitlab_email | string | `"testuser@example.com"` |  |
 | bbtests.cypress.envs.cypress_gitlab_project | string | `"my-awesome-project"` |  |
+| bbtests.cypress.envs.cypress_keycloak_username | string | `"cypress"` |  |
+| bbtests.cypress.envs.cypress_keycloak_password | string | `"tnr_w!G33ZyAt@C8"` |  |
 | bbtests.cypress.secretEnvs[0].name | string | `"cypress_adminpassword"` |  |
 | bbtests.cypress.secretEnvs[0].valueFrom.secretKeyRef.name | string | `"gitlab-gitlab-initial-root-password"` |  |
 | bbtests.cypress.secretEnvs[0].valueFrom.secretKeyRef.key | string | `"password"` |  |

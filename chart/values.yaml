@@ -1943,6 +1943,8 @@ bbtests:
       cypress_gitlab_password: "Password123h56a78"
       cypress_gitlab_email: "testuser@example.com"
       cypress_gitlab_project: "my-awesome-project"
+      cypress_keycloak_username: "cypress"
+      cypress_keycloak_password: "tnr_w!G33ZyAt@C8"
     secretEnvs:
       - name: cypress_adminpassword
         valueFrom:
