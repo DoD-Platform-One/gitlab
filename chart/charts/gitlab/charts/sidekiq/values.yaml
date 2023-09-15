@@ -15,6 +15,7 @@ init:
   resources:
     requests:
       cpu: 50m
+  containerSecurityContext: {}
 
 # Node labels for pod assignment
 # nodeSelector: {}

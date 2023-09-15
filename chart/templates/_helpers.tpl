@@ -485,7 +485,7 @@ Format:
 {{- end -}}
 
 {{/*
-Constructs kubectl image name.
+Constructs kubectl image value.
 */}}
 {{- define "gitlab.kubectl.image" -}}
 {{- include "gitlab.helper.image" (dict "context" . "image" .Values.global.kubectl.image) -}}
