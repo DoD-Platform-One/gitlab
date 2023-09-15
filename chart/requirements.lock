@@ -29,9 +29,12 @@ dependencies:
 - name: nginx-ingress
   repository: ""
   version: '*.*.*'
+- name: nginx-ingress
+  repository: ""
+  version: '*.*.*'
 - name: gitlab-zoekt
   repository: https://charts.gitlab.io/
-  version: 0.5.4
+  version: 0.5.8
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.3.2
@@ -41,5 +44,5 @@ dependencies:
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:fc3ac5e5ce11ca8aba23f42abe33bb966dcd65003349639dd249d3bd956dbc6e
-generated: "2023-08-11T10:49:47.419079-06:00"
+digest: sha256:90966d9433fd20f6760d38a72876b22dc828cad3d2fa9dd7ea99ce37da71311b
+generated: "2023-09-12T19:26:16.877272926+05:00"
