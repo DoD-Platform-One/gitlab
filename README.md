@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.3.1-bb.0](https://img.shields.io/badge/Version-7.3.1--bb.0-informational?style=flat-square) ![AppVersion: 16.3.1](https://img.shields.io/badge/AppVersion-16.3.1-informational?style=flat-square)
+![Version: 7.3.1-bb.1](https://img.shields.io/badge/Version-7.3.1--bb.1-informational?style=flat-square) ![AppVersion: 16.3.1](https://img.shields.io/badge/AppVersion-16.3.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -711,7 +711,6 @@ helm install gitlab chart/
 | postgresql.primary.initdb.user | string | `"gitlab"` |  |
 | postgresql.primary.containerSecurityContext.enabled | bool | `true` |  |
 | postgresql.primary.containerSecurityContext.runAsUser | int | `1001` |  |
-| postgresql.primary.containerSecurityContext.fsGroup | int | `1001` |  |
 | postgresql.primary.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | postgresql.master.extraVolumeMounts[0].name | string | `"custom-init-scripts"` |  |
 | postgresql.master.extraVolumeMounts[0].mountPath | string | `"/docker-entrypoint-preinitdb.d/init_revision.sh"` |  |
@@ -751,7 +750,6 @@ helm install gitlab chart/
 | shared-secrets.rbac.create | bool | `true` |  |
 | shared-secrets.selfsign.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign"` |  |
 | shared-secrets.selfsign.image.tag | string | `"1.6.1"` |  |
-| shared-secrets.selfsign.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | shared-secrets.selfsign.keyAlgorithm | string | `"rsa"` |  |
 | shared-secrets.selfsign.keySize | string | `"4096"` |  |
 | shared-secrets.selfsign.expiry | string | `"3650d"` |  |
@@ -930,7 +928,7 @@ helm install gitlab chart/
 | minio.init.resources.limits.memory | string | `"200Mi"` |  |
 | minio.init.resources.requests.cpu | string | `"200m"` |  |
 | minio.init.resources.requests.memory | string | `"200Mi"` |  |
-| minio.init.resources.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| minio.init.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | minio.resources.limits.cpu | string | `"200m"` |  |
 | minio.resources.limits.memory | string | `"300Mi"` |  |
 | minio.resources.requests.cpu | string | `"200m"` |  |
