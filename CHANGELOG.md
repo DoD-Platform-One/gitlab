@@ -2,6 +2,30 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [7.3.4-bb.0] - 2023-09-21
+### Changed
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl patch 16.3.1 -> 16.3.4
+
+Updated without automation:
+
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox patch 16.3.1 -> 16.3.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice patch 16.3.1 -> 16.3.4
+
+Skipped:
+
+- registry1.dso.mil/ironbank/opensource/postgres/postgresql major 14.8 -> 15.4
+  - excluded because it failed tests and was not updated upstream
+
 ## [7.3.1-bb.1] - 2023-09-19
 ### Changed
 - Upgraded gluon from 0.4.0 to 0.4.1
