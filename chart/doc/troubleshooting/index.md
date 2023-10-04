@@ -370,7 +370,7 @@ Use the following steps to verify:
 1. Inspect the file `/srv/gitlab/config/workhorse-config.toml`. The `[redis]` configuration might be missing:
 
    ```shell
-   cat /srv/gitlab/config/workhorse-config.toml | grep '\[redis\]'
+   grep '\[redis\]' /srv/gitlab/config/workhorse-config.toml
    ```
 
 If the `[redis]` configuration is not present, the `workhorse.keywatcher` flag was set to `false` during deployment

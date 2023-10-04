@@ -2,6 +2,35 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 7.4.1 (2023-09-28)
+
+No changes.
+
+## 7.4.0 (2023-09-21)
+
+### Added (2 changes)
+
+- [Provide option to configure a separate workhorse redis](gitlab-org/charts/gitlab@9e99308a40948c35bf1173a1f54e55299d60ba8f) ([merge request](gitlab-org/charts/gitlab!3296))
+- [Support global image settings for Mailroom chart](gitlab-org/charts/gitlab@4c0e74693966166af1a45c2716a00b9aedbd45ee) ([merge request](gitlab-org/charts/gitlab!3362))
+
+### Fixed (1 change)
+
+- [Restore default `registry.gc.disabled` key](gitlab-org/charts/gitlab@748eb0b168329d312aa63359af5223907b992d12) ([merge request](gitlab-org/charts/gitlab!3394))
+
+### Changed (11 changes)
+
+- [Update gitlab-org/container-registry from 3.82.2-gitlab to 3.83.0-gitlab](gitlab-org/charts/gitlab@f132859596ad43ba618f852b89eddf5177c2759d) ([merge request](gitlab-org/charts/gitlab!3382))
+- [Update gitlab-org/gitlab-qa from 12.4.0 to 12.4.1](gitlab-org/charts/gitlab@3c1a462717ba873a5072310338707ef3ecbfcc19) ([merge request](gitlab-org/charts/gitlab!3381))
+- [Update gitlab-org/container-registry from 3.82.0-gitlab to 3.82.2-gitlab](gitlab-org/charts/gitlab@f7a02aaa7f43107f40f0fb3d2b693785d9af20d9) ([merge request](gitlab-org/charts/gitlab!3374))
+- [Warning user when a non-prod ready subchart is enabled](gitlab-org/charts/gitlab@c16b8a41795a3ff5615a883273913f2f6c225fc5) ([merge request](gitlab-org/charts/gitlab!3352))
+- [Update gitlab-org/container-registry from 3.80.0-gitlab to 3.82.0-gitlab](gitlab-org/charts/gitlab@dc78559c740fb9032a7def8820b54624fbfb5e61) ([merge request](gitlab-org/charts/gitlab!3366))
+- [Update gitlab-org/container-registry from 3.80.0-gitlab to 3.81.0-gitlab](gitlab-org/charts/gitlab@854e9ece8b8fbc2a4344853dcfd6485a7e4663d5) ([merge request](gitlab-org/charts/gitlab!3366))
+- [Update gitlab-org/gitlab-qa from 12.3.0 to 12.4.0](gitlab-org/charts/gitlab@c82d7d57cfae2cf93e9f8cca5dae80ead440a467) ([merge request](gitlab-org/charts/gitlab!3365))
+- [Enforce upgrade stop at 7.3/16.3](gitlab-org/charts/gitlab@46a2f45016f7440849cb7d60fd2427076d0d058a) ([merge request](gitlab-org/charts/gitlab!3342))
+- [Update gitlab-org/charts/gitlab-runner from 0.55.0 to 0.56.0](gitlab-org/charts/gitlab@f14cbc58591049e3e035ee5396b2f096207c4f24) ([merge request](gitlab-org/charts/gitlab!3350))
+- [Update gitlab-org/container-registry from 3.79.0-gitlab to 3.80.0-gitlab](gitlab-org/charts/gitlab@7f61401aaa147497b4a9a32fa25a1c6896bfe394) ([merge request](gitlab-org/charts/gitlab!3341))
+- [Update gitlab-org/gitlab-qa from 12.2.1 to 12.3.0](gitlab-org/charts/gitlab@021b652e4100e94f0f59985cdb21022015275b61) ([merge request](gitlab-org/charts/gitlab!3349))
+
 ## 7.3.4 (2023-09-18)
 
 No changes.
@@ -38,6 +67,20 @@ No changes.
 - [Update gitlab-org/container-registry from 3.78.0-gitlab to 3.79.0-gitlab](gitlab-org/charts/gitlab@1c63ea70ad695118c0a4dc1861f3400e3b8186e0) ([merge request](gitlab-org/charts/gitlab!3310))
 - [Update gitlab-org/gitlab-qa from 12.2.0 to 12.2.1](gitlab-org/charts/gitlab@eff824a0b05538a9d648e21601ac444fc578a701) ([merge request](gitlab-org/charts/gitlab!3299))
 - [Update gitlab-org/charts/gitlab-runner from 0.52.0 to 0.53.0](gitlab-org/charts/gitlab@44694d066d142a42600fd152cc7ce2ca532ab72b) ([merge request](gitlab-org/charts/gitlab!3192))
+
+## 7.2.7 (2023-09-18)
+
+No changes.
+
+## 7.2.6 (2023-09-12)
+
+No changes.
+
+## 7.2.5 (2023-08-31)
+
+### Fixed (1 change)
+
+- [Use tcp prefix for KAS service port names](gitlab-org/security/charts/gitlab@a0f550d2dfe32300e80132425c57af82ab000453)
 
 ## 7.2.4 (2023-08-11)
 
@@ -83,6 +126,12 @@ No changes.
 ### Removed (1 change)
 
 - [Remove registry migration configuration](gitlab-org/charts/gitlab@7593db8956336c56f038542e6e89d5c8690f03de) ([merge request](gitlab-org/charts/gitlab!3280))
+
+## 7.1.5 (2023-08-31)
+
+### Fixed (1 change)
+
+- [Use tcp prefix for KAS service port names](gitlab-org/security/charts/gitlab@98761b5d3f40e0ac8f8abe84ae65fda63cd0c365)
 
 ## 7.1.4 (2023-08-03)
 

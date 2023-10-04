@@ -102,11 +102,11 @@ sentinels:
 
 {{/*
 Return Sentinel list in format for Workhorse
-Note: Workhorse only uses the primary Redis (global.redis)
 */}}
 {{- define "gitlab.redis.workhorse.sentinel-list" }}
+{{- include "gitlab.redis.selectedMergedConfig" . -}}
 {{- $sentinelList := list }}
-{{- range $i, $entry := .Values.global.redis.sentinels }}
+{{- range $i, $entry := .redisMergedConfig.sentinels }}
   {{- $sentinelList = append $sentinelList (quote (print "tcp://" (trim $entry.host) ":" ( default 26379 $entry.port | int ) ) ) }}
 {{- end }}
 {{- $sentinelList | join "," }}
@@ -125,7 +125,7 @@ instances.
 {{- if hasKey . "mountRedisYmlOverrideSecrets" }}
 {{- $mountRedisYmlOverrideSecrets = .mountRedisYmlOverrideSecrets }}
 {{- end }}
-{{- $redisInstances := list "cache" "clusterCache" "sharedState" "queues" "actioncable" "traceChunks" "rateLimiting" "clusterRateLimiting" "sessions" "repositoryCache"}}
+{{- $redisInstances := list "cache" "clusterCache" "sharedState" "queues" "actioncable" "traceChunks" "rateLimiting" "clusterRateLimiting" "sessions" "repositoryCache" "workhorse" }}
 {{- if .instances }}
 {{- $redisInstances = splitList " " .instances }}
 {{- end }}

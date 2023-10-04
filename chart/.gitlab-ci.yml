@@ -50,9 +50,18 @@ variables:
   DEBIAN_VERSION: bullseye
   RUBY_VERSION: "3.0"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "12.2.1"
+  GITLAB_QA_VERSION: "12.4.1"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
+  KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
+  HELM_DEFAULT_SETTINGS: |
+    certmanager-issuer:
+      email: support@gitlab.com
+    gitlab:
+      toolbox:
+        backups:
+          cron:
+            enabled: true
 
 stages:
   - prepare
@@ -146,7 +155,9 @@ lint_package:
     - helm repo add gitlab https://charts.gitlab.io
     - helm repo add jetstack https://charts.jetstack.io
     - helm dependency update
-    - helm lint --set certmanager-issuer.email=support@gitlab.com
+    - echo "$HELM_DEFAULT_SETTINGS" | tee ./template_settings.yaml
+    - echo "$HELM_SETTINGS" | tee -a ./template_settings.yaml
+    - helm lint -f ./template_settings.yaml
     - mkdir -p build
     - helm package -d build .
   artifacts:
@@ -160,24 +171,26 @@ lint_package:
     - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
     - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
 
-.kubeval:
+.kubeconform:
   stage: preflight
   when: always
   script:
     - kubectl version --client=true
     - helm version --template='{{.Version}}'
-    - helm kubeval --version
+    - helm plugin list
     - helm repo add gitlab https://charts.gitlab.io
     - helm repo add jetstack https://charts.jetstack.io
     - helm dependency update
+    - echo "$HELM_DEFAULT_SETTINGS" | tee ./template_settings.yaml
+    - echo "$HELM_SETTINGS" | tee -a ./template_settings.yaml
     - >
-      helm kubeval . --force-color --strict
-      --kube-version $KUBE_VERSION
-      --set certmanager-issuer.email=support@gitlab.com
-      --set gitlab.toolbox.backups.cron.enabled=true
-      $HELM_EXTRAS
-      --skip-kinds "CustomResourceDefinition"
-      -v $KUBE_VERSION
+      helm kubeconform --strict --summary
+      -f ./template_settings.yaml
+      --kubernetes-version $KUBE_VERSION
+      --schema-location default
+      --schema-location "$KUBE_CRD_SCHEMA_URL"
+      --output json
+      .
   rules:
     - if: '$PIPELINE_TYPE =~ /_MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /_BRANCH_PIPELINE$/'
@@ -185,34 +198,39 @@ lint_package:
   needs: ['lint_package']
 
 "Validate 1.19.16":
-  extends: .kubeval
+  extends: .kubeconform
   variables:
     KUBE_VERSION: "1.19.16"
-    KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
 
 "Validate 1.20.7":
-  extends: .kubeval
+  extends: .kubeconform
   variables:
     KUBE_VERSION: "1.20.7"
-    KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
 
 "Validate 1.22.3":
-  extends: .kubeval
+  extends: .kubeconform
   variables:
     KUBE_VERSION: "1.22.3"
-    KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
-    HELM_EXTRAS: "--set global.ingress.apiVersion=networking.k8s.io/v1"
+    HELM_SETTINGS: |
+      global:
+        ingress:
+          apiVersion: networking.k8s.io/v1
 
 "Validate 1.25.7":
-  extends: .kubeval
+  extends: .kubeconform
   variables:
     KUBE_VERSION: "1.25.7"
-    KUBEVAL_SCHEMA_LOCATION: "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
-    HELM_EXTRAS: >-
-      --set global.ingress.apiVersion=networking.k8s.io/v1
-      --set global.pdb.apiVersion=policy/v1
-      --set global.hpa.apiVersion=autoscaling/v2
-      --set global.batch.cronJob.apiVersion=batch/v1
+    HELM_SETTINGS: |
+      global:
+        ingress:
+          apiVersion: networking.k8s.io/v1
+        pdb:
+          apiVersion: policy/v1
+        hpa:
+          apiVersion: autoscaling/v2
+        batch:
+          cronJob:
+            apiVersion: batch/v1
 
 .review_template:
   stage: review
@@ -551,13 +569,14 @@ check_docs_links:
 
 # Trigger a docs build in gitlab-docs
 # Useful to preview the docs changes live
-# https://docs.gitlab.com/ee/development/documentation/index.html#previewing-the-changes-live
+# https://docs.gitlab.com/ee/development/documentation/review_apps.html
 review-docs-deploy:
   extends:
   - .review-docs
   environment:
-    name: review-docs/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
-    url: https://${DOCS_BRANCH}-${DOCS_GITLAB_REPO_SUFFIX}-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}.${DOCS_REVIEW_APPS_DOMAIN}/${DOCS_GITLAB_REPO_SUFFIX}
+    name: review-docs/mr-${CI_MERGE_REQUEST_IID}
+    url: https://${DOCS_BRANCH}-${DOCS_GITLAB_REPO_SUFFIX}-${CI_MERGE_REQUEST_IID}.${DOCS_REVIEW_APPS_DOMAIN}/${DOCS_GITLAB_REPO_SUFFIX}
+    auto_stop_in: 2 weeks
     on_stop: review-docs-cleanup
   script:
   - ./trigger-build.rb docs deploy
@@ -567,7 +586,7 @@ review-docs-cleanup:
   extends:
   - .review-docs
   environment:
-    name: review-docs/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    name: review-docs/mr-${CI_MERGE_REQUEST_IID}
     action: stop
   script:
   - ./trigger-build.rb docs cleanup
@@ -750,7 +769,6 @@ production_specs_eks:
     - |
       SIGNUP_DISABLED=true \
       QA_DEBUG=true \
-      GITHUB_ACCESS_TOKEN=$QA_GITHUB_ACCESS_TOKEN \
       GITLAB_USERNAME=root \
       GITLAB_PASSWORD=$ROOT_PASSWORD \
       GITLAB_ADMIN_USERNAME=root \

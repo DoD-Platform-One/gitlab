@@ -14,6 +14,9 @@ describe 'checkConfig omniauth' do
                 - secret: oauth
                 - secret: oauth2
                   key: config
+                - name: kerberos
+                  label: Kerberos
+                  icon: "https://example.org/kerberos.png"
       )).merge(default_required_values)
     end
 
@@ -24,10 +27,12 @@ describe 'checkConfig omniauth' do
             omniauth:
               providers:
                 - name: oauth2_generic
+                  app_id: id
+                  app_secret: secret
       )).merge(default_required_values)
     end
 
-    let(:error_output) { "each provider should only contain 'secret', and optionally 'key'" }
+    let(:error_output) { "each provider should only contain either:" }
 
     include_examples 'config validation',
                      success_description: 'when omniauth providers are configured in the expected format',

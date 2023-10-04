@@ -41,7 +41,9 @@ keda:
 
 
 image:
+  # registry:
   repository: registry.gitlab.com/gitlab-com/gl-security/engineering-and-research/automation-team/spam/spamcheck
+  # tag:
 
 service:
   type: ClusterIP

@@ -60,7 +60,7 @@ this is usually done after the demo.
 In order to test LFS storage in the chart, you will need to have the ability to
 use `git lfs`:
 
-1. Start by [installing `git-lfs`](https://git-lfs.github.com).
+1. Start by [installing `git-lfs`](https://git-lfs.com/).
 1. Next, have a non-text file on hand to add to your test repository via LFS.
    A good example is [the GitLab logo](https://gitlab.com/gitlab-com/gitlab-artwork/raw/master/logo/logo.png):
 

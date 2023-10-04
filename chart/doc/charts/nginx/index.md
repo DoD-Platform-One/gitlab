@@ -19,6 +19,10 @@ The version of the NGINX Ingress Helm chart bundled with the GitLab Helm charts
 has been updated to support Kubernetes 1.22. As a result, the GitLab Helm
 chart can not longer support Kubernetes versions prior to 1.19.
 
+NOTE:
+Only one `global.hosts.domain` value is possible.
+Support for multiple domains is being tracked in [issue 3147](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3147).
+
 ## Configuring NGINX
 
 See [NGINX chart documentation](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/nginx-ingress/README.md#configuration)

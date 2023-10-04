@@ -1,6 +1,7 @@
 require 'active_support'
 require 'open-uri'
-require "base64"
+require 'base64'
+require 'fugit'
 
 module Gitlab
   def self.included(klass)
@@ -8,6 +9,20 @@ module Gitlab
   end
 
   module TestHelper
+    KUBE_TIMEOUT_DEFAULT = '2m'.freeze
+
+    def kube_timeout_parse(variable)
+      timeout = ENV[variable] || KUBE_TIMEOUT_DEFAULT
+
+      # Check the format, simplify.
+      duration = Fugit::Duration.parse(timeout)
+
+      # If invalid, return the error.
+      raise "kube_timeout_parse: #{variable}: invalid duration '#{timeout}'" if duration.nil?
+
+      duration.deflate.to_plain_s
+    end
+
     def full_command(cmd, env = {})
       "kubectl exec -it #{pod_name} -- env #{env_hash_to_str(env)} #{cmd}"
     end
@@ -63,7 +78,7 @@ module Gitlab
 
       # Operate specifically within the user login form, avoiding registation form
       within('div#login-pane') do
-        fill_in 'Username or email', with: 'root'
+        fill_in 'Username or primary email', with: 'root'
         fill_in 'Password', with: ENV['GITLAB_PASSWORD']
       end
       click_button 'Sign in'
@@ -121,7 +136,7 @@ module Gitlab
 
       puts "Scaling Deployment ('#{filters}') to #{replicas}."
 
-      stdout, status = Open3.capture2e("kubectl scale deployment -l #{filters} --replicas=#{replicas}")
+      stdout, status = Open3.capture2e("kubectl scale deployment -l #{filters} --replicas=#{replicas}  --timeout=#{kube_timeout_parse('KUBE_SCALE_TIMEOUT')}")
       return [stdout, status]
     end
 
@@ -142,16 +157,18 @@ module Gitlab
       end
     end
 
-    def wait_for_rails_rollout(timeout: "120s")
-      wait_for_rollout(timeout: timeout)
+    def wait_for_rails_rollout
+      wait_for_rollout(type: "deployment", filters: "app in (webservice, sidekiq)")
     end
 
-    def wait_for_rollout(type: "deployment", filters: "app in (webservice, sidekiq)", timeout: "120s")
+    def wait_for_rollout(type: nil, filters: nil)
+      raise ArgumentError, "Must supply both 'type' and 'filters'" if type.nil? || filters.nil?
+
       if ENV['RELEASE_NAME']
         filters="#{filters},release=#{ENV['RELEASE_NAME']}"
       end
 
-      stdout, status = Open3.capture2e("kubectl rollout status #{type} -l'#{filters}' --timeout=#{timeout}")
+      stdout, status = Open3.capture2e("kubectl rollout status #{type} -l'#{filters}' --timeout=#{kube_timeout_parse('KUBE_ROLLOUT_TIMEOUT')}")
       raise stdout unless status.success?
     end
 

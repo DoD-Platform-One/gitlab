@@ -53,18 +53,6 @@ registry:
 {{/* END gitlab.checkConfig.registry.database */}}
 
 {{/*
-Ensure Registry online garbage collection is configured properly and dependencies are met
-*/}}
-{{- define "gitlab.checkConfig.registry.gc" -}}
-{{-   if not (or $.Values.registry.gc.disabled $.Values.registry.database.enabled) }}
-registry:
-    Enabling online garbage collection requires the metadata database to be enabled.
-    See https://docs.gitlab.com/charts/charts/registry#gc
-{{-   end -}}
-{{- end -}}
-{{/* END gitlab.checkConfig.registry.gc */}}
-
-{{/*
 Ensure Registry Redis cache is configured properly and dependencies are met
 */}}
 {{- define "gitlab.checkConfig.registry.redis.cache" -}}

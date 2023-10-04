@@ -68,7 +68,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.79.0-gitlab'
+    tag: 'v3.83.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -174,7 +174,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.79.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.83.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
 | `init.containerSecurityContext`                                                                                                              |                                                                                | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                                                             |
@@ -335,7 +335,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.79.0-gitlab'`
+- `tag: 'v3.83.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -891,7 +891,9 @@ profiling:
 The `database` property is optional and enables the [metadata database](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database).
 
 NOTE:
-The metadata database is an experimental feature and _must not_ be used in production.
+The metadata database is a beta feature from version 16.4 and later. Please
+review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
+and associated documentation before enabling this feature.
 
 NOTE:
 This feature requires PostgreSQL 12 or newer.
@@ -996,8 +998,10 @@ there will be some variation in how you connect.
 The `gc` property provides [online garbage collection](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc)
 options.
 
-WARNING:
-This is an experimental feature and _must not_ be used in production.
+NOTE:
+The online garbage collection is a beta feature from version 16.4 and later. Please
+review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
+and associated documentation before enabling this feature.
 
 Online garbage collection requires the [metadata database](#database) to be enabled. You must use online garbage collection when using the database, though
 you can temporarily disable online garbage collection for maintenance and debugging.
@@ -1020,8 +1024,10 @@ gc:
 
 ### Redis cache
 
-WARNING:
-This is an experimental feature and _must not_ be used in production.
+NOTE:
+The Redis cache is a beta feature from version 16.4 and later. Please
+review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
+and associated documentation before enabling this feature.
 
 The `redis.cache` property is optional and provides options related to the
 [Redis cache](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#cache-1).

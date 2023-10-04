@@ -7,10 +7,13 @@ dependencies:
       enabled: true
   settings:
     # Assign to maintainers by default
-    gitlab_assignee_ids:
-      - 597578  # @WarheadsSE (jplum)
-      - 42196   # @twk3 (dmountney)
-      - 5727219 # @mnielsen (mnielsen)
+    # gitlab_assignee_ids:
+      ## maintainers
+      # - 597578  # @WarheadsSE (jplum)
+      # - 5727219 # @mnielsen (mnielsen)
+      ## trainee maintainers
+      # - 13376698 # clemensbeck
+      # - 4849     # balasankarc (balu)
     gitlab_labels:
       - dependencies.io
       - group::distribution::deploy

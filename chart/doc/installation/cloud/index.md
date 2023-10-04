@@ -18,6 +18,11 @@ Kubernetes features. 1.25 is supported as of Chart 6.6 (GitLab 15.6).
 [Epic 10785](https://gitlab.com/groups/gitlab-org/-/epics/10785) tracks progress towards supporting 1.26.
 For some components, like the [agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/#gitlab-agent-for-kubernetes-supported-cluster-versions) and [GitLab Operator](https://docs.gitlab.com/operator/installation.html#kubernetes), GitLab might support different cluster versions.
 
+WARNING:
+Kubernetes nodes must use the x86-64 architecture.
+Support for multiple architectures, including AArch64/ARM64, is under active development.
+See [issue 2899](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2899) for more information.
+
 NOTE:
 Disabling the in-chart NGINX Ingress Controller (`nginx-ingress.enabled=false`),
 allows the use of Kubernetes 1.16 or later. Alternatively, using version 1.2.1

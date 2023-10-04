@@ -3,6 +3,23 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [7.4.1-bb.0] - 2023-10-03
+### Changed
+Upgrade gitlab to app version 16.4.1 chart version 7.4.1-bb.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice patch 16.3.4 -> 16.4.1
+
+
 ## [7.3.4-bb.0] - 2023-09-21
 ### Changed
 - registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 16.3.1 -> 16.3.4
