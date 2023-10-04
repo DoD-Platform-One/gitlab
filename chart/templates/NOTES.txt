@@ -1,7 +1,20 @@
 {{- $NOTICE := "\n=== NOTICE" -}}
 {{- $WARNING := "\n=== WARNING" -}}
+{{- $CRITICAL := "\n=== CRITICAL" -}}
 
-{{/* PostgreSQL minimum version change */}}
+{{- /* If any development subchart is enabled, note it is not production ready */}}
+{{- $enabledNonProdCharts := fromJsonArray (include "gitlab.nonProdCharts.enabledNames" .) -}}
+{{- if not (empty $enabledNonProdCharts) }}
+{{ $CRITICAL }}
+The following charts are included for evaluation purposes only. They will not be supported by GitLab Support 
+for production workloads. Use Cloud Native Hybrid deployments for production. For more information visit 
+https://docs.gitlab.com/charts/installation/index.html#use-the-reference-architectures.
+{{- range $name := $enabledNonProdCharts }}
+- {{ $name }}
+{{- end }}
+{{- end }}
+
+{{- /* PostgreSQL minimum version change */}}
 {{ $NOTICE }}
 The minimum required version of PostgreSQL is now 13. See https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/doc/installation/upgrade.md for more details.
 
@@ -9,18 +22,6 @@ The minimum required version of PostgreSQL is now 13. See https://gitlab.com/git
 {{- if eq .Values.registry.database.enabled true }}
 {{ $WARNING }}
 The Container Registry metadata database has been enabled. Please note that it is an experimental feature and must not be used in production.
-{{- end }}
-
-{{- /* If the Container Registry online garbage collection is enabled, note it is not production ready */}}
-{{- if eq false .Values.registry.gc.disabled }}
-{{ $WARNING }}
-The Container Registry online garbage collection has been enabled. Please note that it is an experimental feature and must not be used in production.
-{{- end }}
-
-{{- /* If Praefect enabled, note it is not production ready */}}
-{{- if eq .Values.global.praefect.enabled true }}
-{{ $WARNING }}
-The Praefect chart has been enabled. Please note that it is still under development and not ready for production use. Usage may require significant manual intervention during upgrades.
 {{- end }}
 
 {{- /* If shared-secrets is disable, manual secret creation will be needed */}}

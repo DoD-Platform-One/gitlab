@@ -96,6 +96,13 @@ Input: dict "context" $ "name" string
 {{- end -}}
 {{- end -}}
 
+{{- define "gitlab.rails.redis.workhorse" -}}
+{{- if .Values.global.redis.workhorse -}}
+{{-   $_ := set $ "redisConfigName" "workhorse" }}
+{{-   include "gitlab.rails.redis.yaml" (dict "context" $ "name" "redis.workhorse") -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 cable.yml configuration
 If no `global.redis.actioncable`, use `global.redis`
@@ -144,5 +151,6 @@ redis.yml.erb: |
 {{ include "gitlab.rails.redis.clusterRateLimiting" . }}
 {{ include "gitlab.rails.redis.sessions" . }}
 {{ include "gitlab.rails.redis.repositoryCache" . }}
+{{ include "gitlab.rails.redis.workhorse" . }}
 {{ include "gitlab.rails.redisYmlOverride" . }}
 {{- end -}}

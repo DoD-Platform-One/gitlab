@@ -13,6 +13,7 @@ group :test do
   gem 'hash-deep-merge'
   gem 'knapsack'
   gem 'tomlrb'
+  gem 'fugit'
 end
 
 group :rubocop do

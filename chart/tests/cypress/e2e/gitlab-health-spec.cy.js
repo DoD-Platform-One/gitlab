@@ -25,7 +25,7 @@ describe('Gitlab Signup', () => {
     cy.get('.validation-error').then(($userexist) => {
       if ($userexist.hasClass('hide')) {
         cy.get('input[id="new_user_password"]').type(Cypress.env('gitlab_password'))
-        cy.get('button[data-qa-selector="new_user_register_button"]').click()
+        cy.get('button[data-testid="new-user-register-button"]').click()
       }
     })
   })
@@ -43,13 +43,13 @@ describe('Gitlab Login as Root', () => {
 
     // approve new user
     cy.visit('/admin/users')
-    cy.get('a[data-qa-selector="pending_approval_tab"]').click()
+    cy.get('a[data-testid="pending-approval-tab"]').click()
 
     cy.get('body').then($body => {
-      if ($body.find('div[data-qa-selector="user_actions_dropdown_toggle"] > button').length > 0 ) {
-        cy.get('div[data-qa-selector="user_actions_dropdown_toggle"] > button').click()
+      if ($body.find('div[data-testid="user-actions-dropdown-toggle"] > button').length > 0 ) {
+        cy.get('div[data-testid="user-actions-dropdown-toggle"] > button').click()
         cy.get('li[data-testid="approve"] > button').click()
-        cy.get('button[data-qa-selector="approve_user_confirm_button"]').click()
+        cy.get('button[data-testid="approve-user-confirm-button"]').click()
       }
     })
   })

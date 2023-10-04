@@ -1,5 +1,5 @@
 {{- if and .Values.enabled .Values.global.appConfig.incomingEmail.enabled }}
-{{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
+{{- $imageCfg := dict "global" .Values.global.image "local" .Values.image "context" $ -}}
 {{- $initImageCfg := include "gitlab.configure.config" .Values | fromYaml -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -86,7 +86,7 @@ spec:
       containers:
         {{- include "gitlab.extraContainers" . | nindent 8 }}
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ coalesce .Values.image.tag (include "gitlab.parseAppVersion" (dict "appVersion" .Chart.AppVersion "prepend" "true")) }}{{ include "gitlab.image.tagSuffix" . }}"
+          image: {{ include "gitlab.image.fullPath" $imageCfg }}
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           {{- include "gitlab.containerSecurityContext" $ | indent 10 }}
           env:

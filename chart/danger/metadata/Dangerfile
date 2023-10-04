@@ -1,0 +1,12 @@
+fail("Please add labels to this merge request.") if helper.mr_labels.empty?
+
+warn("You may want to add ~group::distribution label to this MR for gitlab-insights") unless helper.mr_labels.include?("group::distribution")
+
+has_pick_into_stable_label = helper.mr_labels.find { |label| label.start_with?('Pick into') }
+
+warn("Most of the time, all merge requests should target `master`. Otherwise, please set the relevant `Pick into X.Y` label.") if helper.mr_target_branch != "master" && !has_pick_into_stable_label
+
+has_qa_verified_label = helper.mr_labels.find { |label| label.start_with?('QA:verified') }
+is_docs_only_branch = helper.mr_source_branch =~ /(^docs[\/-].*|.*-docs$)/
+
+warn("Please check the QA job and compare with builds on `master`. If no new failures are reported in QA job, add ~QA:verified label.") unless has_qa_verified_label || is_docs_only_branch

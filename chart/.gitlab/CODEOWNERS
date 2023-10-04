@@ -24,17 +24,16 @@
 .markdownlint.yml @eread @axil @aqualls @gitlab-org/tw-leadership
 /doc/.vale/ @eread @axil @aqualls @gitlab-org/tw-leadership
 
-^[Distribution CI/CD] @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
-.gitlab/ci/*
-/scripts/ci/*
-.gitlab-ci.yml
+# Distribution CI/CD
+.gitlab/ci/ @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
+/scripts/ci/ @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
+.gitlab-ci.yml @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
+
+# Chart Dependency
+/requirements.yaml @gitlab-org/maintainers/helm-charts-gitlab @DylanGriffith @dgruzd @terrichu @johnmason
+
+# Charts Architecture
+/doc/architecture/ @WarheadsSE @twk3 @ayufan @stanhu
 
 ^[Documentation Directories] @gl-docsteam
 /doc/
-
-^[Chart Dependency] @gitlab-org/maintainers/helm-charts-gitlab @DylanGriffith @dgruzd @terrichu @johnmason
-/requirements.yaml
-
-[Charts Architecture] @WarheadsSE @twk3 @ayufan @stanhu
-/doc/architecture/*
-

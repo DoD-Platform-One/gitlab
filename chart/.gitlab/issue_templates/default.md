@@ -45,3 +45,4 @@ Support: Please do not raise support issues for GitLab.com on this tracker. See 
 
 (Please provide any relevant log snippets you have collected, using code blocks (```) to format)
 
+<!-- template sourced from https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/.gitlab/issue_templates/default.md -->

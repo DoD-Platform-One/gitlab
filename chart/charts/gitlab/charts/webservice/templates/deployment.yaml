@@ -275,7 +275,7 @@ spec:
             - name: webservice-secrets
               mountPath: /srv/gitlab/config/puma.key
               subPath: puma/puma.key
-           {{- end }}
+            {{- end }}
             - name: webservice-config
               mountPath: '/etc/krb5.conf'
               subPath: krb5.conf

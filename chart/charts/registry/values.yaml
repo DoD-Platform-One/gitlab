@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.79.0-gitlab'
+  tag: 'v3.83.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -367,7 +367,9 @@ serviceAccount:
   create: false
 
 # Disable metadata database by default
-# NOTE: This is an experimental feature and must not be used in production.
+# NOTE: The metadata database is a beta feature from version 16.4 and later. Please
+# review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
+# and associated documentation before enabling this feature.
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database
 database:
   enabled: false
@@ -393,12 +395,13 @@ redis:
     password:
       enabled: false
 
-# Disable online garbage collection by default.
-# NOTE: This is an experimental feature and must not be used in production.
+# The online garbage collector is only going to be enabled if the metadata
+# database is enabled. In general, we don't want to default to disabled, since
+# online garbage collection is designed to run continuously and should only be
+# disabled for compelling debugging and troubleshooting reasons.
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc
 gc:
-  disabled: true
-
+  disabled: false
 
 ## Configure TLS on the instance itself
 ## WARNING: All clients must trust the certificate used for service.
