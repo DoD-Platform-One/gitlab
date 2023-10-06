@@ -80,7 +80,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
     gatekeeper:
       enabled: false
 
-    istiooperator:
+    istioOperator:
       enabled: true
 
     istio:
