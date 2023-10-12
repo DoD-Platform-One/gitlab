@@ -882,6 +882,7 @@ global:
 # Needed for upgradeCheck containerSecurityContext values
 containerSecurityContext:
   runAsUser: 65534
+  runAsGroup: 65534
   capabilities:
     drop:
       - ALL
@@ -895,6 +896,7 @@ upgradeCheck:
   securityContext:
     # in alpine/debian/busybox based images, this is `nobody:nogroup`
     runAsUser: 65534
+    runAsGroup: 65534
     fsGroup: 65534
   #The below values are used above not nested under upgradeCheck
   #containerSecurityContext:
@@ -1208,6 +1210,7 @@ redis:
     containerSecurityContext:
       enabled: true
       runAsUser: 1001
+      runAsGroup: 1001
       runAsNonRoot: true
       capabilities:
         drop: 
@@ -1232,6 +1235,7 @@ redis:
     containerSecurityContext:
       enabled: true
       runAsUser: 1001
+      runAsGroup: 1001
       runAsNonRoot: true
       capabilities:
         drop: 
@@ -1247,6 +1251,7 @@ redis:
     containerSecurityContext:
       enabled: true
       runAsUser: 1001
+      runAsGroup: 1001
       runAsNonRoot: true
       capabilities:
         drop: 
@@ -1316,6 +1321,7 @@ postgresql:
     containerSecurityContext:
       enabled: true
       runAsUser: 1001
+      runAsGroup: 1001
       capabilities:
         drop: 
           - ALL
@@ -1390,7 +1396,13 @@ registry:
     path: /metrics
     serviceMonitor:
       enabled: true
+  securityContext: 
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
   containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
     capabilities:
       drop: 
         - ALL
@@ -1425,6 +1437,7 @@ shared-secrets:
   securityContext:
     # in debian/alpine based images, this is `nobody:nogroup`
     runAsUser: 65534
+    runAsGroup: 65534
     fsGroup: 65534
   containerSecurityContext:
     capabilities:
@@ -1529,7 +1542,13 @@ gitlab:
             cpu: 500m
             memory: 768Mi
         istioShutdown: "&& echo \"Backup Complete\" && until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Istio sidecar proxy...\"; sleep 3; done && sleep 5 && echo \"Stopping the istio proxy...\" && curl -X POST http://localhost:15020/quitquitquit"
+    securityContext: 
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       capabilities:
         drop: 
           - ALL
@@ -1602,7 +1621,13 @@ gitlab:
       tag: 16.4.1
       pullSecrets:
       - name: private-registry
+    securityContext: 
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       capabilities:
         drop: 
           - ALL
@@ -1622,7 +1647,13 @@ gitlab:
         capabilities:
           drop: 
             - ALL
+    securityContext: 
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       capabilities:
         drop: 
           - ALL
@@ -1693,7 +1724,13 @@ gitlab:
       limits:
         memory: 3G
         cpu: 1500m
+    securityContext: 
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       capabilities:
         drop: 
           - ALL
@@ -1728,7 +1765,13 @@ gitlab:
       enabled: true
       serviceMonitor:
         enabled: true
+    securityContext: 
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       capabilities:
         drop: 
           - ALL
@@ -1759,7 +1802,13 @@ gitlab:
       requests:
         cpu: 300m
         memory: 300Mi
+    securityContext: 
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       capabilities:
         drop: 
           - ALL
@@ -1854,7 +1903,14 @@ minio:
     requests:
       cpu: 200m
       memory: 300Mi
+  securityContext: 
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
   containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
     capabilities:
       drop: 
         - ALL
