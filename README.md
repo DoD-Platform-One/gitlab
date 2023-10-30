@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.4.1-bb.4](https://img.shields.io/badge/Version-7.4.1--bb.4-informational?style=flat-square) ![AppVersion: 16.4.1](https://img.shields.io/badge/AppVersion-16.4.1-informational?style=flat-square)
+![Version: 7.4.1-bb.5](https://img.shields.io/badge/Version-7.4.1--bb.5-informational?style=flat-square) ![AppVersion: 16.4.1](https://img.shields.io/badge/AppVersion-16.4.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -382,9 +382,10 @@ helm install gitlab chart/
 | global.gitlabBase.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
 | global.gitlabBase.image.tag | string | `"8.8"` |  |
 | global.gitlabBase.image.pullSecrets[0].name | string | `"private-registry"` |  |
-| global.serviceAccount.enabled | bool | `false` |  |
+| global.serviceAccount.enabled | bool | `true` |  |
 | global.serviceAccount.create | bool | `true` |  |
 | global.serviceAccount.annotations | object | `{}` |  |
+| global.serviceAccount.automountServiceAccountToken | bool | `false` |  |
 | global.tracing.connection.string | string | `""` |  |
 | global.tracing.urlTemplate | string | `""` |  |
 | global.zoekt.gateway.basicAuth | object | `{}` |  |
@@ -657,6 +658,7 @@ helm install gitlab chart/
 | redis.metrics.containerSecurityContext.runAsGroup | int | `1001` |  |
 | redis.metrics.containerSecurityContext.runAsNonRoot | bool | `true` |  |
 | redis.metrics.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| redis.serviceAccount.automountServiceAccountToken | bool | `false` |  |
 | redis.securityContext.runAsUser | int | `1001` |  |
 | redis.securityContext.fsGroup | int | `1001` |  |
 | redis.securityContext.runAsNonRoot | bool | `true` |  |
@@ -769,6 +771,7 @@ helm install gitlab chart/
 | shared-secrets.serviceAccount.enabled | bool | `true` |  |
 | shared-secrets.serviceAccount.create | bool | `true` |  |
 | shared-secrets.serviceAccount.name | string | `nil` |  |
+| shared-secrets.serviceAccount.automountServiceAccountToken | bool | `false` |  |
 | shared-secrets.resources.requests.cpu | string | `"300m"` |  |
 | shared-secrets.resources.requests.memory | string | `"200Mi"` |  |
 | shared-secrets.resources.limits.cpu | string | `"300m"` |  |

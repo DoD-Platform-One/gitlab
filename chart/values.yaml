@@ -837,9 +837,10 @@ global:
 
   ## https://docs.gitlab.com/charts/charts/globals#service-accounts
   serviceAccount:
-    enabled: false
+    enabled: true
     create: true
     annotations: {}
+    automountServiceAccountToken: false
     ## Name to be used for serviceAccount, otherwise defaults to chart fullname
     # name:
 
@@ -1215,6 +1216,8 @@ redis:
       capabilities:
         drop: 
           - ALL
+  serviceAccount:
+    automountServiceAccountToken: false
   securityContext:
     runAsUser: 1001
     fsGroup: 1001
@@ -1427,6 +1430,7 @@ shared-secrets:
     enabled: true
     create: true
     name: # Specify a pre-existing ServiceAccount name
+    automountServiceAccountToken: false
   resources:
     requests:
       cpu: 300m

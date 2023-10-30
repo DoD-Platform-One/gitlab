@@ -490,6 +490,19 @@ Create the name of the service account to use for shared-secrets job
 {{- end -}}
 
 {{/*
+Return the sub-chart serviceAccount automountServiceAccountToken setting
+If that is not present it will use the global chart serviceAccount automountServiceAccountToken setting
+*/}}
+{{- define "shared-secrets.automountServiceAccountToken" -}}
+{{- $sharedSecretValues := index .Values "shared-secrets" -}}
+{{- if not (empty $sharedSecretValues.serviceAccount.automountServiceAccountToken) -}}
+    {{ $sharedSecretValues.serviceAccount.automountServiceAccountToken }}
+{{- else -}}
+    {{ .Values.global.serviceAccount.automountServiceAccountToken }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return a emptyDir definition for Volume declarations
 
 Scope is the configuration of that emptyDir.
