@@ -166,3 +166,15 @@ upgrades don't cause errors trying to create the already ran job.
 {{- $name := include "registry.fullname" . | trunc 55 | trimSuffix "-" -}}
 {{- printf "%s-migrations-%d" $name .Release.Revision | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Return the sub-chart serviceAccount automountServiceAccountToken setting
+If that is not present it will use the global chart serviceAccount automountServiceAccountToken setting
+*/}}
+{{- define "registry.serviceAccount.automountServiceAccountToken" -}}
+{{- if not (empty .Values.serviceAccount.automountServiceAccountToken) -}}
+    {{ .Values.serviceAccount.automountServiceAccountToken }}
+{{- else -}}
+    {{ .Values.global.serviceAccount.automountServiceAccountToken }}
+{{- end -}}
+{{- end -}}

@@ -198,6 +198,88 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 # Modifications made to upstream chart
 This is a high-level list of modifications that Big Bang has made to the upstream helm chart. You can use this as as cross-check to make sure that no modifications were lost during the upgrade process.
 
+## chart/charts/certmanager-issuer/templates/rbac-config.yaml 
+- Exposed automountServiceAccountToken for service account.
+```
+automountServiceAccountToken: {{ template "gitlab.serviceAccount.automountServiceAccountToken" . }}
+```
+
+## chart/charts/gitlab/charts/*/templates/serviceaccount.yaml 
+- Exposed automountServiceAccountToken for service accounts in the following gitlab components: geo-logcursor, gitaly, gitlab-exporter, gitlab-pages, gitlab-shell, kas, mailroom, migrations (_serviceaccountspec.yaml), praefect, sidekiq, spamcheck, toolbox, webservice
+```
+automountServiceAccountToken: {{ template "gitlab.serviceAccount.automountServiceAccountToken" . }}
+```
+
+## chart/charts/gitlab/templates/_serviceAccount.tpl 
+- Added template that respects the global and specific service account settings pertaining to automountServiceAccountToken
+```
+{{/*
+Return the sub-chart serviceAccount automountServiceAccountToken setting
+If that is not present it will use the global chart serviceAccount automountServiceAccountToken setting
+*/}}
+{{- define "gitlab.serviceAccount.automountServiceAccountToken" -}}
+{{- if not (empty .Values.serviceAccount.automountServiceAccountToken) -}}
+    {{ .Values.serviceAccount.automountServiceAccountToken }}
+{{- else -}}
+    {{ .Values.global.serviceAccount.automountServiceAccountToken }}
+{{- end -}}
+{{- end -}}
+```
+
+## chart/charts/nginx-ingress/values.yaml
+- Added default for serviceAccount.automountServiceAccountToken in controller.admissionWebhooks to respect implicit default
+```
+controller:
+  admissionWebhooks:
+    serviceAccount:
+      automountServiceAccountToken: true
+```
+
+## chart/templates/shared-secrets/job.yaml && chart/templates/shared-secrets/self-signed-cert-job.yml
+- Set automountServiceAccountToken to true for shared-secrets jobs which need this token to be successful
+```
+automountServiceAccountToken: true
+```
+
+## chart/templates/shared-secrets/rbac-config.yaml
+- Exposed automountServiceAccountToken for service account.
+```
+automountServiceAccountToken: {{ template "shared-secrets.automountServiceAccountToken" . }}
+```
+
+## chart/charts/registry/templates/_helpers.tpl  
+- Added template that respects the global and specific service account settings pertaining to automountServiceAccountToken
+```
+{{/*
+Return the sub-chart serviceAccount automountServiceAccountToken setting
+If that is not present it will use the global chart serviceAccount automountServiceAccountToken setting
+*/}}
+{{- define "registry.serviceAccount.automountServiceAccountToken" -}}
+{{- if not (empty .Values.serviceAccount.automountServiceAccountToken) -}}
+    {{ .Values.serviceAccount.automountServiceAccountToken }}
+{{- else -}}
+    {{ .Values.global.serviceAccount.automountServiceAccountToken }}
+{{- end -}}
+{{- end -}}
+```
+
+## chart/templates/_helpers.tpl
+- Added template that respects the global and specific service account settings pertaining to automountServiceAccountToken
+```
+{{/*
+Return the sub-chart serviceAccount automountServiceAccountToken setting
+If that is not present it will use the global chart serviceAccount automountServiceAccountToken setting
+*/}}
+{{- define "shared-secrets.automountServiceAccountToken" -}}
+{{- $sharedSecretValues := index .Values "shared-secrets" -}}
+{{- if not (empty $sharedSecretValues.serviceAccount.automountServiceAccountToken) -}}
+    {{ $sharedSecretValues.serviceAccount.automountServiceAccountToken }}
+{{- else -}}
+    {{ .Values.global.serviceAccount.automountServiceAccountToken }}
+{{- end -}}
+{{- end -}}
+```
+
 ## chart/bigbang/*
 - Add DoD approved CA certificates (recursive copy directory from previous release).
 - If updating new certificates from new bundle:

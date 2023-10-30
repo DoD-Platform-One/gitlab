@@ -40,6 +40,7 @@ spec:
       {{- if or $sharedSecretValues.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ template "shared-secrets.serviceAccountName" . }}
       {{- end }}
+      automountServiceAccountToken: true
       restartPolicy: Never
       {{- include "gitlab.image.pullSecrets" $imageCfg | nindent 6 }}
       initContainers:

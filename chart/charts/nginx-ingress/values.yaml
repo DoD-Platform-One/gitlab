@@ -605,6 +605,9 @@ controller:
       #   kubernetes.io/os: linux
       tolerations: []
       runAsUser: 2000
+    
+    serviceAccount:
+      automountServiceAccountToken: true
 
   metrics:
     port: 10254
