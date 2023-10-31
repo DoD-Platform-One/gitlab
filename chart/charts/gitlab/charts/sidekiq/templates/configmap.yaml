@@ -13,6 +13,10 @@ data:
     gitlab-helm-chart
   database.yml.erb: |
     {{- include "gitlab.database.yml" . | nindent 4 }}
+  {{- if $.Values.global.clickhouse.enabled }}
+  click_house.yml.erb: |
+    {{- include "gitlab.clickhouse.yml" . | nindent 4 }}
+  {{- end }}
   krb5.conf: |
     {{- .Values.global.appConfig.kerberos.krb5Config | nindent 4 }}
   smtp_settings.rb: |

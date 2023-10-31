@@ -60,6 +60,7 @@ The outline below should be followed in order:
 1. [Confirm Operational Status](#confirm-operational-status)
 1. [Configure a separate URL for the secondary site (Optional)](#configure-a-separate-url-for-the-secondary-site-optional)
 1. [Registry](#registry)
+1. [Cert-manager and unified URL](#cert-manager-and-unified-url)
 
 ## Set up Linux package database nodes
 
@@ -218,6 +219,11 @@ After the configuration above is prepared:
 ## Deploy chart as Geo Primary site
 
 _This section is performed on the Primary site's Kubernetes cluster._
+
+NOTE:
+Setting up a unified URL on primaries currently does not work with pre-defined IP addresses
+set in `global.hosts.externalIP`.
+See [issue 5006](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5006) for more information.
 
 To deploy this chart as a Geo Primary, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/primary.yaml):
 
@@ -756,3 +762,16 @@ In some cases, you may want to give users control over which site they visit. Fo
 To sync the secondary registry with the primary registry you can configure
 [registry replication](https://docs.gitlab.com/ee/administration/geo/replication/container_registry.html#configure-container-registry-replication)
 using a  [notification secret](../../charts/registry/index.md#notification-secret).
+
+## Cert-manager and unified URL
+
+Geo's unified URL is often used with geolocation-aware routing (for example, using Amazon Route 53 or Google Cloud DNS), which can
+cause problems if the [HTTP01 challenge](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) is used to validate that the
+domain name is under your control.
+
+When you request a certificate for one Geo site, Let's Encrypt must resolve the DNS name to the requesting Geo site. If the DNS resolves
+to a different Geo site, the certificate for the unified URL will not be issued or refreshed.
+
+To reliably create and refresh certificates with cert-manager, either [set the challenge nameserver](https://cert-manager.io/docs/configuration/acme/http01/#setting-nameservers-for-http-01-solver-propagation-checks)
+to a server that is known to resolve the unified hostname to the Geo sites IP address or configure
+a [DNS01](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge) [Issuer](https://cert-manager.io/docs/configuration/acme/dns01/).

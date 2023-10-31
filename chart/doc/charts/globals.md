@@ -140,6 +140,14 @@ The GitLab global host settings for CronJobs are located under the `global.batch
 | :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
 | `apiVersion` | String    |         | API version to use in the CronJob object definitions. |
 
+## Configure Monitoring settings
+
+The GitLab global settings for ServiceMonitors and PodMonitors are located under the `global.monitoring` key:
+
+| Name         | Type      | Default | Description                                                           |
+| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
+| `enabled`    | Boolean   | `false` | Enable monitoring resources regardless of the availability of the `monitoring.coreos.com/v1` API. |
+
 ## Configure Ingress settings
 
 The GitLab global host settings for Ingress are located under the `global.ingress` key:

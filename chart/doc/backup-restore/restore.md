@@ -8,7 +8,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 To obtain a backup tarball of an existing GitLab instance that used other installation methods like the Linux
 package or GitLab Helm chart, follow the instructions
-[given in documentation](https://docs.gitlab.com/ee/raketasks/backup_restore.html#creating-a-backup-of-the-gitlab-system).
+[given in documentation](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html).
 
 If you are restoring a backup taken from another instance, you must migrate your existing instance to using object storage
 before taking the backup. See [issue 646](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/646).
@@ -95,7 +95,7 @@ The steps for restoring a GitLab installation are
    kubectl get pods -lrelease=RELEASE_NAME,app=toolbox
    ```
 
-1. Get the tarball ready in any of the above locations. Make sure it is named in the `<timestamp>_gitlab_backup.tar` format. Read what the [backup timestamp](https://docs.gitlab.com/ee/raketasks/backup_restore.html#backup-timestamp) is about.
+1. Get the tarball ready in any of the above locations. Make sure it is named in the `<timestamp>_gitlab_backup.tar` format. Read what the [backup timestamp](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#backup-timestamp) is about.
 
 1. Note the current number of replicas for database clients for subsequent restart:
 

@@ -1,0 +1,37 @@
+registry:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+gitlab:
+  gitaly:
+    metrics:
+      serviceMonitor:
+        enabled: true
+  gitlab-exporter:
+    metrics:
+      serviceMonitor:
+        enabled: true
+  gitlab-pages:
+    metrics:
+      serviceMonitor:
+        enabled: true
+  gitlab-shell:
+    sshDaemon: gitlab-sshd
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+  kas:
+    metrics:
+      serviceMonitor:
+        enabled: true
+  praefect:
+    metrics:
+      serviceMonitor:
+        enabled: true
+  webservice:
+    metrics:
+      serviceMonitor:
+        enabled: true

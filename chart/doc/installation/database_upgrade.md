@@ -35,7 +35,7 @@ The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-b
 
 NOTE:
 Starting from `7.0.0`, GitLab chart not longer mounts PostgreSQL credentials as files inside of the PostgreSQL instance.
-This is done by setting `postgresql.auth.usePasswordFiles` to `false`. This means that database crededntials are passed
+This is done by setting `postgresql.auth.usePasswordFiles` to `false`. This means that database credentials are passed
 as environment variables instead of password files, only for this component.
 
 This is due to [an issue](https://github.com/bitnami/charts/issues/16707) in upstream PostgreSQL chart. If you do not

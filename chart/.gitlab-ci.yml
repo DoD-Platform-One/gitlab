@@ -62,6 +62,7 @@ variables:
         backups:
           cron:
             enabled: true
+  GITLAB_AUTH_TOKEN: $DANGER_GITLAB_API_TOKEN
 
 stages:
   - prepare
@@ -74,6 +75,7 @@ stages:
   - specs
   - qa-manual
   - qa
+  - qa-report
   - staging-release
   - package
   - release-package
@@ -89,8 +91,12 @@ include:
   - project: 'gitlab-org/quality/pipeline-common'
     file:
       - '/ci/danger-review.yml'
+      - '/ci/allure-report.yml'
     rules:
-      - if: $CI_SERVER_HOST == "gitlab.com"
+      - if: '$CI_SERVER_HOST == "gitlab.com"'
+  - local: '/gitlab-ci-config/gitlab-com.yml'
+    rules:
+      - if: '$CI_SERVER_HOST == "gitlab.com"'
 
 dependency_scanning:
   needs: []
@@ -267,12 +273,30 @@ lint_package:
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
 
+.review_gke122_common_vars: &review_gke122_common_vars
+  DNS_PROVIDER: "google"
+  AGENT_NAME: "gke122-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
+  KUBE_NAMESPACE: "helm-charts-win"
+
+.review_gke125_common_vars: &review_gke125_common_vars
+  DNS_PROVIDER: "google"
+  AGENT_NAME: "gke125-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
+  KUBE_NAMESPACE: "helm-charts-win"
+
+.review_gke126_common_vars: &review_gke126_common_vars
+  DNS_PROVIDER: "google"
+  AGENT_NAME: "gke126-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v126.helm-charts.win"
+  KUBE_NAMESPACE: "helm-charts-win"
+
+.review_eks_common_vars: &review_eks_common_vars
+  DNS_PROVIDER: "aws"
+
 review_gke122:
   variables:
-    DNS_PROVIDER: "google"
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
+    <<: *review_gke122_common_vars
   extends: .review_template
   environment:
     name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
@@ -283,10 +307,7 @@ review_gke122:
 
 review_gke125:
   variables:
-    DNS_PROVIDER: "google"
-    AGENT_NAME: "gke125-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
+    <<: *review_gke125_common_vars
   extends: .review_template
   environment:
     name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
@@ -295,9 +316,20 @@ review_gke125:
     auto_stop_in: 2 days
   resource_group: "gke125-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
 
+review_gke126:
+  variables:
+    <<: *review_gke126_common_vars
+  extends: .review_template
+  environment:
+    name: gke126_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke126
+    auto_stop_in: 2 days
+  resource_group: "gke126-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+
 review_eks:
   variables:
-    DNS_PROVIDER: "aws"
+    <<: *review_eks_common_vars
   extends: .review_template
   environment:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
@@ -330,24 +362,30 @@ review_eks:
 stop_review_gke122:
   extends: .stop_review_template
   variables:
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
+    <<:  *review_gke122_common_vars
   environment:
     name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     action: stop
 
 stop_review_gke125:
   variables:
-    AGENT_NAME: "gke125-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
+    <<:  *review_gke125_common_vars
   extends: .stop_review_template
   environment:
     name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     action: stop
 
+stop_review_gke126:
+  variables:
+    <<:  *review_gke126_common_vars
+  extends: .stop_review_template
+  environment:
+    name: gke126_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    action: stop
+
 stop_review_eks:
+  variables:
+    <<: *review_eks_common_vars
   extends: .stop_review_template
   environment:
     name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
@@ -389,10 +427,8 @@ stable_gke122:
     name: gke122_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   variables:
+    <<: *review_gke122_common_vars
     VARIABLES_FILE: "variables/stable_gke122"
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
   resource_group: "gke122-production"
 
 stable_gke125:
@@ -401,11 +437,19 @@ stable_gke125:
     name: gke125_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   variables:
+    <<: *review_gke125_common_vars
     VARIABLES_FILE: "variables/stable_gke125"
-    AGENT_NAME: "gke125-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
   resource_group: "gke125-production"
+
+stable_gke126:
+  extends: .stable
+  environment:
+    name: gke126_production
+    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
+  variables:
+    <<: *review_gke126_common_vars
+    VARIABLES_FILE: "variables/stable_gke126"
+  resource_group: "gke126-production"
 
 stable_eks:
   extends: .stable
@@ -413,15 +457,14 @@ stable_eks:
     name: eks_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   variables:
+    <<: *review_eks_common_vars
     VARIABLES_FILE: "variables/stable_eks"
   resource_group: "eks-production"
 
 review_helm_test_gke122:
   stage: qa
   variables:
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
+    <<:  *review_gke122_common_vars
   environment:
     name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
@@ -440,9 +483,7 @@ review_helm_test_gke122:
 production_helm_test_gke122:
   stage: qa
   variables:
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
+    <<:  *review_gke122_common_vars
   environment:
     name: gke122_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
@@ -471,11 +512,10 @@ debug_review_gke122:
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_gke122
   variables:
+    <<: *review_gke122_common_vars
     HOST_SUFFIX: "$CI_ENVIRONMENT_SLUG"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
     DOMAIN: "-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN"
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_NAMESPACE: "helm-charts-win"
+
   rules:
     - !reference [.rule:skip_if_no_cluster]
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
@@ -630,11 +670,9 @@ review-docs-cleanup:
 review_specs_gke122:
   extends: .specs
   variables:
+    <<: *review_gke122_common_vars
     VARIABLES_FILE: "variables/review_gke122"
     RSPEC_TAGS: type:feature
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
   environment:
     name: gke122_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
@@ -648,11 +686,9 @@ review_specs_gke122:
 review_specs_gke125:
   extends: .specs
   variables:
+    <<: *review_gke125_common_vars
     VARIABLES_FILE: "variables/review_gke125"
     RSPEC_TAGS: type:feature
-    AGENT_NAME: "gke125-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
   environment:
     name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
@@ -663,9 +699,26 @@ review_specs_gke125:
     - !reference [.specs, rules]
   needs: ['review_gke125']
 
+review_specs_gke126:
+  extends: .specs
+  variables:
+    <<: *review_gke126_common_vars
+    VARIABLES_FILE: "variables/review_gke126"
+    RSPEC_TAGS: type:feature
+  environment:
+    name: gke126_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke126
+  resource_group: "gke126-review-app-${REVIEW_REF_PREFIX}${CI_COMMIT_REF_SLUG}"
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
+  needs: ['review_gke126']
+
 review_specs_eks:
   extends: .specs
   variables:
+    <<:  *review_eks_common_vars
     VARIABLES_FILE: "variables/review_eks"
     RSPEC_TAGS: type:feature
   environment:
@@ -708,11 +761,9 @@ production_specs_without_cluster:
 production_specs_gke122:
   extends: .production_specs
   variables:
+    <<: *review_gke122_common_vars
     VARIABLES_FILE: "variables/stable_gke122"
     RSPEC_TAGS: type:feature
-    AGENT_NAME: "gke122-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v122.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
   environment:
     name: gke122_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
@@ -722,21 +773,32 @@ production_specs_gke122:
 production_specs_gke125:
   extends: .production_specs
   variables:
+    <<: *review_gke125_common_vars
     VARIABLES_FILE: "variables/stable_gke125"
     RSPEC_TAGS: type:feature
-    AGENT_NAME: "gke125-ci-cluster"
-    KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v125.helm-charts.win"
-    KUBE_NAMESPACE: "helm-charts-win"
   environment:
     name: gke125_production
     url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
   resource_group: "gke125-production"
   needs: ['stable_gke125']
 
+production_specs_gke126:
+  extends: .production_specs
+  variables:
+    <<: *review_gke126_common_vars
+    VARIABLES_FILE: "variables/stable_gke126"
+    RSPEC_TAGS: type:feature
+  environment:
+    name: gke126_production
+    url: https://gitlab.$KUBE_INGRESS_BASE_DOMAIN
+  resource_group: "gke126-production"
+  needs: ['stable_gke126']
+
 production_specs_eks:
   extends: .production_specs
   allow_failure: true
   variables:
+    <<: *review_eks_common_vars
     VARIABLES_FILE: "variables/stable_eks"
     RSPEC_TAGS: type:feature
   environment:
@@ -751,6 +813,7 @@ production_specs_eks:
   services:
   - docker:dind
   variables:
+    QA_GENERATE_ALLURE_REPORT: "true"
     DOCKER_HOST: tcp://docker:2375
     QA_ARTIFACTS_DIR: $CI_PROJECT_DIR
     QA_CAN_TEST_PRAEFECT: "false"
@@ -907,6 +970,19 @@ qa_gke125:
     - job: review_specs_gke125
       artifacts: false
 
+qa_gke126:
+  extends: .qa_branch
+  variables:
+    VARIABLES_FILE: "variables/review_gke126"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  environment:
+    name: gke126_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_gke126
+  needs:
+    - review_gke126
+    - job: review_specs_gke126
+      artifacts: false
+
 qa_eks:
   extends: .qa_branch
   variables:
@@ -942,6 +1018,18 @@ qa_gke125_production:
   needs:
     - stable_gke125
     - job: production_specs_gke125
+      artifacts: false
+
+qa_gke126_production:
+  extends: .qa_production
+  variables:
+    VARIABLES_FILE: "variables/stable_gke126"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  environment:
+    name: gke126_production
+  needs:
+    - stable_gke126
+    - job: production_specs_gke126
       artifacts: false
 
 qa_eks_production:
@@ -999,6 +1087,10 @@ qa_gke125_full_suite_manual_trigger:
   extends: .qa_full_suite_manual_trigger
   script: echo 'The job will trigger Full E2E suite against GKE125'
 
+qa_gke126_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against GKE126'
+
 qa_gke125_manual_full_suite:
   extends: .qa_branch
   parallel: 7
@@ -1009,6 +1101,17 @@ qa_gke125_manual_full_suite:
     name: gke125_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
     on_stop: stop_review_gke125
   needs: [ "qa_gke125_full_suite_manual_trigger"]
+
+qa_gke126_manual_full_suite:
+  extends: .qa_branch
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/review_gke126"
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
+  environment:
+    name: gke126_review/$REVIEW_REF_PREFIX$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_gke126
+  needs: [ "qa_gke126_full_suite_manual_trigger"]
 
 qa_eks_full_suite_manual_trigger:
   extends: .qa_full_suite_manual_trigger

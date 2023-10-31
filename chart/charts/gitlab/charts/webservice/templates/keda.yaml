@@ -2,9 +2,9 @@
 {{- include "webservice.datamodel.prepare" $ -}}
 {{/* BEGIN range deployments */}}
 {{- range $.Values.deployments -}}
-{{-   $kedaCfg := (dict "global" $.Values.global "hpa" .hpa "keda" .keda "resources" .resources) -}}
-{{-   $kedaEnabled := include "gitlab.keda.scaledobject.enabled" $kedaCfg -}}
-{{-   if $kedaEnabled -}}
+{{-   $kedaCfg := (dict "global" $.Values.global "hpa" .hpa "keda" .keda "resources" .resources) }}
+{{-   $kedaEnabled := include "gitlab.keda.scaledobject.enabled" $kedaCfg }}
+{{-   if $kedaEnabled }}
 {{/*
 From here on:
 - `.` is `.deployments.xyz` value

@@ -6,7 +6,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Using the Mailroom chart **(FREE SELF)**
 
-The Mailroom Pod handles the ingestion of email into the GitLab application.
+The Mailroom Chart handles [incoming email](https://docs.gitlab.com/ee/administration/incoming_email.html).
 
 ## Configuration
 
