@@ -54,7 +54,7 @@ To migrate from a Helm installation to a Linux package (Omnibus) installation:
      you uninstall GitLab Helm chart if you are using the built-in MinIO instance.
 
 1. Copy the GitLab Helm backup to `/var/opt/gitlab/backups` on your Linux package instance, and
-   [perform the restore](https://docs.gitlab.com/ee/raketasks/backup_restore.html#restore-for-omnibus-gitlab-installations).
+   [perform the restore](https://docs.gitlab.com/ee/administration/backup_restore/restore_gitlab.html#restore-for-linux-package-installations).
 1. After the restore is complete, run the [doctor Rake tasks](https://docs.gitlab.com/ee/administration/raketasks/check.html)
    to make sure that the secrets are valid.
 1. After everything is verified, you may [uninstall](../uninstall.md)

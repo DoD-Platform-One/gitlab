@@ -490,6 +490,9 @@ spec:
           {{- include "gitlab.appConfig.incomingEmail.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.appConfig.serviceDeskEmail.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.gitaly.clientSecrets" $ | nindent 10 }}
+          {{- if $.Values.global.clickhouse.enabled }}
+            {{- include "gitlab.clickhouse.main.secrets" $ | nindent 10 }}
+          {{- end }}
           {{- include "gitlab.redis.secrets" (dict "globalContext" $) | nindent 10 }}
           {{- range $.Values.local.psql }}
           {{-   include "gitlab.psql.secret" . | nindent 10 }}

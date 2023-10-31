@@ -57,7 +57,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "16.4.1"
+  gitlabVersion: "16.5.0"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -112,6 +112,10 @@ global:
   batch:
     cronJob:
       apiVersion: "batch/v1"
+
+  # Override enablement of ServiceMonitor and PodMonitor objects.
+  monitoring:
+    enabled: false
 
   gitlab:
     ## Enterprise license for this GitLab installation
@@ -777,7 +781,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -818,7 +822,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1199,7 +1203,7 @@ redis:
     image:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
-      tag: v1.54.0
+      tag: v1.55.0
       pullSecrets: []
     resources:
       limits: 
@@ -1388,7 +1392,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 16.4.1
+    tag: 16.5.0
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1511,7 +1515,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1583,7 +1587,7 @@ gitlab:
         - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1622,7 +1626,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     securityContext: 
@@ -1671,7 +1675,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1684,7 +1688,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1706,7 +1710,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1743,7 +1747,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1784,7 +1788,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1828,7 +1832,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 16.4.1
+      tag: 16.5.0
       pullSecrets:
         - name: private-registry
     containerSecurityContext:
@@ -1845,7 +1849,7 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 16.4.1
+      tag: 16.5.0
     containerSecurityContext:
       capabilities:
         drop: 
@@ -1856,7 +1860,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.4.1
+      tag: 16.5.0
     init:
       resources:
         limits:

@@ -60,7 +60,7 @@ describe "Restoring a backup" do
 
     it 'Navigating to testproject1 repo should work' do
       visit '/root/testproject1'
-      expect(find('[data-testid="file_tree_table"],[data-qa-selector="file_tree_table"]'))
+      expect(find('[data-testid="file-tree-table"]'))
         .to have_content('Dockerfile')
     end
 
