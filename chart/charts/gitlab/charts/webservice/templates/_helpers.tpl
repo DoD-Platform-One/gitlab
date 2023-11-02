@@ -256,3 +256,42 @@ Return whether the Workhorse exporter has TLS enabled.
 {{-   $.Values.global.workhorse.tls.enabled }}
 {{- end }}
 {{- end -}}
+
+
+{{/*
+Return the workhorse redis configuration.
+*/}}
+{{- define "workhorse.redis.config" -}}
+{{- if $.Values.global.redis.workhorse }}
+{{-   $_ := set $ "redisConfigName" "workhorse" }}
+{{- end }}
+{{- include "gitlab.redis.selectedMergedConfig" . -}}
+[redis]
+{{- if not .redisMergedConfig.sentinels }}
+URL = "{{ template "gitlab.redis.scheme" $ }}://{{ template "gitlab.redis.host" $ }}:{{ template "gitlab.redis.port" $ }}"
+{{- else }}
+SentinelMaster = "{{ template "gitlab.redis.host" $ }}"
+Sentinel = [ {{ template "gitlab.redis.workhorse.sentinel-list" $ }} ]
+{{- end }}
+{{- if .redisMergedConfig.password.enabled }}
+{{-   $passwordPath := printf "%s-password" (default "redis" .redisConfigName) }}
+Password = {% file.Read "/etc/gitlab/redis/{{ $passwordPath }}" | strings.TrimSpace | data.ToJSON %}
+{{- end }}
+{{- $_ := set . "redisConfigName" "" }}
+{{- end -}}
+
+{{/*
+Return the bash setup commands for redis secrets.
+*/}}
+{{- define "workhorse.redis.secret-setup" -}}
+{{- if $.Values.global.redis.workhorse -}}
+{{-   $_ := set $ "redisConfigName" "workhorse" }}
+{{- end -}}
+{{- include "gitlab.redis.selectedMergedConfig" . -}}
+{{- if .redisMergedConfig.password.enabled -}}
+{{-   $passwordPath := printf "%s-password" (default "redis" .redisConfigName) -}}
+mkdir -p /init-secrets-workhorse/redis
+cp -v -r -L /init-config/redis/{{ $passwordPath }} /init-secrets-workhorse/redis/
+{{- end -}}
+{{- $_ := set . "redisConfigName" "" }}
+{{- end -}}

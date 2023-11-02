@@ -1,6 +1,7 @@
 image:
+  # registry:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-mailroom
-  # tag: v0.9.1
+  # tag:
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 

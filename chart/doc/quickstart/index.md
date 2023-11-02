@@ -39,6 +39,11 @@ A cluster with a total of at least eight virtual CPUs and 30GB of RAM is recomme
 You can either refer to your cloud providers' instructions on how to create a Kubernetes cluster,
 or use the GitLab-provided scripts to [automate the cluster creation](../installation/cloud/index.md).
 
+WARNING:
+Kubernetes nodes must use the x86-64 architecture.
+Support for multiple architectures, including AArch64/ARM64, is under active development.
+See [issue 2899](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2899) for more information.
+
 ### Install kubectl
 
 To install kubectl, see the [Kubernetes installation documentation](https://kubernetes.io/docs/tasks/tools/).
@@ -114,7 +119,7 @@ simplicity we recommend a single "wildcard" record:
 - In Google Cloud DNS, create an `A` record with the name `*`. We also
   suggest setting the TTL to `1` minute instead of `5` minutes.
 - On AWS EKS, the address will be a URL rather than an IP address.
-  [Create a Route 53 alias record](https://aws.amazon.com/premiumsupport/knowledge-center/route-53-create-alias-records/)
+  [Create a Route 53 alias record](https://repost.aws/knowledge-center/route-53-create-alias-records)
   `*.domain.tld` pointing to this URL.
 
 ## Sign in to GitLab

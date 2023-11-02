@@ -2,6 +2,60 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+--
+## [7.5.0-bb.0] - 2023-10-03
+### Changed
+Upgrade gitlab to app version 16.5.0 chart version 7.5.0-bb.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox patch 16.4.1 -> 16.5.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice patch 16.4.1 -> 16.5.0
+
+## [7.4.1-bb.5] - 2023-10-24
+### Changed
+- Exposed autoMountServiceAccountToken for gitlab service accounts via values.yaml
+- Hardened pods by removing autoMountServiceAccountToken when not required and explicitly requesting when required
+
+## [7.4.1-bb.4] - 2023-10-16
+### Changed
+- Removed duplicate annotation on webservice template
+
+## [7.4.1-bb.3] - 2023-10-11
+### Changed
+- OSCAL Version update from 1.0.0 to 1.1.1
+
+## [7.4.1-bb.2] - 2023-10-09
+### Changed
+- Update security contexts for kyverno non-root-group policy violations
+
+## [7.4.1-bb.1] - 2023-10-06
+### Changed
+- Fixed typo in documentation that leads to error
+
+## [7.4.1-bb.0] - 2023-10-03
+### Changed
+Upgrade gitlab to app version 16.4.1 chart version 7.4.1-bb.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox patch 16.3.4 -> 16.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice patch 16.3.4 -> 16.4.1
+
 
 ## [7.3.4-bb.0] - 2023-09-21
 ### Changed

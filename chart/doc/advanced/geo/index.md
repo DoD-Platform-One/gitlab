@@ -13,7 +13,8 @@ While external database services can be used, these documents focus on
 the use of the [Linux package](https://docs.gitlab.com/omnibus/) for PostgreSQL to provide the
 most platform agnostic guide, and make use of the automation included in `gitlab-ctl`.
 
-In this guide, both clusters have the same external URL. See [Set up a Unified URL for Geo sites](https://docs.gitlab.com/ee/administration/geo/secondary_proxy/index.html#set-up-a-unified-url-for-geo-sites).
+In this guide, both clusters have the same external URL. This feature is supported by the chart
+since version 7.3. See [Set up a Unified URL for Geo sites](https://docs.gitlab.com/ee/administration/geo/secondary_proxy/index.html#set-up-a-unified-url-for-geo-sites). You can optionally [configure a separate URL for the secondary site](#configure-a-separate-url-for-the-secondary-site-optional).
 
 NOTE:
 See the [defined terms](https://docs.gitlab.com/ee/administration/geo/glossary.html)
@@ -51,12 +52,15 @@ The outline below should be followed in order:
 1. [Collect information](#collect-information)
 1. [Configure Primary database](#configure-primary-database)
 1. [Deploy chart as Geo Primary site](#deploy-chart-as-geo-primary-site)
-1. [Set the Geo primary site](#set-the-geo-primary-site)
+1. [Set the Geo Primary site](#set-the-geo-primary-site)
 1. [Configure Secondary database](#configure-secondary-database)
-1. [Copy secrets from primary site to secondary site](#copy-secrets-from-the-primary-site-to-the-secondary-site)
+1. [Copy secrets from the primary site to the secondary site](#copy-secrets-from-the-primary-site-to-the-secondary-site)
 1. [Deploy chart as Geo Secondary site](#deploy-chart-as-geo-secondary-site)
 1. [Add Secondary Geo site via Primary](#add-secondary-geo-site-via-primary)
 1. [Confirm Operational Status](#confirm-operational-status)
+1. [Configure a separate URL for the secondary site (Optional)](#configure-a-separate-url-for-the-secondary-site-optional)
+1. [Registry](#registry)
+1. [Cert-manager and unified URL](#cert-manager-and-unified-url)
 
 ## Set up Linux package database nodes
 
@@ -215,6 +219,11 @@ After the configuration above is prepared:
 ## Deploy chart as Geo Primary site
 
 _This section is performed on the Primary site's Kubernetes cluster._
+
+NOTE:
+Setting up a unified URL on primaries currently does not work with pre-defined IP addresses
+set in `global.hosts.externalIP`.
+See [issue 5006](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5006) for more information.
 
 To deploy this chart as a Geo Primary, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/primary.yaml):
 
@@ -624,7 +633,7 @@ Now that both databases are configured and applications are deployed, we must te
 the Primary site that the Secondary site exists:
 
 1. Visit the **primary** site.
-1. On the left sidebar, expand the top-most chevron (**{chevron-down}**).
+1. On the left sidebar, select **Search or go to**.
 1. Select **Admin Area**.
 1. Select **Geo > Add site**.
 1. Add the **secondary** site. Use the full GitLab URL for the URL.
@@ -699,8 +708,70 @@ configured, via the Toolbox Pod.
      Rake task is checking for a local SSH server, which is actually present in the
      `gitlab-shell` chart, deployed elsewhere, and already configured appropriately.
 
+## Configure a separate URL for the secondary site (Optional)
+
+A single, unified URL for the primary and secondary site is usually more convenient for users. For example, you can:
+
+- Place both sites behind a load balancer.
+- Route users to the closest site using your cloud provider's DNS features.
+
+In some cases, you may want to give users control over which site they visit. For this purpose, you can configure the secondary Geo site to use a unique external URL. For example:
+
+- Primary cluster's External URL: `https://gitlab.example.com`
+- Secondary cluster's External URL: `https://shanghai.gitlab.example.com`
+
+1. Edit `secondary.yaml` and update the secondary cluster's external URL so that the `webservice` chart can process those requests:
+
+   ```yaml
+   global:
+     # See docs.gitlab.com/charts/charts/globals
+     # Configure host & domain
+     hosts:
+       domain: example.com
+       # use a unique external URL for the secondary site
+       gitlab:
+         name: shanghai.gitlab.example.com
+   ```
+
+1. Update the secondary site's External URL in GitLab so that it can use the URL wherever it's needed:
+   - Using the Admin UI:
+     1. Visit the **primary** site.
+     1. On the left sidebar, select **Search or go to**.
+     1. Select **Admin Area**.
+     1. Select **Geo > Sites**.
+     1. Select the pencil icon to **Edit the secondary site**.
+     1. Edit the External URL, for example `https://shanghai.gitlab.example.com`.
+     1. Select **Save changes**.
+   - Using a Rails runner command:
+     1. In a toolbox container in the primary site:
+
+        ```shell
+        kubectl --namespace gitlab exec -ti gitlab-geo-toolbox-XXX -- gitlab-rails runner "GeoNode.secondary_nodes.last.update!(url: 'https://shanghai.gitlab.example.com')"
+        ```
+
+1. Redeploy the secondary site's chart:
+
+   ```shell
+   helm upgrade --install gitlab-geo gitlab/gitlab --namespace gitlab -f secondary.yaml
+   ```
+
+1. Wait for the deployment to complete, and the application to come online.
+
 ## Registry
 
 To sync the secondary registry with the primary registry you can configure
 [registry replication](https://docs.gitlab.com/ee/administration/geo/replication/container_registry.html#configure-container-registry-replication)
 using a  [notification secret](../../charts/registry/index.md#notification-secret).
+
+## Cert-manager and unified URL
+
+Geo's unified URL is often used with geolocation-aware routing (for example, using Amazon Route 53 or Google Cloud DNS), which can
+cause problems if the [HTTP01 challenge](https://letsencrypt.org/docs/challenge-types/#http-01-challenge) is used to validate that the
+domain name is under your control.
+
+When you request a certificate for one Geo site, Let's Encrypt must resolve the DNS name to the requesting Geo site. If the DNS resolves
+to a different Geo site, the certificate for the unified URL will not be issued or refreshed.
+
+To reliably create and refresh certificates with cert-manager, either [set the challenge nameserver](https://cert-manager.io/docs/configuration/acme/http01/#setting-nameservers-for-http-01-solver-propagation-checks)
+to a server that is known to resolve the unified hostname to the Geo sites IP address or configure
+a [DNS01](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge) [Issuer](https://cert-manager.io/docs/configuration/acme/dns01/).

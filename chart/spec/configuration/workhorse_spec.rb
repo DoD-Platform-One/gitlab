@@ -11,6 +11,8 @@ describe 'Workhorse configuration' do
   end
   let(:template) { HelmTemplate.new(default_values) }
   let(:raw_toml) { template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.tpl') }
+  let(:global_redis_password) { SecureRandom.hex }
+  let(:workhorse_redis_password) { SecureRandom.hex }
 
   def render_toml(raw_template, object_store_config = nil)
     Dir.mktmpdir do |tmpdir|
@@ -21,7 +23,8 @@ describe 'Workhorse configuration' do
       directories = %w[redis objectstorage]
       directories.each { |dir| FileUtils.mkdir(File.join(tmpdir, dir)) }
       # Write bogus redis password
-      File.write(File.join(tmpdir, "redis", "redis-password"), SecureRandom.hex)
+      File.write(File.join(tmpdir, "redis", "redis-password"), global_redis_password)
+      File.write(File.join(tmpdir, "redis", "workhorse-password"), workhorse_redis_password)
       File.write(File.join(tmpdir, "objectstorage", "object_store"), object_store_config) if object_store_config
 
       cmd = "gomplate --left-delim '{%' --right-delim '%}' --file #{input_file}"
@@ -132,6 +135,145 @@ describe 'Workhorse configuration' do
         expect(object_storage['google']['google_project']).to eq(yaml['google_project'])
         # here, we `rstrip` the YAML string, because it has an extra `\n` on the end as opposed to the rendered TOML
         expect(object_storage['google']['google_json_key_string']).to eq(yaml['google_json_key_string'].rstrip)
+      end
+    end
+  end
+
+  context 'configuring dedicated redis' do
+    let(:template) { HelmTemplate.new(values) }
+
+    context 'with global redis' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: global.redis
+              auth:
+                enabled: true
+                secret: global-secret
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'renders the global redis config' do
+        toml = render_toml(raw_toml)
+
+        expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+        redis_config = toml['redis']
+
+        expect(redis_config.keys).to match_array(%w[URL Password])
+        expect(redis_config['URL']).to eq('redis://global.redis:6379')
+        expect(redis_config['Password']).to eq(global_redis_password)
+
+        expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/redis-password')
+        expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/redis-password')
+      end
+    end
+
+    context 'with standalone redis' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: global.redis
+              auth:
+                enabled: true
+                secret: global-secret
+              workhorse:
+                host: workhorse.redis
+                password:
+                  enabled: true
+                  secret: workhorse
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'overrides global redis config' do
+        toml = render_toml(raw_toml)
+
+        expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+        redis_config = toml['redis']
+        expect(redis_config.keys).to match_array(%w[URL Password])
+        expect(redis_config['URL']).to eq('redis://workhorse.redis:6379')
+        expect(redis_config['Password']).to eq(workhorse_redis_password)
+        expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
+        expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
+      end
+
+      context 'when workhorse redis does not have password' do
+        before do
+          values["global"]["redis"]["workhorse"]["password"]["enabled"] = false
+        end
+
+        it 'overrides global redis config' do
+          toml = render_toml(raw_toml)
+
+          expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+          redis_config = toml['redis']
+          expect(redis_config.keys).to match_array(%w[URL])
+          expect(redis_config['URL']).to eq('redis://workhorse.redis:6379')
+        end
+      end
+    end
+
+    context 'with redis sentinel' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: global.redis
+              auth:
+                enabled: true
+                secret: global-secret
+              workhorse:
+                host: workhorse.redis
+                sentinels:
+                - host: s1.workhorse.redis
+                  port: 26379
+                - host: s2.workhorse.redis
+                  port: 26379
+                password:
+                  enabled: true
+                  secret: workhorse
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it 'overrides global redis config' do
+        toml = render_toml(raw_toml)
+
+        expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+        redis_config = toml['redis']
+        expect(redis_config.keys).to match_array(%w[Password SentinelMaster Sentinel])
+        expect(redis_config['SentinelMaster']).to eq('workhorse.redis')
+        expect(redis_config['Sentinel']).to match_array(%w[tcp://s1.workhorse.redis:26379 tcp://s2.workhorse.redis:26379])
+        expect(redis_config['Password']).to eq(workhorse_redis_password)
+        expect(template.dig("ConfigMap/test-workhorse-default", "data", 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
+        expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
+      end
+
+      context 'when workhorse redis does not have password' do
+        before do
+          values["global"]["redis"]["workhorse"]["password"]["enabled"] = false
+        end
+
+        it 'overrides global redis config' do
+          toml = render_toml(raw_toml)
+
+          expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+          redis_config = toml['redis']
+          expect(redis_config.keys).to match_array(%w[SentinelMaster Sentinel])
+          expect(redis_config['SentinelMaster']).to eq('workhorse.redis')
+          expect(redis_config['Sentinel']).to match_array(%w[tcp://s1.workhorse.redis:26379 tcp://s2.workhorse.redis:26379])
+        end
       end
     end
   end

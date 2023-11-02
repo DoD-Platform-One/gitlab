@@ -63,6 +63,11 @@ A cloud or local Kubernetes cluster may be used for development.
 For simple issues, a local cluster is often enough to test deployments.
 When dealing with networking, storage, or other complex issues, a cloud Kubernetes cluster allows you to more accurately recreate a production environment.
 
+WARNING:
+Kubernetes nodes must use the x86-64 architecture.
+Support for multiple architectures, including AArch64/ARM64, is under active development.
+See [issue 2899](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2899) for more information.
+
 ### Local cluster
 
 The following local cluster options are supported:

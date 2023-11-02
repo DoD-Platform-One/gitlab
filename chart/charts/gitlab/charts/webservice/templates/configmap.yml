@@ -22,6 +22,10 @@ data:
     gitlab-helm-chart
   database.yml.erb: |
     {{- include "gitlab.database.yml" . | nindent 4 }}
+  {{- if $.Values.global.clickhouse.enabled }}
+  click_house.yml.erb: |
+    {{- include "gitlab.clickhouse.yml" . | nindent 4 }}
+  {{- end }}
   krb5.conf: |
     {{- .Values.global.appConfig.kerberos.krb5Config | nindent 4 }}
   smtp_settings.rb: |
@@ -196,16 +200,7 @@ data:
     {{- end }}
 
     {{- if .workhorse.keywatcher }}
-    [redis]
-    {{- if not $.Values.global.redis.sentinels }}
-    URL = "{{ template "gitlab.redis.scheme" $ }}://{{ template "gitlab.redis.host" $ }}:{{ template "gitlab.redis.port" $ }}"
-    {{- else }}
-    SentinelMaster = "{{ template "gitlab.redis.host" $ }}"
-    Sentinel = [ {{ template "gitlab.redis.workhorse.sentinel-list" $ }} ]
-    {{- end }}
-    {{- if eq (include "gitlab.redis.password.enabled" $) "true" }}
-    Password = {% file.Read "/etc/gitlab/redis/redis-password" | strings.TrimSpace | data.ToJSON %}
-    {{- end }}
+    {{- include "workhorse.redis.config" $ | nindent 4 }}
     {{- end }}
     {{- include "workhorse.object_storage.config" $ | nindent 4 }}
     [image_resizer]
@@ -234,10 +229,7 @@ data:
       set -e
       mkdir -p /init-secrets-workhorse/gitlab-workhorse
       cp -v -r -L /init-config/gitlab-workhorse/secret /init-secrets-workhorse/gitlab-workhorse/secret
-      {{- if eq (include "gitlab.redis.password.enabled" $) "true" }}
-      mkdir -p /init-secrets-workhorse/redis
-      cp -v -r -L /init-config/redis/redis-password /init-secrets-workhorse/redis/
-      {{- end }}
+      {{- include "workhorse.redis.secret-setup" $ | nindent 6 -}}
       {{- if $.Values.global.minio.enabled }}
       if [ -d /init-config/minio ]; then
         mkdir -p /init-secrets-workhorse/minio

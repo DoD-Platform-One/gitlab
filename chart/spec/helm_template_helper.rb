@@ -180,6 +180,11 @@ class HelmTemplate
       &.find { |container| container['name'] == container_name }
   end
 
+  def find_image(item, container_name, init = false)
+    find_container(item, container_name, init)
+      &.dig('image')
+  end
+
   def env(item, container_name, init = false)
     find_container(item, container_name, init)
       &.dig('env')

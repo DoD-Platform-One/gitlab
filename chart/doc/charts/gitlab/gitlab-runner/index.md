@@ -8,13 +8,21 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 The GitLab Runner subchart provides a GitLab Runner for running CI jobs. It is enabled by default and should work out of the box with support for caching using s3 compatible object storage.
 
+WARNING:
+The default configuration of the included GitLab Runner chart is **not intended for production**.
+It is provided as a proof of concept (PoC) implementation where all GitLab services are deployed
+in the cluster. For production deployments, install GitLab Runner on a separate machine for
+[security and performance reasons](https://docs.gitlab.com/ee/install/requirements.html#gitlab-runner).
+For more information, see the
+[reference architecture documentation](../../../installation/index.md#use-the-reference-architectures).
+
 ## Requirements
 
 This chart depends on the shared-secrets Job to populate its `registrationToken` for automatic registration. If you intend to run this chart as a stand-alone chart with an existing GitLab instance then you will need to manually set the `registrationToken` in the `gitlab-runner` secret to be equal to that displayed by the running GitLab instance.
 
 ## Configuration
 
-There are no required settings, it should work out of the box if you deploy all of the charts together.
+For more information, see the documentation on [usage and configuration](https://docs.gitlab.com/runner/install/kubernetes.html).
 
 ## Deploying a stand-alone runner
 
@@ -29,31 +37,6 @@ In order to run Docker-in-Docker, the runner container needs to be privileged to
 ### Security concerns
 
 Privileged containers have extended capabilities, for example they can mount arbitrary files from the host they run on. Make sure to run the container in an isolated environment such that nothing important runs beside it.
-
-## Installation command line options
-
-| Parameter                                      | Description                                | Default                               |
-| ---------------------------------------------- | ------------------------------------------ | ------------------------------------- |
-| `gitlab-runner.image`                          | Runner image                               | `gitlab/gitlab-runner:alpine-v10.5.0` |
-| `gitlab-runner.gitlabUrl`                      | URL that the Runner uses to register to GitLab Server                | GitLab external URL                   |
-| `gitlab-runner.install`                        | Install the `gitlab-runner` chart          | `true`                                |
-| `gitlab-runner.imagePullPolicy`                | Image pull policy                          | `IfNotPresent`                        |
-| `gitlab-runner.init.image.repository`          | `initContainer` image                      |                                       |
-| `gitlab-runner.init.image.tag`                 | `initContainer` image tag                  |                                       |
-| `gitlab-runner.pullSecrets`                    | Secrets for the image repository           |                                       |
-| `gitlab-runner.unregisterRunners`              | Unregister all runners before termination  | `true`                                |
-| `gitlab-runner.concurrent`                     | Number of concurrent jobs                  | `10`                                  |
-| `gitlab-runner.checkInterval`                  | Polling interval                           | `30s`                                 |
-| `gitlab-runner.rbac.create`                    | Whether to create RBAC service account     | `true`                                |
-| `gitlab-runner.rbac.clusterWideAccess`         | Deploy containers of jobs cluster-wide     | `false`                               |
-| `gitlab-runner.rbac.serviceAccountName`        | Name of the RBAC service account to create | `default`                             |
-| `gitlab-runner.runners.privileged`             | Run in privileged mode, needed for `dind`  | `false`                               |
-| `gitlab-runner.runners.cache.secretName`       | Secret to access key and secret key from   | `gitlab-minio`                        |
-| `gitlab-runner.runners.config`                 | Runner configuration as string             | See [below](#default-runner-configuration)|
-| `gitlab-runner.resources.limits.cpu`           | Runner CPU limit                           |                                       |
-| `gitlab-runner.resources.limits.memory`        | Runner memory limit                        |                                       |
-| `gitlab-runner.resources.requests.cpu`         | Runner requested CPU                       |                                       |
-| `gitlab-runner.resources.requests.memory`      | Runner requested memory                    |                                       |
 
 ## Default runner configuration
 
@@ -79,20 +62,6 @@ gitlab-runner:
         {{ end }}
 ```
 
-## Chart configuration examples
-
-Runners configuration to use only custom nameservers (exclude any cluster or host nameservers):
-
-```yaml
-gitlab-runner:
-  runners:
-    config: |
-      [[runners]]
-        [runners.kubernetes]
-          image = "ubuntu:22.04"
-          dns_policy = "none"
-        [runners.kubernetes.dns_config]
-          nameservers = ["8.8.8.8"]
-```
-
-See the [Runner chart additional configuration](https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration).
+All customized GitLab Runner chart configuration is available in the
+[top-level `values.yaml` file](https://gitlab.com/gitlab-org/charts/gitlab/raw/master/values.yaml)
+under the `gitlab-runner` key.

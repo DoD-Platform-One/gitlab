@@ -261,7 +261,7 @@ configured to authenticate as a user with sufficient access to read/write to all
 
    - On Google Cloud Storage, you can create the file by creating a service account
      with the `storage.admin` role and then
-     [creating a service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys).
+     [creating a service account key](https://cloud.google.com/iam/docs/keys-create-delete#creating_service_account_keys).
      Below is an example of using the `gcloud` CLI to create the file.
 
      ```shell

@@ -1,0 +1,11 @@
+# Enables the external ClickHouse service
+global:
+  clickhouse:
+    enabled: true
+    main:
+      username: default
+      password:
+        secret: gitlab-clickhouse-password
+        key: main_password
+      database: gitlab_clickhouse_main_production
+      url: 'http://example.com'

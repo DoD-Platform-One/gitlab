@@ -217,6 +217,9 @@ spec:
                 - key: {{ template "gitlab.gitlab-shell.authToken.key" . }}
                   path: shell/.gitlab_shell_secret
           {{- include "gitlab.gitaly.clientSecrets" . | nindent 10 }}
+          {{- if $.Values.global.clickhouse.enabled }}
+            {{- include "gitlab.clickhouse.main.secrets" $ | nindent 10 }}
+          {{- end }}
           {{- include "gitlab.redis.secrets" (dict "globalContext" $) | nindent 10 }}
           {{- range $.Values.local.psql }}
           {{-   include "gitlab.psql.secret" . | nindent 10 }}

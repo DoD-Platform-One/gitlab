@@ -103,9 +103,12 @@ helm inspect values gitlab/gitlab
 
 ### Common settings
 
+See [incoming email configuration examples documentation](https://docs.gitlab.com/ee/administration/incoming_email.html#configuration-examples)
+for more information.
+
 | Parameter                                         | Description                                                                                            | Default                                                    |
 |---------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
-| `global.appConfig.incomingEmail.address`          | The email address to reference the item being replied to (example: `gitlab-incoming+%{key}@gmail.com`) | empty                                                      |
+| `global.appConfig.incomingEmail.address`          | The email address to reference the item being replied to (example: `gitlab-incoming+%{key}@gmail.com`). Note that the `+%{key}` suffix should be included in its entirety within the email address and not replaced by another value. | empty                                                      |
 | `global.appConfig.incomingEmail.enabled`          | Enable incoming email                                                                                  | false                                                      |
 | `global.appConfig.incomingEmail.deleteAfterDelivery` | Whether to mark messages as deleted. For IMAP, messages that are marked as deleted are expunged if `expungedDeleted` is set to `true`. For Microsoft Graph, set this to false to retain messages in the inbox because deleted messages are auto-expunged after some time. | true |
 | `global.appConfig.incomingEmail.expungeDeleted`   | Whether to expunge (permanently remove) messages from the mailbox when they are marked as deleted after delivery. Only relevant to IMAP because Microsoft Graph will auto-expunge deleted messages. | false |
@@ -307,7 +310,7 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bi
 | `gitlab-runner.runners.privileged` | run in privileged mode, needed for `dind` | false |
 | `gitlab-runner.runners.cache.secretName` | secret to get `accesskey` and `secretkey` from | `gitlab-minio` |
 | `gitlab-runner.runners.config` | Runner configuration as string | See [Chart documentation](../charts/gitlab/gitlab-runner/index.md#default-runner-configuration) |
-| `gitlab-runner.unregisterRunners` | unregister all runners before termination | true |
+| `gitlab-runner.unregisterRunners` | Unregisters all runners in the local `config.toml` when the chart is installed. If the token is prefixed with `glrt-`, the runner manager is deleted, not the runner. The runner manager is identified by the runner and the machine that contains the `config.toml`. If the runner was registered with a registration token, the runner is deleted. | true |
 | `gitlab.geo-logcursor.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
 | `gitlab.geo-logcursor.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
 | `gitlab.gitaly.authToken.key` | Key to Gitaly token in the secret | `token` |

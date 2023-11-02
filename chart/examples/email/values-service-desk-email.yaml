@@ -4,6 +4,8 @@ global:
   appConfig:
     incomingEmail:
       enabled: true
+      # This '+%{key}' suffix should be included in its entirety within the email
+      # address and not replaced by another value.
       address: gitlab-incoming+%{key}@gmail.com
       host: example.com
       port: 993
@@ -11,7 +13,8 @@ global:
       startTls: true
       user: myusername
       password:
-        # https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/installation/secrets.md#imap-password-for-incoming-emails
+        # https://docs.gitlab.com/charts/installation/secrets.html#imap-password-for-incoming-emails
+        # https://docs.gitlab.com/ee/development/emails.html
         secret: my-incoming-mail-secret
         key: secret
       mailbox: inbox
@@ -19,6 +22,8 @@ global:
       authToken: {}
     serviceDeskEmail:
       enabled: true
+      # This '+%{key}' suffix should be included in its entirety within the email
+      # address and not replaced by another value.
       address: project_contact+%{key}@gmail.com
       host: example.com
       port: 993
@@ -26,8 +31,9 @@ global:
       startTls: true
       user: myusername
       password:
-        # https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/installation/secrets.md#imap-password-for-service-desk-emails
-        secret: my-service-desk-email-secret
+        # https://docs.gitlab.com/charts/installation/secrets.html#imap-password-for-service-desk-emails
+        # https://docs.gitlab.com/ee/development/emails.html
+        secret: service-desk-email-password
         key: secret
       mailbox: inbox
       deliveryMethod: webhook

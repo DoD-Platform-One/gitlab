@@ -31,13 +31,13 @@ for common configuration options, such as GitLab and Registry hostnames.
 
 ### FIPS-compliant Traefik
 
-[Traefik Enterprise](https://doc.traefik.io/traefik-enterprise) provides FIPS compliance. Note that Traefik Enterprise requires
+[Traefik Enterprise](https://doc.traefik.io/traefik-enterprise/) provides FIPS compliance. Note that Traefik Enterprise requires
 a license, which is not included as part of this chart.
 
 Following are links for more information on Traefik Enterprise:
 
 - [Traefik Enterprise features](https://doc.traefik.io/traefik/providers/kubernetes-ingress/)
-- [Traefik Enterprise FIPS image](https://doc.traefik.io/traefik-enterprise/operations/fips-image)
-- [Traefik Enterprise Helm chart](https://doc.traefik.io/traefik-enterprise/installing/kubernetes/helm)
+- [Traefik Enterprise FIPS image](https://doc.traefik.io/traefik-enterprise/operations/fips-image/)
+- [Traefik Enterprise Helm chart](https://doc.traefik.io/traefik-enterprise/installing/kubernetes/helm/)
 - [Traefik Enterprise Operator on ArtifactHub](https://artifacthub.io/packages/olm/community-operators/traefikee-operator)
 - [Traefik Enterprise Certified OpenShift Operator on RedHat Catalog](https://catalog.redhat.com/software/operators/detail/5e98745a6c5dcb34dfbb1a0a)
