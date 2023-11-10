@@ -593,7 +593,8 @@ global:
         secret: gitlab-registry-notification
         key: secret
 
-  # If utilising Geo, and wishing to sync the container registry
+  # If utilising Geo, and wishing to sync the container registry.
+  # Define this in the primary site configs only.
   geo:
     registry:
       replication:

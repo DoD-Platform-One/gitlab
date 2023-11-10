@@ -1,0 +1,67 @@
+.review_app_common:
+  stage: review
+  variables:
+    AGENT_NAME: "gke125-ci-cluster" # connect to 1.25 cluster until we have a dedicated cluster
+  environment:
+    name: gke125_vcluster/${VCLUSTER_NAME}
+    auto_stop_in: 1 hour
+  before_script:
+    - source scripts/ci/vcluster.sh
+  allow_failure: true
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
+
+.review_app_template:
+  extends: .review_app_common
+  script:
+    - cluster_connect
+    - kubectl version
+    - vcluster_create
+    - vcluster_run kubectl version
+    - vcluster_helm_deploy
+    - vcluster_helm_rollout_status
+    - vcluster_info
+
+.stop_review_app_template:
+  extends: .review_app_common
+  dependencies: []
+  script:
+    - cluster_connect
+    - vcluster_delete
+  environment:
+    action: stop
+  when: manual
+
+# Below, create two jobs for each Kubernetes version:
+#  - one to create the environment
+#  - one to stop the environment
+
+# Kubernetes 1.27
+
+review_vcluster_127:
+  extends: .review_app_template
+  variables:
+    VCLUSTER_K8S_VERSION: "1.27"
+    VCLUSTER_NAME: vcluster-1-27-${CI_COMMIT_REF_SLUG}
+  environment:
+    on_stop: stop_review_vcluster_127
+
+stop_review_vcluster_127:
+  extends: .stop_review_app_template
+  variables: !reference [review_vcluster_127, variables]
+
+# Kubernetes 1.28
+
+review_vcluster_128:
+  extends: .review_app_template
+  variables:
+    VCLUSTER_K8S_VERSION: "1.28"
+    VCLUSTER_NAME: vcluster-1-28-${CI_COMMIT_REF_SLUG}
+  environment:
+    on_stop: stop_review_vcluster_128
+
+stop_review_vcluster_128:
+  extends: .stop_review_app_template
+  variables: !reference [review_vcluster_128, variables]

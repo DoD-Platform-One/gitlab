@@ -1,0 +1,49 @@
+global:
+  hosts:
+    https: false
+  image:
+    pullPolicy: Always
+  ingress:
+    configureCertmanager: false
+    tls:
+      enabled: false
+  appConfig:
+    initialDefaults:
+      signupEnabled: false
+gitlab:
+  webservice:
+    minReplicas: 1    # 2
+    maxReplicas: 3    # 10
+    resources:
+      requests:
+        cpu: 500m     # 900m
+        memory: 1500M # 2.5G
+  sidekiq:
+    minReplicas: 1    # 1
+    maxReplicas: 2    # 10
+    resources:
+      requests:
+        cpu: 500m     # 900m
+        memory: 1000M # 2G
+  gitlab-shell:
+    minReplicas: 1    # 2
+    maxReplicas: 2    # 10
+  toolbox:
+    enabled: true
+gitlab-runner:
+  install: false
+certmanager:
+  install: false
+nginx-ingress:
+  controller:
+    replicaCount: 1   # 2
+    service:
+      type: NodePort # to avoid creating a LoadBalancer
+redis:
+  resources:
+    requests:
+      cpu: 100m
+minio:
+  resources:
+    requests:
+      cpu: 100m

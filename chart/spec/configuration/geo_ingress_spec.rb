@@ -10,6 +10,8 @@ describe 'Geo NGINX controller' do
   let(:external_ingress) { default_ingress }
   let(:internal_ingress) { template['Ingress/test-webservice-default-extra'] }
   let(:geo_nginx_class) { 'test-nginx-geo' }
+  let(:default_controller_service) { template['Service/test-nginx-ingress-controller'] }
+  let(:geo_controller_service) { template['Service/test-nginx-ingress-geo-controller'] }
 
   shared_examples 'a valid template' do
     it 'renders the template' do
@@ -44,6 +46,8 @@ describe 'Geo NGINX controller' do
           hostSuffix: secondary
           gitlab:
             name: gitlab.example.com
+          externalIP: 172.0.0.1
+          externalGeoIP: 172.0.0.2
       ))
     end
     it_should_behave_like 'a valid template'
@@ -87,6 +91,11 @@ describe 'Geo NGINX controller' do
       gitlab_yml = template.dig('ConfigMap/test-webservice', 'data', 'gitlab.yml.erb')
       gitlab_yml_hash = YAML.safe_load(gitlab_yml)
       expect(gitlab_yml_hash['production']['gitlab']['host']).to eql('gitlab.example.com')
+    end
+
+    it 'renders the static IPs to the load balancer service' do
+      expect(default_controller_service['spec']['loadBalancerIP']).to eql('172.0.0.1')
+      expect(geo_controller_service['spec']['loadBalancerIP']).to eql('172.0.0.2')
     end
   end
 end

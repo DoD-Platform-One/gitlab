@@ -220,11 +220,6 @@ After the configuration above is prepared:
 
 _This section is performed on the Primary site's Kubernetes cluster._
 
-NOTE:
-Setting up a unified URL on primaries currently does not work with pre-defined IP addresses
-set in `global.hosts.externalIP`.
-See [issue 5006](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5006) for more information.
-
 To deploy this chart as a Geo Primary, start [from this example configuration](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/geo/primary.yaml):
 
 1. Create a secret containing the database password for the
@@ -245,6 +240,10 @@ To deploy this chart as a Geo Primary, start [from this example configuration](h
      # Configure host & domain
      hosts:
        domain: example.com
+       # optionally configure a static IP for the default LoadBalancer
+       # externalIP: 
+       # optionally configure a static IP for the Geo LoadBalancer
+       # externalGeoIP:
      # configure DB connection
      psql:
        host: geo-1.db.example.com

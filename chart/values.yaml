@@ -57,7 +57,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "16.5.0"
+  gitlabVersion: "16.5.1"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -781,7 +781,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     customCAs:
@@ -822,7 +822,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -857,6 +857,8 @@ global:
   zoekt:
     gateway:
       basicAuth: {}
+    indexer:
+      internalApi: {}
 
   ## https://docs.gitlab.com/charts/charts/globals
   extraEnv: {}
@@ -1022,6 +1024,8 @@ nginx-ingress-geo:
     ingressClassResource:
       name: '{{ include "gitlab.geo.ingress.class.name" $ | quote }}'
       controllerValue: 'k8s.io/nginx-ingress-geo'
+  # A pre-defined/static external IP can be configured with global.hosts.externalGeoIP.
+  externalIpTpl: '{{ .Values.global.hosts.externalGeoIP }}'
 
 haproxy:
   install: false
@@ -1392,7 +1396,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 16.5.0
+    tag: 16.5.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1464,6 +1468,9 @@ gitlab-runner:
     create: true
   runners:
     locked: false
+    # Set secret to an arbitrary value because the runner chart renders the gitlab-runner.secret template only if it is not empty.
+    # The parent/GitLab chart overrides the template to render the actual secret name.
+    secret: "nonempty"
     config: |
       [[runners]]
         [runners.kubernetes]
@@ -1515,7 +1522,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1587,7 +1594,7 @@ gitlab:
         - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1626,7 +1633,7 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     securityContext: 
@@ -1675,7 +1682,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1688,7 +1695,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1710,7 +1717,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1747,7 +1754,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1788,7 +1795,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1832,7 +1839,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 16.5.0
+      tag: 16.5.1
       pullSecrets:
         - name: private-registry
     containerSecurityContext:
@@ -1849,7 +1856,7 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 16.5.0
+      tag: 16.5.1
     containerSecurityContext:
       capabilities:
         drop: 
@@ -1860,7 +1867,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.5.0
+      tag: 16.5.1
     init:
       resources:
         limits:
@@ -1888,6 +1895,16 @@ gitlab:
 ## Installation & configuration of gitlab/gitlab-zoekt
 gitlab-zoekt:
   install: false
+  gateway:
+    basicAuth:
+      enabled: false
+      secretName: '{{ include "gitlab.zoekt.gateway.basicAuth.secretName" $ }}'
+  indexer:
+    internalApi:
+      enabled: false
+      secretName: '{{ include "gitlab.zoekt.indexer.internalApi.secretName" $ }}'
+      secretKey: '{{ include "gitlab.zoekt.indexer.internalApi.secretKey" $ }}'
+      gitlabUrl: '{{ include "gitlab.zoekt.indexer.internalApi.gitlabUrl" $ }}'
 
 ## Override minio sub-chart values
 minio:
@@ -2035,7 +2052,3 @@ bbtests:
       GITLAB_ORIGIN: http://testuser:Password123h56a78@gitlab-webservice-default.gitlab.svc.cluster.local:8181
       GITLAB_REGISTRY: gitlab-registry-test-svc.gitlab.svc.cluster.local:80
 
-  gateway:
-    basicAuth:
-      enabled: true
-      secretName: '{{ include "gitlab.zoekt.gateway.basicAuth.secretName" $ }}'
