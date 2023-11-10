@@ -13,9 +13,19 @@ The GitLab chart is intended to fit in a cluster with at least 8 vCPU
 and 30 GB of RAM. If you are trying to deploy a non-production instance,
 you can reduce the defaults to fit into a smaller cluster.
 
-A Kubernetes cluster, running version 1.20 through 1.25, is required because of certain
-Kubernetes features. 1.25 is supported as of Chart 6.6 (GitLab 15.6).
-[Epic 10785](https://gitlab.com/groups/gitlab-org/-/epics/10785) tracks progress towards supporting 1.26.
+## Supported Kubernetes versions
+
+The GitLab Helm chart supports the following Kubernetes versions:
+
+- A cluster running Kubernetes 1.20 or newer is required for all components to work.
+- 1.26 support is fully tested as of Chart 7.5 (GitLab 16.5).
+- 1.27 and 1.28 are expected to also be compatible with Chart 7.6 (GitLab 16.6), and full testing is [in progress](https://gitlab.com/groups/gitlab-org/-/epics/11320).
+
+The GitLab Helm Chart aims to support new minor Kubernetes versions three months after their initial release.
+We welcome any compatibility issues with releases newer than those listed above in our [issue tracker](https://gitlab.com/gitlab-org/charts/gitlab/-/issues).
+
+Some GitLab features might not work on versions older than the versions listed above.
+
 For some components, like the [agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/#gitlab-agent-for-kubernetes-supported-cluster-versions) and [GitLab Operator](https://docs.gitlab.com/operator/installation.html#kubernetes), GitLab might support different cluster versions.
 
 WARNING:
@@ -23,15 +33,12 @@ Kubernetes nodes must use the x86-64 architecture.
 Support for multiple architectures, including AArch64/ARM64, is under active development.
 See [issue 2899](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2899) for more information.
 
-NOTE:
-Disabling the in-chart NGINX Ingress Controller (`nginx-ingress.enabled=false`),
-allows the use of Kubernetes 1.16 or later. Alternatively, using version 1.2.1
-(`nginx-ingress.controller.image.tag=v1.2.1`) allows the use of Kubernetes 1.19 or later.
-
 - For cluster topology recommendations for an environment, see the
   [reference architectures](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures).
 - For an example of tuning the resources to fit in a 3 vCPU 12 GB cluster, see the
   [minimal GKE example values file](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/values-gke-minimum.yaml).
+
+## Instructions for specific Cloud providers
 
 Create and connect to a Kubernetes cluster in your environment:
 

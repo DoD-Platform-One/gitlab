@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.5.0-bb.0](https://img.shields.io/badge/Version-7.5.0--bb.0-informational?style=flat-square) ![AppVersion: 16.5.0](https://img.shields.io/badge/AppVersion-16.5.0-informational?style=flat-square)
+![Version: 7.5.1-bb.0](https://img.shields.io/badge/Version-7.5.1--bb.0-informational?style=flat-square) ![AppVersion: 16.5.0](https://img.shields.io/badge/AppVersion-16.5.0-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -705,7 +705,7 @@ helm install gitlab chart/
 | postgresql.resources.requests.memory | string | `"500Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
 | postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql"` |  |
-| postgresql.image.tag | string | `"14.8"` |  |
+| postgresql.image.tag | string | `"14.9"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.auth.username | string | `"gitlab"` |  |
 | postgresql.auth.password | string | `"bogus-satisfy-upgrade"` |  |

@@ -42,40 +42,7 @@ function previousDeployFailed() {
   return $status
 }
 
-function get_gitlab_app_version_for_branch() {
-  git fetch origin "${1}"
-  git show origin/"${1}":Chart.yaml | grep 'appVersion:' | awk '{print $2}'
-}
-
-function get_image_branch_for_gitlab_app_version() {
-  # turn vX.Y.Z / X.Y.Z into X-Y-stable
-  echo "${1}" | sed -E 's/^v?([0-9]+)\.([0-9]+)\.([0-9]+)$/\1-\2-stable/'
-}
-
 function deploy() {
-  # Use the gitlab version from the environment or use stable images when on the stable branch
-  gitlab_app_version=$(grep 'appVersion:' Chart.yaml | awk '{ print $2}')
-  if [[ -n "${GITLAB_VERSION}" ]]; then
-    image_branch=$GITLAB_VERSION
-  elif [[ "${CI_COMMIT_BRANCH}" =~ -stable$ ]] && [[ "${gitlab_app_version}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    image_branch=$(get_image_branch_for_gitlab_app_version "${gitlab_app_version}")
-  elif [[ "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" =~ -stable$ ]]; then
-    stable_gitlab_app_version=$(get_gitlab_app_version_for_branch "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}")
-    image_branch=$(get_image_branch_for_gitlab_app_version "${stable_gitlab_app_version}")
-  fi
-
-  gitlab_version_args=()
-  if [[ -n "$image_branch" ]]; then
-      gitlab_version_args=(
-      "--set" "global.gitlabVersion=${image_branch}"
-      "--set" "gitlab.gitaly.image.tag=${image_branch}"
-      "--set" "gitlab.gitlab-shell.image.tag=${image_branch}"
-      "--set" "gitlab.gitlab-exporter.image.tag=${image_branch}"
-      "--set" "gitlab.kas.image.tag=${image_branch}"
-      "--set" "registry.image.tag=${image_branch}"
-    )
-  fi
-
   # Cleanup and previous installs, as FAILED and PENDING_UPGRADE will cause errors with `upgrade`
   if [ "$RELEASE_NAME" != "production" ] && previousDeployFailed ; then
     echo "Deployment in bad state, cleaning up $RELEASE_NAME"
@@ -179,8 +146,8 @@ CIYAML
     -f ci.details.yaml \
     -f ci.scale.yaml \
     -f ci.psql.yaml \
+    -f ci.digests.yaml \
     --set releaseOverride="$RELEASE_NAME" \
-    --set global.image.pullPolicy="Always" \
     --set global.hosts.hostSuffix="$HOST_SUFFIX" \
     --set global.hosts.domain="$KUBE_INGRESS_BASE_DOMAIN" \
     --set global.ingress.annotations."external-dns\.alpha\.kubernetes\.io/ttl"="10" \

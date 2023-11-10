@@ -280,6 +280,30 @@ describe 'Mailroom configuration' do
     end
   end
 
+  context 'When using sidekiq deliveryMethod' do
+    let(:values) do
+      YAML.safe_load(%(
+        global:
+          redis:
+            host: external-redis
+            port: 9999
+            password:
+              enable: true
+              secret: external-redis-secret
+              key: external-redis-key
+          appConfig:
+              incomingEmail:
+                enabled: true
+                deliveryMethod: sidekiq
+      )).deep_merge(default_values)
+    end
+
+    it 'does not include the resque:gitlab namespace' do
+      t = HelmTemplate.new(values)
+      expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).not_to include(":namespace: resque:gitlab")
+    end
+  end
+
   context 'When global.redis is present' do
     let(:values) do
       YAML.safe_load(%(

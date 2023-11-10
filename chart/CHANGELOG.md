@@ -2,6 +2,12 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 7.5.1 (2023-10-30)
+
+### Changed (1 change)
+
+- [Update gitlab-org/charts/gitlab-runner from 0.57.1 to 0.58.0](gitlab-org/security/charts/gitlab@f22baeb579a3ed2caa78ae1fefc7566ffd71f8db)
+
 ## 7.5.0 (2023-10-20)
 
 ### Added (1 change)
@@ -26,6 +32,12 @@ entry.
 ### Other (1 change)
 
 - [Enable dual-namespace polling for sidekiq probe in gitlab-exporter](gitlab-org/charts/gitlab@08e94769a6169bdc380e7d46b3ed300aa9c9cfab) ([merge request](gitlab-org/charts/gitlab!3388))
+
+## 7.4.2 (2023-10-30)
+
+### Changed (1 change)
+
+- [Update gitlab-org/charts/gitlab-runner from 0.56.0 to 0.57.1](gitlab-org/security/charts/gitlab@31e21355635bd7767122652673cca0964d04bbd1)
 
 ## 7.4.1 (2023-09-28)
 
@@ -55,6 +67,10 @@ No changes.
 - [Update gitlab-org/charts/gitlab-runner from 0.55.0 to 0.56.0](gitlab-org/charts/gitlab@f14cbc58591049e3e035ee5396b2f096207c4f24) ([merge request](gitlab-org/charts/gitlab!3350))
 - [Update gitlab-org/container-registry from 3.79.0-gitlab to 3.80.0-gitlab](gitlab-org/charts/gitlab@7f61401aaa147497b4a9a32fa25a1c6896bfe394) ([merge request](gitlab-org/charts/gitlab!3341))
 - [Update gitlab-org/gitlab-qa from 12.2.1 to 12.3.0](gitlab-org/charts/gitlab@021b652e4100e94f0f59985cdb21022015275b61) ([merge request](gitlab-org/charts/gitlab!3349))
+
+## 7.3.6 (2023-10-30)
+
+No changes.
 
 ## 7.3.5 (2023-09-28)
 
