@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.5.1-bb.0](https://img.shields.io/badge/Version-7.5.1--bb.0-informational?style=flat-square) ![AppVersion: 16.5.0](https://img.shields.io/badge/AppVersion-16.5.0-informational?style=flat-square)
+![Version: 7.5.1-bb.1](https://img.shields.io/badge/Version-7.5.1--bb.1-informational?style=flat-square) ![AppVersion: 16.5.1](https://img.shields.io/badge/AppVersion-16.5.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -41,7 +41,7 @@ helm install gitlab chart/
 | global.image | object | `{}` |  |
 | global.pod.labels | object | `{}` |  |
 | global.edition | string | `"ee"` |  |
-| global.gitlabVersion | string | `"16.5.0"` |  |
+| global.gitlabVersion | string | `"16.5.1"` |  |
 | global.application.create | bool | `false` |  |
 | global.application.links | list | `[]` |  |
 | global.application.allowClusterRoles | bool | `true` |  |
@@ -343,8 +343,11 @@ helm install gitlab chart/
 | global.workhorse.tls.enabled | bool | `false` |  |
 | global.webservice.workerTimeout | int | `60` |  |
 | global.certificates.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/certificates"` |  |
-| global.certificates.image.tag | string | `"16.5.0"` |  |
+| global.certificates.image.tag | string | `"16.5.1"` |  |
 | global.certificates.image.pullSecrets[0].name | string | `"private-registry"` |  |
+| global.certificates.init.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| global.certificates.init.securityContext.runAsUser | int | `65534` |  |
+| global.certificates.init.securityContext.runAsNonRoot | bool | `true` |  |
 | global.certificates.customCAs[0].secret | string | `"ca-certs-australian-defence-organisation-cross-cert-chain"` |  |
 | global.certificates.customCAs[1].secret | string | `"ca-certs-australian-defence-organisation-direct-trust-chain"` |  |
 | global.certificates.customCAs[2].secret | string | `"ca-certs-boeing"` |  |
@@ -376,7 +379,7 @@ helm install gitlab chart/
 | global.certificates.customCAs[28].secret | string | `"ca-certs-dod-trust-anchors-self-signed"` |  |
 | global.certificates.customCAs[29].secret | string | `"ca-certs-eca"` |  |
 | global.kubectl.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kubectl"` |  |
-| global.kubectl.image.tag | string | `"16.5.0"` |  |
+| global.kubectl.image.tag | string | `"16.5.1"` |  |
 | global.kubectl.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.kubectl.securityContext.runAsUser | int | `65534` |  |
 | global.kubectl.securityContext.fsGroup | int | `65534` |  |
@@ -390,6 +393,7 @@ helm install gitlab chart/
 | global.tracing.connection.string | string | `""` |  |
 | global.tracing.urlTemplate | string | `""` |  |
 | global.zoekt.gateway.basicAuth | object | `{}` |  |
+| global.zoekt.indexer.internalApi | object | `{}` |  |
 | global.extraEnv | object | `{}` |  |
 | global.extraEnvFrom | object | `{}` |  |
 | containerSecurityContext.runAsUser | int | `65534` |  |
@@ -532,6 +536,7 @@ helm install gitlab chart/
 | nginx-ingress-geo.controller.electionID | string | `"ingress-controller-leader-geo"` |  |
 | nginx-ingress-geo.controller.ingressClassResource.name | string | `"{{ include \"gitlab.geo.ingress.class.name\" $ \| quote }}"` |  |
 | nginx-ingress-geo.controller.ingressClassResource.controllerValue | string | `"k8s.io/nginx-ingress-geo"` |  |
+| nginx-ingress-geo.externalIpTpl | string | `"{{ .Values.global.hosts.externalGeoIP }}"` |  |
 | haproxy.install | bool | `false` |  |
 | haproxy.controller.service.type | string | `"LoadBalancer"` |  |
 | haproxy.controller.service.tcpPorts[0].name | string | `"ssh"` |  |
@@ -705,7 +710,7 @@ helm install gitlab chart/
 | postgresql.resources.requests.memory | string | `"500Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
 | postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql"` |  |
-| postgresql.image.tag | string | `"14.9"` |  |
+| postgresql.image.tag | string | `"14.8"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.auth.username | string | `"gitlab"` |  |
 | postgresql.auth.password | string | `"bogus-satisfy-upgrade"` |  |
@@ -748,7 +753,7 @@ helm install gitlab chart/
 | registry.resources.requests.cpu | string | `"200m"` |  |
 | registry.resources.requests.memory | string | `"1024Mi"` |  |
 | registry.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry"` |  |
-| registry.image.tag | string | `"16.5.0"` |  |
+| registry.image.tag | string | `"16.5.1"` |  |
 | registry.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | registry.ingress.enabled | bool | `false` |  |
 | registry.metrics.enabled | bool | `true` |  |
@@ -787,6 +792,7 @@ helm install gitlab chart/
 | gitlab-runner.install | bool | `false` |  |
 | gitlab-runner.rbac.create | bool | `true` |  |
 | gitlab-runner.runners.locked | bool | `false` |  |
+| gitlab-runner.runners.secret | string | `"nonempty"` |  |
 | gitlab-runner.runners.config | string | `"[[runners]]\n  [runners.kubernetes]\n  image = \"ubuntu:22.04\"\n  {{- if .Values.global.minio.enabled }}\n  [runners.cache]\n    Type = \"s3\"\n    Path = \"gitlab-runner\"\n    Shared = true\n    [runners.cache.s3]\n      ServerAddress = {{ include \"gitlab-runner.cache-tpl.s3ServerAddress\" . }}\n      BucketName = \"runner-cache\"\n      BucketLocation = \"us-east-1\"\n      Insecure = false\n  {{ end }}\n"` |  |
 | gitlab-runner.podAnnotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
 | gitlab-runner.podAnnotations."gitlab.com/prometheus_port" | int | `9252` |  |
@@ -797,10 +803,13 @@ helm install gitlab chart/
 | traefik.ports.gitlab-shell.exposedPort | int | `22` |  |
 | gitlab.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.init.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| gitlab.certificates.init.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| gitlab.certificates.init.securityContext.runAsUser | int | `65534` |  |
+| gitlab.certificates.init.securityContext.runAsNonRoot | bool | `true` |  |
 | gitlab.toolbox.replicas | int | `1` |  |
 | gitlab.toolbox.antiAffinityLabels.matchLabels.app | string | `"gitaly"` |  |
 | gitlab.toolbox.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
-| gitlab.toolbox.image.tag | string | `"16.5.0"` |  |
+| gitlab.toolbox.image.tag | string | `"16.5.1"` |  |
 | gitlab.toolbox.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.toolbox.init.resources.requests.cpu | string | `"200m"` |  |
 | gitlab.toolbox.init.resources.requests.memory | string | `"200Mi"` |  |
@@ -836,7 +845,7 @@ helm install gitlab chart/
 | gitlab.gitlab-exporter.resources.requests.memory | string | `"200Mi"` |  |
 | gitlab.gitlab-exporter.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-exporter.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter"` |  |
-| gitlab.gitlab-exporter.image.tag | string | `"16.5.0"` |  |
+| gitlab.gitlab-exporter.image.tag | string | `"16.5.1"` |  |
 | gitlab.gitlab-exporter.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-exporter.metrics.enabled | bool | `true` |  |
 | gitlab.gitlab-exporter.metrics.port | int | `9168` |  |
@@ -853,7 +862,7 @@ helm install gitlab chart/
 | gitlab.migrations.resources.requests.cpu | string | `"500m"` |  |
 | gitlab.migrations.resources.requests.memory | string | `"1G"` |  |
 | gitlab.migrations.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
-| gitlab.migrations.image.tag | string | `"16.5.0"` |  |
+| gitlab.migrations.image.tag | string | `"16.5.1"` |  |
 | gitlab.migrations.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.migrations.securityContext.runAsUser | int | `1000` |  |
 | gitlab.migrations.securityContext.runAsGroup | int | `1000` |  |
@@ -877,14 +886,14 @@ helm install gitlab chart/
 | gitlab.webservice.resources.requests.cpu | string | `"600m"` |  |
 | gitlab.webservice.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice"` |  |
-| gitlab.webservice.image.tag | string | `"16.5.0"` |  |
+| gitlab.webservice.image.tag | string | `"16.5.1"` |  |
 | gitlab.webservice.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.webservice.workhorse.resources.limits.cpu | string | `"600m"` |  |
 | gitlab.webservice.workhorse.resources.limits.memory | string | `"2.5G"` |  |
 | gitlab.webservice.workhorse.resources.requests.cpu | string | `"600m"` |  |
 | gitlab.webservice.workhorse.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.workhorse.image | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse"` |  |
-| gitlab.webservice.workhorse.tag | string | `"16.5.0"` |  |
+| gitlab.webservice.workhorse.tag | string | `"16.5.1"` |  |
 | gitlab.webservice.workhorse.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.webservice.workhorse.metrics.enabled | bool | `true` |  |
 | gitlab.webservice.workhorse.metrics.serviceMonitor.enabled | bool | `true` |  |
@@ -894,7 +903,7 @@ helm install gitlab chart/
 | gitlab.webservice.metrics.port | int | `8083` |  |
 | gitlab.webservice.metrics.serviceMonitor.enabled | bool | `true` |  |
 | gitlab.sidekiq.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq"` |  |
-| gitlab.sidekiq.image.tag | string | `"16.5.0"` |  |
+| gitlab.sidekiq.image.tag | string | `"16.5.1"` |  |
 | gitlab.sidekiq.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.sidekiq.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.sidekiq.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -912,7 +921,7 @@ helm install gitlab chart/
 | gitlab.sidekiq.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.sidekiq.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitaly.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.gitaly.image.tag | string | `"16.5.0"` |  |
+| gitlab.gitaly.image.tag | string | `"16.5.1"` |  |
 | gitlab.gitaly.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitaly.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitaly.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -932,7 +941,7 @@ helm install gitlab chart/
 | gitlab.gitaly.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitaly.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-shell.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell"` |  |
-| gitlab.gitlab-shell.image.tag | string | `"16.5.0"` |  |
+| gitlab.gitlab-shell.image.tag | string | `"16.5.1"` |  |
 | gitlab.gitlab-shell.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-shell.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitlab-shell.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -950,15 +959,15 @@ helm install gitlab chart/
 | gitlab.gitlab-shell.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitlab-shell.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.mailroom.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom"` |  |
-| gitlab.mailroom.image.tag | string | `"16.5.0"` |  |
+| gitlab.mailroom.image.tag | string | `"16.5.1"` |  |
 | gitlab.mailroom.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.mailroom.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-pages.service.customDomains.type | string | `"ClusterIP"` |  |
 | gitlab.gitlab-pages.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages"` |  |
-| gitlab.gitlab-pages.image.tag | string | `"16.5.0"` |  |
+| gitlab.gitlab-pages.image.tag | string | `"16.5.1"` |  |
 | gitlab.gitlab-pages.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.praefect.image.tag | string | `"16.5.0"` |  |
+| gitlab.praefect.image.tag | string | `"16.5.1"` |  |
 | gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.praefect.init.resources.limits.memory | string | `"200Mi"` |  |
 | gitlab.praefect.init.resources.requests.cpu | string | `"200m"` |  |
@@ -970,6 +979,12 @@ helm install gitlab chart/
 | gitlab.praefect.resources.limits.memory | string | `"1Gi"` |  |
 | gitlab.praefect.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab-zoekt.install | bool | `false` |  |
+| gitlab-zoekt.gateway.basicAuth.enabled | bool | `false` |  |
+| gitlab-zoekt.gateway.basicAuth.secretName | string | `"{{ include \"gitlab.zoekt.gateway.basicAuth.secretName\" $ }}"` |  |
+| gitlab-zoekt.indexer.internalApi.enabled | bool | `false` |  |
+| gitlab-zoekt.indexer.internalApi.secretName | string | `"{{ include \"gitlab.zoekt.indexer.internalApi.secretName\" $ }}"` |  |
+| gitlab-zoekt.indexer.internalApi.secretKey | string | `"{{ include \"gitlab.zoekt.indexer.internalApi.secretKey\" $ }}"` |  |
+| gitlab-zoekt.indexer.internalApi.gitlabUrl | string | `"{{ include \"gitlab.zoekt.indexer.internalApi.gitlabUrl\" $ }}"` |  |
 | minio.init.resources.limits.cpu | string | `"200m"` |  |
 | minio.init.resources.limits.memory | string | `"200Mi"` |  |
 | minio.init.resources.requests.cpu | string | `"200m"` |  |
@@ -1046,8 +1061,173 @@ helm install gitlab chart/
 | bbtests.scripts.envs.GITLAB_REPOSITORY | string | `"http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
 | bbtests.scripts.envs.GITLAB_ORIGIN | string | `"http://testuser:Password123h56a78@gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
 | bbtests.scripts.envs.GITLAB_REGISTRY | string | `"gitlab-registry-test-svc.gitlab.svc.cluster.local:80"` |  |
-| bbtests.gateway.basicAuth.enabled | bool | `true` |  |
-| bbtests.gateway.basicAuth.secretName | string | `"{{ include \"gitlab.zoekt.gateway.basicAuth.secretName\" $ }}"` |  |
+
+## Contributing
+
+Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+# postgresql
+
+![Version: 8.9.4](https://img.shields.io/badge/Version-8.9.4-informational?style=flat-square) ![AppVersion: 11.7.0](https://img.shields.io/badge/AppVersion-11.7.0-informational?style=flat-square)
+
+Chart for PostgreSQL, an object-relational database management system (ORDBMS) with an emphasis on extensibility and on standards-compliance.
+
+## Upstream References
+* <https://www.postgresql.org/>
+
+* <https://github.com/bitnami/bitnami-docker-postgresql>
+
+## Learn More
+* [Application Overview](docs/overview.md)
+* [Other Documentation](docs/)
+
+## Pre-Requisites
+
+* Kubernetes Cluster deployed
+* Kubernetes config installed in `~/.kube/config`
+* Helm installed
+
+Install Helm
+
+https://helm.sh/docs/intro/install/
+
+## Deployment
+
+* Clone down the repository
+* cd into directory
+```bash
+helm install postgresql chart/
+```
+
+## Values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| global.postgresql | object | `{}` |  |
+| image.registry | string | `"docker.io"` |  |
+| image.repository | string | `"bitnami/postgresql"` |  |
+| image.tag | string | `"11.7.0-debian-10-r90"` |  |
+| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.debug | bool | `false` |  |
+| volumePermissions.enabled | bool | `false` |  |
+| volumePermissions.image.registry | string | `"docker.io"` |  |
+| volumePermissions.image.repository | string | `"bitnami/minideb"` |  |
+| volumePermissions.image.tag | string | `"buster"` |  |
+| volumePermissions.image.pullPolicy | string | `"Always"` |  |
+| volumePermissions.securityContext.runAsUser | int | `0` |  |
+| securityContext.enabled | bool | `true` |  |
+| securityContext.fsGroup | int | `1001` |  |
+| securityContext.runAsUser | int | `1001` |  |
+| serviceAccount.enabled | bool | `false` |  |
+| psp.create | bool | `false` |  |
+| rbac.create | bool | `false` |  |
+| replication.enabled | bool | `false` |  |
+| replication.user | string | `"repl_user"` |  |
+| replication.password | string | `"repl_password"` |  |
+| replication.slaveReplicas | int | `1` |  |
+| replication.synchronousCommit | string | `"off"` |  |
+| replication.numSynchronousReplicas | int | `0` |  |
+| replication.applicationName | string | `"my_application"` |  |
+| postgresqlUsername | string | `"postgres"` |  |
+| postgresqlDataDir | string | `"/bitnami/postgresql/data"` |  |
+| extraEnv | list | `[]` |  |
+| ldap.enabled | bool | `false` |  |
+| ldap.url | string | `""` |  |
+| ldap.server | string | `""` |  |
+| ldap.port | string | `""` |  |
+| ldap.prefix | string | `""` |  |
+| ldap.suffix | string | `""` |  |
+| ldap.baseDN | string | `""` |  |
+| ldap.bindDN | string | `""` |  |
+| ldap.bind_password | string | `nil` |  |
+| ldap.search_attr | string | `""` |  |
+| ldap.search_filter | string | `""` |  |
+| ldap.scheme | string | `""` |  |
+| ldap.tls | bool | `false` |  |
+| service.type | string | `"ClusterIP"` |  |
+| service.port | int | `5432` |  |
+| service.annotations | object | `{}` |  |
+| shmVolume.enabled | bool | `true` |  |
+| shmVolume.chmod.enabled | bool | `true` |  |
+| persistence.enabled | bool | `true` |  |
+| persistence.mountPath | string | `"/bitnami/postgresql"` |  |
+| persistence.subPath | string | `""` |  |
+| persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| persistence.size | string | `"8Gi"` |  |
+| persistence.annotations | object | `{}` |  |
+| updateStrategy.type | string | `"RollingUpdate"` |  |
+| master.nodeSelector | object | `{}` |  |
+| master.affinity | object | `{}` |  |
+| master.tolerations | list | `[]` |  |
+| master.labels | object | `{}` |  |
+| master.annotations | object | `{}` |  |
+| master.podLabels | object | `{}` |  |
+| master.podAnnotations | object | `{}` |  |
+| master.priorityClassName | string | `""` |  |
+| master.extraInitContainers | list | `[]` |  |
+| master.extraVolumeMounts | list | `[]` |  |
+| master.extraVolumes | list | `[]` |  |
+| master.sidecars | list | `[]` |  |
+| master.service | object | `{}` |  |
+| slave.nodeSelector | object | `{}` |  |
+| slave.affinity | object | `{}` |  |
+| slave.tolerations | list | `[]` |  |
+| slave.labels | object | `{}` |  |
+| slave.annotations | object | `{}` |  |
+| slave.podLabels | object | `{}` |  |
+| slave.podAnnotations | object | `{}` |  |
+| slave.priorityClassName | string | `""` |  |
+| slave.extraInitContainers | string | `"# - name: do-something\n#   image: busybox\n#   command: ['do', 'something']\n"` |  |
+| slave.extraVolumeMounts | list | `[]` |  |
+| slave.extraVolumes | list | `[]` |  |
+| slave.sidecars | list | `[]` |  |
+| slave.service | object | `{}` |  |
+| resources.requests.memory | string | `"256Mi"` |  |
+| resources.requests.cpu | string | `"250m"` |  |
+| commonAnnotiations | object | `{}` |  |
+| networkPolicy.enabled | bool | `false` |  |
+| networkPolicy.allowExternal | bool | `true` |  |
+| networkPolicy.explicitNamespacesSelector | object | `{}` |  |
+| livenessProbe.enabled | bool | `true` |  |
+| livenessProbe.initialDelaySeconds | int | `30` |  |
+| livenessProbe.periodSeconds | int | `10` |  |
+| livenessProbe.timeoutSeconds | int | `5` |  |
+| livenessProbe.failureThreshold | int | `6` |  |
+| livenessProbe.successThreshold | int | `1` |  |
+| readinessProbe.enabled | bool | `true` |  |
+| readinessProbe.initialDelaySeconds | int | `5` |  |
+| readinessProbe.periodSeconds | int | `10` |  |
+| readinessProbe.timeoutSeconds | int | `5` |  |
+| readinessProbe.failureThreshold | int | `6` |  |
+| readinessProbe.successThreshold | int | `1` |  |
+| metrics.enabled | bool | `false` |  |
+| metrics.service.type | string | `"ClusterIP"` |  |
+| metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
+| metrics.service.annotations."prometheus.io/port" | string | `"9187"` |  |
+| metrics.service.loadBalancerIP | string | `nil` |  |
+| metrics.serviceMonitor.enabled | bool | `false` |  |
+| metrics.serviceMonitor.additionalLabels | object | `{}` |  |
+| metrics.prometheusRule.enabled | bool | `false` |  |
+| metrics.prometheusRule.additionalLabels | object | `{}` |  |
+| metrics.prometheusRule.namespace | string | `""` |  |
+| metrics.prometheusRule.rules | list | `[]` |  |
+| metrics.image.registry | string | `"docker.io"` |  |
+| metrics.image.repository | string | `"bitnami/postgres-exporter"` |  |
+| metrics.image.tag | string | `"0.8.0-debian-10-r99"` |  |
+| metrics.image.pullPolicy | string | `"IfNotPresent"` |  |
+| metrics.securityContext.enabled | bool | `false` |  |
+| metrics.securityContext.runAsUser | int | `1001` |  |
+| metrics.livenessProbe.enabled | bool | `true` |  |
+| metrics.livenessProbe.initialDelaySeconds | int | `5` |  |
+| metrics.livenessProbe.periodSeconds | int | `10` |  |
+| metrics.livenessProbe.timeoutSeconds | int | `5` |  |
+| metrics.livenessProbe.failureThreshold | int | `6` |  |
+| metrics.livenessProbe.successThreshold | int | `1` |  |
+| metrics.readinessProbe.enabled | bool | `true` |  |
+| metrics.readinessProbe.initialDelaySeconds | int | `5` |  |
+| metrics.readinessProbe.periodSeconds | int | `10` |  |
+| metrics.readinessProbe.timeoutSeconds | int | `5` |  |
+| metrics.readinessProbe.failureThreshold | int | `6` |  |
+| metrics.readinessProbe.successThreshold | int | `1` |  |
 
 ## Contributing
 

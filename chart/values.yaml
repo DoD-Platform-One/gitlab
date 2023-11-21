@@ -784,6 +784,13 @@ global:
       tag: 16.5.1
       pullSecrets:
       - name: private-registry
+    init:
+      securityContext:
+        capabilities:
+          drop: 
+            - ALL
+        runAsUser: 65534
+        runAsNonRoot: true
     customCAs:
       # DoD approved certificates from https://public.cyber.mil/pki-pke/pkipke-document-library/
 
@@ -1514,6 +1521,14 @@ gitlab:
       capabilities:
         drop: 
           - ALL
+  certificates:
+    init:
+      securityContext:
+        capabilities:
+          drop: 
+            - ALL
+        runAsUser: 65534
+        runAsNonRoot: true
   ## https://docs.gitlab.com/charts/charts/gitlab/toolbox
   toolbox:
     replicas: 1
