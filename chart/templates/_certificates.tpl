@@ -9,7 +9,10 @@
 - name: certificates
   image: {{ include "gitlab.certificates.image" . }}
   {{- include "gitlab.image.pullPolicy" $imageCfg | indent 2 }}
-  {{- include "gitlab.init.containerSecurityContext" . | indent 2 }}
+  {{- with .Values.global.certificates.init.securityContext }}
+  securityContext:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   env:
   {{- include "gitlab.extraEnv" . | nindent 2 }}
   {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 2 }}
@@ -17,8 +20,20 @@
   - name: etc-ssl-certs
     mountPath: /etc/ssl/certs
     readOnly: false
+  - name: etc-pki-ca-trust-extracted-openssl
+    mountPath: /etc/pki/ca-trust/extracted/openssl
+    readOnly: false
   - name: etc-pki-ca-trust-extracted-pem
     mountPath: /etc/pki/ca-trust/extracted/pem
+    readOnly: false
+  - name: etc-pki-ca-trust-extracted-java
+    mountPath: /etc/pki/ca-trust/extracted/java
+    readOnly: false
+  - name: etc-pki-ca-trust-extracted-edk2
+    mountPath: /etc/pki/ca-trust/extracted/edk2
+    readOnly: false
+  - name: rhel-usr-pki-anchors
+    mountPath: /usr/share/pki/ca-trust-source/anchors
     readOnly: false
 {{- if or $customCAsEnabled (or $certmanagerDisabled $internalGitalyTLSEnabled $internalPraefectTLSEnabled) }}
   - name: custom-ca-certificates
@@ -38,6 +53,18 @@
   emptyDir:
     medium: "Memory"
 - name: etc-pki-ca-trust-extracted-pem
+  emptyDir:
+    medium: "Memory"
+- name: etc-pki-ca-trust-extracted-openssl
+  emptyDir:
+    medium: "Memory"
+- name: etc-pki-ca-trust-extracted-java
+  emptyDir:
+    medium: "Memory"
+- name: etc-pki-ca-trust-extracted-edk2
+  emptyDir:
+    medium: "Memory"
+- name: rhel-usr-pki-anchors
   emptyDir:
     medium: "Memory"
 {{- if or $customCAsEnabled (or $certmanagerDisabled $internalGitalyTLSEnabled $internalPraefectTLSEnabled) }}
@@ -112,5 +139,14 @@
   readOnly: true
 - name: etc-pki-ca-trust-extracted-pem
   mountPath: /etc/pki/ca-trust/extracted/pem
+  readOnly: true
+- name: etc-pki-ca-trust-extracted-openssl
+  mountPath: /etc/pki/ca-trust/extracted/openssl
+  readOnly: true
+- name: etc-pki-ca-trust-extracted-java
+  mountPath: /etc/pki/ca-trust/extracted/java
+  readOnly: true
+- name: etc-pki-ca-trust-extracted-edk2
+  mountPath: /etc/pki/ca-trust/extracted/edk2
   readOnly: true
 {{- end -}}

@@ -280,6 +280,19 @@ If that is not present it will use the global chart serviceAccount automountServ
 {{- end -}}
 ```
 
+## `chart/templates/_certificates.tpl`
+- Remove the include initContainerSecurityContext function.
+```
+{{- include "gitlab.init.containerSecurityContext" . | indent 2 }}
+```
+- Add the logic to use our own configurable securityContext for certificates initContainers.
+```
+  {{- with .Values.global.certificates.init.securityContext }}
+  securityContext:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+```
+
 ## chart/bigbang/*
 - Add DoD approved CA certificates (recursive copy directory from previous release).
 - If updating new certificates from new bundle:
@@ -371,6 +384,7 @@ If that is not present it will use the global chart serviceAccount automountServ
   ```bash
   for i in $(helm template -s templates/bigbang/secrets/DoD_CA_certs.yaml . | grep "name:" | cut -d ":" -f 2); do echo "- secret: $i"; done
   ``````
+- Add `global.certificates.init.securityContext` and it's 3 entries
 - Add `postgresqlInitdbArgs`, `securityContext`, `postgresqlDataDir` and `persistence` to get IB image working with postgres subchart.
 - Add `upgradeCheck.annotations`: sidecar.istio.io/inject: "false".
 - Add `shared-secrets.annotations`: sidecar.istio.io/inject: "false".
