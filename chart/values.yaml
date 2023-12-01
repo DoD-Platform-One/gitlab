@@ -1617,7 +1617,13 @@ gitlab:
       port: 9168
       serviceMonitor:
         enabled: true
+    securityContext: 
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
       capabilities:
         drop: 
           - ALL

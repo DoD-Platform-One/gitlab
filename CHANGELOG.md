@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 --
+## [7.5.1-bb.2] - 2023-12-01
+### Changed
+- Update gitlab-exporter security context to fix non-root-group policy violations
+
 ## [7.5.1-bb.1] - 2023-11-17
 ### Changed
 - certificates initContainer securityContext alterations

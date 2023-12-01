@@ -1,35 +1,41 @@
+
 # gitlab
 
-![Version: 7.5.1-bb.1](https://img.shields.io/badge/Version-7.5.1--bb.1-informational?style=flat-square) ![AppVersion: 16.5.1](https://img.shields.io/badge/AppVersion-16.5.1-informational?style=flat-square)
+![Version: 7.5.1-bb.2](https://img.shields.io/badge/Version-7.5.1--bb.2-informational?style=flat-square) ![AppVersion: 16.5.1](https://img.shields.io/badge/AppVersion-16.5.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
-## Upstream References
-* <https://about.gitlab.com/>
+**Homepage:** <https://about.gitlab.com/>
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| GitLab Inc. | <support@gitlab.com> |  |
+
+## Source Code
 
 * <https://gitlab.com/gitlab-org/charts/gitlab>
 
-## Learn More
-* [Application Overview](docs/overview.md)
-* [Other Documentation](docs/)
+## Requirements
 
-## Pre-Requisites
-
-* Kubernetes Cluster deployed
-* Kubernetes config installed in `~/.kube/config`
-* Helm installed
-
-Install Helm
-
-https://helm.sh/docs/intro/install/
-
-## Deployment
-
-* Clone down the repository
-* cd into directory
-```bash
-helm install gitlab chart/
-```
+| Repository | Name | Version |
+|------------|------|---------|
+|  | certmanager-issuer | *.*.* |
+|  | gitlab | *.*.* |
+|  | minio | *.*.* |
+|  | nginx-ingress-geo(nginx-ingress) | *.*.* |
+|  | nginx-ingress | *.*.* |
+|  | registry | *.*.* |
+| https://charts.bitnami.com/bitnami | postgresql | 12.5.2 |
+| https://charts.bitnami.com/bitnami | redis | 16.13.2 |
+| https://charts.gitlab.io/ | gitlab-runner | 0.58.1 |
+| https://charts.gitlab.io/ | gitlab-zoekt | 0.8.0 |
+| https://charts.jetstack.io/ | certmanager(cert-manager) | 1.11.1 |
+| https://haproxytech.github.io/helm-charts | haproxy(kubernetes-ingress) | 1.32.0 |
+| https://helm.traefik.io/traefik | traefik | 10.19.4 |
+| https://prometheus-community.github.io/helm-charts | prometheus | 15.18.0 |
+| oci://registry1.dso.mil/bigbang | gluon | 0.4.1 |
 
 ## Values
 
@@ -850,6 +856,11 @@ helm install gitlab chart/
 | gitlab.gitlab-exporter.metrics.enabled | bool | `true` |  |
 | gitlab.gitlab-exporter.metrics.port | int | `9168` |  |
 | gitlab.gitlab-exporter.metrics.serviceMonitor.enabled | bool | `true` |  |
+| gitlab.gitlab-exporter.securityContext.runAsUser | int | `1000` |  |
+| gitlab.gitlab-exporter.securityContext.runAsGroup | int | `1000` |  |
+| gitlab.gitlab-exporter.securityContext.fsGroup | int | `1000` |  |
+| gitlab.gitlab-exporter.containerSecurityContext.runAsUser | int | `1000` |  |
+| gitlab.gitlab-exporter.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitlab-exporter.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.migrations.annotations."sidecar.istio.io/inject" | string | `"false"` |  |
 | gitlab.migrations.init.resources.limits.cpu | string | `"200m"` |  |
@@ -1062,173 +1073,5 @@ helm install gitlab chart/
 | bbtests.scripts.envs.GITLAB_ORIGIN | string | `"http://testuser:Password123h56a78@gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
 | bbtests.scripts.envs.GITLAB_REGISTRY | string | `"gitlab-registry-test-svc.gitlab.svc.cluster.local:80"` |  |
 
-## Contributing
-
-Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
-# postgresql
-
-![Version: 8.9.4](https://img.shields.io/badge/Version-8.9.4-informational?style=flat-square) ![AppVersion: 11.7.0](https://img.shields.io/badge/AppVersion-11.7.0-informational?style=flat-square)
-
-Chart for PostgreSQL, an object-relational database management system (ORDBMS) with an emphasis on extensibility and on standards-compliance.
-
-## Upstream References
-* <https://www.postgresql.org/>
-
-* <https://github.com/bitnami/bitnami-docker-postgresql>
-
-## Learn More
-* [Application Overview](docs/overview.md)
-* [Other Documentation](docs/)
-
-## Pre-Requisites
-
-* Kubernetes Cluster deployed
-* Kubernetes config installed in `~/.kube/config`
-* Helm installed
-
-Install Helm
-
-https://helm.sh/docs/intro/install/
-
-## Deployment
-
-* Clone down the repository
-* cd into directory
-```bash
-helm install postgresql chart/
-```
-
-## Values
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| global.postgresql | object | `{}` |  |
-| image.registry | string | `"docker.io"` |  |
-| image.repository | string | `"bitnami/postgresql"` |  |
-| image.tag | string | `"11.7.0-debian-10-r90"` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.debug | bool | `false` |  |
-| volumePermissions.enabled | bool | `false` |  |
-| volumePermissions.image.registry | string | `"docker.io"` |  |
-| volumePermissions.image.repository | string | `"bitnami/minideb"` |  |
-| volumePermissions.image.tag | string | `"buster"` |  |
-| volumePermissions.image.pullPolicy | string | `"Always"` |  |
-| volumePermissions.securityContext.runAsUser | int | `0` |  |
-| securityContext.enabled | bool | `true` |  |
-| securityContext.fsGroup | int | `1001` |  |
-| securityContext.runAsUser | int | `1001` |  |
-| serviceAccount.enabled | bool | `false` |  |
-| psp.create | bool | `false` |  |
-| rbac.create | bool | `false` |  |
-| replication.enabled | bool | `false` |  |
-| replication.user | string | `"repl_user"` |  |
-| replication.password | string | `"repl_password"` |  |
-| replication.slaveReplicas | int | `1` |  |
-| replication.synchronousCommit | string | `"off"` |  |
-| replication.numSynchronousReplicas | int | `0` |  |
-| replication.applicationName | string | `"my_application"` |  |
-| postgresqlUsername | string | `"postgres"` |  |
-| postgresqlDataDir | string | `"/bitnami/postgresql/data"` |  |
-| extraEnv | list | `[]` |  |
-| ldap.enabled | bool | `false` |  |
-| ldap.url | string | `""` |  |
-| ldap.server | string | `""` |  |
-| ldap.port | string | `""` |  |
-| ldap.prefix | string | `""` |  |
-| ldap.suffix | string | `""` |  |
-| ldap.baseDN | string | `""` |  |
-| ldap.bindDN | string | `""` |  |
-| ldap.bind_password | string | `nil` |  |
-| ldap.search_attr | string | `""` |  |
-| ldap.search_filter | string | `""` |  |
-| ldap.scheme | string | `""` |  |
-| ldap.tls | bool | `false` |  |
-| service.type | string | `"ClusterIP"` |  |
-| service.port | int | `5432` |  |
-| service.annotations | object | `{}` |  |
-| shmVolume.enabled | bool | `true` |  |
-| shmVolume.chmod.enabled | bool | `true` |  |
-| persistence.enabled | bool | `true` |  |
-| persistence.mountPath | string | `"/bitnami/postgresql"` |  |
-| persistence.subPath | string | `""` |  |
-| persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
-| persistence.size | string | `"8Gi"` |  |
-| persistence.annotations | object | `{}` |  |
-| updateStrategy.type | string | `"RollingUpdate"` |  |
-| master.nodeSelector | object | `{}` |  |
-| master.affinity | object | `{}` |  |
-| master.tolerations | list | `[]` |  |
-| master.labels | object | `{}` |  |
-| master.annotations | object | `{}` |  |
-| master.podLabels | object | `{}` |  |
-| master.podAnnotations | object | `{}` |  |
-| master.priorityClassName | string | `""` |  |
-| master.extraInitContainers | list | `[]` |  |
-| master.extraVolumeMounts | list | `[]` |  |
-| master.extraVolumes | list | `[]` |  |
-| master.sidecars | list | `[]` |  |
-| master.service | object | `{}` |  |
-| slave.nodeSelector | object | `{}` |  |
-| slave.affinity | object | `{}` |  |
-| slave.tolerations | list | `[]` |  |
-| slave.labels | object | `{}` |  |
-| slave.annotations | object | `{}` |  |
-| slave.podLabels | object | `{}` |  |
-| slave.podAnnotations | object | `{}` |  |
-| slave.priorityClassName | string | `""` |  |
-| slave.extraInitContainers | string | `"# - name: do-something\n#   image: busybox\n#   command: ['do', 'something']\n"` |  |
-| slave.extraVolumeMounts | list | `[]` |  |
-| slave.extraVolumes | list | `[]` |  |
-| slave.sidecars | list | `[]` |  |
-| slave.service | object | `{}` |  |
-| resources.requests.memory | string | `"256Mi"` |  |
-| resources.requests.cpu | string | `"250m"` |  |
-| commonAnnotiations | object | `{}` |  |
-| networkPolicy.enabled | bool | `false` |  |
-| networkPolicy.allowExternal | bool | `true` |  |
-| networkPolicy.explicitNamespacesSelector | object | `{}` |  |
-| livenessProbe.enabled | bool | `true` |  |
-| livenessProbe.initialDelaySeconds | int | `30` |  |
-| livenessProbe.periodSeconds | int | `10` |  |
-| livenessProbe.timeoutSeconds | int | `5` |  |
-| livenessProbe.failureThreshold | int | `6` |  |
-| livenessProbe.successThreshold | int | `1` |  |
-| readinessProbe.enabled | bool | `true` |  |
-| readinessProbe.initialDelaySeconds | int | `5` |  |
-| readinessProbe.periodSeconds | int | `10` |  |
-| readinessProbe.timeoutSeconds | int | `5` |  |
-| readinessProbe.failureThreshold | int | `6` |  |
-| readinessProbe.successThreshold | int | `1` |  |
-| metrics.enabled | bool | `false` |  |
-| metrics.service.type | string | `"ClusterIP"` |  |
-| metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
-| metrics.service.annotations."prometheus.io/port" | string | `"9187"` |  |
-| metrics.service.loadBalancerIP | string | `nil` |  |
-| metrics.serviceMonitor.enabled | bool | `false` |  |
-| metrics.serviceMonitor.additionalLabels | object | `{}` |  |
-| metrics.prometheusRule.enabled | bool | `false` |  |
-| metrics.prometheusRule.additionalLabels | object | `{}` |  |
-| metrics.prometheusRule.namespace | string | `""` |  |
-| metrics.prometheusRule.rules | list | `[]` |  |
-| metrics.image.registry | string | `"docker.io"` |  |
-| metrics.image.repository | string | `"bitnami/postgres-exporter"` |  |
-| metrics.image.tag | string | `"0.8.0-debian-10-r99"` |  |
-| metrics.image.pullPolicy | string | `"IfNotPresent"` |  |
-| metrics.securityContext.enabled | bool | `false` |  |
-| metrics.securityContext.runAsUser | int | `1001` |  |
-| metrics.livenessProbe.enabled | bool | `true` |  |
-| metrics.livenessProbe.initialDelaySeconds | int | `5` |  |
-| metrics.livenessProbe.periodSeconds | int | `10` |  |
-| metrics.livenessProbe.timeoutSeconds | int | `5` |  |
-| metrics.livenessProbe.failureThreshold | int | `6` |  |
-| metrics.livenessProbe.successThreshold | int | `1` |  |
-| metrics.readinessProbe.enabled | bool | `true` |  |
-| metrics.readinessProbe.initialDelaySeconds | int | `5` |  |
-| metrics.readinessProbe.periodSeconds | int | `10` |  |
-| metrics.readinessProbe.timeoutSeconds | int | `5` |  |
-| metrics.readinessProbe.failureThreshold | int | `6` |  |
-| metrics.readinessProbe.successThreshold | int | `1` |  |
-
-## Contributing
-
-Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.10.0](https://github.com/norwoodj/helm-docs/releases/v1.10.0)
