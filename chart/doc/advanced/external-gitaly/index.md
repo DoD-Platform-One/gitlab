@@ -132,3 +132,17 @@ You can choose any valid secret name and key for this, but make
 sure the key is unique across all the secrets specified in `customCAs` to avoid
 collision since all keys within the secrets will be mounted. You **do not**
 need to provide the key for the certificate, as this is the _client side_.
+
+## Test that GitLab can connect to Gitaly
+
+To check that GitLab can connect to the external Gitaly server:
+
+```shell
+kubectl exec -it <toolbox-pod> -- gitlab-rake gitlab:gitaly:check
+```
+
+If you are using Gitaly with TLS, you can also check if GitLab Chart trusts the Gitaly certificate:
+
+```shell
+kubectl exec -it <toolbox-pod> -- echo | /usr/bin/openssl s_client -connect <gitaly-host>:<gitaly-port>
+```

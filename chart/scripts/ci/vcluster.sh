@@ -9,17 +9,22 @@ function cluster_connect() {
   fi
 }
 
+function vcluster_name() {
+  printf ${VCLUSTER_NAME:0:52}
+}
+
 function vcluster_create() {
-  vcluster create ${VCLUSTER_NAME} \
+  local vcluster_name=$(vcluster_name)
+  vcluster create ${vcluster_name} \
     --upgrade \
-    --namespace=${VCLUSTER_NAME} \
+    --namespace=${vcluster_name} \
     --kubernetes-version=${VCLUSTER_K8S_VERSION} \
     --connect=false \
     --update-current=false
 }
 
 function vcluster_run() {
-  vcluster connect ${VCLUSTER_NAME} -- $@
+  vcluster connect $(vcluster_name) -- $@
 }
 
 function vcluster_helm_deploy() {
@@ -38,12 +43,12 @@ function vcluster_helm_rollout_status() {
 }
 
 function vcluster_delete() {
-  vcluster delete ${VCLUSTER_NAME}
+  vcluster delete $(vcluster_name)
 }
 
 function vcluster_info() {
   echo "To connect to the virtual cluster:"
   echo "1. Connect to host cluster via kubectl: ${AGENT_NAME}"
-  echo "2. Connect to virtual cluster: vcluster connect ${VCLUSTER_NAME}"
+  echo "2. Connect to virtual cluster: vcluster connect $(vcluster_name)"
   echo "3. Open a separate terminal window and run your kubectl and helm commands."
 }

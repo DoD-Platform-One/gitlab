@@ -16,4 +16,4 @@ Related issue(s):
 <!-- Any additional context, questions, or notes for the technical writer. -->
 
 
-/label ~documentation ~"section::enablement" ~"devops::systems" ~"group::distribution"
+/label ~documentation ~"section::core platform" ~"devops::systems" ~"group::distribution"

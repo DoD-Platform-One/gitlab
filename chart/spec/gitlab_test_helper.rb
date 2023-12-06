@@ -179,14 +179,14 @@ module Gitlab
         skip_flags += " --skip #{skipped}"
       end
 
-      cmd = full_command("backup-utility --restore -t original #{skip_flags}", { GITLAB_ASSUME_YES: "1" })
+      cmd = full_command("backup-utility --restore -t #{original_backup_prefix} #{skip_flags}", { GITLAB_ASSUME_YES: "1" })
       stdout, status = Open3.capture2e(cmd)
 
       return [stdout, status]
     end
 
     def backup_instance
-      cmd = full_command("backup-utility -t test-backup", { GITLAB_ASSUME_YES: "1" })
+      cmd = full_command("backup-utility -t #{new_backup_prefix}", { GITLAB_ASSUME_YES: "1" })
       stdout, status = Open3.capture2e(cmd)
 
       return [stdout, status]
@@ -282,17 +282,33 @@ module Gitlab
     end
 
     def ensure_backups_on_object_storage
-      storage_url = 'https://storage.googleapis.com/gitlab-charts-ci/test-backups'
-      backup_file_names = ["#{ENV['TEST_BACKUP_PREFIX']}_gitlab_backup.tar"]
-      backup_file_names.each do |file_name|
-        file = URI.open("#{storage_url}/#{file_name}").read
-        object_storage.put_object(
-          bucket: 'gitlab-backups',
-          key: 'original_gitlab_backup.tar',
-          body: file
-        )
-        puts "Uploaded #{file_name}"
-      end
+      file = URI.open(original_backup_source_url).read
+      object_storage.put_object(
+        bucket: 'gitlab-backups',
+        key: original_backup_name,
+        body: file
+      )
+      puts "Uploaded #{original_backup_name}"
+    end
+
+    def original_backup_prefix
+      ENV['TEST_BACKUP_PREFIX']
+    end
+
+    def original_backup_name
+      "#{original_backup_prefix}_gitlab_backup.tar"
+    end
+
+    def original_backup_source_url
+      "https://storage.googleapis.com/gitlab-charts-ci/test-backups/#{original_backup_name}"
+    end
+
+    def new_backup_prefix
+      'test-backup'
+    end
+
+    def new_backup_name
+      "#{new_backup_prefix}_gitlab_backup.tar"
     end
   end
 end

@@ -102,35 +102,36 @@ describe "Restoring a backup" do
       expect(status.success?).to be(true), "Error backing up instance: #{stdout}"
 
       object_storage.get_object(
-        response_target: '/tmp/original_backup.tar',
+        response_target: "/tmp/#{original_backup_name}",
         bucket: 'gitlab-backups',
-        key: 'original_gitlab_backup.tar'
+        key: original_backup_name
       )
 
-      cmd = 'mkdir -p /tmp/original_backup && tar -xf /tmp/original_backup.tar -C /tmp/original_backup'
+      cmd = "mkdir -p /tmp/#{original_backup_prefix} && tar -xf /tmp/#{original_backup_name} -C /tmp/#{original_backup_prefix}"
       stdout, status = Open3.capture2e(cmd)
       expect(status.success?).to be(true), "Error unarchiving original backup: #{stdout}"
 
       object_storage.get_object(
-        response_target: '/tmp/test_generated_backup.tar',
+        response_target: "/tmp/#{new_backup_name}",
         bucket: 'gitlab-backups',
-        key: 'test-backup_gitlab_backup.tar'
+        key: new_backup_name
       )
-      cmd = 'mkdir -p /tmp/test_backup && tar -xf /tmp/test_generated_backup.tar -C /tmp/test_backup'
+
+      cmd = "mkdir -p /tmp/#{new_backup_prefix} && tar -xf /tmp/#{new_backup_name} -C /tmp/#{new_backup_prefix}"
       stdout, status = Open3.capture2e(cmd)
       expect(status.success?).to be(true), "Error unarchiving generated backup: #{stdout}"
 
-      Dir.glob("/tmp/original_backup/*") do |file|
-        file_path = "/tmp/test_backup/#{File.basename(file)}"
+      Dir.glob("/tmp/#{original_backup_prefix}/*") do |file|
+        file_path = "/tmp/#{new_backup_prefix}/#{File.basename(file)}"
         expect(File.exist?(file_path)).to be_truthy, "#{File.basename(file)} exists in original backup but not in test ( #{file_path} )"
         # extract every tar file
         if File.extname(file) == 'tar'
-          cmd = "tar -xf #{file} -C /tmp/original_backup"
+          cmd = "tar -xf #{file} -C /tmp/#{original_backup_prefix}"
           stdout, status = Open3.capture2e(cmd)
           expect(status.success?).to be(true), "Error extracting tar #{file}: #{stdout}"
 
-          f_name = file.gsub('original_backup', 'test_backup')
-          cmd = "tar -xf #{f_name} -C /tmp/test_backup"
+          f_name = file.gsub(original_backup_prefix, new_backup_prefix)
+          cmd = "tar -xf #{f_name} -C /tmp/#{new_backup_prefix}"
           stdout, status = Open3.capture2e(cmd)
           expect(status.success?).to be(true), "Error extracting tar #{f_name}: #{stdout}"
         end
@@ -139,20 +140,24 @@ describe "Restoring a backup" do
       # Remove timestamp information from directory structure
       ## Find nested repo LATEST files to locate a repo directory
       ## Find all dirs within that directory, and rename them to increments rather than date
-      Dir.glob(["/tmp/original_backup/repositories/@hashed/*/*/*/LATEST", "/tmp/test_backup/repositories/@hashed/*/*/*/LATEST"]) do |latest_file|
+      Dir.glob(["/tmp/#{original_backup_prefix}/repositories/@hashed/*/*/*/LATEST", "/tmp/#{new_backup_prefix}/repositories/@hashed/*/*/*/LATEST"]) do |latest_file|
         repo_dir = File.dirname(latest_file)
-        Dir.glob(File.join(repo_dir, '*')).sort.each_with_index do |file, index|
-          parent_dir = File.dirname(file)
-          File.rename(file, File.join(parent_dir, index.to_s)) if File.directory?(file)
+        backup_id_directories = Dir.glob(File.join(repo_dir, '*')).select { |f| File.directory?(f) }
+
+        backup_id_directories.sort.each_with_index do |directory, index|
+          parent_dir = File.dirname(directory)
+
+          File.rename(directory, File.join(parent_dir, index.to_s))
         end
       end
 
-      Dir.glob("/tmp/original_backup/**/*") do |file|
+      Dir.glob("/tmp/#{original_backup_prefix}/**/*") do |file|
         next if ['tar', '.gz'].include? File.extname(file)
         next if File.directory?(file)
         next if ['backup_information.yml', 'LATEST'].include? File.basename(file)
+        next if File.dirname(file).include?('manifest')
 
-        test_counterpart = file.gsub('original_backup', 'test_backup')
+        test_counterpart = file.gsub(original_backup_prefix, new_backup_prefix)
 
         expect(File.exist?(test_counterpart)).to be_truthy, "Expected #{test_counterpart} to exist"
 

@@ -3,6 +3,25 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 --
+## [7.6.0-bb.0] - 2023-12-01
+### Changed
+- Update GitLab to appVersion 16.6.0
+- Update chart version to 7.6.0
+- Update gluon from 0.4.1 to 0.4.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl patch 16.5.1 -> 16.6.0
+- registry1.dso.mil/ironbank/redhat/ubi/ubi8 patch 8.8 -> 8.9
+
 ## [7.5.1-bb.2] - 2023-12-01
 ### Changed
 - Update gitlab-exporter security context to fix non-root-group policy violations

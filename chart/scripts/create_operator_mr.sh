@@ -24,7 +24,7 @@ pushd /tmp/gitlab-operator || exit
     -o merge_request.description="Created by pipeline: ${CI_PIPELINE_URL}" \
     -o merge_request.label="group::distribution" \
     -o merge_request.label="devops::enablement" \
-    -o merge_request.label="section::enablement" \
+    -o merge_request.label="section::core platform" \
     -o merge_request.label="type::maintenance" \
     -o merge_request.label="Category:Cloud Native Installation" \
     -o merge_request.label="workflow::ready for review"
