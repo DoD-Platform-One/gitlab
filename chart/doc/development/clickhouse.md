@@ -29,7 +29,7 @@ kubectl create secret generic gitlab-clickhouse-password --from-literal="main_pa
 
 ## Starting a chart with ClickHouse
 
-You can fill in the details related to the ClickHouse server within the  `examples/kind/enable-clickhouse.yaml` file.
+You can fill in the details related to the ClickHouse server in the `examples/kind/enable-clickhouse.yaml` file.
 
 Start the chart:
 

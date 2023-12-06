@@ -18,7 +18,7 @@ dependencies:
       - dependencies.io
       - group::distribution::deploy
       - group::distribution
-      - section::enablement
+      - section::core platform
       - devops::systems
       - type::maintenance
       - maintenance::dependency
@@ -63,3 +63,9 @@ dependencies:
         replace_in_files:
         - filename: .gitlab-ci.yml
           pattern: 'GITLAB_QA_VERSION: "(\S+)"'
+      # cert-manager subchart
+      https://github.com/cert-manager/cert-manager.git:
+        replace_in_files:
+        - filename: requirements.yaml
+          pattern: 'name: cert-manager\n  version: (\S+)'
+          range: '< 1.13.0'
