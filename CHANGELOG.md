@@ -3,6 +3,24 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 --
+## [7.6.1-bb.0] - 2023-12-12
+### Changed
+- Update GitLab to appVersion 16.6.1
+- Update chart version to 7.6.1
+- ironbank/gitlab/gitlab/gitlab-webservice 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 16.6.0 -> 16.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 16.6.0 -> 16.6.1
+
 ## [7.6.0-bb.0] - 2023-12-01
 ### Changed
 - Update GitLab to appVersion 16.6.0
