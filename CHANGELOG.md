@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 --
+## [7.6.1-bb.1] - 2023-12-13
+### Changed
+- registry1.dso.mil/ironbank/redhat/ubi/ubi8 8.9 -> registry1.dso.mil/ironbank/redhat/ubi/ubi9 9.3
+
 ## [7.6.1-bb.0] - 2023-12-12
 ### Changed
 - Update GitLab to appVersion 16.6.1
