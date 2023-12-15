@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.6.1-bb.0](https://img.shields.io/badge/Version-7.6.1--bb.0-informational?style=flat-square) ![AppVersion: 16.6.1](https://img.shields.io/badge/AppVersion-16.6.1-informational?style=flat-square)
+![Version: 7.6.1-bb.1](https://img.shields.io/badge/Version-7.6.1--bb.1-informational?style=flat-square) ![AppVersion: 16.6.1](https://img.shields.io/badge/AppVersion-16.6.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -383,8 +383,8 @@ helm install gitlab chart/
 | global.kubectl.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.kubectl.securityContext.runAsUser | int | `65534` |  |
 | global.kubectl.securityContext.fsGroup | int | `65534` |  |
-| global.gitlabBase.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
-| global.gitlabBase.image.tag | string | `"8.9"` |  |
+| global.gitlabBase.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi9"` |  |
+| global.gitlabBase.image.tag | string | `"9.3"` |  |
 | global.gitlabBase.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.serviceAccount.enabled | bool | `true` |  |
 | global.serviceAccount.create | bool | `true` |  |
@@ -400,8 +400,8 @@ helm install gitlab chart/
 | containerSecurityContext.runAsGroup | int | `65534` |  |
 | containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | upgradeCheck.enabled | bool | `true` |  |
-| upgradeCheck.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi8"` |  |
-| upgradeCheck.image.tag | string | `"8.9"` |  |
+| upgradeCheck.image.repository | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi9"` |  |
+| upgradeCheck.image.tag | string | `"9.3"` |  |
 | upgradeCheck.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | upgradeCheck.securityContext.runAsUser | int | `65534` |  |
 | upgradeCheck.securityContext.runAsGroup | int | `65534` |  |
