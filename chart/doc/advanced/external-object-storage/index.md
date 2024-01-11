@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Configure the GitLab chart with an external object storage
@@ -253,8 +253,8 @@ configured to authenticate as a user with sufficient access to read/write to all
 
      ```ini
      [default]
-     access_key = BOGUS_ACCESS_KEY
-     secret_key = BOGUS_SECRET_KEY
+     access_key = AWS_ACCESS_KEY
+     secret_key = AWS_SECRET_KEY
      bucket_location = us-east-1
      multipart_chunk_size_mb = 128 # default is 15 (MB)
      ```
@@ -285,9 +285,9 @@ configured to authenticate as a user with sufficient access to read/write to all
 
      # Setup access keys
      # Access Key = Azure Storage Account name
-     access_key = BOGUS_ACCOUNT_NAME
+     access_key = AZURE_ACCOUNT_NAME
      # Secret Key = Azure Storage Account Key
-     secret_key = BOGUS_KEY
+     secret_key = AZURE_ACCOUNT_KEY
 
      # Use S3 v4 signature APIs
      signature_v2 = False

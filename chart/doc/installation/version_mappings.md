@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # GitLab chart versions **(FREE SELF)**
@@ -37,11 +37,17 @@ The table below maps some of the key previous chart versions and GitLab versions
 
 | Chart version | GitLab version |
 |---------------|----------------|
+| 7.7.0 | 16.7.0 |
+| 7.6.2 | 16.6.2 |
 | 7.6.1 | 16.6.1 |
 | 7.6.0 | 16.6.0 |
+| 7.5.4 | 16.5.4 |
+| 7.5.3 | 16.5.3 |
 | 7.5.2 | 16.5.2 |
 | 7.5.1 | 16.5.1 |
 | 7.5.0 | 16.5.0 |
+| 7.4.4 | 16.4.4 |
+| 7.4.3 | 16.4.3 |
 | 7.4.2 | 16.4.2 |
 | 7.4.1 | 16.4.1 |
 | 7.4.0 | 16.4.0 |

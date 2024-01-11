@@ -1,8 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
-type: reference
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Kubernetes cheat sheet **(FREE SELF)**
@@ -128,7 +127,7 @@ and they will assist you with any issues you are having.
   kubectl --namespace gitlab get pods -lapp=toolbox
 
   # enter it
-  kubectl exec -it <toolbox-pod-name> -- bash
+  kubectl --namespace gitlab exec -it <toolbox-pod-name> -- bash
 
   # open rails console
   # rails console can be also called from other GitLab pods
@@ -305,16 +304,16 @@ If you make any changes using the `toolbox` pod, those will not be persisted if 
 To patch the source code in the `toolbox` pod:
 
 1. Fetch the desired `.patch` file to be applied:
-  
+
    - Either download the diff of a merge request directly as a [patch file](https://docs.gitlab.com/ee/user/project/merge_requests/reviews/#download-merge-request-changes-as-a-patch-file).
    - Or, fetch the diff directly using `curl`. Replace `<mr_iid>` below with the IID of the merge request, or change the URL to point to a raw snippet:
-  
+
      ```shell
      curl --output ~/<mr_iid>.patch "https://gitlab.com/gitlab-org/gitlab/-/merge_requests/<mr_iid>.patch"
      ```
 
 1. Patch the local files on the `toolbox` pod:
-  
+
     ```shell
     cd /srv/gitlab
     busybox patch -p1 -f < ~/<mr_iid>.patch

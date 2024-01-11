@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Using the GitLab Webservice chart **(FREE SELF)**
@@ -712,11 +712,12 @@ Pods to specific endpoints.
 ### Example Network Policy
 
 The webservice service requires Ingress connections for only the Prometheus
-exporter if enabled and traffic coming from the NGINX Ingress, and normally
+exporter if enabled and traffic coming from the NGINX Ingress, and typically
 requires Egress connections to various places. This examples adds the following
 network policy:
 
 - All Ingress requests from the network on TCP `10.0.0.0/8` port 8080 are allowed for metrics exporting and NGINX Ingress
+- All Ingress requests to port 8181 are allowed for general service operation
 - All Egress requests to the network on UDP `10.0.0.0/8` port 53 are allowed for DNS
 - All Egress requests to the network on TCP `10.0.0.0/8` port 5432 are allowed for PostgreSQL
 - All Egress requests to the network on TCP `10.0.0.0/8` port 6379 are allowed for Redis
@@ -726,7 +727,7 @@ network policy:
 
 _Note the example provided is only an example and may not be complete_
 
-_Note that the Webservice requires outbound connectivity to the public internet
+_Note the Webservice requires outbound connectivity to the public internet
 for images on [external object storage](../../../advanced/external-object-storage)_
 
 ```yaml
@@ -740,6 +741,9 @@ networkpolicy:
             cidr: 10.0.0.0/8
         ports:
         - port: 8080
+      - from:
+        ports:
+        - port: 8181
   egress:
     enabled: true
     rules:

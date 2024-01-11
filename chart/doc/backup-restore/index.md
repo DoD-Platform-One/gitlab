@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Backup and restore a GitLab instance **(FREE SELF)**
@@ -222,3 +222,10 @@ following flag to your `.s3cfg` file referenced via `gitlab.toolbox.backups.obje
 ```toml
 preserve_attrs = False
 ```
+
+### Repositories skipped on restore
+
+Starting with GitLab 16.6/Chart 7.6 repositories may be skipped on restore if the backup archive has been renamed.
+To avoid this, do not rename backup archives and rename backups to their original names (`{backup_id}_gitlab_backup.tar`).
+
+The original backup ID can be extracted from the repository backup directory structure: `repositories/@hashed/*/*/*/{backup_id}/LATEST`

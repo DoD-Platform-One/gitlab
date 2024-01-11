@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Configure charts using globals **(FREE SELF)**
@@ -240,6 +240,12 @@ with the `-fips` extension to the image tag.
 ## Configure PostgreSQL settings
 
 The GitLab global PostgreSQL settings are located under the `global.psql` key.
+GitLab is using two database connections: one for `main` database and one for
+`ci`. By default, they point to the same PostgreSQL database.
+
+The values under `global.psql` are defaults and are applied to both database
+configurations. If you want to use [two databases](https://docs.gitlab.com/ee/administration/postgresql/multiple_databases.html),
+you can specifiy the connection details in `global.psql.main` and `global.psql.ci`.
 
 ```yaml
 global:
@@ -263,6 +269,12 @@ global:
       secret: gitlab-postgres
       key: psql-password
       file:
+    main: {}
+      # host: postgresql-main.hostedsomewhere.else
+      # ...
+    ci: {}
+      # host: postgresql-ci.hostedsomewhere.else
+      # ...
 ```
 
 | Name                 | Type      | Default                | Description                                                                                                                                                                                    |
@@ -284,8 +296,8 @@ global:
 | `keepalivesInterval` | Integer   |                        | The number of seconds after which a TCP keepalive message that is not acknowledged by the server should be retransmitted. A value of zero uses the system default.                             |
 | `keepalivesCount`    | Integer   |                        | The number of TCP keepalives that can be lost before the client's connection to the server is considered dead. A value of zero uses the system default.                                        |
 | `tcpUserTimeout`     | Integer   |                        | The number of milliseconds that transmitted data may remain unacknowledged before a connection is forcibly closed. A value of zero uses the system default.                                    |
-| `applicationName`    | String    |                        | The name of the application connecting to the database. Set to a blank string (`""`) to disable. By default, this will be set to the name of the running process (e.g. `sidekiq`, `puma`).     |
-| `ci.enabled`         | Boolean   | Not defined            | Enables [two database connections](#configure-multiple-database-connections).                                                                                                                  |
+| `applicationName`    | String    |                        | The name of the application connecting to the database. Set to a blank string (`""`) to disable. By default, this will be set to the name of the running process (e.g. `sidekiq`, `puma`).  |
+| `ci.enabled`         | Boolean   | `true`                 | Enables [two database connections](#configure-multiple-database-connections).                                                                                                                  |
 
 ### PostgreSQL per chart
 

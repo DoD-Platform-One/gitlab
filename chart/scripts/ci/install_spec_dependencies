@@ -2,7 +2,7 @@
 set -e
 
 export DEBIAN_FRONTEND=noninteractive
-HELM_VERSION=${HELM_VERSION:-3.5.2}
+HELM_VERSION=${HELM_VERSION:-3.9.4}
 GOMPLATE_VERSION=${GOMPLATE_VERSION:-v3.11.4}
 DOCKER_VERSION="20.10.13"
 DOCKER_DEB_VERSION="5:${DOCKER_VERSION}~3-0~debian-${DEBIAN_VERSION:-bullseye}"
@@ -28,7 +28,9 @@ if [ "${STRICT_VERSIONS:-false}" == "true" ] && [ "${DOCKER_INSTALLED_VERSION}" 
     apt-get update -qq
     apt install -y docker-ce-cli=${DOCKER_DEB_VERSION}
 fi
-docker version --format 'Effective: docker-{{ .Client.Version }}'
+# Sometimes, `docker:dind` service is not ready yet, causing exit code of 1
+# We only care about the client, anyways!
+docker version --format 'Effective: docker-{{ .Client.Version }}' || true
 
 GOMPLATE_INSTALLED_VERSION=""
 if command -v gomaplate; then

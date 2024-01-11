@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Configure the GitLab chart with an external Redis
@@ -42,7 +42,8 @@ helm install gitlab gitlab/gitlab  \
 If you are connecting to a Redis HA cluster that has Sentinel servers
 running, the `global.redis.host` attribute needs to be set to the name of
 the Redis instance group (such as `mymaster` or `resque`), as
-specified in the `sentinel.conf`. Sentinel servers can be referenced
+specified in the `sentinel.conf`, but not to the hostname of the Redis master. 
+Sentinel servers can be referenced
 using the `global.redis.sentinels[0].host` and `global.redis.sentinels[0].port`
 values for the `--set` flag. The index is zero based.
 

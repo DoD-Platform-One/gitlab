@@ -29,7 +29,7 @@ global:
   istio:
     enabled: false
     injection: disabled
-    
+
   common:
     labels: {}
 
@@ -57,7 +57,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "16.6.1"
+  gitlabVersion: "16.7.0"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -152,6 +152,22 @@ global:
     # applicationName:
     # preparedStatements: false
     # databaseTasks: true
+    main: {}
+      # host: postgresql.hostedsomewhere.else
+      # port: 123
+      # username: gitlab
+      # database: gitlabhq_production
+      # applicationName:
+      # preparedStatements: false
+      # databaseTasks: true
+    ci: {}
+      # host: postgresql.hostedsomewhere.else
+      # port: 123
+      # username: gitlab
+      # database: gitlabhq_production_ci
+      # applicationName:
+      # preparedStatements: false
+      # databaseTasks: false
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-redis-settings
   redis:
@@ -569,7 +585,7 @@ global:
     ## Geo Secondary only
     # nodeName allows multiple instances behind a load balancer.
     nodeName: # defaults to `gitlab.gitlab.host`
-    # ingressClass: 
+    # ingressClass:
     # PostgreSQL connection details only needed for `secondary`
     psql:
       password: {}
@@ -781,13 +797,13 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
     init:
       securityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
         runAsUser: 65534
         runAsNonRoot: true
@@ -829,7 +845,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1214,13 +1230,13 @@ redis:
     image:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
-      tag: v1.55.0
+      tag: v1.56.0
       pullSecrets: []
     resources:
-      limits: 
+      limits:
         cpu: 250m
         memory: 256Mi
-      requests: 
+      requests:
         cpu: 250m
         memory: 256Mi
     containerSecurityContext:
@@ -1229,7 +1245,7 @@ redis:
       runAsGroup: 1001
       runAsNonRoot: true
       capabilities:
-        drop: 
+        drop:
           - ALL
   serviceAccount:
     automountServiceAccountToken: false
@@ -1243,27 +1259,27 @@ redis:
     tag: 7.0.0-debian-10-r3
     pullSecrets: []
   master:
-    resources: 
-      limits: 
+    resources:
+      limits:
         cpu: 250m
         memory: 256Mi
-      requests: 
+      requests:
         cpu: 250m
-        memory: 256Mi    
+        memory: 256Mi
     containerSecurityContext:
       enabled: true
       runAsUser: 1001
       runAsGroup: 1001
       runAsNonRoot: true
       capabilities:
-        drop: 
+        drop:
           - ALL
   slave:
-    resources: 
-      limits: 
+    resources:
+      limits:
         cpu: 250m
         memory: 256Mi
-      requests: 
+      requests:
         cpu: 250m
         memory: 256Mi
     containerSecurityContext:
@@ -1272,30 +1288,30 @@ redis:
       runAsGroup: 1001
       runAsNonRoot: true
       capabilities:
-        drop: 
+        drop:
           - ALL
   sentinel:
-    resources: 
-      limits: 
+    resources:
+      limits:
         cpu: 250m
         memory: 256Mi
-      requests: 
+      requests:
         cpu: 250m
         memory: 256Mi
   volumePermissions:
-    resources: 
-      limits: 
+    resources:
+      limits:
         cpu: 250m
         memory: 256Mi
-      requests: 
+      requests:
         cpu: 250m
         memory: 256Mi
   sysctlImage:
-    resources: 
-      limits: 
+    resources:
+      limits:
         cpu: 250m
         memory: 256Mi
-      requests: 
+      requests:
         cpu: 250m
         memory: 256Mi
 
@@ -1341,7 +1357,7 @@ postgresql:
       runAsUser: 1001
       runAsGroup: 1001
       capabilities:
-        drop: 
+        drop:
           - ALL
   master:
     extraVolumeMounts:
@@ -1392,7 +1408,7 @@ registry:
         memory: 200Mi
     containerSecurityContext:
       capabilities:
-        drop: 
+        drop:
           - ALL
   resources:
     limits:
@@ -1403,7 +1419,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 16.6.1
+    tag: 16.7.0
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1414,7 +1430,7 @@ registry:
     path: /metrics
     serviceMonitor:
       enabled: true
-  securityContext: 
+  securityContext:
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
@@ -1422,7 +1438,7 @@ registry:
     runAsUser: 1000
     runAsGroup: 1000
     capabilities:
-      drop: 
+      drop:
         - ALL
 
 ## Automatic shared secret generation
@@ -1460,7 +1476,7 @@ shared-secrets:
     fsGroup: 65534
   containerSecurityContext:
     capabilities:
-      drop: 
+      drop:
         - ALL
   tolerations: []
   podLabels: {}
@@ -1498,7 +1514,7 @@ gitlab-runner:
     gitlab.com/prometheus_port: 9252
   securityContext:
     capabilities:
-      drop: 
+      drop:
         - ALL
 
 traefik:
@@ -1514,18 +1530,18 @@ traefik:
 gitlab:
   containerSecurityContext:
     capabilities:
-      drop: 
+      drop:
         - ALL
   init:
     containerSecurityContext:
       capabilities:
-        drop: 
+        drop:
           - ALL
   certificates:
     init:
       securityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
         runAsUser: 65534
         runAsNonRoot: true
@@ -1537,7 +1553,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1550,7 +1566,7 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     resources:
       requests:
@@ -1572,7 +1588,7 @@ gitlab:
             cpu: 500m
             memory: 768Mi
         istioShutdown: "&& echo \"Backup Complete\" && until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Istio sidecar proxy...\"; sleep 3; done && sleep 5 && echo \"Stopping the istio proxy...\" && curl -X POST http://localhost:15020/quitquitquit"
-    securityContext: 
+    securityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
@@ -1580,7 +1596,7 @@ gitlab:
       runAsUser: 1000
       runAsGroup: 1000
       capabilities:
-        drop: 
+        drop:
           - ALL
 
   gitlab-exporter:
@@ -1595,7 +1611,7 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     resources:
       limits:
@@ -1605,11 +1621,11 @@ gitlab:
         cpu: 150m
         memory: 200Mi
     capabilities:
-      drop: 
+      drop:
         - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1617,7 +1633,7 @@ gitlab:
       port: 9168
       serviceMonitor:
         enabled: true
-    securityContext: 
+    securityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
@@ -1625,7 +1641,7 @@ gitlab:
       runAsUser: 1000
       runAsGroup: 1000
       capabilities:
-        drop: 
+        drop:
           - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/migrations
@@ -1643,7 +1659,7 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     resources:
       limits:
@@ -1654,10 +1670,10 @@ gitlab:
         memory: 1G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
-    securityContext: 
+    securityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
@@ -1665,7 +1681,7 @@ gitlab:
       runAsUser: 1000
       runAsGroup: 1000
       capabilities:
-        drop: 
+        drop:
           - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
@@ -1681,9 +1697,9 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
-    securityContext: 
+    securityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
@@ -1691,7 +1707,7 @@ gitlab:
       runAsUser: 1000
       runAsGroup: 1000
       capabilities:
-        drop: 
+        drop:
           - ALL
     resources:
       # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
@@ -1703,7 +1719,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 16.6.1
+      tag: 16.7.0-1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1716,7 +1732,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1725,7 +1741,7 @@ gitlab:
           enabled: true
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     ingress:
       enabled: false  # Local setting in subchart must be overridden
@@ -1738,7 +1754,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1751,7 +1767,7 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     resources:
       requests:
@@ -1760,7 +1776,7 @@ gitlab:
       limits:
         memory: 3G
         cpu: 1500m
-    securityContext: 
+    securityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
@@ -1768,14 +1784,14 @@ gitlab:
       runAsUser: 1000
       runAsGroup: 1000
       capabilities:
-        drop: 
+        drop:
           - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1788,7 +1804,7 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     resources:
       requests:
@@ -1801,7 +1817,7 @@ gitlab:
       enabled: true
       serviceMonitor:
         enabled: true
-    securityContext: 
+    securityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
@@ -1809,14 +1825,14 @@ gitlab:
       runAsUser: 1000
       runAsGroup: 1000
       capabilities:
-        drop: 
+        drop:
           - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1829,7 +1845,7 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     resources:
       limits:
@@ -1838,7 +1854,7 @@ gitlab:
       requests:
         cpu: 300m
         memory: 300Mi
-    securityContext: 
+    securityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
@@ -1846,7 +1862,7 @@ gitlab:
       runAsUser: 1000
       runAsGroup: 1000
       capabilities:
-        drop: 
+        drop:
           - ALL
     # metrics:
     #   enabled: true
@@ -1860,12 +1876,12 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 16.6.1
+      tag: 16.7.0
       pullSecrets:
         - name: private-registry
     containerSecurityContext:
       capabilities:
-        drop: 
+        drop:
           - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
@@ -1877,10 +1893,10 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 16.6.1
+      tag: 16.7.0
     containerSecurityContext:
       capabilities:
-        drop: 
+        drop:
           - ALL
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
@@ -1888,7 +1904,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 16.6.1
+      tag: 16.7.0
     init:
       resources:
         limits:
@@ -1899,7 +1915,7 @@ gitlab:
           memory: 200Mi
       containerSecurityContext:
         capabilities:
-          drop: 
+          drop:
             - ALL
     resources:
       requests:
@@ -1910,7 +1926,7 @@ gitlab:
         memory: 1Gi
     containerSecurityContext:
       capabilities:
-        drop: 
+        drop:
           - ALL
 
 ## Installation & configuration of gitlab/gitlab-zoekt
@@ -1940,7 +1956,7 @@ minio:
         memory: 200Mi
     containerSecurityContext:
       capabilities:
-        drop: 
+        drop:
           - ALL
   resources:
     limits:
@@ -1949,7 +1965,7 @@ minio:
     requests:
       cpu: 200m
       memory: 300Mi
-  securityContext: 
+  securityContext:
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
@@ -1958,7 +1974,7 @@ minio:
     runAsGroup: 1000
     runAsNonRoot: true
     capabilities:
-      drop: 
+      drop:
         - ALL
   # Additional job annotations
   jobAnnotations:
@@ -2012,7 +2028,7 @@ istio:
     labels: {}
     gateways:
       - istio-system/pages
-    # Enable or disable custom domains 
+    # Enable or disable custom domains
     customDomains:
       enabled: true
     #only affects the Istio VirtualService ingress. Does not affect Gitlab configuration. Must be populated as a wildcard.
