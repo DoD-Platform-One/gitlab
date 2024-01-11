@@ -13,8 +13,8 @@ class HelmTemplate
       @_helm_patch_version = parts[4].to_i
 
       # Check for Helm version below minimum supported version
-      if @_helm_major_version < 3 || (@_helm_major_version == 3 && @_helm_minor_version < 5 && @_helm_patch_version < 2)
-        puts "ERROR: Helm version needs to be greater than 3.5.2"
+      if @_helm_major_version < 3 || (@_helm_major_version == 3 && @_helm_minor_version < 9 && @_helm_patch_version < 4)
+        puts "ERROR: Helm version needs to be greater than 3.9.4"
         exit(1)
       end
     end

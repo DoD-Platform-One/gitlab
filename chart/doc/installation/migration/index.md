@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Migration guides for the GitLab Helm chart **(FREE SELF)**
@@ -15,3 +15,4 @@ Other migrations:
 
 - [Migrate between Helm versions.](helm.md)
 - [Migrate to the built-in MinIO service for object storage.](minio.md)
+- [Migrate from Gitaly chart to external Gitaly](../../advanced/external-gitaly/index.md#migrate-from-gitaly-chart-to-external-gitaly)

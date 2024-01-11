@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Backing up a GitLab installation **(FREE SELF)**
@@ -10,9 +10,9 @@ GitLab backups are taken by running the `backup-utility` command in the Toolbox 
 
 Before running the backup for the first time, you should ensure the
 [Toolbox is properly configured](../charts/gitlab/toolbox/index.md#configuration)
-for access to [object storage](index.md#object-storage)
+for access to [object storage](index.md#object-storage).
 
-Follow these steps for backing up a GitLab Helm chart based installation
+Follow these steps for backing up a GitLab Helm chart based installation.
 
 ## Create the backup
 
@@ -52,7 +52,37 @@ You need to set the following parameters:
 
 ## Backup utility extra arguments
 
-The backup utility can take some extra arguments. See what those are with:
+The backup utility can take some extra arguments.
+
+### Skipping components
+
+Skip components by using the `--skip` argument. Valid components names can be found at [Excluding specific directories from the backup](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#excluding-specific-directories-from-the-backup).
+
+Each component must have its own `--skip` argument. For example:
+
+```shell
+kubectl exec <Toolbox pod name> -it -- backup-utility --skip db --skip lfs
+```
+
+### Cleanup backups only
+
+Run the backup cleanup without creating a new backup. 
+
+```shell
+kubectl exec <Toolbox pod name> -it -- backup-utility --cleanup
+```
+
+### Specify S3 tool to use
+
+ S3 CLI tool to use. Can be either `s3cmd` or `awscli`.
+
+ ```shell
+ kubectl exec <Toolbox pod name> -it -- backup-utility --s3tool awscli
+ ```
+
+### Other arguments
+
+To see a complete list of available arguments, run the following command:
 
 ```shell
 kubectl exec <Toolbox pod name> -it -- backup-utility --help

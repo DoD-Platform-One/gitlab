@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # GitLab chart prerequisites **(FREE SELF)**
@@ -19,7 +19,7 @@ of the version running in your cluster.
 
 ### Helm
 
-Install Helm v3.5.2 or later by following [the Helm documentation](https://helm.sh/docs/intro/install/).
+Install Helm v3.9.4 or later by following [the Helm documentation](https://helm.sh/docs/intro/install/).
 
 ### PostgreSQL
 

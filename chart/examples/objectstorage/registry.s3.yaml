@@ -6,8 +6,8 @@
 #   See https://gitlab.com/gitlab-org/container-registry/-/tree/master/docs-gitlab#additional-parameters
 s3:
   bucket: gitlab-registry-storage
-  accesskey: BOGUS_ACCESS_KEY
-  secretkey: BOGUS_SECRET_KEY
+  accesskey: AWS_ACCESS_KEY
+  secretkey: AWS_SECRET_KEY
   region: us-east-1
   # regionendpoint: "https://minio.example.com:9000"
   v4auth: true

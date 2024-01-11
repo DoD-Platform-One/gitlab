@@ -70,6 +70,16 @@ function tag_and_digest() {
 rm -f ci.digests.yaml
 cat << CIYAML > ci.digests.yaml
 # generated: $(date)
+global:
+  gitlabBase:
+    image:
+      tag: "$(tag_and_digest gitlab-base)"
+  certificates:
+    image:
+      tag: "$(tag_and_digest certificates)"
+  kubectl:
+    image:
+      tag: "$(tag_and_digest kubectl)"
 gitlab:
   gitaly:
     image:

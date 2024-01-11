@@ -216,22 +216,17 @@ describe 'registry configuration' do
 
   describe 'templates/configmap.yaml' do
     describe 'database config' do
-      context 'when discovery is enabled and configured properly' do
+      context 'when primary is provided' do
         let(:values) do
           YAML.safe_load(%(
             registry:
               database:
                 enabled: true
-                discovery:
-                  enabled: true
-                  nameserver: "nameserver.fqdn"
-                  port: 5353
-                  primaryrecord: "primary.record.fqdn."
-                  tcp: true
+                primary: "primary.record.fqdn"
           )).deep_merge(default_values)
         end
 
-        it 'populates the database discovery settings correctly' do
+        it 'populates the database primary settings correctly' do
           t = HelmTemplate.new(values)
           expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
 
@@ -245,50 +240,7 @@ describe 'registry configuration' do
               password: "DB_PASSWORD_FILE"
               dbname: registry
               sslmode: disable
-              discovery:
-                enabled: true
-                nameserver: "nameserver.fqdn"
-                port: 5353
-                primaryrecord: "primary.record.fqdn."
-                tcp: true
-            CONFIG
-          )
-        end
-      end
-
-      context 'when discovery is enabled and configured properly without port and tcp' do
-        let(:values) do
-          YAML.safe_load(%(
-            registry:
-              database:
-                enabled: true
-                discovery:
-                  enabled: true
-                  nameserver: "nameserver.fqdn"
-                  primaryrecord: "primary.record.fqdn."
-          )).deep_merge(default_values)
-        end
-
-        it 'populates the database discovery settings with default port values' do
-          t = HelmTemplate.new(values)
-          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
-
-          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml')).to include(
-            <<~CONFIG
-            database:
-              enabled: true
-              host: "test-postgresql.default.svc"
-              port: 5432
-              user: registry
-              password: "DB_PASSWORD_FILE"
-              dbname: registry
-              sslmode: disable
-              discovery:
-                enabled: true
-                nameserver: "nameserver.fqdn"
-                port: 53
-                primaryrecord: "primary.record.fqdn."
-                tcp: false
+              primary: primary.record.fqdn
             CONFIG
           )
         end

@@ -70,67 +70,6 @@ describe 'checkConfig registry' do
                      error_description: 'when when database.sslmode is not valid'
   end
 
-  describe 'registry.database (discovery)' do
-    describe 'nameserver is not provided' do
-      let(:success_values) do
-        YAML.safe_load(%(
-          registry:
-            database:
-              enabled: true
-              discovery:
-                enabled: true
-                nameserver: 'nameserver.fqdn.'
-        )).merge(default_required_values)
-      end
-
-      let(:error_values) do
-        YAML.safe_load(%(
-          registry:
-            database:
-              enabled: true
-              discovery:
-                enabled: true
-        )).merge(default_required_values)
-      end
-
-      let(:error_output) { "Enabling database discovery requires a nameserver to be provided." }
-
-      include_examples 'config validation',
-                       success_description: 'when discovery is enabled and a nameserver is provided',
-                       error_description: 'when discovery is enabled but the nameserver is missing'
-    end
-
-    describe 'nameserver is provided but is an empty string' do
-      let(:success_values) do
-        YAML.safe_load(%(
-          registry:
-            database:
-              enabled: true
-              discovery:
-                enabled: true
-                nameserver: 'nameserver.fqdn.'
-        )).merge(default_required_values)
-      end
-
-      let(:error_values) do
-        YAML.safe_load(%(
-          registry:
-            database:
-              enabled: true
-              discovery:
-                enabled: true
-                nameserver: ''
-        )).merge(default_required_values)
-      end
-
-      let(:error_output) { "Enabling database discovery requires a nameserver to be provided." }
-
-      include_examples 'config validation',
-                       success_description: 'when discovery is enabled and a nameserver is provided',
-                       error_description: 'when discovery is enabled but the nameserver is empty'
-    end
-  end
-
   describe 'gitlab.checkConfig.registry.sentry.dsn' do
     let(:success_values) do
       YAML.safe_load(%(

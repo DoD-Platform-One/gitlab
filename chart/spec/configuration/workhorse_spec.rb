@@ -99,8 +99,8 @@ describe 'Workhorse configuration' do
         object_storage = toml['object_storage']
         expect(object_storage.keys).to match_array(%w[provider s3])
         expect(object_storage['s3'].keys).to match_array(%w[aws_access_key_id aws_secret_access_key])
-        expect(object_storage['s3']['aws_access_key_id']).to eq('BOGUS_ACCESS_KEY')
-        expect(object_storage['s3']['aws_secret_access_key']).to eq('BOGUS_SECRET_KEY')
+        expect(object_storage['s3']['aws_access_key_id']).to eq('AWS_ACCESS_KEY')
+        expect(object_storage['s3']['aws_secret_access_key']).to eq('AWS_SECRET_KEY')
       end
     end
 

@@ -2,7 +2,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
   // returning false here prevents Cypress from failing the test
   // gitlab throws this error in the console which by default fails the cypress test
   return false
-}) 
+})
 
 describe('Gitlab Signup', () => {
   it('Check user is able to signup', () => {
@@ -38,8 +38,7 @@ describe('Gitlab Login as Root', () => {
     cy.visit('/users/sign_in')
     cy.get('input[id="user_login"]').type('root')
     cy.get('input[id="user_password"]').type(Cypress.env('adminpassword'))
-    //cy.get('button[type="submit"][name="button"]').click()
-    cy.get('button[data-qa-selector="sign_in_button"').click()
+    cy.get('button[data-testid="sign-in-button"').click()
 
     // approve new user
     cy.visit('/admin/users')
@@ -71,20 +70,20 @@ describe('Create Gitlab Project', () => {
         cy.get('input[id="password"]')
           .type(Cypress.env('keycloak_password'))
           .should('have.value', Cypress.env('keycloak_password'));
-              
-        cy.get('form').submit(); 
 
-        cy.get('input[id="kc-accept"]').click(); 
+        cy.get('form').submit();
 
-        cy.get('input[id="kc-login"]').click(); 
+        cy.get('input[id="kc-accept"]').click();
+
+        cy.get('input[id="kc-login"]').click();
       } else {
-    
+
         cy.get('input[id="user_login"]').type(Cypress.env('gitlab_username'))
         cy.get('input[id="user_password"]').type(Cypress.env('gitlab_password'))
         // Old: cy.get('button[type="submit"][name="button"]').click()
-        cy.get('button[data-qa-selector="sign_in_button"').click()
+        cy.get('button[data-testid="sign-in-button"').click()
       }
-    
+
     // if first login assign Developer role with the joining_team objective
     cy.url().then(($url) => {
       if ($url.includes('welcome')) {
@@ -93,7 +92,7 @@ describe('Create Gitlab Project', () => {
         cy.get('button[type="submit"]').click()
       }
     })
-    
+
     // check if project exists
     cy.get('body').then($body => {
       if ($body.find('.project-row').length === 0) {
@@ -103,8 +102,8 @@ describe('Create Gitlab Project', () => {
             cy.get('a[href="#blank_project"]').click()
             cy.get('input[id="project_name"]').first().type(Cypress.env('gitlab_project')) // for some reason, there are 2 other hidden elements with the same attributes but we only need the first one
             // For some reason, there are 2 other hidden elements with the same attributes but we only need the first one
-            // Also use force: true for the click due to the label is covering the radio button (but can still be clicked) 
-            cy.get('input[id="project_visibility_level_20"]').first().click({force: true})  
+            // Also use force: true for the click due to the label is covering the radio button (but can still be clicked)
+            cy.get('input[id="project_visibility_level_20"]').first().click({force: true})
             //commenting out below because 'initial_with_readme' is checked by default now
             //cy.get('input[id="project_initialize_with_readme"]').click({force: true)
             cy.get('button[type="submit"]').first().click()                        // for some reason, there are 2 other hidden elements with the same attributes but we only need the first one

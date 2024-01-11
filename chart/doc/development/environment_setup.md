@@ -1,7 +1,7 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Environment setup
@@ -14,7 +14,7 @@ Kubernetes cluster are required.
 The minimum tools required for charts development are documented on the [Required tools page](../installation/tools.md).
 
 You should use [`asdf`](https://github.com/asdf-vm/asdf) to install these tools.
-This allows us to easily switch between versions, Helm 3.4 and 3.5 for example.
+This allows us to easily switch between versions, Helm 3.7 and 3.9 for example.
 
 We provide a [`.tool-versions` file](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/.tool-versions)
 that specifies these tools with their recommended versions. To install or update them:
@@ -48,7 +48,7 @@ Developers working on charts also often use the following tools:
 
 Tool name | Benefits | Example use case | Link(s)
 -|-|-|-
-`asdf` | Easily switch between versions of your favorite runtimes and CLI tools. | Switching between Helm 3.4 and Helm 3.5 binaries. | [GitHub](https://github.com/asdf-vm/asdf)
+`asdf` | Easily switch between versions of your favorite runtimes and CLI tools. | Switching between Helm 3.7 and Helm 3.9 binaries. | [GitHub](https://github.com/asdf-vm/asdf)
 `kubectx` & `kubens` | Manage and switch between Kubernetes contexts and namespaces. | Setting default namespace per selected cluster context. | [GitHub](https://github.com/ahmetb/kubectx)
 `k3s` | Lightweight Kubernetes installation (<40MB). | Quick and reliable local chart testing. | [Homepage](https://k3s.io)
 `k9s` | Greatly reduced typing of `kubectl` commands. | Navigate and manage cluster resources quickly in a command line interface. | [GitHub](https://github.com/derailed/k9s)

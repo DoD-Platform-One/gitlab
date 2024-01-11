@@ -1,15 +1,15 @@
 ---
 stage: Systems
 group: Distribution
-info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/product/ux/technical-writing/#assignments
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
 # Migrate from the Helm chart to the Linux package **(FREE SELF)**
 
 To migrate from a Helm installation to a Linux package (Omnibus) installation:
 
-1. Go to the admin area (**{admin}**) and select **Overview > Components** to
-   check your current version of GitLab.
+1. On the left sidebar, at the bottom, select **Admin Area**.
+1. Select **Overview > Components** to check your current version of GitLab.
 1. Prepare a clean machine and
    [install the Linux package](https://docs.gitlab.com/ee/update/package/index.html)
    that matches your GitLab Helm chart version.

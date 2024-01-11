@@ -20,6 +20,13 @@ For anything in this list which will not be completed, please provide a reason i
 - [ ] MR has a green pipeline on GitLab.com
 - [ ] When ready for review, follow the instructions in the "Reviewer Roulette" section of the Danger Bot MR comment, as per the [Distribution experimental MR workflow](https://about.gitlab.com/handbook/engineering/development/enablement/systems/distribution/merge_requests.html)
 
+For merge requests from forks, consider the following options for Danger to work properly:
+
+- Consider using our [community forks](https://gitlab.com/gitlab-community/meta) instead of forking
+   your own project. These community forks have the GitLab API token preconfigured.
+- Alternatively, see our documentation on
+  [configuring Danger for personal forks](https://docs.gitlab.com/ee/development/dangerbot.html#configuring-danger-for-personal-forks).
+
 ### Expected (please provide an explanation if not completing)
 - [ ] Test plan indicating conditions for success has been posted and passes
 - [ ] Documentation created/updated

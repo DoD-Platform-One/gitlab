@@ -54,7 +54,7 @@ describe 'checkConfig webservice' do
       )).merge(default_required_values)
     end
 
-    let(:error_output) { 'fail' }
+    let(:error_output) { 'You must set terminationGracePeriodSeconds (5) longer than blackoutSeconds (20)' }
 
     include_examples 'config validation',
                      success_description: 'when terminationGracePeriodSeconds is >= blackoutSeconds',

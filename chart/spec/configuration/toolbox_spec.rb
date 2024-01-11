@@ -209,6 +209,90 @@ describe 'toolbox configuration' do
     end
   end
 
+  context 'when setting extraEnvFrom' do
+    def deployment_name
+      "Deployment/test-toolbox"
+    end
+
+    context 'when the global value is set' do
+      let(:global_values) do
+        YAML.safe_load(%(
+          global:
+            extraEnvFrom:
+              EXTRA_ENV_VAR_B:
+                secretKeyRef:
+                  key: "keyB"
+                  name: "nameB"
+              EXTRA_ENV_VAR_C:
+                secretKeyRef:
+                  key: "keyC"
+                  name: "nameC"
+              EXTRA_ENV_VAR_D:
+                secretKeyRef:
+                  key: "keyD"
+                  name: "nameD"
+        )).deep_merge(default_values)
+      end
+
+      let(:global_template) { HelmTemplate.new(global_values) }
+
+      it 'sets those environment variables on toolbox pod' do
+        expect(global_template.exit_code).to eq(0)
+
+        expect(global_template.env(deployment_name, 'toolbox'))
+          .to include(
+            { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+            { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC", "key" => "keyC" } } },
+            { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD", "key" => "keyD" } } }
+          )
+      end
+
+      context 'when the chart-level value is set' do
+        let(:chart_values) do
+          YAML.safe_load(%(
+            gitlab:
+              toolbox:
+                extraEnvFrom:
+                  EXTRA_ENV_VAR_A:
+                    secretKeyRef:
+                      key: "keyA-chart"
+                      name: "nameA-chart"
+                  EXTRA_ENV_VAR_C:
+                    secretKeyRef:
+                      key: "keyC-chart"
+                      name: "nameC-chart"
+                  EXTRA_ENV_VAR_D:
+                    secretKeyRef:
+                      key: "keyD-chart"
+                      name: "nameD-chart"
+          ))
+        end
+
+        let(:chart_template) { HelmTemplate.new(global_values.deep_merge(chart_values)) }
+
+        it 'sets those environment variables on toolbox pod' do
+          expect(chart_template.exit_code).to eq(0)
+
+          expect(chart_template.env(deployment_name, 'toolbox'))
+            .to include(
+              { 'name' => 'EXTRA_ENV_VAR_A', 'valueFrom' => { "secretKeyRef" => { "name" => "nameA-chart", "key" => "keyA-chart" } } },
+              { 'name' => 'EXTRA_ENV_VAR_B', 'valueFrom' => { "secretKeyRef" => { "name" => "nameB", "key" => "keyB" } } },
+              { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-chart", "key" => "keyC-chart" } } },
+              { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-chart", "key" => "keyD-chart" } } }
+            )
+        end
+
+        it 'overrides global values' do
+          expect(chart_template.env(deployment_name, 'toolbox'))
+            .to include(
+              { 'name' => 'EXTRA_ENV_VAR_C', 'valueFrom' => { "secretKeyRef" => { "name" => "nameC-chart", "key" => "keyC-chart" } } },
+              { 'name' => 'EXTRA_ENV_VAR_D', 'valueFrom' => { "secretKeyRef" => { "name" => "nameD-chart", "key" => "keyD-chart" } } }
+            )
+        end
+      end
+    end
+  end
+
   context 'backup configuration' do
     context 'using azure backend' do
       let(:values) do

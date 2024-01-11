@@ -2,6 +2,34 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 7.7.0 (2023-12-20)
+
+### Added (1 change)
+
+- [Add auth-timeout flag in Gitlab Pages](gitlab-org/charts/gitlab@6586cebcd3f813eb07c97c81986701d4a694b86b) ([merge request](gitlab-org/charts/gitlab!3502))
+
+### Fixed (1 change)
+
+- [Fix newline in NGINX DaemonSet](gitlab-org/charts/gitlab@1b13e056c27ebbb7a125fe44aef6a7615e996680) ([merge request](gitlab-org/charts/gitlab!3517))
+
+### Changed (7 changes)
+
+- [Update gitlab-org/container-registry from 3.87.0-gitlab to 3.88.0-gitlab](gitlab-org/charts/gitlab@759c49e581fc56612f4884d07bf48ae2956091fc) ([merge request](gitlab-org/charts/gitlab!3543))
+- [Update gitlab-org/gitlab-qa from 12.5.0 to 13.0.0](gitlab-org/charts/gitlab@c4f25d89b33e8eb241b6ad607e78d869a865c681) ([merge request](gitlab-org/charts/gitlab!3522))
+- [Update gitlab-org/container-registry from 3.86.2-gitlab to 3.87.0-gitlab](gitlab-org/charts/gitlab@3a73a280d03c0b665f720b64eb0963f0223d5c8b) ([merge request](gitlab-org/charts/gitlab!3521))
+- [Update gitlab-org/charts/gitlab-runner from 0.59.0 to 0.59.1](gitlab-org/charts/gitlab@1f0269179b4b313aa044be4de3a7cfd684e30ba7) ([merge request](gitlab-org/charts/gitlab!3498))
+- [Update gitlab-org/charts/gitlab-runner from 0.58.2 to 0.59.0](gitlab-org/charts/gitlab@561480190777e575ed794e41c5de62c44e920cf6) ([merge request](gitlab-org/charts/gitlab!3493))
+- [Update gitlab-org/gitlab-exporter from 13.4.1 to 13.5.0](gitlab-org/charts/gitlab@7a12945b9146898967ce80158fbd32a51eda27ac) ([merge request](gitlab-org/charts/gitlab!3484))
+- [Update gitlab-org/container-registry from 3.86.1-gitlab to 3.86.2-gitlab](gitlab-org/charts/gitlab@d9be455eb43298cdf385a1afb86881bc7b65ce14) ([merge request](gitlab-org/charts/gitlab!3488))
+
+### Other (1 change)
+
+- [Doc: FIPS Add note of UBI expectations for FIPS mode host](gitlab-org/charts/gitlab@4274d077ab7d6b08b9ac640182640b02ea22b4f7) ([merge request](gitlab-org/charts/gitlab!3487))
+
+## 7.6.2 (2023-12-13)
+
+No changes.
+
 ## 7.6.1 (2023-11-30)
 
 ### Changed (2 changes)
@@ -32,6 +60,16 @@ entry.
 ### Other (1 change)
 
 - [Deprecate namespace in mailroom.yml](gitlab-org/charts/gitlab@781a94d070a5ae221c33f1a31fdd9ecde15f2be6) ([merge request](gitlab-org/charts/gitlab!3419))
+
+## 7.5.4 (2023-12-13)
+
+No changes.
+
+## 7.5.3 (2023-11-30)
+
+### Changed (1 change)
+
+- [Update gitlab-runner chart from 0.58.1 to 0.58.2](gitlab-org/security/charts/gitlab@d5cb0431d91e4cb95645b7a7c692ed4658445e6f)
 
 ## 7.5.2 (2023-11-14)
 
@@ -67,6 +105,14 @@ No changes.
 ### Other (1 change)
 
 - [Enable dual-namespace polling for sidekiq probe in gitlab-exporter](gitlab-org/charts/gitlab@08e94769a6169bdc380e7d46b3ed300aa9c9cfab) ([merge request](gitlab-org/charts/gitlab!3388))
+
+## 7.4.4 (2023-12-13)
+
+No changes.
+
+## 7.4.3 (2023-11-30)
+
+No changes.
 
 ## 7.4.2 (2023-10-30)
 
