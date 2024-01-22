@@ -13,7 +13,7 @@ dependencies:
   version: '*.*.*'
 - name: cert-manager
   repository: https://charts.jetstack.io/
-  version: v1.12.6
+  version: v1.12.7
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 15.18.0
@@ -22,7 +22,7 @@ dependencies:
   version: 12.5.2
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
-  version: 0.59.2
+  version: 0.60.0
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 16.13.2
@@ -34,7 +34,7 @@ dependencies:
   version: '*.*.*'
 - name: gitlab-zoekt
   repository: https://charts.gitlab.io/
-  version: 0.9.2
+  version: 1.0.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.4.7
@@ -44,5 +44,5 @@ dependencies:
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:6f382f76dd3a1a3cbf35472c153d8b3d40a0d16859be7089295ea06a9c4d52f2
-generated: "2024-01-11T11:43:38.874129-08:00"
+digest: sha256:5c33b2fa475686cae539cb3dd2633154dd981efe0c6e2290a54b92ee8c0b1551
+generated: "2024-01-19T13:22:00.820079-08:00"

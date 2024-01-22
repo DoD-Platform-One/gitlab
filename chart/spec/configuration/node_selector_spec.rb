@@ -36,6 +36,11 @@ describe 'Node Selector configuration' do
           patch:
             enabled: true
 
+      # ensures inclusion of:
+      # - charts/registry/tempaltes/migrations-job.yaml
+      registry:
+        database:
+          enabled: true
     ))
   end
 
