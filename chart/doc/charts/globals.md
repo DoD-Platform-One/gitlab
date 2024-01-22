@@ -158,6 +158,7 @@ The GitLab global host settings for Ingress are located under the `global.ingres
 | `apiVersion`                   | String  |                | API version to use in the Ingress object definitions.
 | `annotations.*annotation-key*` | String  |                | Where `annotation-key` is a string that will be used with the value as an annotation on every Ingress. For Example: `global.ingress.annotations."nginx\.ingress\.kubernetes\.io/enable-access-log"=true`. No global annotations are provided by default. |
 | `configureCertmanager`         | Boolean | `true`         | [See below](#globalingressconfigurecertmanager). |
+| `useNewIngressForCerts`        | Boolean | `false`        | [See below](#globalingressusenewingressforcerts). |
 | `class`                        | String  | `gitlab-nginx` | Global setting that controls `kubernetes.io/ingress.class` annotation or `spec.IngressClassName` in `Ingress` resources. Set to `none` to disable, or `""` for empty. Note: for `none` or `""`, set `nginx-ingress.enabled=false` to prevent the charts from deploying unnecessary Ingress resources. |
 | `enabled`                      | Boolean | `true`         | Global setting that controls whether to create Ingress objects for services that support them. |
 | `tls.enabled`                  | Boolean | `true`         | When set to `false`, this disables TLS in GitLab. This is useful for cases in which you cannot use TLS termination of Ingresses, such as when you have a TLS-terminating proxy before the Ingress Controller. If you want to disable https completely, this should be set to `false` together with [`global.hosts.https`](#configure-host-settings). |
@@ -208,6 +209,18 @@ If you wish to use an external `cert-manager`, you must provide the following:
 - `registry.ingress.tls.secretName`
 - `minio.ingress.tls.secretName`
 - `global.ingress.annotations`
+
+### `global.ingress.useNewIngressForCerts`
+
+Global setting that changes the behavior of the `cert-manager` to perform the ACME challenge validation with
+a new Ingress created dynamically each time.
+
+The default logic (when `global.ingress.useNewIngressForCerts` is `false`) reuses existing Ingresses for
+validation. This default is not suitable in some situations. Setting the flag to `true` will mean that a new
+Ingress object is created for each validation.
+
+`global.ingress.useNewIngressForCerts` cannot be set to `true` when used with GKE Ingress Controllers. For full details
+on enabling this, see [release notes](../releases/7_0.md#bundled-certmanager).
 
 ## GitLab Version
 
@@ -530,19 +543,26 @@ for different persistence classes, currently:
 
 | Instance          | Purpose                                                         |
 |:------------------|:----------------------------------------------------------------|
-| `cache`           | Store cached data                                               |
-| `queues`          | Store Sidekiq background jobs                                   |
-| `sharedState`     | Store various persistent data such as distributed locks         |
 | `actioncable`     | Pub/Sub queue backend for ActionCable                           |
-| `traceChunks`     | Store job traces temporarily                                    |
+| `cache`           | Store cached data                                               |
+| `kas`             | Store kas specific data                                         |
+| `queues`          | Store Sidekiq background jobs                                   |
 | `rateLimiting`    | Store rate-limiting usage for RackAttack and Application Limits |
-| `sessions`        | Store user session data                                         |
 | `repositoryCache` | Store repository related data                                   |
+| `sessions`        | Store user session data                                         |
+| `sharedState`     | Store various persistent data such as distributed locks         |
+| `traceChunks`     | Store job traces temporarily                                    |
 | `workhorse`       | Pub/sub queue backend for Workhorse                             |
 
 Any number of the instances may be specified. Any instances not specified
 will be handled by the primary Redis instance specified
 by `global.redis.host` or use the deployed Redis instance from the chart.
+The only exception is for the [GitLab agent server (KAS)](gitlab/kas/index.md), which looks for Redis configuration in the following order:
+
+1. `global.redis.kas`
+1. `global.redis.sharedState`
+1. `global.redis.host`
+
 For example:
 
 ```yaml
@@ -556,27 +576,6 @@ global:
       enabled: true
       secret: redis-secret
       key: redis-password
-    cache:
-      host: cache.redis.example
-      port: 6379
-      password:
-        enabled: true
-        secret: cache-secret
-        key: cache-password
-    sharedState:
-      host: shared.redis.example
-      port: 6379
-      password:
-        enabled: true
-        secret: shared-secret
-        key: shared-password
-    queues:
-      host: queues.redis.example
-      port: 6379
-      password:
-        enabled: true
-        secret: queues-secret
-        key: queues-password
     actioncable:
       host: cable.redis.example
       port: 6379
@@ -584,13 +583,27 @@ global:
         enabled: true
         secret: cable-secret
         key: cable-password
-    traceChunks:
-      host: traceChunks.redis.example
+    cache:
+      host: cache.redis.example
       port: 6379
       password:
         enabled: true
-        secret: traceChunks-secret
-        key: traceChunks-password
+        secret: cache-secret
+        key: cache-password
+    kas:
+      host: kas.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: kas-secret
+        key: kas-password
+    queues:
+      host: queues.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: queues-secret
+        key: queues-password
     rateLimiting:
       host: rateLimiting.redis.example
       port: 6379
@@ -598,13 +611,6 @@ global:
         enabled: true
         secret: rateLimiting-secret
         key: rateLimiting-password
-    sessions:
-      host: sessions.redis.example
-      port: 6379
-      password:
-        enabled: true
-        secret: sessions-secret
-        key: sessions-password
     repositoryCache:
       host: repositoryCache.redis.example
       port: 6379
@@ -612,6 +618,27 @@ global:
         enabled: true
         secret: repositoryCache-secret
         key: repositoryCache-password
+    sessions:
+      host: sessions.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: sessions-secret
+        key: sessions-password
+    sharedState:
+      host: shared.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: shared-secret
+        key: shared-password
+    traceChunks:
+      host: traceChunks.redis.example
+      port: 6379
+      password:
+        enabled: true
+        secret: traceChunks-secret
+        key: traceChunks-password
     workhorse:
       host: workhorse.redis.example
       port: 6379
@@ -811,7 +838,7 @@ The `external` key provides a configuration for Gitaly nodes external to the clu
 Each item of this list has 3 keys:
 
 - `name`: The name of the [storage](https://docs.gitlab.com/ee/administration/repository_storage_paths.html).
-  An entry with `name: default` is required.
+  An entry with [`name: default` is required](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#gitlab-requires-a-default-repository-storage).
 - `hostname`: The host of Gitaly services.
 - `port`: (optional) The port number to reach the host on. Defaults to `8075`.
 - `tlsEnabled`: (optional) Override `global.gitaly.tls.enabled` for this particular entry.
@@ -829,7 +856,7 @@ interchangeable, as from the viewpoint of the clients, there is no difference.
 
 It is possible to use both internal and external Gitaly nodes, but be aware that:
 
-- There must always be a node named `default`, which Internal provides by default.
+- There [must always be a node named `default`](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#gitlab-requires-a-default-repository-storage), which Internal provides by default.
 - External nodes will be populated first, then Internal.
 
 A sample [configuration of mixed internal and external nodes](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/gitaly/values-multiple-mixed.yaml)
@@ -2482,12 +2509,4 @@ global:
 
 By default, the GitLab Helm chart does not rotate logs. This can cause ephemeral storage issues for containers that run for a long time.
 
-To enable log rotation, set the `GITLAB_LOGGER_TRUNCATE_LOGS` environment variable to true. You can also configure the log rotation frequency and the maximum log size by setting the `GITLAB_LOGGER_TRUNCATE_INTERVAL` and `GITLAB_LOGGER_MAX_FILESIZE` environment variables, respectively:
-
-```yaml
-global:
-  extraEnv:
-    GITLAB_LOGGER_TRUNCATE_LOGS: true
-    GITLAB_LOGGER_TRUNCATE_INTERVAL: 300
-    GITLAB_LOGGER_MAX_FILESIZE: 1000
-```
+To enable log rotation, set the `GITLAB_LOGGER_TRUNCATE_LOGS` environment variable to `true`. For more details on configuration options, see [GitLab Logger's documentation](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#configuration). Environment variables [GITLAB_LOGGER_TRUNCATE_INTERVAL](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#truncate-logs-interval) and [GITLAB_LOGGER_MAX_FILESIZE](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#max-log-file-size) should be particularly helpful for configuring log rotation.

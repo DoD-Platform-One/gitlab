@@ -182,15 +182,19 @@ kubectl get secret <release>-gitlab-shell-secret -ojsonpath='{.data.secret}' | b
 kubectl get secret <release>-gitaly-secret -ojsonpath='{.data.token}' | base64 -d
 ```
 
-For a single Gitaly node:
+::Tabs
+
+:::TabTitle Gitaly
 
 - The Gitaly token extracted here should be used for the `AUTH_TOKEN` value.
 - The GitLab Shell secret extracted here should be used for the `shellsecret` value.
 
-For Gitaly Cluster:
+:::TabTitle Gitaly Cluster
 
 - The Gitaly token extracted here should be used for the `PRAEFECT_EXTERNAL_TOKEN`.
 - The GitLab Shell secret extracted here should be used for the `GITLAB_SHELL_SECRET_TOKEN`.
+
+::EndTabs
 
 ### Step 3: Verify no Git changes can be made during migration
 
@@ -408,7 +412,7 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
 ### Step 6: Restore and validate repository backup
 
 1. [Restore the backup file](../../backup-restore/restore.md#restoring-the-backup-file) created previously.
-   The repositories in the backup file should be copied to the external Gitaly.
+   As a result, the repositories are copied to the configured external Gitaly or Gitaly Cluster.
 
 1. [Check all GitLab repositories](https://docs.gitlab.com/ee/administration/raketasks/check.html#check-all-gitlab-repositories)
    and create a list of repository checksums. Pipe the output to a file so we can `diff` the checksums in the next step:

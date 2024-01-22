@@ -392,6 +392,8 @@ If that is not present it will use the global chart serviceAccount automountServ
 - Add `gitlab.migrations.annotations`: sidecar.istio.io/inject: "false".
 - Add `minio.jobAnnotations`: sidecar.istio.io/inject: "false".
 - Add `gitlab.toolbox.annotations`: `sidecar.istio.io/proxyMemory: 512Mi` and `sidecar.istio.io/proxyMemoryLimit: 512Mi`.
+- Change default value for `global.ingress.configureCertmanager` to `false`
+
 
 # chart/Chart.yaml
 - Change version key to Big Bang composite version.

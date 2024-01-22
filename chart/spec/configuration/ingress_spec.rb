@@ -20,6 +20,14 @@ describe 'GitLab Ingress configuration(s)' do
     template.dig("Ingress/#{ingress_name}", 'metadata', 'annotations', 'kubernetes.io/ingress.class')
   end
 
+  def get_issuer_annotation(template, ingress_name)
+    template.dig("Ingress/#{ingress_name}", 'metadata', 'annotations', 'cert-manager.io/issuer')
+  end
+
+  def get_edit_in_place_annotation(template, ingress_name)
+    template.dig("Ingress/#{ingress_name}", 'metadata', 'annotations', 'acme.cert-manager.io/http01-edit-in-place')
+  end
+
   def get_ingress_class_spec(template, ingress_name)
     template.dig("Ingress/#{ingress_name}", 'spec', 'ingressClassName')
   end
@@ -28,9 +36,14 @@ describe 'GitLab Ingress configuration(s)' do
     template.dig("Service/#{service_name}", 'spec', 'ports')
   end
 
-  def get_certmanager_http01_solver_ingress_class_spec(template, issuer_config_name)
+  def get_certmanager_http01_solver_ingress_class(template, issuer_config_name)
     issuer = YAML.safe_load(template.dig("ConfigMap/#{issuer_config_name}", 'data', 'issuer.yml'))
     issuer.dig('spec', 'acme', 'solvers', 0, 'http01', 'ingress', 'class')
+  end
+
+  def get_certmanager_http01_solver_ingress_class_name(template, issuer_config_name)
+    issuer = YAML.safe_load(template.dig("ConfigMap/#{issuer_config_name}", 'data', 'issuer.yml'))
+    issuer.dig('spec', 'acme', 'solvers', 0, 'http01', 'ingress', 'ingressClassName')
   end
 
   let(:default_values) do
@@ -484,28 +497,63 @@ describe 'GitLab Ingress configuration(s)' do
   end
 
   describe 'certmanager issuer ingress config' do
-    context 'when ingress class is configured' do
-      using RSpec::Parameterized::TableSyntax
-      where(:class_name, :expected_spec) do
-        [
-          [nil,    'test-nginx'],
-          ['none', nil],
-          ['foo',  'foo']
-        ]
+    let(:template) { HelmTemplate.new(values) }
+    let(:expected_ingress_name) { "test-webservice-default" }
+    let(:issuer_annotation) { get_issuer_annotation(template, expected_ingress_name) }
+    let(:edit_in_place_annotation) { get_edit_in_place_annotation(template, expected_ingress_name) }
+
+    using RSpec::Parameterized::TableSyntax
+    where(:class_name, :expected_spec) do
+      [
+        [nil,    'test-nginx'],
+        ['none', nil],
+        ['foo',  'foo']
+      ]
+    end
+
+    with_them do
+      context "when the default values are used and ingress class is set" do
+        let(:values) do
+          default_values.deep_merge(YAML.safe_load(%(
+            global:
+              ingress:
+                class: #{class_name}
+          )))
+        end
+
+        it { expect(template.exit_code).to eq(0) }
+
+        it 'populates the legacy ingress class on the http01 solver' do
+          issuer_class_spec = get_certmanager_http01_solver_ingress_class(template, "test-certmanager-issuer-certmanager")
+          expect(issuer_class_spec).to eq(expected_spec)
+        end
+
+        it 'sets the cert-manager issuer and http01-edit-in-place annotations' do
+          expect(issuer_annotation).to eq("test-issuer")
+          expect(edit_in_place_annotation).to be_truthy
+        end
       end
 
-      with_them do
-        it 'populates expected ingress class to http01 solver' do
-          values = default_values.deep_merge(YAML.safe_load(%(
-              global:
-                ingress:
-                  class: #{class_name}
-            )))
+      context "and when the useNewIngressForCerts value is set to true and ingress class is set" do
+        let(:values) do
+          default_values.deep_merge(YAML.safe_load(%(
+            global:
+              ingress:
+                class: #{class_name}
+                useNewIngressForCerts: true
+          )))
+        end
 
-          t = HelmTemplate.new(values)
-          expect(t.exit_code).to eq(0)
-          issuer_class_spec = get_certmanager_http01_solver_ingress_class_spec(t, "test-certmanager-issuer-certmanager")
-          expect(issuer_class_spec).to eq(expected_spec)
+        it { expect(template.exit_code).to eq(0) }
+
+        it 'populates the new ingress class on the http01 solver' do
+          issuer_class_spec = get_certmanager_http01_solver_ingress_class_name(template, "test-certmanager-issuer-certmanager")
+          expect(issuer_class_spec).to eq expected_spec
+        end
+
+        it 'sets the cert-manager issuer but not the http01-edit-in-place annotations' do
+          expect(issuer_annotation).to eq("test-issuer")
+          expect(edit_in_place_annotation).to be_nil
         end
       end
     end

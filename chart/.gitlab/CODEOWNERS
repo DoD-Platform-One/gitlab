@@ -21,8 +21,9 @@
 
 ## Technical writing files that do not need `*` rule approval,
 ## but still require an approval from a TW team DRI for each file.
-.markdownlint.yml @eread @axil @aqualls @gitlab-org/tw-leadership
-/doc/.vale/ @eread @axil @aqualls @gitlab-org/tw-leadership
+.markdownlint.yml @marcel.amirault @eread @axil @aqualls @gitlab-org/tw-leadership
+/doc/.markdownlint/ @marcel.amirault @eread @axil @aqualls @gitlab-org/tw-leadership
+/doc/.vale/ @marcel.amirault @eread @axil @aqualls @gitlab-org/tw-leadership
 
 # Distribution CI/CD
 .gitlab/ci/ @gitlab-org/maintainers/helm-charts-gitlab @balasankarc

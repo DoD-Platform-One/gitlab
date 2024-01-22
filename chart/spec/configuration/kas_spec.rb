@@ -344,9 +344,11 @@ describe 'kas configuration' do
           let(:kas_values) do
             vals = default_kas_values
             vals['global'].deep_merge!(redis_shared_state_config)
+            vals['global'].deep_merge!(redis_kas_config)
             vals.deep_merge!('redis' => { 'install' => false })
           end
 
+          let(:redis_kas_config) { {} }
           let(:redis_password_enabled) { true }
 
           let(:redis_shared_state_config) do
@@ -404,6 +406,43 @@ describe 'kas configuration' do
 
             it 'does not set password_file' do
               expect(config_yaml_data['redis']).not_to have_key("password_file")
+            end
+          end
+
+          context 'when redis.kas is defined' do
+            let(:sentinels) do
+              YAML.safe_load(%(
+                - host: sentinel1.kas.com
+                  port: 26379
+                - host: sentinel2.kas.com
+                  port: 26379
+              ))
+            end
+
+            let(:redis_kas_config) do
+              YAML.safe_load(%(
+                redis:
+                  host: global.host
+                  kas:
+                    host: kas.redis
+                    port: 6378
+                    password:
+                      enabled: #{redis_password_enabled}
+                      secret: kas-secret
+                      key: kas-key
+                    sentinels: #{sentinels.to_json}
+              ))
+            end
+
+            it 'configures a kas sentinel config, overriding shared state' do
+              expect(config_yaml_data['redis']).to include(YAML.safe_load(%(
+                password_file: /etc/kas/redis/kas-password
+                sentinel:
+                  addresses:
+                    - sentinel1.kas.com:26379
+                    - sentinel2.kas.com:26379
+                  master_name: kas.redis
+              )))
             end
           end
         end
