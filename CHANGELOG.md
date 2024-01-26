@@ -2,6 +2,24 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.8.1-bb.0] - 2024-01-26 
+### Changed
+- Update GitLab to appVersion 16.8.1
+- Update chart version to 7.8.1
+- ironbank/gitlab/gitlab/gitlab-webservice 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 16.8.0 -> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 16.8.0-> 16.8.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 16.8.0 -> 16.8.1
+
 --
 ## [7.8.0-bb.1] - 2024-01-24
 ### Changed
