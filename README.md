@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.8.1-bb.0](https://img.shields.io/badge/Version-7.8.0--bb.1-informational?style=flat-square) ![AppVersion: v16.8.1](https://img.shields.io/badge/AppVersion-v16.8.1-informational?style=flat-square)
+![Version: 7.8.1-bb.2](https://img.shields.io/badge/Version-7.8.1--bb.2-informational?style=flat-square) ![AppVersion: v16.8.1](https://img.shields.io/badge/AppVersion-v16.8.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -1053,7 +1053,7 @@ helm install gitlab chart/
 | bbtests.cypress.resources.limits.cpu | int | `1` |  |
 | bbtests.cypress.resources.limits.memory | string | `"2Gi"` |  |
 | bbtests.cypress.artifacts | bool | `true` |  |
-| bbtests.cypress.envs.cypress_baseUrl | string | `"http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
+| bbtests.cypress.envs.cypress_url | string | `"http://gitlab-webservice-default:8181"` |  |
 | bbtests.cypress.envs.cypress_gitlab_first_name | string | `"test"` |  |
 | bbtests.cypress.envs.cypress_gitlab_last_name | string | `"user"` |  |
 | bbtests.cypress.envs.cypress_gitlab_username | string | `"testuser"` |  |
