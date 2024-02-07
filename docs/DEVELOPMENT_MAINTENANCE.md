@@ -43,7 +43,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
         ```
     1. Export the environment variables that are needed by the cypress test. Reference the `bbtests:` at the end of `/chart/values.yaml`.
         ```bash
-        export cypress_baseUrl=https://gitlab.bigbang.dev
+        export cypress_url=https://gitlab.bigbang.dev
         export cypress_gitlab_first_name=test
         export cypress_gitlab_last_name=user
         export cypress_gitlab_username=testuser
