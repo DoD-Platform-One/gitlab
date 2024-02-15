@@ -158,7 +158,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
                 enabled: true
               defaultCanCreateGroup: true
     ```
-1. Access Gitlab UI from a browser and login with SSO.
+1. Access Gitlab UI from a browser and login with SSO (to learn about deploying GitLab with a dev version of Keycloak, see [keycloak-dev.md](./keycloak-dev.md)).
 1. Test changing your profile image.
 1. In your profile create an access token with all privileges. Save the token for later use.
 1. Create a group called `test`.
