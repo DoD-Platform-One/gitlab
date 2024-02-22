@@ -322,6 +322,7 @@ describe 'Gitaly configuration' do
               enabled: #{pack_objects_cache_enabled}
               dir: #{pack_objects_cache_dir}
               max_age: #{pack_objects_cache_max_age}
+              min_occurrences: #{pack_objects_cache_min_occurrences}
       )).merge(default_values)
     end
 
@@ -329,6 +330,7 @@ describe 'Gitaly configuration' do
       let(:pack_objects_cache_enabled) { 'true' }
       let(:pack_objects_cache_dir) { '/pack-objects-cache' }
       let(:pack_objects_cache_max_age) { '10m' }
+      let(:pack_objects_cache_min_occurrences) { '1' }
 
       let(:template) { HelmTemplate.new(values) }
 
@@ -338,7 +340,8 @@ describe 'Gitaly configuration' do
         pack_objects_cache_section = "[pack_objects_cache]\n" \
                                      "enabled = #{pack_objects_cache_enabled}\n" \
                                      "dir = \"#{pack_objects_cache_dir}\"\n" \
-                                     "max_age = #{pack_objects_cache_max_age}"
+                                     "max_age = \"#{pack_objects_cache_max_age}\"\n" \
+                                     "min_occurrences = #{pack_objects_cache_min_occurrences}"
 
         expect(config_toml).to include(pack_objects_cache_section)
       end
@@ -348,6 +351,7 @@ describe 'Gitaly configuration' do
       let(:pack_objects_cache_enabled) { 'false' }
       let(:pack_objects_cache_dir) { '/pack-objects-cache' }
       let(:pack_objects_cache_max_age) { '10m' }
+      let(:pack_objects_cache_min_occurrences) { '1' }
 
       let(:template) { HelmTemplate.new(values) }
 

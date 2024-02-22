@@ -37,6 +37,9 @@ describe "Restoring a backup" do
     stdout, status = enforce_root_password(ENV['GITLAB_PASSWORD']) if ENV['GITLAB_PASSWORD']
     fail stdout unless status.success?
 
+    stdout, status = set_admin_token
+    fail stdout unless status.success?
+
     # scale the Rails code deployments up
     scale_rails_up
     # wait for rollout to complete (change in replicas)
@@ -50,40 +53,37 @@ describe "Restoring a backup" do
   end
 
   describe 'Restored gitlab instance' do
-    before { sign_in }
 
-    it 'Home page should show projects' do
-      visit '/'
-      expect(page).to have_content 'Projects'
-      expect(page).to have_content 'Administrator / testproject1'
+    it 'Project testproject1 should exist' do
+      uri = "search?scope=projects&search=testproject1"
+      response = ApiHelper.invoke_get_request(uri)
+      expect(response.collect { |item| item["name_with_namespace"] }).to have_content 'Administrator / testproject1'
     end
 
-    it 'Navigating to testproject1 repo should work' do
-      visit '/root/testproject1'
-      expect(find('[data-testid="file-tree-table"]'))
+    it 'Issue under testproject1 should exist' do
+      uri = "search?scope=issues&search=test"
+      response = ApiHelper.invoke_get_request(uri)
+      expect(response.collect { |item| item["title"] }).to have_content 'This is a test issue with attachment'
+    end
+
+    it 'Test project repository should have Dockerfile' do
+      uri = "projects/1/repository/tree"
+      response = ApiHelper.invoke_get_request(uri)
+      expect(response.collect { |item| item["name"] })
         .to have_content('Dockerfile')
     end
 
-    it 'Should have runner registered' do
-      visit '/admin/runners'
-      expect(page).to have_css('#content-body [data-testid^="runner-row-"],[data-qa-selector^="runner-row-"]', minimum: 1)
+    it 'Should have at least 1 runner registered' do
+      uri = "runners/all"
+      response = ApiHelper.invoke_get_request(uri)
+      expect(response.collect { |item| item["status"] }).to have_content('online', minimum: 1)
+      expect(response.collect { |item| item["online"] }).to have_content('true', minimum: 1)
     end
 
-    it 'Issue attachments should load correctly' do
-      visit '/root/testproject1/-/issues/1'
-
-      image_selector = 'div.md > p > a > img.js-lazy-loaded'
-
-      # Image has additional classes added by JS async
-      wait(reload: false) do
-        has_selector?(image_selector)
-      end
-
-      expect(page).to have_selector(image_selector)
-      image_src = page.all(image_selector)[0][:src]
-      URI.open(image_src) do |f|
-        expect(f.status[0]).to eq '200'
-      end
+    it 'Issue contains attachment in the description' do
+      uri = "issues"
+      response = ApiHelper.invoke_get_request(uri)
+      expect(response.collect { |item| item["description"] }).to have_content '![Screen_Shot_2018-05-01_at_2.53.34_PM](/uploads/90701344e9ebb53fa9ebac83d43afdcc/Screen_Shot_2018-05-01_at_2.53.34_PM.png)'
     end
 
     it 'Could pull image from registry' do

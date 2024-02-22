@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Configure charts using globals **(FREE SELF)**
+# Configure charts using globals
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 To reduce configuration duplication when installing our wrapper Helm chart, several
 configuration settings are available to be set in the `global` section of `values.yaml`.
@@ -99,7 +103,7 @@ global:
 | `kas.https`               | Boolean   | `false`        | If `hosts.https` or `kas.https` are `true`, the KAS external URL will use `wss://` instead of `ws://`.                                                                                                                                                                                                                    |
 | `pages.name`              | String    | `pages`        | The hostname for GitLab Pages. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.                                                                                                                                                                             |
 | `pages.https`             | String    |                | If `global.pages.https` or `global.hosts.pages.https` or `global.hosts.https` are `true`, then URL for GitLab Pages in the Project settings UI will use `https://` instead of `http://`.                                                                                                                                  |
-| `ssh`                     | String    |                | The hostname for cloning repositories over SSH. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.
+| `ssh`                     | String    |                | The hostname for cloning repositories over SSH. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
 
 ### hostSuffix
 
@@ -155,7 +159,7 @@ The GitLab global host settings for Ingress are located under the `global.ingres
 
 | Name                           | Type    | Default        | Description |
 |:------------------------------ |:-------:|:-------        |:----------- |
-| `apiVersion`                   | String  |                | API version to use in the Ingress object definitions.
+| `apiVersion`                   | String  |                | API version to use in the Ingress object definitions. |
 | `annotations.*annotation-key*` | String  |                | Where `annotation-key` is a string that will be used with the value as an annotation on every Ingress. For Example: `global.ingress.annotations."nginx\.ingress\.kubernetes\.io/enable-access-log"=true`. No global annotations are provided by default. |
 | `configureCertmanager`         | Boolean | `true`         | [See below](#globalingressconfigurecertmanager). |
 | `useNewIngressForCerts`        | Boolean | `false`        | [See below](#globalingressusenewingressforcerts). |
@@ -425,7 +429,7 @@ global:
 
 ### Configure multiple database connections
 
-> The `gitlab:db:decomposition:connection_status` Rake task was [introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/111927) in GitLab 15.11.
+> - The `gitlab:db:decomposition:connection_status` Rake task was [introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/111927) in GitLab 15.11.
 
 In GitLab 16.0, GitLab defaults to using two database connections
 that point to the same PostgreSQL database.
@@ -918,7 +922,7 @@ global:
 | psql.host       | String  |             | The hostname of the database server to use (when using an external database) |
 | psql.port       | String  |             | The port number of the database server (when using an external database) |
 | psql.user       | String  | `praefect` | The database user to use                                           |
-| psql.dbName | String | `praefect` | The name of the database to use
+| psql.dbName | String | `praefect` | The name of the database to use |
 
 ## Configure MinIO settings
 
@@ -1248,8 +1252,6 @@ You can use these defaults or configure the bucket names:
 
 #### storage_options
 
-> Introduced in GitLab 13.4.
-
 The `storage_options` are used to configure
 [S3 Server Side Encryption](https://docs.gitlab.com/ee/administration/object_storage.html#server-side-encryption-headers).
 
@@ -1566,7 +1568,7 @@ See [Custom Certificate Authorities](#custom-certificate-authorities) for more i
 
 ### DuoAuth
 
-Use these settings to enable [two-factor authentication (2FA) with Duo](https://docs.gitlab.com/ee/user/profile/account/two_factor_authentication.html#enable-one-time-password).
+Use these settings to enable [two-factor authentication (2FA) with GitLab Duo](https://docs.gitlab.com/ee/user/profile/account/two_factor_authentication.html#enable-one-time-password).
 
 ```yaml
 global:
@@ -1582,16 +1584,16 @@ global:
 
 | Name              | Type    | Default | Description                                |
 |:----------------- |:-------:|:------- |:------------------------------------------ |
-| `enabled`         | Boolean | `false` | Enable or disable the integration with Duo |
-| `hostname`        | String  |         | Duo API hostname                           |
-| `integrationKey` | String  |         | Duo API integration key                    |
-| `secretKey`      |         |         | Duo API secret key that must be [configured with the name of secret and key name](#configure-the-duo-secret-key) |
+| `enabled`         | Boolean | `false` | Enable or disable the integration with GitLab Duo |
+| `hostname`        | String  |         | GitLab Duo API hostname                           |
+| `integrationKey` | String  |         | GitLab Duo API integration key                    |
+| `secretKey`      |         |         | GitLab Duo API secret key that must be [configured with the name of secret and key name](#configure-the-gitlab-duo-secret-key) |
 
-### Configure the Duo secret key
+### Configure the GitLab Duo secret key
 
-To configure Duo auth integration in the GitLab Helm chart you must provide a secret in the `global.appConfig.duoAuth.secretKey.secret` setting containing Duo auth secret_key value.
+To configure GitLab Duo auth integration in the GitLab Helm chart you must provide a secret in the `global.appConfig.duoAuth.secretKey.secret` setting containing GitLab Duo auth secret_key value.
 
-To create a Kubernetes secret object to store your Duo account `secretKey`, from the command line, run:
+To create a Kubernetes secret object to store your GitLab Duo account `secretKey`, from the command line, run:
 
 ```shell
 kubectl create secret generic <secret_object_name> --from-literal=secretKey=<duo_secret_key_value>
@@ -1833,7 +1835,7 @@ corresponding queue:
   [worker matching query](https://docs.gitlab.com/ee/administration/sidekiq/processing_specific_job_classes.html#worker-matching-query) syntax.
 - The `<queue_name>` must match a valid Sidekiq queue name `sidekiq.pods[].queues` defined under [`sidekiq.pods`](gitlab/sidekiq/index.md#per-pod-settings). If the queue name
   is `nil`, or an empty string, the worker is routed to the queue generated
-  by the name of the worker instead.
+  by the name of the worker instead. See [Full example of Sidekiq configuration](gitlab/sidekiq/index.md#full-example-of-sidekiq-configuration) as a reference.
 
 The query supports wildcard matching `*`, which matches all workers. As a
 result, the wildcard query must stay at the end of the list or the later rules
@@ -2186,9 +2188,10 @@ global:
     disktype: ssd
 ```
 
-> **Note**: charts that are maintained externally do not respect the `global.nodeSelector`
-> at this time and may need to be configured separately based on available chart values.
-> This includes Prometheus, cert-manager, Redis, etc.
+NOTE:
+Charts that are maintained externally do not respect the `global.nodeSelector`
+at this time and may need to be configured separately based on available chart values.
+This includes Prometheus, cert-manager, Redis, etc.
 
 ## Labels
 
@@ -2505,8 +2508,13 @@ global:
 
 ## Log rotation
 
-> [Introduced](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger/-/merge_requests/10) in GitLab 15.6.
+> - [Introduced](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger/-/merge_requests/10) in GitLab 15.6.
 
 By default, the GitLab Helm chart does not rotate logs. This can cause ephemeral storage issues for containers that run for a long time.
 
-To enable log rotation, set the `GITLAB_LOGGER_TRUNCATE_LOGS` environment variable to `true`. For more details on configuration options, see [GitLab Logger's documentation](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#configuration). Environment variables [GITLAB_LOGGER_TRUNCATE_INTERVAL](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#truncate-logs-interval) and [GITLAB_LOGGER_MAX_FILESIZE](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#max-log-file-size) should be particularly helpful for configuring log rotation.
+To enable log rotation, set the `GITLAB_LOGGER_TRUNCATE_LOGS` environment variable to `true`. For more information, see
+[GitLab Logger's documentation](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#configuration). In particular,
+see information on:
+
+- [`GITLAB_LOGGER_TRUNCATE_INTERVAL`](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#truncate-logs-interval).
+- [`GITLAB_LOGGER_MAX_FILESIZE`](https://gitlab.com/gitlab-org/cloud-native/gitlab-logger#max-log-file-size).

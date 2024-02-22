@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Backup and restore a GitLab instance **(FREE SELF)**
+# Backup and restore a GitLab instance
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 GitLab Helm chart provides a utility pod from the Toolbox sub-chart that acts as an interface for the purpose of backing up and restoring GitLab instances. It is equipped with a `backup-utility` executable which interacts with other necessary pods for this task.
 Technical details for how the utility works can be found in the [architecture documentation](../architecture/backup-restore.md).
@@ -28,7 +32,7 @@ We provide a MinIO instance out of the box when using this charts unless an [ext
 
 ### Backups to S3
 
-The Toolbox uses `s3cmd` to connect to object storage. In order to configure connectivity to external object storage `gitlab.toolbox.backups.objectStorage.config.secret` should be specified which points to a Kubernetes secret containing a `.s3cfg` file. `gitlab.toolbox.backups.objectStorage.config.key` should be specified if different from the default of `config`. This points to the key containing the contents of a `.s3cfg` file.
+The Toolbox uses `s3cmd` by default to connect to object storage unless you [specify another s3 tool to use](../backup-restore/backup.md#specify-s3-tool-to-use). In order to configure connectivity to external object storage `gitlab.toolbox.backups.objectStorage.config.secret` should be specified which points to a Kubernetes secret containing a `.s3cfg` file. `gitlab.toolbox.backups.objectStorage.config.key` should be specified if different from the default of `config`. This points to the key containing the contents of a `.s3cfg` file.
 
 It should look like this:
 

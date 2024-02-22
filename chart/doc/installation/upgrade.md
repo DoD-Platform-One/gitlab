@@ -4,13 +4,21 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Upgrade the GitLab chart **(FREE SELF)**
+# Upgrade the GitLab chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 Before upgrading your GitLab installation, you need to check the
 [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md)
 corresponding to the specific release you want to upgrade to and look for any
 [release notes](version_mappings.md#release-notes-for-each-version) that might pertain to the new GitLab chart
 version.
+
+Upgrades have to follow a supported [upgrade path](https://docs.gitlab.com/ee/update/#upgrade-paths).
+Because the GitLab chart versions don't follow the same numbering as GitLab versions,
+see the [version mappings](version_mappings.md) between them.
 
 NOTE:
 **Zero-downtime upgrades** are not available with the GitLab charts.
@@ -26,8 +34,6 @@ You can retrieve your previous `--set` arguments cleanly, with
 (`helm get values <release name> > gitlab.yaml`), you can safely pass this
 file via `-f`. Thus `helm upgrade gitlab gitlab/gitlab -f gitlab.yaml`.
 This safely replaces the behavior of `--reuse-values`
-
-See [mappings](../installation/version_mappings.md) between chart versioning and GitLab versioning.
 
 ## Steps
 

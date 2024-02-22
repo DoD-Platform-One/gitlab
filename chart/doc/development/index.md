@@ -35,6 +35,12 @@ Unit tests are written in RSpec and stored in the `spec/` directory of the chart
 Read the notes on [creating RSpec tests](rspec.md) to validate the
 functionality of the chart.
 
+### Developing bats tests
+
+Unit tests for functions in shell scripts are written in [bats](https://bats-core.readthedocs.io/en/stable/) and stored next to the script file they are testing in the `scripts/` directory of the chart repository.
+
+Read the notes on [creating bats tests](bats.md) to validate functions in the scripts used in this project.
+
 ### Running GitLab QA
 
 [GitLab QA](https://gitlab.com/gitlab-org/gitlab-qa) can be used to run integrations and functional tests against a deployed cloud-native GitLab installation.

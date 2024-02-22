@@ -35,6 +35,11 @@ To use GitLab Geo with the GitLab Helm chart, the following requirements must be
   - Support SSL between primary and secondary database nodes.
 - The primary site must be reachable via HTTP(S) by all secondary sites.
   Secondary sites must be accessible to the primary site via HTTP(S).
+- See [requirements for running Geo](https://docs.gitlab.com/ee/administration/geo/#requirements-for-running-geo) for the full list of requirements.
+
+## Limitations
+
+See [Geo limitations](https://docs.gitlab.com/ee/administration/geo/#limitations) for a complete list of limitations.
 
 ## Overview
 

@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab-Gitaly chart **(FREE SELF)**
+# Using the GitLab-Gitaly chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 The `gitaly` sub-chart provides a configurable deployment of Gitaly Servers.
 
@@ -90,6 +94,7 @@ the `helm install` command using the `--set` flags.
 | `packObjectsCache.enabled`                       | `false`                                           | Enable the Gitaly pack-objects cache                                                                                                                                           |
 | `packObjectsCache.dir`                           | `/home/git/repositories/+gitaly/PackObjectsCache` | Directory where cache files get stored                                                                                                                                         |
 | `packObjectsCache.max_age`                       | `5m`                                              | Cache entries lifespan                                                                                                                                                         |
+| `packObjectsCache.min_occurrences`               | `1`                                               | Key must hit a minimum count to create a cache entry                                                                                                                                                         |
 | `git.catFileCacheSize`                           |                                                   | Cache size used by Git cat-file process                                                                                                                                        |
 | `git.config[]`                                   | `[]`                                              | Git configuration that Gitaly should set when spawning Git commands                                                                                                            |
 | `prometheus.grpcLatencyBuckets`                  |                                                   | Buckets corresponding to histogram latencies on GRPC method calls to be recorded by Gitaly. A string form of the array (for example, `"[1.0, 1.5, 2.0]"`) is required as input |

@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Migrate from the Linux package to the Helm chart **(FREE SELF)**
+# Migrate from the Linux package to the Helm chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 This guide will help you migrate from a package-based GitLab installation to
 the Helm chart.

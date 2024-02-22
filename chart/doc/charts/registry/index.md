@@ -4,17 +4,25 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Using the Container Registry **(FREE SELF)**
+# Using the Container Registry
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 The `registry` sub-chart provides the Registry component to a complete cloud-native
-GitLab deployment on Kubernetes. This sub-chart makes use of the upstream
-[registry](https://hub.docker.com/_/registry/) [container](https://github.com/docker/distribution-library-image)
-containing [Docker Distribution](https://github.com/docker/distribution). This chart
-is composed of 3 primary parts: [Service](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/registry/templates/service.yaml),
-[Deployment](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/registry/templates/deployment.yaml),
-and [ConfigMap](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/registry/templates/configmap.yaml).
+GitLab deployment on Kubernetes. This sub-chart is based on the
+[upstream chart](https://github.com/docker/distribution-library-image)
+and contains the GitLab [Container Registry](https://gitlab.com/gitlab-org/container-registry).
 
-All configuration is handled according to the official [Registry configuration documentation](https://docs.docker.com/registry/configuration/)
+This chart is composed of 3 primary parts:
+
+- [Service](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/registry/templates/service.yaml),
+- [Deployment](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/registry/templates/deployment.yaml),
+- [ConfigMap](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/charts/registry/templates/configmap.yaml).
+
+All configuration is handled according to the
+[Registry configuration documentation](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads)
 using `/etc/docker/registry/config.yml` variables provided to the `Deployment` populated
 from the `ConfigMap`. The `ConfigMap` overrides the upstream defaults, but is
 [based on them](https://github.com/docker/distribution-library-image/blob/master/config-example.yml).
@@ -68,7 +76,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v3.88.0-gitlab'
+    tag: 'v3.88.1-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -174,7 +182,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                                                                                                           |                                                                                | Pull policy for the registry image                                                                                                                                                                                                                                                                                                           |
 | `image.pullSecrets`                                                                                                                          |                                                                                | Secrets to use for image repository                                                                                                                                                                                                                                                                                                          |
 | `image.repository`                                                                                                                           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry`           | Registry image                                                                                                                                                                                                                                                                                                                               |
-| `image.tag`                                                                                                                                  | `v3.88.0-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
+| `image.tag`                                                                                                                                  | `v3.88.1-gitlab`                                                               | Version of the image to use                                                                                                                                                                                                                                                                                                                  |
 | `init.image.repository`                                                                                                                      |                                                                                | initContainer image                                                                                                                                                                                                                                                                                                                          |
 | `init.image.tag`                                                                                                                             |                                                                                | initContainer image tag                                                                                                                                                                                                                                                                                                                      |
 | `init.containerSecurityContext`                                                                                                              |                                                                                | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                                                             |
@@ -331,7 +339,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v3.88.0-gitlab'`
+- `tag: 'v3.88.1-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -803,7 +811,7 @@ middleware:
         # `privatekey` is auto-populated with the content from the privatekey Secret.
         privatekeySecret:
           secret: cloudfront-secret-name
-          # "key" value is going to be used to generate file name for PEM storage:
+          # "key" value is going to be used to generate filename for PEM storage:
           #   /etc/docker/registry/middleware.storage/<index>/<key>
           key: private-key-ABC.pem
         keypairid: ABCEDFGHIJKLMNOPQRST
@@ -885,11 +893,15 @@ profiling:
 
 ### database
 
+DETAILS:
+**Status:** Beta
+
+> - [Introduced](https://gitlab.com/groups/gitlab-org/-/epics/5521) in GitLab 16.4 as a [Beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
+
 The `database` property is optional and enables the [metadata database](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database).
 
-NOTE:
-The metadata database is a beta feature from version 16.4 and later. Please
-review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
+This is a [Beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
+See the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
 and associated documentation before enabling this feature.
 
 NOTE:
@@ -926,64 +938,10 @@ database:
     backoffLimit: 6
 ```
 
-#### Creating the database
+#### Manage the database
 
-If the Registry database is enabled, Registry will use its own database to track its state.
-
-Follow the steps below to manually create the database and role.
-
-NOTE:
-These instructions assume you are using the bundled PostgreSQL server. If you are using your own server,
-there will be some variation in how you connect.
-
-1. Create the secret with the database password:
-
-   ```shell
-   kubectl create secret generic RELEASE_NAME-registry-database-password --from-literal=password=randomstring
-   ```
-
-1. Log into your database instance:
-
-   ```shell
-   kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name=postgresql -o custom-columns=NAME:.metadata.name --no-headers) -- bash
-   ```
-
-   ```shell
-   PGPASSWORD=${POSTGRES_POSTGRES_PASSWORD} psql -U postgres -d template1
-   ```
-
-1. Create the database user:
-
-   ```sql
-   CREATE ROLE registry WITH LOGIN;
-   ```
-
-1. Set the database user password.
-
-   1. Fetch the password:
-
-      ```shell
-      kubectl get secret RELEASE_NAME-registry-database-password -o jsonpath="{.data.password}" | base64 --decode
-      ```
-
-   1. Set the password in the `psql` prompt:
-
-      ```sql
-      \password registry
-      ```
-
-1. Create the database:
-
-   ```sql
-   CREATE DATABASE registry WITH OWNER registry;
-   ```
-
-1. Safely exit from the PostgreSQL command line and then from the container using `exit`:
-
-   ```shell
-   template1=# exit
-   ...@gitlab-postgresql-0/$ exit
-   ```
+See the [Container registry metadata database](metadata_database.md) page for
+more information about creating the database.
 
 ### `gc` property
 

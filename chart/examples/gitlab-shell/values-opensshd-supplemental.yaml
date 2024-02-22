@@ -1,0 +1,19 @@
+gitlab:
+  gitlab-shell:
+    opensshd:
+      supplemental_config: |-
+        CASignatureAlgorithms +ssh-rsa
+        TrustedUserCAKeys /etc/security/mycompany_user_ca.pub
+
+        AuthorizedPrincipalsCommandUser git
+        AuthorizedPrincipalsCommand /srv/gitlab-shell/bin/gitlab-shell-authorized-principals-check %i sshUsers
+    extraVolumes: |
+      - name: trusted-user-ca-keys
+        configMap:
+          name: gitlab-ssh-trusted-cakeys
+
+    extraVolumeMounts: |
+      - name: trusted-user-ca-keys
+        mountPath: /etc/security/mycompany_user_ca.pub
+        subPath: mycompany_user_ca.pub
+

@@ -53,7 +53,7 @@ end
 
 def fetch_default_gitlab_version
   # load from values.yaml
-  values = YAML.load_file('./values.yaml')
+  values = YAML.load_file('./values.yaml', aliases: true)
   # fetch value of key (nil if not present)
   gitlab_version = values['global']['gitlabVersion']
   # if not present, return `:master`

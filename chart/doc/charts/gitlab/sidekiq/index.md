@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab-Sidekiq chart **(FREE SELF)**
+# Using the GitLab-Sidekiq chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 The `sidekiq` sub-chart provides configurable deployment of Sidekiq workers, explicitly
 designed to provide separation of queues across multiple `Deployment`s with individual
@@ -431,8 +435,8 @@ a different pod configuration. It will not add a new pod in addition to the defa
 | `concurrency`                         | Integer |                                                                     | The number of tasks to process simultaneously. If not provided, it will be pulled from the chart-wide default.                                                                                                                                                          |
 | `name`                                | String  |                                                                     | Used to name the `Deployment` and `ConfigMap` for this pod. It should be kept short, and should not be duplicated between any two entries.                                                                                                                              |
 | `queues`                              | String  |                                                                     | [See below](#queues).                                                                                                                                                                                                                                                   |
-| `negateQueues`                        | String  |                                                                     | **DEPRECATED** [See below](#negatequeues).                                                                                                                                                                                                                              |
-| `queueSelector`                       | Boolean | `false`                                                             | **DEPRECATED** Use the [queue selector](https://docs.gitlab.com/ee/administration/sidekiq/processing_specific_job_classes.html#queue-selectors).                                                                                                                        |
+| `negateQueues`                        | String  |                                                                     | **DEPRECATED** [See details below](#negatequeues-deprecated).                                                                                                                                                                                                                               |
+| `queueSelector`                       | Boolean | `false`                                                             | Use the [queue selector](https://docs.gitlab.com/ee/administration/sidekiq/processing_specific_job_classes.html#queue-selectors-deprecated). **DEPRECATED** in favor of [routing rules](https://docs.gitlab.com/ee/administration/sidekiq/processing_specific_job_classes.html#routing-rules). For more information, see [queues](#queues) and [routing rules](../../globals.md#sidekiq-routing-rules-settings).                                                                                                                        |
 | `timeout`                             | Integer |                                                                     | The Sidekiq shutdown timeout. The number of seconds after Sidekiq gets the TERM signal before it forcefully shuts down its processes. If not provided, it will be pulled from the chart-wide default. This value **must** be less than `terminationGracePeriodSeconds`. |
 | `resources`                           |         |                                                                     | Each pod can present it's own `resources` requirements, which will be added to the `Deployment` created for it, if present. These match the Kubernetes documentation.                                                                                                   |
 | `nodeSelector`                        |         |                                                                     | Each pod can be configured with a `nodeSelector` attribute, which will be added to the `Deployment` created for it, if present. These definitions match the Kubernetes documentation.                                                                                   |
@@ -456,7 +460,7 @@ a different pod configuration. It will not add a new pod in addition to the defa
 | `hpa.memory.targetAverageValue`       | String  |                                                                     | Overrides the autoscaling memory target value                                                                                                                                                                                                                           |
 | `hpa.memory.targetAverageUtilization` | Integer |                                                                     | Overrides the autoscaling memory target utilization                                                                                                                                                                                                                     |
 | `hpa.targetAverageValue`              | String  |                                                                     | **DEPRECATED** Overrides the autoscaling CPU target value                                                                                                                                                                                                               |
-| `keda.enabled`                        | Boolean | `false`                                                             | Overrides enabling KEDA
+| `keda.enabled`                        | Boolean | `false`                                                             | Overrides enabling KEDA |
 | `keda.pollingInterval`                | Integer | `30`                                                                | Overrides the KEDA polling interval                                                                                                                                                                                                                                     |
 | `keda.cooldownPeriod`                 | Integer | `300`                                                               | Overrides the KEDA cooldown period                                                                                                                                                                                                                                      |
 | `keda.minReplicaCount`                | Integer |                                                                     | Overrides the KEDA minimum replica count                                                                                                                                                                                                                                |
@@ -485,7 +489,12 @@ these files in the GitLab source:
 1. [`app/workers/all_queues.yml`](https://gitlab.com/gitlab-org/gitlab/-/blob/master/app/workers/all_queues.yml)
 1. [`ee/app/workers/all_queues.yml`](https://gitlab.com/gitlab-org/gitlab/-/blob/master/ee/app/workers/all_queues.yml)
 
-### negateQueues
+In addition to configuring `gitlab.sidekiq.pods[].queues`, you must also configure `global.appConfig.sidekiq.routingRules`. For more information, see
+[Sidekiq routing rules settings](../../globals.md#sidekiq-routing-rules-settings).
+
+### negateQueues (deprecated)
+
+For more information about the deprecation, see [Negate settings (deprecated)](https://docs.gitlab.com/ee/administration/sidekiq/processing_specific_job_classes.html#negate-settings-deprecated).
 
 `negateQueues` is in the same format as [`queues`](#queues), but it represents
 queues to be ignored rather than processed.
@@ -525,6 +534,28 @@ pods:
       cpu:
         targetType: Value
         targetAverageValue: 350m
+```
+
+### Full example of Sidekiq configuration
+
+The following is a full example of Sidekiq configuration using a separate Sidekiq pod for import-related jobs and another pod for everything else.
+
+```yaml
+...
+global:
+  appConfig:
+    sidekiq:
+      routingRules:
+      - ["feature_category=importers", "import"]
+      - ["*", "default"]
+...
+gitlab:
+  sidekiq:
+    pods:
+    - name: import
+      queues: import
+    - name: default
+...
 ```
 
 ## Configuring the `networkpolicy`

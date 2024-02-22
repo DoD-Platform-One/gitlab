@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab `kas` chart **(FREE SELF)**
+# Using the GitLab `kas` chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 The `kas` sub-chart provides a configurable deployment of the
 [GitLab agent server (KAS)](https://docs.gitlab.com/ee/administration/clusters/kas.html).
@@ -138,10 +142,7 @@ You can pass these parameters to the `helm install` command by using the `--set`
 
 ## Enable TLS communication
 
-> - The `gitlab.kas.privateApi.tls.enabled` and `gitlab.kas.privateApi.tls.secretName` attributes were
-    [deprecated](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3843) in GitLab 15.8, and will be
-    removed in GitLab 17.0. Enable TLS via the [global KAS attribute](../../globals.md#tls-settings-1)
-    instead.
+> - The `gitlab.kas.privateApi.tls.enabled` and `gitlab.kas.privateApi.tls.secretName` attributes were [deprecated](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3843) in GitLab 15.8, and will be removed in GitLab 17.0. Enable TLS via the [global KAS attribute](../../globals.md#tls-settings-1) instead.
 
 Enable TLS communication between your `kas` pods and other GitLab chart components,
 through the [global KAS attribute](../../globals.md#tls-settings-1).

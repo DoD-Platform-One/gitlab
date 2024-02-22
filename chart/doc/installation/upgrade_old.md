@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Upgrade old versions **(FREE SELF)**
+# Upgrade old versions
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 If you are looking to upgrade a recent version of the GitLab chart, see the [Upgrade Guide](upgrade.md).
 

@@ -88,7 +88,7 @@ Details on installing the chart from the Git repository can be found in the [dev
 
 ## Developer license
 
-A [developer license](https://about.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee-developer-licenses) can
+A [developer license](https://handbook.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee-developer-licenses) can
 be used for chart development to test features that are only functional in a licensed environment.
 
 To use a developer license follow the [instructions for Enterprise licenses](../installation/secrets.md#initial-enterprise-license)

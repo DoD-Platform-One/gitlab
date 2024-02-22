@@ -4,4 +4,4 @@ helm 3.11.0
 stern 1.23.0
 yq 4.34.2
 gomplate v3.11.5
-vale 2.29.6
+vale 3.0.7
