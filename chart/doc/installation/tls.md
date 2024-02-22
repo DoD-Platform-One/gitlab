@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Configure TLS for the GitLab chart **(FREE SELF)**
+# Configure TLS for the GitLab chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 This chart is capable of doing TLS termination using the NGINX Ingress Controller. You have the choice of how to
 acquire the TLS certificates for your deployment. Extensive details can be found in [global Ingress settings](../charts/globals.md#configure-ingress-settings).
@@ -116,7 +120,8 @@ These charts also provide the capability to provide a auto-generated self-signed
 This can be useful in environments where Let's Encrypt is not an option, but security via SSL is still
 desired. This functionality is provided by the [shared-secrets](../charts/shared-secrets.md) job.
 
-> **Note**: The `gitlab-runner` chart does not function properly with self-signed certificates. We recommend
+NOTE:
+The `gitlab-runner` chart does not function properly with self-signed certificates. We recommend
 disabling it, as shown below.
 
 ```shell

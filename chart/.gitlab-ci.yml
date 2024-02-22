@@ -51,7 +51,7 @@ variables:
   DEBIAN_VERSION: bullseye
   RUBY_VERSION: "3.0"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "13.1.0"
+  GITLAB_QA_VERSION: "14.0.2"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -70,6 +70,7 @@ stages:
   - prepare
   - test
   - preflight
+  - approve-review-apps
   - prepare-review
   - review
   - staging
@@ -106,9 +107,6 @@ dependency_scanning:
   needs: []
   before_script: []
 secret_detection:
-  needs: []
-  before_script: []
-sast:
   needs: []
   before_script: []
 sast:
@@ -239,23 +237,6 @@ lint_package:
           cronJob:
             apiVersion: batch/v1
 
-pin_image_versions:
-  stage: prepare-review
-  script:
-    - apk add skopeo
-    - bash ./scripts/ci/pin_image_digests.sh
-  artifacts:
-    paths:
-      - ci.digests.yaml
-  rules:
-    # Rules from .stable
-    - if: '$PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/'
-    # Rules from .review_template
-    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
-    - if: '$PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/'
-    - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
-    - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
-
 "Validate 1.26.8":
   extends: .kubeconform
   variables:
@@ -273,6 +254,37 @@ pin_image_versions:
   variables:
     KUBE_VERSION: "1.28.3"
     HELM_SETTINGS: !reference ["Validate 1.25.7", variables, HELM_SETTINGS]
+
+approve_cluster_tests:
+  stage: approve-review-apps
+  image: alpine:latest
+  script: echo "Proceeding to tests in CI clusters..."
+  rules:
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+      when: manual
+    - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
+      when: manual
+  needs:
+    - job: danger-review
+      optional: true
+
+pin_image_versions:
+  stage: prepare-review
+  script:
+    - apk add bats skopeo
+    - bats --verbose-run ./scripts/ci/pin_image_digests.bats
+    - bash ./scripts/ci/pin_image_digests.sh
+  artifacts:
+    paths:
+      - ci.digests.yaml
+  rules:
+    # Rules from .stable
+    - if: '$PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/'
+    # Rules from .review_template
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
+    - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
 
 .set_up_varfile_and_kubecontext:
   script:
@@ -306,9 +318,8 @@ pin_image_versions:
     - kubectl version
     - !reference [.set_up_namespace_secret_and_deploy, script]
     - restart_toolbox
-    - echo "export QA_ENVIRONMENT_URL=gitlab-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
+    - echo "export GITLAB_URL=gitlab-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
     - echo "export GITLAB_ROOT_DOMAIN=$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN"        >> "${VARIABLES_FILE}"
-    - echo "export GITLAB_URL=gitlab-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN"         >> "${VARIABLES_FILE}"
     - echo "export REGISTRY_URL=registry-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN"     >> "${VARIABLES_FILE}"
     - echo "export S3_ENDPOINT=https://minio-$HOST_SUFFIX.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
     - !reference [.get_qa_revision, script]
@@ -529,7 +540,7 @@ stop_review_eks:
     - !reference [.set_up_namespace_secret_and_deploy, script]
     - check_domain_ip
     - restart_toolbox
-    - echo "export QA_ENVIRONMENT_URL=gitlab.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
+    - echo "export GITLAB_URL=gitlab.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
     - echo "export GITLAB_ROOT_DOMAIN=$KUBE_INGRESS_BASE_DOMAIN"        >> "${VARIABLES_FILE}"
     - echo "export S3_ENDPOINT=https://minio.$KUBE_INGRESS_BASE_DOMAIN" >> "${VARIABLES_FILE}"
     - !reference [.get_qa_revision, script]
@@ -665,7 +676,7 @@ rubocop:
 
 # Perform documentation linting on Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.18-vale-2.29.6-markdownlint-0.37.0-markdownlint2-0.10.0
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.19-vale-3.0.7-markdownlint-0.39.0-markdownlint2-0.12.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -674,7 +685,7 @@ check_docs_markdown:
     # Lint prose
     - vale --minAlertLevel error doc
     # Lint Markdown
-    - markdownlint-cli2-config .markdownlint.yml 'doc/**/*.md'
+    - markdownlint-cli2 'doc/**/*.md'
   rules:
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
@@ -683,17 +694,22 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.18-ruby-3.2.2-08fa6df8
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.19-ruby-3.2.3-eee6c4c0
   stage: prepare
   cache: {}
   dependencies: []
   before_script: []
   script:
-    - mv doc/ /tmp/gitlab-docs/content/charts
+    # Put documentation in location expected by nanoc and configured in nanoc.yaml. For more information, see:
+    # https://gitlab.com/gitlab-org/gitlab-docs/-/blob/eee6c4c03621ff13743828ad74a8f0e8b96dfe7c/nanoc.yaml#L43
+    - mkdir /tmp/charts-gitlab
+    - mv doc/ /tmp/charts-gitlab
     - cd /tmp/gitlab-docs
     # Build HTML from Markdown
     - make compile
     # Check the internal links and anchors (in parallel)
+    # Links from the home page aren't checked because they aren't rendered here. For information, see:
+    # https://gitlab.com/gitlab-org/gitlab-docs/-/blob/eee6c4c03621ff13743828ad74a8f0e8b96dfe7c/content/index.erb#L6
     - "parallel time bundle exec nanoc check ::: internal_links internal_anchors"
   rules:
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
@@ -755,7 +771,7 @@ review-docs-cleanup:
 # ---------------------------------------------------------------------------
 
 .specs: &specs
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-2.7.patched-golang-1.18-node-16.14-postgresql-11:git-2.33-lfs-2.9-chrome-109-yarn-1.22-graphicsmagick-1.3.36-kubectl-1.23-helm-3.5
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-3.1.patched-golang-1.21-rust-1.73-node-18.17-postgresql-14:rubygems-3.4-git-2.36-lfs-2.9-chrome-120-yarn-1.22-graphicsmagick-1.3.36
   stage: specs
   services:
   - docker:${DOCKER_VERSION}-dind
@@ -949,7 +965,7 @@ production_specs_eks:
     - else
     -   QA_IMAGE="gitlab/gitlab-ee-qa:nightly" # this will default to use nightly https://gitlab.com/gitlab-org/gitlab-qa/-/blob/master/docs/what_tests_can_be_run.md#specifying-the-gitlab-version
     - fi;
-    - echo "Running - 'gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE'"
+    - echo "Running - 'gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$GITLAB_URL -- $TEST_SUITE'"
     - |
       SIGNUP_DISABLED=true \
       QA_DEBUG=true \
@@ -957,7 +973,7 @@ production_specs_eks:
       GITLAB_PASSWORD=$ROOT_PASSWORD \
       GITLAB_ADMIN_USERNAME=root \
       GITLAB_ADMIN_PASSWORD=$ROOT_PASSWORD \
-      gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$QA_ENVIRONMENT_URL -- $TEST_SUITE
+      gitlab-qa Test::Instance::Any --qa-image $QA_IMAGE EE https://$GITLAB_URL -- $TEST_SUITE
   artifacts:
     when: always
     expire_in: 7d

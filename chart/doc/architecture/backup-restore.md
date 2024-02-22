@@ -21,7 +21,7 @@ The image contains some [custom scripts](https://gitlab.com/gitlab-org/build/CNG
 ## Backup utility
 
 [Backup utility](https://gitlab.com/gitlab-org/build/CNG/-/blob/master/gitlab-toolbox/scripts/bin/backup-utility) is one of the scripts
-in the task runner container and as the name suggests it is a script used for doing backups but also handles restoring of an existing backup.
+in the toolbox container and as the name suggests it is a script used for doing backups but also handles restoring of an existing backup.
 
 ### Backups
 
@@ -45,7 +45,7 @@ Backups are made using the following steps, in order:
 
 - `--skip <component>`
 
-  You can skip parts of the backup process by using `--skip <component>` for every component that you want to skip in the backup process. Skippable components are the database (`db`), repositories (`repositories`), and any of the object storages (`registry`, `uploads`, `artifacts`, `lfs`, `packages`, `external_diffs`, `terraform_state`, or `ci_secure_files`).
+  You can skip parts of the backup process by using `--skip <component>` for every component that you want to skip in the backup process. Skippable components are found in [Excluding specific data from the backup](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#excluding-specific-data-from-the-backup).
 
 - `-t <timestamp-override-value>`
 

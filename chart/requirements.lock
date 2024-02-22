@@ -22,7 +22,7 @@ dependencies:
   version: 12.5.2
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
-  version: 0.60.0
+  version: 0.61.2
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 16.13.2
@@ -34,7 +34,7 @@ dependencies:
   version: '*.*.*'
 - name: gitlab-zoekt
   repository: https://charts.gitlab.io/
-  version: 1.0.0
+  version: 1.0.1
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.4.7
@@ -44,5 +44,5 @@ dependencies:
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:5c33b2fa475686cae539cb3dd2633154dd981efe0c6e2290a54b92ee8c0b1551
-generated: "2024-01-19T13:22:00.820079-08:00"
+digest: sha256:3ba7e27fb5552039bf66b325bf089f5ee3b5db57ce34d4cd9786abf8040bcb45
+generated: "2024-02-21T17:19:15.565197-08:00"

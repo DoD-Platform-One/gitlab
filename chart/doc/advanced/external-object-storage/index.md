@@ -24,7 +24,7 @@ This documentation specifies usage of access and secret keys for AWS. It is also
 
 ## S3 encryption
 
-> [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2251) in GitLab 13.4.
+> - [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2251) in GitLab 13.4.
 
 GitLab supports [Amazon KMS](https://aws.amazon.com/kms/)
 to [encrypt data stored in S3 buckets](https://docs.gitlab.com/ee/administration/object_storage.html#encrypted-s3-buckets).
@@ -40,8 +40,6 @@ See the [GitLab documentation on encrypted S3 buckets](https://docs.gitlab.com/e
 for more details.
 
 ## Azure Blob Storage
-
-> [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/25877) in GitLab 13.4.
 
 Direct support for Azure Blob storage is available for
 [uploaded attachments, CI job artifacts, LFS, and other object types supported via the consolidated settings](https://docs.gitlab.com/ee/administration/object_storage.html#storage-specific-configuration). In previous GitLab versions, an [Azure MinIO gateway](azure-minio-gateway.md) was needed.
@@ -92,7 +90,8 @@ Configuration of object storage for the `registry` chart is done via the `regist
 --set global.registry.bucket=bucket-name
 ```
 
-> **Note**: The bucket name needs to be set both in the secret, and in `global.registry.bucket`. The secret is used in the registry server, and
+NOTE:
+The bucket name needs to be set both in the secret, and in `global.registry.bucket`. The secret is used in the registry server, and
 the global is used by GitLab backups.
 
 Create the secret per [registry chart documentation on storage](../../charts/registry/index.md#storage), then configure the chart to make use of this secret.
@@ -301,7 +300,7 @@ configured to authenticate as a user with sufficient access to read/write to all
 
 ## Google Cloud CDN
 
-> [Introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/98010) in GitLab 15.5.
+> - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/98010) in GitLab 15.5.
 
 You can use [Google Cloud CDN](https://cloud.google.com/cdn) to cache
 and fetch data from the artifacts bucket. This can help improve

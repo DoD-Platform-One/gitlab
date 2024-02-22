@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Installing GitLab by using Helm **(FREE SELF)**
+# Installing GitLab by using Helm
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 Install GitLab on Kubernetes by using the cloud native GitLab Helm chart.
 

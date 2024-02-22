@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Using the Mailroom chart **(FREE SELF)**
+# Using the Mailroom chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 The Mailroom Chart handles [incoming email](https://docs.gitlab.com/ee/administration/incoming_email.html).
 

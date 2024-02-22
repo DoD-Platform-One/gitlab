@@ -1,0 +1,7 @@
+gitlab:
+  gitlab-shell:
+    opensshd:
+      supplemental_config: |-
+        HostKeyAlgorithms +ssh-rsa,ssh-rsa-cert-v01@openssh.com
+        PubkeyAcceptedAlgorithms +ssh-rsa,ssh-rsa-cert-v01@openssh.com
+        CASignatureAlgorithms +ssh-rsa

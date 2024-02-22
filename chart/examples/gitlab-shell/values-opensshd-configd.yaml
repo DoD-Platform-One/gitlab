@@ -1,0 +1,11 @@
+gitlab:
+  gitlab-shell:
+    extraVolumes: |
+      - name: gitlab-sshdconfig-extra
+        configMap:
+          name: gitlab-sshdconfig-extra
+
+    extraVolumeMounts: |
+      - name: gitlab-sshdconfig-extra
+        mountPath: /etc/ssh/sshd_config.d/extra.conf
+        subPath: extra.conf

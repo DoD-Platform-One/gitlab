@@ -105,7 +105,7 @@ major functionality is working
 Selecting a test suite depends on the use case. In the majority of cases, running
 Smoke and Reliable suite should give quick and consistent test results
 as well as a good test coverage. This suite is being used as a sanity
-check in [GitLab.com deployments](https://about.gitlab.com/handbook/engineering/releases/#gitlabcom-deployments-process).
+check in [GitLab.com deployments](https://handbook.gitlab.com/handbook/engineering/deployments-and-releases/deployments/#gitlabcom-deployments-process).
 
 Full suite should be used to get full test results on the environment. It can be resource
 intensive to run this suite from a local machine. Use `export CHROME_DISABLE_DEV_SHM=true`

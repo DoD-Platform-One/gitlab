@@ -2,6 +2,34 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 7.9.0 (2024-02-14)
+
+### Added (2 changes)
+
+- [Add tests for image digest pinning functionality](gitlab-org/charts/gitlab@6fdc3995b978e789685cb62f7a8b6dade7a80a3d) ([merge request](gitlab-org/charts/gitlab!3571))
+- [GitLab Shell: make extended configuration of sshd_config](gitlab-org/charts/gitlab@0937f24254ac0135fbc68405a69159a8f4daf541) ([merge request](gitlab-org/charts/gitlab!3581))
+
+### Fixed (1 change)
+
+- [Fix kas redis secret mounting in init-etc-kas](gitlab-org/charts/gitlab@6f772f1a17d73b9308f300c25b8d4c7b7f3fd412) ([merge request](gitlab-org/charts/gitlab!3562))
+
+### Changed (8 changes)
+
+- [Update gitlab-org/charts/gitlab-runner from 0.61.1 to 0.61.2](gitlab-org/charts/gitlab@dc7602c13ccf0dabd6a189462c875c9834b705b5) ([merge request](gitlab-org/charts/gitlab!3622))
+- [Update gitlab-org/charts/gitlab-runner from 0.61.0 to 0.61.1](gitlab-org/charts/gitlab@cf7bdebf6a60c1b8a453bec52e56f3d334c99ad6) ([merge request](gitlab-org/charts/gitlab!3608))
+- [Update gitlab-org/container-registry from 3.88.0-gitlab to 3.88.1-gitlab](gitlab-org/charts/gitlab@93890826c8dc8f5b3e5653b225618f148e903ba2) ([merge request](gitlab-org/charts/gitlab!3601))
+- [Update gitlab-org/charts/gitlab-runner from 0.60.0 to 0.61.0](gitlab-org/charts/gitlab@8342d162d527301f29d9cfa05ffc041f46eac44f) ([merge request](gitlab-org/charts/gitlab!3574))
+- [Fix the Configmap for packObjectsCache for Gitaly](gitlab-org/charts/gitlab@13108db8ad997fcbcba6ca3bab623e0065cfde4b) by @Modjo85 ([merge request](gitlab-org/charts/gitlab!3565))
+- [Zoekt: Enable internalApi by default](gitlab-org/charts/gitlab@f2d5eed2a4ad8c2e66dc5ea21e68d48c9a31ab1e) ([merge request](gitlab-org/charts/gitlab!3572))
+- [Update gitlab-org/gitlab-exporter from 13.5.0 to 14.0.0](gitlab-org/charts/gitlab@6cedee72b82377bbea9ca4c915c4e9bd83d22a45) ([merge request](gitlab-org/charts/gitlab!3542))
+- [Update gitlab-org/gitlab-qa from 13.1.0 to 13.2.1](gitlab-org/charts/gitlab@8c970eb366b508ef20d30c6369a6aeee57fed149) ([merge request](gitlab-org/charts/gitlab!3573))
+
+## 7.8.2 (2024-02-07)
+
+### Changed (1 change)
+
+- [Update gitlab-org/charts/gitlab-runner from 0.60.0 to 0.61.0](gitlab-org/security/charts/gitlab@7d2d3c4d088a89ab953dc37aea7ec9b4333a63f2)
+
 ## 7.8.1 (2024-01-24)
 
 No changes.
@@ -27,6 +55,14 @@ No changes.
 ### Other (1 change)
 
 - [Provide option to configure kas redis using global.redis.kas](gitlab-org/charts/gitlab@3e03a63726406922b39057c804d1d7d43508946f) ([merge request](gitlab-org/charts/gitlab!3544))
+
+## 7.7.5 (2024-02-07)
+
+No changes.
+
+## 7.7.4 (2024-01-24)
+
+No changes.
 
 ## 7.7.3 (2024-01-13)
 
@@ -63,6 +99,14 @@ No changes.
 ### Other (1 change)
 
 - [Doc: FIPS Add note of UBI expectations for FIPS mode host](gitlab-org/charts/gitlab@4274d077ab7d6b08b9ac640182640b02ea22b4f7) ([merge request](gitlab-org/charts/gitlab!3487))
+
+## 7.6.7 (2024-02-07)
+
+No changes.
+
+## 7.6.6 (2024-01-24)
+
+No changes.
 
 ## 7.6.5 (2024-01-13)
 
@@ -110,6 +154,10 @@ No changes.
 ### Other (1 change)
 
 - [Deprecate namespace in mailroom.yml](gitlab-org/charts/gitlab@781a94d070a5ae221c33f1a31fdd9ecde15f2be6) ([merge request](gitlab-org/charts/gitlab!3419))
+
+## 7.5.8 (2024-01-24)
+
+No changes.
 
 ## 7.5.7 (2024-01-13)
 

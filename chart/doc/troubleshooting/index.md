@@ -500,7 +500,7 @@ When a pod is deployed, an init container mounts the certificates and sets them 
 components can use them. The init container is`registry.gitlab.com/gitlab-org/build/cng/alpine-certificates`.
 
 Additional certificates are mounted into the container at `/usr/local/share/ca-certificates`,
-using the secret key name as the certificate file name.
+using the secret key name as the certificate filename.
 
 The init container runs `/scripts/bundle-certificates` ([source](https://gitlab.com/gitlab-org/build/CNG-mirror/-/blob/master/alpine-certificates/scripts/bundle-certificates)).
 In that script, `update-ca-certificates`:
@@ -596,7 +596,7 @@ Run the certificates container using Docker.
 1. Check your certificates have been correctly built:
 
    - `etc/ssl/certs/corporate_root.pem` should have been created.
-   - There should be a hashed file name, which is a symlink to the certificate itself (such as `etc/ssl/certs/1234abcd.0`).
+   - There should be a hashed filename, which is a symlink to the certificate itself (such as `etc/ssl/certs/1234abcd.0`).
    - The file and the symbolic link should display with:
 
      ```shell

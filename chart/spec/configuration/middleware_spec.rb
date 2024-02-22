@@ -43,7 +43,7 @@ describe 'middleware configuration' do
             'data',
             'config.yml'
           ),
-          [Symbol]
+          permitted_classes: [Symbol]
         )['middleware']).to include(YAML.safe_load(%(
           storage:
             - name: cloudfront

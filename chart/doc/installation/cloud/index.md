@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Cloud provider setup for the GitLab chart **(FREE SELF)**
+# Cloud provider setup for the GitLab chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 Before you deploy the GitLab chart, you must configure resources for
 the cloud provider you choose.

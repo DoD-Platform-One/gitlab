@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Using the GitLab Shell chart **(FREE SELF)**
+# Using the GitLab Shell chart
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 The `gitlab-shell` sub-chart provides an SSH server configured for Git SSH access to GitLab.
 
@@ -51,6 +55,7 @@ controlled by `global.shell.port`.
 | `config.gssapi.keytab.key`                      | `keytab`                                                                                                                                                                    | Key holding the keytab in the Kubernetes secret                                                                                                                                                    |
 | `config.gssapi.krb5Config`                      |                                                                                                                                                                             | Content of the `/etc/krb5.conf` file in the GitLab Shell container                                                                                                                                 |
 | `config.gssapi.servicePrincipalName`            |                                                                                                                                                                             | The Kerberos service name to be used by the `gitlab-sshd` daemon                                                                                                                                   |
+| `opensshd.supplemental_config`                  |                                                                                                                                                                             | Supplemental configuration, appended to `sshd_config`. Strict alignment to [man page](https://manpages.debian.org/bookworm/openssh-server/sshd_config.5.en.html)                                    |
 | `deployment.livenessProbe.initialDelaySeconds`  | 10                                                                                                                                                                          | Delay before liveness probe is initiated                                                                                                                                                           |
 | `deployment.livenessProbe.periodSeconds`        | 10                                                                                                                                                                          | How often to perform the liveness probe                                                                                                                                                            |
 | `deployment.livenessProbe.timeoutSeconds`       | 3                                                                                                                                                                           | When the liveness probe times out                                                                                                                                                                  |
@@ -318,6 +323,49 @@ service:
   loadBalancerSourceRanges:
   - 5.6.7.8/32
   - 10.0.0.0/8
+```
+
+### OpenSSH supplemental configuration
+
+When making use of OpenSSH's `sshd` (via `.sshDaemon: openssh`), it is possible to provide supplemental configuration
+in two ways: `.opensshd.supplemental_config`, and via mounting configuration snippets to `/etc/ssh/sshd_config.d/*.conf`.
+
+Any configuration supplied _must_ meet the functional requirements of `sshd_config`. Ensure you read the [manual page](https://man.openbsd.org/sshd_config).
+
+#### opensshd.supplemental_config
+
+The content of `.opensshd.supplemental_config` will be directly placed at the end the `sshd_config` file within the container.
+This value should be a mutli-line string.
+
+Example, enabling older clients using the `ssh-rsa` key exchange algorithms. Note that enabling deprecated algorithms, such as `ssh-rsa`, creates [significant security vulnerabilities](https://www.openssh.com/txt/release-8.8). The likelihood of exploitation is **significantly amplified** on publicly exposed GitLab instances with these changes. 
+
+```yaml
+opensshd:
+    supplemental_config: |-
+      HostKeyAlgorithms +ssh-rsa,ssh-rsa-cert-v01@openssh.com
+      PubkeyAcceptedAlgorithms +ssh-rsa,ssh-rsa-cert-v01@openssh.com
+      CASignatureAlgorithms +ssh-rsa
+```
+
+#### sshd_config.d
+
+You may provide full configuration snippets to `sshd` via mounting content into `/etc/ssh/sshd_config.d`, with the files
+matching `*.conf`. Note, that these are included _after_ the default configuration which is required for the application
+to function in the container, and within the chart. These values _will not_ override the contents of `sshd_config`, but
+extend them.
+
+Example, mounting a single item of a ConfigMap into the container via `extraVolumes` and `extraVolumeMounts`:
+
+```yaml
+extraVolumes: |
+  - name: gitlab-sshdconfig-extra
+    configMap:
+      name: gitlab-sshdconfig-extra
+
+extraVolumeMounts: |
+  - name: gitlab-sshdconfig-extra
+    mountPath: /etc/ssh/sshd_config.d/extra.conf
+    subPath: extra.conf
 ```
 
 ### Configuring the `networkpolicy`

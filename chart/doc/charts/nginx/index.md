@@ -4,7 +4,11 @@ group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 ---
 
-# Using NGINX **(FREE SELF)**
+# Using NGINX
+
+DETAILS:
+**Tier:** Free, Premium, Ultimate
+**Offering:** Self-managed
 
 We provide a complete NGINX deployment to be used as an Ingress Controller. Not all
 Kubernetes providers natively support the NGINX [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls),
@@ -61,7 +65,7 @@ IngressClass (`useGeoClass=true`).
 
 ## Annotation value word blocklist
 
-> Introduced in [GitLab Helm chart 6.6](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2713).
+> - Introduced in [GitLab Helm chart 6.6](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2713).
 
 In situations where cluster operators need greater control over the generated
 NGINX configuration, the NGINX Ingress allows for [configuration snippets](https://kubernetes.github.io/ingress-nginx/examples/customization/configuration-snippets/)

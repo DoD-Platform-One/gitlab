@@ -2,6 +2,26 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.9.0-bb.0] (2024-02-20)
+
+### Changed (17 Changes)
+- Update GitLab to appVersion 16.9.0
+- Update chart version 7.9.0 
+- Update ironbank/gitlab/gitlab/gitlab-webservice from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter from v1.57.0 to 1.58.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/certificates from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitaly from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse from 16.8.1 to 16.9.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl from 16.8.1 to 16.9.0
+
 ## [7.8.0-bb.2] - 2024-01-31
 ### Changed
  - Updated to Gluon 0.4.7

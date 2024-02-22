@@ -1,0 +1,14 @@
+global:
+  hosts:
+    domain: domain.xyz
+    ssh: altssh.domain.xyz
+  shell:
+    port: 443
+gitlab:
+  gitlab-shell:
+    service:
+      type: LoadBalancer
+      annotations:
+        # any provider specific appropriate annotations for this Service object
+    # disables the rendering of NGINX TCP configuration for GitLab Shell
+    tcpExternalConfig: true
