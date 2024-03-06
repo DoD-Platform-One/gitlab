@@ -1,0 +1,17 @@
+{{- if .Values.openshift }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gitlab-clusterrolebinding-openshift-scc
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "0"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: 'system:openshift:scc:anyuid'
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: 'system:serviceaccounts:{{ .Release.Namespace }}'
+{{- end }}
