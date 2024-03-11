@@ -2,7 +2,7 @@
     "baseBranches": ["main"],
     "configWarningReuseIssue": false,
     "dependencyDashboard": true,
-    "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.", 
+    "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
     "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
     "draftPR": true,
     "enabledManagers": ["helm-values", "regex"],
@@ -53,7 +53,17 @@
             "registryUrlTemplate": "https://registry1.dso.mil",
             "depNameTemplate": "ironbank/gitlab/gitlab/gitlab-webservice",
             "datasourceTemplate": "docker"
+        },
+        {
+            "fileMatch": ["^chart/requirements\\.yaml$"],
+            "matchStrings": [
+                "- name:[\\s]+gluon[\\s]+version:[\\s]+(?<currentValue>.*)"
+            ],
+            "registryUrlTemplate": "https://registry1.dso.mil",
+            "depNameTemplate": "bigbang/gluon",
+            "datasourceTemplate": "docker"
         }
+
     ],
     "separateMajorMinor": false
 }
