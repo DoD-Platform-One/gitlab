@@ -37,12 +37,12 @@ dependencies:
   version: 1.0.1
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
-  version: 0.4.7
+  version: 0.4.8
 - name: traefik
   repository: https://helm.traefik.io/traefik
   version: 10.19.4
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:3ba7e27fb5552039bf66b325bf089f5ee3b5db57ce34d4cd9786abf8040bcb45
-generated: "2024-02-21T17:19:15.565197-08:00"
+digest: sha256:b3e3b8a351ac3aaa96dee7c5862cf44ce9238ecaac9e2b14afd28bd0dcb47d4c
+generated: "2024-03-12T14:45:57.301465-07:00"
