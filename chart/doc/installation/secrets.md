@@ -535,7 +535,7 @@ Use the `Secret` name, not the _actual password_ when configuring the Helm prope
 
 ### Microsoft Graph client secret for Service Desk emails
 
-To let GitLab have access to [service_desk emails](https://docs.gitlab.com/ee/user/project/service_desk.html#using-custom-email-address)
+To let GitLab have access to [service_desk emails](https://docs.gitlab.com/ee/user/project/service_desk/configure.html#custom-email-address)
 store the password of the IMAP account in a Kubernetes secret:
 
 ```shell

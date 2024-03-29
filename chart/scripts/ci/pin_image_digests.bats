@@ -15,7 +15,8 @@ set -e
 PROJECT_ROOT="$(dirname -- "$BATS_TEST_FILENAME")/../.."
 
 setup() {
-  unset GITLAB_VERSION  # set by CNG-triggered pipelines
+  unset GITLAB_VERSION # set by CNG-triggered pipelines
+  unset CI_MERGE_REQUEST_TARGET_BRANCH_NAME # backports to stable branches use the stable branch tag
 }
 
 @test "tag_and_digest, on master branch" {

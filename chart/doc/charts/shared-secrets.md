@@ -26,31 +26,31 @@ used across the installation, unless otherwise manually specified. This includes
 The table below contains all the possible configurations that can be supplied to
 the `helm install` command using the `--set` flag:
 
-| Parameter                  | Default             | Description                         |
-| -------------------------- | ------------------- | ----------------------------------- |
-| `enabled`                  | `true`              | [See Below](#disable-functionality) |
-| `env`                      | `production`        | Rails environment                   |
-| `podLabels`                |                     | Supplemental Pod labels. Will not be used for selectors. |
-| `annotations`              |                     | Supplemental Pod annotations.       |
-| `image.pullPolicy`         | `Always`            | Gitaly image pull policy            |
-| `image.pullSecrets`        |                     | Secrets for the image repository    |
-| `image.repository`         | `registry.gitlab.com/gitlab-org/build/cng/kubectl` | Gitaly image repository |
-| `image.tag`                | `1f8690f03f7aeef27e727396927ab3cc96ac89e7` | Gitaly image tag |
+| Parameter                  | Default             | Description                                                                                                         |
+| -------------------------- | ------------------- |---------------------------------------------------------------------------------------------------------------------|
+| `enabled`                  | `true`              | [See Below](#disable-functionality)                                                                                 |
+| `env`                      | `production`        | Rails environment                                                                                                   |
+| `podLabels`                |                     | Supplemental Pod labels. Will not be used for selectors.                                                            |
+| `annotations`              |                     | Supplemental Pod annotations.                                                                                       |
+| `image.pullPolicy`         | `Always`            | **DEPRECATED**: Use `global.kubectl.image.pullPolicy` instead.                                                      |
+| `image.pullSecrets`        |                     | **DEPRECATED**: Use `global.kubectl.image.pullSecrets` instead.                                                     |
+| `image.repository`         | `registry.gitlab.com/gitlab-org/build/cng/kubectl` | **DEPRECATED**: Use `global.kubectl.image.repository` instead.                                                      |
+| `image.tag`                | `1f8690f03f7aeef27e727396927ab3cc96ac89e7` | **DEPRECATED**: Use `global.kubectl.image.tag` instead.                                                             |
 | `priorityClassName`        |                     | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods |
-| `rbac.create`              | `true`              | Create RBAC roles and bindings      |
-| `resources`                |                     | resource requests, limits           |
-| `securitContext.fsGroup`   | `65534`             | User ID to mount filesystems as     |
-| `securitContext.runAsUser` | `65534`             | User ID to run the container as     |
-| `selfsign.caSubject`       | `GitLab Helm Chart` | selfsign CA Subject                 |
-| `selfsign.image.repository` | `registry.gitlab.com/gitlab-org/build/cnf/cfssl-self-sign` | selfsign image repository |
-| `selfsign.image.pullSecrets` |                   | Secrets for the image repository    |
-| `selfsign.image.tag`       |                     | selfsign image tag                  |
-| `selfsign.keyAlgorithm`    | `rsa`               | selfsign cert key algorithm         |
-| `selfsign.keySize`         | `4096`              | selfsign cert key size              |
-| `serviceAccount.enabled`   | `true`              | Define serviceAccountName on job(s) |
-| `serviceAccount.create`    | `true`              | Create ServiceAccount               |
-| `serviceAccount.name`      | `RELEASE_NAME-shared-secrets` | Service account name to specify on job(s) (and on the serviceAccount itself if `serviceAccount.create=true`) |
-| `tolerations`              | `[]`                | Toleration labels for pod assignment|
+| `rbac.create`              | `true`              | Create RBAC roles and bindings                                                                                      |
+| `resources`                |                     | resource requests, limits                                                                                           |
+| `securitContext.fsGroup`   | `65534`             | User ID to mount filesystems as                                                                                     |
+| `securitContext.runAsUser` | `65534`             | User ID to run the container as                                                                                     |
+| `selfsign.caSubject`       | `GitLab Helm Chart` | selfsign CA Subject                                                                                                 |
+| `selfsign.image.repository` | `registry.gitlab.com/gitlab-org/build/cnf/cfssl-self-sign` | selfsign image repository                                                                                           |
+| `selfsign.image.pullSecrets` |                   | Secrets for the image repository                                                                                    |
+| `selfsign.image.tag`       |                     | selfsign image tag                                                                                                  |
+| `selfsign.keyAlgorithm`    | `rsa`               | selfsign cert key algorithm                                                                                         |
+| `selfsign.keySize`         | `4096`              | selfsign cert key size                                                                                              |
+| `serviceAccount.enabled`   | `true`              | Define serviceAccountName on job(s)                                                                                 |
+| `serviceAccount.create`    | `true`              | Create ServiceAccount                                                                                               |
+| `serviceAccount.name`      | `RELEASE_NAME-shared-secrets` | Service account name to specify on job(s) (and on the serviceAccount itself if `serviceAccount.create=true`)        |
+| `tolerations`              | `[]`                | Toleration labels for pod assignment                                                                                |
 
 ## Job configuration examples
 

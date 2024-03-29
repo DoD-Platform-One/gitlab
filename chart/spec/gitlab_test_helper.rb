@@ -137,6 +137,10 @@ module Gitlab
       wait_for_rollout(type: "deployment", filters: "app in (webservice, sidekiq)")
     end
 
+    def wait_for_runner_rollout
+      wait_for_rollout(type: "deployment", filters: "app=#{runner_app_label}")
+    end
+
     def wait_for_rollout(type: nil, filters: nil)
       raise ArgumentError, "Must supply both 'type' and 'filters'" if type.nil? || filters.nil?
 
@@ -176,8 +180,7 @@ module Gitlab
     end
 
     def restart_gitlab_runner
-      release = ENV['RELEASE_NAME'] || 'gitlab'
-      filters = "app=#{release}-gitlab-runner"
+      filters = "app=#{runner_app_label}"
 
       if ENV['RELEASE_NAME']
         filters="#{filters},release=#{ENV['RELEASE_NAME']}"
@@ -285,6 +288,11 @@ module Gitlab
 
     def new_backup_name
       "#{new_backup_prefix}_gitlab_backup.tar"
+    end
+
+    def runner_app_label
+      release = ENV['RELEASE_NAME'] || 'gitlab'
+      "#{release}-gitlab-runner"
     end
   end
 end

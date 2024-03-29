@@ -22,7 +22,7 @@ while the [NGINX Ingress controller](https://github.com/kubernetes/ingress-nginx
 
 ## Configuring HAProxy
 
-See the [HAProxy Helm chart documentation](https://www.haproxy.com/documentation/kubernetes/latest/community/configuration-reference/)
+See the [HAProxy Helm chart documentation](https://www.haproxy.com/documentation/kubernetes-ingress/enterprise/configuration-reference/)
 or the [Helm values file](https://github.com/haproxytech/helm-charts/blob/main/kubernetes-ingress/values.yaml).
 for configuration details.
 
@@ -45,4 +45,4 @@ Following are links for more information on HAProxy Enterprise:
 - [HAProxy FIPS compliance blog post](https://www.haproxy.com/blog/become-fips-compliant-with-haproxy-enterprise-on-red-hat-enterprise-linux-8)
 - [Certified OpenShift Operator](https://catalog.redhat.com/software/container-stacks/detail/5ec3f9fc110f56bd24f2dd57)
 - [How to use an image from a private registry](https://github.com/haproxytech/helm-charts/blob/kubernetes-ingress-1.22.0/haproxy/README.md#installing-from-a-private-registry)
-- [How to find the HAProxy Enterprise image](https://www.haproxy.com/documentation/hapee/latest/getting-started/installation/docker/)
+- [How to find the HAProxy Enterprise image](https://www.haproxy.com/documentation/haproxy-enterprise/getting-started/installation/docker/)

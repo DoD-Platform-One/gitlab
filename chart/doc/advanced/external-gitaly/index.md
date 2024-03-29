@@ -241,10 +241,10 @@ kubectl exec <toolbox pod name> -it -- gitlab-rails runner 'Sidekiq::Cron::Job.a
 
 We need to wait for any enqueued or in progress jobs to complete before proceeding to the next step.
 
-1. In the Admin Area, go to [**Monitoring**](https://docs.gitlab.com/ee/administration/admin_area.html#background-jobs) and select **Background Jobs**. 
+1. In the Admin Area, go to [**Monitoring**](https://docs.gitlab.com/ee/administration/admin_area.html#background-jobs) and select **Background Jobs**.
 1. Under the Sidekiq dashboard, select **Queues** and then **Live Poll**.
 1. Wait for **Busy** and **Enqueued** to drop to 0.
-      
+
    ![Sidekiq background jobs](img/sidekiq_bg_jobs_v16_5.png)
 
 **6. Scale down Sidekiq and Webservice pods**
