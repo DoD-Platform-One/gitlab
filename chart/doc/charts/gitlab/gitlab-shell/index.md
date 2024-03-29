@@ -337,7 +337,7 @@ Any configuration supplied _must_ meet the functional requirements of `sshd_conf
 The content of `.opensshd.supplemental_config` will be directly placed at the end the `sshd_config` file within the container.
 This value should be a mutli-line string.
 
-Example, enabling older clients using the `ssh-rsa` key exchange algorithms. Note that enabling deprecated algorithms, such as `ssh-rsa`, creates [significant security vulnerabilities](https://www.openssh.com/txt/release-8.8). The likelihood of exploitation is **significantly amplified** on publicly exposed GitLab instances with these changes. 
+Example, enabling older clients using the `ssh-rsa` key exchange algorithms. Note that enabling deprecated algorithms, such as `ssh-rsa`, creates [significant security vulnerabilities](https://www.openssh.com/txt/release-8.8). The likelihood of exploitation is **significantly amplified** on publicly exposed GitLab instances with these changes.
 
 ```yaml
 opensshd:

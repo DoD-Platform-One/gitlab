@@ -221,6 +221,34 @@ all Kubernetes resources and dependent charts:
   helm get manifest <release name>
   ```
 
+## Fast-Stats for KubeSOS reports
+
+[KubeSOS](https://gitlab.com/gitlab-com/support/toolbox/kubesos) is a tool that gathers the GitLab cluster configuration and logs from GitLab Cloud Native chart deployments. You can use [fast-stats](https://gitlab.com/gitlab-com/support/toolbox/fast-stats), a tool with minimal memory use, to quickly create and compare performance statistics from and between GitLab logs.
+
+- Run `fast-stats`:
+
+  ```shell
+  cat <file-name> | cut -d  ' ' -f2- | grep ^{ | fast-stats
+  ```
+
+- List errors:
+
+  ```shell
+  cat <file-name> | cut -d ' ' -f2- | grep ^{ | fast-stats errors
+  ```
+
+- Run `fast-stats` top:
+
+  ```shell
+  cat <file-name> | cut -d ' ' -f2- | grep ^{ | fast-stats top
+  ```
+
+- Change the number of rows printed. By default, 10 rows are printed.
+
+  ```shell
+  cat <file-name> | cut -d ' ' -f2- | grep ^{ | fast-stats -l <number of rows>
+  ```
+
 ## Installation of minimal GitLab configuration via minikube on macOS
 
 This section is based on [Developing for Kubernetes with minikube](../development/minikube/index.md)

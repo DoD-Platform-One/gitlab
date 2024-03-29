@@ -22,7 +22,7 @@ With the SSL-enabled installation options below, if you want to clone repositori
 
 - Make sure that you're running MacOS >= 13 (Ventura).
 - Install [`colima`](https://github.com/abiosoft/colima#installation).
-- Install [`Rosetta`](https://support.apple.com/en-us/HT211861):
+- Install [`Rosetta`](https://support.apple.com/en-us/102527):
 
   ```shell
   softwareupdate --install-rosetta
@@ -145,7 +145,10 @@ kubectl get secret gitlab-wildcard-tls-ca -ojsonpath='{.data.cfssl_ca}' | base64
 Now that the root CA is downloaded, you can add it to your local chain (instructions vary per platform and are readily available online).
 
 NOTE:
-If you need to log into the registry with `docker login`, you will need to take additional steps to configure the registry to work with your self-signed certificates. More instructions can be found [here](https://docs.docker.com/registry/deploying/#run-an-externally-accessible-registry) and [here](https://blog.container-solutions.com/adding-self-signed-registry-certs-docker-mac).
+If you need to log into the registry with `docker login`, you will need to take additional steps to configure the registry to work with your self-signed certificates. More instructions can be found in:
+
+- [Run an externally-accessible registry](https://distribution.github.io/distribution/about/deploying/#run-an-externally-accessible-registry)
+- [Adding self-signed registry certificates to Docker and Docker for macOS](https://blog.container-solutions.com/adding-self-signed-registry-certs-docker-mac).
 
 ### NGINX Ingress NodePort without SSL
 
@@ -162,7 +165,7 @@ helm upgrade --install gitlab gitlab/gitlab \
 Access GitLab at `http://gitlab.(your host IP).nip.io`.
 
 NOTE:
-If you need to log into the registry with `docker login`, you will need to tell Docker to [trust your insecure registry](https://docs.docker.com/registry/insecure/#deploy-a-plain-http-registry).
+If you need to log into the registry with `docker login`, you will need to tell Docker to [trust your insecure registry](https://distribution.github.io/distribution/about/insecure/#deploy-a-plain-http-registry).
 
 ### Handling DNS
 

@@ -61,6 +61,12 @@ For mappings between chart versions and GitLab versions, read [GitLab version ma
 
 Instructions for installing a development branch rather than a tagged release can be found in the [developer deploy documentation](../development/deploy.md).
 
+## Verifying the integrity and origin of GitLab Helm charts
+
+You can verify the integrity and origin of GitLab Helm charts by using
+[Helm provenance](https://helm.sh/docs/topics/provenance/). For more
+information, see [GitLab Helm Chart provenance](chart-provenance.md).
+
 ## Monitoring the Deployment
 
 This will output the list of resources installed once the deployment finishes which may take 5-10 minutes.

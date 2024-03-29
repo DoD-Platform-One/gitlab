@@ -50,6 +50,7 @@ describe "Restoring a backup" do
 
     # Have the gitlab-runner re-register after the restore
     restart_gitlab_runner
+    wait_for_runner_rollout
   end
 
   describe 'Restored gitlab instance' do
