@@ -2053,6 +2053,7 @@ networkPolicies:
   controlPlaneCidr: 0.0.0.0/0
   gitalyEgress:
     enabled: false
+  additionalPolicies: []
 
 openshift: false
 
