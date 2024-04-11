@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.10.1-bb.0](https://img.shields.io/badge/Version-7.10.1--bb.0-informational?style=flat-square) ![AppVersion: 16.10.1](https://img.shields.io/badge/AppVersion-16.10.1-informational?style=flat-square)
+![Version: 7.10.1-bb.1](https://img.shields.io/badge/Version-7.10.1--bb.1-informational?style=flat-square) ![AppVersion: 16.10.1](https://img.shields.io/badge/AppVersion-16.10.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -1045,6 +1045,7 @@ helm install gitlab chart/
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
 | networkPolicies.gitalyEgress.enabled | bool | `false` |  |
+| networkPolicies.additionalPolicies | list | `[]` |  |
 | openshift | bool | `false` |  |
 | use_iam_profile | bool | `false` |  |
 | bbtests.enabled | bool | `false` |  |

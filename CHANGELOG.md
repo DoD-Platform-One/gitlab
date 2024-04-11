@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.10.1-bb.1] (2024-04-05)
+### Added
+- Custom network policies
+
 ## [7.10.1-bb.0] (2024-03-29)
 ### Changed (16 Changes)
 - Update GitLab to appVersion 16.10.1
