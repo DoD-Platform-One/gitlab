@@ -54,7 +54,7 @@ Before deploying GitLab and configuring SSO, you need to deploy the dev instance
 1. Run sshuttle to connect to your cluster's private network (command was provided once the `k3d-dev.sh` script completed.)
 1. Run the following command and copy the results:
     ```bash
-    $ curl https://keycloak.bigbang.dev/auth/realms/baby-yoda/protocol/saml/descriptor
+    $ curl https://keycloak.dev.bigbang.mil/auth/realms/baby-yoda/protocol/saml/descriptor
     ```
 1. Add the following to `overrides.yaml`:
    ```yaml
@@ -67,7 +67,7 @@ Before deploying GitLab and configuring SSO, you need to deploy the dev instance
          client_id: dev_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_gitlab
    sso: # derived from docs/assets/configs/example/dev-sso-values.yaml
      name: Keycloak Dev SSO
-     url: https://keycloak.bigbang.dev/auth/realms/baby-yoda
+     url: https://keycloak.dev.bigbang.mil/auth/realms/baby-yoda
      saml:
        metadata: <paste output of curl command here>
      certificateAuthority:
@@ -108,7 +108,7 @@ Before deploying GitLab and configuring SSO, you need to deploy the dev instance
     ```bash
     $ helm upgrade -i bigbang ./chart -n bigbang --create-namespace -f ./registry-values.yaml -f ./chart/ingress-certs.yaml -f ./keycloak-dev-values.yaml -f ./overrides.yaml 
     ```
-1. Login to the Keycloak admin console: (`admin/password`) https://keycloak.bigbang.dev/auth/admin/master/console/
+1. Login to the Keycloak admin console: (`admin/password`) https://keycloak.dev.bigbang.mil/auth/admin/master/console/
 1. Switch to the baby-yoda realm. 
 1. Create a new user. Be sure to do the following: Switch "Email verified" to "Yes", join the "Impact Level 2 Authorized" group, remove all "Required user actions" (do this after the user is created), create a password (disable "Temporary").
 1. Login to Gitlab using SSO and the user you just configured.
