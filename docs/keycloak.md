@@ -44,7 +44,7 @@ Reference Gitlab [documentation for SSO](https://docs.gitlab.com/charts/charts/g
     "client_options": {
       "identifier": "platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-gitlab",
       "secret": "your-secret-here",
-      "redirect_uri": "https://code.bigbang.dev/users/auth/openid_connect/callback",
+      "redirect_uri": "https://code.dev.bigbang.mil/users/auth/openid_connect/callback",
       "end_session_endpoint": "https://login.dso.mil/auth/realms/baby-yoda/protocol/openid-connect/logout"
     }
   }

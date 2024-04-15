@@ -2,6 +2,24 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.10.2-bb.0] (2024-04-12)
+### Changed
+- Update Gitlab to appVersion 16.10.2
+- Update chart version 7.10.2
+- Update ironbank/gitlab/gitlab/gitlab-webservice PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/certificates PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitaly PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse PATCH 16.10.1 to 16.10.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl PATCH 16.10.1 to 16.10.2
+
 ## [7.10.1-bb.1] (2024-04-05)
 ### Added
 - Custom network policies

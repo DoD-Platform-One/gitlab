@@ -1,3 +1,6 @@
+# Notice about updating postgres via renovate
+  Currently, we do not update postgresql via renovate bot unless the [upstream gitlab documentation](https://docs.gitlab.com/ee/install/requirements.html#postgresql-requirements) updates beyond our current supported version of postgres. Due to local in-place image upgrades not working because of limitations around the data directory being initialized by a previous major postgresql version, this requires a manual `pg_dump` from current & `pg_restore` to new updated postgres pod locally (RDS and other non docker DBs will do this automatically). We try to keep all local in-cluster/CI DBs on the same version and upgrade once all are recommended and tested to be on the next major version.
+
 # How to upgrade the Gitlab Package chart
 BigBang makes modifications to the upstream helm chart. The full list of changes is at the end of  this document.
 1. Read release notes from upstream [Gitlab Releases](https://about.gitlab.com/releases/categories/releases/). Be aware of changes that are included in the upgrade, you can find those by [comparing the current and new revision](https://gitlab.com/gitlab-org/charts/gitlab/-/compare?from=master&to=master). Take note of any manual upgrade steps that customers might need to perform, if any.
@@ -19,7 +22,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
     version: X.X.X-bb.X
     appVersion: X.X.X
     annotations:
-      bigbang.dev/applicationVersions: |
+      dev.bigbang.mil/applicationVersions: |
         - Gitlab: X.X.X
     ```
 1. Update `annotations.helm.sh/images` section in `/chart/Chart.yaml` to fix references to updated packages (if needed).
@@ -43,7 +46,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
         ```
     1. Export the environment variables that are needed by the cypress test. Reference the `bbtests:` at the end of `/chart/values.yaml`.
         ```bash
-        export cypress_url=https://gitlab.bigbang.dev
+        export cypress_url=https://gitlab.dev.bigbang.mil
         export cypress_gitlab_first_name=test
         export cypress_gitlab_last_name=user
         export cypress_gitlab_username=testuser
@@ -65,7 +68,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 1. Follow the instructions at the end of the script to connect to the k8s cluster and install flux.
 1. Deploy gitlab with these dev values overrides. Core apps are disabled for quick deployment.
     ```yaml
-    domain: bigbang.dev
+    domain: dev.bigbang.mil
 
     flux:
       interval: 1m
@@ -165,20 +168,20 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 1. Create a project called `test1` with a README.md within the `test` group.
 1. From your workstation git clone with https the test1 project.
     ```bash
-    git clone https://gitlab.bigbang.dev/test/test1.git
+    git clone https://gitlab.dev.bigbang.mil/test/test1.git
     ```
 1. Make a change to README.md and commit and push. Verify that the change shows in Gitlab UI.
 1. Test pushing and pulling an image to the project container registry. Use the access token you created.
     ```bash
-    docker login registry.bigbang.dev
+    docker login registry.dev.bigbang.mil
     docker pull busybox
-    docker tag busybox:latest registry.bigbang.dev/test/test1:latest
-    docker push registry.bigbang.dev/test/test1:latest
+    docker tag busybox:latest registry.dev.bigbang.mil/test/test1:latest
+    docker push registry.dev.bigbang.mil/test/test1:latest
     docker image rm busybox:latest
-    docker image rm registry.bigbang.dev/test/test1:latest
-    docker pull registry.bigbang.dev/test/test1:latest
+    docker image rm registry.dev.bigbang.mil/test/test1:latest
+    docker pull registry.dev.bigbang.mil/test/test1:latest
     ```
-1. Test a pipeline with gitlab-runner. Navigate to `https://gitlab.bigbang.dev/test/test1/-/settings/ci_cd` and disable the Auto DevOps. Navigate to `https://gitlab.bigbang.dev/test/test1/-/ci/editor?branch_name=main` and configure a pipeline. Verify that it completes successfully at `https://gitlab.bigbang.dev/test/test1/-/pipelines`.
+1. Test a pipeline with gitlab-runner. Navigate to `https://gitlab.dev.bigbang.mil/test/test1/-/settings/ci_cd` and disable the Auto DevOps. Navigate to `https://gitlab.dev.bigbang.mil/test/test1/-/ci/editor?branch_name=main` and configure a pipeline. Verify that it completes successfully at `https://gitlab.dev.bigbang.mil/test/test1/-/pipelines`.
    ```yaml
     stages:
       - test
@@ -376,10 +379,10 @@ If that is not present it will use the global chart serviceAccount automountServ
 - Disable all internal services other than postgres, minio, and redis.
 - Add BigBang additional values at bottom of `values.yaml`.
 - Add prometheus exporter:  gitlab.gitlab-exporter.
-- Add default bigbang.dev hostnames for global.hosts.
+- Add default dev.bigbang.mil hostnames for global.hosts.
 - Add IronBank hardened images.
 - Add pullSecrets for each IronBank image.
-- Add default bigbag.dev hostnames at global.hosts.
+- Add default dev.bigbang.mil hostnames at global.hosts.
 - Add customCAs (the cert files and secrets need to be added in the next 2 steps for this to work).
   - Run this to get a list of secrets:
   ```bash
@@ -397,4 +400,4 @@ If that is not present it will use the global chart serviceAccount automountServ
 
 # chart/Chart.yaml
 - Change version key to Big Bang composite version.
-- Add Big Bang `annotations.bigbang.dev/applicationVersions` and `annotations.helm.sh/images` keys to support release automation.
+- Add Big Bang `annotations.dev.bigbang.mil/applicationVersions` and `annotations.helm.sh/images` keys to support release automation.
