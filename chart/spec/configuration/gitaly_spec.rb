@@ -233,6 +233,9 @@ describe 'Gitaly configuration' do
             serviceLabels:
               service: true
               global: service
+            persistence:
+              labels:
+                foo: global
       )).deep_merge(default_values)
     end
 
@@ -248,6 +251,7 @@ describe 'Gitaly configuration' do
         expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
         expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
         expect(t.dig('StatefulSet/test-gitaly', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).not_to include('global' => 'gitaly')
+        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).to include('foo' => 'global')
         expect(t.dig('PodDisruptionBudget/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
         expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('global' => 'service')
         expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('gitaly' => 'gitaly')

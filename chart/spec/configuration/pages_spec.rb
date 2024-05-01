@@ -78,6 +78,8 @@ describe 'GitLab Pages' do
             service:
               labels:
                 global_service: true
+            job:
+              nameSuffixOverride: '1'
           gitlab:
             gitlab-pages:
               common:
@@ -252,6 +254,8 @@ describe 'GitLab Pages' do
                 localStore:
                   enabled: true
                   path: /random/path
+              job:
+                nameSuffixOverride: '1'
           ))
         end
 

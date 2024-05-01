@@ -175,3 +175,54 @@ for both distributions was based upon the following:
   - Required for RHEL certification and inclusion into the OpenShift Marketplace / RedHat Catalog
 
 Further discussion on this topic can be found in [issue #3095](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3095).
+
+## Kubernetes release support policy
+
+Date: 2024-03-26
+
+GitLab will officially support three minor releases of Kubernetes: `N`, `N-1`,
+and `N-2`. `N` is either:
+
+- The latest released minor version of Kubernetes, if we have finished
+  qualifying it.
+- The next most recent minor version, if we have not finished or started qualifying
+  the most recent minor version.
+
+For example, if the current releases available are `1.28`, `1.27`, `1.26`,
+`1.25` and we have not qualified release `1.28`, then `N` would be `1.27` and we
+would officially support releases `1.25`, `1.26`, and `1.27` as shown in this
+table.
+
+| Release | Reference |
+|---------|-----------|
+| `1.27`  | `N`       |
+| `1.26`  | `N-1`     |
+| `1.25`  | `N-2`     |
+
+Details can be found at [Distribution Team Kubernetes and OpenShift release support policy](https://handbook.gitlab.com/handbook/engineering/infrastructure/core-platform/systems/distribution/k8s-release-support-policy/)
+
+## OpenShift release support policy
+
+Date: 2024-03-26
+
+GitLab will officially support four minor releases of OpenShift -- `N`, `N-1`,
+and `N-2` and `N-3`. Like Kubernetes, `N` is either:
+
+- The latest released minor version of OpenShift, if we have finished qualifying
+  it.
+- The next most recent minor version, if we have not finished or started qualifying
+  the most recent minor version.
+
+For example, if the current releases available are `4.14`, `4.13`, `4.12`,
+`4.11` and we have not qualified release 4.15, then `N` would be `4.14` and we
+would officially support releases `4.14`, `4.13`, `4.12`, and `4.11` as shown in
+this table.
+
+| Release | Reference |
+|---------|-----------|
+| `4.14`  | `N`       |
+| `4.13`  | `N-1`     |
+| `4.12`  | `N-2`     |
+| `4.11`  | `N-2`     |
+
+Details can be found at [Distribution Team Kubernetes and OpenShift release support policy](https://handbook.gitlab.com/handbook/engineering/infrastructure/core-platform/systems/distribution/k8s-release-support-policy/)

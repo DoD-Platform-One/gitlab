@@ -47,7 +47,7 @@ spec:
 
     spec:
       {{- if .Values.upgradeCheck.nodeSelector }}
-        nodeSelector: {{ toYaml .Values.upgradeCheck.nodeSelector | nindent 8 }}
+      nodeSelector: {{ toYaml .Values.upgradeCheck.nodeSelector | nindent 8 }}
       {{- else }}
       {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- end }}

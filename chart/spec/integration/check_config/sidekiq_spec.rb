@@ -218,7 +218,7 @@ describe 'checkConfig sidekiq' do
                   - ["feature_category=pages", null]
                   - ["feature_category=search", "search"]
                   - ["feature_category=memory|resource_boundary=memory", "memory-bound"]
-                  - ["*", "default"]
+                  - ["*", "default", "default"]
         )).deep_merge(default_required_values)
       end
 
@@ -303,7 +303,7 @@ describe 'checkConfig sidekiq' do
       end
     end
 
-    context 'one rule has 3 elements' do
+    context 'one rule has 4 elements' do
       let(:values) do
         YAML.safe_load(%(
           global:
@@ -311,7 +311,7 @@ describe 'checkConfig sidekiq' do
               sidekiq:
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
-                - ["resource_boundary=cpu", "cpu_boundary", "something"]
+                - ["resource_boundary=cpu", "cpu_boundary", "something", "something"]
         )).deep_merge(default_required_values)
       end
 
@@ -331,6 +331,25 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - ["rule", 123]
+        )).deep_merge(default_required_values)
+      end
+
+      it 'returns an error' do
+        expect(exit_code).to be > 0
+        expect(stdout).to be_empty
+        expect(stderr).to include(error_output)
+      end
+    end
+
+    context "one rule's shard is invalid" do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            appConfig:
+              sidekiq:
+                routingRules:
+                - ["resource_boundary=cpu", "cpu_boundary"]
+                - ["rule", "default", 123]
         )).deep_merge(default_required_values)
       end
 

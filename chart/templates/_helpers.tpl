@@ -468,15 +468,10 @@ Return the name template for shared-secrets job.
 
 {{/*
 Create a default fully qualified job name for shared-secrets.
-Due to the job only being allowed to run once, we add the chart revision so helm
-upgrades don't cause errors trying to create the already ran job.
-Due to the helm delete not cleaning up these jobs, we add a randome value to
-reduce collision
 */}}
 {{- define "shared-secrets.jobname" -}}
 {{- $name := include "shared-secrets.fullname" . | trunc 55 | trimSuffix "-" -}}
-{{- $rand := randAlphaNum 3 | lower }}
-{{- printf "%s-%d-%s" $name .Release.Revision $rand | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" $name ( include "gitlab.jobNameSuffix" . ) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -562,4 +557,30 @@ securityContext:
   fsGroupChangePolicy: {{ $psc.fsGroupChangePolicy }}
 {{-   end }}
 {{- end }}
+{{- end -}}
+
+{{/*
+Returns `.Values.global.job.nameSuffixOverride` if set.
+
+If `.Values.global.job.nameSuffixOverride` is not set, job names will be
+suffixed by a hash that is based on the chart's app version and the chart's
+values (which also might contain the global.gitlabVersion) to make sure that
+the job is run at least once everytime GitLab is updated.
+
+In order to make sure that the hash is stable for `helm template`
+and `helm upgrade --install`, we need to remove the `local` block injected
+by the template file `charts/gitlab/templates/_databaseDatamodel.tpl`.
+
+This local block contains the values of the Helm "built-in object"
+(see https://helm.sh/docs/chart_template_guide/builtin_objects) which would
+result in different hash values due to fields like `Release.IsUpgrade`,
+`Release.IsInstall` and especially `Release.Revision`.
+*/}}
+{{- define "gitlab.jobNameSuffix" -}}
+{{-   if .Values.global.job.nameSuffixOverride -}}
+{{-     tpl .Values.global.job.nameSuffixOverride . -}}
+{{-   else -}}
+{{-     $values := unset ( deepCopy .Values ) "local" -}}
+{{-     printf "%s-%s-%s" .Chart.Version .Chart.AppVersion ( $values | toYaml | b64enc ) | sha256sum | trunc 7 -}}
+{{-   end -}}
 {{- end -}}

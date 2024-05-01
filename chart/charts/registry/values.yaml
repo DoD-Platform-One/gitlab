@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.90.0-gitlab'
+  tag: 'v3.92.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -384,6 +384,8 @@ database:
     enabled: true
     activeDeadlineSeconds: 3600
     backoffLimit: 6
+    # Annotations for the job
+    annotations: {}
 
 # Redis cache to be used in conjunction with the metadata database.
 # NOTE: This is an experimental feature and must not be used in production.

@@ -54,7 +54,7 @@ Ensure that Sidekiq routingRules configuration is in a valid format
 {{-     range $rule := . }}
 {{-       if (not (kindIs "slice" $rule)) }}
 {{-         $validRoutingRules = false }}
-{{-       else if (ne (len $rule) 2) }}
+{{-       else if not (or (eq (len $rule) 2) (eq (len $rule) 3)) }}
 {{-         $validRoutingRules = false }}
 {{/*      The first item (routing query) must be a string */}}
 {{-       else if not (kindIs "string" (index $rule 0)) }}
@@ -62,6 +62,11 @@ Ensure that Sidekiq routingRules configuration is in a valid format
 {{/*      The second item (queue name) must be either a string or null */}}
 {{-       else if not (or (kindIs "invalid" (index $rule 1)) (kindIs "string" (index $rule 1))) -}}
 {{-         $validRoutingRules = false }}
+{{-       end -}}
+{{-       if (eq (len $rule) 3) }}
+{{-         if not (or (kindIs "invalid" (index $rule 2)) (kindIs "string" (index $rule 2))) -}}
+{{-           $validRoutingRules = false }}
+{{-         end -}}
 {{-       end -}}
 {{-     end -}}
 {{-   end -}}

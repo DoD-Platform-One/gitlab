@@ -679,9 +679,9 @@ to the way Helm merges default values with user provided configuration.
 
 ### Intermittent 502 errors
 
-When a request being handled by a Puma worker crosses the memory limit threshold, it is killed by the node's OOMKiller. 
-However, killing the request does not necessarily kill or restart the webservice pod itself. This situation causes the request to return a `502` timeout. 
-In the logs, this appears as a Puma worker being created shortly after the `502` error is logged. 
+When a request being handled by a Puma worker crosses the memory limit threshold, it is killed by the node's OOMKiller.
+However, killing the request does not necessarily kill or restart the webservice pod itself. This situation causes the request to return a `502` timeout.
+In the logs, this appears as a Puma worker being created shortly after the `502` error is logged.
 
 ```shell
 2024-01-19T14:12:08.949263522Z {"correlation_id":"XXXXXXXXXXXX","duration_ms":1261,"error":"badgateway: failed to receive response: context canceled"....

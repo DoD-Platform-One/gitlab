@@ -34,7 +34,7 @@ function print_help(){
 Usage: ${0} ARGS (up|down|list|creds|add_ebs_csi_driver)
 -c NAME - Name of the cluster to use. Defaults to gitlab-cluster
 -n NODES - number of nodes to use. Defaults to 2
--k VERSION - Kubernetes version to use. Defaults to 1.21
+-k VERSION - Kubernetes version to use. Defaults to 1.29
 -r REGION - Region to install the cluster in. Defaults to us-east-2
 -m TYPE - Type of nodes to use. Default m5.xlarge
 

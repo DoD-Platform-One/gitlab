@@ -1,9 +1,12 @@
 # Example configuration of registry `storage` secret
 # Example for Google Cloud Storage
-#   See https://docs.docker.com/registry/storage-drivers/gcs
+#   See https://distribution.github.io/distribution/storage-drivers/gcs/
 #   See https://gitlab.com/gitlab-org/charts/gitlab/tree/master/doc/charts/registry/#storage
 #   See https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/advanced/external-object-storage
 gcs:
   bucket: gitlab-registry-storage
   # This should match the name provided to `extraKey` property.
+  # If keyfile is omitted, then Application Default Credentials will be used.
+  # See https://cloud.google.com/docs/authentication/application-default-credentials.
   keyfile: /etc/docker/registry/storage/keyfile
+  # rootdirectory: ""

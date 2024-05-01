@@ -313,7 +313,7 @@ describe 'gitlab.yml.erb configuration' do
                   - ["feature_category=pages", null]
                   - ["feature_category=search", '']
                   - ["feature_category=memory|resource_boundary=memory", 'memory']
-                  - ["*", "default"]
+                  - ["*", "default", "default"]
         ))
       end
 
@@ -335,7 +335,7 @@ describe 'gitlab.yml.erb configuration' do
               - ["feature_category=pages",null]
               - ["feature_category=search",""]
               - ["feature_category=memory|resource_boundary=memory","memory"]
-              - ["*","default"]
+              - ["*","default", "default"]
         )))
       end
     end
@@ -384,7 +384,7 @@ describe 'gitlab.yml.erb configuration' do
                   - ["feature_category=pages", null]
                   - ["feature_category=search", '']
                   - ["feature_category=memory|resource_boundary=memory", 'memory']
-                  - ["*", "default"]
+                  - ["*", "default", "default"]
         ))
       end
 
@@ -405,7 +405,7 @@ describe 'gitlab.yml.erb configuration' do
             - ["feature_category=pages",null]
             - ["feature_category=search",""]
             - ["feature_category=memory|resource_boundary=memory","memory"]
-            - ["*","default"]
+            - ["*","default", "default"]
         )))
       end
     end

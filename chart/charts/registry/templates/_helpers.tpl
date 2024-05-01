@@ -39,7 +39,7 @@ if there is a shared tls secret for all ingresses.
 
 {{/*
 Returns the minio URL.
-If `registry.redirect` is set to `true` it will return the external domain name of minio, 
+If `registry.redirect` is set to `true` it will return the external domain name of minio,
 e.g. `https://minio.example.com`, otherwise it will fallback to the internal minio service
 URL, e.g. `http://minio-svc:9000`.
 
@@ -159,12 +159,10 @@ Failing that a serviceAccount will be generated automatically
 
 {{/*
 Create a default fully qualified job name.
-Due to the job only being allowed to run once, we add the chart revision so Helm
-upgrades don't cause errors trying to create the already ran job.
 */}}
 {{- define "registry.migrations.jobname" -}}
 {{- $name := include "registry.fullname" . | trunc 55 | trimSuffix "-" -}}
-{{- printf "%s-migrations-%d" $name .Release.Revision | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-migrations-%s" $name ( include "gitlab.jobNameSuffix" . ) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*

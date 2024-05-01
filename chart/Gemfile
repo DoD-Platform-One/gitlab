@@ -20,7 +20,7 @@ group :rubocop do
 end
 
 group :development, :test do
-  gem 'pry'
+  gem 'pry', '~> 0.14'
 end
 
 group :development, :test, :danger do

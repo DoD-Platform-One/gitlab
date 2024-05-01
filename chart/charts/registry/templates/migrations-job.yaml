@@ -7,6 +7,12 @@ metadata:
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
+  {{- if .Values.database.migrations.annotations }}
+  annotations:
+  {{-   range $key, $value := .Values.database.migrations.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{-   end }}
+  {{- end }}
 spec:
   activeDeadlineSeconds: {{ .Values.database.migrations.activeDeadlineSeconds }}
   backoffLimit: {{ .Values.database.migrations.backoffLimit }}
