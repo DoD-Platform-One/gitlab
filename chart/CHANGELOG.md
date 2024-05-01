@@ -2,6 +2,36 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 7.11.0 (2024-04-17)
+
+### Added (3 changes)
+
+- [registry: Add job annotations to migrations job](gitlab-org/charts/gitlab@13d71e6540a25a79a81c808a2414647074ab8f90) by @weikinhuang ([merge request](gitlab-org/charts/gitlab!3675))
+- [Update Gitaly charts to manage labels for volume claim](gitlab-org/charts/gitlab@9c82633c6f20dc1f4290004b388a2b9ccb576679) by @Jitrixis ([merge request](gitlab-org/charts/gitlab!3467))
+- [Add runAsGroup to backup-job securityContext](gitlab-org/charts/gitlab@59f05671dc4c295f5b00c501d194057114a4ac5e) by @sam586 ([merge request](gitlab-org/charts/gitlab!3642))
+
+### Fixed (1 change)
+
+- [Fix indent for upgrade hook job in nodeSelector](gitlab-org/charts/gitlab@2c245127ed3711e1f51cca78e206dd5d0c6f50fb) by @ngnix1 ([merge request](gitlab-org/charts/gitlab!3660))
+
+### Changed (7 changes)
+
+- [Update gitlab-org/gitlab-exporter from 14.3.0 to 14.4.0](gitlab-org/charts/gitlab@aac027a4484db55f15635e8e42426a4d42378420) ([merge request](gitlab-org/charts/gitlab!3695))
+- [Update gitlab-org/gitlab-qa from 14.4.0 to 14.5.0](gitlab-org/charts/gitlab@fde0ed1dea0b6eaf13c949d012bda614d698f1cb) ([merge request](gitlab-org/charts/gitlab!3672))
+- [Update gitlab-org/container-registry from 3.91.0-gitlab to 3.92.0-gitlab](gitlab-org/charts/gitlab@e4e9a972b8527da02e8de1f073c38cb8f429313c) ([merge request](gitlab-org/charts/gitlab!3688))
+- [Replace usages of Helm release revision with a stable hash](gitlab-org/charts/gitlab@e15c0c2b57cc6dc3e14d5716db9a937362b023c0) by @pathob ([merge request](gitlab-org/charts/gitlab!3602))
+- [Update gitlab-org/container-registry from 3.90.0-gitlab to 3.91.0-gitlab](gitlab-org/charts/gitlab@48c80da31d0c12ea757db1e56f1b4b12d3b0c42c) ([merge request](gitlab-org/charts/gitlab!3681))
+- [Update gitlab-org/charts/gitlab-runner from 0.62.1 to 0.63.0](gitlab-org/charts/gitlab@8709ba9e9ef2aabeb527b207dc5de6d55ff3a6c7) ([merge request](gitlab-org/charts/gitlab!3671))
+- [Update cert-manager/cert-manager from 1.12.8 to 1.12.9](gitlab-org/charts/gitlab@5d5155882c706ce974a5ad354d3bb2c6b289e320) ([merge request](gitlab-org/charts/gitlab!3662))
+
+### Other (1 change)
+
+- [Allow routing rules to contain shard information](gitlab-org/charts/gitlab@aad02140fdabbf2a045e2701b8f1f5b6c3ab81c5) ([merge request](gitlab-org/charts/gitlab!3682))
+
+## 7.10.3 (2024-04-12)
+
+No changes.
+
 ## 7.10.2 (2024-04-09)
 
 No changes.
@@ -27,6 +57,20 @@ No changes.
 ### Deprecated (1 change)
 
 - [Removed kubernetes 1.22 testing](gitlab-org/charts/gitlab@ca9ec21a32e28e63b8e731c317d5089384c9c782) ([merge request](gitlab-org/charts/gitlab!3597))
+
+## 7.9.5 (2024-04-12)
+
+### Deprecated (1 change)
+
+- [[CI] remove references to 1.22 cluster](gitlab-org/charts/gitlab@c155a8ca9aa5cd0f894dde51c9d8175aedecd328) ([merge request](gitlab-org/charts/gitlab!3677))
+
+## 7.9.4 (2024-04-09)
+
+No changes.
+
+## 7.9.3 (2024-03-27)
+
+No changes.
 
 ## 7.9.2 (2024-03-06)
 
@@ -57,6 +101,20 @@ No changes.
 - [Zoekt: Enable internalApi by default](gitlab-org/charts/gitlab@f2d5eed2a4ad8c2e66dc5ea21e68d48c9a31ab1e) ([merge request](gitlab-org/charts/gitlab!3572))
 - [Update gitlab-org/gitlab-exporter from 13.5.0 to 14.0.0](gitlab-org/charts/gitlab@6cedee72b82377bbea9ca4c915c4e9bd83d22a45) ([merge request](gitlab-org/charts/gitlab!3542))
 - [Update gitlab-org/gitlab-qa from 13.1.0 to 13.2.1](gitlab-org/charts/gitlab@8c970eb366b508ef20d30c6369a6aeee57fed149) ([merge request](gitlab-org/charts/gitlab!3573))
+
+## 7.8.7 (2024-04-12)
+
+### Deprecated (1 change)
+
+- [[CI] remove references to 1.22 cluster](gitlab-org/charts/gitlab@ce1ea8b564e9fe31852d59f79bd543455836d1ed) ([merge request](gitlab-org/charts/gitlab!3678))
+
+## 7.8.6 (2024-04-09)
+
+No changes.
+
+## 7.8.5 (2024-03-27)
+
+No changes.
 
 ## 7.8.4 (2024-03-06)
 

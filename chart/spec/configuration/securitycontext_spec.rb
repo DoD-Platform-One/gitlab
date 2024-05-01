@@ -35,6 +35,8 @@ describe 'security context' do
             enabled: true
           spamcheck:
             enabled: true
+          job:
+            nameSuffixOverride: '1'
         minio:
           securityContext:
             fsGroupChangePolicy: "OnRootMismatch"

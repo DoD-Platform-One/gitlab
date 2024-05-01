@@ -117,6 +117,7 @@ persistence:
   ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector
   matchExpressions: []
   annotations: {}
+  labels: {}
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious

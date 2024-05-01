@@ -59,6 +59,9 @@ gitlab:
     securityContext:
       fsGroup: '1000'
       runAsUser: '1000'
+      runAsGroup: '1000'
+    containerSecurityContext:
+      runAsUser: '1000'
 ```
 
 | Parameter                                   | Description                                  | Default                      |
@@ -118,8 +121,9 @@ gitlab:
 | `priorityClassName`                         | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |                              |
 | `replicas`                                  | Number of Toolbox Pods to run            | `1`                          |
 | `resources.requests`                        | Toolbox minimum requested resources      | { `cpu`: `50m`, `memory`: `350M` |
-| `securityContext.fsGroup`                   | Group ID under which the pod should be started | `1000`                     |
+| `securityContext.fsGroup`                   | File System Group ID under which the pod should be started | `1000`                     |
 | `securityContext.runAsUser`                 | User ID under which the pod should be started  | `1000`                     |
+| `securityContext.runAsGroup`                | Group ID under which the pod should be started | `1000`                     |
 | `securityContext.fsGroupChangePolicy`       | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) | |
 | `containerSecurityContext`                  | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started | |
 | `containerSecurityContext.runAsUser`        | Allow to overwrite the specific security context under which the container is started | `1000` |

@@ -50,7 +50,7 @@ variables:
   DEBIAN_VERSION: bullseye
   RUBY_VERSION: "3.0"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "14.4.0"
+  GITLAB_QA_VERSION: "14.6.0"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -190,11 +190,12 @@ lint_package:
     - helm dependency update
     - echo "$HELM_DEFAULT_SETTINGS" | tee ./template_settings.yaml
     - echo "$HELM_SETTINGS" | tee -a ./template_settings.yaml
+    - echo "${KUBECONFORM_SCHEMA_LOCATION:-default}"
     - >
       helm kubeconform --strict --summary
       -f ./template_settings.yaml
       --kubernetes-version $KUBE_VERSION
-      --schema-location default
+      --schema-location "${KUBECONFORM_SCHEMA_LOCATION:-default}"
       --schema-location "$KUBE_CRD_SCHEMA_URL"
       --output json
       .
@@ -338,6 +339,9 @@ pin_image_versions:
 
 .review_eks_common_vars: &review_eks_common_vars
   DNS_PROVIDER: "aws"
+  AGENT_NAME: "eks127-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "sandbox.eks.helm-charts.win"
+  KUBE_NAMESPACE: "eks-helm-charts-win"
 
 # Jobs using auto_stop_in that exit with a failure will not execute the on_stop
 # action. We get frequent failures during review_* jobs. Their accompanying
@@ -440,9 +444,9 @@ create_review_eks:
     <<: *review_eks_common_vars
     GIT_STRATEGY: none
   script:
-    - echo "Configuring eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA to automatically stop in $REVIEW_APPS_AUTO_STOP_IN."
+    - echo "Configuring eks127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA to automatically stop in $REVIEW_APPS_AUTO_STOP_IN."
   environment:
-    name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    name: eks127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
     on_stop: stop_review_eks
     auto_stop_in: $REVIEW_APPS_AUTO_STOP_IN
     action: start
@@ -452,7 +456,7 @@ review_eks:
     <<: *review_eks_common_vars
   extends: .review_template
   environment:
-    name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    name: eks127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_eks
     auto_stop_in: "${REVIEW_APPS_AUTO_STOP_IN}"
@@ -505,7 +509,7 @@ stop_review_eks:
     <<: *review_eks_common_vars
   extends: .stop_review_template
   environment:
-    name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    name: eks127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
     action: stop
 
 debug_review_gke125:
@@ -575,7 +579,7 @@ check_docs_markdown:
 
 # Perform link checks on published HTML files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.19-ruby-3.2.3-eee6c4c0
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.19-ruby-3.2.3-a5032206
   stage: prepare
   cache: {}
   dependencies: []
@@ -741,7 +745,7 @@ review_specs_eks:
     VARIABLES_FILE: "variables/review_eks"
     RSPEC_TAGS: type:feature
   environment:
-    name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    name: eks127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
     url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     on_stop: stop_review_eks
     action: access
@@ -939,7 +943,7 @@ qa_eks:
     VARIABLES_FILE: "variables/review_eks"
     TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
   environment:
-    name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    name: eks127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
     on_stop: stop_review_eks
     action: access
   needs:
@@ -1016,7 +1020,7 @@ qa_eks_manual_full_suite:
     VARIABLES_FILE: "variables/review_eks"
     TEST_SUITE: $QA_FULL_SUITE_OPTIONS
   environment:
-    name: eks_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    name: eks127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
     on_stop: stop_review_eks
     action: access
   needs: [ "qa_eks_full_suite_manual_trigger"]

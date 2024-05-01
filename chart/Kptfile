@@ -5,7 +5,7 @@ metadata:
 upstream:
   type: git
   git:
-    commit: b54ebc0a999423b20aab646a104228cd12196f02
+    commit: f817b1a6aa39608550bc5e80c4709dbde6d30cfa
     repo: https://gitlab.com/gitlab-org/charts/gitlab
     directory: /
-    ref: v7.10.2
+    ref: v7.11.0

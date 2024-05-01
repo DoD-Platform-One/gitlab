@@ -165,6 +165,8 @@ describe 'global configuration' do
             enabled: true
           ingress:
             configureCertmanager: false
+          job:
+            nameSuffixOverride: '1'
         nginx-ingress:
           controller:
             kind: Both
