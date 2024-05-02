@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.11.0-bb.0](https://img.shields.io/badge/Version-7.11.0--bb.0-informational?style=flat-square) ![AppVersion: 16.11.0](https://img.shields.io/badge/AppVersion-16.11.0-informational?style=flat-square)
+![Version: 7.11.0-bb.1](https://img.shields.io/badge/Version-7.11.0--bb.1-informational?style=flat-square) ![AppVersion: 16.11.0](https://img.shields.io/badge/AppVersion-16.11.0-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -1018,7 +1018,12 @@ helm install gitlab chart/
 | minio.minioMc.tag | string | `"RELEASE.2022-12-24T15-21-38Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | domain | string | `"dev.bigbang.mil"` |  |
+| sso.enabled | bool | `false` |  |
+| sso.host | string | `"login.dso.mil"` |  |
 | istio.enabled | bool | `false` |  |
+| istio.hardened.enabled | bool | `false` |  |
+| istio.hardened.outboundTrafficPolicyMode | string | `"REGISTRY_ONLY"` |  |
+| istio.hardened.customServiceEntries | list | `[]` |  |
 | istio.injection | string | `"disabled"` |  |
 | istio.gitlab.enabled | bool | `true` |  |
 | istio.gitlab.annotations | object | `{}` |  |

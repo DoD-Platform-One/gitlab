@@ -2001,9 +2001,30 @@ minio:
 
 # Big Bang Additions
 domain: dev.bigbang.mil
+# Used for Istio SSO serviceEntry
+sso:
+  enabled: false
+  host: login.dso.mil
 istio:
   # Toggle istio integration
   enabled: false
+  hardened:
+    enabled: false
+    outboundTrafficPolicyMode: "REGISTRY_ONLY"
+    customServiceEntries: []
+      # - name: "allow-google"
+      #   enabled: true
+      #   spec:
+      #     exportTo:
+      #       - "."
+      #     hosts:
+      #       - google.com
+      #     location: MESH_EXTERNAL
+      #     ports:
+      #       - number: 443
+      #         protocol: TLS
+      #         name: https
+      #     resolution: DNS
   injection: disabled
   gitlab:
     # Toggle vs creation

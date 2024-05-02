@@ -84,9 +84,6 @@ minio:
   pullSecrets:
   - name: private-registry
 
-istio:
-  enabled: true
-
 networkPolicies:
   enabled: true
   controlPlaneCidr: 172.16.0.0/12
