@@ -1,0 +1,18 @@
+{{- /* Render Istio ServiceEntry for SSO */ -}}
+{{- if and .Values.istio.enabled .Values.istio.hardened.enabled .Values.sso.enabled -}}
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: {{ .Values.sso.host | replace "." "-" }}-service-entry
+  namespace: {{ $.Release.Namespace }}
+spec:
+  exportTo:
+    - "."
+  hosts:
+    - {{ .Values.sso.host }}
+  location: MESH_EXTERNAL
+  ports:
+    - number: 443
+      protocol: TLS
+      name: https
+{{- end -}}
