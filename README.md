@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.11.0-bb.1](https://img.shields.io/badge/Version-7.11.0--bb.1-informational?style=flat-square) ![AppVersion: 16.11.0](https://img.shields.io/badge/AppVersion-16.11.0-informational?style=flat-square)
+![Version: 7.11.0-bb.2](https://img.shields.io/badge/Version-7.11.0--bb.2-informational?style=flat-square) ![AppVersion: 16.11.0](https://img.shields.io/badge/AppVersion-16.11.0-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -18,6 +18,8 @@ GitLab is the most comprehensive AI-powered DevSecOps Platform.
 * Kubernetes Cluster deployed
 * Kubernetes config installed in `~/.kube/config`
 * Helm installed
+
+Kubernetes: `>=1.29.0-0`
 
 Install Helm
 
@@ -411,7 +413,7 @@ helm install gitlab chart/
 | upgradeCheck.securityContext.runAsGroup | int | `65534` |  |
 | upgradeCheck.securityContext.fsGroup | int | `65534` |  |
 | upgradeCheck.tolerations | list | `[]` |  |
-| upgradeCheck.annotations."sidecar.istio.io/inject" | string | `"false"` |  |
+| upgradeCheck.annotations."sidecar.istio.io/inject" | string | `"true"` |  |
 | upgradeCheck.configMapAnnotations | object | `{}` |  |
 | upgradeCheck.resources.requests.cpu | string | `"500m"` |  |
 | upgradeCheck.resources.requests.memory | string | `"500Mi"` |  |
@@ -792,7 +794,7 @@ helm install gitlab chart/
 | shared-secrets.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | shared-secrets.tolerations | list | `[]` |  |
 | shared-secrets.podLabels | object | `{}` |  |
-| shared-secrets.annotations."sidecar.istio.io/inject" | string | `"false"` |  |
+| shared-secrets.annotations."sidecar.istio.io/inject" | string | `"true"` |  |
 | gitlab-runner.install | bool | `false` |  |
 | gitlab-runner.rbac.create | bool | `true` |  |
 | gitlab-runner.runners.locked | bool | `false` |  |
@@ -860,7 +862,7 @@ helm install gitlab chart/
 | gitlab.gitlab-exporter.containerSecurityContext.runAsUser | int | `1000` |  |
 | gitlab.gitlab-exporter.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitlab-exporter.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| gitlab.migrations.annotations."sidecar.istio.io/inject" | string | `"false"` |  |
+| gitlab.migrations.annotations."sidecar.istio.io/inject" | string | `"true"` |  |
 | gitlab.migrations.init.resources.limits.cpu | string | `"500m"` |  |
 | gitlab.migrations.init.resources.limits.memory | string | `"768Mi"` |  |
 | gitlab.migrations.init.resources.requests.cpu | string | `"500m"` |  |
@@ -1010,7 +1012,7 @@ helm install gitlab chart/
 | minio.containerSecurityContext.runAsGroup | int | `1000` |  |
 | minio.containerSecurityContext.runAsNonRoot | bool | `true` |  |
 | minio.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| minio.jobAnnotations."sidecar.istio.io/inject" | string | `"false"` |  |
+| minio.jobAnnotations."sidecar.istio.io/inject" | string | `"true"` |  |
 | minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
 | minio.imageTag | string | `"RELEASE.2022-12-12T19-27-27Z"` |  |
 | minio.pullSecrets[0].name | string | `"private-registry"` |  |
@@ -1025,16 +1027,30 @@ helm install gitlab chart/
 | istio.hardened.outboundTrafficPolicyMode | string | `"REGISTRY_ONLY"` |  |
 | istio.hardened.customServiceEntries | list | `[]` |  |
 | istio.injection | string | `"disabled"` |  |
+| istio.hardened.enabled | bool | `false` |  |
+| istio.hardened.customAuthorizationPolicies | list | `[]` |  |
+| istio.hardened.gitlabRunner.enabled | bool | `true` |  |
+| istio.hardened.gitlabRunner.namespaces[0] | string | `"gitlab-runner"` |  |
+| istio.hardened.monitoring.enabled | bool | `true` |  |
+| istio.hardened.monitoring.namespaces[0] | string | `"monitoring"` |  |
+| istio.hardened.monitoring.principals[0] | string | `"cluster.local/ns/monitoring/sa/monitoring-grafana"` |  |
+| istio.hardened.monitoring.principals[1] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager"` |  |
+| istio.hardened.monitoring.principals[2] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator"` |  |
+| istio.hardened.monitoring.principals[3] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus"` |  |
+| istio.hardened.monitoring.principals[4] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics"` |  |
+| istio.hardened.monitoring.principals[5] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter"` |  |
 | istio.gitlab.enabled | bool | `true` |  |
 | istio.gitlab.annotations | object | `{}` |  |
 | istio.gitlab.labels | object | `{}` |  |
 | istio.gitlab.gateways[0] | string | `"istio-system/main"` |  |
 | istio.gitlab.hosts | string | `nil` |  |
+| istio.gitlab.selectorLabels.app | string | `"webservice"` |  |
 | istio.registry.enabled | bool | `true` |  |
 | istio.registry.annotations | object | `{}` |  |
 | istio.registry.labels | object | `{}` |  |
 | istio.registry.gateways[0] | string | `"istio-system/main"` |  |
 | istio.registry.hosts | string | `nil` |  |
+| istio.registry.selectorLabels.app | string | `"registry"` |  |
 | istio.pages.enabled | bool | `false` |  |
 | istio.pages.annotations | object | `{}` |  |
 | istio.pages.ingressLabels.app | string | `"pages-ingressgateway"` |  |

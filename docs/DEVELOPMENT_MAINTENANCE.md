@@ -314,6 +314,7 @@ If that is not present it will use the global chart serviceAccount automountServ
 - Add networkpolicies.
 - Add istio peerauthentications.
 - Add Secrets for DoD certificate authorities.
+- Add istio authorization policies
 
 ## chart/templates/tests/*
 - Add templates for CI helm tests.
@@ -401,3 +402,4 @@ If that is not present it will use the global chart serviceAccount automountServ
 # chart/Chart.yaml
 - Change version key to Big Bang composite version.
 - Add Big Bang `annotations.dev.bigbang.mil/applicationVersions` and `annotations.helm.sh/images` keys to support release automation.
+- Add the required kubeversion

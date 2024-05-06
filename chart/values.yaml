@@ -940,7 +940,7 @@ upgradeCheck:
   #      - ALL
   tolerations: []
   annotations:
-    sidecar.istio.io/inject: "false"
+    sidecar.istio.io/inject: "true"
   configMapAnnotations: {}
   resources:
     requests:
@@ -1486,7 +1486,7 @@ shared-secrets:
   tolerations: []
   podLabels: {}
   annotations:
-    sidecar.istio.io/inject: "false"
+    sidecar.istio.io/inject: "true"
 
 ## Installation & configuration of gitlab/gitlab-runner
 ## See requirements.yaml for current version
@@ -1653,7 +1653,7 @@ gitlab:
   migrations:
     # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
     annotations:
-      sidecar.istio.io/inject: "false"
+      sidecar.istio.io/inject: "true"
     init:
       resources:
         limits:
@@ -1983,7 +1983,7 @@ minio:
         - ALL
   # Additional job annotations
   jobAnnotations:
-    sidecar.istio.io/inject: "false"
+    sidecar.istio.io/inject: "true"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
   imageTag: RELEASE.2022-12-12T19-27-27Z
@@ -2008,6 +2008,7 @@ sso:
 istio:
   # Toggle istio integration
   enabled: false
+  injection: disabled
   hardened:
     enabled: false
     outboundTrafficPolicyMode: "REGISTRY_ONLY"
@@ -2025,7 +2026,25 @@ istio:
       #         protocol: TLS
       #         name: https
       #     resolution: DNS
-  injection: disabled
+    customAuthorizationPolicies: []
+    # - name: "allow-nothing"
+    #   enabled: true
+    #   spec: {}
+    gitlabRunner:
+      enabled: true
+      namespaces:
+        - gitlab-runner
+    monitoring:
+      enabled: true
+      namespaces:
+        - monitoring
+      principals:
+        - cluster.local/ns/monitoring/sa/monitoring-grafana
+        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager
+        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator
+        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus
+        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics
+        - cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter
   gitlab:
     # Toggle vs creation
     enabled: true
@@ -2035,6 +2054,8 @@ istio:
       - istio-system/main
     # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
     hosts: null
+    selectorLabels:
+      app: webservice
   registry:
     # Toggle vs creation
     enabled: true
@@ -2044,6 +2065,8 @@ istio:
       - istio-system/main
     # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
     hosts: null
+    selectorLabels:
+      app: registry
   pages:
     # Toggle vs creation
     enabled: false
