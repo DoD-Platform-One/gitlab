@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.11.1-bb.0](https://img.shields.io/badge/Version-7.11.1--bb.0-informational?style=flat-square) ![AppVersion: 16.11.1](https://img.shields.io/badge/AppVersion-16.11.1-informational?style=flat-square)
+![Version: 7.11.1-bb.1](https://img.shields.io/badge/Version-7.11.1--bb.1-informational?style=flat-square) ![AppVersion: 16.11.1](https://img.shields.io/badge/AppVersion-16.11.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
