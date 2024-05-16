@@ -940,7 +940,7 @@ upgradeCheck:
   #      - ALL
   tolerations: []
   annotations:
-    sidecar.istio.io/inject: "true"
+    sidecar.istio.io/inject: "false"
   configMapAnnotations: {}
   resources:
     requests:
@@ -1486,7 +1486,7 @@ shared-secrets:
   tolerations: []
   podLabels: {}
   annotations:
-    sidecar.istio.io/inject: "true"
+    sidecar.istio.io/inject: "false"
 
 ## Installation & configuration of gitlab/gitlab-runner
 ## See requirements.yaml for current version
@@ -1653,7 +1653,7 @@ gitlab:
   migrations:
     # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
     annotations:
-      sidecar.istio.io/inject: "true"
+      sidecar.istio.io/inject: "false"
     init:
       resources:
         limits:
@@ -1983,7 +1983,7 @@ minio:
         - ALL
   # Additional job annotations
   jobAnnotations:
-    sidecar.istio.io/inject: "true"
+    sidecar.istio.io/inject: "false"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
   imageTag: RELEASE.2022-12-12T19-27-27Z
