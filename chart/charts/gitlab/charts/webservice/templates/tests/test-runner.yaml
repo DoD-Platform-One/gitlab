@@ -11,11 +11,11 @@ metadata:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
 spec:
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
   containers:
-    securityContext:
-      capabilities:
-        drop:
-          - ALL
   - name: test-runner
     image: {{ include "webservice.image" . }}
     command: ['sh', '/tests/test_login']
