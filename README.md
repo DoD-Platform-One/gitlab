@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 7.11.2-bb.3](https://img.shields.io/badge/Version-7.11.2--bb.3-informational?style=flat-square) ![AppVersion: 16.11.2](https://img.shields.io/badge/AppVersion-16.11.2-informational?style=flat-square)
+![Version: 7.11.2-bb.4](https://img.shields.io/badge/Version-7.11.2--bb.4-informational?style=flat-square) ![AppVersion: 16.11.2](https://img.shields.io/badge/AppVersion-16.11.2-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -911,6 +911,7 @@ helm install gitlab chart/
 | gitlab.webservice.metrics.enabled | bool | `true` |  |
 | gitlab.webservice.metrics.port | int | `8083` |  |
 | gitlab.webservice.metrics.serviceMonitor.enabled | bool | `true` |  |
+| gitlab.webservice.helmTests.enabled | bool | `false` |  |
 | gitlab.sidekiq.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq"` |  |
 | gitlab.sidekiq.image.tag | string | `"16.11.2"` |  |
 | gitlab.sidekiq.image.pullSecrets[0].name | string | `"private-registry"` |  |
@@ -1063,6 +1064,7 @@ helm install gitlab chart/
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
+| networkPolicies.egressPort | string | `nil` |  |
 | networkPolicies.gitalyEgress.enabled | bool | `false` |  |
 | networkPolicies.additionalPolicies | list | `[]` |  |
 | openshift | bool | `false` |  |
