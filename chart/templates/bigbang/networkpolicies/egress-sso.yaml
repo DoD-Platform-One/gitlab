@@ -11,7 +11,7 @@ spec:
   policyTypes:
   - Egress
   egress:
-    - ports:
-      - port: 443
+   - ports:
+      - port: {{ coalesce .Values.networkPolicies.egressPort 443 8443 }}
         protocol: TCP
 {{- end }}

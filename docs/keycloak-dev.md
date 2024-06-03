@@ -113,3 +113,6 @@ Before deploying GitLab and configuring SSO, you need to deploy the dev instance
 1. Create a new user. Be sure to do the following: Switch "Email verified" to "Yes", join the "Impact Level 2 Authorized" group, remove all "Required user actions" (do this after the user is created), create a password (disable "Temporary").
 1. Login to Gitlab using SSO and the user you just configured.
 1. Setup MFA.
+
+#### OmniAuth oidc-provider SSO setup
+- Reference [keycloak.md](https://repo1.dso.mil/big-bang/product/packages/gitlab/-/blob/main/docs/keycloak.md?ref_type=heads) for omniauth global configuration and more override examples.
