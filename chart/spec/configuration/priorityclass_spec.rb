@@ -10,6 +10,8 @@ describe 'global priorityClass configuration' do
     HelmTemplate.with_defaults(%(
       global:
         priorityClassName: system-cluster-critical
+        pages:
+          enabled: true
       gitlab:
         kas:
           enabled: true  # DELETE THIS WHEN KAS BECOMES ENABLED BY DEFAULT

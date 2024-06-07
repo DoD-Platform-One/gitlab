@@ -1,53 +1,44 @@
 gitlab:
-  # n1-highcpu-32 in GKE is
-  # - cpu:    31850m
-  # - memory: 26041340Ki
   webservice:
-    # Min pods recommended to be set to 75% of max to start
-    maxReplicas: 80
+    # Webservice Target Node Pool Totals
+    # 308 vCPU
+    # 385 GB memory (request)
+    # 539 GB memory (limit)
+    maxReplicas: 77
     maxUnavailable: 40
-    minReplicas: 60
-    # Increased to stabilize scaling and accommodate for higher CPU load on large environment
-    hpa:
-      cpu:
-        targetAverageValue: 1600m
-    ingress:
-      proxyBodySize: 0 # To allow large file uploads like imports
-    nodeSelector:
-      workload: webservice
+    minReplicas: 58 # Min pods recommended to be set to 75% of max to start
     resources:
       limits:
-        memory: 5.25G # roughly, 1.3GB/worker
+        memory: 7G # roughly, 1.75GB/worker
       requests:
         cpu: 4 # requests.cpu <= workerProcesses
         memory: 5G # roughly, 1.25GB/worker
     workerProcesses: 4
-  sidekiq:
-    maxReplicas: 14
-    minReplicas: 10
-    # Increased to stabilize scaling and accommodate for higher CPU load on large environment
     hpa:
       cpu:
-        targetAverageValue: 700m
+        targetAverageValue: 1600m # Increased to stabilize scaling and accommodate for higher CPU load on large environment
+    ingress:
+      proxyBodySize: 0 # To allow large file uploads like imports
     nodeSelector:
-      workload: sidekiq
+      workload: webservice
+  sidekiq:
+    # Sidekiq Target Node Pool Totals
+    # 12.6 vCPU
+    # 28 GB memory (request)
+    # 56 GB memory (limit)
+    maxReplicas: 14
+    minReplicas: 10
     resources:
-      # Running up to 14 pods with a ratio of roughly 1 vCPU to 2 GB RAM as a starting point for requests.
-      # Per the 50k reference architecture (https://docs.gitlab.com/ee/administration/reference_architectures/50k_users.html),
-      # consider the resource limitations in play:
-      # For an n1-standard-4 node in GKE: 4 vCPU, 15 GB memory
-      # - 4 nodes x 4 vCPU = 16 cores in total
-      # - 4 nodes x 15 GB = 60GB of memory in total
-      # - 60GB memory / 16 cores = ~3.75 GB memory / core, excluding overhead
-      # Each Sidekiq node has the following resources allocatable (roughly):
-      # - cpu:    3920m
-      # - memory: 12698332Ki
-      # Notice that there is actually only <4 vCPU and <13GB memory allocatable.
       limits:
         memory: 4G
       requests:
         cpu: 900m # Assume single-process, 1 CPU
         memory: 2G
+    hpa:
+      cpu:
+        targetAverageValue: 700m # Increased to stabilize scaling and accommodate for higher CPU load on large environment
+    nodeSelector:
+      workload: sidekiq
   toolbox:
     backups:
       # Below, GCS is used an example for the ObjectStorage section.
@@ -147,32 +138,12 @@ global:
   registry:
     bucket: example-registry-storage
 
-# Run Prometheus
-prometheus:
-  install: true
-  alertmanager:
+# Run NGinx pods on Webservice nodes as DaemonSet
+nginx-ingress:
+  controller:
+    kind: DaemonSet
     nodeSelector:
-      workload: support
-  kubeStateMetrics:
-    nodeSelector:
-      workload: support
-  nodeExporter:
-    nodeSelector:
-      workload: support
-  pushgateway:
-    nodeSelector:
-      workload: support
-  server:
-    nodeSelector:
-      workload: support
-
-# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
-gitlab-runner:
-  install: false
-
-# Run Redis outside of cluster
-redis:
-  install: false
+      workload: webservice
 
 registry:
   storage:
@@ -180,6 +151,14 @@ registry:
     key: registry-config
     secret: gcs-secret-example
 
+# Run Redis outside of cluster
+redis:
+  install: false
+
 # Database run outside of cluster
 postgresql:
+  install: false
+
+# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
+gitlab-runner:
   install: false

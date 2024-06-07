@@ -13,7 +13,6 @@ GitLab Pages using the Helm chart.
 
 ## Requirements
 
-1. GitLab 13.7 or later.
 1. [External Object Storage](../external-object-storage/index.md), as
    recommended for production instances, should be used.
 1. Base64 encoded form of a 32-bytes-long API secret key for Pages to interact

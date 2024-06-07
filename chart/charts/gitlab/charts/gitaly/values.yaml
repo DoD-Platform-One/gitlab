@@ -184,3 +184,6 @@ gpgSigning: {}
   # enabled: false
   # secret: glGPG
   # key:
+
+backup: {}
+  # goCloudUrl:

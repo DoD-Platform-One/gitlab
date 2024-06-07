@@ -2,6 +2,23 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.1-bb.0] (2024-05-23)
+### Changed
+- Skipped 17.0.0 release, see this [Gitlab security release](https://about.gitlab.com/releases/2024/05/22/patch-release-gitlab-17-0-1-released/) for details.
+- Update ironbank/gitlab/gitlab/gitlab-webservice 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/certificates 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 16.11.2 -> 17.0.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 16.11.2 -> 17.0.1
+
 ## [7.11.2-bb.5] (2024-06-03)
 ### Changed (1 Change)
 - Update Gitlab to v16.11.3
@@ -10,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed (1 Change)
 - Update egress-sso networkpolicy to support port 8443
 
-## [7.11.2-bb.2] (2024-05-30)
+## [7.11.2-bb.3] (2024-05-30)
 ### Changed
 - Fixed the monitoring select label
 

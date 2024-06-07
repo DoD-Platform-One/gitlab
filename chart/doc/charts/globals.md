@@ -435,15 +435,6 @@ global:
 In GitLab 16.0, GitLab defaults to using two database connections
 that point to the same PostgreSQL database.
 
-If you wish to switch back to single database connection, set the `ci.enabled` key to `false`:
-
-```yaml
-global:
-  psql:
-    ci:
-      enabled: false
-```
-
 ## Configure Redis settings
 
 The GitLab global Redis settings are located under the `global.redis` key.
@@ -689,7 +680,7 @@ To connect to Redis with SSL:
        authClients: false
    ```
 
-   This configuration is required because [Redis defaults to mutual TLS](https://redis.io/docs/management/security/encryption/#client-certificate-authentication), which not all chart components support.
+   This configuration is required because [Redis defaults to mutual TLS](https://redis.io/docs/latest/operate/oss_and_stack/management/security/encryption/), which not all chart components support.
 
 1. Follow Bitnami's [steps to enable TLS](https://github.com/bitnami/charts/tree/main/bitnami/redis#securing-traffic-using-tls). Make sure the chart components trust the certificate authority used to create Redis certificates.
 1. Optional. If you use a custom certificate authority, see the [Custom Certificate Authorities](#custom-certificate-authorities) global configuration.
@@ -2128,12 +2119,6 @@ certmanager:
 
 GitLab Helm chart uses a common GitLab base image for various initialization tasks.
 This image support UBI builds and shares layers with other images.
-It replaces the now deprecated busybox image.
-
-NOTE:
-If custom busybox settings are defined, the chart falls back to the legacy busybox.
-This `busybox` configuration fallback will eventually be removed.
-Please migrate your settings to `global.gitlabBase`.
 
 ## Service Accounts
 

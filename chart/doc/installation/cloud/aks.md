@@ -11,7 +11,7 @@ DETAILS:
 **Offering:** Self-managed
 
 For a fully functional GitLab instance, you need a few resources before
-deploying the GitLab chart to [Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/intro-kubernetes).
+deploying the GitLab chart to [Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/what-is-aks).
 
 ## Creating the AKS cluster
 

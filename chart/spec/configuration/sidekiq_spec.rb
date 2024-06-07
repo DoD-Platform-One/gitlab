@@ -13,7 +13,6 @@ describe 'Sidekiq configuration' do
           - name: pod-1
             queues: merge
           - name: pod-2
-            negateQueues: merge
     ))
   end
 
@@ -101,7 +100,6 @@ describe 'Sidekiq configuration' do
                       EXTRA_ENV_VAR_C: pod-c
                       EXTRA_ENV_VAR_E: pod-e
                   - name: pod-2
-                    negateQueues: merge
                     extraEnv:
                       EXTRA_ENV_VAR_B: pod-b
                       EXTRA_ENV_VAR_C: pod-c
@@ -271,7 +269,6 @@ describe 'Sidekiq configuration' do
                           key: "keyE-pod"
                           name: "nameE-pod"
                   - name: pod-2
-                    negateQueues: merge
                     extraEnvFrom:
                       EXTRA_ENV_VAR_A:
                         secretKeyRef:
@@ -640,9 +637,7 @@ describe 'Sidekiq configuration' do
               - name: pod-1
                 queues: merge
               - name: pod-2
-                negateQueues: merge
                 podLabels:
-                  deployment: negateQueues
                   sidekiq: pod-2
               - name: pod-3
                 fooQueue: merge
@@ -666,7 +661,6 @@ describe 'Sidekiq configuration' do
         expect(t.dig('Deployment/test-sidekiq-pod-1-v2', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
         expect(t.dig('Deployment/test-sidekiq-pod-1-v2', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
         expect(t.dig('Deployment/test-sidekiq-pod-1-v2', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
-        expect(t.dig('Deployment/test-sidekiq-pod-2-v2', 'spec', 'template', 'metadata', 'labels')).to include('deployment' => 'negateQueues')
         expect(t.dig('Deployment/test-sidekiq-pod-2-v2', 'spec', 'template', 'metadata', 'labels')).to include('sidekiq' => 'pod-2')
         expect(t.dig('Deployment/test-sidekiq-pod-3-v2', 'spec', 'template', 'metadata', 'labels')).to include('deployment' => 'fooQueue')
         expect(t.dig('Deployment/test-sidekiq-pod-3-v2', 'metadata', 'labels')).to include('sidekiq' => 'pod-common-3')

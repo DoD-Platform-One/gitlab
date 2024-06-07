@@ -205,6 +205,22 @@ module Gitlab
       return [stdout, status]
     end
 
+    # Enable legacy runner registration.
+    # CI/QA testing needs to migrate to the new runner registration workflow by 18.0.
+    # https://docs.gitlab.com/ee/administration/settings/continuous_integration.html#enable-runner-registrations-tokens
+    def enable_legacy_runner_registration
+      cmd = full_command(
+        "gitlab-rails runner \"" \
+        "settings = ApplicationSetting.current_without_cache; " \
+        "settings.update_columns(allow_runner_registration_token: true); " \
+        "settings.save!; " \
+        "\""
+      )
+
+      stdout, status = Open3.capture2e(cmd)
+      return [stdout, status]
+    end
+
     def wait_for_dependencies
       cmd = full_command("/scripts/wait-for-deps")
 

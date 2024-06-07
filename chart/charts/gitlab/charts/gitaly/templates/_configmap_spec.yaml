@@ -168,3 +168,8 @@ data:
     {{-     end }}
     {{-   end }}
     {{- end }}
+
+    {{- if .Values.backup.goCloudUrl }}
+    [backup]
+    go_cloud_url = "{{ .Values.backup.goCloudUrl }}"
+    {{- end }}

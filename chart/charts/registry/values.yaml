@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v3.92.0-gitlab'
+  tag: 'v4.0.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -372,6 +372,7 @@ serviceAccount:
 # and associated documentation before enabling this feature.
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database
 database:
+  configure: false
   enabled: false
   user: registry
   password: {}

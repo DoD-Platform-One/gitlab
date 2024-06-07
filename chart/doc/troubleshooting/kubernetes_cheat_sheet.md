@@ -123,9 +123,6 @@ and they will assist you with any issues you are having.
 - Most of the useful GitLab tools (console, Rake tasks, etc) are found in the toolbox
   pod. You may enter it and run commands inside or run them from the outside.
 
-  NOTE:
-  The `task-runner` pod was renamed to `toolbox` in GitLab 14.2 (charts 5.2).
-
   ```shell
   # find the pod
   kubectl --namespace gitlab get pods -lapp=toolbox
@@ -170,19 +167,8 @@ and they will assist you with any issues you are having.
 
 - How to connect to a GitLab PostgreSQL database.
 
-  NOTE:
-  The `task-runner` pod was renamed to `toolbox` in GitLab 14.2 (charts 5.2).
-
-  In GitLab 14.2 (chart 5.2) and later:
-
   ```shell
   kubectl exec -it <toolbox-pod-name> -- /srv/gitlab/bin/rails dbconsole --include-password --database main
-  ```
-
-  In GitLab 14.1 (chart 5.1) and earlier:
-
-  ```shell
-  kubectl exec -it <task-runner-pod-name> -- /srv/gitlab/bin/rails dbconsole --include-password
   ```
 
 - How to get information about Helm installation status:
@@ -228,25 +214,25 @@ all Kubernetes resources and dependent charts:
 - Run `fast-stats`:
 
   ```shell
-  cat <file-name> | cut -d  ' ' -f2- | grep ^{ | fast-stats
+  cut -d  ' ' -f2- <file-name> | grep ^{ | fast-stats
   ```
 
 - List errors:
 
   ```shell
-  cat <file-name> | cut -d ' ' -f2- | grep ^{ | fast-stats errors
+  cut -d  ' ' -f2- <file-name> | grep ^{ | fast-stats errors
   ```
 
 - Run `fast-stats` top:
 
   ```shell
-  cat <file-name> | cut -d ' ' -f2- | grep ^{ | fast-stats top
+  cut -d  ' ' -f2- <file-name> | grep ^{ | fast-stats top
   ```
 
 - Change the number of rows printed. By default, 10 rows are printed.
 
   ```shell
-  cat <file-name> | cut -d ' ' -f2- | grep ^{ | fast-stats -l <number of rows>
+  cut -d  ' ' -f2- <file-name> | grep ^{ | fast-stats -l <number of rows>
   ```
 
 ## Installation of minimal GitLab configuration via minikube on macOS

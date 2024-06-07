@@ -64,6 +64,25 @@ describe 'checkConfig toolbox' do
       include_examples 'config validation',
                        success_description: 'when toolbox has a valid object storage backup secret configured',
                        error_description: 'when toolbox does not have a valid object storage backup secret configured'
+
+      context 'with Google Cloud Storage backend' do
+        let(:success_values) do
+          YAML.safe_load(%(
+            gitlab:
+              toolbox:
+                enabled: true
+                backups:
+                  objectStorage:
+                    backend: gcs
+                    config:
+                      # secret: s3cmd-config
+                      key: config
+          )).merge(default_required_values)
+        end
+
+        include_examples 'config validation',
+                         success_description: 'when toolbox uses GCS for backup with no secret configured'
+      end
     end
 
     describe 'gitlab.toolbox.enabled (set to false)' do

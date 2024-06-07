@@ -92,7 +92,7 @@ spec:
             - name: OWN_PRIVATE_API_URL
               value: "{{ include "gitlab.kas.internal.scheme" . }}://$(POD_IP):{{ .Values.service.privateApiPort }}"
             {{- include "gitlab.extraEnv" . | nindent 12 }}
-            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 12 }}
+            {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
           ports:
             - containerPort: {{ .Values.service.internalPort }}
               name: {{ template "name" . }}
@@ -142,9 +142,9 @@ spec:
                 items:
                   - key: {{ template "gitlab.kas.privateApi.key" . }}
                     path: .gitlab_kas_private_api_secret
-            {{- if or $.Values.privateApi.tls.enabled $.Values.global.kas.tls.enabled }}
+            {{- if $.Values.global.kas.tls.enabled }}
             - secret:
-                name: {{ default .Values.privateApi.tls.secretName .Values.global.kas.tls.secretName | quote }}
+                name: {{ .Values.global.kas.tls.secretName | quote }}
                 items:
                   - key: tls.crt
                     path: tls.crt

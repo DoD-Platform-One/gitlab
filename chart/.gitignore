@@ -13,3 +13,4 @@ knapsack_rspec_report.json
 Chart.*.yaml
 ci.digests.test.yaml
 node_modules
+scripts/debug/chart-info

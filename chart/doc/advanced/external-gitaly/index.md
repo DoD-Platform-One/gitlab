@@ -150,25 +150,22 @@ kubectl exec -it <toolbox-pod> -- echo | /usr/bin/openssl s_client -connect <git
 ## Migrate from Gitaly chart to external Gitaly
 
 If you are using the Gitaly Chart to provide the Gitaly service and you need to migrate all of your
-repositories to an external Gitaly service, you can back up your repositories from the Gitaly
-chart PersistentVolumeClaim (PVC) and then restore them to the external Gitaly service.
+repositories to an external Gitaly service, this can be done with one of the following methods:
 
-This operation:
+- [Migrate with the repository storage moves API (recommended)](#migrate-with-the-repository-storage-moves-api).
+- [Migrate with the backup/restore method](#migrate-with-the-backuprestore-method).
 
-- Does incur downtime to all users.
+### Migrate with the repository storage moves API
+
+This method:
+
+- Uses the [repository storage moves API](https://docs.gitlab.com/ee/api/project_repository_storage_moves.html)
+  to migrate repositories from the Gitaly chart to the external Gitaly service. 
+- Can be performed with zero downtime.
+- Requires that the external Gitaly service resides within the same VPC/zone as the Gitaly pods.
 - Has not been tested with the [Praefect chart](../../charts/gitlab/praefect/index.md) and is not supported.
 
-### Step 1: Get the current release revision of the GitLab Chart
-
-In the unlikely event that something goes wrong during the migration, get the current release
-revision of the GitLab Chart. Copy the output and put it aside just in case we need to perform a
-[rollback](#rollback):
-
-```shell
-helm history <release> --max=1
-```
-
-### Step 2: Setup external Gitaly Service or Gitaly Cluster
+#### Step 1: Set up external Gitaly Service or Gitaly Cluster
 
 Set up an [external Gitaly](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html)
 or [external Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html). You must
@@ -196,7 +193,242 @@ kubectl get secret <release>-gitaly-secret -ojsonpath='{.data.token}' | base64 -
 
 ::EndTabs
 
-### Step 3: Verify no Git changes can be made during migration
+Lastly, ensure that the firewall for the external Gitaly service allows traffic on the configured
+Gitaly port for your Kubernetes pod IP range.
+
+#### Step 2: Configure Instance to use new Gitaly Service
+
+1. Configure GitLab to use the external Gitaly.
+   If there are any Gitaly references in your main `gitlab.yml` configuration file, remove those
+   and create a new `mixed-gitaly.yml` file with the following content.
+
+   If you have previously defined additional Gitaly storages, you need to ensure a matching Gitaly
+   storage with the same name is specified in the new configuration, otherwise the restore operation
+   fails.
+
+   Refer to the
+   [connecting to external Gitaly over TLS](#connecting-to-external-gitaly-over-tls) section if you
+   are configuring TLS:
+
+   ::Tabs
+
+   :::TabTitle Gitaly
+
+   ```yaml
+   global:
+     gitaly:
+       internal:
+         names:
+           - default
+       external:
+         - name: ext-gitaly                # required
+           hostname: node1.git.example.com # required
+           port: 8075                      # optional, default shown
+           tlsEnabled: false               # optional, overrides gitaly.tls.enabled
+   ```
+
+   :::TabTitle Gitaly Cluster
+
+   ```yaml
+   global:
+     gitaly:
+       internal:
+         names:
+           - default
+       external:
+         - name: ext-gitaly-cluster        # required
+           hostname: ha.git.example.com    # required
+           port: 2305                      # Praefect uses port 2305
+           tlsEnabled: false               # optional, overrides gitaly.tls.enabled
+   ```
+
+   ::EndTabs
+
+1. Apply the new configuration using the `gitlab.yml` and `mixed-gitaly.yml` files:
+
+    ```shell
+    helm upgrade --install gitlab gitlab/gitlab \
+      -f gitlab.yml \
+      -f mixed-gitaly.yml
+    ```
+
+1. On the Toolbox pod, confirm that GitLab can connect to the external Gitaly successfully:
+
+   ```shell
+   kubectl exec <toolbox pod name> -it -- gitlab-rake gitlab:gitaly:check
+   ```
+
+1. Ensure that the external Gitaly can connect back to your Chart install:
+
+   ::Tabs
+
+   :::TabTitle Gitaly
+
+   Ensure that the Gitaly service can perform callbacks to the GitLab API successfully:
+
+   ```shell
+   sudo /opt/gitlab/embedded/bin/gitaly check /var/opt/gitlab/gitaly/config.toml
+   ```
+
+   :::TabTitle Gitaly Cluster
+
+   On all Praefect nodes, ensure that the Praefect service can connect to the Gitaly nodes:
+
+   ```shell
+   # Run on Praefect nodes
+   sudo /opt/gitlab/embedded/bin/praefect -config /var/opt/gitlab/praefect/config.toml dial-nodes
+   ```
+
+   On all Gitaly nodes, ensure that the Gitaly service can perform callbacks to the GitLab API
+   successfully:
+
+   ```shell
+   # Run on Gitaly nodes
+   sudo /opt/gitlab/embedded/bin/gitaly check /var/opt/gitlab/gitaly/config.toml
+   ```
+
+   ::EndTabs
+
+#### Step 3: Get the Gitaly pod IP and hostnames
+
+For the repository storage moves API to succeed, the external Gitaly service needs to be able to connect back to
+the Gitaly pods using the pod service hostname. In order for the pod service hostnames to be resolvable, we
+need to add the hostnames to the hosts file on each external Gitaly service running the Gitaly process.
+
+1. Fetch a list of Gitaly pods and their respective internal IP addresses/hostnames:
+
+   ```shell
+   kubectl get pods -l app=gitaly -o jsonpath='{range .items[*]}{.status.podIP}{"\t"}{.spec.hostname}{"."}{.spec.subdomain}{"."}{.metadata.namespace}{".svc\n"}{end}'
+   ```
+
+1. Add the output from the last step to the `/etc/hosts` file on each external Gitaly service running the Gitaly process.
+1. Confirm that the Gitaly pod hostnames can be pinged from each external Gitaly service running the Gitaly process:
+
+   ```shell
+   ping <gitaly pod hostname>
+   ```
+
+After connectivity is confirmed, we can proceed to scheduling the repository storage move.
+
+#### Step 4: Schedule the repository storage move
+
+Schedule the move by following the steps indicated in [moving repositories](https://docs.gitlab.com/ee/administration/operations/moving_repositories.html#moving-repositories).
+
+#### Step 5: Final configuration and validation
+
+1. If you have multiple Gitaly storages, [configure where new repositories are stored](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#configure-where-new-repositories-are-stored).
+
+1. Consider generating a consolidated `gitlab.yml` for the future that includes the external Gitaly configuration:
+
+    ```shell
+    helm get values <RELEASE_NAME> -o yaml > gitlab.yml
+    ```
+
+1. Disable the internal Gitaly subchart in the `gitlab.yml` file, and point the new `default` repository storage to the external Gitaly service. [GitLab requires a default repository storage](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#gitlab-requires-a-default-repository-storage):
+
+   ::Tabs
+
+   :::TabTitle Gitaly
+
+   ```yaml
+   global:
+     gitaly:
+       enabled: false                      # Disable the internal Gitaly subchart
+       external:
+         - name: ext-gitaly                # required
+           hostname: node1.git.example.com # required
+           port: 8075                      # optional, default shown
+           tlsEnabled: false               # optional, overrides gitaly.tls.enabled
+         - name: default                   # Add the default repository storage, use the same settings as ext-gitaly
+           hostname: node1.git.example.com
+           port: 8075
+           tlsEnabled: false
+   ```
+
+   :::TabTitle Gitaly Cluster
+
+   ```yaml
+   global:
+     gitaly:
+       enabled: false                      # Disable the internal Gitaly subchart
+       external:
+         - name: ext-gitaly-cluster        # required
+           hostname: ha.git.example.com    # required
+           port: 2305                      # Praefect uses port 2305
+           tlsEnabled: false               # optional, overrides gitaly.tls.enabled
+         - name: default                   # Add the default repository storage, use the same settings as ext-gitaly-cluster
+           hostname: ha.git.example.com
+           port: 2305
+           tlsEnabled: false
+   ```
+
+   ::EndTabs
+
+1. Apply the new configuration:
+
+   ```shell
+   helm upgrade --install gitlab gitlab/gitlab \
+     -f gitlab.yml
+   ```
+
+1. Optional. Remove the changes made to each external Gitaly `/etc/hosts` file after following the [get the Gitaly pod IP and hostnames](#step-3-get-the-gitaly-pod-ip-and-hostnames) step.
+
+1. After you have confirmed everything is working as expected, you can delete the Gitaly PVC:
+
+   WARNING: Do not delete the Gitaly PVC until you have double checked that everything is working as expected.
+
+   ```shell
+   kubectl delete pvc repo-data-<release>-gitaly-0
+   ```
+
+### Migrate with the backup/restore method
+
+This method:
+
+- Backs up your repositories from the Gitaly chart PersistentVolumeClaim (PVC) and then restore them to the 
+external Gitaly service.
+- Does incur downtime to all users.
+- Has not been tested with the [Praefect chart](../../charts/gitlab/praefect/index.md) and is not supported.
+
+#### Step 1: Get the current release revision of the GitLab Chart
+
+In the unlikely event that something goes wrong during the migration, get the current release
+revision of the GitLab Chart. Copy the output and put it aside just in case we need to perform a
+[rollback](#rollback):
+
+```shell
+helm history <release> --max=1
+```
+
+#### Step 2: Setup external Gitaly Service or Gitaly Cluster
+
+Set up an [external Gitaly](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html)
+or [external Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html). You must
+provide the Gitaly token and GitLab Shell secret from your Chart installation as part of those steps:
+
+```shell
+# Get the GitLab Shell secret
+kubectl get secret <release>-gitlab-shell-secret -ojsonpath='{.data.secret}' | base64 -d
+
+# Get the Gitaly token
+kubectl get secret <release>-gitaly-secret -ojsonpath='{.data.token}' | base64 -d
+```
+
+::Tabs
+
+:::TabTitle Gitaly
+
+- The Gitaly token extracted here should be used for the `AUTH_TOKEN` value.
+- The GitLab Shell secret extracted here should be used for the `shellsecret` value.
+
+:::TabTitle Gitaly Cluster
+
+- The Gitaly token extracted here should be used for the `PRAEFECT_EXTERNAL_TOKEN`.
+- The GitLab Shell secret extracted here should be used for the `GITLAB_SHELL_SECRET_TOKEN`.
+
+::EndTabs
+
+#### Step 3: Verify no Git changes can be made during migration
 
 To ensure the data integrity of the migration, prevent any changes from being made to your Git
 repositories in the following steps:
@@ -304,7 +536,7 @@ and create a list of repository checksums. Pipe the output to a file so we can `
 kubectl exec <toolbox pod name> -it -- gitlab-rake gitlab:git:checksum_projects > ~/checksums-before.txt
 ```
 
-### Step 4: Backup all repositories
+#### Step 4: Backup all repositories
 
 [Create a backup](../../backup-restore/backup.md#create-the-backup) of your repositories only:
 
@@ -312,7 +544,7 @@ kubectl exec <toolbox pod name> -it -- gitlab-rake gitlab:git:checksum_projects 
 kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure_files,db,external_diffs,lfs,packages,pages,registry,terraform_state,uploads
 ```
 
-### Step 5: Configure Instance to use new Gitaly Service
+#### Step 5: Configure Instance to use new Gitaly Service
 
 1. Disable the Gitaly subchart and configure GitLab to use the external Gitaly.
    If there are any Gitaly references in your main `gitlab.yml` configuration file, remove those
@@ -409,7 +641,7 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
 
    ::EndTabs
 
-### Step 6: Restore and validate repository backup
+#### Step 6: Restore and validate repository backup
 
 1. [Restore the backup file](../../backup-restore/restore.md#restoring-the-backup-file) created previously.
    As a result, the repositories are copied to the configured external Gitaly or Gitaly Cluster.
@@ -431,7 +663,7 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
    If you observe a blank checksum changing to `0000000000000000000000000000000000000000` in the `diff` output for a specific line,
    this is expected and can be safely ignored.
 
-### Step 7: Final configuration and validation
+#### Step 7: Final configuration and validation
 
 1. To allow external users and GitLab Runners to connect to GitLab again, apply the `gitlab.yml` and `external-gitaly.yml` files. As
    we aren't specifying `ingress-only-allow-ext-gitaly.yml`, it removes the IP restrictions:
@@ -477,7 +709,7 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
    kubectl delete pvc repo-data-<release>-gitaly-0
    ```
 
-### Rollback
+#### Rollback
 
 If you run into any problems, you can rollback the changes made so the Gitaly subchart is used again.
 

@@ -454,4 +454,31 @@ describe 'Gitaly configuration' do
       end
     end
   end
+
+  context 'server side backups' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            backup:
+              goCloudUrl: 'gs://gitaly-backups'
+      )).deep_merge(default_values)
+    end
+
+    let(:template) { HelmTemplate.new(values) }
+    let(:gitaly_config) { template.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl') }
+
+    it 'renders the template' do
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+    end
+
+    it 'sets the object storage url' do
+      expect(gitaly_config).to include(
+        <<~CONFIG
+        [backup]
+        go_cloud_url = "gs://gitaly-backups"
+        CONFIG
+      )
+    end
+  end
 end

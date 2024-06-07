@@ -50,7 +50,7 @@ variables:
   DEBIAN_VERSION: bullseye
   RUBY_VERSION: "3.0"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "14.6.0"
+  GITLAB_QA_VERSION: "14.8.1"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -156,7 +156,7 @@ lint_package:
   stage: preflight
   when: always
   script:
-    - kubectl version --client=true
+    - kubectl version --client=true --output=json
     - helm version --template='Helm Version - {{.Version}}'
     - helm repo add gitlab https://charts.gitlab.io
     - helm repo add jetstack https://charts.jetstack.io
@@ -182,7 +182,7 @@ lint_package:
   stage: preflight
   when: always
   script:
-    - kubectl version --client=true
+    - kubectl version --client=true --output=json
     - helm version --template='{{.Version}}'
     - helm plugin list
     - helm repo add gitlab https://charts.gitlab.io
@@ -298,7 +298,7 @@ pin_image_versions:
     - pin_image_versions
   script:
     - !reference [.set_up_varfile_and_kubecontext, script]
-    - kubectl version
+    - kubectl version --output=json
     - !reference [.set_up_namespace_secret_and_deploy, script]
     - check_domain_ip
     - restart_toolbox
@@ -335,6 +335,12 @@ pin_image_versions:
   DNS_PROVIDER: "google"
   AGENT_NAME: "gke127-ci-cluster"
   KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v127.helm-charts.win"
+  KUBE_NAMESPACE: "helm-charts-win"
+
+.review_gke129_common_vars: &review_gke129_common_vars
+  DNS_PROVIDER: "google"
+  AGENT_NAME: "gke129-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v129.helm-charts.win"
   KUBE_NAMESPACE: "helm-charts-win"
 
 .review_eks_common_vars: &review_eks_common_vars
@@ -437,6 +443,33 @@ review_gke127:
     action: access
 
 # See comments in create_review_gke125.
+create_review_gke129:
+  stage: review
+  image: busybox
+  variables:
+    <<: *review_gke129_common_vars
+    GIT_STRATEGY: none
+  script:
+    - echo "Configuring gke129_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA to automatically stop in $REVIEW_APPS_AUTO_STOP_IN."
+  environment:
+    name: gke129_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke129
+    auto_stop_in: $REVIEW_APPS_AUTO_STOP_IN
+    action: start
+
+review_gke129:
+  variables:
+    <<: *review_gke129_common_vars
+  extends: .review_template
+  environment:
+    name: gke129_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke129
+    auto_stop_in: "${REVIEW_APPS_AUTO_STOP_IN}"
+    action: access
+
+# See comments in create_review_gke125.
 create_review_eks:
   stage: review
   image: busybox
@@ -504,6 +537,14 @@ stop_review_gke127:
     name: gke127_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
     action: stop
 
+stop_review_gke129:
+  variables:
+    <<:  *review_gke129_common_vars
+  extends: .stop_review_template
+  environment:
+    name: gke129_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    action: stop
+
 stop_review_eks:
   variables:
     <<: *review_eks_common_vars
@@ -559,9 +600,9 @@ rubocop:
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
 
-# Perform documentation linting on Markdown files
-check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.19-vale-3.0.7-markdownlint-0.39.0-markdownlint2-0.12.1
+# Perform content linting on documentation Markdown files
+check_docs_content:
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.19-vale-3.4.1-markdownlint2-0.13.0-lychee-0.14.3
   stage: prepare
   cache: {}
   dependencies: []
@@ -569,6 +610,19 @@ check_docs_markdown:
   script:
     # Lint prose
     - vale --minAlertLevel error doc
+  rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
+# Perform linting on documentation Markdown files
+check_docs_markdown:
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.19-vale-3.4.1-markdownlint2-0.13.0-lychee-0.14.3
+  stage: prepare
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
     # Lint Markdown
     - markdownlint-cli2 'doc/**/*.md'
   rules:
@@ -576,26 +630,16 @@ check_docs_markdown:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
-
-# Perform link checks on published HTML files
+# Perform link checking on documentation Markdown files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-html:alpine-3.19-ruby-3.2.3-a5032206
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.19-vale-3.4.1-markdownlint2-0.13.0-lychee-0.14.3
   stage: prepare
   cache: {}
   dependencies: []
   before_script: []
   script:
-    # Put documentation in location expected by nanoc and configured in nanoc.yaml. For more information, see:
-    # https://gitlab.com/gitlab-org/gitlab-docs/-/blob/eee6c4c03621ff13743828ad74a8f0e8b96dfe7c/nanoc.yaml#L43
-    - mkdir /tmp/charts-gitlab
-    - mv doc/ /tmp/charts-gitlab
-    - cd /tmp/gitlab-docs
-    # Build HTML from Markdown
-    - make compile
-    # Check the internal links and anchors (in parallel)
-    # Links from the home page aren't checked because they aren't rendered here. For information, see:
-    # https://gitlab.com/gitlab-org/gitlab-docs/-/blob/eee6c4c03621ff13743828ad74a8f0e8b96dfe7c/content/index.erb#L6
-    - "parallel time bundle exec nanoc check ::: internal_links internal_anchors"
+    # Check Markdown links
+    - lychee --offline --include-fragments doc/**/*.md
   rules:
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
@@ -625,9 +669,6 @@ check_docs_links:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
-  needs:
-    - check_docs_links
-    - check_docs_markdown
 
 # Trigger a docs build in gitlab-docs
 # Useful to preview the docs changes live
@@ -737,6 +778,22 @@ review_specs_gke127:
     - !reference [.rule:skip_if_no_cluster]
     - !reference [.specs, rules]
   needs: ['review_gke127']
+
+review_specs_gke129:
+  extends: .specs
+  variables:
+    <<: *review_gke129_common_vars
+    VARIABLES_FILE: "variables/review_gke129"
+    RSPEC_TAGS: type:feature
+  environment:
+    name: gke129_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke129
+    action: access
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
+  needs: ['review_gke129']
 
 review_specs_eks:
   extends: .specs
@@ -937,6 +994,20 @@ qa_gke127:
     - job: review_specs_gke127
       artifacts: false
 
+qa_gke129:
+  extends: .qa_branch
+  variables:
+    VARIABLES_FILE: "variables/review_gke129"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  environment:
+    name: gke129_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    on_stop: stop_review_gke129
+    action: access
+  needs:
+    - review_gke129
+    - job: review_specs_gke129
+      artifacts: false
+
 qa_eks:
   extends: .qa_branch
   variables:
@@ -973,6 +1044,10 @@ qa_gke127_full_suite_manual_trigger:
   extends: .qa_full_suite_manual_trigger
   script: echo 'The job will trigger Full E2E suite against GKE127'
 
+qa_gke129_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against GKE129'
+
 qa_gke125_manual_full_suite:
   extends: .qa_branch
   parallel: 7
@@ -1008,6 +1083,18 @@ qa_gke127_manual_full_suite:
     on_stop: stop_review_gke127
     action: access
   needs: [ "qa_gke127_full_suite_manual_trigger"]
+
+qa_gke129_manual_full_suite:
+  extends: .qa_branch
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/review_gke129"
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
+  environment:
+    name: gke129_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    on_stop: stop_review_gke129
+    action: access
+  needs: [ "qa_gke129_full_suite_manual_trigger"]
 
 qa_eks_full_suite_manual_trigger:
   extends: .qa_full_suite_manual_trigger
