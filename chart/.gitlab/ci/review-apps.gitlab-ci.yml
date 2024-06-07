@@ -19,9 +19,9 @@
     - pin_image_versions
   script:
     - cluster_connect
-    - kubectl version
+    - kubectl version --output=json
     - vcluster_create
-    - vcluster_run kubectl version
+    - vcluster_run kubectl version --output=json
     - vcluster_helm_deploy
     - vcluster_helm_rollout_status
     - vcluster_info

@@ -54,8 +54,28 @@ when restoring a backup.
 
 ### Backups to Google Cloud Storage (GCS)
 
-To backup to GCS you must set `gitlab.toolbox.backups.objectStorage.backend` to `gcs`. This ensures that the Toolbox uses the `gsutil` CLI when storing and retrieving
-objects. Additionally you must set `gitlab.toolbox.backups.objectStorage.config.gcpProject` to the project ID of the GCP project that contains your storage buckets.
+To backup to GCS, you must first set `gitlab.toolbox.backups.objectStorage.backend` to `gcs`. This ensures
+that the Toolbox uses the `gsutil` CLI when storing and retrieving
+objects.
+
+In addition, two bucket locations need to be configured, one for storing
+the backups, and one temporary bucket that is used when restoring a
+backup.
+
+```shell
+--set global.appConfig.backups.bucket=gitlab-backup-storage
+--set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
+```
+
+The backup utility needs access to these buckets. There are two ways to grant access:
+
+- Specifying credentials in a Kubernetes secret.
+- Configuring [Workload Identity Federation for GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity).
+
+#### GCS credentials
+
+First, set `gitlab.toolbox.backups.objectStorage.config.gcpProject` to the project ID of the GCP project that contains your storage buckets.
+
 You must create a Kubernetes secret with the contents of an active service account JSON key where the service account has the `storage.admin` role for the buckets
 you will use for backup. Below is an example of using the `gcloud` and `kubectl` to create the secret.
 
@@ -77,18 +97,19 @@ helm install gitlab gitlab/gitlab \
   --set gitlab.toolbox.backups.objectStorage.backend=gcs
 ```
 
-In addition, two bucket locations need to be configured, one for storing the backups, and one temporary bucket that is used
-when restoring a backup.
+#### Configuring Workload Identity Federation for GKE
 
-```shell
---set global.appConfig.backups.bucket=gitlab-backup-storage
---set global.appConfig.backups.tmpBucket=gitlab-tmp-storage
-```
+See the [documentation on Workload Identity Federation for GKE using the GitLab chart](../advanced/external-object-storage/gke-workload-identity.md).
+
+When creating an IAM allow policy that references the Kubernetes ServiceAccount, grant the `roles/storage.objectAdmin` role.
+
+For backups, ensure that Google's Application Default Credentials are used by making sure that
+`gitlab.toolbox.backups.objectStorage.config.secret` and `gitlab.toolbox.backups.objectStorage.config.key` are NOT set.
 
 ### Backups to Azure blob storage
 
 Azure blob storage can be used to store backups by setting
-`gitlab.toolbox.backups.objectStorage.backend` to `azure`. This will enable
+`gitlab.toolbox.backups.objectStorage.backend` to `azure`. This enables
 Toolbox to use the included copy of `azcopy` to transmit and retrieve the
 backup files to the Azure blob storage.
 

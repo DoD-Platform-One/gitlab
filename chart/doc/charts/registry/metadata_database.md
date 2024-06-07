@@ -99,8 +99,7 @@ Follow the instructions that match your situation:
   - [Three-step migration](#three-step-migration). Recommended for larger container registries.
 
 NOTE:
-Users have reported the one-step import completed at [rates of 2 to 4 TB per hour](https://gitlab.com/gitlab-org/gitlab/-/issues/423459).
-At the slower speed, registries with over 100 TB of data could take longer than 48 hours.
+For a list of import times for various test and user registries, see [this table in issue 423459](https://gitlab.com/gitlab-org/gitlab/-/issues/423459#completed-tests-and-user-reports). Your registry deployment is unique, and your import times might be longer than those reported in the issue.
 
 ### Before you start
 
@@ -131,14 +130,14 @@ To enable the database:
        password:
          secret: gitlab-registry-database-password # must match the secret name
          key: password  # must match the secret key to read the password from
-     sslmode: verify-full
-     ssl:
-       secret: gitlab-registry-postgresql-ssl # you will need to create this secret manually
-       clientKey: client-key.pem
-       clientCertificate: client-cert.pem
-       serverCA: server-ca.pem
-     migrations:
-       enabled: true  # this option will execute the schema migration as part of the registry deployment
+       sslmode: verify-full
+       ssl:
+         secret: gitlab-registry-postgresql-ssl # you will need to create this secret manually
+         clientKey: client-key.pem
+         clientCertificate: client-cert.pem
+         serverCA: server-ca.pem
+       migrations:
+         enabled: true  # this option will execute the schema migration as part of the registry deployment
    ```
 
 1. Optional. You can verify the schema migrations have been applied properly.
@@ -215,8 +214,8 @@ When doing a one-step migration, be aware that:
          clientKey: client-key.pem
          clientCertificate: client-cert.pem
          serverCA: server-ca.pem
-     migrations:
-       enabled: true  # this option will execute the schema migration as part of the registry deployment
+       migrations:
+         enabled: true  # this option will execute the schema migration as part of the registry deployment
    ```
 
 1. Upgrade your Helm installation to apply changes in your deployment:
@@ -253,8 +252,8 @@ When doing a one-step migration, be aware that:
        password:
          secret: gitlab-registry-database-password
          key: password
-     migrations:
-       enabled: true
+       migrations:
+         enabled: true
    ```
 
 1. Upgrade your Helm installation to apply changes in your deployment:

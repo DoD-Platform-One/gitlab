@@ -177,4 +177,13 @@ If you are using Let's Encrypt as your TLS provider and you are facing certifica
    ```
 
    If you see any errors, try removing the certificate object to force requesting a new one.
-1. If nothing of the above works, consider reinstalling the cert-manager.
+
+1. If nothing of the above works, consider removing [existing cert-manager resources](https://cert-manager.io/docs/installation/kubectl/#uninstalling)
+   and reinstalling cert-manager. If you are using the internal
+   cert-manager, delete the deployments with `certmanager` in the name,
+   and re-install the Helm Chart. For example, assuming a release named `gitlab`:
+
+   ```shell
+   kubectl -n <namespace> delete deployment gitlab-certmanager gitlab-certmanager-cainjector gitlab-certmanager-webhook
+   helm upgrade --install -n <namespace> gitlab gitlab/gitlab
+   ```

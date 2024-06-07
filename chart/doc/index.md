@@ -14,12 +14,12 @@ To install a cloud-native version of GitLab, use the GitLab Helm chart.
 This chart contains all the required components to get started and can scale to large deployments.
 
 For OpenShift-based installations, use [GitLab Operator](https://docs.gitlab.com/operator/),
-otherwise you'll have to update the [security context constraints](https://docs.gitlab.com/operator/security_context_constraints.html)
+otherwise you must update the [security context constraints](https://docs.gitlab.com/operator/security_context_constraints.html)
 yourself.
 
 WARNING:
 The default Helm chart configuration is **not intended for production**.
-The default values will create an implementation where _all_ GitLab services are
+The default values create an implementation where _all_ GitLab services are
 deployed in the cluster, which is **not suitable for production workloads**.
 For production deployments, you **must** follow the [Cloud Native Hybrid reference architectures](installation/index.md#use-the-reference-architectures).
 

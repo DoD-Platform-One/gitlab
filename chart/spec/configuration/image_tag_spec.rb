@@ -204,44 +204,5 @@ describe 'image tag configuration' do
         expect(configure['image']).to end_with(':init-tag')
       end
     end
-
-    context 'init Image busybox fallback' do
-      begin
-        values = HelmTemplate.with_defaults %(
-          global:
-            gitlabVersion: 1.2.3
-            busybox:
-              image:
-                tag: bb-tag
-          gitlab:
-            sidekiq:
-              init:
-                image:
-                  tag: init-tag
-        )
-        template = HelmTemplate.new values
-      rescue StandardError
-        # Skip these examples when helm or chart dependencies are missing
-        next
-      end
-
-      let(:template) { template }
-
-      it 'should render the template without error' do
-        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
-      end
-
-      it 'should use the busybox image/tag' do
-        configure = template.find_container('Deployment/test-webservice-default', 'configure', true)
-        expect(configure['image']).to include('busybox')
-        expect(configure['image']).to end_with(':bb-tag')
-      end
-
-      it 'should override the busybox image/tag' do
-        configure = template.find_container('Deployment/test-sidekiq-all-in-1-v2', 'configure', true)
-        expect(configure['image']).to include('busybox')
-        expect(configure['image']).to end_with(':init-tag')
-      end
-    end
   end
 end

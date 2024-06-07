@@ -217,8 +217,6 @@ Sidekiq pods did not receive a unique selector prior to chart release
 Upgrades to `3.0.0` using Helm will automatically delete the old Sidekiq deployments and create new ones by appending `-v1` to the
 name of the Sidekiq `Deployments`,`HPAs`, and `Pods`.
 
-Starting from `5.5.0` Helm will delete old Sidekiq deployments from prior versions and will use `-v2` suffix for `Pods`, `Deployments` and `HPAs`.
-
 If you continue to run into this error on the Sidekiq deployment when installing `3.0.0`, resolve these with the following
 steps:
 
@@ -399,8 +397,7 @@ There are a number of potential causes for this error:
   Git clients sometimes open a connection and leave it idling, like when compressing objects.
   Settings like `timeout client` in HAProxy might cause these idle connections to be terminated.
 
-  In [GitLab 14.0 (chart version 5.0)](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2049)
-  and later, you can set a keepalive in `sshd`:
+  you can set a keepalive in `sshd`:
 
   ```yaml
   gitlab:
@@ -448,10 +445,6 @@ For example, change this:
 key1: value1
 key2: value2
 ```
-
-This change ensures that the configuration can be populated correctly by
-[gomplate](https://gomplate.ca), which was added in GitLab 14.5 (chart version 5.5.0)
-via [MR 2218](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2218).
 
 ## TLS and certificates
 

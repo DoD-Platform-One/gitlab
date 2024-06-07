@@ -32,11 +32,6 @@ Before the migration, a few prerequisites must be met:
 
 ## Migration steps
 
-WARNING:
-JUnit test report artifact (`junit.xml.gz`) migration
-[was not supported until GitLab 12.8](https://gitlab.com/gitlab-org/gitlab/-/issues/27698#note_317190991)
-by the `gitlab:artifacts:migrate` script below.
-
 1. Migrate any existing data from the package-based
    installation to object storage:
 

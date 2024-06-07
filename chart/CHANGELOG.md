@@ -2,6 +2,42 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.0.1 (2024-05-21)
+
+No changes.
+
+## 8.0.0 (2024-05-15)
+
+### Added (5 changes)
+
+- [Add priorityClassName to gitlab-pages pods](gitlab-org/charts/gitlab@961ac7b34b1b1baaa7d47eecc7fefdc2216cacb7) by @joawin ([merge request](gitlab-org/charts/gitlab!3719))
+- [CI: Add jobs for Kubernetes 1.27](gitlab-org/charts/gitlab@9ead9ffaba709110a247899dba9f45347b2552ae) ([merge request](gitlab-org/charts/gitlab!3705))
+- [Add registry.database.configure flag](gitlab-org/charts/gitlab@c2f0c123c0e8229e5683f430dbd3525d522efcf5) ([merge request](gitlab-org/charts/gitlab!3633))
+- [Toolbox: Support GKE Workload Identity Federation for gsutil](gitlab-org/charts/gitlab@f0c004878460961aa462a1be099b4544e38a96a4) ([merge request](gitlab-org/charts/gitlab!3699))
+- [Support configuring Gitaly server side backups](gitlab-org/charts/gitlab@eca493e91a26b0826d0d5b5bd44c4cbc41d9cfa6) ([merge request](gitlab-org/charts/gitlab!3691))
+
+### Fixed (2 changes)
+
+- [Fix calls to extraEnvFrom](gitlab-org/charts/gitlab@c7d0c8fcb0447e5e906d9edfb2df4fde04af786a) ([merge request](gitlab-org/charts/gitlab!3707))
+- [Support consolidated storage settings with ciSecureFiles](gitlab-org/charts/gitlab@89fc636f252c0b4dc8a8fa805b4bca4aa5e17b0d) ([merge request](gitlab-org/charts/gitlab!3728))
+
+### Changed (8 changes)
+
+- [Update gitlab-org/charts/gitlab-runner from 0.64.0 to 0.64.1](gitlab-org/charts/gitlab@def5b82fa5ec640d1907e4b7e3a3582080e70fa0) ([merge request](gitlab-org/charts/gitlab!3739))
+- [Update gitlab-org/container-registry from 3.92.0-gitlab to 4.0.0-gitlab](gitlab-org/charts/gitlab@3e0c35239cdc7fca7c1e92d0ac71249b87e45507) ([merge request](gitlab-org/charts/gitlab!3724))
+- [Update gitlab-org/container-registry from 3.92.0-gitlab to 3.93.0-gitlab](gitlab-org/charts/gitlab@79c06cf9e9b24549038ccfb63dce4522c538cf7b) ([merge request](gitlab-org/charts/gitlab!3724))
+- [Update cert-manager/cert-manager from 1.12.9 to 1.12.10](gitlab-org/charts/gitlab@8e94af7bc5ae876b8280cd4f8ad814a77e688303) ([merge request](gitlab-org/charts/gitlab!3723))
+- [Require upgrade stop at 16.11/chart 7.11](gitlab-org/charts/gitlab@a0d91172013a54af02026cff961b55b66832dacd) ([merge request](gitlab-org/charts/gitlab!3708))
+- [Update gitlab-org/gitlab-qa from 14.7.0 to 14.8.1](gitlab-org/charts/gitlab@52b2110e050827b4647a1edce412437e0f58cd83) ([merge request](gitlab-org/charts/gitlab!3714))
+- [Update gitlab-org/charts/gitlab-runner from 0.63.0 to 0.64.0](gitlab-org/charts/gitlab@7d5e4203d52bd08494089aa86680ea6b2d44366e) ([merge request](gitlab-org/charts/gitlab!3711))
+- [Update gitlab-org/gitlab-qa from 14.6.0 to 14.7.0](gitlab-org/charts/gitlab@3f8d9c2c48e4c30dbb4c2166f41a541afa4c3fa7) ([merge request](gitlab-org/charts/gitlab!3700))
+
+### Removed (3 changes)
+
+- [Remove kas.privateApi.tls.enabled and secretName](gitlab-org/charts/gitlab@bb51a4de6f204e854f287463712d665e9c6370a2) ([merge request](gitlab-org/charts/gitlab!3716))
+- [Remove deprecated queue selector and negate options from Sidekiq chart](gitlab-org/charts/gitlab@6c3bf44290e29b230132bb17d244d38e218eb15b) ([merge request](gitlab-org/charts/gitlab!3697))
+- [Remove support for busybox init containers](gitlab-org/charts/gitlab@f85e7f94cc4863038461daece756081e9d1d960a) ([merge request](gitlab-org/charts/gitlab!3709))
+
 ## 7.11.2 (2024-05-07)
 
 No changes.
@@ -38,6 +74,14 @@ No changes.
 
 - [Allow routing rules to contain shard information](gitlab-org/charts/gitlab@aad02140fdabbf2a045e2701b8f1f5b6c3ab81c5) ([merge request](gitlab-org/charts/gitlab!3682))
 
+## 7.10.5 (2024-05-07)
+
+No changes.
+
+## 7.10.4 (2024-04-24)
+
+No changes.
+
 ## 7.10.3 (2024-04-12)
 
 No changes.
@@ -67,6 +111,18 @@ No changes.
 ### Deprecated (1 change)
 
 - [Removed kubernetes 1.22 testing](gitlab-org/charts/gitlab@ca9ec21a32e28e63b8e731c317d5089384c9c782) ([merge request](gitlab-org/charts/gitlab!3597))
+
+## 7.9.8 (2024-05-09)
+
+No changes.
+
+## 7.9.7 (2024-05-07)
+
+No changes.
+
+## 7.9.6 (2024-04-24)
+
+No changes.
 
 ## 7.9.5 (2024-04-12)
 

@@ -94,8 +94,8 @@ spec:
             {{- toYaml .Values.init.resources | nindent 12 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
-          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 10 }}
-        {{- if .Values.database.enabled }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
+        {{- if or .Values.database.enabled .Values.database.configure }}
         - name: dependencies
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ include "gitlab.image.tagSuffix" . }}"
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
@@ -109,7 +109,7 @@ spec:
             {{- toYaml .Values.init.resources | nindent 12 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
-          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 10 }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
         {{- end }}
       {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
       containers:
@@ -119,7 +119,7 @@ spec:
           {{- include "gitlab.containerSecurityContext" $ | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
-          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 10 }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
           volumeMounts:
           - name: registry-server-config
             mountPath: /etc/docker/registry/
@@ -214,7 +214,7 @@ spec:
                   path: profiling-key.json
           {{- end }}
           {{- include "registry.notifications.secrets" $ | nindent 10 }}
-          {{- if .Values.database.enabled -}}
+          {{- if or .Values.database.enabled .Values.database.configure }}
           {{-   include "gitlab.registry.database.password.projectedVolume" . | nindent 10 }}
           {{-   include "gitlab.registry.psql.ssl" . | nindent 10 }}
           {{- end }}

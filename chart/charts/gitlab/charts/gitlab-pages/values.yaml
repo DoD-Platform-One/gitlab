@@ -114,7 +114,6 @@ ingress:
 tolerations: []
 
 cluster: true
-queueSelector: false
 
 annotations: {}
 podLabels: {}

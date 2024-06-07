@@ -67,7 +67,7 @@ spec:
           {{- include "gitlab.init.containerSecurityContext" $ | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
-          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 12 }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
           volumeMounts:
           {{- include "gitlab.extraVolumeMounts" . | nindent 10 }}
           - name: mailroom-config
@@ -91,7 +91,7 @@ spec:
           {{- include "gitlab.containerSecurityContext" $ | indent 10 }}
           env:
           {{- include "gitlab.extraEnv" . | nindent 10 }}
-          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 10 }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
           volumeMounts:
             - name: mailroom-config
               mountPath: /var/opt/gitlab/mail_room.yml

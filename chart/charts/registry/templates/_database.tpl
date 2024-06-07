@@ -1,10 +1,11 @@
 {{/*
-Return database configuration, if enabled.
+Return database configuration, if settings available.
 */}}
 {{- define "registry.database.config" -}}
-{{- if .Values.database.enabled }}
+{{/*Need to use enabled or configure flags for backwards compatibility*/}}
+{{- if or .Values.database.enabled .Values.database.configure }}
 database:
-  enabled: true
+  enabled: {{ .Values.database.enabled }}
   host: {{ default (include "gitlab.psql.host" .) .Values.database.host | quote }}
   port: {{ default (include "gitlab.psql.port" .) .Values.database.port }}
   user: {{ .Values.database.user }}

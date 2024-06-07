@@ -39,8 +39,7 @@ This safely replaces the behavior of `--reuse-values`
 
 NOTE:
 If you're upgrading to the `7.0` version of the chart, follow the [manual upgrade steps for 7.0](#upgrade-to-version-70).
-If you're upgrading to the `5.0` version of the chart, follow the [manual upgrade steps for 5.0](#upgrade-to-version-50).
-If you're upgrading to the `4.0` version of the chart, follow the [manual upgrade steps for 4.0](#upgrade-to-version-40).
+If you're upgrading to the `6.0` version of the chart, follow the [manual upgrade steps for 6.0](#upgrade-to-version-60).
 If you're upgrading to an older version of the chart, follow the [upgrade steps for older versions](upgrade_old.md).
 
 Before you upgrade, reflect on your set values and if you've possibly "over-configured" your settings. We expect you to maintain a small list of modified values, and leverage most of the chart defaults. If you've explicitly set a large number of settings by:
@@ -90,17 +89,6 @@ To upgrade the bundled PostgreSQL to version 13, the following steps are require
 1. [Delete existing PostgreSQL data](database_upgrade.md#delete-existing-postgresql-data).
 1. Update the `postgresql.image.tag` value to `13.6.0` and [reinstall the chart](database_upgrade.md#upgrade-gitlab) to create a new PostgreSQL 13 database.
 1. [Restore the database](database_upgrade.md#restore-the-database).
-
-### Upgrade the bundled PostgreSQL to version 12
-
-As part of the `5.0.0` release of this chart, we upgraded the bundled PostgreSQL version from `11.9.0` to `12.7.0`. This is
- not a drop in replacement. Manual steps need to be performed to upgrade the database.
-The steps have been documented in the [5.0 upgrade steps](#upgrade-to-version-50).
-
-### Upgrade the bundled PostgreSQL to version 11
-
-As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) from `7.7.0` to `8.9.4`. This is not a drop in replacement. Manual steps need to be performed to upgrade the database.
-The steps have been documented in the [4.0 upgrade steps](#upgrade-to-version-40).
 
 ## Upgrade to version 7.0
 
@@ -180,147 +168,3 @@ to first update to the latest `5.10.x` patch release in order for the upgrade to
 The [6.0 release notes](../releases/6_0.md) describe the supported upgrade path.
 
 To upgrade to the `6.0` release you must first be on the latest `5.10.x` patch release. There isn't any additional manual changes required in `6.0` so you can [follow the regular release upgrade steps](#steps).
-
-## Upgrade to version 5.9
-
-### Sidekiq pod never becomes ready
-
-Upgrading to `5.9.x` may lead to a situation where the Sidekiq pod does not become ready. The pod starts and appears to work properly but never listens on the `3807`, the default metrics endpoint port (`metrics.port`). As a result, the Sidekiq pod is not considered to be ready.
-
-This can be resolved from the **Admin Area**:
-
-1. On the left sidebar, at the bottom, select **Admin Area**.
-1. Select **Settings > Metrics and profiling**.
-1. Expand **Metrics - Prometheus**.
-1. Ensure that **Enable health and performance metrics endpoint** is enabled.
-1. Restart the affected pods.
-
-There is additional conversation about this scenario in a [closed issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3198).
-
-## Upgrade to version 5.5
-
-The `task-runner` chart [was renamed](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/2099/diffs)
-to `toolbox` and removed in `5.5.0`. As a result, any mention of `task-runner`
-in your configuration should be renamed to `toolbox`. In version 5.5 and newer,
-use the `toolbox` chart, and in version 5.4 and older, use the `task-runner` chart.
-
-### Missing object storage secret error
-
-Upgrading to 5.5 or newer might cause an error similar to the following:
-
-```shell
-Error: UPGRADE FAILED: execution error at (gitlab/charts/gitlab/charts/toolbox/templates/deployment.yaml:227:23): A valid backups.objectStorage.config.secret is needed!
-```
-
-If the secret mentioned in the error already exists and is correct, then this error
-is likely because there is an object storage configuration value that still references
-`task-runner` instead of the new `toolbox`. Rename `task-runner` to `toolbox` in your
-configuration to fix this.
-
-There is an [open issue about clarifying the error message](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3004).
-
-## Upgrade to version 5.0
-
-WARNING:
-If you are upgrading from the `4.x` version of the chart to the latest `5.0` release, you need
-to first update to the latest `4.12.x` patch release in order for the upgrade to work.
-The [5.0 release notes](../releases/5_0.md) describe the supported upgrade path.
-
-The `5.0.0` release requires manual steps in order to perform the upgrade. If you're using the
-bundled PostgreSQL, the best way to perform this upgrade is to back up your old database, and
-restore into a new database instance.
-
-WARNING:
-Remember to make a [backup](../backup-restore/index.md)
-before proceeding with the upgrade. Failure to perform these steps as documented **may** result in
-the loss of your database. Ensure you have a separate backup.
-
-If you are using an external PostgreSQL database, you should first upgrade the database to version 12 or greater. Then
-follow the [standard upgrade steps](#steps).
-
-If you are using the bundled PostgreSQL database, you should follow the [bundled database upgrade steps](database_upgrade.md#steps-for-upgrading-the-bundled-postgresql).
-
-### Troubleshooting 5.0 release upgrade process
-
-- If you see any failure during the upgrade, it may be useful to check the description of `gitlab-upgrade-check` pod for details:
-
-  ```shell
-  kubectl get pods -lrelease=RELEASE,app=gitlab
-  kubectl describe pod <gitlab-upgrade-check-pod-full-name>
-  ```
-
-## Upgrade to version 4.0
-
-The `4.0.0` release requires manual steps in order to perform the upgrade. If you're using the
-bundled PostgreSQL, the best way to perform this upgrade is to back up your old database, and
-restore into a new database instance.
-
-WARNING:
-Remember to make a [backup](../backup-restore/index.md)
-before proceeding with the upgrade. Failure to perform these steps as documented **may** result in
-the loss of your database. Ensure you have a separate backup.
-
-If you are using an external PostgreSQL database, you should first upgrade the database to version 11 or greater. Then
-follow the [standard upgrade steps](#steps).
-
-If you are using the bundled PostgreSQL database, you should follow the [bundled database upgrade steps](database_upgrade.md#steps-for-upgrading-the-bundled-postgresql).
-
-### Troubleshooting 4.0 release upgrade process
-
-- If you see any failure during the upgrade, it may be useful to check the description of `gitlab-upgrade-check` pod for details:
-
-  ```shell
-  kubectl get pods -lrelease=RELEASE,app=gitlab
-  kubectl describe pod <gitlab-upgrade-check-pod-full-name>
-  ```
-
-#### 4.8: Repository data appears to be lost upgrading Praefect
-
-The Praefect chart is not yet considered suitable for production use.
-
-If you have enabled Praefect before upgrading to version 4.8 of the chart (GitLab 13.8),
-note that the StatefulSet name for Gitaly will now include the virtual storage name.
-
-In version 4.8 of the Praefect chart, the ability to specify multiple virtual storages
-was added, making it necessary to change the StatefulSet name.
-
-Any existing Praefect-managed Gitaly StatefulSet names (and, therefore, their
-associated PersistentVolumeClaims) will change as well, leading to repository data
-appearing to be lost.
-
-Prior to upgrading, ensure that:
-
-- All your repositories are in sync across the Gitaly Cluster, and GitLab
-  is not in use during the upgrade. To check whether the repositories are in sync,
-  run the following command in one of your Praefect pods:
-
-  ```shell
-  /usr/local/bin/praefect -config /etc/gitaly/config.toml dataloss
-  ```
-
-- You have a complete and tested backup.
-
-Repository data can be restored by following the
-[managing persistent volumes documentation](../advanced/persistent-volumes/index.md),
-which provides guidance on reconnecting existing PersistentVolumeClaims to previous
-PersistentVolumes.
-
-A key step of the process is setting the old persistent volumes' `persistentVolumeReclaimPolicy`
-to `Retain`. If this step is missed, actual data loss will likely occur.
-
-After reviewing the documentation, there is a scripted summary of the procedure
-[in a comment on one of a related issues](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2532#note_506467539).
-
-Having reconnected the PersistentVolumes, it is likely that all your repositories
-will be set `read-only` by Praefect, as shown by running the following in a
-Praefect container:
-
-```plaintext
-praefect -config /etc/gitaly/config.toml dataloss
-```
-
-If all your Git repositories are in sync across the old persistent volumes, use the
-`accept-dataloss` procedure for each repository to fix the Gitaly Cluster in Praefect.
-
-[We have an issue open](https://gitlab.com/gitlab-org/gitaly/-/issues/3448) to verify
-that this is the best approach to fixing Praefect.

@@ -26,7 +26,7 @@ Registry: Notifications should be defined in the global scope. Use `global.regis
 Ensure Registry database is configured properly and dependencies are met
 */}}
 {{- define "gitlab.checkConfig.registry.database" -}}
-{{-   if $.Values.registry.database.enabled }}
+{{-   if not (quote $.Values.registry.database.sslmode | empty)  }}
 {{-     $validSSLModes := list "require" "disable" "allow" "prefer" "require" "verify-ca" "verify-full" -}}
 {{-     if not (has $.Values.registry.database.sslmode $validSSLModes) }}
 registry:

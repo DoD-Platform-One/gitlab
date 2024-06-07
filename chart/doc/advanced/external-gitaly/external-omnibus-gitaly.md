@@ -75,14 +75,17 @@ gitlab_rails['auto_migrate'] = false
 gitlab_rails['internal_api_url'] = 'GITLAB_URL'
 gitlab_shell['secret_token'] = 'SHELL_TOKEN'
 
-# Make Gitaly accept connections on all network interfaces. You must use
-# firewalls to restrict access to this address/port.
-# Comment out following line if you only want to support TLS connections
-gitaly['listen_addr'] = "0.0.0.0:8075"
-
-# Authentication token to ensure only authorized servers can communicate with
-# Gitaly server
-gitaly['auth_token'] = 'AUTH_TOKEN'
+gitaly['configuration'] = {
+    # Make Gitaly accept connections on all network interfaces. You must use
+    # firewalls to restrict access to this address/port.
+    # Comment out following line if you only want to support TLS connections
+    listen_addr: '0.0.0.0:8075',
+    # Authentication token to ensure only authorized servers can communicate with
+    # Gitaly server
+    auth: {
+        token: 'AUTH_TOKEN',
+    },
+}
 
 git_data_dirs({
  'default' => {

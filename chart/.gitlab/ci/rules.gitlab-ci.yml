@@ -31,7 +31,7 @@ workflow:
       variables:
         PIPELINE_TYPE: RELEASE_PIPELINE
     ## Docs pipelines
-    - if: '$PIPELINE_TYPE == null && ($CI_COMMIT_BRANCH =~ /(^docs-|-docs$)/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /(^docs-|-docs$)/)'
+    - if: '$PIPELINE_TYPE == null && ($CI_COMMIT_BRANCH =~ /(^docs-|-docs$|^docs\/)/ || $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /(^docs-|-docs$|^docs\/)/)'
       variables:
         PIPELINE_TYPE: DOCS_PIPELINE
     ## MR pipelines

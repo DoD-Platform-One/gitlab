@@ -31,6 +31,9 @@ describe "Restoring a backup" do
     stdout, status = set_runner_token
     fail stdout unless status.success?
 
+    stdout, status = enable_legacy_runner_registration
+    fail stdout unless status.success?
+
     stdout, status = run_migrations
     fail stdout unless status.success?
 

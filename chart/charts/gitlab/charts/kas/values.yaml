@@ -117,12 +117,9 @@ workhorse: {}
 # merged with the default kas config
 customConfig: {}
 
-privateApi:
+privateApi: {}
   # secret:
   # key:
-  tls:
-    enabled: false # DEPRECATED: in favor of `global.kas.tls.enabled`
-      # secretName: # DEPRECATED: in favor of `global.kas.tls.secretName`
 deployment:
   terminationGracePeriodSeconds: 300
   strategy: {}

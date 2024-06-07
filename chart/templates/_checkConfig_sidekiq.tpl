@@ -1,16 +1,3 @@
-{{/* Check configuration of Sidekiq - don't supply queues and negateQueues */}}
-{{- define "gitlab.checkConfig.sidekiq.queues.mixed" -}}
-{{- if .Values.gitlab.sidekiq.pods -}}
-{{-   range $pod := .Values.gitlab.sidekiq.pods -}}
-{{-     if and (hasKey $pod "queues") (hasKey $pod "negateQueues") }}
-sidekiq: mixed queues
-    It appears you've supplied both `queues` and `negateQueues` for the pod definition of `{{ $pod.name }}`. `negateQueues` is not usable if `queues` is provided. Please use only one.
-{{-     end -}}
-{{-   end -}}
-{{- end -}}
-{{- end -}}
-{{/* END gitlab.checkConfig.sidekiq.queues.mixed */}}
-
 {{/* Check configuration of Sidekiq - queues must be a string */}}
 {{- define "gitlab.checkConfig.sidekiq.queues" -}}
 {{- if .Values.gitlab.sidekiq.pods -}}
@@ -18,9 +5,6 @@ sidekiq: mixed queues
 {{-     if and (hasKey $pod "queues") (ne (kindOf $pod.queues) "string") }}
 sidekiq:
     The `queues` in pod definition `{{ $pod.name }}` is not a string.
-{{-     else if and (hasKey $pod "negateQueues") (ne (kindOf $pod.negateQueues) "string") }}
-sidekiq:
-    The `negateQueues` in pod definition `{{ $pod.name }}` is not a string.
 {{-     end -}}
 {{-   end -}}
 {{- end -}}

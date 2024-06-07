@@ -245,6 +245,54 @@ describe 'registry configuration' do
           )
         end
       end
+
+      context "when database configuration is required" do
+        using RSpec::Parameterized::TableSyntax
+
+        # rubocop:disable Lint/BinaryOperatorWithIdenticalOperands
+        where(:enabled, :configure, :include_db_config) do
+          false | false | false
+          true  | false | true # Backwards compatibility with .registry.database.enabled.
+          false | true  | true
+          true  | true  | true
+        end
+        # rubocop:enable Lint/BinaryOperatorWithIdenticalOperands
+
+        with_them do
+          let(:values) do
+            YAML.safe_load(%(
+            registry:
+              database:
+                configure: #{configure}
+                enabled: #{enabled}
+          )).deep_merge(default_values)
+          end
+
+          let(:config) do
+            <<~CONFIG
+            database:
+              enabled: #{enabled}
+              host: "test-postgresql.default.svc"
+              port: 5432
+              user: registry
+              password: "DB_PASSWORD_FILE"
+              dbname: registry
+              sslmode: disable
+            CONFIG
+          end
+
+          it 'populates the database settings correctly' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            if include_db_config
+              expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml')).to include(config)
+            else
+              expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml')).not_to include(config)
+            end
+          end
+        end
+      end
     end
 
     describe 'redis cache config' do
