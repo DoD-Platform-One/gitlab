@@ -412,7 +412,7 @@ sidekiq.pods[{{ $index }}] ({{ $pod.name }}):
 {{/* END gitlab.deprecate.sidekiq.pods.cluster */}}
 
 {{- define "gitlab.deprecate.sidekiq.queueSelector" -}}
-{{- if and (hasKey .Values.gitlab.sidekiq "queueSelector") (eq true .Values.gitlab.sidekiq.queueSelector) }}
+{{- if hasKey .Values.gitlab.sidekiq "queueSelector" }}
 sidekiq:
     The configuration of 'gitlab.sidekiq.queueSelector' should be removed. Please follow the steps at https://docs.gitlab.com/ee/administration/sidekiq/extra_sidekiq_processes.html#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
 {{- end }}
@@ -421,7 +421,7 @@ sidekiq:
 
 {{- define "gitlab.deprecate.sidekiq.pods.queueSelector" -}}
 {{- range $index, $pod := .Values.gitlab.sidekiq.pods -}}
-{{-   if and (hasKey $pod "queueSelector") }}
+{{-   if hasKey $pod "queueSelector" }}
 sidekiq.pods[{{ $index }}] ({{ $pod.name }}):
     The configuration of 'gitlab.sidekiq.pods[{{ $index }}].queueSelector' should be removed. Please follow the steps at https://docs.gitlab.com/ee/administration/sidekiq/extra_sidekiq_processes.html#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
 {{-   end -}}
