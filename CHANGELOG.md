@@ -2,6 +2,24 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.2-bb.0] (2024-06-17)
+### Changed
+- Update ironbank/gitlab/gitlab/gitlab-webservice 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.59.0 -> v1.60.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/certificates 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.0.1 -> 17.0.2
+- Update registry1.dso.mil/ironbank/opensource/postgres/postgresql 14.11 -> 14.12
+
 ## [8.0.1-bb.0] (2024-05-23)
 ### Changed
 - Skipped 17.0.0 release, see this [Gitlab security release](https://about.gitlab.com/releases/2024/05/22/patch-release-gitlab-17-0-1-released/) for details.
