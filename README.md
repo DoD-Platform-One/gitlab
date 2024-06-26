@@ -5,11 +5,13 @@
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -21,12 +23,13 @@ GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install gitlab chart/
 ```
