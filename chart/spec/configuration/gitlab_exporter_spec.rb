@@ -1,7 +1,9 @@
 require 'spec_helper'
 require 'helm_template_helper'
-require 'yaml'
+require 'runtime_template_helper'
 require 'hash_deep_merge'
+require 'tomlrb'
+require 'yaml'
 
 describe 'gitlab-exporter configuration' do
   let(:default_values) do
@@ -13,6 +15,26 @@ describe 'gitlab-exporter configuration' do
             enabled: true
             create: true
     ))
+  end
+  let(:template) { HelmTemplate.new(values) }
+  let(:raw_erb) { template.dig('ConfigMap/test-gitlab-exporter', 'data', 'gitlab-exporter.yml.erb') }
+  let(:rendered_erb) { render_erb(raw_erb) }
+  let(:sidekiq_config) { rendered_erb['probes']['sidekiq'] }
+  let(:password) { ERB::Util.url_encode(RuntimeTemplate::JUNK_PASSWORD) }
+
+  def render_erb(raw_template)
+    yaml = RuntimeTemplate.erb(raw_template: raw_template, files: RuntimeTemplate.mock_files)
+    YAML.safe_load(yaml, aliases: true)
+  end
+
+  context 'with default values' do
+    let(:values) { default_values }
+
+    it 'configures Redis' do
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@test-redis-master.default.svc:6379")
+      expect(sidekiq_config['opts']).not_to include('redis_sentinels')
+    end
   end
 
   context 'When customer provides additional labels' do
@@ -59,6 +81,67 @@ describe 'gitlab-exporter configuration' do
       expect(t.dig('Service/test-gitlab-exporter', 'metadata', 'labels')).to include('service' => 'true')
       expect(t.dig('Service/test-gitlab-exporter', 'metadata', 'labels')).not_to include('global' => 'global')
       expect(t.dig('ServiceAccount/test-gitlab-exporter', 'metadata', 'labels')).to include('global' => 'exporter')
+    end
+  end
+
+  context 'with redis sentinel' do
+    let(:values) do
+      YAML.safe_load(%(
+        global:
+          redis:
+            host: global.host
+            sentinels:
+            - host: sentinel1.example.com
+              port: 26379
+            - host: sentinel2.example.com
+              port: 26379
+      )).deep_merge(default_values)
+    end
+
+    it 'configures Sentinels' do
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@global.host:6379")
+      expect(sidekiq_config['opts']['redis_sentinels']).to eq(
+        [
+          { 'host' => 'sentinel1.example.com', 'port' => 26379 },
+          { 'host' => 'sentinel2.example.com', 'port' => 26379 }
+        ])
+    end
+
+    context 'with Sentinel password as secret' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: global.host
+              sentinels:
+              - host: sentinel1.example.com
+                port: 26379
+              - host: sentinel2.example.com
+                port: 26379
+              sentinelAuth:
+                enabled: true
+                secret: test-redis-sentinel-secret
+                key: password
+        )).deep_merge(default_values)
+      end
+
+      let(:volumes) { template.dig('Deployment/test-gitlab-exporter', 'spec', 'template', 'spec', 'volumes') }
+      let(:secret_volumes) { volumes.find { |volume| volume['name'] == 'init-gitlab-exporter-secrets' } }
+      let(:secret_names) { secret_volumes.dig('projected', 'sources').map { |source| source['secret'] }.map { |secret| secret['name'] } }
+
+      it 'configures Sentinels with password' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+        expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@global.host:6379")
+        expect(sidekiq_config['opts']['redis_sentinel_password']).to eq(RuntimeTemplate::JUNK_PASSWORD)
+        expect(sidekiq_config['opts']['redis_sentinels']).to eq(
+          [
+            { 'host' => 'sentinel1.example.com', 'port' => 26379 },
+            { 'host' => 'sentinel2.example.com', 'port' => 26379 }
+          ])
+
+        expect(secret_names).to include('test-redis-sentinel-secret')
+      end
     end
   end
 

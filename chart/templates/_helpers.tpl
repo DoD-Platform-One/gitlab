@@ -584,3 +584,19 @@ result in different hash values due to fields like `Release.IsUpgrade`,
 {{-     printf "%s-%s-%s" .Chart.Version .Chart.AppVersion ( $values | toYaml | b64enc ) | sha256sum | trunc 7 -}}
 {{-   end -}}
 {{- end -}}
+
+{{/*
+Return a boolean value that indicates whether a given key exists in the provided environment
+variables.
+
+Usage: {{- include checkDuplicateKeyFromEnv (dict "keyToFind" "MY_KEY", "extraEnv" .Values.extraEnv, "extraEnvFrom"
+.Values.extraEnvFrom) -}}
+*/}}
+{{- define "checkDuplicateKeyFromEnv" -}}
+  {{- $keyToFind := .keyToFind -}}
+  {{- $extraEnv := .extraEnv -}}
+  {{- $extraEnvFrom := .extraEnvFrom -}}
+  {{- $combinedKeys := merge $extraEnv $extraEnvFrom -}}
+  
+  {{ hasKey $combinedKeys $keyToFind }}
+{{- end -}}

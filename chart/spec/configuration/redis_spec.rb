@@ -43,6 +43,42 @@ describe 'Redis configuration' do
     end
   end
 
+  describe 'global.redis.sentinelAuth.enabled' do
+    let(:values) do
+      YAML.safe_load(%(
+        global:
+          redis:
+            sentinelAuth:
+              enabled: true
+      )).merge(default_values)
+    end
+
+    context 'when true' do
+      it 'populate password' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).to include("redis-sentinel/redis-sentinel-password")
+      end
+    end
+
+    context 'when false' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              senntinelAuth:
+                enabled: false
+        )).merge(default_values)
+      end
+
+      it 'do not populate password' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0)
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).not_to include("redis-sentinel/redis-sentinel-password")
+      end
+    end
+  end
+
   describe 'redis.yml override' do
     context 'when redisYmlOverride is set' do
       context 'when redisYmlOverrideSecrets contains invalid secrets' do

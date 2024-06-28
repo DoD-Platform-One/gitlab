@@ -57,7 +57,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "17.0.2"
+  gitlabVersion: "17.1.1"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -194,6 +194,10 @@ global:
     # sentinels:
     #   - host:
     #     port:
+    sentinelAuth:
+      enabled: false
+      # secret:
+      # key:
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-gitaly-settings
   gitaly:
@@ -643,6 +647,8 @@ global:
   rails:
     bootsnap: # Enable / disable Shopify/Bootsnap cache
       enabled: true
+    sessionStore:
+      sessionCookieTokenPrefix: ""
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-registry-settings
   registry:
@@ -668,7 +674,8 @@ global:
       #   - name: FooListener
       #     url: https://foolistener.com/event
       #     timeout: 500ms
-      #     threshold: 10
+      #     threshold: 10 # DEPRECATED: use maxretries instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
+      #     maxretries: 5
       #     backoff: 1s
       #     headers:
       #       FooBar: ['1', '2']
@@ -767,10 +774,19 @@ global:
   deployment:
     annotations: {}
 
+
+  # Setting a global nodeAffinity only applies to the registry chart for now.
+  # See issue https://gitlab.com/gitlab-com/gl-infra/production-engineering/-/issues/25403 for more information
+
+  nodeAffinity:
+
   antiAffinity: soft
   affinity:
     podAntiAffinity:
       topologyKey: "kubernetes.io/hostname"
+    nodeAffinity:
+      key: topology.kubernetes.io/zone
+      values: []
 
   # Priority class assigned to pods, may be overridden for individual components
   # https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
@@ -798,7 +814,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     init:
@@ -846,7 +862,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1235,7 +1251,7 @@ redis:
     image:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
-      tag: v1.60.0
+      tag: v1.61.0
       pullSecrets: []
     resources:
       limits:
@@ -1320,7 +1336,7 @@ redis:
         cpu: 250m
         memory: 256Mi
 
-## Installation & configuration of stable/prostgresql
+## Installation & configuration of stable/postgresql
 ## See requirements.yaml for current version
 postgresql:
   install: true
@@ -1424,7 +1440,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 17.0.2
+    tag: 17.1.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1558,7 +1574,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1630,7 +1646,7 @@ gitlab:
         - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1675,7 +1691,7 @@ gitlab:
         memory: 1.5G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1717,14 +1733,14 @@ gitlab:
     resources:
       # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
       limits:
-        cpu: 600m # double the default
+        cpu: 1000m # double the default
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
       requests:
-        cpu: 600m # double the default
+        cpu: 300m # double the default
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1737,7 +1753,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1761,7 +1777,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1798,7 +1814,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1839,7 +1855,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1883,7 +1899,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 17.0.2
+      tag: 17.1.1
       pullSecrets:
         - name: private-registry
     containerSecurityContext:
@@ -1900,7 +1916,7 @@ gitlab:
         type: ClusterIP
     image:
       repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 17.0.2
+      tag: 17.1.1
     containerSecurityContext:
       capabilities:
         drop:
@@ -1911,7 +1927,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.0.2
+      tag: 17.1.1
     init:
       resources:
         limits:

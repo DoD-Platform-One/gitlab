@@ -23,7 +23,7 @@ of the version running in your cluster.
 
 ### Helm
 
-Install Helm v3.9.4 or later by following [the Helm documentation](https://helm.sh/docs/intro/install/).
+Install Helm v3.10.3 or later by following [the Helm documentation](https://helm.sh/docs/intro/install/).
 
 ### PostgreSQL
 
@@ -51,6 +51,16 @@ For all the available configuration settings, see the
 
 As of GitLab chart 4.0.0, replication is available internally, but
 not enabled by default. Such functionality has not been load tested by GitLab.
+
+### Gitaly
+
+By default, the GitLab chart includes an in-cluster Gitaly deployment. For production, running Gitaly in Kubernetes is not supported.
+[Gitaly is only supported on conventional virtual machines](https://docs.gitlab.com/ee/administration/reference_architectures/index.html#stateful-components-in-kubernetes).
+
+You should set up an
+[external, production-ready Gitaly instance](../advanced/external-gitaly/index.md).
+For all the available configuration settings, see the
+[Gitaly globals documentation](../charts/globals.md#configure-gitaly-settings).
 
 ## Decide on other options
 

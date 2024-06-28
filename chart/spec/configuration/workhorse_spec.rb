@@ -4,6 +4,7 @@ require 'helm_template_helper'
 require 'tomlrb'
 require 'yaml'
 require 'hash_deep_merge'
+require 'runtime_template_helper'
 
 describe 'Workhorse configuration' do
   let(:default_values) do
@@ -12,6 +13,7 @@ describe 'Workhorse configuration' do
   let(:template) { HelmTemplate.new(default_values) }
   let(:raw_toml) { template.dig('ConfigMap/test-workhorse-default', 'data', 'workhorse-config.toml.tpl') }
   let(:global_redis_password) { SecureRandom.hex }
+  let(:global_redis_sentinel_password) { SecureRandom.hex }
   let(:workhorse_redis_password) { SecureRandom.hex }
 
   def render_toml(raw_template, object_store_config = nil)
@@ -20,11 +22,12 @@ describe 'Workhorse configuration' do
       input_file = File.join(tmpdir, 'input.tpl')
       File.write(input_file, raw_template)
 
-      directories = %w[redis objectstorage]
+      directories = %w[redis redis-sentinel objectstorage]
       directories.each { |dir| FileUtils.mkdir(File.join(tmpdir, dir)) }
       # Write bogus redis password
       File.write(File.join(tmpdir, "redis", "redis-password"), global_redis_password)
       File.write(File.join(tmpdir, "redis", "workhorse-password"), workhorse_redis_password)
+      File.write(File.join(tmpdir, "redis-sentinel", "redis-sentinel-password"), global_redis_sentinel_password)
       File.write(File.join(tmpdir, "objectstorage", "object_store"), object_store_config) if object_store_config
 
       cmd = "gomplate --left-delim '{%' --right-delim '%}' --file #{input_file}"
@@ -35,6 +38,16 @@ describe 'Workhorse configuration' do
 
       Tomlrb.parse(stdout)
     end
+  end
+
+  def render_erb(raw_template)
+    files = {
+      '/etc/gitlab/redis/workhorse-password' => workhorse_redis_password,
+      '/etc/gitlab/redis-sentinel/redis-sentinel-password' => global_redis_sentinel_password
+    }
+
+    yaml = RuntimeTemplate.erb(raw_template: raw_template, files: files)
+    YAML.safe_load(yaml)
   end
 
   it 'renders a TOML configuration file' do
@@ -245,7 +258,13 @@ describe 'Workhorse configuration' do
         )).merge(default_values)
       end
 
+      let(:webservice_config) { template.dig('ConfigMap/test-webservice', 'data') }
+      let(:redis_workhorse_raw_yml) { webservice_config['redis.workhorse.yml.erb'] }
+      let(:redis_workhorse_yml) { render_erb(redis_workhorse_raw_yml) }
+
       it 'overrides global redis config' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+
         toml = render_toml(raw_toml)
 
         expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
@@ -273,6 +292,59 @@ describe 'Workhorse configuration' do
           expect(redis_config.keys).to match_array(%w[SentinelMaster Sentinel])
           expect(redis_config['SentinelMaster']).to eq('workhorse.redis')
           expect(redis_config['Sentinel']).to match_array(%w[tcp://s1.workhorse.redis:26379 tcp://s2.workhorse.redis:26379])
+        end
+      end
+
+      context 'with redis sentinel authentication' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: global.redis
+                auth:
+                  enabled: true
+                  secret: global-secret
+                sentinelAuth:
+                  enabled: true
+                  secret: redis-sentinel-secret
+                  key: password
+                workhorse:
+                  host: workhorse.redis
+                  sentinels:
+                  - host: s1.workhorse.redis
+                    port: 26379
+                  - host: s2.workhorse.redis
+                    port: 26379
+                  password:
+                    enabled: true
+                    secret: workhorse
+                  sentinelAuth: # Unsupported, so test that the override doesn't do anything
+                    enabled: true
+                    secret: workhorse-redis-sentinel-secret
+                    key: password
+            redis:
+              install: false
+          )).merge(default_values)
+        end
+
+        it 'uses global redis config' do
+          toml = render_toml(raw_toml)
+
+          expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+          redis_config = toml['redis']
+          expect(redis_config.keys).to match_array(%w[Password SentinelMaster Sentinel SentinelPassword])
+          expect(redis_config['SentinelMaster']).to eq('workhorse.redis')
+          expect(redis_config['Sentinel']).to match_array(%w[tcp://s1.workhorse.redis:26379 tcp://s2.workhorse.redis:26379])
+          expect(redis_config['Password']).to eq(workhorse_redis_password)
+          expect(redis_config['SentinelPassword']).to eq(global_redis_sentinel_password)
+
+          expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+
+          expect(template.dig("ConfigMap/test-workhorse-default", "data", 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
+          expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
+
+          expect(redis_workhorse_yml['production']['sentinel_password']).to eq(global_redis_sentinel_password)
         end
       end
     end

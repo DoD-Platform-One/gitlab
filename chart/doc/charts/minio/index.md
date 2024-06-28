@@ -87,7 +87,6 @@ to the `helm install` command using the `--set` flags:
 | `persistence.volumeName`       |                               | MinIO existing persistent volume name   |
 | `priorityClassName`            |                               | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |
 | `pullSecrets`                  |                               | Secrets for the image repository        |
-| `replicas`                     | `4`                           | MinIO number of replicas                |
 | `resources.requests.cpu`       | `250m`                        | MinIO minimum CPU requested             |
 | `resources.requests.memory`    | `256Mi`                       | MinIO minimum memory requested          |
 | `securityContext.fsGroup`      | `1000`                        | Group ID to start the pod with          |

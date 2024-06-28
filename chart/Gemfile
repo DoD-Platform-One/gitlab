@@ -29,4 +29,5 @@ end
 
 group :development do
   gem 'solargraph'
+  gem 'jaro_winkler', '> 1.5.4'
 end

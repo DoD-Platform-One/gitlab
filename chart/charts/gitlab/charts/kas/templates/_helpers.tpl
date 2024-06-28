@@ -37,6 +37,9 @@ sentinel:
     - {{ quote (print (trim $entry.host) ":" ( default 26379 $entry.port | int ) ) -}}
   {{ end }}
   master_name: {{ template "gitlab.redis.host" . }}
+{{- if .redisMergedConfig.sentinelAuth.enabled }}
+  sentinel_password_file: "/etc/kas/redis-sentinel/redis-sentinel-password"
+{{- end -}}
 {{- end -}}
 {{- if eq (.redisMergedConfig.scheme | default "") "rediss" }}
 tls:

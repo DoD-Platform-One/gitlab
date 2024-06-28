@@ -59,9 +59,9 @@ For example, here is the [Cloud Native Hybrid reference architecture](https://do
 GitLab develops Infrastructure as Code that is capable of configuring the combination of Helm charts and supplemental cloud infrastructure:
 
 - [GitLab Environment Toolkit IaC](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit).
-- [AWS Quick Start on EKS IaC](https://docs.gitlab.com/ee/install/aws/gitlab_hybrid_on_aws.html):
+- [AWS Quick Start on EKS IaC](https://docs.gitlab.com/ee/solutions/cloud/aws/gitlab_instance_on_aws.html):
   This tooling is under development. For GA status, follow
   [this issue](https://gitlab.com/gitlab-com/alliances/aws/public-tracker/-/issues/11).
-- [Implementation pattern: Provision GitLab cloud native hybrid on AWS EKS](https://docs.gitlab.com/ee/install/aws/gitlab_hybrid_on_aws.html):
+- [Implementation pattern: Provision GitLab cloud native hybrid on AWS EKS](https://docs.gitlab.com/ee/solutions/cloud/aws/gitlab_instance_on_aws.html):
   This resource provides a Bill of Materials tested with the GitLab Performance Toolkit,
   and uses the AWS Cost Calculator for budgeting.

@@ -27,6 +27,9 @@ spec:
       {{- if .Values.backups.cron.activeDeadlineSeconds }}
       activeDeadlineSeconds: {{ .Values.backups.cron.activeDeadlineSeconds }}
       {{- end }}
+      {{- if .Values.backups.cron.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ .Values.backups.cron.ttlSecondsAfterFinished }}
+      {{- end }}
       template:
         metadata:
           labels:
@@ -188,6 +191,7 @@ spec:
                         path: shell/.gitlab_shell_secret
                 {{- include "gitlab.gitaly.clientSecrets" . | nindent 16 }}
                 {{- include "gitlab.redis.secrets" (dict "globalContext" $) | nindent 16 }}
+                {{- include "gitlab.redisSentinel.secret" $ | nindent 16 }}
                 {{- range $.Values.local.psql }}
                 {{- include "gitlab.psql.secret" . | nindent 16 }}
                 {{- end }}

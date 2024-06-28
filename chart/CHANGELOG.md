@@ -2,6 +2,43 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.1.1 (2024-06-25)
+
+No changes.
+
+## 8.1.0 (2024-06-19)
+
+### Added (6 changes)
+
+- [feat: add support for Redis Sentinel passwords in MailRoom](gitlab-org/charts/gitlab@676d8114693ab604094423893d1bcbe4995108af) ([merge request](gitlab-org/charts/gitlab!3792))
+- [feat: add support for Redis Sentinel passwords in GitLab Exporter](gitlab-org/charts/gitlab@4b097809240bb89e9821346c44b4b4f59bc4644f) ([merge request](gitlab-org/charts/gitlab!3792))
+- [Set GOMEMLIMIT for Gitaly container](gitlab-org/charts/gitlab@2412974df2a2cc2dc580ceb57937d3668020dc16) ([merge request](gitlab-org/charts/gitlab!3758))
+- [feat: add support for configuring Redis Sentinels with GitLab Exporter](gitlab-org/charts/gitlab@d6552e0ef3059cc23858345d634fb06b299d76a8) ([merge request](gitlab-org/charts/gitlab!3781))
+- [Ability to prefix session cookies](gitlab-org/charts/gitlab@dd4d70b63ec8446c7fd457a71748fa71c1e584f4) ([merge request](gitlab-org/charts/gitlab!3773))
+- [Add ttlSecondsAfterFinished option to toolbox cron backup jobs](gitlab-org/charts/gitlab@16bf374b8c519dcb960eedeb5a2e51f9c84b8324) by @mtorrinha ([merge request](gitlab-org/charts/gitlab!3747))
+
+### Fixed (1 change)
+
+- [Change queueSelector deprecations to not depend on type](gitlab-org/charts/gitlab@d5eeeb2a175ab74f7ec6a5adad13c4394e958f09) ([merge request](gitlab-org/charts/gitlab!3768))
+
+### Changed (11 changes)
+
+- [Update gitlab-org/container-registry from 4.1.0-gitlab to 4.5.0-gitlab](gitlab-org/charts/gitlab@8ea987dcf622d954ddf6dc9ccf0594beb4f4db65) ([merge request](gitlab-org/charts/gitlab!3776))
+- [Update gitlab-org/container-registry from 4.1.0-gitlab to 4.4.0-gitlab](gitlab-org/charts/gitlab@8441f28072c90a78bae926a7ffb70dc8ba3cc3a0) ([merge request](gitlab-org/charts/gitlab!3776))
+- [Update cert-manager/cert-manager from 1.12.10 to 1.12.11](gitlab-org/charts/gitlab@0fcbbca6c853bfe7ef08f791afeb676d3338cc22) ([merge request](gitlab-org/charts/gitlab!3797))
+- [Update gitlab-org/container-registry from 4.1.0-gitlab to 4.3.0-gitlab](gitlab-org/charts/gitlab@9860244e19b71108dc4876e0d6c3ee773f186010) ([merge request](gitlab-org/charts/gitlab!3776))
+- [Update gitlab-org/gitlab-exporter from 14.5.0 to 15.0.0](gitlab-org/charts/gitlab@2818c940eeb9883f67013ef9d6a0089ad473d868) ([merge request](gitlab-org/charts/gitlab!3784))
+- [Update gitlab-org/container-registry from 4.1.0-gitlab to 4.2.0-gitlab](gitlab-org/charts/gitlab@df98f4d0e15e08ae1e90a9953d34c513ebcea394) ([merge request](gitlab-org/charts/gitlab!3776))
+- [Update gitlab-org/charts/gitlab-runner from 0.64.1 to 0.65.0](gitlab-org/charts/gitlab@07204aa9b376e1172cb0c6407dea40784cd8a20a) ([merge request](gitlab-org/charts/gitlab!3774))
+- [Update gitlab-qa from 14.8.1 to 14.9.0](gitlab-org/charts/gitlab@527e6c93b1752021123f22b7d238ef700f6beb0e) ([merge request](gitlab-org/charts/gitlab!3735))
+- [Update gitlab-org/gitlab-exporter from 14.4.0 to 14.5.0](gitlab-org/charts/gitlab@6ec63d34610d002536a9afcc7f562bf3d5de8372) ([merge request](gitlab-org/charts/gitlab!3740))
+- [Update minimum Helm version to 3.10](gitlab-org/charts/gitlab@f660ec9a337a8fa7eae5803e94ab9af9f419dcdb) ([merge request](gitlab-org/charts/gitlab!3726))
+- [Update gitlab-org/container-registry from 4.0.0-gitlab to 4.1.0-gitlab](gitlab-org/charts/gitlab@2684ffdfc996dbfb832799054bb224a2c9ee87b5) ([merge request](gitlab-org/charts/gitlab!3750))
+
+### Removed (1 change)
+
+- [Remove gke125 CI jobs](gitlab-org/charts/gitlab@57ced9243021af6de6e324f2ec5ad17b5dcf975e) ([merge request](gitlab-org/charts/gitlab!3760))
+
 ## 8.0.2 (2024-06-11)
 
 No changes.
@@ -42,6 +79,14 @@ No changes.
 - [Remove deprecated queue selector and negate options from Sidekiq chart](gitlab-org/charts/gitlab@6c3bf44290e29b230132bb17d244d38e218eb15b) ([merge request](gitlab-org/charts/gitlab!3697))
 - [Remove support for busybox init containers](gitlab-org/charts/gitlab@f85e7f94cc4863038461daece756081e9d1d960a) ([merge request](gitlab-org/charts/gitlab!3709))
 
+## 7.11.4 (2024-06-11)
+
+No changes.
+
+## 7.11.3 (2024-05-21)
+
+No changes.
+
 ## 7.11.2 (2024-05-07)
 
 No changes.
@@ -77,6 +122,14 @@ No changes.
 ### Other (1 change)
 
 - [Allow routing rules to contain shard information](gitlab-org/charts/gitlab@aad02140fdabbf2a045e2701b8f1f5b6c3ab81c5) ([merge request](gitlab-org/charts/gitlab!3682))
+
+## 7.10.7 (2024-06-11)
+
+No changes.
+
+## 7.10.6 (2024-05-21)
+
+No changes.
 
 ## 7.10.5 (2024-05-07)
 

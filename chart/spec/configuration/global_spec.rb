@@ -89,7 +89,8 @@ describe 'global configuration' do
                   url: https://foolistener.com/event
                   timeout: 500ms
                   threshold: 10
-                  ackoff: 1s
+                  maxretries: 5
+                  backoff: 1s
                   headers:
                     FooBar: ['1', '2']
                     Authorization:
