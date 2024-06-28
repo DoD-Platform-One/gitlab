@@ -12,7 +12,7 @@ DETAILS:
 **Status:** Experiment
 
 WARNING:
-The Praefect chart is still under development. The alpha version is not yet suitable for production use. Upgrades may require significant manual intervention.
+The Praefect chart is still under development. This experimental version is not yet suitable for production use. Upgrades may require significant manual intervention.
 See our [Praefect GA release Epic](https://gitlab.com/groups/gitlab-org/charts/-/epics/33) for more information.
 
 The Praefect chart is used to manage a [Gitaly cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) inside a GitLab installment deployed with the Helm charts.

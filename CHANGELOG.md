@@ -2,6 +2,25 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.1.1-bb.0] (2024-06-27)
+
+### Changed
+
+- Update ironbank/gitlab/gitlab/gitlab-webservice 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.60.0 -> v1.61.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/certificates 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 17.0.2 -> 17.1.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.0.2 -> 17.1.1
+
 ## [8.0.2-bb.0] (2024-06-17)
 
 ### Changed

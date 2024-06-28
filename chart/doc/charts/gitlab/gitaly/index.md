@@ -118,6 +118,7 @@ the `helm install` command using the `--set` flags.
 | `metrics.serviceMonitor.additionalLabels`        | `{}`                                              | Additional labels to add to the ServiceMonitor                                                                                                                                 |
 | `metrics.serviceMonitor.endpointConfig`          | `{}`                                              | Additional endpoint configuration for the ServiceMonitor                                                                                                                       |
 | `metrics.metricsPort`                            |                                                   | **DEPRECATED** Use `metrics.port`                                                                                                                                              |
+| `gomemlimit.enabled`                            | `true`                                             | This will automatically set the `GOMEMLIMIT` environment variable for the Gitaly container to `resources.limits.memory`, if that limit is also set. Users can override this value by setting this value false and setting `GOMEMLIMIT` in `extraEnv`. This must meet [documented format criteria](https://pkg.go.dev/runtime#hdr-Environment_Variables). |
 
 ## Chart configuration examples
 
@@ -387,3 +388,34 @@ as well as commits created by GitLab, such as merge commits and squashes.
          secret: gitaly-gpg-signing-key
          key: signing_key
    ```
+
+### Server-side backups
+
+The chart supports [Gitaly server-side backups](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#configure-server-side-backups).
+To use them:
+
+1. Create a bucket to store the backups.
+1. Configure the object store credentials and the storage URL.
+
+   ```yaml
+   gitlab:
+     gitaly:
+       extraEnvFrom:
+          # Mount the exisitign object store secret to the expected environment variables.
+          AWS_ACCESS_KEY_ID:
+            secretKeyRef:
+              name: <Rails object store secret>
+              key: aws_access_key_id
+          AWS_SECRET_ACCESS_KEY:
+            secretKeyRef:
+              name: <Rails object store secret>
+              key: aws_secret_access_key
+       backup:
+         # This is the connection string for Gitaly server side backups.
+         goCloudUrl: <object store connection URL>
+   ```
+
+   For the expected environment variables and storage URL format for your object storage backend, see
+   the [Gitaly documentation](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#configure-server-side-backups).
+
+1. [Enable server-side backups with `backup-utility`](../../../backup-restore/backup.md#server-side-repository-backups).

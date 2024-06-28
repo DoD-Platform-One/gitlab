@@ -34,7 +34,7 @@ issue certificates.
 
 ### Create a Kubernetes cluster
 
-A cluster with a total of at least eight virtual CPUs and 30GB of RAM is recommended.
+A cluster with a total of at least eight virtual CPUs and 30 GB of RAM is recommended.
 
 You can either refer to your cloud providers' instructions on how to create a Kubernetes cluster,
 or use the GitLab-provided scripts to [automate the cluster creation](../installation/cloud/index.md).

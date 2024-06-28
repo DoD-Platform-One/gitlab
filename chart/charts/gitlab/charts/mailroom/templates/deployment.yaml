@@ -125,6 +125,7 @@ spec:
           defaultMode: 0400
           sources:
           {{- include "gitlab.redis.secret" . | nindent 10 }}
+          {{- include "gitlab.redisSentinel.secret" . | nindent 10 }}
           {{- if eq .Values.global.appConfig.incomingEmail.inboxMethod "microsoft_graph" }}
           - secret:
               name: {{ .Values.global.appConfig.incomingEmail.clientSecret.secret | required "Missing required secret containing the OAuth2 Client ID for incoming email. Make sure to set `.Values.global.appConfig.incomingEmail.clientSecret.secret`" }}

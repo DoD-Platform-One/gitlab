@@ -8,7 +8,7 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 The purpose of this template is to provide a means to prevent users from deploying the Helm chart, or updates to it, in what would be a broken state due to known problematic configurations.
 
-The design makes use of multiple templates, providing a modular method of declaring and managing checks. This is to aid in simplification of both development and maintenance.
+The design makes use of multiple templates, providing a modular method of declaring and managing checks. This aids in simplification of both development and maintenance.
 
 ## General concept
 

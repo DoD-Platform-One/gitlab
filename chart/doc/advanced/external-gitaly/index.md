@@ -160,7 +160,7 @@ repositories to an external Gitaly service, this can be done with one of the fol
 This method:
 
 - Uses the [repository storage moves API](https://docs.gitlab.com/ee/api/project_repository_storage_moves.html)
-  to migrate repositories from the Gitaly chart to the external Gitaly service. 
+  to migrate repositories from the Gitaly chart to the external Gitaly service.
 - Can be performed with zero downtime.
 - Requires that the external Gitaly service resides within the same VPC/zone as the Gitaly pods.
 - Has not been tested with the [Praefect chart](../../charts/gitlab/praefect/index.md) and is not supported.
@@ -385,7 +385,7 @@ Schedule the move by following the steps indicated in [moving repositories](http
 
 This method:
 
-- Backs up your repositories from the Gitaly chart PersistentVolumeClaim (PVC) and then restore them to the 
+- Backs up your repositories from the Gitaly chart PersistentVolumeClaim (PVC) and then restore them to the
 external Gitaly service.
 - Does incur downtime to all users.
 - Has not been tested with the [Praefect chart](../../charts/gitlab/praefect/index.md) and is not supported.

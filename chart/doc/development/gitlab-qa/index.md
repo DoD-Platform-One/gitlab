@@ -96,14 +96,14 @@ when end-to-end tests are grouped by various [RSpec metadata](https://docs.gitla
 - _Smoke suite_: small [subset of fast end-to-end functional tests](https://docs.gitlab.com/ee/development/testing_guide/smoke.html)
 to quickly ensure that basic functionality is working
   - Enable this suite via `export QA_OPTIONS="--tag smoke"`
-- _Smoke and Reliable suite_: subset of smoke and reliable tests to verify that the
+- _Smoke and Blocking suite_: subset of smoke and blocking tests to verify that the
 major functionality is working
-  - Enable this suite via `export QA_OPTIONS="--tag smoke --tag reliable --tag ~skip_live_env --tag ~orchestrated  --tag ~github"`
+  - Enable this suite via `export QA_OPTIONS="--tag smoke --tag blocking --tag ~skip_live_env --tag ~orchestrated  --tag ~github"`
 - _Full suite_: running all tests against the environment. Test run will take more than an hour.
   - Enable this suite via `--tag ~skip_live_env --tag ~orchestrated --tag ~requires_praefect --tag ~github --tag ~requires_git_protocol_v2 --tag ~transient`
 
 Selecting a test suite depends on the use case. In the majority of cases, running
-Smoke and Reliable suite should give quick and consistent test results
+Smoke and Blocking suite should give quick and consistent test results
 as well as a good test coverage. This suite is being used as a sanity
 check in [GitLab.com deployments](https://handbook.gitlab.com/handbook/engineering/deployments-and-releases/deployments/#gitlabcom-deployments-process).
 

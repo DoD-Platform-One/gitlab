@@ -13,7 +13,7 @@ DETAILS:
 Before upgrading your GitLab installation, you need to check the
 [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md)
 corresponding to the specific release you want to upgrade to and look for any
-[release notes](version_mappings.md#release-notes-for-each-version) that might pertain to the new GitLab chart
+[release notes](version_mappings.md#release-notes-for-each-supported-version) that might pertain to the new GitLab chart
 version.
 
 Upgrades have to follow a supported [upgrade path](https://docs.gitlab.com/ee/update/#upgrade-paths).
@@ -167,4 +167,10 @@ If you are upgrading from the `5.x` version of the chart to the latest `6.0` rel
 to first update to the latest `5.10.x` patch release in order for the upgrade to work.
 The [6.0 release notes](../releases/6_0.md) describe the supported upgrade path.
 
-To upgrade to the `6.0` release you must first be on the latest `5.10.x` patch release. There isn't any additional manual changes required in `6.0` so you can [follow the regular release upgrade steps](#steps).
+To upgrade to the `6.0` release you must first be on the latest `5.10.x` patch release. There isn't any additional
+manual changes required in `6.0` so you can [follow the regular release upgrade steps](#steps).
+
+## Older upgrade instructions
+
+If you're upgrading from versions of GitLab chart older than 5.x, see the
+[GitLab Docs archives](https://docs.gitlab.com/archives/) to access older versions of the documentation.

@@ -70,6 +70,7 @@ gitlab:
 | `common.labels`                             | Supplemental labels that are applied to all objects created by this chart.  | `{}` |
 | `antiAffinityLabels.matchLabels`            | Labels for setting anti-affinity options     |                              |
 | `backups.cron.activeDeadlineSeconds`        | Backup CronJob active deadline seconds (if null, no active deadline is applied)| `null` |
+| `backups.cron.ttlSecondsAfterFinished`      | Backup CronJob job time to live after finished (if null, no time to live is applied) | `null` |
 | `backups.cron.safeToEvict`                  | Autoscaling safe-to-evict annotation         | false                        |
 | `backups.cron.backoffLimit`                 | Backup CronJob backoff limit| `6` |
 | `backups.cron.concurrencyPolicy`            | Kubernetes Job concurrency policy            | `Replace`                    |

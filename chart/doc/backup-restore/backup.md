@@ -124,6 +124,17 @@ The S3 CLI tool `s5cmd` support is under investigation.
 See [issue 523](https://gitlab.com/gitlab-org/build/CNG/-/issues/523) to track
 the progress.
 
+### Server-side repository backups
+
+> - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/438393) in GitLab 17.0.
+
+Instead of storing large repository backups in the backup archive, repository
+backups can be configured so that the Gitaly node that hosts each repository is
+responsible for creating the backup and streaming it to object storage. This
+helps reduce the network resources required to create and restore a backup.
+
+See [Create server-side repository backups](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#create-server-side-repository-backups).
+
 ### Other arguments
 
 To see a complete list of available arguments, run the following command:

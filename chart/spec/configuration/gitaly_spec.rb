@@ -481,4 +481,46 @@ describe 'Gitaly configuration' do
       )
     end
   end
+
+  context 'gomemlimit' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            resources:
+              limits:
+                memory: #{resources_limits_memory}
+            gomemlimit:
+              enabled: #{gomemlimit_enabled}
+      )).merge(default_values)
+    end
+
+    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
+
+    context 'when enabled' do
+      let(:gomemlimit_enabled) { 'true' }
+      let(:resources_limits_memory) { '100Mi' }
+
+      it 'sets the env var GOMEMLIMIT' do
+        t = HelmTemplate.new(values)
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_container_env = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['env']
+        expect(gitaly_container_env).to include(
+          'name' => 'GOMEMLIMIT',
+          'valueFrom' => { 'resourceFieldRef' => { 'containerName' => 'gitaly', 'resource' => 'limits.memory' } })
+      end
+    end
+
+    context 'when not enabled' do
+      let(:gomemlimit_enabled) { 'false' }
+      let(:resources_limits_memory) { '' }
+
+      it 'does not set the env var GOMEMLIMIT' do
+        t = HelmTemplate.new(values)
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_container_env = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['env']
+        expect(gitaly_container_env.map { |env| env['name'] }).not_to include('GOMEMLIMIT')
+      end
+    end
+  end
 end

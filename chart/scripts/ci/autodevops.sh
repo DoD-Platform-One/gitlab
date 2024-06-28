@@ -260,7 +260,8 @@ function check_kube_domain() {
 
 function check_domain_ip() {
   # Expect the `DOMAIN` is a wildcard.
-  domain_ip=$(nslookup gitlab$DOMAIN 2>/dev/null | grep "Address: \d" | awk '{print $2}')
+  domain_ip=$(getent hosts gitlab$DOMAIN 2>/dev/null | awk '{print $1}')
+
   if [ -z $domain_ip ]; then
     echo "ERROR: There was a problem resolving the IP of 'gitlab$DOMAIN'. Be sure you have configured a DNS entry."
     false

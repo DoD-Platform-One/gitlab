@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v4.0.0-gitlab'
+  tag: 'v4.5.0-gitlab'
   # pullPolicy: IfNotPresent
   # pullSecrets: []
 
@@ -215,6 +215,9 @@ nodeSelector: {}
 affinity:
   podAntiAffinity:
     topologyKey:
+  nodeAffinity:
+    key:
+    values:
 
 # Protocol/Host only. '/jwt/auth' will be appended.
 authEndpoint:
@@ -365,6 +368,7 @@ profiling:
 
 serviceAccount:
   create: false
+
 
 # Disable metadata database by default
 # NOTE: The metadata database is a beta feature from version 16.4 and later. Please

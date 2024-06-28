@@ -532,6 +532,45 @@ global:
 All the prior Redis attributes in the general [configure Redis settings](#configure-redis-settings)
 continue to apply with the Sentinel support unless re-specified in the table above.
 
+#### Redis Sentinel password support
+
+> - [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3792) in GitLab 17.1.
+
+```yaml
+redis:
+  install: false
+global:
+  redis:
+    host: redis.example.com
+    serviceName: redis
+    port: 6379
+    sentinels:
+      - host: sentinel1.example.com
+        port: 26379
+      - host: sentinel2.example.com
+        port: 26379
+    auth:
+      enabled: true
+      secret: gitlab-redis
+      key: redis-password
+    sentinelAuth:
+      enabled: false
+      secret: gitlab-redis-sentinel
+      key: sentinel-password
+```
+
+| Name                       | Type       | Default | Description |
+|:-------------------------- |:----------:|:------- |:----------- |
+| `sentinelAuth.enabled`     | Boolean    | false   | The `sentinelAuth.enabled` provides a toggle for using a password with the Redis Sentinel instance. |
+| `sentinelAuth.key`         | String     |         | The `sentinelAuth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
+| `sentinelAuth.secret`      | String     |         | The `sentinelAuth.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
+
+`global.redis.sentinelAuth` can be used to configure a Sentinel password
+for all Sentinel instances.
+
+Note that `sentinelAuth` cannot be overridden with [Redis instance-specific settings](#multiple-redis-support)
+or [`global.redis.redisYmlOverride`](../advanced/external-redis/index.md#redisyml-override).
+
 ### Multiple Redis support
 
 The GitLab chart includes support for running with separate Redis instances
@@ -747,7 +786,10 @@ global:
         - name: CustomListener
           url: https://mycustomlistener.com
           timeout: 500mx
+          # DEPRECATED: use `maxretries` instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
+          # When using `maxretries`, `threshold` is ignored: https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#endpoints
           threshold: 5
+          maxretries: 5
           backoff: 1s
           headers:
             X-Random-Config: [plain direct]
@@ -1768,7 +1810,7 @@ global:
 | `enabled`        | Boolean | `false`  | Enable or Disable the integration |
 | `dsn`            | String  |        | Sentry DSN for backend errors |
 | `clientside_dsn` | String  |        | Sentry DSN for front-end errors |
-| `environment`    | String  |        | See [Sentry environments](https://docs.sentry.io/product/sentry-basics/concepts/environments/) |
+| `environment`    | String  |        | See [Sentry environments](https://docs.sentry.io/concepts/key-terms/environments/) |
 
 ### `gitlab_docs` settings
 

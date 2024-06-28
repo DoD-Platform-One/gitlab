@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'helm_template_helper'
+require 'runtime_template_helper'
 require 'yaml'
 require 'hash_deep_merge'
 
@@ -13,6 +14,21 @@ describe 'Mailroom configuration' do
             password:
               secret: mailroom-password
     ))
+  end
+
+  let(:template) { HelmTemplate.new(values) }
+  let(:raw_mail_room_yml) { template.dig('ConfigMap/test-mailroom', 'data', 'mail_room.yml') }
+  let(:rendered_mail_room_yml) { render_erb(raw_mail_room_yml) }
+
+  def render_erb(raw_template)
+    files = {
+      '/etc/gitlab/redis/redis-password' => SecureRandom.hex,
+      '/etc/gitlab/redis-sentinel/redis-sentinel-password' => SecureRandom.hex,
+      '/etc/gitlab/mailroom/password_incoming_email' => SecureRandom.hex
+    }
+
+    yaml = RuntimeTemplate.erb(raw_template: raw_template, files: files)
+    YAML.safe_load(yaml, permitted_classes: [Symbol])
   end
 
   context 'When using all defaults' do
@@ -54,10 +70,6 @@ describe 'Mailroom configuration' do
           appConfig: #{app_config.to_json}
       ))
     end
-
-    let(:template) { HelmTemplate.new(values) }
-
-    let(:raw_mail_room_yml) { template.dig('ConfigMap/test-mailroom', 'data', 'mail_room.yml') }
 
     let(:mail_room_yml) do
       data = raw_mail_room_yml.dup
@@ -146,10 +158,6 @@ describe 'Mailroom configuration' do
           appConfig: #{app_config.to_json}
       ))
     end
-
-    let(:template) { HelmTemplate.new(values) }
-
-    let(:raw_mail_room_yml) { template.dig('ConfigMap/test-mailroom', 'data', 'mail_room.yml') }
 
     let(:mail_room_yml) do
       data = raw_mail_room_yml.dup
@@ -344,6 +352,49 @@ describe 'Mailroom configuration' do
       # check that global.sentinels populate
       expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).to include(":sentinels:")
       expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).to include("s1.resque.redis")
+    end
+
+    context 'when Sentinel password is used' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: external-redis
+              port: 9999
+              password:
+                enable: true
+                secret: external-redis-secret
+                key: external-redis-key
+              sentinels:
+                - host: s1.resque.redis
+                  port: 26379
+                - host: s2.resque.redis
+                  port: 26379
+              sentinelAuth:
+                enabled: true
+                secret: redis-sentinel-secret
+                key: password
+        )).deep_merge(default_values)
+      end
+
+      it 'populates Sentinel password' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+
+        expect(rendered_mail_room_yml[:mailboxes].length).to eq(1)
+
+        mailbox = rendered_mail_room_yml[:mailboxes].first
+        expect(mailbox[:arbitration_method]).to eq('redis')
+        expect(mailbox.dig(:arbitration_options, :sentinels).length).to eq(2)
+        expect(mailbox.dig(:arbitration_options, :sentinel_password)).to be_a(String)
+      end
+
+      it 'mounts the Sentinel password secret' do
+        projected_volume = template.projected_volume_sources('Deployment/test-mailroom','init-mailroom-secrets')
+        sentinel_secrets =  projected_volume.find { |item| item.dig('secret', 'name') == "redis-sentinel-secret" }
+
+        expect(sentinel_secrets.length).to eq(1)
+        expect(sentinel_secrets['secret']['items']).to eq([{ "key" => "password", "path" => "redis-sentinel/redis-sentinel-password" }])
+      end
     end
   end
 

@@ -17,6 +17,10 @@ Input: dict "context" $ "name" string
   production:
     url: {{ template "gitlab.redis.url" .context }}
     {{- include "gitlab.redis.sentinels" .context | nindent 4 }}
+    {{- $password := include "gitlab.redis.sentinel.password" .context }}
+    {{- if $password }}
+    sentinel_password: "{{- include "gitlab.redis.sentinel.password" .context }}"
+    {{- end }}
     id:
     {{- if eq .name "cable" }}
     adapter: redis

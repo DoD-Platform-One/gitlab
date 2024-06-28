@@ -1,9 +1,9 @@
 .review_app_common:
   stage: review
   variables:
-    AGENT_NAME: "gke125-ci-cluster" # connect to 1.25 cluster until we have a dedicated cluster
+    AGENT_NAME: "gke129-ci-cluster" # connect to 1.29 cluster until we have a dedicated cluster
   environment:
-    name: gke125_vcluster/${VCLUSTER_NAME}
+    name: gke129_vcluster/${VCLUSTER_NAME}
     auto_stop_in: 1 hour
   before_script:
     - source scripts/ci/vcluster.sh

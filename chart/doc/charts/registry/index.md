@@ -76,7 +76,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v4.0.0-gitlab'
+    tag: 'v4.5.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -115,6 +115,7 @@ registry:
         deny: []
   notifications: {}
   tolerations: []
+  affinity: {}
   ingress:
     enabled: false
     tls:
@@ -182,7 +183,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                          |                                                                      | Pull policy for the registry image |
 | `image.pullSecrets`                         |                                                                      | Secrets to use for image repository |
 | `image.repository`                          | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry` | Registry image |
-| `image.tag`                                 | `v4.0.0-gitlab`                                                     | Version of the image to use |
+| `image.tag`                                 | `v4.5.0-gitlab`                                                     | Version of the image to use |
 | `init.image.repository`                     |                                                                      | initContainer image |
 | `init.image.tag`                            |                                                                      | initContainer image tag |
 | `init.containerSecurityContext`             |                                                                      | initContainer container specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) |
@@ -206,7 +207,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `priorityClassName`                         |                                                                      | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |
 | `reporting.sentry.enabled`                  | `false`                                                              | Enable reporting using Sentry |
 | `reporting.sentry.dsn`                      |                                                                      | The Sentry DSN (Data Source Name) |
-| `reporting.sentry.environment`              |                                                                      | The Sentry [environment](https://docs.sentry.io/product/sentry-basics/concepts/environments/) |
+| `reporting.sentry.environment`              |                                                                      | The Sentry [environment](https://docs.sentry.io/concepts/key-terms/environments/) |
 | `profiling.stackdriver.enabled`             | `false`                                                              | Enable continuous profiling using Stackdriver |
 | `profiling.stackdriver.credentials.secret`  | `gitlab-registry-profiling-creds`                                    | Name of the secret containing credentials |
 | `profiling.stackdriver.credentials.key`     | `credentials`                                                        | Secret key in which the credentials are stored |
@@ -256,6 +257,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `tokenService`                              | `container_registry`                                                 | JWT token service |
 | `tokenIssuer`                               | `gitlab-issuer`                                                      | JWT token issuer |
 | `tolerations`                               | `[]`                                                                 | Toleration labels for pod assignment |
+| `affinity`                                 | `{}`                                                                 | Affinity rules for pod assignment |
 | `middleware.storage`                        |                                                                      | configuration layer for midleware storage ([s3 for instance](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#example-middleware-configuration)) |
 | `redis.cache.enabled`                       | `false`                                                              | When set to `true`, the Redis cache is enabled. This feature is dependent on the [metadata database](#database) being enabled. Repository metadata will be cached on the configured Redis instance. |
 | `redis.cache.host`                          | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`. |
@@ -314,6 +316,40 @@ tolerations:
   effect: "NoExecute"
 ```
 
+### affinity
+
+`affinity` is an optional parameter that allows you to set either or both:
+
+- `podAntiAffinity` rules to:
+  - Not schedule pods in the same domain as the pods that match the expression corresponding to the `topology key`.
+  - Set two modes of `podAntiAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). Using the variable `antiAffinity` in `values.yaml`, set the setting to `soft` so that the preferred mode is
+    applied or set it to `hard` so that the required mode is applied.
+- `nodeAffinity` rules to:
+  - Schedule pods to nodes that belong to a specific zone or zones.
+  - Set two modes of `nodeAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). When set to `soft`, the preferred mode is applied. When set to `hard`, the required mode is applied. This
+    rule is implemented only for the registry chart.
+
+`nodeAffinity` only implements the [`In` operator](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators).
+
+For more information, see [the relevant Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
+
+The following example sets `affinity`, with both `nodeAffinity` and `antiAffinity` set to `hard`:
+
+```yaml
+nodeAffinity: "hard"
+antiAffinity: "hard"
+affinity:
+  nodeAffinity:
+    key: "test.com/zone"
+    values:
+    - us-east1-a
+    - us-east1-b
+  podAntiAffinity:
+    topologyKey: "test.com/hostname"
+```
+
 ### annotations
 
 `annotations` allows you to add annotations to the registry pods.
@@ -341,7 +377,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v4.0.0-gitlab'`
+- `tag: 'v4.5.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -704,12 +740,18 @@ notifications:
     - name: FooListener
       url: https://foolistener.com/event
       timeout: 500ms
+      # DEPRECATED: use `maxretries` instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
+      # When using `maxretries`, `threshold` is ignored: https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#endpoints
       threshold: 10
+      maxretries: 10
       backoff: 1s
     - name: BarListener
       url: https://barlistener.com/event
       timeout: 100ms
+      # DEPRECATED: use `maxretries` instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
+      # When using `maxretries`, `threshold` is ignored: https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#endpoints
       threshold: 3
+      maxretries: 5
       backoff: 1s
   events:
     includereferences: true
@@ -750,12 +792,12 @@ For S3, make sure you give the correct
 [permissions for registry storage](https://distribution.github.io/distribution/storage-drivers/s3/#s3-permission-scopes). For more information about storage configuration, see
 [Container Registry storage driver](https://docs.gitlab.com/ee/administration/packages/container_registry.html#container-registry-storage-driver) in the administration documentation.
 
-Place the *contents* of the `storage` block into the secret, and provide the following
+Place the _contents_ of the `storage` block into the secret, and provide the following
 as items to the `storage` map:
 
 - `secret`: name of the Kubernetes Secret housing the YAML block.
 - `key`: name of the key in the secret to use. Defaults to `config`.
-- `extraKey`: *(optional)* name of an extra key in the secret, which will be mounted
+- `extraKey`: _(optional)_ name of an extra key in the secret, which will be mounted
   to `/etc/docker/registry/storage/${extraKey}` within the container. This can be
   used to provide the `keyfile` for the `gcs` driver.
 
@@ -898,11 +940,11 @@ profiling:
 DETAILS:
 **Status:** Beta
 
-> - [Introduced](https://gitlab.com/groups/gitlab-org/-/epics/5521) in GitLab 16.4 as a [Beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
+> - [Introduced](https://gitlab.com/groups/gitlab-org/-/epics/5521) in GitLab 16.4 as a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
 
 The `database` property is optional and enables the [metadata database](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database).
 
-This is a [Beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
+This is a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
 See the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
 and associated documentation before enabling this feature.
 

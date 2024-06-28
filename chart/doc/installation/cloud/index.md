@@ -23,11 +23,11 @@ The GitLab Helm chart supports the following Kubernetes releases:
 
 | Kubernetes release | Status     | Minimum GitLab version | Architectures | End of life |
 |--------------------|------------|------------------------|---------------|-------------|
-| 1.30               | [In development/qualification](https://gitlab.com/gitlab-org/distribution/team-tasks/-/issues/1527)  | 17.0 | x86-64 | 2025-06-28 |
+| 1.30               | [In development/qualification](https://gitlab.com/gitlab-org/distribution/team-tasks/-/issues/1498)  | 17.0 | x86-64 | 2025-06-28 |
 | 1.29               | Supported  | 17.0                   | x86-64        | 2025-02-28  |
 | 1.28               | Supported  | 17.0                   | x86-64        | 2024-10-28  |
 | 1.27               | Supported  | 16.6                   | x86-64        | 2024-06-28  |
-| 1.26               | Supported  | 16.5                   | x86-64        | 2024-02-28  |
+| 1.26               | Deprecated | 16.5                   | x86-64        | 2024-02-28  |
 | 1.25               | Deprecated | 16.5                   | x86-64        | 2023-10-28  |
 | 1.24               | Deprecated | 16.5                   | x86-64        | 2023-07-28  |
 | 1.23               | Deprecated | 16.5                   | x86-64        | 2023-02-28  |

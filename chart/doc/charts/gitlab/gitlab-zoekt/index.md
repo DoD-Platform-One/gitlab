@@ -8,20 +8,16 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 DETAILS:
 **Tier:** Premium, Ultimate
-**Offering:** Self-managed
-**Status:** Experiment
+**Offering:** GitLab.com, Self-managed
+**Status:** Beta
 
-> - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/105049) in GitLab 15.9 [with flags](https://docs.gitlab.com/ee/administration/feature_flags.html) named `index_code_with_zoekt` and `search_code_with_zoekt`. Disabled by default.
+> - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/105049) as a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) in GitLab 15.9 [with flags](https://docs.gitlab.com/ee/administration/feature_flags.html) named `index_code_with_zoekt` and `search_code_with_zoekt`. Disabled by default.
 > - [Enabled on GitLab.com](https://gitlab.com/gitlab-org/gitlab/-/issues/388519) in GitLab 16.6.
-
-FLAG:
-On self-managed GitLab, by default this feature is not available.
-To make it available, an administrator can [enable the feature flags](https://docs.gitlab.com/ee/administration/feature_flags.html) named `index_code_with_zoekt` and `search_code_with_zoekt`.
-On GitLab.com, this feature is available.
+> - Feature flags `index_code_with_zoekt` and `search_code_with_zoekt` [removed](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/148378) in GitLab 17.1.
 
 WARNING:
-This feature is an [Experiment](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#experiment).
-GitLab Support cannot assist with configuring or troubleshooting the Zoekt chart.
+This feature is in [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) and subject to change without notice.
+For more information, see [epic 9404](https://gitlab.com/groups/gitlab-org/-/epics/9404).
 
 The Zoekt chart provides support for
 [exact code search](https://docs.gitlab.com/ee/user/search/exact_code_search.html).

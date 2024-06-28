@@ -154,5 +154,6 @@ spec:
             {{- if .Values.redis.enabled -}}
             {{-   $instance := empty .Values.global.redis.kas | ternary "sharedState" "kas" }}
             {{-   include "gitlab.redis.secrets" (dict "globalContext" $ "instances" $instance "mountRedisYmlOverrideSecrets" false) | nindent 12 }}
+            {{-   include "gitlab.redisSentinel.secret" $ | nindent 12 }}
             {{- end }}
 {{- end }}
