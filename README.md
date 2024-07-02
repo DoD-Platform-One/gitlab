@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 8.1.1-bb.0](https://img.shields.io/badge/Version-8.1.1--bb.0-informational?style=flat-square) ![AppVersion: v17.1.1](https://img.shields.io/badge/AppVersion-v17.1.1-informational?style=flat-square)
+![Version: 8.1.1-bb.1](https://img.shields.io/badge/Version-8.1.1--bb.1-informational?style=flat-square) ![AppVersion: v17.1.1](https://img.shields.io/badge/AppVersion-v17.1.1-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -895,9 +895,9 @@ helm install gitlab chart/
 | gitlab.webservice.containerSecurityContext.runAsUser | int | `1000` |  |
 | gitlab.webservice.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.webservice.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| gitlab.webservice.resources.limits.cpu | string | `"600m"` |  |
+| gitlab.webservice.resources.limits.cpu | string | `"1000m"` |  |
 | gitlab.webservice.resources.limits.memory | string | `"2.5G"` |  |
-| gitlab.webservice.resources.requests.cpu | string | `"600m"` |  |
+| gitlab.webservice.resources.requests.cpu | string | `"300m"` |  |
 | gitlab.webservice.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice"` |  |
 | gitlab.webservice.image.tag | string | `"17.1.1"` |  |
