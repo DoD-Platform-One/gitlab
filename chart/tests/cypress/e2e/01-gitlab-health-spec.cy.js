@@ -90,26 +90,23 @@ describe('Create Gitlab Project', () => {
       }
     })
 
-    // Commenting out call to delete cypress created gitlab project as test script is also dependent on it
-    // Revisit once https://repo1.dso.mil/big-bang/product/packages/gitlab/-/issues/233 has been addressed
-    //cy.deleteGitlabProject(Cypress.env('url'), Cypress.env('gitlab_username'), Cypress.env('gitlab_project'))
+    // Cleanup: delete the just-created gitlab project
+    cy.deleteGitlabProject(Cypress.env('url'), Cypress.env('gitlab_username'), Cypress.env('gitlab_project'))
   })
 
-  // Commenting out this part of the test as script test is dependent on cypress created user
-  // Revisit once https://repo1.dso.mil/big-bang/product/packages/gitlab/-/issues/233 has been addressed
-  //it('Login as Root and Delete Test User', () => {
-  //  // clear user data before starting test
-  //  cy.clearAllUserData()
-  //
-  //  //Sign in as Root
-  //  cy.visit(`${Cypress.env('url')}/users/sign_in`)
-  //  cy.performGitlabLogin('root', Cypress.env('adminpassword'))
-  //
-  //  //Browse to created user and delete
-  //  cy.visit(`${Cypress.env('url')}/admin/users/${Cypress.env('gitlab_username')}`)
-  //  cy.get('div[data-testid="user-actions-2"]').find('button[data-testid="base-dropdown-toggle"]').click()
-  //  cy.get('li[data-testid="delete-deleteWithContributions"]').find('button').click()
-  //  cy.get('input[name="username"]').type(`${Cypress.env('gitlab_first_name')} ${Cypress.env('gitlab_last_name')}`)
-  //  cy.contains('span', 'Delete user and contributions').click({force: true})
-  //})
+  it('Login as Root and Delete Test User', () => {
+   // clear user data before starting test
+   cy.clearAllUserData()
+
+   //Sign in as Root
+   cy.visit(`${Cypress.env('url')}/users/sign_in`)
+   cy.performGitlabLogin('root', Cypress.env('adminpassword'))
+
+   //Browse to created user and delete
+   cy.visit(`${Cypress.env('url')}/admin/users/${Cypress.env('gitlab_username')}`)
+   cy.get('div[data-testid="user-actions-2"]').find('button[data-testid="base-dropdown-toggle"]').click()
+   cy.get('li[data-testid="delete-deleteWithContributions"]').find('button').click()
+   cy.get('input[name="username"]').type(`${Cypress.env('gitlab_first_name')} ${Cypress.env('gitlab_last_name')}`)
+   cy.contains('span', 'Delete user and contributions').click({force: true})
+  })
 })
