@@ -1,0 +1,52 @@
+{{- if .Values.bbtests }}
+{{- if .Values.bbtests.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: {{ $.Release.Namespace }}
+  name: gitlab-test-pod-exec
+  labels:
+    bigbang.dso.mil/purpose: gitlab-gluon-script
+  ########################################################################
+  # Script needed: kubectl -n gitlab exec -ti deploy/gitlab-toolbox
+  ########################################################################
+rules:
+  # look up a pod from deployments/gitlab-toolbox
+  # fails like:
+  # User "system:serviceaccount:gitlab:default" cannot get resource "deployments" in API group "apps" in the namespace "gitlab"
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list"]
+  # look up a pod from deployments/gitlab-toolbox
+  # fails like:
+  # User "system:serviceaccount:gitlab:default" cannot list resource "pods" in API group "" in the namespace "gitlab"
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  # exec into that pod to run gitlab-rails console and create a temporary admin token
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  # clean up this role after we're done with it
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings"]
+    verbs: ["delete", "list", "get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: {{ $.Release.Namespace }}
+  name: gitlab-test-pod-exec
+  labels:
+    bigbang.dso.mil/purpose: gitlab-gluon-script
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: gitlab-test-pod-exec
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: 'system:serviceaccounts:{{ .Release.Namespace }}'
+    namespace: {{ $.Release.Namespace }}
+{{- end }}
+{{- end }}

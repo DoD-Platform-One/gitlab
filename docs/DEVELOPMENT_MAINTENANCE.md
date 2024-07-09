@@ -50,9 +50,14 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
         export cypress_gitlab_first_name=test
         export cypress_gitlab_last_name=user
         export cypress_gitlab_username=testuser
-        export cypress_gitlab_password=12345678
         export cypress_gitlab_email=testuser@example.com
         export cypress_gitlab_project=my-awesome-project
+
+        # actual user password doesn't matter much but gitlab rejects it if it's too simple
+        export cypress_gitlab_password=aa32b3ba7d5bbf537d745fd62469b15b
+
+        # fetch gitlab admin password via CLI:
+        #   kubectl -n gitlab get secrets gitlab-gitlab-initial-root-password -ojson | jq .data.password -r | base64 -d | pbcopy
         export cypress_adminpassword=put-the-gitlab-root-password-here
         ```
     1. Run cypress from the parent directory of the gitlab and cypress directories.

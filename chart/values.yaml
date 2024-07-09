@@ -2155,12 +2155,11 @@ bbtests:
             name: gitlab-gitlab-initial-root-password
             key: password
   scripts:
-    image: "registry1.dso.mil/bigbang-ci/gitlab-tester:0.0.4"
+    image: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"
     envs:
-      GITLAB_USER: "testuser"
-      GITLAB_PASS: "Password123h56a78"
-      GITLAB_EMAIL: "testuser@example.com"
-      GITLAB_PROJECT: "my-awesome-project"
-      GITLAB_REPOSITORY: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
-      GITLAB_ORIGIN: http://testuser:Password123h56a78@gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      GITLAB_USER: "root"
+      GITLAB_EMAIL: "gitlab-root-user@example.com"
+      GITLAB_HOST: gitlab-webservice-default.gitlab.svc.cluster.local:8181
+      GITLAB_PROJECT: "bigbang-test-project-2"
       GITLAB_REGISTRY: gitlab-registry-test-svc.gitlab.svc.cluster.local:80
+      GITLAB_REPOSITORY: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
