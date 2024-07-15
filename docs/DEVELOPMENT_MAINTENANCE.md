@@ -57,7 +57,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
         export cypress_gitlab_password=aa32b3ba7d5bbf537d745fd62469b15b
 
         # fetch gitlab admin password via CLI:
-        #   kubectl -n gitlab get secrets gitlab-gitlab-initial-root-password -ojson | jq .data.password -r | base64 -d | pbcopy
+        #   kubectl -n gitlab get secrets gitlab-gitlab-initial-root-password -ojson | jq .data.password -r | base64 -d | pbcopy 
         export cypress_adminpassword=put-the-gitlab-root-password-here
         ```
     1. Run cypress from the parent directory of the gitlab and cypress directories.
@@ -71,101 +71,15 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 # Testing new Gitlab version
 1. Create a k8s dev environment. One option is to use the Big Bang [k3d-dev.sh](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/tree/master/docs/developer/scripts) with no arguments which will give you the default configuration. The following steps assume you are using the script.
 1. Follow the instructions at the end of the script to connect to the k8s cluster and install flux.
-1. Deploy gitlab with these dev values overrides. Core apps are disabled for quick deployment.
-    ```yaml
-    domain: dev.bigbang.mil
-
-    flux:
-      interval: 1m
-      rollback:
-        cleanupOnFail: false
-
-    networkPolicies:
-      enabled: true
-
-    clusterAuditor:
-      enabled: false
-
-    gatekeeper:
-      enabled: false
-
-    istioOperator:
-      enabled: true
-
-    istio:
-      enabled: true
-
-    jaeger:
-      enabled: false
-
-    kiali:
-      enabled: false
-
-    elasticsearchKibana:
-      enabled: false
-
-    eckOperator:
-      enabled: false
-
-    fluentbit:
-      enabled: false
-
-    twistlock:
-      enabled: false
-      values:
-        console:
-          persistence:
-            size: 5Gi
-
-    sso:
-      oidc:
-        host: login.dso.mil
-        realm: baby-yoda
-      client_secret: ""
-
-    addons:
-
-      gitlabRunner:
-        enabled: true
-
-      gitlab:
-        enabled: true
-        git:
-          tag: null
-          branch: "your-development-branch-name"
-
-        hostnames:
-          gitlab: gitlab
-          registry: registry
-        sso:
-          enabled: true
-          label: "Platform One SSO"
-          client_id: "platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-gitlab"
-          client_secret: ""
-
-        values:
-          gitlab:
-            webservice:
-              minReplicas: 1
-              maxReplicas: 1
-              helmTests:
-                enabled: false
-            gitlab-shell:
-              minReplicas: 1
-              maxReplicas: 1
-            sidekiq:
-              minReplicas: 1
-              maxReplicas: 1
-          registry:
-            hpa:
-              minReplicas: 1
-              maxReplicas: 1
-          global:
-            appConfig:
-              object_store:
-                enabled: true
-              defaultCanCreateGroup: true
-    ```
+   1. Deploy gitlab with the dev values overrides from [docs/dev-overrides.yaml](./dev-overrides.yaml). Core apps are disabled for quick deployment.
+    1. Example helm upgrade command (run from within your local checkout of the `bigbang` repository):
+    ```shell
+    helm upgrade -n bigbang --create-namespace --install \
+     bigbang ./chart \
+     -f https://repo1.dso.mil/big-bang/bigbang/-/raw/master/tests/test-values.yaml \
+     -f https://repo1.dso.mil/big-bang/product/packages/gitlab/-/blob/main/docs/dev-overrides.yaml \
+     --set addons.gitlab.git.branch=YOUR-WORKING-BRANCH-NAME-HERE
+   ```
 1. Access Gitlab UI from a browser and login with SSO (to learn about deploying GitLab with a dev version of Keycloak, see [keycloak-dev.md](./keycloak-dev.md)).
 1. Test changing your profile image.
 1. In your profile create an access token with all privileges. Save the token for later use.
