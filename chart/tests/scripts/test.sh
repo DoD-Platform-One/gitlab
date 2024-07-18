@@ -96,7 +96,12 @@ function main {
   export project_name="${GITLAB_PROJECT}-${RANDOM}"
   export base_branch=main
   export test_branch="test-${RANDOM}"
-  export reference_image=alpine:latest
+  export reference_image=registry1.dso.mil/ironbank/opensource/alpinelinux/alpine:latest
+
+
+  ####################################################
+  # COPY REGISTRY1 CREDS TO AUTHFILE FOR SKOPEO
+  cat /.docker/auth.json > /test/auth.json
 
 
   ####################################################
@@ -152,11 +157,11 @@ function main {
 
   # skopeo needs to save registry auth to a writeable folder
   # see https://github.com/containers/skopeo/blob/main/docs/skopeo-login.1.md
-  export REGISTRY_AUTH_FILE="${HOME}/.container_auth.json"
 
   canwe "log in to a gitlab container registry with our new PAT"
-  skopeo login --tls-verify=false "${GITLAB_REGISTRY}" --username "${GITLAB_USER}" --password "${pat_value}"
+  skopeo login --tls-verify=false --authfile=${HOME}/auth.json "${GITLAB_REGISTRY}" --username "${GITLAB_USER}" --password "${pat_value}"
   success "logged in to gitlab container registry using our PAT."
+
 
 
   canwe "push local changes to our new project"
@@ -168,7 +173,7 @@ function main {
   success "pushed local changes to our new project."
 
   canwe "push a copy of [${reference_image}] to a gitlab container registry under our new project"
-  skopeo sync --dest-tls-verify=false --src docker --dest docker $reference_image "${GITLAB_REGISTRY}/${GITLAB_USER}/${project_name}/"
+  skopeo sync --authfile=${HOME}/auth.json --dest-tls-verify=false --src docker --dest docker $reference_image "${GITLAB_REGISTRY}/${GITLAB_USER}/${project_name}/"
   success "pushed a copy of ${reference_image} to a new container repository under project ${project_name}."
 
 

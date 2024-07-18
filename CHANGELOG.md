@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.1.2-bb.1] (2024-07-15)
+
+### Changed
+
+- Change registry image in test to pull from registry1
+
 ## [8.1.2-bb.0] (2024-07-12)
 
 ### Changed

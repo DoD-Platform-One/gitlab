@@ -2156,6 +2156,16 @@ bbtests:
             key: password
   scripts:
     image: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"
+    additionalVolumes:
+      - name: docker-config
+        secret:
+          secretName: private-registry
+          items:
+          - key: .dockerconfigjson
+            path: auth.json
+    additionalVolumeMounts:
+      - name: docker-config
+        mountPath: /.docker/
     envs:
       GITLAB_USER: "root"
       GITLAB_EMAIL: "gitlab-root-user@example.com"
