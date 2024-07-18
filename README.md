@@ -1,6 +1,6 @@
 # gitlab
 
-![Version: 8.1.2-bb.0](https://img.shields.io/badge/Version-8.1.2--bb.0-informational?style=flat-square) ![AppVersion: 17.1.2](https://img.shields.io/badge/AppVersion-17.1.2-informational?style=flat-square)
+![Version: 8.1.2-bb.1](https://img.shields.io/badge/Version-8.1.2--bb.1-informational?style=flat-square) ![AppVersion: 17.1.2](https://img.shields.io/badge/AppVersion-17.1.2-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -1093,6 +1093,12 @@ helm install gitlab chart/
 | bbtests.cypress.secretEnvs[0].valueFrom.secretKeyRef.name | string | `"gitlab-gitlab-initial-root-password"` |  |
 | bbtests.cypress.secretEnvs[0].valueFrom.secretKeyRef.key | string | `"password"` |  |
 | bbtests.scripts.image | string | `"registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"` |  |
+| bbtests.scripts.additionalVolumes[0].name | string | `"docker-config"` |  |
+| bbtests.scripts.additionalVolumes[0].secret.secretName | string | `"private-registry"` |  |
+| bbtests.scripts.additionalVolumes[0].secret.items[0].key | string | `".dockerconfigjson"` |  |
+| bbtests.scripts.additionalVolumes[0].secret.items[0].path | string | `"auth.json"` |  |
+| bbtests.scripts.additionalVolumeMounts[0].name | string | `"docker-config"` |  |
+| bbtests.scripts.additionalVolumeMounts[0].mountPath | string | `"/.docker/"` |  |
 | bbtests.scripts.envs.GITLAB_USER | string | `"root"` |  |
 | bbtests.scripts.envs.GITLAB_EMAIL | string | `"gitlab-root-user@example.com"` |  |
 | bbtests.scripts.envs.GITLAB_HOST | string | `"gitlab-webservice-default.gitlab.svc.cluster.local:8181"` |  |
