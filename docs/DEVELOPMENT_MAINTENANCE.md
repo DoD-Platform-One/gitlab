@@ -1,5 +1,13 @@
+# Files that require bigbang integration testing
+
+### See [bb MR testing](./docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart.
+
+There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within gitlab (see: [istio templates](./chart/templates/bigbang/istio/), [network policy templates](./chart/templates/bigbang/networkpolicies/), [service entry templates](./chart/templates/bigbang/serviceentries/)).
+
+Be sure to also test against monitoring locally as it is integrated by default with these high-impact service control packages, and needs to be validated using the necessary chart values beneath `istio.hardened` block with `monitoring.enabled` set to true as part of your [dev-overrides.yaml](./docs/dev-overrides.yaml).
+
 # Notice about updating postgres via renovate
-  Currently, we do not update postgresql via renovate bot unless the [upstream gitlab documentation](https://docs.gitlab.com/ee/install/requirements.html#postgresql-requirements) updates beyond our current supported version of postgres. Due to local in-place image upgrades not working because of limitations around the data directory being initialized by a previous major postgresql version, this requires a manual `pg_dump` from current & `pg_restore` to new updated postgres pod locally (RDS and other non docker DBs will do this automatically). We try to keep all local in-cluster/CI DBs on the same version and upgrade once all are recommended and tested to be on the next major version.
+Currently, we do not update postgresql via renovate bot unless the [upstream gitlab documentation](https://docs.gitlab.com/ee/install/requirements.html#postgresql-requirements) updates beyond our current supported version of postgres. Due to local in-place image upgrades not working because of limitations around the data directory being initialized by a previous major postgresql version, this requires a manual `pg_dump` from current & `pg_restore` to new updated postgres pod locally (RDS and other non docker DBs will do this automatically). We try to keep all local in-cluster/CI DBs on the same version and upgrade once all are recommended and tested to be on the next major version.
 
 # How to upgrade the Gitlab Package chart
 BigBang makes modifications to the upstream helm chart. The full list of changes is at the end of  this document.
