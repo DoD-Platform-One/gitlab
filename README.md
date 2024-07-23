@@ -9,6 +9,10 @@ GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 * <https://gitlab.com/gitlab-org/charts/gitlab>
 
+### Upstream Release Notes
+
+The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
+
 ## Learn More
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
