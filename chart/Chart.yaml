@@ -16,6 +16,8 @@ maintainers:
 annotations:
   bigbang.dev/applicationVersions: |
     - Gitlab: 17.1.2
+  bigbang.dev/upstreamReleaseNotesMarkdown: |
+    The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
   helm.sh/images: |
     - name: redis-exporter
       condition: redis.metrics.enabled

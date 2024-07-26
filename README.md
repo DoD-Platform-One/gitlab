@@ -1,3 +1,4 @@
+<!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
 ![Version: 8.1.2-bb.3](https://img.shields.io/badge/Version-8.1.2--bb.3-informational?style=flat-square) ![AppVersion: 17.1.2](https://img.shields.io/badge/AppVersion-17.1.2-informational?style=flat-square)
@@ -431,120 +432,120 @@ helm install gitlab chart/
 | certmanager.install | bool | `false` |  |
 | certmanager.rbac.create | bool | `true` |  |
 | nginx-ingress.enabled | bool | `false` |  |
-| nginx-ingress.tcpExternalConfig | string | `"true"` |  |
-| nginx-ingress.controller.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
-| nginx-ingress.controller.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
-| nginx-ingress.controller.config.hsts | string | `"true"` |  |
-| nginx-ingress.controller.config.hsts-include-subdomains | string | `"false"` |  |
-| nginx-ingress.controller.config.hsts-max-age | string | `"63072000"` |  |
-| nginx-ingress.controller.config.server-name-hash-bucket-size | string | `"256"` |  |
-| nginx-ingress.controller.config.use-http2 | string | `"true"` |  |
-| nginx-ingress.controller.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
-| nginx-ingress.controller.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
-| nginx-ingress.controller.config.server-tokens | string | `"false"` |  |
-| nginx-ingress.controller.config.upstream-keepalive-connections | int | `100` |  |
-| nginx-ingress.controller.config.upstream-keepalive-time | string | `"30s"` |  |
-| nginx-ingress.controller.config.upstream-keepalive-timeout | int | `5` |  |
-| nginx-ingress.controller.config.upstream-keepalive-requests | int | `1000` |  |
-| nginx-ingress.controller.service.externalTrafficPolicy | string | `"Local"` |  |
-| nginx-ingress.controller.ingressClassByName | bool | `false` |  |
-| nginx-ingress.controller.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
-| nginx-ingress.controller.resources.requests.cpu | string | `"100m"` |  |
-| nginx-ingress.controller.resources.requests.memory | string | `"100Mi"` |  |
-| nginx-ingress.controller.publishService.enabled | bool | `true` |  |
-| nginx-ingress.controller.replicaCount | int | `2` |  |
-| nginx-ingress.controller.minAvailable | int | `1` |  |
-| nginx-ingress.controller.scope.enabled | bool | `true` |  |
-| nginx-ingress.controller.metrics.enabled | bool | `true` |  |
-| nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
-| nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
-| nginx-ingress.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
-| nginx-ingress.controller.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
-| nginx-ingress.controller.admissionWebhooks.enabled | bool | `false` |  |
-| nginx-ingress.defaultBackend.resources.requests.cpu | string | `"5m"` |  |
-| nginx-ingress.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
-| nginx-ingress.rbac.create | bool | `true` |  |
-| nginx-ingress.rbac.scope | bool | `false` |  |
-| nginx-ingress.serviceAccount.create | bool | `true` |  |
 | nginx-ingress-geo.<<.enabled | bool | `false` |  |
+| nginx-ingress.tcpExternalConfig | string | `"true"` |  |
 | nginx-ingress-geo.<<.tcpExternalConfig | string | `"true"` |  |
-| nginx-ingress-geo.<<.controller.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
-| nginx-ingress-geo.<<.controller.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
-| nginx-ingress-geo.<<.controller.config.hsts | string | `"true"` |  |
-| nginx-ingress-geo.<<.controller.config.hsts-include-subdomains | string | `"false"` |  |
-| nginx-ingress-geo.<<.controller.config.hsts-max-age | string | `"63072000"` |  |
-| nginx-ingress-geo.<<.controller.config.server-name-hash-bucket-size | string | `"256"` |  |
-| nginx-ingress-geo.<<.controller.config.use-http2 | string | `"true"` |  |
-| nginx-ingress-geo.<<.controller.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
-| nginx-ingress-geo.<<.controller.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
-| nginx-ingress-geo.<<.controller.config.server-tokens | string | `"false"` |  |
-| nginx-ingress-geo.<<.controller.config.upstream-keepalive-connections | int | `100` |  |
-| nginx-ingress-geo.<<.controller.config.upstream-keepalive-time | string | `"30s"` |  |
-| nginx-ingress-geo.<<.controller.config.upstream-keepalive-timeout | int | `5` |  |
-| nginx-ingress-geo.<<.controller.config.upstream-keepalive-requests | int | `1000` |  |
-| nginx-ingress-geo.<<.controller.service.externalTrafficPolicy | string | `"Local"` |  |
-| nginx-ingress-geo.<<.controller.ingressClassByName | bool | `false` |  |
-| nginx-ingress-geo.<<.controller.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
-| nginx-ingress-geo.<<.controller.resources.requests.cpu | string | `"100m"` |  |
-| nginx-ingress-geo.<<.controller.resources.requests.memory | string | `"100Mi"` |  |
-| nginx-ingress-geo.<<.controller.publishService.enabled | bool | `true` |  |
-| nginx-ingress-geo.<<.controller.replicaCount | int | `2` |  |
-| nginx-ingress-geo.<<.controller.minAvailable | int | `1` |  |
-| nginx-ingress-geo.<<.controller.scope.enabled | bool | `true` |  |
-| nginx-ingress-geo.<<.controller.metrics.enabled | bool | `true` |  |
-| nginx-ingress-geo.<<.controller.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
-| nginx-ingress-geo.<<.controller.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
-| nginx-ingress-geo.<<.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
-| nginx-ingress-geo.<<.controller.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
-| nginx-ingress-geo.<<.controller.admissionWebhooks.enabled | bool | `false` |  |
-| nginx-ingress-geo.<<.defaultBackend.resources.requests.cpu | string | `"5m"` |  |
-| nginx-ingress-geo.<<.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
-| nginx-ingress-geo.<<.rbac.create | bool | `true` |  |
-| nginx-ingress-geo.<<.rbac.scope | bool | `false` |  |
-| nginx-ingress-geo.<<.serviceAccount.create | bool | `true` |  |
-| nginx-ingress-geo.enabled | bool | `false` |  |
 | nginx-ingress-geo.controller.<<.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
+| nginx-ingress.controller.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
+| nginx-ingress-geo.<<.controller.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
 | nginx-ingress-geo.controller.<<.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
-| nginx-ingress-geo.controller.<<.config.hsts | string | `"true"` |  |
-| nginx-ingress-geo.controller.<<.config.hsts-include-subdomains | string | `"false"` |  |
-| nginx-ingress-geo.controller.<<.config.hsts-max-age | string | `"63072000"` |  |
-| nginx-ingress-geo.controller.<<.config.server-name-hash-bucket-size | string | `"256"` |  |
-| nginx-ingress-geo.controller.<<.config.use-http2 | string | `"true"` |  |
-| nginx-ingress-geo.controller.<<.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
-| nginx-ingress-geo.controller.<<.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
-| nginx-ingress-geo.controller.<<.config.server-tokens | string | `"false"` |  |
-| nginx-ingress-geo.controller.<<.config.upstream-keepalive-connections | int | `100` |  |
-| nginx-ingress-geo.controller.<<.config.upstream-keepalive-time | string | `"30s"` |  |
-| nginx-ingress-geo.controller.<<.config.upstream-keepalive-timeout | int | `5` |  |
-| nginx-ingress-geo.controller.<<.config.upstream-keepalive-requests | int | `1000` |  |
-| nginx-ingress-geo.controller.<<.service.externalTrafficPolicy | string | `"Local"` |  |
-| nginx-ingress-geo.controller.<<.ingressClassByName | bool | `false` |  |
-| nginx-ingress-geo.controller.<<.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
-| nginx-ingress-geo.controller.<<.resources.requests.cpu | string | `"100m"` |  |
-| nginx-ingress-geo.controller.<<.resources.requests.memory | string | `"100Mi"` |  |
-| nginx-ingress-geo.controller.<<.publishService.enabled | bool | `true` |  |
-| nginx-ingress-geo.controller.<<.replicaCount | int | `2` |  |
-| nginx-ingress-geo.controller.<<.minAvailable | int | `1` |  |
-| nginx-ingress-geo.controller.<<.scope.enabled | bool | `true` |  |
-| nginx-ingress-geo.controller.<<.metrics.enabled | bool | `true` |  |
-| nginx-ingress-geo.controller.<<.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
-| nginx-ingress-geo.controller.<<.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
-| nginx-ingress-geo.controller.<<.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
-| nginx-ingress-geo.controller.<<.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
-| nginx-ingress-geo.controller.<<.admissionWebhooks.enabled | bool | `false` |  |
+| nginx-ingress-geo.<<.controller.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
+| nginx-ingress.controller.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
 | nginx-ingress-geo.controller.config.<<.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
 | nginx-ingress-geo.controller.config.<<.hsts | string | `"true"` |  |
+| nginx-ingress-geo.<<.controller.config.hsts | string | `"true"` |  |
+| nginx-ingress-geo.controller.<<.config.hsts | string | `"true"` |  |
+| nginx-ingress.controller.config.hsts | string | `"true"` |  |
 | nginx-ingress-geo.controller.config.<<.hsts-include-subdomains | string | `"false"` |  |
+| nginx-ingress-geo.controller.<<.config.hsts-include-subdomains | string | `"false"` |  |
+| nginx-ingress.controller.config.hsts-include-subdomains | string | `"false"` |  |
+| nginx-ingress-geo.<<.controller.config.hsts-include-subdomains | string | `"false"` |  |
 | nginx-ingress-geo.controller.config.<<.hsts-max-age | string | `"63072000"` |  |
+| nginx-ingress.controller.config.hsts-max-age | string | `"63072000"` |  |
+| nginx-ingress-geo.controller.<<.config.hsts-max-age | string | `"63072000"` |  |
+| nginx-ingress-geo.<<.controller.config.hsts-max-age | string | `"63072000"` |  |
 | nginx-ingress-geo.controller.config.<<.server-name-hash-bucket-size | string | `"256"` |  |
+| nginx-ingress-geo.controller.<<.config.server-name-hash-bucket-size | string | `"256"` |  |
+| nginx-ingress-geo.<<.controller.config.server-name-hash-bucket-size | string | `"256"` |  |
+| nginx-ingress.controller.config.server-name-hash-bucket-size | string | `"256"` |  |
 | nginx-ingress-geo.controller.config.<<.use-http2 | string | `"true"` |  |
+| nginx-ingress-geo.controller.<<.config.use-http2 | string | `"true"` |  |
+| nginx-ingress.controller.config.use-http2 | string | `"true"` |  |
+| nginx-ingress-geo.<<.controller.config.use-http2 | string | `"true"` |  |
+| nginx-ingress.controller.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
+| nginx-ingress-geo.controller.<<.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
+| nginx-ingress-geo.<<.controller.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
 | nginx-ingress-geo.controller.config.<<.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
+| nginx-ingress-geo.<<.controller.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
 | nginx-ingress-geo.controller.config.<<.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
+| nginx-ingress.controller.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
+| nginx-ingress-geo.controller.<<.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
+| nginx-ingress-geo.<<.controller.config.server-tokens | string | `"false"` |  |
+| nginx-ingress.controller.config.server-tokens | string | `"false"` |  |
+| nginx-ingress-geo.controller.<<.config.server-tokens | string | `"false"` |  |
 | nginx-ingress-geo.controller.config.<<.server-tokens | string | `"false"` |  |
+| nginx-ingress.controller.config.upstream-keepalive-connections | int | `100` |  |
+| nginx-ingress-geo.<<.controller.config.upstream-keepalive-connections | int | `100` |  |
+| nginx-ingress-geo.controller.<<.config.upstream-keepalive-connections | int | `100` |  |
 | nginx-ingress-geo.controller.config.<<.upstream-keepalive-connections | int | `100` |  |
 | nginx-ingress-geo.controller.config.<<.upstream-keepalive-time | string | `"30s"` |  |
+| nginx-ingress-geo.<<.controller.config.upstream-keepalive-time | string | `"30s"` |  |
+| nginx-ingress-geo.controller.<<.config.upstream-keepalive-time | string | `"30s"` |  |
+| nginx-ingress.controller.config.upstream-keepalive-time | string | `"30s"` |  |
+| nginx-ingress-geo.controller.<<.config.upstream-keepalive-timeout | int | `5` |  |
+| nginx-ingress.controller.config.upstream-keepalive-timeout | int | `5` |  |
 | nginx-ingress-geo.controller.config.<<.upstream-keepalive-timeout | int | `5` |  |
+| nginx-ingress-geo.<<.controller.config.upstream-keepalive-timeout | int | `5` |  |
+| nginx-ingress.controller.config.upstream-keepalive-requests | int | `1000` |  |
+| nginx-ingress-geo.<<.controller.config.upstream-keepalive-requests | int | `1000` |  |
+| nginx-ingress-geo.controller.<<.config.upstream-keepalive-requests | int | `1000` |  |
 | nginx-ingress-geo.controller.config.<<.upstream-keepalive-requests | int | `1000` |  |
+| nginx-ingress-geo.<<.controller.service.externalTrafficPolicy | string | `"Local"` |  |
+| nginx-ingress.controller.service.externalTrafficPolicy | string | `"Local"` |  |
+| nginx-ingress-geo.controller.<<.service.externalTrafficPolicy | string | `"Local"` |  |
+| nginx-ingress-geo.controller.<<.ingressClassByName | bool | `false` |  |
+| nginx-ingress-geo.<<.controller.ingressClassByName | bool | `false` |  |
+| nginx-ingress.controller.ingressClassByName | bool | `false` |  |
+| nginx-ingress.controller.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
+| nginx-ingress-geo.<<.controller.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
+| nginx-ingress-geo.controller.<<.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
+| nginx-ingress.controller.resources.requests.cpu | string | `"100m"` |  |
+| nginx-ingress-geo.<<.controller.resources.requests.cpu | string | `"100m"` |  |
+| nginx-ingress-geo.controller.<<.resources.requests.cpu | string | `"100m"` |  |
+| nginx-ingress.controller.resources.requests.memory | string | `"100Mi"` |  |
+| nginx-ingress-geo.controller.<<.resources.requests.memory | string | `"100Mi"` |  |
+| nginx-ingress-geo.<<.controller.resources.requests.memory | string | `"100Mi"` |  |
+| nginx-ingress-geo.<<.controller.publishService.enabled | bool | `true` |  |
+| nginx-ingress-geo.controller.<<.publishService.enabled | bool | `true` |  |
+| nginx-ingress.controller.publishService.enabled | bool | `true` |  |
+| nginx-ingress-geo.controller.<<.replicaCount | int | `2` |  |
+| nginx-ingress-geo.<<.controller.replicaCount | int | `2` |  |
+| nginx-ingress.controller.replicaCount | int | `2` |  |
+| nginx-ingress-geo.controller.<<.minAvailable | int | `1` |  |
+| nginx-ingress.controller.minAvailable | int | `1` |  |
+| nginx-ingress-geo.<<.controller.minAvailable | int | `1` |  |
+| nginx-ingress.controller.scope.enabled | bool | `true` |  |
+| nginx-ingress-geo.<<.controller.scope.enabled | bool | `true` |  |
+| nginx-ingress-geo.controller.<<.scope.enabled | bool | `true` |  |
+| nginx-ingress-geo.controller.<<.metrics.enabled | bool | `true` |  |
+| nginx-ingress-geo.<<.controller.metrics.enabled | bool | `true` |  |
+| nginx-ingress.controller.metrics.enabled | bool | `true` |  |
+| nginx-ingress-geo.controller.<<.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
+| nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
+| nginx-ingress-geo.<<.controller.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
+| nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
+| nginx-ingress-geo.<<.controller.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
+| nginx-ingress-geo.controller.<<.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
+| nginx-ingress-geo.controller.<<.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
+| nginx-ingress-geo.<<.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
+| nginx-ingress.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
+| nginx-ingress-geo.controller.<<.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
+| nginx-ingress-geo.<<.controller.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
+| nginx-ingress.controller.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
+| nginx-ingress-geo.<<.controller.admissionWebhooks.enabled | bool | `false` |  |
+| nginx-ingress.controller.admissionWebhooks.enabled | bool | `false` |  |
+| nginx-ingress-geo.controller.<<.admissionWebhooks.enabled | bool | `false` |  |
+| nginx-ingress-geo.<<.defaultBackend.resources.requests.cpu | string | `"5m"` |  |
+| nginx-ingress.defaultBackend.resources.requests.cpu | string | `"5m"` |  |
+| nginx-ingress.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
+| nginx-ingress-geo.<<.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
+| nginx-ingress.rbac.create | bool | `true` |  |
+| nginx-ingress-geo.<<.rbac.create | bool | `true` |  |
+| nginx-ingress-geo.<<.rbac.scope | bool | `false` |  |
+| nginx-ingress.rbac.scope | bool | `false` |  |
+| nginx-ingress-geo.<<.serviceAccount.create | bool | `true` |  |
+| nginx-ingress.serviceAccount.create | bool | `true` |  |
+| nginx-ingress-geo.enabled | bool | `false` |  |
 | nginx-ingress-geo.controller.config.use-forwarded-headers | bool | `true` |  |
 | nginx-ingress-geo.controller.electionID | string | `"ingress-controller-leader-geo"` |  |
 | nginx-ingress-geo.controller.ingressClassResource.name | string | `"{{ include \"gitlab.geo.ingress.class.name\" $ \| quote }}"` |  |
@@ -1113,3 +1114,8 @@ helm install gitlab chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
+---
+
+_This file is programatically generated using `helm-docs` and some BigBang-specific templates. The `gluon` repository has [instructions for regenerating package READMEs](https://repo1.dso.mil/big-bang/product/packages/gluon/-/blob/master/docs/bb-package-readme.md)._
+
