@@ -16,7 +16,7 @@ https://docs.gitlab.com/charts/installation/index.html#use-the-reference-archite
 
 {{- /* PostgreSQL minimum version change */}}
 {{ $NOTICE }}
-The minimum required version of PostgreSQL is now 13. See https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/doc/installation/upgrade.md for more details.
+The minimum required version of PostgreSQL is now 14. See https://docs.gitlab.com/charts/installation/upgrade.html for more details.
 
 {{- /* If the Container Registry metadata database is enabled, note it is not production ready */}}
 {{- if eq .Values.registry.database.enabled true }}
@@ -147,7 +147,7 @@ redis:
     https://docs.gitlab.com/charts/installation/upgrade.html#use-of-globalredispassword
 {{- end -}}
 
-{{- /* run deprecations */}}
-{{ include "gitlab.deprecations" . }}
+{{- /* run removals */}}
+{{ include "gitlab.removals" . }}
 {{- /* run checkConfig */}}
 {{ include "gitlab.checkConfig" . }}

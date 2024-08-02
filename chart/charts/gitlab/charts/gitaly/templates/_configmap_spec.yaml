@@ -173,3 +173,40 @@ data:
     [backup]
     go_cloud_url = "{{ .Values.backup.goCloudUrl }}"
     {{- end }}
+
+    {{- if .Values.cgroups.enabled }}
+    {{-   with .Values.cgroups }}
+    [cgroups]
+    {{-     if .mountpoint }}
+    mountpoint = "{{ .mountpoint }}"
+    {{-     end }}
+    {{-     if .hierarchyRoot }}
+    hierarchy_root = {{ .hierarchyRoot | quote }}
+    {{-     end }}
+    {{-     if .memoryBytes }}
+    memory_bytes = {{ .memoryBytes | int64 }}
+    {{-     end }}
+    {{-     if .cpuShares }}
+    cpu_shares = {{ .cpuShares | int64 }}
+    {{-     end }}
+    {{-     if .cpuQuotaUs }}
+    cpu_quota_us = {{ .cpuQuotaUs | int64 }}
+    {{-     end }}
+    {{-  end }}
+
+    {{-   with .Values.cgroups.repositories }}
+    [cgroups.repositories]
+    {{-     if .count }}
+    count = {{ .count | int64 }}
+    {{-     end }}
+    {{-     if .memoryBytes }}
+    memory_bytes = {{ .memoryBytes | int64 }}
+    {{-     end }}
+    {{-     if .cpuShares }}
+    cpu_shares = {{ .cpuShares | int64 }}
+    {{-     end }}
+    {{-     if .cpuQuotaUs }}
+    cpu_quota_us = {{ .cpuQuotaUs | int64 }}
+    {{-     end }}
+    {{-   end }}
+    {{- end }}

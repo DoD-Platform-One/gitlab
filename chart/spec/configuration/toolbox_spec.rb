@@ -240,6 +240,47 @@ describe 'toolbox configuration' do
     end
   end
 
+  context 'when setting cron job nodeSelector' do
+    let(:values) do
+      HelmTemplate.with_defaults %(
+          gitlab:
+            toolbox:
+              backups:
+                cron:
+                  enabled: true
+                  nodeSelector:
+                    key: "value"
+        )
+    end
+    let(:template) { HelmTemplate.new(values) }
+
+    it 'populates nodeSelector for toolbox cronjob' do
+      expect(template.dig('CronJob/test-toolbox-backup', 'spec', 'jobTemplate', 'spec', 'template', 'spec', 'nodeSelector')).to eq({ 'key' => 'value' })
+    end
+  end
+
+  context 'when setting cron job tolerations' do
+    let(:values) do
+      HelmTemplate.with_defaults %(
+          gitlab:
+            toolbox:
+              backups:
+                cron:
+                  enabled: true
+                  tolerations:
+                    - key: "key1"
+                      operator: "Equal"
+                      value: "value1"
+                      effect: "NoSchedule"
+        )
+    end
+    let(:template) { HelmTemplate.new(values) }
+
+    it 'populates tolerations for toolbox cronjob' do
+      expect(template.dig('CronJob/test-toolbox-backup', 'spec', 'jobTemplate', 'spec', 'template', 'spec', 'tolerations')).to eq([{ 'key' => 'key1', 'operator' => 'Equal', 'value' => 'value1', 'effect' => 'NoSchedule' }])
+    end
+  end
+
   context 'when setting extraEnvFrom' do
     def deployment_name
       "Deployment/test-toolbox"

@@ -495,7 +495,7 @@ components can use them. The init container is`registry.gitlab.com/gitlab-org/bu
 Additional certificates are mounted into the container at `/usr/local/share/ca-certificates`,
 using the secret key name as the certificate filename.
 
-The init container runs `/scripts/bundle-certificates` ([source](https://gitlab.com/gitlab-org/build/CNG-mirror/-/blob/master/alpine-certificates/scripts/bundle-certificates)).
+The init container runs `/scripts/bundle-certificates` ([source](https://gitlab.com/gitlab-org/build/CNG-mirror/-/blob/master/certificates/scripts/bundle-certificates)).
 In that script, `update-ca-certificates`:
 
 1. Copies custom certificates from `/usr/local/share/ca-certificates` to `/etc/ssl/certs`.

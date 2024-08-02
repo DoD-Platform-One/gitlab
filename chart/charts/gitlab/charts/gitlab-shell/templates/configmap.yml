@@ -75,6 +75,9 @@ data:
         {{- .Values.config.macs | toYaml | nindent 8 }}
       # The server disconnects after this time if the user has not successfully logged in
       login_grace_time: {{ .Values.config.loginGraceTime }}
+      # Available public key algorithms
+      public_key_algorithms:
+        {{- .Values.config.publicKeyAlgorithms | toYaml | nindent 8 }}
       # SSH host key files.
       # - Walking {% env.Getenv "KEYS_DIRECTORY" "/etc/ssh" %} for keys.
       host_key_files:

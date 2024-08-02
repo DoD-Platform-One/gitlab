@@ -142,7 +142,7 @@ Here is a direct comparison of Ruby's `Hash.merge` versus `Hash.deep_merge` from
  => {"a"=>{"b"=>2, "c"=>[1, 2, 3], "d"=>"whee"}}
 ```
 
-Let us compare the output of Ruby's `values.deep_merge(xyz)` and that of Helm's `helm template . -f xyz.yaml`, so that we can examine the differences between `deep_merge` and `coalesceValues` within Helm. The desired behavior is the equavilent of [`merge.WithOverride`](https://github.com/imdario/mergo#usage) from `github.com/imdario/mergo` Go module as used within Helm and Sprig.
+Let us compare the output of Ruby's `values.deep_merge(xyz)` and that of Helm's `helm template . -f xyz.yaml`, so that we can examine the differences between `deep_merge` and `coalesceValues` within Helm. The desired behavior is the equivalent of [`merge.WithOverride`](https://github.com/darccio/mergo#usage) from `github.com/darccio/mergo` Go module as used within Helm and Sprig.
 
 The Ruby code for this is effectively:
 

@@ -226,7 +226,8 @@ describe 'GitLab Pages' do
             'local_store' => {
               'enabled' => false,
               'path' => nil
-            }
+            },
+            'namespace_in_path' => false
           )
         end
       end
@@ -254,6 +255,7 @@ describe 'GitLab Pages' do
                 localStore:
                   enabled: true
                   path: /random/path
+                namespaceInPath: true
               job:
                 nameSuffixOverride: '1'
           ))
@@ -279,7 +281,8 @@ describe 'GitLab Pages' do
             'local_store' => {
               'enabled' => true,
               'path' => '/random/path'
-            }
+            },
+            'namespace_in_path' => true
           )
         end
 
@@ -461,6 +464,7 @@ describe 'GitLab Pages' do
               pages:
                 enabled: true
                 accessControl: true
+                namespaceInPath: false
               oauth:
                 gitlab-pages:
                   authScope: read_api
@@ -587,6 +591,23 @@ describe 'GitLab Pages' do
         it 'populates the config.tpl pages metrics tls settings' do
           expect(config_data).to include('metrics-certificate=/etc/gitlab-secrets/pages-metrics/pages-metrics.crt')
           expect(config_data).to include('metrics-key=/etc/gitlab-secrets/pages-metrics/pages-metrics.key')
+        end
+      end
+
+      context 'when namespace in path is enabled' do
+        let(:pages_enabled_values) do
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                accessControl: true
+                namespaceInPath: true
+          ))
+        end
+
+        it 'populates the config.tpl pages metrics tls settings' do
+          expect(config_data).to include('namespace-in-path=true')
+          expect(config_data).to include('auth-redirect-uri=https://pages.example.com/projects/auth')
         end
       end
     end

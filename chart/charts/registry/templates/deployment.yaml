@@ -64,17 +64,24 @@ spec:
           image: {{ include "gitlab.configure.image" (dict "root" $ "image" .Values.init.image) | quote }}
           {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 10 }}
           {{- include "gitlab.init.containerSecurityContext" $ | indent 10 }}
-          command: ["sh", "/config/configure"]
+          args: ["sh", "/config/configure"]
           volumeMounts:
             - name: registry-secrets
               mountPath: /config
+            - name: registry-server-config-templates
+              mountPath: /templates
+              readOnly: true
             - name: registry-server-config
               mountPath: /registry
           resources:
             {{- toYaml .Values.init.resources | nindent 12 }}
           env:
-          {{- include "gitlab.extraEnv" . | nindent 10 }}
-          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
+            - name: CONFIG_TEMPLATE_DIRECTORY
+              value: /templates
+            - name: CONFIG_DIRECTORY
+              value: /registry
+          {{- include "gitlab.extraEnv" . | nindent 12 }}
+          {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
         {{- if or .Values.database.enabled .Values.database.configure }}
         - name: dependencies
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ include "gitlab.image.tagSuffix" . }}"
@@ -144,6 +151,13 @@ spec:
                 command: ["/bin/bash", "-c", "sleep 5"]
       terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
       volumes:
+      - name: registry-server-config-templates
+        configMap:
+          name: {{ template "registry.fullname" . }}
+          items:
+            - key: config.yml.tpl
+              path: config.yml.tpl
+      # Actual config dirs that will be used in the container
       - name: registry-server-config
         emptyDir:
           medium: "Memory"
@@ -219,5 +233,7 @@ spec:
                   path: tls/tls-debug.key
           {{- end }}
           {{- include "gitlab.registry.redisCacheSecret.mount" $ | nindent 10 }}
+          {{- include "gitlab.registry.redisSentinelSecret.mount" $ | nindent 10 }}
+          {{- include "gitlab.registry.redisRateLimitingSecret.mount" $ | nindent 10 }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
 {{- end -}}

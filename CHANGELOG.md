@@ -4,6 +4,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.2.1-bb.0] (2024-08-02)
+
+### Added
+
+- Introduces `registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base:17.2.1` as `gitlabBase` image where we previously used `ubi9` for some `initContainers`.
+
+### Changed
+
+- Update appVersion 17.1.2 -> 17.2.1
+- Update helm chart 8.1.2 -> 8.2.1
+- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.61.0 -> v1.62.0
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/certificates 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 17.1.2 -> 17.2.1
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.1.2 -> 17.2.1
+
 ## [8.1.2-bb.3] (2024-07-19)
 
 ### Changed

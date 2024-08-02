@@ -106,3 +106,6 @@ securityContext:
 affinity:
   podAntiAffinity:
     topologyKey:
+  nodeAffinity:
+       key:
+       values:

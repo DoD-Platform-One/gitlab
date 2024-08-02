@@ -90,6 +90,9 @@ tolerations: []
 affinity:
   podAntiAffinity:
     topologyKey:
+  nodeAffinity:
+       key:
+       values:
 
 podLabels: {}
 common:

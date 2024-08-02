@@ -33,7 +33,10 @@ This deployment is for trial purposes only and **not recommended for use in prod
 
 You should set up an
 [external, production-ready PostgreSQL instance](../advanced/external-db/index.md).
-PostgreSQL 13 is the recommended default version since GitLab chart 6.0.
+Recommended default versions:
+
+- PostgreSQL 13 since GitLab chart 6.0.
+- PostgreSQL 14 since GitLab chart 8.0.
 
 As of GitLab chart 4.0.0, replication is available internally, but not enabled by default.
 Such functionality has not been load tested by GitLab.

@@ -560,6 +560,31 @@ securityContext:
 {{- end -}}
 
 {{/*
+Return a PodSecurityContext definition that allows to it to run as root.
+
+Usage:
+  {{ include "gitlab.podSecurityContextRoot" .Values.securityContext }}
+*/}}
+{{- define "gitlab.podSecurityContextRoot" -}}
+{{- $psc := . }}
+{{- if $psc }}
+securityContext:
+{{-   if not (eq $psc.runAsUser nil) }}
+  runAsUser: {{ $psc.runAsUser }}
+{{-   end }}
+{{-   if not (eq $psc.runAsGroup nil) }}
+  runAsGroup: {{ $psc.runAsGroup }}
+{{-   end }}
+{{-   if not (eq $psc.fsGroup nil) }}
+  fsGroup: {{ $psc.fsGroup }}
+{{-   end }}
+{{-   if not (eq $psc.fsGroupChangePolicy nil) }}
+  fsGroupChangePolicy: {{ $psc.fsGroupChangePolicy }}
+{{-   end }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Returns `.Values.global.job.nameSuffixOverride` if set.
 
 If `.Values.global.job.nameSuffixOverride` is not set, job names will be

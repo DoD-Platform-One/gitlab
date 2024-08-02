@@ -39,6 +39,7 @@ configurations that can be supplied to the `helm install` command using the
 
 | Parameter                                 | Default                                                    | Description                                                                                                                                                                                        |
 | ----------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `affinity`                             | `{}`                                                       | [Affinity rules](#affinity) for pod assignment                                                                                                                                                               |
 | `annotations`                             |                                                            | Pod annotations                                                                                                                                                                                    |
 | `common.labels`                           | `{}`                                                       | Supplemental labels that are applied to all objects created by this chart.                                                                                                                         |
 | `deployment.strategy`                     | `{}`                                                       | Allows one to configure the update strategy used by the deployment. When not provided, the cluster default is used.                                                                                |
@@ -282,6 +283,65 @@ To have TLS access to the GitLab Pages feature you must:
 1. Create a DNS entry in your DNS provider with the name `*.pages.<yourdomaindomain>`
    pointing to your LoadBalancer.
 
+### Pages domain without wildcard DNS
+
+DETAILS:
+**Status:** Beta
+
+> - [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5570) as an [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html) in GitLab 17.2.
+
+FLAG:
+On GitLab.com this feature is not available. This feature is not ready for production use.
+
+WARNING:
+GitLab Pages supports only one URL scheme at a time: Either with wildcard DNS, or without wildcard DNS. If you enable `namespaceInPath`, existing GitLab Pages websites are accessible only on domains without wildcard DNS.
+
+1. Enable `namespaceInPath` in the global Pages settings.
+
+   ```yaml
+   global:
+     pages:
+       namespaceInPath: true
+   ```
+
+1. Create a DNS entry in your DNS provider with the name `pages.<yourdomaindomain>` pointing to your LoadBalancer.
+
+#### TLS access to GitLab Pages domain without wildcard DNS
+
+1. Create a certificate for your GitLab Pages domain in this format: `pages.<yourdomain>`.
+1. Create the secret in Kubernetes:
+
+   ```shell
+   kubectl create secret tls tls-star-pages-<mysecret> --cert=<path/to/fullchain.pem> --key=<path/to/privkey.pem>
+   ```
+
+1. Configure GitLab Pages to use this secret:
+
+   ```yaml
+   gitlab:
+     gitlab-pages:
+       ingress:
+         tls:
+           secretName: tls-star-pages-<mysecret>
+   ```
+
+#### Configure access control
+
+1. Enable `accessControl` in the global pages settings.
+
+   ```yaml
+   global:
+     pages:
+       accessControl: true
+   ```
+
+1. Optional. If [TLS access](#tls-access-to-gitlab-pages-domain-without-wildcard-dns) is configured, update the redirect URI in the GitLab Pages
+   [System OAuth application](https://docs.gitlab.com/ee/integration/oauth_provider.html#create-an-instance-wide-application)
+   to use the HTTPS protocol.
+
+WARNING:
+GitLab Pages does not update the OAuth application, and the default `authRedirectUri` is updated to `https://pages.<yourdomaindomain>/projects/auth`. While accessing a private Pages site, if you encounter an error 'The redirect URI included is not valid', update the redirect URI in the GitLab Pages [System OAuth application](https://docs.gitlab.com/ee/integration/oauth_provider.html#create-an-instance-wide-application) to `https://pages.<yourdomaindomain>/projects/auth`.
+
 ### Configuring KEDA
 
 This `keda` section enables the installation of [KEDA](https://keda.sh/) `ScaledObjects` instead of regular `HorizontalPodAutoscalers`.
@@ -310,3 +370,37 @@ Refer to the [KEDA documentation](https://keda.sh/docs/2.10/concepts/scaling-dep
 | `restoreToOriginalReplicaCount` | Boolean |         | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted                                                      |
 | `behavior`                      | Map     |         | The specifications for up- and downscaling behavior, defaults to `hpa.behavior`                                                                                                 |
 | `triggers`                      | Array   |         | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory`                                                      |
+
+### affinity
+
+`affinity` is an optional parameter that allows you to set either or both:
+
+- `podAntiAffinity` rules to:
+  - Not schedule pods in the same domain as the pods that match the expression corresponding to the `topology key`.
+  - Set two modes of `podAntiAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). Using the variable `antiAffinity` in `values.yaml`, set the setting to `soft` so that the preferred mode is
+    applied or set it to `hard` so that the required mode is applied.
+- `nodeAffinity` rules to:
+  - Schedule pods to nodes that belong to a specific zone or zones.
+  - Set two modes of `nodeAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). When set to `soft`, the preferred mode is applied. When set to `hard`, the required mode is applied. This
+    rule is implemented only for the `registry` chart and the `gitlab` chart alongwith all its subcharts except `webservice` and `sidekiq`.
+
+`nodeAffinity` only implements the [`In` operator](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators).
+
+For more information, see [the relevant Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
+
+The following example sets `affinity`, with both `nodeAffinity` and `antiAffinity` set to `hard`:
+
+```yaml
+nodeAffinity: "hard"
+antiAffinity: "hard"
+affinity:
+  nodeAffinity:
+    key: "test.com/zone"
+    values:
+    - us-east1-a
+    - us-east1-b
+  podAntiAffinity:
+    topologyKey: "test.com/hostname"
+```

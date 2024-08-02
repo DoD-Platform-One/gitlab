@@ -55,7 +55,7 @@ describe 'global configuration' do
       gitlab_config = t.dig('ConfigMap/test-sidekiq', 'data', 'gitlab.yml.erb')
       expect(gitlab_config).to include('notification_secret')
 
-      config = t.dig('ConfigMap/test-registry', 'data', 'config.yml')
+      config = t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')
       config_yaml = YAML.safe_load(config, permitted_classes: [Symbol])
 
       # With geo enabled && syncing of the registry enabled, we insert this notifier
@@ -106,7 +106,7 @@ describe 'global configuration' do
       expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
 
       # The below is ugly, both code wise, as well as informing the user testing WHAT is wrong...
-      config = t.dig('ConfigMap/test-registry', 'data', 'config.yml')
+      config = t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')
       config_yaml = YAML.safe_load(config, permitted_classes: [Symbol])
 
       # Testing that we don't accidentally blow away a customization

@@ -34,6 +34,7 @@ that specifies these tools with their recommended versions. To install or update
    asdf plugin add helm
    asdf plugin add stern
    asdf plugin add vale
+   asdf plugin add gomplate
    ```
 
 1. Install or update the tools:

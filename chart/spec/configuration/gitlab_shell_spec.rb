@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'helm_template_helper'
+require 'runtime_template_helper'
 require 'yaml'
 require 'hash_deep_merge'
 
@@ -45,26 +46,35 @@ describe 'gitlab-shell configuration' do
               proxyPolicy: #{proxy_policy}
               proxyHeaderTimeout: #{proxy_header_timeout}
               loginGraceTime: #{login_grace_time}
+              publicKeyAlgorithms:
+                - ssh-rsa
       )).deep_merge(default_values)
     end
 
     let(:config) { t.dig('ConfigMap/test-gitlab-shell', 'data', 'config.yml.tpl') }
 
+    let(:rendered_config) do
+      rendered = RuntimeTemplate.gomplate(raw_template: config)
+      YAML.safe_load(rendered, aliases: true)
+    end
+
     it 'renders gitlab-sshd config' do
       expect_successful_exit_code
-      expect(config).to match(/^sshd:$/)
-      expect(config).to include("proxy_protocol: #{proxy_protocol}")
-      expect(config).to include("proxy_policy: #{proxy_policy}")
-      expect(config).to include("client_alive_interval: #{client_alive_interval}")
-      expect(config).to include("proxy_header_timeout: #{proxy_header_timeout}")
-      expect(config).to match(/ciphers:\n    - aes128-gcm@openssh.com/m)
-      expect(config).to match(/kex_algorithms:\n    - curve25519-sha256/m)
-      expect(config).to match(/macs:\n    - hmac-sha2-256-etm@openssh.com/m)
-      expect(config).to include("login_grace_time: #{login_grace_time}")
+
+      expect(rendered_config['sshd']['proxy_protocol']).to eq(proxy_protocol)
+      expect(rendered_config['sshd']['proxy_policy']).to eq(proxy_policy)
+      expect(rendered_config['sshd']['client_alive_interval']).to eq(client_alive_interval)
+      expect(rendered_config['sshd']['proxy_header_timeout']).to eq(proxy_header_timeout)
+      expect(rendered_config['sshd']['login_grace_time']).to eq(login_grace_time)
+
+      expect(rendered_config['sshd']['ciphers']).to include('aes128-gcm@openssh.com')
+      expect(rendered_config['sshd']['kex_algorithms']).to include('curve25519-sha256')
+      expect(rendered_config['sshd']['macs']).to include('hmac-sha2-256-etm@openssh.com')
+      expect(rendered_config['sshd']['public_key_algorithms']).to include('ssh-rsa')
     end
 
     it 'sets 5 seconds smaller grace period' do
-      expect(config).to include("grace_period: #{grace_period - 5}")
+      expect(rendered_config['sshd']['grace_period']).to eq(grace_period - 5)
     end
   end
 

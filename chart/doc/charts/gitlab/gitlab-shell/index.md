@@ -36,6 +36,7 @@ controlled by `global.shell.port`.
 
 | Parameter                                       | Default                                                                                                                                                                     | Description                                                                                                                                                                                        |
 | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `affinity`                             | `{}`                                                       | [Affinity rules](#affinity) for pod assignment                                                                                                                                                               |
 | `annotations`                                   |                                                                                                                                                                             | Pod annotations                                                                                                                                                                                    |
 | `podLabels`                                     |                                                                                                                                                                             | Supplemental Pod labels. Will not be used for selectors.                                                                                                                                           |
 | `common.labels`                                 |                                                                                                                                                                             | Supplemental labels that are applied to all objects created by this chart.                                                                                                                         |
@@ -50,6 +51,7 @@ controlled by `global.shell.port`.
 | `config.ciphers`                                | `[aes128-gcm@openssh.com, chacha20-poly1305@openssh.com, aes256-gcm@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr]`                                                       | Specify the ciphers allowed.                                                                                                                                                                       |
 | `config.kexAlgorithms`                          | `[curve25519-sha256, curve25519-sha256@libssh.org, ecdh-sha2-nistp256, ecdh-sha2-nistp384, ecdh-sha2-nistp521, diffie-hellman-group14-sha256, diffie-hellman-group14-sha1]` | Specifies the available KEX (Key Exchange) algorithms.                                                                                                                                             |
 | `config.macs`                                   | `[hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1]`                                                                   | Specifies the available MAC (message authentication code algorithms.                                                                                                                               |
+| `config.publicKeyAlgorithms`                    | `[]`                                                                                                                                                                        | Custom list of public key algorithms. If empty, the default algorithms are used.                                                                                                                   |
 | `config.gssapi.enabled`                         | `false`                                                                                                                                                                     | Enable GSS-API support for the `gitlab-sshd` daemon                                                                                                                                                |
 | `config.gssapi.keytab.secret`                   |                                                                                                                                                                             | The name of a Kubernetes secret holding the keytab for the gssapi-with-mic authentication method                                                                                                   |
 | `config.gssapi.keytab.key`                      | `keytab`                                                                                                                                                                    | Key holding the keytab in the Kubernetes secret                                                                                                                                                    |
@@ -86,7 +88,7 @@ controlled by `global.shell.port`.
 | `hpa.targetAverageValue`                        |                                                                                                                                                                             | **DEPRECATED** Set the autoscaling CPU target value                                                                                                                                                |
 | `image.pullPolicy`                              | `IfNotPresent`                                                                                                                                                              | Shell image pull policy                                                                                                                                                                            |
 | `image.pullSecrets`                             |                                                                                                                                                                             | Secrets for the image repository                                                                                                                                                                   |
-| `image.repository`                              | `registry.com/gitlab-org/build/cng/gitlab-shell`                                                                                                                            | Shell image repository                                                                                                                                                                             |
+| `image.repository`                              | `registry.gitlab.com/gitlab-org/build/cng/gitlab-shell`                                                                                                                     | Shell image repository                                                                                                                                                                             |
 | `image.tag`                                     | `master`                                                                                                                                                                    | Shell image tag                                                                                                                                                                                    |
 | `init.image.repository`                         |                                                                                                                                                                             | initContainer image                                                                                                                                                                                |
 | `init.image.tag`                                |                                                                                                                                                                             | initContainer image tag                                                                                                                                                                            |
@@ -248,6 +250,40 @@ tolerations:
   operator: "Equal"
   value: "true"
   effect: "NoExecute"
+```
+
+### affinity
+
+`affinity` is an optional parameter that allows you to set either or both:
+
+- `podAntiAffinity` rules to:
+  - Not schedule pods in the same domain as the pods that match the expression corresponding to the `topology key`.
+  - Set two modes of `podAntiAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). Using the variable `antiAffinity` in `values.yaml`, set the setting to `soft` so that the preferred mode is
+    applied or set it to `hard` so that the required mode is applied.
+- `nodeAffinity` rules to:
+  - Schedule pods to nodes that belong to a specific zone or zones.
+  - Set two modes of `nodeAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). When set to `soft`, the preferred mode is applied. When set to `hard`, the required mode is applied. This
+    rule is implemented only for the `registry` chart and the `gitlab` chart alongwith all its subcharts except `webservice` and `sidekiq`.
+
+`nodeAffinity` only implements the [`In` operator](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators).
+
+For more information, see [the relevant Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
+
+The following example sets `affinity`, with both `nodeAffinity` and `antiAffinity` set to `hard`:
+
+```yaml
+nodeAffinity: "hard"
+antiAffinity: "hard"
+affinity:
+  nodeAffinity:
+    key: "test.com/zone"
+    values:
+    - us-east1-a
+    - us-east1-b
+  podAntiAffinity:
+    topologyKey: "test.com/hostname"
 ```
 
 ### annotations

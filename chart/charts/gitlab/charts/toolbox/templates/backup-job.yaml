@@ -43,9 +43,10 @@ spec:
           {{- end }}
         spec:
           restartPolicy: {{ .Values.backups.cron.restartPolicy }}
-          {{- if .Values.tolerations }}
+          {{- $tolerations := default .Values.tolerations .Values.backups.cron.tolerations }}
+          {{- if $tolerations }}
           tolerations:
-            {{- toYaml .Values.tolerations | nindent 12 }}
+            {{- toYaml $tolerations | nindent 12 }}
           {{- end }}
           {{- include "gitlab.podSecurityContext" .Values.securityContext | nindent 10 }}
           {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
@@ -231,5 +232,10 @@ spec:
               emptyDir:
                 medium: "Memory"
             {{- include "gitlab.certificates.volumes" . | nindent 12 }}
-          {{- include "gitlab.nodeSelector" . | nindent 10 }}
+          {{- if .Values.backups.cron.nodeSelector }}
+          nodeSelector:
+            {{- toYaml .Values.backups.cron.nodeSelector | nindent 12 }}
+          {{- else }}
+          {{-   include "gitlab.nodeSelector" . | nindent 10 }}
+          {{- end }}
 {{- end }}

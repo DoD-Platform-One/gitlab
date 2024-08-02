@@ -26,6 +26,9 @@ antiAffinityLabels:
 affinity:
   podAntiAffinity:
     topologyKey:
+  nodeAffinity:
+       key:
+       values:
 
 common:
   labels: {}

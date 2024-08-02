@@ -12,7 +12,8 @@ describe 'Gitaly configuration' do
 
   def render_toml(raw_template, env = {})
     # provide the gitaly_token
-    files = { '/etc/gitlab-secrets/gitaly/gitaly_token' => RuntimeTemplate::JUNK_TOKEN }
+    files = { '/etc/gitlab-secrets/gitaly/gitaly_token' => RuntimeTemplate::JUNK_TOKEN,
+              '/etc/gitlab-secrets/gitaly-pod-cgroup' => RuntimeTemplate::JUNK_TOKEN }
 
     toml = RuntimeTemplate.gomplate(raw_template: raw_template, files: files, env: env)
 
@@ -341,11 +342,13 @@ describe 'Gitaly configuration' do
       it 'populates a pack_objects_cache section in config.toml.tpl' do
         config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
 
-        pack_objects_cache_section = "[pack_objects_cache]\n" \
-                                     "enabled = #{pack_objects_cache_enabled}\n" \
-                                     "dir = \"#{pack_objects_cache_dir}\"\n" \
-                                     "max_age = \"#{pack_objects_cache_max_age}\"\n" \
-                                     "min_occurrences = #{pack_objects_cache_min_occurrences}"
+        pack_objects_cache_section = <<~CONFIG
+          [pack_objects_cache]
+          enabled = #{pack_objects_cache_enabled}
+          dir = "#{pack_objects_cache_dir}"
+          max_age = "#{pack_objects_cache_max_age}"
+          min_occurrences = #{pack_objects_cache_min_occurrences}
+        CONFIG
 
         expect(config_toml).to include(pack_objects_cache_section)
       end
@@ -362,7 +365,7 @@ describe 'Gitaly configuration' do
       it 'does not populate a pack_objects_cache section in config.toml.tpl' do
         config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
 
-        expect(config_toml).not_to match /^\[pack_objects_cache\]/
+        expect(config_toml).not_to match(/^\[pack_objects_cache\]/)
       end
     end
   end
@@ -403,7 +406,7 @@ describe 'Gitaly configuration' do
       it 'does not populate a signing_key field in config.toml.tpl' do
         config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
 
-        expect(config_toml).not_to match /^signing_key = /
+        expect(config_toml).not_to match(/^signing_key = /)
       end
     end
   end
@@ -520,6 +523,161 @@ describe 'Gitaly configuration' do
         gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
         gitaly_container_env = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['env']
         expect(gitaly_container_env.map { |env| env['name'] }).not_to include('GOMEMLIMIT')
+      end
+    end
+  end
+
+  context 'cgroups' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            cgroups:
+              enabled: #{cgroups_enabled}
+              initContainer:
+                image:
+                  repository: registry.gitlab.com/gitlab-org/build/cng/gitaly-init-cgroups
+                  tag: master
+                  pullPolicy: IfNotPresent
+              mountpoint: '{% file.Read "/etc/gitlab-secrets/gitaly-pod-cgroup" | strings.TrimSpace %}'
+              hierarchyRoot: gitaly
+              memoryBytes: 64424509440
+              cpuShares: 1024
+              cpuQuotaUs: 400000
+              repositories:
+                count: 1000
+                memoryBytes: 32212254720
+                cpuShares: 512
+                cpuQuotaUs: 200000
+      )).deep_merge(default_values)
+    end
+
+    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
+
+    context 'when enabled' do
+      let(:cgroups_enabled) { true }
+
+      let(:template) { HelmTemplate.new(values) }
+      let(:gitaly_config) { template.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl') }
+
+      it 'renders the template' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      end
+
+      it 'sets the cgroups config' do
+        expect(gitaly_config).to include(
+          <<~CONFIG
+          [cgroups]
+          mountpoint = "{% file.Read "/etc/gitlab-secrets/gitaly-pod-cgroup" | strings.TrimSpace %}"
+          hierarchy_root = "gitaly"
+          memory_bytes = 64424509440
+          cpu_shares = 1024
+          cpu_quota_us = 400000
+          [cgroups.repositories]
+          count = 1000
+          memory_bytes = 32212254720
+          cpu_shares = 512
+          cpu_quota_us = 200000
+          CONFIG
+        )
+      end
+
+      it 'sets the cgroups init container' do
+        gitaly_set = template.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_init_container = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['initContainers'][0]
+        gitaly_init_container_env = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['initContainers'][0]['env']
+        expect(gitaly_init_container['name']).to eq('init-cgroups')
+        expect(gitaly_init_container['image']).to eq('registry.gitlab.com/gitlab-org/build/cng/gitaly-init-cgroups:master')
+        expect(gitaly_init_container['imagePullPolicy']).to eq('IfNotPresent')
+        expect(gitaly_init_container['securityContext']).to include('runAsUser' => 0, 'runAsGroup' => 0)
+        expect(gitaly_init_container_env.map { |env| env['name'] }).to match_array(['GITALY_POD_UID', 'CGROUP_PATH', 'OUTPUT_PATH'])
+      end
+    end
+
+    context 'when disabled' do
+      let(:cgroups_enabled) { false }
+
+      let(:template) { HelmTemplate.new(values) }
+
+      it 'does not populate a cgroups field in config.toml.tpl' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
+
+        expect(config_toml).not_to match(/^\[cgroups\]/)
+        expect(config_toml).not_to match(/^\[cgroups.repositories\]/)
+      end
+
+      it 'does not add an initContainer to gitaly' do
+        gitaly_set = template.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_init_containers = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['initContainers']
+        expect(gitaly_init_containers.map { |c| c['name'] }).not_to include('init-cgroups')
+      end
+    end
+  end
+
+  context 'startupProbe' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            statefulset:
+              startupProbe:
+                enabled: #{startup_probe_enabled}
+                initialDelaySeconds: 5
+                periodSeconds: 1
+                timeoutSeconds: 2
+                successThreshold: 1
+                failureThreshold: 30
+      )).merge(default_values)
+    end
+
+    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
+
+    context 'when enabled' do
+      let(:startup_probe_enabled) { 'true' }
+
+      it 'sets the startup probe config' do
+        t = HelmTemplate.new(values)
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_startup_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['startupProbe']
+        gitaly_readiness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['readinessProbe']
+        gitaly_liveness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['livenessProbe']
+
+        expect(gitaly_startup_probe).to include(
+          'initialDelaySeconds' => 5,
+          'exec' => { "command" => ["/scripts/healthcheck"] },
+          'failureThreshold' => 30,
+          'periodSeconds' => 1,
+          'timeoutSeconds' => 2,
+          'successThreshold' => 1
+        )
+
+        expect(gitaly_readiness_probe).to include(
+          'initialDelaySeconds' => 0
+        )
+
+        expect(gitaly_liveness_probe).to include(
+          'initialDelaySeconds' => 0
+        )
+      end
+    end
+
+    context 'when not enabled' do
+      let(:startup_probe_enabled) { 'false' }
+
+      it 'does not set startup probe for the Gitaly container' do
+        t = HelmTemplate.new(values)
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_container = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]
+        gitaly_readiness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['readinessProbe']
+        gitaly_liveness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['livenessProbe']
+
+        expect(gitaly_container).not_to have_key('startupProbe')
+        expect(gitaly_readiness_probe).to include(
+          'initialDelaySeconds' => 10
+        )
+        expect(gitaly_liveness_probe).to include(
+          'initialDelaySeconds' => 30
+        )
       end
     end
   end

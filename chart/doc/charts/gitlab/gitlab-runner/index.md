@@ -22,7 +22,28 @@ For more information, see the
 
 ## Requirements
 
-This chart depends on the shared-secrets Job to populate its `registrationToken` for automatic registration. If you intend to run this chart as a stand-alone chart with an existing GitLab instance then you will need to manually set the `registrationToken` in the `gitlab-runner` secret to be equal to that displayed by the running GitLab instance.
+In GitLab 16.0, we introduced a new runner creation workflow that uses runner authentication tokens to
+register runners. The legacy workflow that uses registration tokens is deprecated and disabled by default
+in GitLab 17.0. It will be removed in GitLab 18.0.
+
+To use the recommended workflow:
+
+- [Generate an authentication token.](https://docs.gitlab.com/ee/ci/runners/new_creation_workflow.html#prevent-your-runner-registration-workflow-from-breaking)
+- Update the runner secret (`<release>-gitlab-runner-secret`) manually, as the configuration
+  is not handled by the [`shared-secrets`](../../shared-secrets.md) job.
+- Set `gitlab-runner.runners.locked` to `null`:
+
+  ```yaml
+  gitlab-runner:
+    runners:
+      locked: null
+  ```
+
+If you want to use the legacy workflow (not recommended):
+
+- You must [re-enable the legacy workflow](https://docs.gitlab.com/ee/administration/settings/continuous_integration.html#enable-runner-registrations-tokens).
+- The registration token is populated by the [`shared-secrets`](../../shared-secrets.md) Job.
+- You must migrate to the new workflow before GitLab 18.0, which will remove support for the legacy workflow.
 
 ## Configuration
 

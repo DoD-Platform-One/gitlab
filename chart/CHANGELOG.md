@@ -2,6 +2,29 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.2.1 (2024-07-24)
+
+### Changed (1 change)
+
+- [Update gitlab-org/charts/gitlab-runner from 0.66.0 to 0.67.0](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/28a61a472f39a3da9aba14a518b3375f3831274d)
+
+## 8.2.0 (2024-07-17)
+
+### Added (5 changes)
+
+- [Add support for configuring node affinity](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/d46049c5b7c6aea1d6fbbdf2e72eaf4da34da2a7) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3770))
+- [Add StartupProbe for Gitaly](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4e9e27c504109a783f88625252996c130a9e8ed6) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3828))
+- [Pages namespace in path configuration](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/35fb7358830e4773be5eba44bcd2afabf5d17fa6) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3821))
+- [Registry: add redis rate-limiter connection settings](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/2190cbb778854f2af461033d0fa1c3bf930b830d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3794))
+- [GitLab Shell: Support public key algorithms](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/ca16729ed341b873e6aae80b74e803e2348aa40e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3798))
+
+### Changed (4 changes)
+
+- [Update gitlab-org/gitlab-qa from 14.10.0 to 14.12.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/59a3c9d4bb40b02ae21b9d893d079af8734d0958) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3822))
+- [Update gitlab-org/container-registry from 4.5.0-gitlab to 4.6.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/6732226e39aab24b8a478a4a841e2bd94355a4d4) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3826))
+- [Update cert-manager/cert-manager from 1.12.11 to 1.12.12](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/726af7eb0d223e28ba35b0287a3134ba267ddd01) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3817))
+- [Update gitlab-org/charts/gitlab-runner from 0.65.0 to 0.66.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4b2f9346d27fa467ea97cc4f44794288e61325a8) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3810))
+
 ## 8.1.2 (2024-07-09)
 
 ### Changed (1 change)
@@ -45,6 +68,14 @@ No changes.
 
 - [Remove gke125 CI jobs](gitlab-org/charts/gitlab@57ced9243021af6de6e324f2ec5ad17b5dcf975e) ([merge request](gitlab-org/charts/gitlab!3760))
 
+## 8.0.4 (2024-07-09)
+
+No changes.
+
+## 8.0.3 (2024-06-25)
+
+No changes.
+
 ## 8.0.2 (2024-06-11)
 
 No changes.
@@ -84,6 +115,14 @@ No changes.
 - [Remove kas.privateApi.tls.enabled and secretName](gitlab-org/charts/gitlab@bb51a4de6f204e854f287463712d665e9c6370a2) ([merge request](gitlab-org/charts/gitlab!3716))
 - [Remove deprecated queue selector and negate options from Sidekiq chart](gitlab-org/charts/gitlab@6c3bf44290e29b230132bb17d244d38e218eb15b) ([merge request](gitlab-org/charts/gitlab!3697))
 - [Remove support for busybox init containers](gitlab-org/charts/gitlab@f85e7f94cc4863038461daece756081e9d1d960a) ([merge request](gitlab-org/charts/gitlab!3709))
+
+## 7.11.6 (2024-07-09)
+
+No changes.
+
+## 7.11.5 (2024-06-25)
+
+No changes.
 
 ## 7.11.4 (2024-06-11)
 
@@ -128,6 +167,10 @@ No changes.
 ### Other (1 change)
 
 - [Allow routing rules to contain shard information](gitlab-org/charts/gitlab@aad02140fdabbf2a045e2701b8f1f5b6c3ab81c5) ([merge request](gitlab-org/charts/gitlab!3682))
+
+## 7.10.8 (2024-06-25)
+
+No changes.
 
 ## 7.10.7 (2024-06-11)
 
@@ -174,6 +217,10 @@ No changes.
 ### Deprecated (1 change)
 
 - [Removed kubernetes 1.22 testing](gitlab-org/charts/gitlab@ca9ec21a32e28e63b8e731c317d5089384c9c782) ([merge request](gitlab-org/charts/gitlab!3597))
+
+## 7.9.9 (2024-06-25)
+
+No changes.
 
 ## 7.9.8 (2024-05-09)
 
@@ -231,6 +278,10 @@ No changes.
 - [Update gitlab-org/gitlab-exporter from 13.5.0 to 14.0.0](gitlab-org/charts/gitlab@6cedee72b82377bbea9ca4c915c4e9bd83d22a45) ([merge request](gitlab-org/charts/gitlab!3542))
 - [Update gitlab-org/gitlab-qa from 13.1.0 to 13.2.1](gitlab-org/charts/gitlab@8c970eb366b508ef20d30c6369a6aeee57fed149) ([merge request](gitlab-org/charts/gitlab!3573))
 
+## 7.8.8 (2024-06-25)
+
+No changes.
+
 ## 7.8.7 (2024-04-12)
 
 ### Deprecated (1 change)
@@ -285,6 +336,10 @@ No changes.
 
 - [Provide option to configure kas redis using global.redis.kas](gitlab-org/charts/gitlab@3e03a63726406922b39057c804d1d7d43508946f) ([merge request](gitlab-org/charts/gitlab!3544))
 
+## 7.7.8 (2024-06-25)
+
+No changes.
+
 ## 7.7.7 (2024-03-06)
 
 No changes.
@@ -336,6 +391,10 @@ No changes.
 ### Other (1 change)
 
 - [Doc: FIPS Add note of UBI expectations for FIPS mode host](gitlab-org/charts/gitlab@4274d077ab7d6b08b9ac640182640b02ea22b4f7) ([merge request](gitlab-org/charts/gitlab!3487))
+
+## 7.6.8 (2024-06-25)
+
+No changes.
 
 ## 7.6.7 (2024-02-07)
 

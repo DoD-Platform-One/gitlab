@@ -75,6 +75,7 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.notifications" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.database" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.redis.cache" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.registry.redis.rateLimiting" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.tls" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.debug.tls" .) -}}
 
