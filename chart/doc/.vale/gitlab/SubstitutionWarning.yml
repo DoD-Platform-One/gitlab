@@ -15,7 +15,7 @@ swap:
   active users: "billable users"
   air(?:-| )?gapped: "offline environment"
   bullet: "list item"
-  click: "select"
+  (?<!right-)click(?!-through): "select"
   code base: "codebase"
   config: "configuration"
   confirmation box: "confirmation dialog"
@@ -49,6 +49,7 @@ swap:
   once that: "after that"
   once the: "after the"
   once you: "after you"
+  open telemetry: "OpenTelemetry"
   pack file: packfile
   pack files: packfiles
   pop-up window: "dialog"
@@ -64,5 +65,6 @@ swap:
   sub-groups: "subgroups"
   timezone: "time zone"
   utiliz(?:es?|ing): "use"
+  VSCode: "VS Code"
   we recommend: "you should"
   within: "in"

@@ -6,9 +6,9 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # Contribute to Helm chart development
 
-Our contribution policies can be found in [CONTRIBUTING.md](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/CONTRIBUTING.md)
+Our contribution policies can be found in [CONTRIBUTING.md](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CONTRIBUTING.md)
 
-Contributing documentation changes to the charts requires only a text editor. Documentation is stored in the [`doc/`](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/) directory.
+Contributing documentation changes to the charts requires only a text editor. Documentation is stored in the [`doc/`](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/doc) directory.
 
 ## Architecture
 
@@ -76,7 +76,7 @@ GitLab CI pipelines run on pipelines for:
 
 The configuration for these CI pipelines is managed in:
 
-- [`.gitlab-ci.yml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/.gitlab-ci.yml)
+- [`.gitlab-ci.yml`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/.gitlab-ci.yml)
 - Files under [`.gitlab/ci/`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/.gitlab/ci/)
 
 ### Review apps

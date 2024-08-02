@@ -247,7 +247,7 @@ See [`nginx-ingress` chart](../charts/nginx/index.md).
 | `redis.existingSecretKey`            | Secret key where password is stored         | `redis-password`      |
 
 Any additional configuration of the Redis service should use the configuration
-settings from the [Redis chart](https://github.com/bitnami/charts/tree/master/bitnami/redis).
+settings from the [Redis chart](https://github.com/bitnami/charts/tree/main/bitnami/redis).
 
 ## Advanced registry configuration
 

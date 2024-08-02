@@ -84,6 +84,39 @@ registry:
 {{/* END gitlab.checkConfig.registry.redis.cache */}}
 
 {{/*
+Ensure Registry Redis rate-limiter is configured properly and dependencies are met
+*/}}
+{{- define "gitlab.checkConfig.registry.redis.rateLimiting" -}}
+{{-   if $.Values.registry.redis.rateLimiting.enabled }}
+{{-     if  and (kindIs "string" $.Values.registry.redis.rateLimiting.host) (empty $.Values.registry.redis.rateLimiting.host) }}
+registry:
+    Enabling the Redis rate-limiter requires the host to not be empty.
+    See https://docs.gitlab.com/charts/charts/registry#redis-rate-limiter
+{{-     end -}}
+{{- end -}}
+{{-   if and $.Values.registry.redis.rateLimiting.enabled $.Values.registry.redis.rateLimiting.sentinels}}
+{{-     if  and (kindIs "string" $.Values.registry.redis.rateLimiting.host) (empty $.Values.registry.redis.rateLimiting.host) }}
+registry:
+    Enabling the Redis rate-limiter with sentinels requires the registry.redis.rateLimiting.host to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-rate-limiter
+{{-     end -}}
+{{- end -}}
+{{-   if and $.Values.registry.redis.rateLimiting.enabled $.Values.registry.redis.rateLimiting.password.enabled }}
+{{-     if and (kindIs "string" $.Values.registry.redis.rateLimiting.password.secret) (empty $.Values.registry.redis.rateLimiting.password.secret) }}
+registry:
+    Enabling the Redis rate-limiter password requires 'registry.redis.rateLimiting.password.secret' to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-rate-limiter
+{{-     end -}}
+{{-     if and (kindIs "string" $.Values.registry.redis.rateLimiting.password.key) (empty $.Values.registry.redis.rateLimiting.password.key) }}
+registry:
+    Enabling the Redis rate-limiter password requires 'registry.redis.rateLimiting.password.key' to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-cache
+{{-     end -}}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.registry.redis.rateLimiting */}}
+
+{{/*
 Ensure Registry TLS has a secret when enabled
 */}}
 {{- define "gitlab.checkConfig.registry.tls" -}}

@@ -100,3 +100,6 @@ deployment:
 affinity:
   podAntiAffinity:
     topologyKey:
+  nodeAffinity:
+       key:
+       values:

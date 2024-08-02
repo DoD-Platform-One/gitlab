@@ -31,10 +31,15 @@
 .gitlab-ci.yml @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
 
 # Chart Dependency
-/requirements.yaml @gitlab-org/maintainers/helm-charts-gitlab @DylanGriffith @dgruzd @terrichu @johnmason
+/requirements.yaml @gitlab-org/maintainers/helm-charts-gitlab @DylanGriffith @dgruzd @terrichu @johnmason @hswimelar @jdrpereira @jaime @suleimiahmed
 
 # Charts Architecture
 /doc/architecture/ @WarheadsSE @twk3 @ayufan @stanhu
 
 ^[Documentation Directories] @gl-docsteam
 /doc/
+
+[Container Registry] @gitlab-org/maintainers/helm-charts-gitlab @hswimelar @jdrpereira @jaime @suleimiahmed
+charts/registry/Chart.yaml
+charts/registry/values.yaml
+doc/charts/registry/index.md

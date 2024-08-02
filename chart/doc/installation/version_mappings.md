@@ -33,17 +33,24 @@ The table below maps some of the key previous supported chart versions and suppo
 
 | Chart version | GitLab version |
 |---------------|----------------|
+| 8.2.1 | 17.2.1 |
+| 8.2.0 | 17.2.0 |
 | 8.1.2 | 17.1.2 |
 | 8.1.1 | 17.1.1 |
 | 8.1.0 | 17.1.0 |
+| 8.0.4 | 17.0.4 |
+| 8.0.3 | 17.0.3 |
 | 8.0.2 | 17.0.2 |
 | 8.0.1 | 17.0.1 |
 | 8.0.0 | 17.0.0 |
+| 7.11.6 | 16.11.6 |
+| 7.11.5 | 16.11.5 |
 | 7.11.4 | 16.11.4 |
 | 7.11.3 | 16.11.3 |
 | 7.11.2 | 16.11.2 |
 | 7.11.1 | 16.11.1 |
 | 7.11.0 | 16.11.0 |
+| 7.10.8 | 16.10.8 |
 | 7.10.7 | 16.10.7 |
 | 7.10.6 | 16.10.6 |
 | 7.10.5 | 16.10.5 |
@@ -52,6 +59,7 @@ The table below maps some of the key previous supported chart versions and suppo
 | 7.10.2 | 16.10.2 |
 | 7.10.1 | 16.10.1 |
 | 7.10.0 | 16.10.0 |
+| 7.9.9 | 16.9.9 |
 | 7.9.8 | 16.9.8 |
 | 7.9.7 | 16.9.7 |
 | 7.9.6 | 16.9.6 |
@@ -61,6 +69,7 @@ The table below maps some of the key previous supported chart versions and suppo
 | 7.9.2 | 16.9.2 |
 | 7.9.1 | 16.9.1 |
 | 7.9.0 | 16.9.0 |
+| 7.8.8 | 16.8.8 |
 | 7.8.7 | 16.8.7 |
 | 7.8.6 | 16.8.6 |
 | 7.8.5 | 16.8.5 |
@@ -69,6 +78,7 @@ The table below maps some of the key previous supported chart versions and suppo
 | 7.8.2 | 16.8.2 |
 | 7.8.1 | 16.8.1 |
 | 7.8.0 | 16.8.0 |
+| 7.7.8 | 16.7.8 |
 | 7.7.7 | 16.7.7 |
 | 7.7.6 | 16.7.6 |
 | 7.7.5 | 16.7.5 |
@@ -77,6 +87,7 @@ The table below maps some of the key previous supported chart versions and suppo
 | 7.7.2 | 16.7.2 |
 | 7.7.1 | 16.7.1 |
 | 7.7.0 | 16.7.0 |
+| 7.6.8 | 16.6.8 |
 | 7.6.7 | 16.6.7 |
 | 7.6.6 | 16.6.6 |
 | 7.6.5 | 16.6.5 |

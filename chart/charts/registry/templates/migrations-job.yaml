@@ -53,17 +53,24 @@ spec:
         {{- else }}
         {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 8 }}
         {{- end }}
-        command: ['sh', '/config/configure']
+        args: ['sh', '/config/configure']
         volumeMounts:
           - name: registry-secrets
             mountPath: /config
+          - name: registry-server-config-templates
+            mountPath: /templates
+            readOnly: true
           - name: registry-server-config
             mountPath: /registry
         resources:
           {{- toYaml .Values.init.resources | nindent 10 }}
         env:
-        {{- include "gitlab.extraEnv" . | nindent 8 }}
-        {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 8 }}
+          - name: CONFIG_TEMPLATE_DIRECTORY
+            value: /templates
+          - name: CONFIG_DIRECTORY
+            value: /registry
+        {{- include "gitlab.extraEnv" . | nindent 10 }}
+        {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
       restartPolicy: OnFailure
       {{- include "gitlab.image.pullSecrets" (dict "global" .Values.global.image "local" .Values.image) | indent 6 }}
       containers:
@@ -91,6 +98,13 @@ spec:
         {{- include "gitlab.extraEnv" . | nindent 8 }}
         {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 8 }}
       volumes:
+      - name: registry-server-config-templates
+        configMap:
+          name: {{ template "registry.fullname" . }}
+          items:
+            - key: migrations-config.yml.tpl
+              path: config.yml.tpl
+      # Actual config dirs that will be used in the container
       - name: registry-server-config
         emptyDir:
           medium: "Memory"
@@ -102,8 +116,6 @@ spec:
               items:
               - key: configure
                 path: configure
-              - key: migrations-config.yml
-                path: config.yml
           {{- include "gitlab.registry.database.password.projectedVolume" . | nindent 10 }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
 {{- end }}

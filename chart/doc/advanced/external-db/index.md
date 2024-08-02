@@ -10,7 +10,7 @@ For a production-ready GitLab chart deployment, use an external database.
 
 Prerequisites:
 
-- A deployment of PostgreSQL 12 or later. If you do not have one, consider
+- A deployment of PostgreSQL 14 or later. If you do not have one, consider
   a cloud provided solution like [AWS RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/)
   or [GCP Cloud SQL](https://cloud.google.com/sql/). For a self-managed solution,
   consider [the Linux package](external-omnibus-psql.md).

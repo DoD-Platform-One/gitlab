@@ -105,6 +105,14 @@
             "type": "string"
           }
         },
+        "publicKeyAlgorithms": {
+          "title": "Accepted public key algorithms in gitlab-sshd",
+          "description": "Custom list of public key algorithms. If empty, the default algorithms are used.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "gssapi": {
           "properties": {
             "enabled": {

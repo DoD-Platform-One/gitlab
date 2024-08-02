@@ -46,25 +46,7 @@ spec:
 
     spec:
       {{- include "gitlab.podSecurityContext" .Values.securityContext | nindent 6 }}
-      {{- if eq (default .Values.global.antiAffinity .antiAffinity) "hard" }}
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: {{ default .Values.global.affinity.podAntiAffinity.topologyKey .Values.affinity.podAntiAffinity.topologyKey | quote }}
-              labelSelector:
-                matchLabels:
-                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
-      {{- else if eq (default .Values.global.antiAffinity .antiAffinity) "soft" }}
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              topologyKey: {{ default .Values.global.affinity.podAntiAffinity.topologyKey .Values.affinity.podAntiAffinity.topologyKey | quote }}
-              labelSelector:
-                matchLabels:
-                  {{- include "gitlab.selectorLabels" . | nindent 18 }}
-      {{- end }}
+      {{- include "gitlab.affinity" . | nindent 6 }}
       {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
       {{- end }}

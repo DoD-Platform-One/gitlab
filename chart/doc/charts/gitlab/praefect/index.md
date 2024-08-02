@@ -298,6 +298,7 @@ the `helm install` command using the `--set` flags.
 | `metrics.separate_database_metrics`       | `true`                                            | If true then metrics scrapes will not perform database queries, setting to false [may cause performance problems](https://gitlab.com/gitlab-org/gitaly/-/issues/3796)      |
 | `metrics.path`                            | `/metrics`                                        | Metrics endpoint path                                                                                                                                                      |
 | `metrics.serviceMonitor.enabled`          | `false`                                           | If a ServiceMonitor should be created to enable Prometheus Operator to manage the metrics scraping, note that enabling this removes the `prometheus.io` scrape annotations |
+| `affinity`                             | `{}`                                                       | [Affinity rules](#affinity) for pod assignment                                                                                                                                                               |
 | `metrics.serviceMonitor.additionalLabels` | `{}`                                              | Additional labels to add to the ServiceMonitor                                                                                                                             |
 | `metrics.serviceMonitor.endpointConfig`   | `{}`                                              | Additional endpoint configuration for the ServiceMonitor                                                                                                                   |
 | securityContext.runAsUser                 | 1000                                              |                                                                                                                                                                            |
@@ -305,3 +306,37 @@ the `helm install` command using the `--set` flags.
 | securityContext.fsGroupChangePolicy       |                                                   | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23)                                                                                      |
 | serviceLabels                             | `{}`                                              | Supplemental service labels                                                                                                                                                |
 | statefulset.strategy                      | `{}`                                              | Allows one to configure the update strategy utilized by the statefulset                                                                                                    |
+
+### affinity
+
+`affinity` is an optional parameter that allows you to set either or both:
+
+- `podAntiAffinity` rules to:
+  - Not schedule pods in the same domain as the pods that match the expression corresponding to the `topology key`.
+  - Set two modes of `podAntiAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). Using the variable `antiAffinity` in `values.yaml`, set the setting to `soft` so that the preferred mode is
+    applied or set it to `hard` so that the required mode is applied.
+- `nodeAffinity` rules to:
+  - Schedule pods to nodes that belong to a specific zone or zones.
+  - Set two modes of `nodeAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
+    (`preferredDuringSchedulingIgnoredDuringExecution`). When set to `soft`, the preferred mode is applied. When set to `hard`, the required mode is applied. This
+    rule is implemented only for the `registry` chart and the `gitlab` chart alongwith all its subcharts except `webservice` and `sidekiq`.
+
+`nodeAffinity` only implements the [`In` operator](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators).
+
+For more information, see [the relevant Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
+
+The following example sets `affinity`, with both `nodeAffinity` and `antiAffinity` set to `hard`:
+
+```yaml
+nodeAffinity: "hard"
+antiAffinity: "hard"
+affinity:
+  nodeAffinity:
+    key: "test.com/zone"
+    values:
+    - us-east1-a
+    - us-east1-b
+  podAntiAffinity:
+    topologyKey: "test.com/hostname"
+```

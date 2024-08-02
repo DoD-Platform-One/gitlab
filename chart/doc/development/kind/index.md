@@ -33,7 +33,7 @@ With the SSL-enabled installation options below, if you want to clone repositori
 Create the `colima` VM:
 
 ```shell
-colima start --cpu 4 --memory 16 --disk 40 --profile docker --arch aarch64 --vm-type=vz --vz-rosetta
+colima start --cpu 6 --memory 16 --disk 40 --profile docker --arch aarch64 --vm-type=vz --vz-rosetta
 ```
 
 When ready, you can follow the [preparation](#preparation) below to install GitLab with `kind`.
@@ -96,6 +96,16 @@ The GitLab charts repository contains every example referenced in the following 
 
 ```shell
 git clone https://gitlab.com/gitlab-org/charts/gitlab.git
+```
+
+### Spin up the Kind cluster
+
+There are a few example configurations in `doc/examples/kind` pending your desires and needs for testing.
+Please review these configurations and make adjustments as necessary.
+You can now spin up the cluster. Example:
+
+```shell
+kind create cluster --config examples/kind/kind-ssl.yaml
 ```
 
 ### Adding GitLab Helm chart

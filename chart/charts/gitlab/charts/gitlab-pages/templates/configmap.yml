@@ -170,6 +170,9 @@ data:
     {{- if .Values.serverKeepAlive }}
     server-keep-alive={{ .Values.serverKeepAlive }}
     {{- end }}
+    {{- if $.Values.global.pages.namespaceInPath }}
+    namespace-in-path={{ $.Values.global.pages.namespaceInPath }}
+    {{- end }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "pages" "optional" "none") | nindent 4 }}
     {{- if $.Values.metrics.tls.enabled }}
