@@ -2,7 +2,7 @@ image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
   tag: 'v4.6.0-gitlab'
   # pullPolicy: IfNotPresent
-  # pullSecrets: []
+# pullSecrets: []
 
 deployment:
   terminationGracePeriodSeconds: 30
@@ -86,8 +86,8 @@ ingress:
   proxyBodySize: "0"
   proxyBuffering: "off"
   tls: {}
-    # secretName:
-    # enabled: true
+  # secretName:
+  # enabled: true
   annotations: {}
   configureCertmanager:
   path: # /
@@ -97,23 +97,23 @@ global:
     enabled:
     annotations: {}
     tls: {}
-      # secretName:
-      # enabled: true
+    # secretName:
+  # enabled: true
   hosts:
     domain: example.com
     hostSuffix:
     https: true
     tls: {}
-      # secretName:
+    # secretName:
     gitlab: {}
-      #name: gitlab.example.com
-      #https: false
+    #name: gitlab.example.com
+    #https: false
     registry: {}
-      #name: registry.example.com
-      #https: false
+    #name: registry.example.com
+    #https: false
     minio: {}
-      #name: minio.example.com
-      #https: false
+    #name: minio.example.com
+  #https: false
   minio:
     enabled:
     credentials: {}
@@ -126,9 +126,9 @@ global:
 ## Control the InitContainer behaviors.
 init:
   image: {}
-    # repository:
-    # tag:
-    # pullPolicy: IfNotPresent
+  # repository:
+  # tag:
+  # pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 50m
@@ -239,7 +239,7 @@ hpa:
   minReplicas: 2
   maxReplicas: 10
   cpu:
-    targetType: Utilization  # Utilization or AverageValue
+    targetType: Utilization # Utilization or AverageValue
     # targetAverageValue: 1
     targetAverageUtilization: 75
   # memory:
@@ -247,7 +247,7 @@ hpa:
   #   targetAverageValue: 1G
   #   targetAverageUtilization: 75
   # Note that the HPA is limited to autoscaling/v2beta1, autoscaling/v2beta2 and autoscaling/v2
-  customMetrics: []  # Overrides HPA metrics definition
+  customMetrics: [] # Overrides HPA metrics definition
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
@@ -258,14 +258,14 @@ keda:
   pollingInterval: 30
   cooldownPeriod: 300
   # minReplicaCount: 2
-  # maxReplicaCount: 10
-  # fallback: {}
-  #   failureThreshold: 3
-  #   replicas: 6
-  # hpaName: keda-hpa-{scaled-object-name}
-  # restoreToOriginalReplicaCount: false
-  # behavior: {}
-  # triggers: []
+# maxReplicaCount: 10
+# fallback: {}
+#   failureThreshold: 3
+#   replicas: 6
+# hpaName: keda-hpa-{scaled-object-name}
+# restoreToOriginalReplicaCount: false
+# behavior: {}
+# triggers: []
 
 storage: {}
 # secret:
@@ -275,15 +275,15 @@ storage: {}
 middleware:
   # See https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#middleware
   storage: []
-    ## EXAMPLE ONLY
-    # - name: cloudfront
-    #   options:
-    #     baseurl: cdn.registry.example.com
-    #     # `privatekey` is auto-populated with the content from the privatekey Secret.
-    #     privatekeySecret:
-    #       secret: cdn-private-key
-    #       key: private.pem
-    #     keypairid: YOURKEYPAIRIDFORPRIVATEKEY
+  ## EXAMPLE ONLY
+# - name: cloudfront
+#   options:
+#     baseurl: cdn.registry.example.com
+#     # `privatekey` is auto-populated with the content from the privatekey Secret.
+#     privatekeySecret:
+#       secret: cdn-private-key
+#       key: private.pem
+#     keypairid: YOURKEYPAIRIDFORPRIVATEKEY
 
 minio:
   redirect: false
@@ -358,7 +358,7 @@ reporting:
   sentry:
     enabled: false
     # dsn:
-    # environment:
+# environment:
 
 # Disable continuous profiling by default
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#profiling
@@ -382,8 +382,8 @@ database:
   enabled: false
   user: registry
   password: {}
-    # secret: RELEASE_NAME-registry-database-password
-    # key: password
+  # secret: RELEASE_NAME-registry-database-password
+  # key: password
   name: registry
   sslmode: disable
   ssl: {}

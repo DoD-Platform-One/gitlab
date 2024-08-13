@@ -34,20 +34,20 @@ global:
     labels: {}
 
   image: {}
-    # Registry value override is only available for the following Charts:
-    # - Spamcheck
-    # - Mailroom
-    # If specifying a value here, be sure to also configure
-    # `gitlab.<subchart>.image.repository` to a value that does not
-    # include the default registry domain `registry.gitlab.com`.
-    # Support for other charts is coming as an iterative rollout.
-    # See https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2859
-    # for more information.
-    # registry:
+  # Registry value override is only available for the following Charts:
+  # - Spamcheck
+  # - Mailroom
+  # If specifying a value here, be sure to also configure
+  # `gitlab.<subchart>.image.repository` to a value that does not
+  # include the default registry domain `registry.gitlab.com`.
+  # Support for other charts is coming as an iterative rollout.
+  # See https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2859
+  # for more information.
+  # registry:
 
-    # pullPolicy: IfNotPresent
-    # pullSecrets: []
-    # tagSuffix: ""
+  # pullPolicy: IfNotPresent
+  # pullSecrets: []
+  # tagSuffix: ""
 
   ## Supplemental Pod labels. Will not be used for selectors.
   pod:
@@ -57,7 +57,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "17.2.1"
+  gitlabVersion: "17.2.2"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -70,9 +70,8 @@ global:
     hostSuffix:
     https: true
     externalIP:
-    ssh: ~
-    gitlab:
-      name: gitlab.dev.bigbang.mil
+    ssh:
+    gitlab: {}
     minio: {}
     registry:
       name: registry.dev.bigbang.mil
@@ -123,15 +122,15 @@ global:
     ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#initial-enterprise-license
     ## If allowing shared-secrets generation, this is OPTIONAL.
     license: {}
-      # secret: RELEASE-gitlab-license
-      # key: license
+    # secret: RELEASE-gitlab-license
+  # key: license
 
   ## Initial root password for this GitLab installation
   ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#initial-root-password
   ## If allowing shared-secrets generation, this is OPTIONAL.
   initialRootPassword: {}
-    # secret: RELEASE-gitlab-initial-root-password
-    # key: password
+  # secret: RELEASE-gitlab-initial-root-password
+  # key: password
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-postgresql-settings
   psql:
@@ -142,10 +141,10 @@ global:
     keepalivesCount:
     tcpUserTimeout:
     password: {}
-      # useSecret:
-      # secret:
-      # key:
-      # file:
+    # useSecret:
+    # secret:
+    # key:
+    # file:
     # host: postgresql.hostedsomewhere.else
     # port: 123
     # username: gitlab
@@ -154,21 +153,21 @@ global:
     # preparedStatements: false
     # databaseTasks: true
     main: {}
-      # host: postgresql.hostedsomewhere.else
-      # port: 123
-      # username: gitlab
-      # database: gitlabhq_production
-      # applicationName:
-      # preparedStatements: false
-      # databaseTasks: true
+    # host: postgresql.hostedsomewhere.else
+    # port: 123
+    # username: gitlab
+    # database: gitlabhq_production
+    # applicationName:
+    # preparedStatements: false
+    # databaseTasks: true
     ci: {}
-      # host: postgresql.hostedsomewhere.else
-      # port: 123
-      # username: gitlab
-      # database: gitlabhq_production_ci
-      # applicationName:
-      # preparedStatements: false
-      # databaseTasks: false
+    # host: postgresql.hostedsomewhere.else
+  # port: 123
+  # username: gitlab
+  # database: gitlabhq_production_ci
+  # applicationName:
+  # preparedStatements: false
+  # databaseTasks: false
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-redis-settings
   redis:
@@ -183,8 +182,8 @@ global:
       runAsUser: 1001
       runAsNonRoot: true
       capabilities:
-          drop:
-          - ALL
+        drop:
+        - ALL
 
       # secret:
       # key:
@@ -197,14 +196,14 @@ global:
     sentinelAuth:
       enabled: false
       # secret:
-      # key:
+  # key:
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-gitaly-settings
   gitaly:
     enabled: true
     authToken: {}
-      # secret:
-      # key:
+    # secret:
+    # key:
     # serviceName:
     internal:
       names: [default]
@@ -229,9 +228,9 @@ global:
     autoMigrate: true
     dbSecret: {}
     virtualStorages:
-      - name: default
-        gitalyReplicas: 3
-        maxUnavailable: 1
+    - name: default
+      gitalyReplicas: 3
+      maxUnavailable: 1
     psql:
       sslMode: disable
     # serviceName:
@@ -251,7 +250,7 @@ global:
   minio:
     enabled: true
     credentials: {}
-      # secret:
+    # secret:
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-appconfig-settings
   ## Rails based portions of this chart share many settings
@@ -278,70 +277,70 @@ global:
 
     ## https://docs.gitlab.com/charts/charts/globals#cron-jobs-related-settings
     cron_jobs: {}
-      ## Flag stuck CI builds as failed
-      # stuck_ci_jobs_worker:
-      #   cron: "0 * * * *"
-      ## Schedule pipelines in the near future
-      # pipeline_schedule_worker:
-      #   cron: "19 * * * *"
-      ## Remove expired build artifacts
-      # expire_build_artifacts_worker:
-      #   cron: "*/7 * * * *"
-      ## Periodically run 'git fsck' on all repositories.
-      # repository_check_worker:
-      #   cron: "20 * * * *"
-      ## Send admin emails once a week
-      # admin_email_worker:
-      #   cron: "0 0 * * 0"
-      ## Remove outdated repository archives
-      # repository_archive_cache_worker:
-      #   cron: "0 * * * *"
-      ## Verify custom GitLab Pages domains
-      # pages_domain_verification_cron_worker:
-      #   cron: "*/15 * * * *"
-      # schedule_migrate_external_diffs_worker:
-      #   cron: "15 * * * *"
-      ## Prune stale group runners on opted-in namespaces
-      # ci_runners_stale_group_runners_prune_worker_cron:
-      #   cron: "30 * * * *"
-      ## Periodically update ci_runner_versions table with up-to-date versions and status
-      # ci_runner_versions_reconciliation_worker:
-      #   cron: "@daily"
-      ## Periodically clean up stale ci_runner_machines records
-      # ci_runners_stale_machines_cleanup_worker:
-      #   cron: "36 * * * *"
-      # ci_click_house_finished_pipelines_sync_worker:
-      #   cron: "*/4 * * * *"
-      #   args: [0, 1]
-      ### GitLab Geo
-      # Geo Primary only!
-      # geo_prune_event_log_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo repository sync worker
-      # geo_repository_sync_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo file download dispatch worker
-      # geo_file_download_dispatch_worker:
-      #  cron: "*/10 * * * *"
-      ## GitLab Geo repository verification primary batch worker
-      # geo_repository_verification_primary_batch_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo repository verification secondary scheduler worker
-      # geo_repository_verification_secondary_scheduler_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo migrated local files clean up worker
-      # geo_migrated_local_files_clean_up_worker:
-      #   cron: "15 */6 * * *"
-      ### LDAP
-      # ldap_sync_worker:
-      #   cron: "30 1 * * *"
-      # ldap_group_sync_worker:
-      #   cron: "0 * * * *"
-      ### Snapshot active user statistics
-      # historical_data_worker:
-      #   cron: "0 12 * * *"
-      # loose_foreign_keys_cleanup_worker_cron:
-      #   cron: "*/5 * * * *"
+    ## Flag stuck CI builds as failed
+    # stuck_ci_jobs_worker:
+    #   cron: "0 * * * *"
+    ## Schedule pipelines in the near future
+    # pipeline_schedule_worker:
+    #   cron: "19 * * * *"
+    ## Remove expired build artifacts
+    # expire_build_artifacts_worker:
+    #   cron: "*/7 * * * *"
+    ## Periodically run 'git fsck' on all repositories.
+    # repository_check_worker:
+    #   cron: "20 * * * *"
+    ## Send admin emails once a week
+    # admin_email_worker:
+    #   cron: "0 0 * * 0"
+    ## Remove outdated repository archives
+    # repository_archive_cache_worker:
+    #   cron: "0 * * * *"
+    ## Verify custom GitLab Pages domains
+    # pages_domain_verification_cron_worker:
+    #   cron: "*/15 * * * *"
+    # schedule_migrate_external_diffs_worker:
+    #   cron: "15 * * * *"
+    ## Prune stale group runners on opted-in namespaces
+    # ci_runners_stale_group_runners_prune_worker_cron:
+    #   cron: "30 * * * *"
+    ## Periodically update ci_runner_versions table with up-to-date versions and status
+    # ci_runner_versions_reconciliation_worker:
+    #   cron: "@daily"
+    ## Periodically clean up stale ci_runner_machines records
+    # ci_runners_stale_machines_cleanup_worker:
+    #   cron: "36 * * * *"
+    # ci_click_house_finished_pipelines_sync_worker:
+    #   cron: "*/4 * * * *"
+    #   args: [0, 1]
+    ### GitLab Geo
+    # Geo Primary only!
+    # geo_prune_event_log_worker:
+    #   cron: "*/5 * * * *"
+    ## GitLab Geo repository sync worker
+    # geo_repository_sync_worker:
+    #   cron: "*/5 * * * *"
+    ## GitLab Geo file download dispatch worker
+    # geo_file_download_dispatch_worker:
+    #  cron: "*/10 * * * *"
+    ## GitLab Geo repository verification primary batch worker
+    # geo_repository_verification_primary_batch_worker:
+    #   cron: "*/5 * * * *"
+    ## GitLab Geo repository verification secondary scheduler worker
+    # geo_repository_verification_secondary_scheduler_worker:
+    #   cron: "*/5 * * * *"
+    ## GitLab Geo migrated local files clean up worker
+    # geo_migrated_local_files_clean_up_worker:
+    #   cron: "15 */6 * * *"
+    ### LDAP
+    # ldap_sync_worker:
+    #   cron: "30 1 * * *"
+    # ldap_group_sync_worker:
+    #   cron: "0 * * * *"
+    ### Snapshot active user statistics
+    # historical_data_worker:
+    #   cron: "0 12 * * *"
+    # loose_foreign_keys_cleanup_worker_cron:
+    #   cron: "*/5 * * * *"
 
     ## https://docs.gitlab.com/charts/charts/globals#content-security-policy
     contentSecurityPolicy:
@@ -369,32 +368,32 @@ global:
       enabled: false
       proxy_download: true
       storage_options: {}
-        # server_side_encryption:
-        # server_side_encryption_kms_key_id
+      # server_side_encryption:
+      # server_side_encryption_kms_key_id
       connection: {}
-        # secret:
-        # key:
+      # secret:
+    # key:
     lfs:
       enabled: true
       proxy_download: true
       bucket: git-lfs
       connection: {}
-        # secret:
-        # key:
+      # secret:
+    # key:
     artifacts:
       enabled: true
       proxy_download: true
       bucket: gitlab-artifacts
       connection: {}
-        # secret:
-        # key:
+      # secret:
+    # key:
     uploads:
       enabled: true
       proxy_download: true
       bucket: gitlab-uploads
       connection: {}
-        # secret:
-        # key:
+      # secret:
+    # key:
     packages:
       enabled: true
       proxy_download: true
@@ -462,8 +461,8 @@ global:
       pollInterval: 60
       deliveryMethod: webhook
       authToken: {}
-        # secret:
-        # key:
+      # secret:
+    # key:
 
     ## https://docs.gitlab.com/charts/charts/gitlab/mailroom/index.html#service-desk-email
     serviceDeskEmail:
@@ -489,8 +488,8 @@ global:
       pollInterval: 60
       deliveryMethod: webhook
       authToken: {}
-        # secret:
-        # key:
+      # secret:
+    # key:
 
     ## https://docs.gitlab.com/charts/charts/globals#ldap
     ldap:
@@ -502,23 +501,23 @@ global:
     duoAuth:
       enabled: false
       # hostname:
-      # integrationKey:
-      # secretKey:
-      #   secret:
-      #   key:
+    # integrationKey:
+    # secretKey:
+    #   secret:
+    #   key:
 
     ## https://docs.gitlab.com/charts/charts/globals#kas-settings
     gitlab_kas: {}
-      # secret:
-      # key:
-      # enabled:
-      # externalUrl:
-      # internalUrl:
+    # secret:
+    # key:
+    # enabled:
+    # externalUrl:
+    # internalUrl:
 
     ## https://docs.gitlab.com/charts/charts/globals#suggested-reviewers-settings
     suggested_reviewers: {}
-      # secret:
-      # key:
+    # secret:
+    # key:
 
     ## https://docs.gitlab.com/charts/charts/globals#omniauth
     omniauth:
@@ -535,7 +534,7 @@ global:
       allowBypassTwoFactor: []
       providers: []
       # - secret: gitlab-google-oauth2
-      #   key: provider
+    #   key: provider
 
     ## https://docs.gitlab.com/charts/charts/globals#kerberos
     kerberos:
@@ -574,16 +573,16 @@ global:
 
     # Config that only applies to the defaults on initial install
     initialDefaults: {}
-      # signupEnabled:
+    # signupEnabled:
   ## End of global.appConfig
 
   oauth:
     gitlab-pages: {}
-      # secret:
-      # appIdKey:
-      # appSecretKey:
-      # redirectUri:
-      # authScope:
+    # secret:
+  # appIdKey:
+  # appSecretKey:
+  # redirectUri:
+  # authScope:
 
   ## https://docs.gitlab.com/charts/advanced/geo/
   geo:
@@ -598,16 +597,16 @@ global:
     psql:
       password: {}
       #   secret:
-      #   key:
-      # host: postgresql.hostedsomewhere.else
-      # port: 123
-      # username: gitlab_replicator
-      # database: gitlabhq_geo_production
-      # ssl:
-      #   secret:
-      #   clientKey:
-      #   clientCertificate:
-      #   serverCA:
+    #   key:
+    # host: postgresql.hostedsomewhere.else
+    # port: 123
+    # username: gitlab_replicator
+    # database: gitlabhq_geo_production
+    # ssl:
+    #   secret:
+    #   clientKey:
+    #   clientCertificate:
+    #   serverCA:
     registry:
       replication:
         enabled: false
@@ -623,7 +622,7 @@ global:
       enabled: false
       verify: true
       # secretName:
-      # caSecretName:
+  # caSecretName:
 
   ## https://docs.gitlab.com/charts/charts/gitlab/spamcheck/
   spamcheck:
@@ -635,7 +634,7 @@ global:
     # secret:
     # key:
     hostKeys: {}
-      # secret:
+    # secret:
     ## https://docs.gitlab.com/charts/charts/globals#tcp-proxy-protocol
     tcp:
       proxyProtocol: false
@@ -644,7 +643,7 @@ global:
   ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#gitlab-rails-secret
   ## If allowing shared-secrets generation, this is OPTIONAL.
   railsSecrets: {}
-    # secret:
+  # secret:
 
   ## Rails generic setting, applicable to all Rails-based containers
   rails:
@@ -658,13 +657,13 @@ global:
     bucket: registry
 
     certificate: {}
-      # secret:
+    # secret:
     httpSecret: {}
-      # secret:
-      # key:
+    # secret:
+    # key:
     notificationSecret: {}
-      # secret:
-      # key:
+    # secret:
+    # key:
     tls:
       enabled: false
       # secretName:
@@ -675,21 +674,21 @@ global:
         password: {}
     # https://docs.docker.com/registry/notifications/#configuration
     notifications: {}
-      # endpoints:
-      #   - name: FooListener
-      #     url: https://foolistener.com/event
-      #     timeout: 500ms
-      #     threshold: 10 # DEPRECATED: use maxretries instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
-      #     maxretries: 5
-      #     backoff: 1s
-      #     headers:
-      #       FooBar: ['1', '2']
-      #       Authorization:
-      #         secret: gitlab-registry-authorization-header
-      #       SpecificPassword:
-      #         secret: gitlab-registry-specific-password
-      #         key: password
-      # events: {}
+    # endpoints:
+    #   - name: FooListener
+    #     url: https://foolistener.com/event
+    #     timeout: 500ms
+    #     threshold: 10 # DEPRECATED: use maxretries instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
+    #     maxretries: 5
+    #     backoff: 1s
+    #     headers:
+    #       FooBar: ['1', '2']
+    #       Authorization:
+    #         secret: gitlab-registry-authorization-header
+    #       SpecificPassword:
+    #         secret: gitlab-registry-specific-password
+    #         key: password
+    # events: {}
 
     # Settings utilized by other services referencing registry:
     enabled: true
@@ -719,14 +718,14 @@ global:
       bucket: gitlab-pages
       # proxy_download: true
       connection: {}
-        # secret:
-        # key:
+      # secret:
+    # key:
     apiSecret: {}
-      # secret:
-      # key:
+    # secret:
+    # key:
     authSecret: {}
-      # secret:
-      # key:
+    # secret:
+    # key:
     namespaceInPath: false
 
   ## GitLab Runner
@@ -734,7 +733,7 @@ global:
   ## If allowing shared-secrets generation, this is OPTIONAL.
   runner:
     registrationToken: {}
-      # secret:
+    # secret:
 
   ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
   ## Outgoing email server settings
@@ -820,55 +819,55 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     init:
       securityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
         runAsUser: 65534
         runAsNonRoot: true
     customCAs:
-      # DoD approved certificates from https://public.cyber.mil/pki-pke/pkipke-document-library/
+    # DoD approved certificates from https://public.cyber.mil/pki-pke/pkipke-document-library/
 
-      - secret: ca-certs-australian-defence-organisation-cross-cert-chain
-      - secret: ca-certs-australian-defence-organisation-direct-trust-chain
-      - secret: ca-certs-boeing
-      - secret: ca-certs-carillon-federal-services-trust-chain-1
-      - secret: ca-certs-carillon-federal-services-trust-chain-2
-      - secret: ca-certs-department-of-state-trust-chain-1
-      - secret: ca-certs-department-of-state-trust-chain-2
-      - secret: ca-certs-digicert-federal-ssp-trust-chain-1
-      - secret: ca-certs-digicert-federal-ssp-trust-chain-2
-      - secret: ca-certs-digicert-nfi-trust-chain-1
-      - secret: ca-certs-digicert-nfi-trust-chain-2
-      - secret: ca-certs-entrust-federal-ssp-trust-chain-1
-      - secret: ca-certs-entrust-federal-ssp-trust-chain-2
-      - secret: ca-certs-entrust-managed-service-nfi
-      - secret: ca-certs-exostar-llc
-      - secret: ca-certs-identrust-nfi
-      - secret: ca-certs-lockheed-martin
-      - secret: ca-certs-netherlands-ministry-of-defence
-      - secret: ca-certs-northrop-grumman
-      - secret: ca-certs-raytheon-trust-chain-1
-      - secret: ca-certs-raytheon-trust-chain-2
-      - secret: ca-certs-us-treasury-ssp-trust-chain-1
-      - secret: ca-certs-us-treasury-ssp-trust-chain-2
-      - secret: ca-certs-verizon-cybertrust-federal-ssp
-      - secret: ca-certs-widepoint-federal-ssp-trust-chain-1
-      - secret: ca-certs-widepoint-federal-ssp-trust-chain-2
-      - secret: ca-certs-widepoint-nfi
-      - secret: ca-certs-dod-intermediate-and-issuing-ca-certs
-      - secret: ca-certs-dod-trust-anchors-self-signed
-      - secret: ca-certs-eca
+    - secret: ca-certs-australian-defence-organisation-cross-cert-chain
+    - secret: ca-certs-australian-defence-organisation-direct-trust-chain
+    - secret: ca-certs-boeing
+    - secret: ca-certs-carillon-federal-services-trust-chain-1
+    - secret: ca-certs-carillon-federal-services-trust-chain-2
+    - secret: ca-certs-department-of-state-trust-chain-1
+    - secret: ca-certs-department-of-state-trust-chain-2
+    - secret: ca-certs-digicert-federal-ssp-trust-chain-1
+    - secret: ca-certs-digicert-federal-ssp-trust-chain-2
+    - secret: ca-certs-digicert-nfi-trust-chain-1
+    - secret: ca-certs-digicert-nfi-trust-chain-2
+    - secret: ca-certs-entrust-federal-ssp-trust-chain-1
+    - secret: ca-certs-entrust-federal-ssp-trust-chain-2
+    - secret: ca-certs-entrust-managed-service-nfi
+    - secret: ca-certs-exostar-llc
+    - secret: ca-certs-identrust-nfi
+    - secret: ca-certs-lockheed-martin
+    - secret: ca-certs-netherlands-ministry-of-defence
+    - secret: ca-certs-northrop-grumman
+    - secret: ca-certs-raytheon-trust-chain-1
+    - secret: ca-certs-raytheon-trust-chain-2
+    - secret: ca-certs-us-treasury-ssp-trust-chain-1
+    - secret: ca-certs-us-treasury-ssp-trust-chain-2
+    - secret: ca-certs-verizon-cybertrust-federal-ssp
+    - secret: ca-certs-widepoint-federal-ssp-trust-chain-1
+    - secret: ca-certs-widepoint-federal-ssp-trust-chain-2
+    - secret: ca-certs-widepoint-nfi
+    - secret: ca-certs-dod-intermediate-and-issuing-ca-certs
+    - secret: ca-certs-dod-trust-anchors-self-signed
+    - secret: ca-certs-eca
 
   ## kubectl image used by hooks to carry out specific jobs
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -883,7 +882,7 @@ global:
       # 1. UBI does not have the newly required /scripts/set-config template generator in its entrypoint.
       #   a. trying gitlab-base per https://repo1.dso.mil/dsop/gitlab/gitlab/gitlab-base/-/issues/77
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base
-      tag: "17.2.1"
+      tag: "17.2.2"
       pullSecrets:
       - name: private-registry
 
@@ -894,7 +893,7 @@ global:
     annotations: {}
     automountServiceAccountToken: false
     ## Name to be used for serviceAccount, otherwise defaults to chart fullname
-    # name:
+  # name:
 
   ## https://docs.gitlab.com/charts/charts/globals/#tracing
   tracing:
@@ -944,7 +943,7 @@ containerSecurityContext:
   runAsGroup: 65534
   capabilities:
     drop:
-      - ALL
+    - ALL
 upgradeCheck:
   enabled: true
   image:
@@ -1014,9 +1013,9 @@ nginx-ingress: &nginx-ingress
       server-tokens: "false"
       # Configure smaller defaults for upstream-keepalive-*, see https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration
       upstream-keepalive-connections: 100 # Limit of 100 held-open connections
-      upstream-keepalive-time:        30s # 30 second limit for connection reuse
-      upstream-keepalive-timeout:       5 # 5 second timeout to hold open idle connections
-      upstream-keepalive-requests:   1000 # 1000 requests per connection, before recycling
+      upstream-keepalive-time: 30s # 30 second limit for connection reuse
+      upstream-keepalive-timeout: 5 # 5 second timeout to hold open idle connections
+      upstream-keepalive-requests: 1000 # 1000 requests per connection, before recycling
 
     service:
       externalTrafficPolicy: "Local"
@@ -1062,12 +1061,12 @@ nginx-ingress: &nginx-ingress
 #   - Pass X-Forwarded-For headers as is
 #   - Use a different IngressClass name
 nginx-ingress-geo:
-  <<: *nginx-ingress
+  !!merge <<: *nginx-ingress
   enabled: false
   controller:
-    <<: *nginx-ingress-controller
+    !!merge <<: *nginx-ingress-controller
     config:
-      <<: *nginx-ingress-controller-config
+      !!merge <<: *nginx-ingress-controller-config
       # Pass incoming X-Forwarded-* headers to upstream. Required to handle requests
       # from other Geo sites.
       # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers
@@ -1085,11 +1084,11 @@ haproxy:
     service:
       type: LoadBalancer
       tcpPorts:
-        - name: ssh
-          port: 22
-          targetPort: 22
+      - name: ssh
+        port: 22
+        targetPort: 22
     extraArgs:
-      - --configmap-tcp-services=$(POD_NAMESPACE)/$(POD_NAMESPACE)-haproxy-tcp
+    - --configmap-tcp-services=$(POD_NAMESPACE)/$(POD_NAMESPACE)-haproxy-tcp
 
 ## Installation & configuration of stable/prometheus
 ## See requirements.yaml for current version
@@ -1117,126 +1116,111 @@ prometheus:
   serverFiles:
     prometheus.yml:
       scrape_configs:
-        - job_name: prometheus
-          static_configs:
-            - targets:
-                - localhost:9090
-        - job_name: kubernetes-apiservers
-          kubernetes_sd_configs:
-            - role: endpoints
-          scheme: https
-          tls_config:
-            ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-            insecure_skip_verify: true
-          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-          relabel_configs:
-            - source_labels:
-                [
-                  __meta_kubernetes_namespace,
-                  __meta_kubernetes_service_name,
-                  __meta_kubernetes_endpoint_port_name,
-                ]
-              action: keep
-              regex: default;kubernetes;https
-        - job_name: kubernetes-pods
-          kubernetes_sd_configs:
-            - role: pod
-          relabel_configs:
-            - source_labels:
-                [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scrape]
-              action: keep
-              regex: true
-            - source_labels:
-                [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scheme]
-              action: replace
-              regex: (https?)
-              target_label: __scheme__
-            - source_labels:
-                [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_path]
-              action: replace
-              target_label: __metrics_path__
-              regex: (.+)
-            - source_labels:
-                [
-                  __address__,
-                  __meta_kubernetes_pod_annotation_gitlab_com_prometheus_port,
-                ]
-              action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              target_label: __address__
-            - action: labelmap
-              regex: __meta_kubernetes_pod_label_(.+)
-            - source_labels: [__meta_kubernetes_namespace]
-              action: replace
-              target_label: kubernetes_namespace
-            - source_labels: [__meta_kubernetes_pod_name]
-              action: replace
-              target_label: kubernetes_pod_name
-        - job_name: kubernetes-service-endpoints
-          kubernetes_sd_configs:
-            - role: endpoints
-          relabel_configs:
-            - action: keep
-              regex: true
-              source_labels:
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_scrape
-            - action: replace
-              regex: (https?)
-              source_labels:
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_scheme
-              target_label: __scheme__
-            - action: replace
-              regex: (.+)
-              source_labels:
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_path
-              target_label: __metrics_path__
-            - action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              source_labels:
-                - __address__
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_port
-              target_label: __address__
-            - action: labelmap
-              regex: __meta_kubernetes_service_label_(.+)
-            - action: replace
-              source_labels:
-                - __meta_kubernetes_namespace
-              target_label: kubernetes_namespace
-            - action: replace
-              source_labels:
-                - __meta_kubernetes_service_name
-              target_label: kubernetes_name
-            - action: replace
-              source_labels:
-                - __meta_kubernetes_pod_node_name
-              target_label: kubernetes_node
-        - job_name: kubernetes-services
-          metrics_path: /probe
-          params:
-            module: [http_2xx]
-          kubernetes_sd_configs:
-            - role: service
-          relabel_configs:
-            - source_labels:
-                [
-                  __meta_kubernetes_service_annotation_gitlab_com_prometheus_probe,
-                ]
-              action: keep
-              regex: true
-            - source_labels: [__address__]
-              target_label: __param_target
-            - target_label: __address__
-              replacement: blackbox
-            - source_labels: [__param_target]
-              target_label: instance
-            - action: labelmap
-              regex: __meta_kubernetes_service_label_(.+)
-            - source_labels: [__meta_kubernetes_namespace]
-              target_label: kubernetes_namespace
-            - source_labels: [__meta_kubernetes_service_name]
-              target_label: kubernetes_name
+      - job_name: prometheus
+        static_configs:
+        - targets:
+          - localhost:9090
+      - job_name: kubernetes-apiservers
+        kubernetes_sd_configs:
+        - role: endpoints
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+          action: keep
+          regex: default;kubernetes;https
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+        - role: pod
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scrape]
+          action: keep
+          regex: true
+        - source_labels: [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scheme]
+          action: replace
+          regex: (https?)
+          target_label: __scheme__
+        - source_labels: [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_path]
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - source_labels: [__address__, __meta_kubernetes_pod_annotation_gitlab_com_prometheus_port]
+          action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          action: replace
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_pod_name]
+          action: replace
+          target_label: kubernetes_pod_name
+      - job_name: kubernetes-service-endpoints
+        kubernetes_sd_configs:
+        - role: endpoints
+        relabel_configs:
+        - action: keep
+          regex: true
+          source_labels:
+          - __meta_kubernetes_service_annotation_gitlab_com_prometheus_scrape
+        - action: replace
+          regex: (https?)
+          source_labels:
+          - __meta_kubernetes_service_annotation_gitlab_com_prometheus_scheme
+          target_label: __scheme__
+        - action: replace
+          regex: (.+)
+          source_labels:
+          - __meta_kubernetes_service_annotation_gitlab_com_prometheus_path
+          target_label: __metrics_path__
+        - action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          source_labels:
+          - __address__
+          - __meta_kubernetes_service_annotation_gitlab_com_prometheus_port
+          target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_service_label_(.+)
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_namespace
+          target_label: kubernetes_namespace
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_service_name
+          target_label: kubernetes_name
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_pod_node_name
+          target_label: kubernetes_node
+      - job_name: kubernetes-services
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
+        kubernetes_sd_configs:
+        - role: service
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_annotation_gitlab_com_prometheus_probe]
+          action: keep
+          regex: true
+        - source_labels: [__address__]
+          target_label: __param_target
+        - target_label: __address__
+          replacement: blackbox
+        - source_labels: [__param_target]
+          target_label: instance
+        - action: labelmap
+          regex: __meta_kubernetes_service_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_service_name]
+          target_label: kubernetes_name
 
 ## Configuration of Redis
 ## https://docs.gitlab.com/charts/architecture/decisions#redis
@@ -1275,7 +1259,7 @@ redis:
       runAsNonRoot: true
       capabilities:
         drop:
-          - ALL
+        - ALL
   serviceAccount:
     automountServiceAccountToken: false
   securityContext:
@@ -1302,7 +1286,7 @@ redis:
       runAsNonRoot: true
       capabilities:
         drop:
-          - ALL
+        - ALL
   slave:
     resources:
       limits:
@@ -1318,7 +1302,7 @@ redis:
       runAsNonRoot: true
       capabilities:
         drop:
-          - ALL
+        - ALL
   sentinel:
     resources:
       limits:
@@ -1387,12 +1371,12 @@ postgresql:
       runAsGroup: 1001
       capabilities:
         drop:
-          - ALL
+        - ALL
   master:
     extraVolumeMounts:
-      - name: custom-init-scripts
-        mountPath: /docker-entrypoint-preinitdb.d/init_revision.sh
-        subPath: init_revision.sh
+    - name: custom-init-scripts
+      mountPath: /docker-entrypoint-preinitdb.d/init_revision.sh
+      subPath: init_revision.sh
     podAnnotations:
       postgresql.gitlab/init-revision: "1"
   metrics:
@@ -1438,7 +1422,7 @@ registry:
     containerSecurityContext:
       capabilities:
         drop:
-          - ALL
+        - ALL
   resources:
     limits:
       cpu: 200m
@@ -1448,7 +1432,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 17.2.1
+    tag: 17.2.2
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1468,7 +1452,7 @@ registry:
     runAsGroup: 1000
     capabilities:
       drop:
-        - ALL
+      - ALL
 
 ## Automatic shared secret generation
 ## https://docs.gitlab.com/charts/installation/secrets
@@ -1506,7 +1490,7 @@ shared-secrets:
   containerSecurityContext:
     capabilities:
       drop:
-        - ALL
+      - ALL
   tolerations: []
   podLabels: {}
   annotations:
@@ -1544,7 +1528,7 @@ gitlab-runner:
   securityContext:
     capabilities:
       drop:
-        - ALL
+      - ALL
 
 traefik:
   install: false
@@ -1560,18 +1544,18 @@ gitlab:
   containerSecurityContext:
     capabilities:
       drop:
-        - ALL
+      - ALL
   init:
     containerSecurityContext:
       capabilities:
         drop:
-          - ALL
+        - ALL
   certificates:
     init:
       securityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
         runAsUser: 65534
         runAsNonRoot: true
   ## https://docs.gitlab.com/charts/charts/gitlab/toolbox
@@ -1582,7 +1566,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1596,7 +1580,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     resources:
       requests:
         cpu: 2
@@ -1626,7 +1610,7 @@ gitlab:
       runAsGroup: 1000
       capabilities:
         drop:
-          - ALL
+        - ALL
 
   gitlab-exporter:
     enabled: false
@@ -1641,7 +1625,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     resources:
       limits:
         cpu: 150m
@@ -1651,10 +1635,10 @@ gitlab:
         memory: 200Mi
     capabilities:
       drop:
-        - ALL
+      - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1671,7 +1655,7 @@ gitlab:
       runAsGroup: 1000
       capabilities:
         drop:
-          - ALL
+        - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/migrations
   migrations:
@@ -1689,7 +1673,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     resources:
       limits:
         cpu: 500m
@@ -1699,7 +1683,7 @@ gitlab:
         memory: 1.5G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1711,7 +1695,7 @@ gitlab:
       runAsGroup: 1000
       capabilities:
         drop:
-          - ALL
+        - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/webservice
   webservice:
@@ -1727,7 +1711,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     securityContext:
       runAsUser: 1000
       runAsGroup: 1000
@@ -1737,7 +1721,7 @@ gitlab:
       runAsGroup: 1000
       capabilities:
         drop:
-          - ALL
+        - ALL
     resources:
       # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
       limits:
@@ -1748,7 +1732,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1761,7 +1745,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1771,21 +1755,21 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     ingress:
-      enabled: false  # Local setting in subchart must be overridden
+      enabled: false # Local setting in subchart must be overridden
     metrics:
       enabled: true
       port: 8083
       serviceMonitor:
         enabled: true
     helmTests:
-      enabled: false    
+      enabled: false
   ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1799,7 +1783,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     resources:
       requests:
         memory: 3G
@@ -1816,13 +1800,13 @@ gitlab:
       runAsGroup: 1000
       capabilities:
         drop:
-          - ALL
+        - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1836,7 +1820,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     resources:
       requests:
         cpu: 400m
@@ -1857,13 +1841,13 @@ gitlab:
       runAsGroup: 1000
       capabilities:
         drop:
-          - ALL
+        - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1877,7 +1861,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     resources:
       limits:
         cpu: 300m
@@ -1894,26 +1878,26 @@ gitlab:
       runAsGroup: 1000
       capabilities:
         drop:
-          - ALL
+        - ALL
     # metrics:
-    #   enabled: true
-    #   serviceMonitor:
-    #     enabled: true
-    # https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh
-    # gitlab-sshd is in Alpha. It is not ready for production use.
-    # is needed for prometheus servicemonitor metrics to work for gitlab-shell
-    # sshDaemon: gitlab-sshd
+  #   enabled: true
+  #   serviceMonitor:
+  #     enabled: true
+  # https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh
+  # gitlab-sshd is in Alpha. It is not ready for production use.
+  # is needed for prometheus servicemonitor metrics to work for gitlab-shell
+  # sshDaemon: gitlab-sshd
 
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 17.2.1
+      tag: 17.2.2
       pullSecrets:
-        - name: private-registry
+      - name: private-registry
     containerSecurityContext:
       capabilities:
         drop:
-          - ALL
+        - ALL
 
   ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
   #   gitlab-grafana:
@@ -1923,19 +1907,19 @@ gitlab:
       customDomains:
         type: ClusterIP
     image:
-      repository:  registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 17.2.1
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
+      tag: 17.2.2
     containerSecurityContext:
       capabilities:
         drop:
-          - ALL
+        - ALL
   ## https://docs.gitlab.com/charts/charts/gitlab/kas
   #   kas:
   ## https://docs.gitlab.com/charts/charts/gitlab/praefect
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.2.1
+      tag: 17.2.2
     init:
       resources:
         limits:
@@ -1947,7 +1931,7 @@ gitlab:
       containerSecurityContext:
         capabilities:
           drop:
-            - ALL
+          - ALL
     resources:
       requests:
         cpu: 1
@@ -1958,7 +1942,7 @@ gitlab:
     containerSecurityContext:
       capabilities:
         drop:
-          - ALL
+        - ALL
 
 ## Installation & configuration of gitlab/gitlab-zoekt
 gitlab-zoekt:
@@ -1988,7 +1972,7 @@ minio:
     containerSecurityContext:
       capabilities:
         drop:
-          - ALL
+        - ALL
   resources:
     limits:
       cpu: 200m
@@ -2006,7 +1990,7 @@ minio:
     runAsNonRoot: true
     capabilities:
       drop:
-        - ALL
+      - ALL
   # Additional job annotations
   jobAnnotations:
     sidecar.istio.io/inject: "true"
@@ -2039,19 +2023,19 @@ istio:
     enabled: false
     outboundTrafficPolicyMode: "REGISTRY_ONLY"
     customServiceEntries: []
-      # - name: "allow-google"
-      #   enabled: true
-      #   spec:
-      #     exportTo:
-      #       - "."
-      #     hosts:
-      #       - google.com
-      #     location: MESH_EXTERNAL
-      #     ports:
-      #       - number: 443
-      #         protocol: TLS
-      #         name: https
-      #     resolution: DNS
+    # - name: "allow-google"
+    #   enabled: true
+    #   spec:
+    #     exportTo:
+    #       - "."
+    #     hosts:
+    #       - google.com
+    #     location: MESH_EXTERNAL
+    #     ports:
+    #       - number: 443
+    #         protocol: TLS
+    #         name: https
+    #     resolution: DNS
     customAuthorizationPolicies: []
     # - name: "allow-nothing"
     #   enabled: true
@@ -2059,25 +2043,25 @@ istio:
     gitlabRunner:
       enabled: true
       namespaces:
-        - gitlab-runner
+      - gitlab-runner
     monitoring:
       enabled: true
       namespaces:
-        - monitoring
+      - monitoring
       principals:
-        - cluster.local/ns/monitoring/sa/monitoring-grafana
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter
+      - cluster.local/ns/monitoring/sa/monitoring-grafana
+      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager
+      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator
+      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus
+      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics
+      - cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter
   gitlab:
     # Toggle vs creation
     enabled: true
     annotations: {}
     labels: {}
     gateways:
-      - istio-system/main
+    - istio-system/main
     # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
     hosts: null
     selectorLabels:
@@ -2088,7 +2072,7 @@ istio:
     annotations: {}
     labels: {}
     gateways:
-      - istio-system/main
+    - istio-system/main
     # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
     hosts: null
     selectorLabels:
@@ -2102,7 +2086,7 @@ istio:
       istio: ingressgateway
     labels: {}
     gateways:
-      - istio-system/pages
+    - istio-system/pages
     # Enable or disable custom domains
     customDomains:
       enabled: true
@@ -2125,8 +2109,8 @@ networkPolicies:
     istio: ingressgateway
   # See `kubectl cluster-info` and then resolve to IP
   controlPlaneCidr: 0.0.0.0/0
-  egressPort: 
-  gitalyEgress: 
+  egressPort:
+  gitalyEgress:
     enabled: false
   additionalPolicies: []
 
@@ -2157,23 +2141,23 @@ bbtests:
       cypress_keycloak_username: "cypress"
       cypress_keycloak_password: "tnr_w!G33ZyAt@C8"
     secretEnvs:
-      - name: cypress_adminpassword
-        valueFrom:
-          secretKeyRef:
-            name: gitlab-gitlab-initial-root-password
-            key: password
+    - name: cypress_adminpassword
+      valueFrom:
+        secretKeyRef:
+          name: gitlab-gitlab-initial-root-password
+          key: password
   scripts:
     image: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"
     additionalVolumes:
-      - name: docker-config
-        secret:
-          secretName: private-registry
-          items:
-          - key: .dockerconfigjson
-            path: auth.json
+    - name: docker-config
+      secret:
+        secretName: private-registry
+        items:
+        - key: .dockerconfigjson
+          path: auth.json
     additionalVolumeMounts:
-      - name: docker-config
-        mountPath: /.docker/
+    - name: docker-config
+      mountPath: /.docker/
     envs:
       GITLAB_USER: "root"
       GITLAB_EMAIL: "gitlab-root-user@example.com"
