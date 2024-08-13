@@ -1,11 +1,11 @@
 apiVersion: kpt.dev/v1alpha1
 kind: Kptfile
 metadata:
-    name: chart
+  name: chart
 upstream:
   type: git
   git:
-    commit: 48b618cfdeed62853bebd0baf83f4da1d8451ae5
+    commit: 1da2ddbf51a7e15f1c6827ef01652b7790408a2d
     repo: https://gitlab.com/gitlab-org/charts/gitlab
     directory: /
-    ref: v8.2.1
+    ref: v8.2.2
