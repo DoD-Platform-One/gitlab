@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.2.2-bb.1] (2024-08-20)
+
+### Changed
+
+- Update renovate.json to include package rule which ensures postgres version remains on major version 14
+
 ## [8.2.2-bb.0] (2024-08-13)
 
 ### Added

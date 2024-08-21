@@ -12,6 +12,11 @@
         {
             "matchDatasources": ["docker"],
             "groupName": "Ironbank"
+        },
+        {
+            "matchDatasources": ["docker"],
+            "matchPackageNames": ["registry1.dso.mil/ironbank/opensource/postgres/postgresql"],
+            "allowedVersions": "14.x"
         }
     ],
     "regexManagers": [
