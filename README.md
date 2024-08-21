@@ -1,11 +1,12 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.2-bb.0](https://img.shields.io/badge/Version-8.2.2--bb.0-informational?style=flat-square) ![AppVersion: 17.2.2](https://img.shields.io/badge/AppVersion-17.2.2-informational?style=flat-square)
+![Version: 8.2.2-bb.1](https://img.shields.io/badge/Version-8.2.2--bb.1-informational?style=flat-square) ![AppVersion: 17.2.2](https://img.shields.io/badge/AppVersion-17.2.2-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab>
@@ -15,7 +16,9 @@ GitLab is the most comprehensive AI-powered DevSecOps Platform.
 The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
+
 * [Other Documentation](docs/)
 
 ## Pre-Requisites
@@ -31,8 +34,11 @@ https://helm.sh/docs/intro/install/
 ## Deployment
 
 * Clone down the repository
+
 * cd into directory
+
 ```bash
+
 helm install gitlab chart/
 ```
 
@@ -726,7 +732,7 @@ helm install gitlab chart/
 | postgresql.resources.requests.memory | string | `"500Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
 | postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql"` |  |
-| postgresql.image.tag | string | `"16.2"` |  |
+| postgresql.image.tag | string | `"14.12"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.auth.username | string | `"gitlab"` |  |
 | postgresql.auth.password | string | `"bogus-satisfy-upgrade"` |  |
