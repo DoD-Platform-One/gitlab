@@ -57,7 +57,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "17.2.2"
+  gitlabVersion: "17.2.4"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -819,7 +819,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     init:
@@ -867,7 +867,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -882,7 +882,7 @@ global:
       # 1. UBI does not have the newly required /scripts/set-config template generator in its entrypoint.
       #   a. trying gitlab-base per https://repo1.dso.mil/dsop/gitlab/gitlab/gitlab-base/-/issues/77
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base
-      tag: "17.2.2"
+      tag: "17.2.4"
       pullSecrets:
       - name: private-registry
 
@@ -1343,7 +1343,7 @@ postgresql:
   image:
     registry: registry1.dso.mil
     repository: ironbank/opensource/postgres/postgresql
-    tag: "14.12"
+    tag: "14.13"
     pullSecrets:
     - private-registry
   auth:
@@ -1432,7 +1432,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 17.2.2
+    tag: 17.2.4
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1566,7 +1566,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     init:
@@ -1638,7 +1638,7 @@ gitlab:
       - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1683,7 +1683,7 @@ gitlab:
         memory: 1.5G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1732,7 +1732,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1745,7 +1745,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1769,7 +1769,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     init:
@@ -1806,7 +1806,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     init:
@@ -1847,7 +1847,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     init:
@@ -1891,7 +1891,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 17.2.2
+      tag: 17.2.4
       pullSecrets:
       - name: private-registry
     containerSecurityContext:
@@ -1908,7 +1908,7 @@ gitlab:
         type: ClusterIP
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 17.2.2
+      tag: 17.2.4
     containerSecurityContext:
       capabilities:
         drop:
@@ -1919,7 +1919,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.2.2
+      tag: 17.2.4
     init:
       resources:
         limits:
