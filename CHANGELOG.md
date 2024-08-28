@@ -4,6 +4,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.2.4-bb.0] (2024-08-27)
+
+### Changed
+
+- Update gitlab appVersion from 17.2.2 -> 17.2.4
+- Update chart version from 8.2.2-bb.1 -> 8.2.4-bb.0
+- Update gluon from 0.5.0 -> 0.5.3 
+- Update ironbank/gitlab/gitlab/gitlab-webservice (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/certificates (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitaly (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl (source) 17.2.2 -> 17.2.4
+- Update registry1.dso.mil/ironbank/opensource/postgres/postgresql (source) -> 14.12 -> 14.13
+
 ## [8.2.2-bb.1] (2024-08-20)
 
 ### Changed
