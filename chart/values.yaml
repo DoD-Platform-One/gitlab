@@ -1285,7 +1285,7 @@ redis:
   image:
     registry: registry1.dso.mil/ironbank/bitnami
     repository: redis
-    tag: 7.0.0-debian-10-r3
+    tag: 7.4.0
     pullSecrets: []
   master:
     resources:

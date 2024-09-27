@@ -1,7 +1,7 @@
 ---
 apiVersion: v1
 name: gitlab
-version: 8.2.7-bb.0
+version: 8.2.7-bb.1
 appVersion: 17.2.7
 description: GitLab is the most comprehensive AI-powered DevSecOps Platform.
 keywords:
@@ -24,7 +24,7 @@ annotations:
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.63.0
     - name: redis
       condition: redis.install
-      image: registry1.dso.mil/ironbank/bitnami/redis:7.0.0-debian-10-r3
+      image: registry1.dso.mil/ironbank/bitnami/redis:7.4.0
     - name: alpine-certificates
       image: registry1.dso.mil/ironbank/gitlab/gitlab/certificates:17.2.7
     - name: cfssl-self-sign
