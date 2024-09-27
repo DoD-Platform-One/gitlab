@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.7-bb.0](https://img.shields.io/badge/Version-8.2.7--bb.0-informational?style=flat-square) ![AppVersion: 17.2.7](https://img.shields.io/badge/AppVersion-17.2.7-informational?style=flat-square)
+![Version: 8.2.7-bb.1](https://img.shields.io/badge/Version-8.2.7--bb.1-informational?style=flat-square) ![AppVersion: 17.2.7](https://img.shields.io/badge/AppVersion-17.2.7-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -686,7 +686,7 @@ helm install gitlab chart/
 | redis.securityContext.runAsNonRoot | bool | `true` |  |
 | redis.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.image.repository | string | `"redis"` |  |
-| redis.image.tag | string | `"7.0.0-debian-10-r3"` |  |
+| redis.image.tag | string | `"7.4.0"` |  |
 | redis.image.pullSecrets | list | `[]` |  |
 | redis.master.resources.limits.cpu | string | `"250m"` |  |
 | redis.master.resources.limits.memory | string | `"256Mi"` |  |

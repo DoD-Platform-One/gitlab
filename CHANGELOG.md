@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.2.7-bb.1] (2024-09-27)
+
+### Changed
+
+- Update ironbank/bitnami/redis (source) 7.0.0-debian-10-r3 -> 7.4.0
+
 ## [8.2.7-bb.0] (2024-09-18)
 
 ### Changed
