@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.8-bb.0](https://img.shields.io/badge/Version-8.2.8--bb.0-informational?style=flat-square) ![AppVersion: v17.2.8](https://img.shields.io/badge/AppVersion-v17.2.8-informational?style=flat-square)
+![Version: 8.2.8-bb.1](https://img.shields.io/badge/Version-8.2.8--bb.1-informational?style=flat-square) ![AppVersion: v17.2.8](https://img.shields.io/badge/AppVersion-v17.2.8-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 

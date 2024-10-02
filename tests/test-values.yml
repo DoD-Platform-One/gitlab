@@ -8,25 +8,10 @@ global:
       name: gitlab-webservice-test-svc.gitlab.svc.cluster.local
     registry:
       name: gitlab-registry-test-svc.gitlab.svc.cluster.local
-  certificates:
-    image:
-      pullSecrets:
-      - name: private-registry
-  kubectl:
-    image:
-      pullSecrets:
-      - name: private-registry
-redis:
-  global:
-    imagePullSecrets:
-    - private-registry
 registry:
   hpa:
     minReplicas: 1
     maxReplicas: 1
-  image:
-    pullSecrets:
-    - name: private-registry
 shared-secrets:
   selfsign:
     image:
@@ -34,60 +19,20 @@ shared-secrets:
       - name: private-registry
 gitlab:
   toolbox:
-    image:
-      pullSecrets:
-      - name: private-registry
     annotations:
       sidecar.istio.io/proxyMemory: 256Mi
       sidecar.istio.io/proxyMemoryLimit: 256Mi
-  migrations:
-    image:
-      pullSecrets:
-      - name: private-registry 
   webservice:
     minReplicas: 1
     maxReplicas: 1
-    image:
-      pullSecrets:
-      - name: private-registry
-    workhorse:
-      pullSecrets:
-      - name: private-registry
-    helmTests:
-      enabled: false
   sidekiq:
-    image:
-      pullSecrets:
-      - name: private-registry
     minReplicas: 1
     maxReplicas: 1
-  gitaly:
-    image:
-      pullSecrets:
-      - name: private-registry
   gitlab-shell:
     minReplicas: 1
     maxReplicas: 1
-    image:
-      pullSecrets:
-      - name: private-registry
-  gitlab-exporter:
-    image:
-      pullSecrets:
-      - name: private-registry
-  mailroom:
-    image:
-      pullSecrets:
-        - name: private-registry
-
-minio:
-  pullSecrets:
-  - name: private-registry
-
 networkPolicies:
   enabled: true
   controlPlaneCidr: 172.16.0.0/12
-
 bbtests:
   enabled: true
- 
