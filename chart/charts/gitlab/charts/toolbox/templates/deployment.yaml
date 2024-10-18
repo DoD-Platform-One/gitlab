@@ -162,6 +162,11 @@ spec:
               mountPath: /home/git/gitlab
               readOnly: true
 {{- end }}
+            {{- if .Values.customScripts }}
+            - name: {{ template "fullname" . }}-custom-scripts
+              mountPath: /scripts/custom
+              readOnly: true
+            {{- end }}
             {{- include "gitlab.certificates.volumeMount" . | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -259,4 +264,11 @@ spec:
           medium: "Memory"
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
       {{- include "gitlab.nodeSelector" . | nindent 6 }}
+{{- if .Values.customScripts }}
+      - name: {{ template "fullname" . }}-custom-scripts
+        projected:
+          sources:
+            - configMap:
+                name: {{ template "fullname" . }}-custom-scripts
+{{- end }}
 {{- end }}

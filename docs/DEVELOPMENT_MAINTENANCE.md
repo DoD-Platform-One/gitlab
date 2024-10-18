@@ -248,6 +248,53 @@ If that is not present it will use the global chart serviceAccount automountServ
 ## chart/templates/tests/*
 - Add templates for CI helm tests.
 
+## chart/charts/gitlab/charts/toolbox/templates/configmap-custom-scripts.yaml
+- Added custom configmap to mount ruby scripts to toolbox
+  ```yaml
+  {{- if .Values.enabled -}}
+  {{- if .Values.customScripts -}}
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: {{ template "fullname" . }}-custom-scripts
+    namespace: {{ $.Release.Namespace }}
+    labels:
+      {{- include "gitlab.standardLabels" . | nindent 4 }}
+      {{- include "gitlab.commonLabels" . | nindent 4 }}
+  data:
+    {{- range $key, $value := .Values.customScripts }}
+    {{ $key }}: |
+      {{ $value }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  ```
+
+## chart/charts/gitlab/charts/toolbox/templates/deployment.yaml
+- Added volumeMount and volume for custom ruby script configmap
+  volumeMounts:
+  
+  ```yaml
+  ...
+              {{- if .Values.customScripts }}
+            - name: {{ template "fullname" . }}-custom-scripts
+              mountPath: /scripts/custom
+              readOnly: true
+            {{- end }}
+  ...
+  ```
+  volumes:
+  ```yaml
+  ...
+  {{- if .Values.customScripts }}
+      - name: {{ template "fullname" . }}-custom-scripts
+        projected:
+          sources:
+            - configMap:
+                name: {{ template "fullname" . }}-custom-scripts
+  {{- end }}  
+  ```
+
 ## chart/charts/gitlab/charts/toolbox/templates/backup-job.yaml
 - Added istio shutdown to command on lines 85 and 87.
   ```yaml
@@ -326,7 +373,7 @@ If that is not present it will use the global chart serviceAccount automountServ
 - Add `minio.jobAnnotations`: sidecar.istio.io/inject: "false".
 - Add `gitlab.toolbox.annotations`: `sidecar.istio.io/proxyMemory: 512Mi` and `sidecar.istio.io/proxyMemoryLimit: 512Mi`.
 - Change default value for `global.ingress.configureCertmanager` to `false`
-
+- Add `gitlab.toolbox.customScripts` with example `testing.rb` script for custom ruby scripts in toolbox.
 
 # chart/Chart.yaml
 - Change version key to Big Bang composite version.

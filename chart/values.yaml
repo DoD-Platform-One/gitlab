@@ -1627,6 +1627,11 @@ gitlab:
       capabilities:
         drop:
           - ALL
+    customScripts:
+      # this will be mounted into the toolbox container at `/scripts/custom/testing.rb`
+      # execute it in the toolbox with `gitlab-rails runner /scripts/custom/testing.rb`
+      #testing.rb: |
+      #  puts "testing"
 
   gitlab-exporter:
     enabled: false

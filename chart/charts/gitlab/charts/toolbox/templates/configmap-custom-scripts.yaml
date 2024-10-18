@@ -1,0 +1,17 @@
+{{- if .Values.enabled -}}
+{{- if .Values.customScripts -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-custom-scripts
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.customScripts }}
+  {{ $key }}: |
+    {{ $value }}
+  {{- end }}
+{{- end }}
+{{- end }}
