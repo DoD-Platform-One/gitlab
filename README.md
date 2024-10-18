@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.9-bb.0](https://img.shields.io/badge/Version-8.2.9--bb.0-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
+![Version: 8.2.9-bb.1](https://img.shields.io/badge/Version-8.2.9--bb.1-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -851,6 +851,7 @@ helm install gitlab chart/
 | gitlab.toolbox.containerSecurityContext.runAsUser | int | `1000` |  |
 | gitlab.toolbox.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.toolbox.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| gitlab.toolbox.customScripts | string | `nil` |  |
 | gitlab.gitlab-exporter.enabled | bool | `false` |  |
 | gitlab.gitlab-exporter.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitlab-exporter.init.resources.limits.memory | string | `"200Mi"` |  |
