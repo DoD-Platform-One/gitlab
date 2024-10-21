@@ -1,18 +1,18 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.9-bb.1](https://img.shields.io/badge/Version-8.2.9--bb.1-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
+![Version: 8.2.9-bb.2](https://img.shields.io/badge/Version-8.2.9--bb.2-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream References
 - <https://about.gitlab.com/>
 
-* <https://gitlab.com/gitlab-org/charts/gitlab>
+- <https://gitlab.com/gitlab-org/charts/gitlab>
 
 ## Upstream Release Notes
 
-The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
+- The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
 
 ## Learn More
 
@@ -25,9 +25,9 @@ The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab
 - Kubernetes config installed in `~/.kube/config`
 - Helm installed
 
-Install Helm
+- Install Helm
 
-https://helm.sh/docs/intro/install/
+- https://helm.sh/docs/intro/install/
 
 ## Deployment
 

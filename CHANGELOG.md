@@ -3,11 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.2.9-bb.2] (2024-10-18)
+
+### Changed
+
+- Updated hardcoded minio matchLabels
+
 ## [8.2.9-bb.1] (2024-10-15)
 
 ### Added
 
-- Added customScripts functionality to toolbox container 
+- Added customScripts functionality to toolbox container
 
 ## [8.2.9-bb.0] (2024-10-02)
 
@@ -28,7 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 17.2.8 -> 17.2.9
 - update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 17.2.8 -> 17.2.9
 - update registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 17.2.8 -> 17.2.9
-- update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.2.8 -> 17.2.9 
+- update registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.2.8 -> 17.2.9
 
 ## [8.2.8-bb.1] (2024-10-02)
 
