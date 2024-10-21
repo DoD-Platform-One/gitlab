@@ -10,7 +10,7 @@ spec:
     mode: {{ .Values.istio.mtls.mode }}
   selector:
     matchLabels:
-      app: minio
+      {{- include "minio.labels" . | nindent 6 }} 
   portLevelMtls:
     "9000":
       mode: PERMISSIVE
