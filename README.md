@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.9-bb.2](https://img.shields.io/badge/Version-8.2.9--bb.2-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
+![Version: 8.2.9-bb.3](https://img.shields.io/badge/Version-8.2.9--bb.3-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -1028,10 +1028,10 @@ helm install gitlab chart/
 | minio.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | minio.jobAnnotations."sidecar.istio.io/inject" | string | `"true"` |  |
 | minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
-| minio.imageTag | string | `"RELEASE.2022-12-12T19-27-27Z"` |  |
+| minio.imageTag | string | `"RELEASE.2024-06-04T19-20-08Z"` |  |
 | minio.pullSecrets[0].name | string | `"private-registry"` |  |
 | minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
-| minio.minioMc.tag | string | `"RELEASE.2022-12-24T15-21-38Z"` |  |
+| minio.minioMc.tag | string | `"RELEASE.2024-10-02T08-27-28Z"` |  |
 | minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | domain | string | `"dev.bigbang.mil"` |  |
 | sso.enabled | bool | `false` |  |

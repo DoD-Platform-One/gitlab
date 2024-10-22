@@ -2017,7 +2017,7 @@ minio:
     sidecar.istio.io/inject: "true"
   # use Ironbank hardened images for MinIO
   image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2022-12-12T19-27-27Z
+  imageTag: RELEASE.2024-06-04T19-20-08Z
   pullSecrets:
   - name: private-registry
   minioMc:
@@ -2026,7 +2026,7 @@ minio:
     #       line 65
     #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
     image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2022-12-24T15-21-38Z
+    tag: RELEASE.2024-10-02T08-27-28Z
     pullSecrets:
     - name: private-registry
 
