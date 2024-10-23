@@ -846,6 +846,7 @@ global:
       - secret: ca-certs-digicert-nfi-trust-chain-2
       - secret: ca-certs-entrust-federal-ssp-trust-chain-1
       - secret: ca-certs-entrust-federal-ssp-trust-chain-2
+      - secret: ca-certs-entrust-federal-ssp-trust-chain-3
       - secret: ca-certs-entrust-managed-service-nfi
       - secret: ca-certs-exostar-llc
       - secret: ca-certs-identrust-nfi
