@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.9-bb.3](https://img.shields.io/badge/Version-8.2.9--bb.3-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
+![Version: 8.2.9-bb.4](https://img.shields.io/badge/Version-8.2.9--bb.4-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -12,7 +12,7 @@ GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream Release Notes
 
-- The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
+The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
 
 ## Learn More
 
@@ -25,9 +25,9 @@ GitLab is the most comprehensive AI-powered DevSecOps Platform.
 - Kubernetes config installed in `~/.kube/config`
 - Helm installed
 
-- Install Helm
+Install Helm
 
-- https://helm.sh/docs/intro/install/
+https://helm.sh/docs/intro/install/
 
 ## Deployment
 
@@ -378,23 +378,24 @@ helm install gitlab chart/
 | global.certificates.customCAs[10].secret | string | `"ca-certs-digicert-nfi-trust-chain-2"` |  |
 | global.certificates.customCAs[11].secret | string | `"ca-certs-entrust-federal-ssp-trust-chain-1"` |  |
 | global.certificates.customCAs[12].secret | string | `"ca-certs-entrust-federal-ssp-trust-chain-2"` |  |
-| global.certificates.customCAs[13].secret | string | `"ca-certs-entrust-managed-service-nfi"` |  |
-| global.certificates.customCAs[14].secret | string | `"ca-certs-exostar-llc"` |  |
-| global.certificates.customCAs[15].secret | string | `"ca-certs-identrust-nfi"` |  |
-| global.certificates.customCAs[16].secret | string | `"ca-certs-lockheed-martin"` |  |
-| global.certificates.customCAs[17].secret | string | `"ca-certs-netherlands-ministry-of-defence"` |  |
-| global.certificates.customCAs[18].secret | string | `"ca-certs-northrop-grumman"` |  |
-| global.certificates.customCAs[19].secret | string | `"ca-certs-raytheon-trust-chain-1"` |  |
-| global.certificates.customCAs[20].secret | string | `"ca-certs-raytheon-trust-chain-2"` |  |
-| global.certificates.customCAs[21].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-1"` |  |
-| global.certificates.customCAs[22].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-2"` |  |
-| global.certificates.customCAs[23].secret | string | `"ca-certs-verizon-cybertrust-federal-ssp"` |  |
-| global.certificates.customCAs[24].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-1"` |  |
-| global.certificates.customCAs[25].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-2"` |  |
-| global.certificates.customCAs[26].secret | string | `"ca-certs-widepoint-nfi"` |  |
-| global.certificates.customCAs[27].secret | string | `"ca-certs-dod-intermediate-and-issuing-ca-certs"` |  |
-| global.certificates.customCAs[28].secret | string | `"ca-certs-dod-trust-anchors-self-signed"` |  |
-| global.certificates.customCAs[29].secret | string | `"ca-certs-eca"` |  |
+| global.certificates.customCAs[13].secret | string | `"ca-certs-entrust-federal-ssp-trust-chain-3"` |  |
+| global.certificates.customCAs[14].secret | string | `"ca-certs-entrust-managed-service-nfi"` |  |
+| global.certificates.customCAs[15].secret | string | `"ca-certs-exostar-llc"` |  |
+| global.certificates.customCAs[16].secret | string | `"ca-certs-identrust-nfi"` |  |
+| global.certificates.customCAs[17].secret | string | `"ca-certs-lockheed-martin"` |  |
+| global.certificates.customCAs[18].secret | string | `"ca-certs-netherlands-ministry-of-defence"` |  |
+| global.certificates.customCAs[19].secret | string | `"ca-certs-northrop-grumman"` |  |
+| global.certificates.customCAs[20].secret | string | `"ca-certs-raytheon-trust-chain-1"` |  |
+| global.certificates.customCAs[21].secret | string | `"ca-certs-raytheon-trust-chain-2"` |  |
+| global.certificates.customCAs[22].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[23].secret | string | `"ca-certs-us-treasury-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[24].secret | string | `"ca-certs-verizon-cybertrust-federal-ssp"` |  |
+| global.certificates.customCAs[25].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-1"` |  |
+| global.certificates.customCAs[26].secret | string | `"ca-certs-widepoint-federal-ssp-trust-chain-2"` |  |
+| global.certificates.customCAs[27].secret | string | `"ca-certs-widepoint-nfi"` |  |
+| global.certificates.customCAs[28].secret | string | `"ca-certs-dod-intermediate-and-issuing-ca-certs"` |  |
+| global.certificates.customCAs[29].secret | string | `"ca-certs-dod-trust-anchors-self-signed"` |  |
+| global.certificates.customCAs[30].secret | string | `"ca-certs-eca"` |  |
 | global.kubectl.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kubectl"` |  |
 | global.kubectl.image.tag | string | `"17.2.9"` |  |
 | global.kubectl.image.pullSecrets[0].name | string | `"private-registry"` |  |
@@ -439,12 +440,12 @@ helm install gitlab chart/
 | nginx-ingress-geo.<<.enabled | bool | `false` |  |
 | nginx-ingress.tcpExternalConfig | string | `"true"` |  |
 | nginx-ingress-geo.<<.tcpExternalConfig | string | `"true"` |  |
-| nginx-ingress-geo.controller.<<.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
 | nginx-ingress.controller.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
 | nginx-ingress-geo.<<.controller.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
-| nginx-ingress-geo.controller.<<.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
+| nginx-ingress-geo.controller.<<.addHeaders.Referrer-Policy | string | `"strict-origin-when-cross-origin"` |  |
 | nginx-ingress-geo.<<.controller.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
 | nginx-ingress.controller.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
+| nginx-ingress-geo.controller.<<.config.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
 | nginx-ingress-geo.controller.config.<<.annotation-value-word-blocklist | string | `"load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""` |  |
 | nginx-ingress-geo.controller.config.<<.hsts | string | `"true"` |  |
 | nginx-ingress-geo.<<.controller.config.hsts | string | `"true"` |  |
