@@ -515,6 +515,16 @@ emptyDir: {{ toYaml $values | nindent 2 }}
 {{- end -}}
 
 {{/*
+Return upgradeCheck container specific securityContext template
+*/}}
+{{- define "upgradeCheck.containerSecurityContext" }}
+{{- if .Values.upgradeCheck.containerSecurityContext }}
+securityContext:
+  {{- toYaml .Values.upgradeCheck.containerSecurityContext | nindent 2 }}
+{{- end }}
+{{- end }}
+
+{{/*
 Return init container specific securityContext template
 */}}
 {{- define "gitlab.init.containerSecurityContext" }}

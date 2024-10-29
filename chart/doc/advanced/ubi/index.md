@@ -8,7 +8,10 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 GitLab offers [Red Hat UBI](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image)
 versions of its images, allowing you to replace standard images with UBI-based
-images. These images use the same tag as standard images with `-ubi9` extension.
+images. These images use the same tag as standard images with `-ubi` extension.
+
+NOTE:
+The UBI-based images prior to GitLab 17.3 use the `-ubi8` extension.
 
 The GitLab chart uses third-party images that are not based on UBI. These images
 are mostly offer external services to GitLab, such as Redis, PostgreSQL, and so on.

@@ -576,8 +576,8 @@ places. This examples adds the following network policy:
 
 *Note the example provided is only an example and may not be complete*
 
-_Note that the Sidekiq service requires outbound connectivity to the public
-internet for images on [external object storage](../../../advanced/external-object-storage)_
+*Note that the Sidekiq service requires outbound connectivity to the public
+internet for images on [external object storage](../../../advanced/external-object-storage)*
 
 ```yaml
 networkpolicy:

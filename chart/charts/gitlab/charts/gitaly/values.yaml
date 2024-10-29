@@ -67,17 +67,23 @@ tolerations: []
 ## The Gitaly StatefulSet's priorityClassName
 # priorityClassName:
 
+# Gitaly shutdown grace period, how long to wait for in-flight requests to complete (seconds)
+# Pod `terminationGracePeriodSeconds` is set to this value + 5 seconds
+gracefulRestartTimeout: 25
+
 logging:
   format: "json"
   # level:
   # sentryDsn:
   # sentryEnvironment:
+
 git: {}
   # catFileCacheSize:
   ## Amend the default configuration Gitaly is using when spawning Git
   ## commands. Accepts configuration as documented in git-config(1).
   # config:
   #   - {key: "pack.threads", value: 4}
+
 prometheus: {}
   # grpcLatencyBuckets: "[1.0, 1.5, 2.0, 2.5]"
 

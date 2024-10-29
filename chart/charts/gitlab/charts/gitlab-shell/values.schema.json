@@ -146,6 +146,16 @@
           },
           "title": "GSS-API related settings",
           "type": "object"
+        },
+        "lfs": {
+          "properties": {
+            "pureSSHProtocol": {
+              "title": "Enable LFS pure SSH protocol support",
+              "type": "boolean"
+            }
+          },
+          "title": "LFS related settings",
+          "type": "object"
         }
       },
       "required": [

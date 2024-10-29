@@ -1,17 +1,22 @@
 {{/*
-Helper for Sentinels as a string
+Helper for List of addresses as a string
 
-Expectation: input contents has .sentinels, which is a List of Dict
+Expectation: input contents has .sentinels or .cluster, which is a List of Dict
     in the format of [{host: , port:}, ...]
 */}}
-{{- define "registry.redis.host.sentinels" -}}
-{{- $sentinels := list -}}
-{{- range .sentinels -}}
-{{-   $sentinels = append $sentinels (printf "%s:%d" .host (default 26379 .port | int)) -}}
+{{- define "registry.redis.host.addresses" -}}
+{{- $addresses := list -}}
+{{- if .sentinels -}}
+{{-   range .sentinels -}}
+{{-     $addresses = append $addresses (printf "%s:%d" .host (default 26379 .port | int)) -}}
+{{-   end -}}
+{{- else if .cluster -}}
+{{-   range .cluster -}}
+{{-     $addresses = append $addresses (printf "%s:%d" .host (default 6379 .port | int)) -}}
+{{-   end -}}
 {{- end -}}
-{{ join "," $sentinels }}
+{{ join "," $addresses }}
 {{- end -}}
-
 
 {{- define "gitlab.registry.redisCacheSecret.mount" -}}
 {{- if .Values.redis.cache.password.enabled }}
@@ -64,10 +69,10 @@ redis:
   cache:
     enabled: {{ .Values.redis.cache.enabled | eq true }}
     {{- if .Values.redis.cache.sentinels }}
-    addr: {{ include "registry.redis.host.sentinels" .Values.redis.cache | quote }}
+    addr: {{ include "registry.redis.host.addresses" .Values.redis.cache | quote }}
     mainname: {{ .Values.redis.cache.host }}
     {{- else if .redisMergedConfig.sentinels }}
-    addr: {{ include "registry.redis.host.sentinels" .redisMergedConfig | quote }}
+    addr: {{ include "registry.redis.host.addresses" .redisMergedConfig | quote }}
     mainname: {{ template "gitlab.redis.host" . }}
     {{-   if .redisMergedConfig.sentinelAuth.enabled }}
     sentinelpassword: {% file.Read "/config/redis-sentinel/redis-sentinel-password" | strings.TrimSpace | data.ToJSON %}
@@ -118,13 +123,15 @@ redis:
   ratelimiter:
     enabled: {{ .Values.redis.rateLimiting.enabled | eq true }}
     {{- if .Values.redis.rateLimiting.sentinels }}
-    addr: {{ include "registry.redis.host.sentinels" .Values.redis.rateLimiting | quote }}
+    addr: {{ include "registry.redis.host.addresses" .Values.redis.rateLimiting | quote }}
     mainname: {{ .Values.redis.rateLimiting.host }}
-    {{- else if .redisMergedConfig.sentinels }}
-    addr: {{ include "registry.redis.host.sentinels" .redisMergedConfig | quote }}
-    mainname: {{ template "gitlab.redis.host" . }}
+    {{- else if .Values.redis.rateLimiting.cluster }}
+    addr: {{ include "registry.redis.host.addresses" .Values.redis.rateLimiting | quote }}
     {{- else if .Values.redis.rateLimiting.host  }}
     addr: {{ printf "%s:%d" .Values.redis.rateLimiting.host (int .Values.redis.rateLimiting.port | default 6379) | quote }}
+    {{- else if .redisMergedConfig.sentinels }}
+    addr: {{ include "registry.redis.host.addresses" .redisMergedConfig | quote }}
+    mainname: {{ template "gitlab.redis.host" . }}
     {{- else }}
     addr: {{ printf "%s:%s" ( include "gitlab.redis.host" . ) ( include "gitlab.redis.port" . ) | quote }}
     {{- end }}

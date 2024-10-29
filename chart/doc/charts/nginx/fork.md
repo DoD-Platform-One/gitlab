@@ -42,3 +42,27 @@ The following adjustments were made to the NGINX fork:
   - `controller.service.enableShell`.
   - `controller.service.internal.enableShell`.
   (follows the exisiting chart pattern of `controller.service.enableHttp(s)`)
+- Add the following new RBAC rules. This is necessary while our chart is on 4.0.6, but we've bumped the controller image to 1.11.2. Once we bring the chart to 4.11.2, we can remove this patch. It was required because the controller now uses endpointslices to track endpoints.
+  This was added to both: `charts/nginx-ingress/templates/clusterrole.yaml` and `charts/nginx-ingress/templates/controller-role.yaml`:
+  
+  ```yaml
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+      - get
+  ```
+  
+  Additionally, to support migration from v1.3.1 to v1.11.2, for those users that set their own RBAC rules, we've also
+  added these values which will be removed, once we drop the v1.3.1 fallback, which is scheduled for 8.8 release.
+
+  ```yaml
+  controller:
+    image:
+      fallbackTag: "v1.3.1"
+      fallbackDigest: "sha256:54f7fe2c6c5a9db9a0ebf1131797109bb7a4d91f56b9b362bde2abd237dd1974"
+      disableFallback: false
+  ```

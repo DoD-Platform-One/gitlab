@@ -1,4 +1,4 @@
-Forked from https://github.com/helm/charts/tree/master/stable/docker-registry
+Forked from <https://github.com/helm/charts/tree/master/stable/docker-registry>
 
 With a few tweaks to make it play nicely with GitLab, including Minio S3
 storage and GitLab authentication endpoint.
@@ -10,4 +10,4 @@ this chart also introduces some additional configuration. See [additional option
 
 ## Development
 
-For more details, see [development notes](../../doc/development/index.md#verifying-registry) 
+For more details, see [development notes](../../doc/development/index.md#verifying-registry)

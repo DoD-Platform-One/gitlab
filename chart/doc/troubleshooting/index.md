@@ -300,6 +300,8 @@ To fix this, either:
 
 Note that for optional keys, an empty map (`{}`) is a valid value.
 
+<!-- markdownlint-disable line-length -->
+
 ## Restoration failure: `ERROR:  cannot drop view pg_stat_statements because extension pg_stat_statements requires it`
 
 You may face this error when restoring a backup on your Helm chart instance. Use the following steps as a workaround:
@@ -327,6 +329,8 @@ If you encounter the same issue with the `pg_buffercache` extension,
 follow the same steps above to drop and re-create it.
 
 You can find more details about this error in issue [#2469](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2469).
+
+<!-- markdownlint-enable line-length -->
 
 ## Bundled PostgreSQL pod fails to start: `database files are incompatible with server`
 

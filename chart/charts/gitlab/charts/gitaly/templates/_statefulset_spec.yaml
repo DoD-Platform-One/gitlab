@@ -54,7 +54,7 @@ spec:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
       {{- include "gitlab.priorityClassName" . | nindent 6 }}
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: {{ .Values.gracefulRestartTimeout | int | add 5 }}
       initContainers:
       {{- if .Values.cgroups.enabled }}
         - name: init-cgroups

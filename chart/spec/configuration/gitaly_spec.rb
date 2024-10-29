@@ -267,7 +267,7 @@ describe 'Gitaly configuration' do
         config = t.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl')
         toml = render_toml(config, 'HOSTNAME' => 'default')
 
-        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage])
+        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage graceful_restart_timeout])
         expect(toml['storage']).to eq([{ 'name' => 'default', 'path' => '/home/git/repositories' }])
         expect(toml['auth']['token'].length).to eq(32)
       end
@@ -311,7 +311,7 @@ describe 'Gitaly configuration' do
         config = t.dig('ConfigMap/test-gitaly-praefect', 'data', 'config.toml.tpl')
         toml = render_toml(config, 'HOSTNAME' => 'test-gitaly-default-0')
 
-        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage])
+        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage graceful_restart_timeout])
         expect(toml['storage']).to eq([{ 'name' => 'test-gitaly-default-0', 'path' => '/home/git/repositories' }])
         expect(toml['auth']['token'].length).to eq(32)
       end
@@ -678,6 +678,85 @@ describe 'Gitaly configuration' do
         expect(gitaly_liveness_probe).to include(
           'initialDelaySeconds' => 30
         )
+      end
+    end
+  end
+
+  context 'gracefulRestartTimeout' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            gracefulRestartTimeout: #{graceful_restart_timeout}
+      )).merge(default_values)
+    end
+
+    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
+    let(:gitaly_configmap) { 'ConfigMap/test-gitaly' }
+
+    context 'when default' do
+      let(:graceful_restart_timeout) {}
+
+      it 'sets pod termination grace period' do
+        t = HelmTemplate.new(values)
+        # STS
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_termination_grace_period = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['terminationGracePeriodSeconds']
+
+        expect(gitaly_termination_grace_period).to eq(30)
+      end
+
+      it 'sets gitaly config termination grace period' do
+        t = HelmTemplate.new(values)
+        # ConfigMap
+        gitaly_config = t.resources_by_kind('ConfigMap').select { |key| key == gitaly_configmap }
+        config_toml = gitaly_config[gitaly_configmap]['data']['config.toml.tpl']
+
+        expect(config_toml).to include "graceful_restart_timeout = \"25s\""
+      end
+    end
+
+    context 'when seconds' do
+      let(:graceful_restart_timeout) { 45 }
+
+      it 'sets pod termination grace period' do
+        t = HelmTemplate.new(values)
+        # STS
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_termination_grace_period = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['terminationGracePeriodSeconds']
+
+        expect(gitaly_termination_grace_period).to eq(50)
+      end
+
+      it 'sets gitaly config termination grace period' do
+        t = HelmTemplate.new(values)
+        # ConfigMap
+        gitaly_config = t.resources_by_kind('ConfigMap').select { |key| key == gitaly_configmap }
+        config_toml = gitaly_config[gitaly_configmap]['data']['config.toml.tpl']
+
+        expect(config_toml).to include "graceful_restart_timeout = \"45s\""
+      end
+    end
+
+    context 'when minutes' do
+      let(:graceful_restart_timeout) { 120 }
+
+      it 'sets pod termination grace period' do
+        t = HelmTemplate.new(values)
+        # STS
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_termination_grace_period = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['terminationGracePeriodSeconds']
+
+        expect(gitaly_termination_grace_period).to eq(125)
+      end
+
+      it 'sets gitaly config termination grace period' do
+        t = HelmTemplate.new(values)
+        # ConfigMap
+        gitaly_config = t.resources_by_kind('ConfigMap').select { |key| key == gitaly_configmap }
+        config_toml = gitaly_config[gitaly_configmap]['data']['config.toml.tpl']
+
+        expect(config_toml).to include "graceful_restart_timeout = \"2m0s\""
       end
     end
   end

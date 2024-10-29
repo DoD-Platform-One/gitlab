@@ -23,7 +23,10 @@ describe 'gitlab-exporter configuration' do
   let(:password) { ERB::Util.url_encode(RuntimeTemplate::JUNK_PASSWORD) }
 
   def render_erb(raw_template)
-    yaml = RuntimeTemplate.erb(raw_template: raw_template, files: RuntimeTemplate.mock_files)
+    files = RuntimeTemplate.mock_files
+    files['/etc/gitlab/redis/queues-password'] = RuntimeTemplate::JUNK_PASSWORD
+
+    yaml = RuntimeTemplate.erb(raw_template: raw_template, files: files)
     YAML.safe_load(yaml, aliases: true)
   end
 
@@ -106,6 +109,35 @@ describe 'gitlab-exporter configuration' do
           { 'host' => 'sentinel1.example.com', 'port' => 26379 },
           { 'host' => 'sentinel2.example.com', 'port' => 26379 }
         ])
+    end
+
+    context 'when Redis Sentinel is defined for the queues config' do
+      let(:values) do
+        YAML.safe_load(%(
+        redis:
+          install: false
+        global:
+          redis:
+            host: global.host
+            queues:
+              host: queues.redis.host
+              sentinels:
+              - host: sentinel1.example.com
+                port: 26379
+              - host: sentinel2.example.com
+                port: 26379
+      )).deep_merge(default_values)
+      end
+
+      it 'configures Sentinels' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+        expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@queues.redis.host:6379")
+        expect(sidekiq_config['opts']['redis_sentinels']).to eq(
+          [
+            { 'host' => 'sentinel1.example.com', 'port' => 26379 },
+            { 'host' => 'sentinel2.example.com', 'port' => 26379 }
+          ])
+      end
     end
 
     context 'with Sentinel password as secret' do

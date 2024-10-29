@@ -39,6 +39,11 @@ describe 'GitLab Pages' do
       HelmTemplate.new(values.merge(pages_enabled_values))
     end
 
+    it 'renders cert-manager.io/issuer annotation correctly' do
+      annotations = pages_enabled_template.dig('Ingress/test-webservice-default', 'metadata', 'annotations')
+      expect(annotations).to include({ 'cert-manager.io/issuer' => 'test-issuer' })
+    end
+
     it 'creates all pages related required_resources' do
       required_resources.each do |resource|
         resource_name = "#{resource}/test-gitlab-pages"
@@ -508,6 +513,9 @@ describe 'GitLab Pages' do
                 rateLimitTLSSourceIPBurst: 51
                 rateLimitTLSDomain: 1000.5
                 rateLimitTLSDomainBurst: 20001
+                rateLimitSubnetsAllowList:
+                  - "10.1.1.0/24"
+                  - "10.1.2.0/24"
                 serverReadTimeout: 1h
                 serverReadHeaderTimeout: 2h
                 serverWriteTimeout: 3h
@@ -562,6 +570,7 @@ describe 'GitLab Pages' do
             rate-limit-tls-source-ip-burst=51
             rate-limit-tls-domain=1000.5
             rate-limit-tls-domain-burst=20001
+            rate-limit-subnets-allow-list=10.1.1.0/24,10.1.2.0/24
             server-read-timeout=1h
             server-read-header-timeout=2h
             server-write-timeout=3h

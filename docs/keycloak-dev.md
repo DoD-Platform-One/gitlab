@@ -1,13 +1,17 @@
 ## Deploying GitLab with a Dev Instance of Keycloak
+
 ### Prerequisites
+
 1. You will need a K8s development environment with two `Gateway` resources configured. One for `passthrough` and the other for `public`. Use the `k3d-dev.sh` script with the `-m` flag to deploy a dev cluster with MetalLB.
 
-1. You will need the following values file saved locally: `keycloak-dev-values.yaml` ([link](https://repo1.dso.mil/big-bang/bigbang/-/blob/master/docs/assets/configs/example/keycloak-dev-values.yaml?ref_type=heads)). 
+1. You will need the following values file saved locally: `keycloak-dev-values.yaml` ([link](https://repo1.dso.mil/big-bang/bigbang/-/blob/master/docs/assets/configs/example/keycloak-dev-values.yaml?ref_type=heads)).
 
-### Deploying 
+### Deploying
+
 Before deploying GitLab and configuring SSO, you need to deploy the dev instance of Keycloak. Use the overrides file below.
 
 1. `overrides.yaml`:
+
     ```yaml
     clusterAuditor:
       enabled: false
@@ -46,17 +50,23 @@ Before deploying GitLab and configuring SSO, you need to deploy the dev instance
       keycloak:
         enabled: true 
     ````
+
 1. Deploy BigBang:
+
     ```bash
-    $ helm upgrade -i bigbang ./chart -n bigbang --create-namespace -f ./registry-values.yaml -f ./chart/ingress-certs.yaml -f ./keycloak-dev-values.yaml -f ./overrides.yaml
+    helm upgrade -i bigbang ./chart -n bigbang --create-namespace -f ./registry-values.yaml -f ./chart/ingress-certs.yaml -f ./keycloak-dev-values.yaml -f ./overrides.yaml
     ```
+
     Wait for Keycloak pods to be ready before proceeding.
 1. Run sshuttle to connect to your cluster's private network (command was provided once the `k3d-dev.sh` script completed.)
 1. Run the following command and copy the results:
+
     ```bash
-    $ curl https://keycloak.dev.bigbang.mil/auth/realms/baby-yoda/protocol/saml/descriptor
+    curl https://keycloak.dev.bigbang.mil/auth/realms/baby-yoda/protocol/saml/descriptor
     ```
+
 1. Add the following to `overrides.yaml`:
+
    ```yaml
    addons:
      gitlab:
@@ -104,15 +114,19 @@ Before deploying GitLab and configuring SSO, you need to deploy the dev instance
          emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
          -----END CERTIFICATE-----
    ```
+
 1. Upgrade BigBang:
+
     ```bash
-    $ helm upgrade -i bigbang ./chart -n bigbang --create-namespace -f ./registry-values.yaml -f ./chart/ingress-certs.yaml -f ./keycloak-dev-values.yaml -f ./overrides.yaml 
+    helm upgrade -i bigbang ./chart -n bigbang --create-namespace -f ./registry-values.yaml -f ./chart/ingress-certs.yaml -f ./keycloak-dev-values.yaml -f ./overrides.yaml 
     ```
-1. Login to the Keycloak admin console: (`admin/password`) https://keycloak.dev.bigbang.mil/auth/admin/master/console/
-1. Switch to the baby-yoda realm. 
+
+1. Login to the Keycloak admin console: (`admin/password`) <https://keycloak.dev.bigbang.mil/auth/admin/master/console/>
+1. Switch to the baby-yoda realm.
 1. Create a new user. Be sure to do the following: Switch "Email verified" to "Yes", join the "Impact Level 2 Authorized" group, remove all "Required user actions" (do this after the user is created), create a password (disable "Temporary").
 1. Login to Gitlab using SSO and the user you just configured.
 1. Setup MFA.
 
 #### OmniAuth oidc-provider SSO setup
+
 - Reference [keycloak.md](https://repo1.dso.mil/big-bang/product/packages/gitlab/-/blob/main/docs/keycloak.md?ref_type=heads) for omniauth global configuration and more override examples.

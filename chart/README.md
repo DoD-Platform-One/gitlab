@@ -5,6 +5,7 @@
 Exporter for GitLab Prometheus metrics (e.g. CI, pull mirrors)
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/gitlab-exporter>
@@ -12,6 +13,7 @@ Exporter for GitLab Prometheus metrics (e.g. CI, pull mirrors)
 * <https://gitlab.com/gitlab-org/gitlab-exporter>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -23,12 +25,13 @@ Exporter for GitLab Prometheus metrics (e.g. CI, pull mirrors)
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install gitlab-exporter chart/
 ```
@@ -81,6 +84,7 @@ helm install gitlab-exporter chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # migrations
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: v16.4.1](https://img.shields.io/badge/AppVersion-v16.4.1-informational?style=flat-square)
@@ -88,12 +92,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Database migrations and other versioning tasks for upgrading Gitlab
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/migrations>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-rails>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -105,12 +111,13 @@ Database migrations and other versioning tasks for upgrading Gitlab
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install migrations chart/
 ```
@@ -153,6 +160,7 @@ helm install migrations chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # praefect
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: 16.4.1](https://img.shields.io/badge/AppVersion-16.4.1-informational?style=flat-square)
@@ -160,6 +168,7 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Praefect is a router and transaction manager for Gitaly, and a required component for running a Gitaly Cluster.
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/praefect>
@@ -167,6 +176,7 @@ Praefect is a router and transaction manager for Gitaly, and a required componen
 * <https://gitlab.com/gitlab-org/gitaly/-/tree/master/cmd/praefect>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -178,12 +188,13 @@ Praefect is a router and transaction manager for Gitaly, and a required componen
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install praefect chart/
 ```
@@ -225,6 +236,7 @@ helm install praefect chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # sidekiq
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: v16.4.1](https://img.shields.io/badge/AppVersion-v16.4.1-informational?style=flat-square)
@@ -232,12 +244,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Gitlab Sidekiq for asynchronous task processing in rails
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/sidekiq>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-sidekiq>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -249,12 +263,13 @@ Gitlab Sidekiq for asynchronous task processing in rails
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install sidekiq chart/
 ```
@@ -406,6 +421,7 @@ helm install sidekiq chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # toolbox
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: v16.4.1](https://img.shields.io/badge/AppVersion-v16.4.1-informational?style=flat-square)
@@ -413,12 +429,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 For manually running rake tasks through kubectl
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/toolbox>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-toolbox>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -430,12 +448,13 @@ For manually running rake tasks through kubectl
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install toolbox chart/
 ```
@@ -563,6 +582,7 @@ helm install toolbox chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # registry
 
 ![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![AppVersion: v3.83.0-gitlab](https://img.shields.io/badge/AppVersion-v3.83.0--gitlab-informational?style=flat-square)
@@ -570,12 +590,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Stateless, highly scalable application that stores and lets you distribute container images
 
 ## Upstream References
+
 * <https://docs.gitlab.com/ee/user/packages/container_registry>
 
 * <https://gitlab.com/gitlab-org/container-registry>
 * <https://gitlab.com/gitlab-org/charts/gitlab/charts/registry>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -587,12 +609,13 @@ Stateless, highly scalable application that stores and lets you distribute conta
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install registry chart/
 ```
@@ -672,7 +695,7 @@ helm install registry chart/
 | init.image | object | `{}` |  |
 | init.resources.requests.cpu | string | `"50m"` |  |
 | init.containerSecurityContext | object | `{}` |  |
-| init.script | string | `"if [ -e /config/accesskey ] ; then\n  sed -e 's@ACCESS_KEY@'\"$(cat /config/accesskey)\"'@' -e 's@SECRET_KEY@'\"$(cat /config/secretkey)\"'@' /config/config.yml > /registry/config.yml\nelse\n  cp -v -r -L /config/config.yml  /registry/config.yml\nfi\n# Place the `http.secret` value from the kubernetes secret\nsed -i -e 's@HTTP_SECRET@'\"$(cat /config/httpSecret)\"'@' /registry/config.yml\n# Populate sensitive registry notification secrets in the config file\nif [ -d /config/notifications ]; then\n  for i in /config/notifications/*; do\n    filename=$(basename $i);\n    sed -i -e 's@'\"${filename}\"'@'\"$(cat $i)\"'@' /registry/config.yml;\n  done\nfi\n# Insert any provided `storage` block from kubernetes secret\nif [ -d /config/storage ]; then\n  # Copy contents of storage secret(s)\n  mkdir -p /registry/storage\n  cp -v -r -L /config/storage/* /registry/storage/\n  # Ensure there is a new line in the end\n  echo '' >> /registry/storage/config\n  # Default `delete.enabled: true` if not present.\n  ## Note: busybox grep doesn't support multiline, so we chain `egrep`.\n  if ! $(egrep -A1 '^delete:\\s*$' /registry/storage/config \| egrep -q '\\s{2,4}enabled:') ; then\n    echo 'delete:' >> /registry/storage/config\n    echo '  enabled: true' >> /registry/storage/config\n  fi\n  # Indent /registry/storage/config 2 spaces before inserting into config.yml\n  sed -i 's/^/  /' /registry/storage/config\n  # Insert into /registry/config.yml after `storage:`\n  sed -i '/^storage:/ r /registry/storage/config' /registry/config.yml\n  # Remove the now extraneous `config` file\n  rm /registry/storage/config\nfi\n# Copy any middleware.storage if present\nif [ -d /config/middleware.storage ]; then\n  cp -v -r -L /config/middleware.storage  /registry/middleware.storage\nfi\n# Set to known path, to used ConfigMap\ncat /config/certificate.crt > /registry/certificate.crt\n# Copy the optional profiling keyfile to the expected location\nif [ -f /config/profiling-key.json ]; then\n  cp /config/profiling-key.json /registry/profiling-key.json\nfi\n# Insert Database password, if enabled\nif [ -f /config/database_password ] ; then\n  sed -i -e 's@DB_PASSWORD_FILE@'\"$(cat /config/database_password)\"'@' /registry/config.yml\nfi\n# Insert Redis password, if enabled\nif [ -f /config/registry/redis-password ] ; then\n  sed -i -e 's@REDIS_CACHE_PASSWORD@'\"$(cat /config/registry/redis-password)\"'@' /registry/config.yml\nfi\n# Copy the database TLS connection files to the expected location and set permissions\nif [ -d /config/ssl ]; then\n  cp -r /config/ssl/ /registry/ssl\n  chmod 700 /registry/ssl\n  chmod 600 /registry/ssl/*.pem\nfi\n# Copy TLS certificates if present\nif [ -d /config/tls ]; then\n  cp -r /config/tls/ /registry/tls\n  chmod 700 /registry/tls\n  chmod 600 /registry/tls/*\nfi"` |  |
+| init.script | string | `"if [ -e /config/accesskey ] ; then\n  sed -e 's@ACCESS_KEY@'\"$(cat /config/accesskey)\"'@' -e 's@SECRET_KEY@'\"$(cat /config/secretkey)\"'@' /config/config.yml > /registry/config.yml\nelse\n  cp -v -r -L /config/config.yml  /registry/config.yml\nfi\n# Place the`http.secret` value from the kubernetes secret\nsed -i -e 's@HTTP_SECRET@'\"$(cat /config/httpSecret)\"'@' /registry/config.yml\n# Populate sensitive registry notification secrets in the config file\nif [ -d /config/notifications ]; then\n  for i in /config/notifications/*; do\n    filename=$(basename $i);\n    sed -i -e 's@'\"${filename}\"'@'\"$(cat $i)\"'@' /registry/config.yml;\n  done\nfi\n# Insert any provided `storage` block from kubernetes secret\nif [ -d /config/storage ]; then\n  # Copy contents of storage secret(s)\n  mkdir -p /registry/storage\n  cp -v -r -L /config/storage/* /registry/storage/\n  # Ensure there is a new line in the end\n  echo '' >> /registry/storage/config\n  # Default `delete.enabled: true` if not present.\n  ## Note: busybox grep doesn't support multiline, so we chain `egrep`.\n  if ! $(egrep -A1 '^delete:\\s*$' /registry/storage/config \| egrep -q '\\s{2,4}enabled:') ; then\n    echo 'delete:' >> /registry/storage/config\n    echo '  enabled: true' >> /registry/storage/config\n  fi\n  # Indent /registry/storage/config 2 spaces before inserting into config.yml\n  sed -i 's/^/  /' /registry/storage/config\n  # Insert into /registry/config.yml after`storage:`\n  sed -i '/^storage:/ r /registry/storage/config' /registry/config.yml\n  # Remove the now extraneous`config`file\n  rm /registry/storage/config\nfi\n# Copy any middleware.storage if present\nif [ -d /config/middleware.storage ]; then\n  cp -v -r -L /config/middleware.storage  /registry/middleware.storage\nfi\n# Set to known path, to used ConfigMap\ncat /config/certificate.crt > /registry/certificate.crt\n# Copy the optional profiling keyfile to the expected location\nif [ -f /config/profiling-key.json ]; then\n  cp /config/profiling-key.json /registry/profiling-key.json\nfi\n# Insert Database password, if enabled\nif [ -f /config/database_password ] ; then\n  sed -i -e 's@DB_PASSWORD_FILE@'\"$(cat /config/database_password)\"'@' /registry/config.yml\nfi\n# Insert Redis password, if enabled\nif [ -f /config/registry/redis-password ] ; then\n  sed -i -e 's@REDIS_CACHE_PASSWORD@'\"$(cat /config/registry/redis-password)\"'@' /registry/config.yml\nfi\n# Copy the database TLS connection files to the expected location and set permissions\nif [ -d /config/ssl ]; then\n  cp -r /config/ssl/ /registry/ssl\n  chmod 700 /registry/ssl\n  chmod 600 /registry/ssl/*.pem\nfi\n# Copy TLS certificates if present\nif [ -d /config/tls ]; then\n  cp -r /config/tls/ /registry/tls\n  chmod 700 /registry/tls\n  chmod 600 /registry/tls/*\nfi"` |  |
 | resources.requests.cpu | string | `"50m"` |  |
 | resources.requests.memory | string | `"32Mi"` |  |
 | nodeSelector | object | `{}` |  |
@@ -747,6 +770,7 @@ helm install registry chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # gitlab
 
 ![Version: 7.4.1-bb.0](https://img.shields.io/badge/Version-7.4.1--bb.0-informational?style=flat-square) ![AppVersion: 16.4.1](https://img.shields.io/badge/AppVersion-16.4.1-informational?style=flat-square)
@@ -754,11 +778,13 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -770,12 +796,13 @@ GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install gitlab chart/
 ```
@@ -1749,6 +1776,7 @@ helm install gitlab chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # gitlab-shell
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: 14.28.0](https://img.shields.io/badge/AppVersion-14.28.0-informational?style=flat-square)
@@ -1756,12 +1784,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 sshd for Gitlab
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/gitlab-shell>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-shell>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -1773,12 +1803,13 @@ sshd for Gitlab
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install gitlab-shell chart/
 ```
@@ -1886,6 +1917,7 @@ helm install gitlab-shell chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # webservice
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: v16.4.1](https://img.shields.io/badge/AppVersion-v16.4.1-informational?style=flat-square)
@@ -1893,12 +1925,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 HTTP server for Gitlab
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/webservice>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-webservice>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -1910,12 +1944,13 @@ HTTP server for Gitlab
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install webservice chart/
 ```
@@ -2142,6 +2177,7 @@ helm install webservice chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # gitlab-pages
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: 16.4.1](https://img.shields.io/badge/AppVersion-16.4.1-informational?style=flat-square)
@@ -2149,6 +2185,7 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Daemon for serving static websites from GitLab projects
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/gitlab-pages>
@@ -2156,6 +2193,7 @@ Daemon for serving static websites from GitLab projects
 * <https://gitlab.com/gitlab-org/gitlab-pages>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2167,12 +2205,13 @@ Daemon for serving static websites from GitLab projects
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install gitlab-pages chart/
 ```
@@ -2276,6 +2315,7 @@ helm install gitlab-pages chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # geo-logcursor
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: v16.4.1](https://img.shields.io/badge/AppVersion-v16.4.1-informational?style=flat-square)
@@ -2283,12 +2323,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 GitLab Geo logcursor
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/charts/gitlab/tree/master/charts/gitlab/charts/geo-logcursor>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-rails>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2300,12 +2342,13 @@ GitLab Geo logcursor
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install geo-logcursor chart/
 ```
@@ -2364,6 +2407,7 @@ helm install geo-logcursor chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # kas
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: v16.4.0](https://img.shields.io/badge/AppVersion-v16.4.0-informational?style=flat-square)
@@ -2371,12 +2415,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 GitLab Agent Server
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/gitlab-kas>
 * <https://gitlab.com/gitlab-org/cluster-integration/gitlab-agent>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2388,12 +2434,13 @@ GitLab Agent Server
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install kas chart/
 ```
@@ -2472,6 +2519,7 @@ helm install kas chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # minio
 
 ![Version: 0.4.3](https://img.shields.io/badge/Version-0.4.3-informational?style=flat-square) ![AppVersion: RELEASE.2017-12-28T01-21-00Z](https://img.shields.io/badge/AppVersion-RELEASE.2017--12--28T01--21--00Z-informational?style=flat-square)
@@ -2479,12 +2527,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Object storage server built for cloud applications and devops.
 
 ## Upstream References
+
 * <https://minio.io>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/charts/minio>
 * <https://github.com/minio/minio>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2496,12 +2546,13 @@ Object storage server built for cloud applications and devops.
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install minio chart/
 ```
@@ -2649,6 +2700,7 @@ helm install minio chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # certmanager-issuer
 
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![AppVersion: 0.2.2](https://img.shields.io/badge/AppVersion-0.2.2-informational?style=flat-square)
@@ -2656,6 +2708,7 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Configuration Job to add LetsEncrypt Issuer to cert-manager
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/certmanager-issuer>
@@ -2663,6 +2716,7 @@ Configuration Job to add LetsEncrypt Issuer to cert-manager
 * <https://github.com/jetstack/cert-manager>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2674,12 +2728,13 @@ Configuration Job to add LetsEncrypt Issuer to cert-manager
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install certmanager-issuer chart/
 ```
@@ -2697,6 +2752,7 @@ helm install certmanager-issuer chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # gitaly
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: 16.4.1](https://img.shields.io/badge/AppVersion-16.4.1-informational?style=flat-square)
@@ -2704,12 +2760,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Git RPC service for handling all the git calls made by GitLab
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/gitaly>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitaly>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2721,12 +2779,13 @@ Git RPC service for handling all the git calls made by GitLab
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install gitaly chart/
 ```
@@ -2800,6 +2859,7 @@ helm install gitaly chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # mailroom
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: v16.4.1](https://img.shields.io/badge/AppVersion-v16.4.1-informational?style=flat-square)
@@ -2807,12 +2867,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Handling incoming emails
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/mailroom>
 * <https://gitlab.com/gitlab-org/build/CNG/tree/master/gitlab-mailroom>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2824,12 +2886,13 @@ Handling incoming emails
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install mailroom chart/
 ```
@@ -2919,6 +2982,7 @@ helm install mailroom chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # spamcheck
 
 ![Version: 7.4.1](https://img.shields.io/badge/Version-7.4.1-informational?style=flat-square) ![AppVersion: 1.2.3](https://img.shields.io/badge/AppVersion-1.2.3-informational?style=flat-square)
@@ -2926,12 +2990,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 GitLab Anti-Spam Engine
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/gitlab/charts/spamcheck>
 * <https://gitlab.com/gitlab-org/spamcheck>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -2943,12 +3009,13 @@ GitLab Anti-Spam Engine
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install spamcheck chart/
 ```
@@ -3001,6 +3068,7 @@ helm install spamcheck chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # nginx-ingress
 
 ![Version: 4.0.6](https://img.shields.io/badge/Version-4.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.4](https://img.shields.io/badge/AppVersion-1.0.4-informational?style=flat-square)
@@ -3008,12 +3076,14 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Ingress controller for Kubernetes using NGINX as a reverse proxy and load balancer
 
 ## Upstream References
+
 * <https://github.com/kubernetes/ingress-nginx>
 
 * <https://github.com/kubernetes/ingress-nginx>
 * <https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/nginx-ingress>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -3027,12 +3097,13 @@ Kubernetes: `>=1.19.0-0`
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install nginx-ingress chart/
 ```
@@ -3280,6 +3351,7 @@ helm install nginx-ingress chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
 # gitlab
 
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![appVersion: 16.5.0](https://img.shields.io/badge/AppVersion-master-informational?style=flat-square)
@@ -3287,11 +3359,13 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 Web-based Git-repository manager with wiki and issue-tracking features.
 
 ## Upstream References
+
 * <https://about.gitlab.com/>
 
 * <https://gitlab.com/gitlab-org/charts/gitlab>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -3303,12 +3377,13 @@ Web-based Git-repository manager with wiki and issue-tracking features.
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install gitlab chart/
 ```
