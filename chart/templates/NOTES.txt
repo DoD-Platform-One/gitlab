@@ -147,6 +147,20 @@ redis:
     https://docs.gitlab.com/charts/installation/upgrade.html#use-of-globalredispassword
 {{- end -}}
 
+{{- /* If the user is managing RBAC externally with NGINX chart 4.0.6 */}}
+{{- if or (and (index .Values "nginx-ingress" "enabled")     (not (index .Values "nginx-ingress" "rbac" "create")))
+          (and (index .Values "nginx-ingress-geo" "enabled") (not (index .Values "nginx-ingress-geo" "rbac" "create"))) }}
+{{ $WARNING }}
+NGINX Ingress Controller: Default RBAC rules creation has been disabled.
+Updates to NGINX Ingress Controller require RBAC changes. Without these,
+the installation will fallback to version v1.3.1.
+
+Read more on https://docs.gitlab.com/charts/releases/8_0.html#upgrade-to-85x
+
+From GitLab chart 8.8+ the NGINX controller image 1.11.2+ will be the default for
+any configuration.
+{{- end -}}
+
 {{- /* run removals */}}
 {{ include "gitlab.removals" . }}
 {{- /* run checkConfig */}}

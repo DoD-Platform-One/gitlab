@@ -39,7 +39,7 @@ configurations that can be supplied to the `helm install` command using the
 
 | Parameter                                 | Default                                                    | Description                                                                                                                                                                                        |
 | ----------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `affinity`                             | `{}`                                                       | [Affinity rules](#affinity) for pod assignment                                                                                                                                                               |
+| `affinity`                             | `{}`                                                       | [Affinity rules](../index.md#affinity) for pod assignment                                                                                                                                                               |
 | `annotations`                             |                                                            | Pod annotations                                                                                                                                                                                    |
 | `common.labels`                           | `{}`                                                       | Supplemental labels that are applied to all objects created by this chart.                                                                                                                         |
 | `deployment.strategy`                     | `{}`                                                       | Allows one to configure the update strategy used by the deployment. When not provided, the cluster default is used.                                                                                |
@@ -148,14 +148,15 @@ configurations that can be supplied to the `helm install` command using the
 | `zipCache.refresh`          | int      | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration)                                                                                                   |
 | `zipOpenTimeout`            | int      | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration)                                                                                                   |
 | `zipHTTPClientTimeout`      | int      | See: [Zip Serving and Cache Configuration](https://docs.gitlab.com/ee/administration/pages/index.html#zip-serving-and-cache-configuration)                                                                                                   |
-| `rateLimitSourceIP`         |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENFORCE_IP_RATE_LIMITS=true"]`                                                           |
+| `rateLimitSourceIP`         |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits).                                                                                                                                     |
 | `rateLimitSourceIPBurst`    |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits)                                                                                                                                      |
-| `rateLimitDomain`           |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENFORCE_DOMAIN_RATE_LIMITS=true"]`                                                       |
+| `rateLimitDomain`           |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits).                                                                                                                                     |
 | `rateLimitDomainBurst`      |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits)                                                                                                                                      |
-| `rateLimitTLSSourceIP`      |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENFORCE_IP_TLS_RATE_LIMITS=true"]`                                                       |
+| `rateLimitTLSSourceIP`      |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits).                                                                                                                                     |
 | `rateLimitTLSSourceIPBurst` |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits)                                                                                                                                      |
-| `rateLimitTLSDomain`        |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits). To enable rate-limiting use `extraEnv=["FF_ENFORCE_DOMAIN_TLS_RATE_LIMITS=true"]`                                                   |
+| `rateLimitTLSDomain`        |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits).                                                                                                                                     |
 | `rateLimitTLSDomainBurst`   |          | See: [GitLab Pages rate-limits](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits)                                                                                                                                      |
+| `rateLimitSubnetsAllowList` |          | See: [GitLab Pages rate-limits](#rate-limits)                                                                                                                                      |
 | `serverReadTimeout`         | `5s`     | See: [GitLab Pages global settings](https://docs.gitlab.com/ee/administration/pages/#global-settings)                                                                                                                                        |
 | `serverReadHeaderTimeout`   | `1s`     | See: [GitLab Pages global settings](https://docs.gitlab.com/ee/administration/pages/#global-settings)                                                                                                                                        |
 | `serverWriteTimeout`        | `5m`     | See: [GitLab Pages global settings](https://docs.gitlab.com/ee/administration/pages/#global-settings)                                                                                                                                        |
@@ -342,6 +343,26 @@ GitLab Pages supports only one URL scheme at a time: Either with wildcard DNS, o
 WARNING:
 GitLab Pages does not update the OAuth application, and the default `authRedirectUri` is updated to `https://pages.<yourdomaindomain>/projects/auth`. While accessing a private Pages site, if you encounter an error 'The redirect URI included is not valid', update the redirect URI in the GitLab Pages [System OAuth application](https://docs.gitlab.com/ee/integration/oauth_provider.html#create-an-instance-wide-application) to `https://pages.<yourdomaindomain>/projects/auth`.
 
+### Rate limits
+
+You can enforce rate limits to help minimize the risk of a Denial of Service (DoS) attack. Detailed [rate limits documentation](https://docs.gitlab.com/ee/administration/pages/index.html#rate-limits) is available.
+
+To allow certain IP ranges (subnets) to bypass all rate limits:
+
+- `rateLimitSubnetsAllowList`: Sets the allow list with the IP ranges (subnets) that should bypass all rate limits.
+
+#### Configure rate limits subnets allow list
+
+Set the allow list with the IP ranges (subnets) in `charts/gitlab/charts/gitlab-pages/values.yaml`:
+
+```yaml
+gitlab:
+  gitlab-pages:
+    rateLimitSubnetsAllowList:
+     - "1.2.3.4/24"
+     - "2001:db8::1/32"
+```
+
 ### Configuring KEDA
 
 This `keda` section enables the installation of [KEDA](https://keda.sh/) `ScaledObjects` instead of regular `HorizontalPodAutoscalers`.
@@ -373,34 +394,4 @@ Refer to the [KEDA documentation](https://keda.sh/docs/2.10/concepts/scaling-dep
 
 ### affinity
 
-`affinity` is an optional parameter that allows you to set either or both:
-
-- `podAntiAffinity` rules to:
-  - Not schedule pods in the same domain as the pods that match the expression corresponding to the `topology key`.
-  - Set two modes of `podAntiAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
-    (`preferredDuringSchedulingIgnoredDuringExecution`). Using the variable `antiAffinity` in `values.yaml`, set the setting to `soft` so that the preferred mode is
-    applied or set it to `hard` so that the required mode is applied.
-- `nodeAffinity` rules to:
-  - Schedule pods to nodes that belong to a specific zone or zones.
-  - Set two modes of `nodeAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
-    (`preferredDuringSchedulingIgnoredDuringExecution`). When set to `soft`, the preferred mode is applied. When set to `hard`, the required mode is applied. This
-    rule is implemented only for the `registry` chart and the `gitlab` chart alongwith all its subcharts except `webservice` and `sidekiq`.
-
-`nodeAffinity` only implements the [`In` operator](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators).
-
-For more information, see [the relevant Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
-
-The following example sets `affinity`, with both `nodeAffinity` and `antiAffinity` set to `hard`:
-
-```yaml
-nodeAffinity: "hard"
-antiAffinity: "hard"
-affinity:
-  nodeAffinity:
-    key: "test.com/zone"
-    values:
-    - us-east1-a
-    - us-east1-b
-  podAntiAffinity:
-    topologyKey: "test.com/hostname"
-```
+For more information, see [`affinity`](../index.md#affinity).

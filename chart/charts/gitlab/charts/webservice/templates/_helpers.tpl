@@ -269,7 +269,11 @@ Return the workhorse redis configuration.
 {{- include "gitlab.redis.selectedMergedConfig" . -}}
 [redis]
 {{- if not .redisMergedConfig.sentinels }}
-URL = "{{ template "gitlab.redis.scheme" $ }}://{{ template "gitlab.redis.host" $ }}:{{ template "gitlab.redis.port" $ }}"
+{{- $userinfo := "" }}
+{{- if .redisMergedConfig.user }}
+{{- $userinfo = printf "%s@" .redisMergedConfig.user }}
+{{- end }}
+URL = "{{ template "gitlab.redis.scheme" $ }}://{{ $userinfo }}{{ template "gitlab.redis.host" $ }}:{{ template "gitlab.redis.port" $ }}"
 {{- else }}
 SentinelMaster = "{{ template "gitlab.redis.host" $ }}"
 Sentinel = [ {{ template "gitlab.redis.workhorse.sentinel-list" $ }} ]

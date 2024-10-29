@@ -282,6 +282,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `redis.rateLimiting.enabled`                 | `false`                                                              | When set to `true`, the Redis rate limiter is enabled. This feature is under development. |
 | `redis.rateLimiting.host`                    | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`. |
 | `redis.rateLimiting.port`                    | `6379`                                                               | The port of the Redis instance. |
+| `redis.rateLimiting.cluster`                 | `[]`                                                                 | List of addresses with host and port. |
 | `redis.rateLimiting.sentinels`               | `[]`                                                                 | List sentinels with host and port. |
 | `redis.rateLimiting.mainname`                |                                                                      | The main server name. Only applicable for Sentinel. |
 | `redis.rateLimiting.username`                |                                                                      | The username used to connect to the Redis instance. |
@@ -958,16 +959,13 @@ profiling:
 
 ### database
 
-DETAILS:
-**Status:** Beta
-
 > - [Introduced](https://gitlab.com/groups/gitlab-org/-/epics/5521) in GitLab 16.4 as a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
+> - [Generally available](https://gitlab.com/gitlab-org/gitlab/-/issues/423459) in GitLab 17.3.
 
 The `database` property is optional and enables the [metadata database](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database).
 
-This is a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
-See the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
-and associated documentation before enabling this feature.
+See the [administration documentation](https://docs.gitlab.com/ee/administration/packages/container_registry_metadata_database.html)
+before enabling this feature.
 
 NOTE:
 This feature requires PostgreSQL 12 or newer.
@@ -1012,11 +1010,6 @@ more information about creating the database.
 
 The `gc` property provides [online garbage collection](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc)
 options.
-
-NOTE:
-The online garbage collection is a beta feature from version 16.4 and later. Please
-review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
-and associated documentation before enabling this feature.
 
 Online garbage collection requires the [metadata database](#database) to be enabled. You must use online garbage collection when using the database, though
 you can temporarily disable online garbage collection for maintenance and debugging.
@@ -1070,6 +1063,23 @@ redis:
       size: 10
       maxlifetime: 1h
       idletimeout: 300s
+```
+
+#### Cluster
+
+The `redis.rateLimiting.cluster` property is a list of hosts and ports
+to connect to a Redis cluster. For example:
+
+```yaml
+redis:
+  cache:
+    enabled: true
+    host: redis.example.com
+    cluster:
+      - host: host1.example.com
+        port: 6379
+      - host: host2.example.com
+        port: 6379
 ```
 
 #### Sentinels

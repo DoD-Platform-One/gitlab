@@ -301,7 +301,21 @@ describe 'kas configuration' do
         end
 
         context 'when redisConfigName is empty' do
-          context 'when global redis has no password' do
+          context 'when global redis has a username' do
+            let(:kas_values) do
+              default_kas_values.deep_merge!(YAML.safe_load(%(
+                global:
+                  redis:
+                    user: redis-user
+              )))
+            end
+
+            it 'sets username' do
+              expect(config_yaml_data.dig('redis', 'username')).to eq('redis-user')
+            end
+          end
+
+          context 'when global redis has no password or user' do
             let(:kas_values) do
               default_kas_values.deep_merge!(YAML.safe_load(%(
                 global:
@@ -311,8 +325,9 @@ describe 'kas configuration' do
               )))
             end
 
-            it 'does not set password_file' do
+            it 'does not set password_file or username' do
               expect(config_yaml_data['redis']).not_to have_key("password_file")
+              expect(config_yaml_data['redis']).not_to have_key("username")
             end
           end
 

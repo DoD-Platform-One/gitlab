@@ -1,8 +1,11 @@
 create an index pattern for fluentd if not already created for you
+
 ```
 gitlab-*
 ```
+
 Build filter for gitlab namespace
+
 ```
 {
   "query": {
@@ -12,7 +15,9 @@ Build filter for gitlab namespace
   }
 }
 ```
+
 There are more than 15 pods in a Gitlab delployment.
+
 ```
 [p1dev@p1dev-vm gitlab]$ kubectl get pods -n gitlab
 NAME                                           READY   STATUS      RESTARTS   AGE
@@ -36,11 +41,13 @@ gitlab-webservice-7ff8956d8b-8zcj2             2/2     Running     0          4h
 gitlab-webservice-7ff8956d8b-9l8sj             2/2     Running     0          143m
 global-shared-gitlab-runner-567cf8df54-8dzfw   1/1     Running     0          4h50m
 ```
+
 Here is a document that lists the Gitlab components and what each one does
-https://docs.gitlab.com/ce/development/architecture.html#component-details
+<https://docs.gitlab.com/ce/development/architecture.html#component-details>
 
 Here are some an examples of a filter for a specific containers:
 front-end webservice
+
 ```
 {
   "query": {
@@ -50,7 +57,9 @@ front-end webservice
   }
 }
 ```
+
 gitlab-workhorse - a gateway for routing http requests to the proper component
+
 ```
 {
   "query": {
@@ -60,7 +69,9 @@ gitlab-workhorse - a gateway for routing http requests to the proper component
   }
 }
 ```
+
 cli git commands
+
 ```
 {
   "query": {
@@ -70,10 +81,13 @@ cli git commands
   }
 }
 ```
+
 In the KQL field you can text search within a source field such as log
+
 ```
 log: "error"
 ```
+
 ```
 log:
     F 2020-07-10T18:23:01.255Z 8 TID-go4bqp7cw ERROR: Error fetching job: Error connecting to Redis on gitlab-redis-master:6379 (Redis::TimeoutError)

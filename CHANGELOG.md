@@ -3,6 +3,28 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [8.3.0-bb.0] (2024-10-23)
+
+### Changed
+
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter (source) v1.64.1 -> v1.65.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) v17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse (source) 17.2.9 -> 17.3.6
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl (source) 17.2.9 -> 17.3.6
+
 ## [8.2.9-bb.4] (2024-10-22)
 
 ### Added
@@ -79,7 +101,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Update ironbank/bitnami/redis (source) 7.0.0-debian-10-r3 -> 7.4.0
-
 
 ## [8.2.7-bb.0] (2024-09-18)
 

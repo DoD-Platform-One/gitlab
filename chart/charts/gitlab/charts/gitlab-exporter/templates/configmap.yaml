@@ -50,10 +50,10 @@ data:
           - probe_retries
           - probe_stats
         opts:
-          redis_url: {{ template "gitlab.redis.url" . }}
+          redis_url: {{ include "gitlab.gitlab-exporter.redis.url" . }}
           redis_enable_client: false
           probe_non_namespaced: true
-          {{- $sentinels := include "gitlab.redis.sentinelsList" . }}
+          {{- $sentinels := include "gitlab.gitlab-exporter.redis.sentinelsList" . }}
           {{- if $sentinels }}
           redis_sentinels:
             {{- $sentinels | nindent 12 }}

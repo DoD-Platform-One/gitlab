@@ -36,8 +36,7 @@ helm upgrade --install gitlab gitlab/gitlab \
   --timeout 600s \
   --set global.hosts.domain=example.com \
   --set global.hosts.externalIP=10.10.10.10 \
-  --set certmanager-issuer.email=me@example.com \
-  --set postgresql.image.tag=13.6.0
+  --set certmanager-issuer.email=me@example.com
 ```
 
 Note the following:
@@ -93,7 +92,7 @@ kubectl get secret <name>-gitlab-initial-root-password -ojsonpath='{.data.passwo
 
 By default, the Helm charts use the Enterprise Edition of GitLab. The Enterprise Edition is a free, open core version of GitLab with the option of upgrading to a paid tier to unlock additional features. If desired, you can instead use the Community Edition which is licensed under the MIT Expat license. Learn more about the [difference between the two](https://about.gitlab.com/install/ce-or-ee/).
 
-*To deploy the Community Edition, include this option in your Helm install command:*
+_To deploy the Community Edition, include this option in your Helm install command:_
 
 ```shell
 --set global.edition=ce

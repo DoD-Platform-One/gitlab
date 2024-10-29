@@ -72,6 +72,7 @@ class RuntimeTemplate
       "#{path}/postgres/psql-password-main" => JUNK_PASSWORD,
       "#{path}/postgres/psql-password-ci" => JUNK_PASSWORD,
       "#{path}/redis/redis-password" => JUNK_PASSWORD,
+      "#{path}/redis/clusterCache-password" => JUNK_PASSWORD,
       "#{path}/redis-sentinel/redis-sentinel-password" => JUNK_PASSWORD,
       "#{path}/gitaly/gitaly_token" => JUNK_TOKEN,
       # registry notification has a special format ...

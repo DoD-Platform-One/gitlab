@@ -232,6 +232,9 @@ See the [instructions for creating secrets](secrets.md).
 | `nginx-ingress.rbac.createRole`        | Create and use namespaced role        | true    |
 | `prometheus.rbac.create`               | Create and use RBAC resources         | true    |
 
+If you're setting `nginx-ingress.rbac.create` to `false` to configure the RBAC rules by yourself, on
+GitLab chart v8.5.0+, you'll [need to also configure extra rules](../releases/8_0.md#upgrade-to-85x).
+
 ## Advanced NGINX Ingress configuration
 
 Prefix NGINX Ingress values with `nginx-ingress`. For example, set the controller image tag using `nginx-ingress.controller.image.tag`.

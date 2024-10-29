@@ -178,4 +178,53 @@ describe 'gitlab-shell configuration' do
       expect(t.dig('ServiceAccount/test-gitlab-shell', 'metadata', 'labels')).to include('global' => 'shell')
     end
   end
+
+  context 'for LFS Pure SSH protocol support' do
+    let(:lfs_pure_ssh_protocol) { nil }
+
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitlab-shell:
+            config:
+              lfs:
+                pureSSHProtocol: #{lfs_pure_ssh_protocol}
+      )).deep_merge(default_values)
+    end
+
+    let(:config) { t.dig('ConfigMap/test-gitlab-shell', 'data', 'config.yml.tpl') }
+
+    let(:rendered_config) do
+      rendered = RuntimeTemplate.gomplate(raw_template: config)
+      YAML.safe_load(rendered, aliases: true)
+    end
+
+    context 'when unset' do
+      it 'renders lfs.pure_ssh_protocol as disabled by default' do
+        expect_successful_exit_code
+
+        expect(rendered_config['lfs']['pure_ssh_protocol']).to eq(false)
+      end
+    end
+
+    context 'when disabled' do
+      let(:lfs_pure_ssh_protocol) { false }
+
+      it 'renders lfs.pure_ssh_protocol as disabled' do
+        expect_successful_exit_code
+
+        expect(rendered_config['lfs']['pure_ssh_protocol']).to eq(false)
+      end
+    end
+
+    context 'when enabled' do
+      let(:lfs_pure_ssh_protocol) { true }
+
+      it 'renders lfs.pure_ssh_protocol as enabled' do
+        expect_successful_exit_code
+
+        expect(rendered_config['lfs']['pure_ssh_protocol']).to eq(true)
+      end
+    end
+  end
 end

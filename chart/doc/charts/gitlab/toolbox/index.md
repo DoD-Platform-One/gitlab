@@ -67,7 +67,7 @@ gitlab:
 
 | Parameter                                   | Description                                  | Default                      |
 |---------------------------------------------|----------------------------------------------|------------------------------|
-| `affinity`                                  | [Affinity rules](#affinity) for pod assignment            | `{}`                         |
+| `affinity`                                  | [Affinity rules](../index.md#affinity) for pod assignment            | `{}`                         |
 | `annotations`                               | Annotations to add to the Toolbox Pods and Jobs | `{}`                      |
 | `common.labels`                             | Supplemental labels that are applied to all objects created by this chart.  | `{}` |
 | `antiAffinityLabels.matchLabels`            | Labels for setting anti-affinity options     |                              |
@@ -222,34 +222,4 @@ gitlab-rake gitlab:env:info
 
 ### affinity
 
-`affinity` is an optional parameter that allows you to set either or both:
-
-- `podAntiAffinity` rules to:
-  - Not schedule pods in the same domain as the pods that match the expression corresponding to the `topology key`.
-  - Set two modes of `podAntiAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
-    (`preferredDuringSchedulingIgnoredDuringExecution`). Using the variable `antiAffinity` in `values.yaml`, set the setting to `soft` so that the preferred mode is
-    applied or set it to `hard` so that the required mode is applied.
-- `nodeAffinity` rules to:
-  - Schedule pods to nodes that belong to a specific zone or zones.
-  - Set two modes of `nodeAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
-    (`preferredDuringSchedulingIgnoredDuringExecution`). When set to `soft`, the preferred mode is applied. When set to `hard`, the required mode is applied. This
-    rule is implemented only for the `registry` chart and the `gitlab` chart alongwith all its subcharts except `webservice` and `sidekiq`.
-
-`nodeAffinity` only implements the [`In` operator](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators).
-
-For more information, see [the relevant Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
-
-The following example sets `affinity`, with both `nodeAffinity` and `antiAffinity` set to `hard`:
-
-```yaml
-nodeAffinity: "hard"
-antiAffinity: "hard"
-affinity:
-  nodeAffinity:
-    key: "test.com/zone"
-    values:
-    - us-east1-a
-    - us-east1-b
-  podAntiAffinity:
-    topologyKey: "test.com/hostname"
-```
+For more information, see [`affinity`](../index.md#affinity).

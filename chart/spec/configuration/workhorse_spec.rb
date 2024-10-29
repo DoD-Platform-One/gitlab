@@ -234,6 +234,70 @@ describe 'Workhorse configuration' do
       end
     end
 
+    context 'with global Redis user' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: global.redis
+              auth:
+                enabled: true
+                secret: global-secret
+              user: redis-user
+          redis:
+            install: false
+        )).merge(default_values)
+
+        it "adds the username to the URL" do
+          toml = render_toml(raw_toml)
+
+          expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+          redis_config = toml['redis']
+          expect(redis_config.keys).to match_array(%w[URL Password])
+          expect(redis_config['URL']).to eq('redis://redis-user@workhorse.redis:6379')
+          expect(redis_config['Password']).to eq(workhorse_redis_password)
+          expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
+          expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
+        end
+      end
+    end
+
+    context 'with Workhorse Redis user' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: global.redis
+              auth:
+                enabled: true
+                secret: global-secret
+              user: redis-user
+              workhorse:
+                host: workhorse.redis
+                password:
+                  enabled: true
+                  secret: workhorse
+                user: workhorse-redis-user
+          redis:
+            install: false
+        )).merge(default_values)
+      end
+
+      it "overrides global redis config" do
+        toml = render_toml(raw_toml)
+
+        expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+        redis_config = toml['redis']
+        expect(redis_config.keys).to match_array(%w[URL Password])
+        expect(redis_config['URL']).to eq('redis://workhorse-redis-user@workhorse.redis:6379')
+        expect(redis_config['Password']).to eq(workhorse_redis_password)
+        expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
+        expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
+      end
+    end
+
     context 'with redis sentinel' do
       let(:values) do
         YAML.safe_load(%(

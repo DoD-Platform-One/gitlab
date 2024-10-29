@@ -44,10 +44,10 @@ Before the migration, a few prerequisites must be met:
 
 1. [Create a backup tarball](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html) and [exclude all the already migrated directories](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#excluding-specific-directories-from-the-backup).
 
-   The backup file will be stored under `/var/opt/gitlab/backups`, unless you
-   [explicitly changed](https://docs.gitlab.com/omnibus/settings/backups.html#manually-manage-backup-directory)
-   it.
-
+   For local backups (default), the backup file is stored under `/var/opt/gitlab/backups`, unless you
+   [explicitly changed the location](https://docs.gitlab.com/omnibus/settings/backups.html#manually-manage-backup-directory).
+   For [remote storage backups](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#upload-backups-to-a-remote-cloud-storage),
+   the backup file is stored in the configured bucket.
 1. [Restore from the package-based installation](../../backup-restore/restore.md)
    to the Helm chart, starting with the secrets. You will need to migrate the
    values of `/etc/gitlab/gitlab-secrets.json` to the YAML file that will be

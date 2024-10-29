@@ -1,11 +1,12 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.2.9-bb.4](https://img.shields.io/badge/Version-8.2.9--bb.4-informational?style=flat-square) ![AppVersion: v17.2.9](https://img.shields.io/badge/AppVersion-v17.2.9-informational?style=flat-square)
+![Version: 8.3.6-bb.0](https://img.shields.io/badge/Version-8.3.6--bb.0-informational?style=flat-square) ![AppVersion: v17.3.6](https://img.shields.io/badge/AppVersion-v17.3.6-informational?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream References
+
 - <https://about.gitlab.com/>
 
 - <https://gitlab.com/gitlab-org/charts/gitlab>
@@ -27,7 +28,7 @@ The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
@@ -48,7 +49,7 @@ helm install gitlab chart/
 | global.image | object | `{}` |  |
 | global.pod.labels | object | `{}` |  |
 | global.edition | string | `"ee"` |  |
-| global.gitlabVersion | string | `"17.2.9"` |  |
+| global.gitlabVersion | string | `"17.3.6"` |  |
 | global.application.create | bool | `false` |  |
 | global.application.links | list | `[]` |  |
 | global.application.allowClusterRoles | bool | `true` |  |
@@ -360,7 +361,7 @@ helm install gitlab chart/
 | global.workhorse.tls.enabled | bool | `false` |  |
 | global.webservice.workerTimeout | int | `60` |  |
 | global.certificates.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/certificates"` |  |
-| global.certificates.image.tag | string | `"17.2.9"` |  |
+| global.certificates.image.tag | string | `"17.3.6"` |  |
 | global.certificates.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.certificates.init.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | global.certificates.init.securityContext.runAsUser | int | `65534` |  |
@@ -397,12 +398,12 @@ helm install gitlab chart/
 | global.certificates.customCAs[29].secret | string | `"ca-certs-dod-trust-anchors-self-signed"` |  |
 | global.certificates.customCAs[30].secret | string | `"ca-certs-eca"` |  |
 | global.kubectl.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kubectl"` |  |
-| global.kubectl.image.tag | string | `"17.2.9"` |  |
+| global.kubectl.image.tag | string | `"17.3.6"` |  |
 | global.kubectl.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.kubectl.securityContext.runAsUser | int | `65534` |  |
 | global.kubectl.securityContext.fsGroup | int | `65534` |  |
 | global.gitlabBase.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base"` |  |
-| global.gitlabBase.image.tag | string | `"17.2.9"` |  |
+| global.gitlabBase.image.tag | string | `"17.3.6"` |  |
 | global.gitlabBase.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.serviceAccount.enabled | bool | `true` |  |
 | global.serviceAccount.create | bool | `true` |  |
@@ -415,6 +416,7 @@ helm install gitlab chart/
 | global.extraEnv | object | `{}` |  |
 | global.extraEnvFrom | object | `{}` |  |
 | global.job.nameSuffixOverride | string | `nil` |  |
+| global.traefik.apiVersion | string | `""` |  |
 | containerSecurityContext.runAsUser | int | `65534` |  |
 | containerSecurityContext.runAsGroup | int | `65534` |  |
 | containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
@@ -425,6 +427,7 @@ helm install gitlab chart/
 | upgradeCheck.securityContext.runAsUser | int | `65534` |  |
 | upgradeCheck.securityContext.runAsGroup | int | `65534` |  |
 | upgradeCheck.securityContext.fsGroup | int | `65534` |  |
+| upgradeCheck.containerSecurityContext | object | `{}` |  |
 | upgradeCheck.tolerations | list | `[]` |  |
 | upgradeCheck.annotations."sidecar.istio.io/inject" | string | `"true"` |  |
 | upgradeCheck.configMapAnnotations | object | `{}` |  |
@@ -464,86 +467,86 @@ helm install gitlab chart/
 | nginx-ingress-geo.<<.controller.config.server-name-hash-bucket-size | string | `"256"` |  |
 | nginx-ingress.controller.config.server-name-hash-bucket-size | string | `"256"` |  |
 | nginx-ingress-geo.controller.config.<<.use-http2 | string | `"true"` |  |
-| nginx-ingress-geo.controller.<<.config.use-http2 | string | `"true"` |  |
 | nginx-ingress.controller.config.use-http2 | string | `"true"` |  |
+| nginx-ingress-geo.controller.<<.config.use-http2 | string | `"true"` |  |
 | nginx-ingress-geo.<<.controller.config.use-http2 | string | `"true"` |  |
+| nginx-ingress-geo.<<.controller.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
 | nginx-ingress.controller.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
 | nginx-ingress-geo.controller.<<.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
-| nginx-ingress-geo.<<.controller.config.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
 | nginx-ingress-geo.controller.config.<<.ssl-ciphers | string | `"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"` |  |
 | nginx-ingress-geo.<<.controller.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
-| nginx-ingress-geo.controller.config.<<.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
 | nginx-ingress.controller.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
 | nginx-ingress-geo.controller.<<.config.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
-| nginx-ingress-geo.<<.controller.config.server-tokens | string | `"false"` |  |
-| nginx-ingress.controller.config.server-tokens | string | `"false"` |  |
-| nginx-ingress-geo.controller.<<.config.server-tokens | string | `"false"` |  |
+| nginx-ingress-geo.controller.config.<<.ssl-protocols | string | `"TLSv1.3 TLSv1.2"` |  |
 | nginx-ingress-geo.controller.config.<<.server-tokens | string | `"false"` |  |
-| nginx-ingress.controller.config.upstream-keepalive-connections | int | `100` |  |
+| nginx-ingress-geo.controller.<<.config.server-tokens | string | `"false"` |  |
+| nginx-ingress.controller.config.server-tokens | string | `"false"` |  |
+| nginx-ingress-geo.<<.controller.config.server-tokens | string | `"false"` |  |
 | nginx-ingress-geo.<<.controller.config.upstream-keepalive-connections | int | `100` |  |
 | nginx-ingress-geo.controller.<<.config.upstream-keepalive-connections | int | `100` |  |
 | nginx-ingress-geo.controller.config.<<.upstream-keepalive-connections | int | `100` |  |
+| nginx-ingress.controller.config.upstream-keepalive-connections | int | `100` |  |
 | nginx-ingress-geo.controller.config.<<.upstream-keepalive-time | string | `"30s"` |  |
-| nginx-ingress-geo.<<.controller.config.upstream-keepalive-time | string | `"30s"` |  |
 | nginx-ingress-geo.controller.<<.config.upstream-keepalive-time | string | `"30s"` |  |
+| nginx-ingress-geo.<<.controller.config.upstream-keepalive-time | string | `"30s"` |  |
 | nginx-ingress.controller.config.upstream-keepalive-time | string | `"30s"` |  |
-| nginx-ingress-geo.controller.<<.config.upstream-keepalive-timeout | int | `5` |  |
 | nginx-ingress.controller.config.upstream-keepalive-timeout | int | `5` |  |
-| nginx-ingress-geo.controller.config.<<.upstream-keepalive-timeout | int | `5` |  |
+| nginx-ingress-geo.controller.<<.config.upstream-keepalive-timeout | int | `5` |  |
 | nginx-ingress-geo.<<.controller.config.upstream-keepalive-timeout | int | `5` |  |
+| nginx-ingress-geo.controller.config.<<.upstream-keepalive-timeout | int | `5` |  |
 | nginx-ingress.controller.config.upstream-keepalive-requests | int | `1000` |  |
-| nginx-ingress-geo.<<.controller.config.upstream-keepalive-requests | int | `1000` |  |
 | nginx-ingress-geo.controller.<<.config.upstream-keepalive-requests | int | `1000` |  |
 | nginx-ingress-geo.controller.config.<<.upstream-keepalive-requests | int | `1000` |  |
+| nginx-ingress-geo.<<.controller.config.upstream-keepalive-requests | int | `1000` |  |
 | nginx-ingress-geo.<<.controller.service.externalTrafficPolicy | string | `"Local"` |  |
-| nginx-ingress.controller.service.externalTrafficPolicy | string | `"Local"` |  |
 | nginx-ingress-geo.controller.<<.service.externalTrafficPolicy | string | `"Local"` |  |
-| nginx-ingress-geo.controller.<<.ingressClassByName | bool | `false` |  |
+| nginx-ingress.controller.service.externalTrafficPolicy | string | `"Local"` |  |
 | nginx-ingress-geo.<<.controller.ingressClassByName | bool | `false` |  |
+| nginx-ingress-geo.controller.<<.ingressClassByName | bool | `false` |  |
 | nginx-ingress.controller.ingressClassByName | bool | `false` |  |
-| nginx-ingress.controller.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
 | nginx-ingress-geo.<<.controller.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
+| nginx-ingress.controller.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
 | nginx-ingress-geo.controller.<<.ingressClassResource.name | string | `"{{ include \"ingress.class.name\" $ }}"` |  |
+| nginx-ingress-geo.controller.<<.resources.requests.cpu | string | `"100m"` |  |
 | nginx-ingress.controller.resources.requests.cpu | string | `"100m"` |  |
 | nginx-ingress-geo.<<.controller.resources.requests.cpu | string | `"100m"` |  |
-| nginx-ingress-geo.controller.<<.resources.requests.cpu | string | `"100m"` |  |
-| nginx-ingress.controller.resources.requests.memory | string | `"100Mi"` |  |
 | nginx-ingress-geo.controller.<<.resources.requests.memory | string | `"100Mi"` |  |
+| nginx-ingress.controller.resources.requests.memory | string | `"100Mi"` |  |
 | nginx-ingress-geo.<<.controller.resources.requests.memory | string | `"100Mi"` |  |
-| nginx-ingress-geo.<<.controller.publishService.enabled | bool | `true` |  |
 | nginx-ingress-geo.controller.<<.publishService.enabled | bool | `true` |  |
 | nginx-ingress.controller.publishService.enabled | bool | `true` |  |
-| nginx-ingress-geo.controller.<<.replicaCount | int | `2` |  |
+| nginx-ingress-geo.<<.controller.publishService.enabled | bool | `true` |  |
 | nginx-ingress-geo.<<.controller.replicaCount | int | `2` |  |
 | nginx-ingress.controller.replicaCount | int | `2` |  |
-| nginx-ingress-geo.controller.<<.minAvailable | int | `1` |  |
+| nginx-ingress-geo.controller.<<.replicaCount | int | `2` |  |
 | nginx-ingress.controller.minAvailable | int | `1` |  |
 | nginx-ingress-geo.<<.controller.minAvailable | int | `1` |  |
+| nginx-ingress-geo.controller.<<.minAvailable | int | `1` |  |
+| nginx-ingress-geo.controller.<<.scope.enabled | bool | `true` |  |
 | nginx-ingress.controller.scope.enabled | bool | `true` |  |
 | nginx-ingress-geo.<<.controller.scope.enabled | bool | `true` |  |
-| nginx-ingress-geo.controller.<<.scope.enabled | bool | `true` |  |
 | nginx-ingress-geo.controller.<<.metrics.enabled | bool | `true` |  |
-| nginx-ingress-geo.<<.controller.metrics.enabled | bool | `true` |  |
 | nginx-ingress.controller.metrics.enabled | bool | `true` |  |
+| nginx-ingress-geo.<<.controller.metrics.enabled | bool | `true` |  |
 | nginx-ingress-geo.controller.<<.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
 | nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
 | nginx-ingress-geo.<<.controller.metrics.service.annotations."gitlab.com/prometheus_scrape" | string | `"true"` |  |
 | nginx-ingress.controller.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
 | nginx-ingress-geo.<<.controller.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
 | nginx-ingress-geo.controller.<<.metrics.service.annotations."gitlab.com/prometheus_port" | string | `"10254"` |  |
+| nginx-ingress.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
 | nginx-ingress-geo.controller.<<.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
 | nginx-ingress-geo.<<.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
-| nginx-ingress.controller.metrics.service.annotations."prometheus.io/scrape" | string | `"true"` |  |
 | nginx-ingress-geo.controller.<<.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
 | nginx-ingress-geo.<<.controller.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
 | nginx-ingress.controller.metrics.service.annotations."prometheus.io/port" | string | `"10254"` |  |
-| nginx-ingress-geo.<<.controller.admissionWebhooks.enabled | bool | `false` |  |
 | nginx-ingress.controller.admissionWebhooks.enabled | bool | `false` |  |
 | nginx-ingress-geo.controller.<<.admissionWebhooks.enabled | bool | `false` |  |
+| nginx-ingress-geo.<<.controller.admissionWebhooks.enabled | bool | `false` |  |
 | nginx-ingress-geo.<<.defaultBackend.resources.requests.cpu | string | `"5m"` |  |
 | nginx-ingress.defaultBackend.resources.requests.cpu | string | `"5m"` |  |
-| nginx-ingress.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
 | nginx-ingress-geo.<<.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
+| nginx-ingress.defaultBackend.resources.requests.memory | string | `"5Mi"` |  |
 | nginx-ingress.rbac.create | bool | `true` |  |
 | nginx-ingress-geo.<<.rbac.create | bool | `true` |  |
 | nginx-ingress-geo.<<.rbac.scope | bool | `false` |  |
@@ -672,7 +675,7 @@ helm install gitlab chart/
 | redis.metrics.enabled | bool | `true` |  |
 | redis.metrics.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.metrics.image.repository | string | `"analytics/redis-exporter"` |  |
-| redis.metrics.image.tag | string | `"v1.64.1"` |  |
+| redis.metrics.image.tag | string | `"v1.65.0"` |  |
 | redis.metrics.image.pullSecrets | list | `[]` |  |
 | redis.metrics.resources.limits.cpu | string | `"250m"` |  |
 | redis.metrics.resources.limits.memory | string | `"256Mi"` |  |
@@ -772,7 +775,7 @@ helm install gitlab chart/
 | registry.resources.requests.cpu | string | `"200m"` |  |
 | registry.resources.requests.memory | string | `"1024Mi"` |  |
 | registry.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry"` |  |
-| registry.image.tag | string | `"17.2.9"` |  |
+| registry.image.tag | string | `"17.3.6"` |  |
 | registry.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | registry.ingress.enabled | bool | `false` |  |
 | registry.metrics.enabled | bool | `true` |  |
@@ -828,7 +831,7 @@ helm install gitlab chart/
 | gitlab.toolbox.replicas | int | `1` |  |
 | gitlab.toolbox.antiAffinityLabels.matchLabels.app | string | `"gitaly"` |  |
 | gitlab.toolbox.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
-| gitlab.toolbox.image.tag | string | `"17.2.9"` |  |
+| gitlab.toolbox.image.tag | string | `"17.3.6"` |  |
 | gitlab.toolbox.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.toolbox.init.resources.requests.cpu | string | `"200m"` |  |
 | gitlab.toolbox.init.resources.requests.memory | string | `"200Mi"` |  |
@@ -865,7 +868,7 @@ helm install gitlab chart/
 | gitlab.gitlab-exporter.resources.requests.memory | string | `"200Mi"` |  |
 | gitlab.gitlab-exporter.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-exporter.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter"` |  |
-| gitlab.gitlab-exporter.image.tag | string | `"17.2.9"` |  |
+| gitlab.gitlab-exporter.image.tag | string | `"17.3.6"` |  |
 | gitlab.gitlab-exporter.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-exporter.metrics.enabled | bool | `true` |  |
 | gitlab.gitlab-exporter.metrics.port | int | `9168` |  |
@@ -887,7 +890,7 @@ helm install gitlab chart/
 | gitlab.migrations.resources.requests.cpu | string | `"500m"` |  |
 | gitlab.migrations.resources.requests.memory | string | `"1.5G"` |  |
 | gitlab.migrations.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
-| gitlab.migrations.image.tag | string | `"17.2.9"` |  |
+| gitlab.migrations.image.tag | string | `"17.3.6"` |  |
 | gitlab.migrations.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.migrations.securityContext.runAsUser | int | `1000` |  |
 | gitlab.migrations.securityContext.runAsGroup | int | `1000` |  |
@@ -911,14 +914,14 @@ helm install gitlab chart/
 | gitlab.webservice.resources.requests.cpu | string | `"300m"` |  |
 | gitlab.webservice.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice"` |  |
-| gitlab.webservice.image.tag | string | `"17.2.9"` |  |
+| gitlab.webservice.image.tag | string | `"17.3.6"` |  |
 | gitlab.webservice.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.webservice.workhorse.resources.limits.cpu | string | `"600m"` |  |
 | gitlab.webservice.workhorse.resources.limits.memory | string | `"2.5G"` |  |
 | gitlab.webservice.workhorse.resources.requests.cpu | string | `"600m"` |  |
 | gitlab.webservice.workhorse.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.workhorse.image | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse"` |  |
-| gitlab.webservice.workhorse.tag | string | `"17.2.9"` |  |
+| gitlab.webservice.workhorse.tag | string | `"17.3.6"` |  |
 | gitlab.webservice.workhorse.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.webservice.workhorse.metrics.enabled | bool | `true` |  |
 | gitlab.webservice.workhorse.metrics.serviceMonitor.enabled | bool | `true` |  |
@@ -929,7 +932,7 @@ helm install gitlab chart/
 | gitlab.webservice.metrics.serviceMonitor.enabled | bool | `true` |  |
 | gitlab.webservice.helmTests.enabled | bool | `false` |  |
 | gitlab.sidekiq.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq"` |  |
-| gitlab.sidekiq.image.tag | string | `"17.2.9"` |  |
+| gitlab.sidekiq.image.tag | string | `"17.3.6"` |  |
 | gitlab.sidekiq.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.sidekiq.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.sidekiq.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -947,7 +950,7 @@ helm install gitlab chart/
 | gitlab.sidekiq.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.sidekiq.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitaly.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.gitaly.image.tag | string | `"17.2.9"` |  |
+| gitlab.gitaly.image.tag | string | `"17.3.6"` |  |
 | gitlab.gitaly.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitaly.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitaly.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -967,7 +970,7 @@ helm install gitlab chart/
 | gitlab.gitaly.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitaly.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-shell.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell"` |  |
-| gitlab.gitlab-shell.image.tag | string | `"17.2.9"` |  |
+| gitlab.gitlab-shell.image.tag | string | `"17.3.6"` |  |
 | gitlab.gitlab-shell.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-shell.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitlab-shell.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -985,15 +988,15 @@ helm install gitlab chart/
 | gitlab.gitlab-shell.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitlab-shell.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.mailroom.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom"` |  |
-| gitlab.mailroom.image.tag | string | `"17.2.9"` |  |
+| gitlab.mailroom.image.tag | string | `"17.3.6"` |  |
 | gitlab.mailroom.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.mailroom.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-pages.service.customDomains.type | string | `"ClusterIP"` |  |
 | gitlab.gitlab-pages.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages"` |  |
-| gitlab.gitlab-pages.image.tag | string | `"17.2.9"` |  |
+| gitlab.gitlab-pages.image.tag | string | `"17.3.6"` |  |
 | gitlab.gitlab-pages.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.praefect.image.tag | string | `"17.2.9"` |  |
+| gitlab.praefect.image.tag | string | `"17.3.6"` |  |
 | gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.praefect.init.resources.limits.memory | string | `"200Mi"` |  |
 | gitlab.praefect.init.resources.requests.cpu | string | `"200m"` |  |
@@ -1124,4 +1127,3 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 ---
 
 _This file is programatically generated using `helm-docs` and some BigBang-specific templates. The `gluon` repository has [instructions for regenerating package READMEs](https://repo1.dso.mil/big-bang/product/packages/gluon/-/blob/master/docs/bb-package-readme.md)._
-

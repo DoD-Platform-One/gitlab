@@ -36,7 +36,7 @@ controlled by `global.shell.port`.
 
 | Parameter                                       | Default                                                                                                                                                                     | Description                                                                                                                                                                                        |
 | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `affinity`                             | `{}`                                                       | [Affinity rules](#affinity) for pod assignment                                                                                                                                                               |
+| `affinity`                             | `{}`                                                       | [Affinity rules](../index.md#affinity) for pod assignment                                                                                                                                                               |
 | `annotations`                                   |                                                                                                                                                                             | Pod annotations                                                                                                                                                                                    |
 | `podLabels`                                     |                                                                                                                                                                             | Supplemental Pod labels. Will not be used for selectors.                                                                                                                                           |
 | `common.labels`                                 |                                                                                                                                                                             | Supplemental labels that are applied to all objects created by this chart.                                                                                                                         |
@@ -57,7 +57,8 @@ controlled by `global.shell.port`.
 | `config.gssapi.keytab.key`                      | `keytab`                                                                                                                                                                    | Key holding the keytab in the Kubernetes secret                                                                                                                                                    |
 | `config.gssapi.krb5Config`                      |                                                                                                                                                                             | Content of the `/etc/krb5.conf` file in the GitLab Shell container                                                                                                                                 |
 | `config.gssapi.servicePrincipalName`            |                                                                                                                                                                             | The Kerberos service name to be used by the `gitlab-sshd` daemon                                                                                                                                   |
-| `opensshd.supplemental_config`                  |                                                                                                                                                                             | Supplemental configuration, appended to `sshd_config`. Strict alignment to [man page](https://manpages.debian.org/bookworm/openssh-server/sshd_config.5.en.html)                                    |
+| `config.lfs.pureSSHProtocol`                    | `false`                                                                                                                                                                     | Enable LFS Pure SSH protocol support                                                                                                                                                               |
+| `opensshd.supplemental_config`                  |                                                                                                                                                                             | Supplemental configuration, appended to `sshd_config`. Strict alignment to [man page](https://manpages.debian.org/bookworm/openssh-server/sshd_config.5.en.html)                                   |
 | `deployment.livenessProbe.initialDelaySeconds`  | 10                                                                                                                                                                          | Delay before liveness probe is initiated                                                                                                                                                           |
 | `deployment.livenessProbe.periodSeconds`        | 10                                                                                                                                                                          | How often to perform the liveness probe                                                                                                                                                            |
 | `deployment.livenessProbe.timeoutSeconds`       | 3                                                                                                                                                                           | When the liveness probe times out                                                                                                                                                                  |
@@ -123,6 +124,7 @@ controlled by `global.shell.port`.
 | `sshDaemon`                                     | `openssh`                                                                                                                                                                   | Selects which SSH daemon would be run, possible values (`openssh`, `gitlab-sshd`)                                                                                                                  |
 | `tolerations`                                   | `[]`                                                                                                                                                                        | Toleration labels for pod assignment                                                                                                                                                               |
 | `traefik.entrypoint`                            | `gitlab-shell`                                                                                                                                                              | When using traefik, which traefik entrypoint to use for GitLab Shell. Defaults to `gitlab-shell`                                                                                                   |
+| `traefik.tcpMiddlewares`                        | `[]`                                                                                                                                                                        | When using traefik, which TCP Middlewares to add to IngressRouteTCP resource. No middlewares by default                                                                                            |
 | `workhorse.serviceName`                         | `webservice`                                                                                                                                                                | Workhorse service name (by default, Workhorse is a part of the webservice Pods / Service)                                                                                                          |
 | `metrics.enabled`                               | `false`                                                                                                                                                                     | If a metrics endpoint should be made available for scraping (requires `sshDaemon=gitlab-sshd`).                                                                                                    |
 | `metrics.port`                                  | `9122`                                                                                                                                                                      | Metrics endpoint port                                                                                                                                                                              |
@@ -254,37 +256,7 @@ tolerations:
 
 ### affinity
 
-`affinity` is an optional parameter that allows you to set either or both:
-
-- `podAntiAffinity` rules to:
-  - Not schedule pods in the same domain as the pods that match the expression corresponding to the `topology key`.
-  - Set two modes of `podAntiAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
-    (`preferredDuringSchedulingIgnoredDuringExecution`). Using the variable `antiAffinity` in `values.yaml`, set the setting to `soft` so that the preferred mode is
-    applied or set it to `hard` so that the required mode is applied.
-- `nodeAffinity` rules to:
-  - Schedule pods to nodes that belong to a specific zone or zones.
-  - Set two modes of `nodeAffinity` rules: required (`requiredDuringSchedulingIgnoredDuringExecution`) and preferred
-    (`preferredDuringSchedulingIgnoredDuringExecution`). When set to `soft`, the preferred mode is applied. When set to `hard`, the required mode is applied. This
-    rule is implemented only for the `registry` chart and the `gitlab` chart alongwith all its subcharts except `webservice` and `sidekiq`.
-
-`nodeAffinity` only implements the [`In` operator](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators).
-
-For more information, see [the relevant Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
-
-The following example sets `affinity`, with both `nodeAffinity` and `antiAffinity` set to `hard`:
-
-```yaml
-nodeAffinity: "hard"
-antiAffinity: "hard"
-affinity:
-  nodeAffinity:
-    key: "test.com/zone"
-    values:
-    - us-east1-a
-    - us-east1-b
-  podAntiAffinity:
-    topologyKey: "test.com/hostname"
-```
+For more information, see [`affinity`](../index.md#affinity).
 
 ### annotations
 

@@ -67,8 +67,8 @@ request is as follows:
     1. If you are contributing code, fill in the template already provided in the
      "Description" field.
     1. If you are contributing documentation
-      1. Choose `Documentation` from the "Choose a template" menu and fill in the template.
-      1. Ensure the branch name starts with `docs-` or ends with `-docs`
+    1. Choose `Documentation` from the "Choose a template" menu and fill in the template.
+    1. Ensure the branch name starts with `docs-` or ends with `-docs`
     1. Mention the issue(s) your merge request solves, using the `Solves #XXX` or
     `Closes #XXX` syntax to auto-close the issue(s) once the merge request will
     be merged.
@@ -162,7 +162,7 @@ This code of conduct applies both within project spaces and in public spaces
 when an individual is representing the project or its community.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior can be
-reported by emailing contact@gitlab.com.
+reported by emailing <contact@gitlab.com>.
 
 This Code of Conduct is adapted from the [Contributor Covenant][contributor-covenant], version 1.1.0,
 available at [http://contributor-covenant.org/version/1/1/0/](http://contributor-covenant.org/version/1/1/0/).
@@ -174,5 +174,4 @@ available at [http://contributor-covenant.org/version/1/1/0/](http://contributor
 [changelog]: doc/development/changelog.md "Generate a changelog entry"
 [git-squash]: https://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits
 [definition-of-done]: http://guide.agilealliance.org/guide/definition-of-done.html
-[contributor-covenant]: http://contributor-covenant.org
 [CNG]: https://gitlab.com/gitlab-org/build/CNG/

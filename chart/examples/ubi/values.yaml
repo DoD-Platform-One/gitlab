@@ -31,7 +31,7 @@ global:
 
   image:
     pullPolicy: Always  # You can drop this if you're using release tags.
-    tagSuffix: -ubi9
+    tagSuffix: -ubi # -ubi8 for GitLab 17.2 and earlier
 
   # See: https://gitlab.com/gitlab-org/charts/gitlab/blob/master/doc/installation/tls.md#option-2-use-your-own-wildcard-certificate
   ingress:

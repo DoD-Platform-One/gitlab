@@ -66,6 +66,8 @@ maxReplicas: 10
 # When using traefik ingress
 traefik:
   entrypoint: gitlab-shell
+  apiVersion: ""
+  tcpMiddlewares: []
 
 hpa:
   # targetAverageValue: 100m  # DEPRECATED: in favor of `hpa.cpu.targetAverageValue` below
@@ -141,6 +143,8 @@ config:
       key: keytab
     krb5Config: ""
     servicePrincipalName: ""
+  lfs:
+    pureSSHProtocol: false
 
 ## Allow to overwrite under which User and Group the Pod will be running.
 securityContext:

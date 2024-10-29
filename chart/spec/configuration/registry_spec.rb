@@ -945,6 +945,70 @@ describe 'registry configuration' do
         end
       end
 
+      context 'when customer provides a redis rate-limiting cluster configuration' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              redis:
+                rateLimiting:
+                  enabled: true
+                  cluster:
+                    - host: redis1.cluster.example.com
+                      port: 16379
+                    - host: redis2.cluster.example.com
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis rate-limiter settings with the list of host:port' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              ratelimiter:
+                enabled: true
+                addr: "redis1.cluster.example.com:16379,redis2.cluster.example.com:6379"
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a redis rate-limiting cluster configuration in presense of global sentinels' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: global1.example.com
+                    port: 26379
+                  - host: global2.example.com
+                    port: 26379
+            registry:
+              redis:
+                rateLimiting:
+                  enabled: true
+                  cluster:
+                    - host: redis1.cluster.example.com
+                      port: 16379
+                    - host: redis2.cluster.example.com
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis rate-limiter settings with the local cluster host:port instead of global.redis.sentinels' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              ratelimiter:
+                enabled: true
+                addr: "redis1.cluster.example.com:16379,redis2.cluster.example.com:6379"
+            CONFIG
+          )
+        end
+      end
+
       context 'when customer provides a custom redis rate-limiter and cache configuration' do
         let(:values) do
           YAML.safe_load(%(

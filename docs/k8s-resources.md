@@ -1,11 +1,15 @@
 # Kubernetes resource configuration
+
 The BigBang Gitlab Package has a default resource configuration for a minimal installation which is sufficient for development, demos, and CI pipelines. For larger operational deployments you must increase the CPU and memory as needed. Consult Gitlab documentation and Gitlab Support for appropriate settings. The resource requests and limits must be equal to achive quality of service guarantee. Below is a catalog of the possible resource configurations which are provided here for convenience. The values below are fake. If you are pasting selected portions into a BigBang values override file you will need to add three additional indent levels and place them under
+
 ```yaml
 addons:
   gitlab:
     values:
 ```
+
 Here are the possible settings:
+
 ```yaml
 gitlab:
   toolbox:

@@ -47,6 +47,7 @@ for more information on how the global variables work.
 - [Pod priority and preemption](#pod-priority-and-preemption)
 - [Log rotation](#log-rotation)
 - [Jobs](#jobs)
+- [Traefik](#traefik)
 
 ## Configure Host settings
 
@@ -461,6 +462,9 @@ global:
 
 | Name               | Type    | Default | Description |
 |:------------------ |:-------:|:------- |:----------- |
+| `connectTimeout`   | Integer |         | The number of seconds to wait for a Redis connection. If no value specified, the client defaults to 1 second. |
+| `readTimeout`      | Integer |         | The number of seconds to wait for a Redis read. If no value is specified, the client defaults to 1 second. |
+| `writeTimeout`     | Integer |         | The number of seconds to wait for a Redis write. If no value is specified, the client defaults to 1 second. |
 | `host`             | String  |         | The hostname of the Redis server with the database to use. This can be omitted in lieu of `serviceName`. |
 | `serviceName`      | String  | `redis` | The name of the `service` which is operating the Redis database. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Redis as a part of the overall GitLab chart. |
 | `port`             | Integer | `6379`  | The port on which to connect to the Redis server. |
@@ -841,7 +845,7 @@ Administrators can chose to use Gitaly nodes in the following ways:
 See [Repository Storage Paths](https://docs.gitlab.com/ee/administration/repository_storage_paths.html)
 documentation for details on managing which nodes will be used for new projects.
 
-If `gitaly.host` is provided, `gitaly.internal` and `gitaly.external` properties will *be ignored*.
+If `gitaly.host` is provided, `gitaly.internal` and `gitaly.external` properties will _be ignored_.
 See the [deprecated Gitaly settings](#deprecated-gitaly-settings).
 
 The Gitaly authentication token is expected to be identical for
@@ -852,7 +856,7 @@ See [issue #1992](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/1992) for
 
 The `internal` key currently consists of only one key, `names`, which is a list of
 [storage names](https://docs.gitlab.com/ee/administration/repository_storage_paths.html)
-to be managed by the chart. For each listed name, *in logical order*, one pod will
+to be managed by the chart. For each listed name, _in logical order_, one pod will
 be spawned, named `${releaseName}-gitaly-${ordinal}`, where `ordinal` is the index
 within the `names` list. If dynamic provisioning is enabled, the `PersistentVolumeClaim`
 will match.
@@ -863,7 +867,7 @@ This list defaults to `['default']`, which provides for 1 pod related to one
 Manual scaling of this item is required, by adding or removing entries in
 `gitaly.internal.names`. When scaling down, any repository that has not been moved
 to another node will become unavailable. Since the Gitaly chart is a `StatefulSet`,
-dynamically provisioned disks *will not* be reclaimed. This means the data disks
+dynamically provisioned disks _will not_ be reclaimed. This means the data disks
 will persist, and the data on them can be accessed when the set is scaled up again
 by re-adding a node to the `names` list.
 
@@ -913,9 +917,9 @@ All Gitaly nodes **must** share the same authentication token.
 
 | Name                         | Type    | Default | Description |
 |:---------------------------- |:-------:|:------- |:----------- |
-| `host` *(deprecated)*        | String  |         | The hostname of the Gitaly server to use. This can be omitted in lieu of `serviceName`. If this setting is used, it will override any values of `internal` or `external`. |
-| `port` *(deprecated)*        | Integer | `8075`  | The port on which to connect to the Gitaly server. |
-| `serviceName` *(deprecated)* | String  |         | The name of the `service` which is operating the Gitaly server. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Gitaly as a part of the overall GitLab chart. |
+| `host` _(deprecated)_        | String  |         | The hostname of the Gitaly server to use. This can be omitted in lieu of `serviceName`. If this setting is used, it will override any values of `internal` or `external`. |
+| `port` _(deprecated)_        | Integer | `8075`  | The port on which to connect to the Gitaly server. |
+| `serviceName` _(deprecated)_ | String  |         | The name of the `service` which is operating the Gitaly server. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Gitaly as a part of the overall GitLab chart. |
 
 ### TLS settings
 
@@ -1682,8 +1686,8 @@ Defaults to `[]`.
 
 This property has two sub-keys: `secret` and `key`:
 
-- `secret`: *(required)* The name of a Kubernetes `Secret` containing the provider block.
-- `key`: *(optional)* The name of the key in the `Secret` containing the provider block.
+- `secret`: _(required)_ The name of a Kubernetes `Secret` containing the provider block.
+- `key`: _(optional)_ The name of the key in the `Secret` containing the provider block.
   Defaults to `provider`
 
 Alternatively, if the provider has no other configuration than its name, you may
@@ -2122,7 +2126,7 @@ The UBI-based `update-ca-trust` utility does not seem to have the same requireme
 You can provide any number of Secrets or ConfigMaps, each containing any number of keys that hold
 PEM-encoded CA certificates. These are configured as entries under `global.certificates.customCAs`.
 All keys are mounted unless `keys:` is provided with a list of specific keys to be mounted. All mounted keys across all Secrets and ConfigMaps must be unique.
-The Secrets and ConfigMaps can be named in any fashion, but they *must not* contain key names that collide.
+The Secrets and ConfigMaps can be named in any fashion, but they _must not_ contain key names that collide.
 
 ## Application Resource
 
@@ -2588,3 +2592,17 @@ helm <command> <options> --set global.job.nameSuffixOverride=$(date +%Y-%m-%d-%H
 | Name                 | Type   | Default | Description                                               |
 | :--------------------| :--:   | :------ | :-------------------------------------------------------- |
 | `nameSuffixOverride` | String |         | Custom suffix to replace the automatically generated hash |
+
+## Traefik
+
+The Traefik settings can be configured via `globals.traefik`.
+
+```yaml
+global:
+  traefik:
+    apiVersion: ""
+```
+
+| Name         | Type   | Default | Description                                             |
+| :------------| :----- | :------ | :------------------------------------------------------ |
+| `apiVersion` | String |         | Overrides the default `apiVersion` of Traefik resources |

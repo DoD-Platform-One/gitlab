@@ -28,7 +28,7 @@ default:
 
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
-  DOCKER_VERSION: "24.0.6"
+  DOCKER_VERSION: "27.1.1"
   HELM_VERSION: "3.10.3"
   KUBECTL_VERSION: "1.27.9"
   STABLE_REPO_URL: "https://charts.helm.sh/stable"
@@ -50,7 +50,7 @@ variables:
   DEBIAN_VERSION: bookworm
   RUBY_VERSION: "3.1.5"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "14.12.0"
+  GITLAB_QA_VERSION: "14.13.0"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -87,6 +87,7 @@ stages:
 include:
   - local: '/.gitlab/ci/rules.gitlab-ci.yml'
   - local: '/.gitlab/ci/review-apps.gitlab-ci.yml'
+  - local: '/.gitlab/ci/operator.gitlab-ci.yml'
   - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
   - template: Jobs/SAST.latest.gitlab-ci.yml

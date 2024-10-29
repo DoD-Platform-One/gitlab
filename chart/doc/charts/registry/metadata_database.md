@@ -9,9 +9,9 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 DETAILS:
 **Tier:** Free, Premium, Ultimate
 **Offering:** Self-managed
-**Status:** Beta
 
 > - [Introduced](https://gitlab.com/groups/gitlab-org/-/epics/5521) in GitLab 16.4 as a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
+> - [Generally available](https://gitlab.com/gitlab-org/gitlab/-/issues/423459) in GitLab 17.3.
 
 The metadata database enables many new registry features, including
 online garbage collection, and increases the efficiency of many registry operations.
@@ -22,7 +22,8 @@ This page contains information on how to create the database.
 You can migrate existing registries to the metadata database, and use online garbage collection.
 
 Some database-enabled features are only enabled for GitLab.com and automatic database provisioning for
-the registry database is not available. Review the feature support table in the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459#supported-feature-status)
+the registry database is not available. Review the feature support section in the
+[administration documentation](https://docs.gitlab.com/ee/administration/packages/container_registry_metadata_database.html#metadata-database-feature-support)
 for the status of features related to the container registry database.
 
 ## Create the database
@@ -86,7 +87,7 @@ there will be some variation in how you connect.
 
 Prerequisites:
 
-- GitLab 16.4 or later.
+- GitLab 17.3 or later.
 - PostgreSQL database version 12 or later, accessible from the registry pods.
 - Access to the Kubernetes cluster and the Helm deployment locally.
 - SSH access to the registry pods.

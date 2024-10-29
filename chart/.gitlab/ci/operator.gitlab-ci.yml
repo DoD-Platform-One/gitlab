@@ -1,0 +1,14 @@
+trigger_operator_test:
+  stage: approve-review-apps
+  trigger:
+    project: 'gitlab-org/cloud-native/gitlab-operator'
+    branch: master
+  variables:
+    CHARTS_REF: "${CI_COMMIT_SHA}"
+    TRIGGER_PROJECT: "${CI_PROJECT_PATH}"
+  inherit:
+    variables: false
+  when: manual
+  rules:
+    - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "merge_request_event"'
+

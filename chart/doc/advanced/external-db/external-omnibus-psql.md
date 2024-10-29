@@ -23,7 +23,7 @@ Follow the installation instructions for the [Linux package](https://about.gitla
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be very explicit about what is enabled on this node, use the contents below.
 
-*Note*: This example is not intended to provide [PostgreSQL for scaling](https://docs.gitlab.com/ee/administration/postgresql/index.html).
+_Note_: This example is not intended to provide [PostgreSQL for scaling](https://docs.gitlab.com/ee/administration/postgresql/index.html).
 
 _**NOTE**: The values below should be replaced_
 
@@ -60,6 +60,7 @@ gitlab_workhorse['enable'] = false
 nginx['enable'] = false
 prometheus_monitoring['enable'] = false
 redis['enable'] = false
+gitlab_kas['enable'] = false
 ```
 
 After creating `gitlab.rb`, we'll reconfigure the package with `gitlab-ctl reconfigure`. Once the task has completed, check the running processes with `gitlab-ctl status`. The output should appear as such:

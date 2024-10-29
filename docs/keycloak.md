@@ -5,20 +5,21 @@ The integration assumes that keycloak is deployed with a realm other than master
 This documentation is geared towards configuring GitLab to work with P1 SSO/`login.dso.mil`. To learn about deploying GtitLab with a dev version of Keycloak, see [keycloak-dev.md](./keycloak-dev.md).
 
 If the client gitlab doesn't exist in keycloak, please create the client gitlab with the following settings:
-1.  Create a gitlab OIDC client scope. The scope name is case sensitive and must match the oidc settings that Gitlab was deployed with. Bigbang Gitlab settings are expecting scope name "Gitlab" with a capital G. Use the following mappings:
-    
+
+1. Create a gitlab OIDC client scope. The scope name is case sensitive and must match the oidc settings that Gitlab was deployed with. Bigbang Gitlab settings are expecting scope name "Gitlab" with a capital G. Use the following mappings:
+
     | Name        | Mapper Type      | Mapper Selection Sub | Token Claim Name   | Claim JSON Type |
     |-------------|------------------|----------------------|--------------------|-----------------|
     | email       | User Property    | email                | email              | String          |
     | profile     | User Attribute   | profile              | N/A                | String          |
     | username    | User Property    | username             | preferred_username | String          |
   
-2.  Create a gitlab client 
+2. Create a gitlab client
     - Change the following configuration items
       - access type: confidential _this will enable "Credentials"_
       - Direct Access Grants Enabled: Off
-      - Valid Redirect URIs: https://code.${DOMAIN}/users/auth/openid_connect/callback
-      - Base URL: https://code.${DOMAIN}
+      - Valid Redirect URIs: <https://code.${DOMAIN}/users/auth/openid_connect/callback>
+      - Base URL: <https://code.${DOMAIN}>
     - Set Client Scopes
       - Default Client Scopes: Gitlab (the client scope you created in the previous step. This is case sensitive.)
       - optional client scopes: N/A
@@ -26,7 +27,8 @@ If the client gitlab doesn't exist in keycloak, please create the client gitlab 
 
 ### GitLab configuration for keycloak
 
-Reference Gitlab [documentation for SSO](https://docs.gitlab.com/charts/charts/globals.html#omniauth). This is a working example of the json configuration used for keycloak integration. 
+Reference Gitlab [documentation for SSO](https://docs.gitlab.com/charts/charts/globals.html#omniauth). This is a working example of the json configuration used for keycloak integration.
+
 ```
 {
   "name": "openid_connect",
@@ -50,15 +52,19 @@ Reference Gitlab [documentation for SSO](https://docs.gitlab.com/charts/charts/g
   }
 }
 ```
+
 Fill in your values and create a json file with the contents in a temporary directory somewhere. You can name the file gitlab-oidc.json. Encode the contents with base64
+
 ```
 cat gitlab-oidc.enc.json | base64 -w 0
 ```
+
 The encoded output is what you will use in the next step. The ```-w 0``` insures that the encoded value is a one line string.
 
 ### Create a secret in Gitlab namespace for the oidc provider info
 
 Create a secret for the json provider config from the previous step
+
 ```
 apiVersion: v1
 kind: Secret
@@ -68,11 +74,12 @@ metadata:
 data:
     gitlab-oidc.json:  <enter your encoded json config here>
 ```
+
 Before you commit this secret you can encrypt the base64 encoded data with sops. Only encrypt the data section. Flux needs to be able to read the other fields.
 
 ### Gitlab omniauth global configuration
 
-Override the helm chart values.yaml for your environment to include the oidc-provider secret in gitlab ```global.appConfig.omniauth``` definition. The following example is the minimum config that you need.  Refer to Gitlab documentation for more settings. 
+Override the helm chart values.yaml for your environment to include the oidc-provider secret in gitlab ```global.appConfig.omniauth``` definition. The following example is the minimum config that you need.  Refer to Gitlab documentation for more settings.
 
 ```
 global:
@@ -94,11 +101,14 @@ global:
         - secret: oidc-provider
           key: gitlab-oidc.json
 ```
+
 #### Network Policy egress-sso configurable port
+
 - Default egressPort = 443
 - Scenerio: If omniauth is "enabled" and you are configuring the controlPlaneCidr to a specific controlplane ip block you will need to update the "Values.networkPolicies.egressPort" to 8443. This port needs to be open for oidc authentication to the keycloak client in the baby-yoda realm.
 
 Example egress-sso Network Policy override:
+
 ```yaml
 gitlab:
     enabled: true
@@ -164,7 +174,8 @@ sso: # derived from https://repo1.dso.mil/big-bang/product/packages/gitlab/-/blo
       mRGunUHBcnWEvgJBQl9nJEiU0Zsnvgc/ubhPgXRR4Xq37Z0j4r7g1SgEEzwxA57d
       emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
       -----END CERTIFICATE-----
-```      
+```
+
 - Link to [keycloak-dev.md](https://repo1.dso.mil/big-bang/product/packages/gitlab/-/blob/main/docs/keycloak-dev.md?ref_type=heads) document for complete SSO configuration.
 
 If all your configuration is correct you will be able to deploy and use SSO auth for Gitlab!
