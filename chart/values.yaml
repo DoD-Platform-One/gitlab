@@ -946,13 +946,6 @@ global:
 
 ## End of global
 
-# Needed for upgradeCheck containerSecurityContext values
-containerSecurityContext:
-  runAsUser: 65534
-  runAsGroup: 65534
-  capabilities:
-    drop:
-      - ALL
 upgradeCheck:
   enabled: true
   image:
@@ -965,12 +958,12 @@ upgradeCheck:
     runAsUser: 65534
     runAsGroup: 65534
     fsGroup: 65534
-  #The below values are used above not nested under upgradeCheck
-  #containerSecurityContext:
-  #  capabilities:
-  #    drop:
-  #      - ALL
-  containerSecurityContext: {}
+  containerSecurityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
+    capabilities:
+      drop:
+        - ALL
   tolerations: []
   annotations:
     sidecar.istio.io/inject: "true"
