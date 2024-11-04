@@ -60,6 +60,7 @@ spec:
       {{- end }}
       securityContext:
         runAsUser: {{ .Values.upgradeCheck.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.upgradeCheck.securityContext.runAsGroup }}
         fsGroup: {{ .Values.upgradeCheck.securityContext.fsGroup }}
       restartPolicy: Never
       {{- include "gitlab.image.pullSecrets" $imageCfg | nindent 6}}

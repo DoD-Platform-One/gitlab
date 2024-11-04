@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.3.0-bb.1] (2024-11-04)
+
+### Changed
+
+- fix template helper to include proper security context
+
 ## [8.3.0-bb.0] (2024-10-23)
 
 ### Changed
