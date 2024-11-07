@@ -292,7 +292,8 @@ If that is not present it will use the global chart serviceAccount automountServ
 - Add networkpolicies.
 - Add istio peerauthentications.
 - Add Secrets for DoD certificate authorities.
-- Add istio authorization policies
+- Add istio authorization policies.
+- Add GCPE token post-hook install job resources.
 
 ## chart/templates/tests/*
 

@@ -1,0 +1,52 @@
+{{- if index .Values "gitlab-ci-pipelines-exporter" "enabled" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-exporter-token
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    {{- include "gitlab.standardLabels" . | nindent 4 }}
+    {{- include "gitlab.commonLabels" . | nindent 4 }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+spec:
+  template:
+    metadata:
+      name: gitlab-exporter-token
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: true
+      serviceAccountName: exporter-token-sa
+      restartPolicy: Never
+      {{- with .Values.global.kubectl.image.pullSecrets }}
+      imagePullSecrets:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: post-install-token-to-secret
+        image: {{ .Values.global.kubectl.image.repository }}:{{ .Values.global.kubectl.image.tag }}
+        command: ["/bin/bash"]
+        args:
+            - -c
+            - >-
+              token_string=$(head -c 128 /dev/urandom | sha256sum | head -c 32 | awk '{print "glpat-"$1}') && kubectl -n gitlab exec -ti deploy/gitlab-toolbox -- gitlab-rails runner "t=User.find_by_username('root').personal_access_tokens.new(name: 'ci-exporter-token', scopes:['api'], expires_at: 1.year.from_now.utc); t.set_token('${token_string}'); t.save" && kubectl create secret -n gitlab generic gitlab-ci-exporter-token --from-literal=gitlabToken=${token_string}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          capabilities:
+            drop:
+              - ALL
+{{- end }}
