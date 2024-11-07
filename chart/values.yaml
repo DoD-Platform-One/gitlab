@@ -2142,6 +2142,11 @@ openshift: false
 # Track if AWS IAM Profile is used for Object Storage
 use_iam_profile: false
 
+# Set this to 'enabled' if this a new install and you plan to use the Gitlab CI Pipelines Exporter package add-on.
+# See https://repo1.dso.mil/big-bang/product/maintained/gitlab-ci-pipelines-exporter for details.
+gitlab-ci-pipelines-exporter:
+  enabled: false
+
 bbtests:
   enabled: false
   cypress:
