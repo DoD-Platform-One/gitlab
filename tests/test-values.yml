@@ -34,10 +34,5 @@ gitlab:
 networkPolicies:
   enabled: true
   controlPlaneCidr: 172.16.0.0/12
-
-# This tests the from-scratch hook job to create an api token for GCPE in a fresh gitlab deployment.
-gitlab-ci-pipelines-exporter:
-  enabled: true
-
 bbtests:
   enabled: true
