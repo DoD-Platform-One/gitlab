@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.3.0-bb.3] (2024-11-07)
+
+### Changed
+
+- move token job for GCPE to GCPE prep for subchart
+
 ## [8.3.0-bb.2] (2024-11-05)
 
 ### Changed
