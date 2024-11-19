@@ -256,70 +256,42 @@ complex:
 The `HelmTemplate` object has a number of methods that assist with writing
 RSpec tests. The following are a summary of the available methods.
 
-- `.exit_code()`
+- `.exit_code()`. Returns the exit code of the `helm template` command used to create the YAML documents that
+  instantiates the chart in the Kubernetes cluster. A successful completion of the `helm template` will return an exit
+  code of 0.
 
-This returns the exit code of the `helm template` command used to create the
-YAML documents that instantiates the chart in the Kubernetes cluster. A
-successful completion of the `helm template` will return an exit code of 0.
+- `.dig(key, ...)`. Walk down the YAML document returned by the `HelmTemplate` instance and return the value residing at
+  the last key. If no value is found, then `nil` is returned.
 
-- `.dig(key, ...)`
+- `.labels(item)`. Return a hash of the labels for the specified object.
 
-Walk down the YAML document returned by the `HelmTemplate` instance and
-return the value residing at the last key. If no value is found, then `nil`
-is returned.
+- `.template_labels(item)`. Return a hash of the labels used in the template structure for the specified object. The
+  specified object should be a Deployment, StatefulSet or a CronJob object.
 
-- `.labels(item)`
+- `.annotations(item)`. Return a has of the annotations for the specified object.
 
-Return a hash of the labels for the specified object.
+- `.template_annotations(item)`. Return a hash of the annotations used in the template structure for the specified
+  object. The specified object should be a Deployment, StatefulSet or a CronJob object.
 
-- `.template_labels(item)`
+- `.volumes(item)`. Return an array of all the volumes for the specified deployment object. The returned array is a
+  direct copy of the `volumes` key from the deployment object.
 
-Return a hash of the labels used in the template structure for the specified
-object. The specified object should be a Deployment, StatefulSet or a CronJob
-object.
+- `.find_volume(item, volume_name)`. Return a dictionary of the specified volume from the specified deployment object.
 
-- `.annotations(item)`
+- `.projected_volume_sources(item, mount_name)`. Return an array of sources for the specified projected volume. The
+  returned array has the following structure:
 
-Return a has of the annotations for the specified object.
+  ```yaml
+  - secret:
+      name: test-rails-secret
+      items:
+       - key: secrets.yml
+         path: rails-secrets/secrets.yml
+  ```
 
-- `.template_annotations(item)`
+- `.stderr()`. Return the STDERR output from the execution of `helm template` command.
 
-Return a hash of the annotations used in the template structure for the
-specified object. The specified object should be a Deployment, StatefulSet
-or a CronJob object.
-
-- `.volumes(item)`
-
-Return an array of all the volumes for the specified deployment object. The
-returned array is a direct copy of the `volumes` key from the deployment
-object.
-
-- `.find_volume(item, volume_name)`
-
-Return a dictionary of the specified volume from the specified deployment
-object.
-
-- `.projected_volume_sources(item, mount_name)`
-
-Return an array of sources for the specified projected volume. The returned
-array has the following structure:
-
-```yaml
-- secret:
-    name: test-rails-secret
-    items:
-     - key: secrets.yml
-       path: rails-secrets/secrets.yml
-```
-
-- `.stderr()`
-
-Return the STDERR output from the execution of `helm template` command.
-
-- `.values()`
-
-Return a dictionary of all values that were used in the execution of the
-`helm template` command.
+- `.values()`. Return a dictionary of all values that were used in the execution of the `helm template` command.
 
 ## Tests that require a Kubernetes cluster
 

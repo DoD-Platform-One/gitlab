@@ -865,6 +865,68 @@ describe 'kas configuration' do
         end
       end
     end
+
+    describe 'templates/podmonitor.yaml' do
+      context 'when monitoring is disabled (default)' do
+        it 'does not create any PodMonitors' do
+          template = HelmTemplate.new(default_values)
+          expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+          expect(template.resources_by_kind('PodMonitor')).to be_empty
+        end
+      end
+
+      context 'when monitoring is enabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+            global:
+              monitoring:
+                enabled: true
+            gitlab:
+              kas:
+                metrics:
+                  podMonitor:
+                    enabled: true
+                    additionalLabels:
+                      foo: bar
+                    endpointConfig:
+                      port: http-metrics
+                      path: /custom-metrics
+            )))
+        end
+
+        it "creates PodMonitor for kas" do
+          template = HelmTemplate.new(default_values.merge(kas_values))
+          expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+          kas_pod_monitor = template.resources_by_kind('PodMonitor')['PodMonitor/test-kas']
+          expect(kas_pod_monitor).not_to be_nil, "missing PodMonitor for kas"
+          expect(kas_pod_monitor['metadata']['labels']).to include('foo' => 'bar')
+          expect(kas_pod_monitor['spec']['podMetricsEndpoints']).to include('port' => 'http-metrics', 'path' => '/custom-metrics')
+        end
+      end
+
+      context 'when both ServiceMonitor and PodMonitor for KAS are enabled' do
+        let(:service_monitor_pod_monitor_enabled_kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+            global:
+              monitoring:
+                enabled: true
+            gitlab:
+              kas:
+                metrics:
+                  serviceMonitor:
+                    enabled: true
+                  podMonitor:
+                    enabled: true
+          )))
+        end
+
+        it 'fails to render' do
+          template = HelmTemplate.new(service_monitor_pod_monitor_enabled_kas_values)
+          expect(template.exit_code).not_to eq(0)
+          expect(template.stderr).to include('Both metrics.serviceMonitor.enabled and metrics.podMonitor.enabled cannot be set to true at the same time within the same subchart.')
+        end
+      end
+    end
   end
 
   describe 'gitlab.yml.erb/gitlab_kas' do

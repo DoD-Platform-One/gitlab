@@ -400,7 +400,7 @@ or [gomplate](https://docs.gomplate.ca/).
 **Guidelines:**
 
 1. Use template files within ConfigMaps (example: `gitlab.yml.erb`, `config.toml.tpl`)
-    - Entries _must_ use the expected extensions in order to be handled as templates.
+   - Entries _must_ use the expected extensions in order to be handled as templates.
 1. Use templates to populate Secret contents from mounted file locations. (example: [GitLab Pages `config`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/charts/gitlab/charts/gitlab-pages/templates/configmap.yml))
 1. ERB (`.erb`) can be used for any container using Ruby during run-time execution
 1. gomplate (`.tpl`) can be used for any container.
@@ -425,9 +425,8 @@ careful how these strings are added into various configuration formats.
 
 1. Quote in the ERB / Gomplate output, _not_ surrounding it.
 1. Use a format-native encoder whenever possible.
-    - For rendered YAML, use JSON strings because YAML is a superset of JSON.
-    - For rendered TOML, use JSON strings because
-    [TOML strings](https://toml.io/en/v0.3.0#string) escape similarly.
+   - For rendered YAML, use JSON strings because YAML is a superset of JSON.
+   - For rendered TOML, use JSON strings because [TOML strings](https://toml.io/en/v0.3.0#string) escape similarly.
 1. Be wary of complexity, such as quoted strings _inside_ quoted stings such
 as database connection strings.
 

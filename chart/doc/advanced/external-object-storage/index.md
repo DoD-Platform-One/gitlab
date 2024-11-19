@@ -326,14 +326,14 @@ To use Cloud CDN:
 1. Give the [Cloud CDN service account permission to read from the bucket](https://cloud.google.com/cdn/docs/using-signed-urls#configuring_permissions).
 1. Prepare a YAML file with the parameters using the example in [`rails.googlecdn.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/cdn/rails.googlecdn.yaml).
    You will need to fill in the following information:
-    - `url`: Base URL of the CDN host from step 1
-    - `key_name`: Key name from step 2
-    - `key`: The actual secret from step 2
+   - `url`: Base URL of the CDN host from step 1
+   - `key_name`: Key name from step 2
+   - `key`: The actual secret from step 2
 1. Load this YAML file into a Kubernetes secret under the `cdn` key. For example, to create a secret `gitlab-rails-cdn`:
 
-    ```shell
-    kubectl create secret generic gitlab-rails-cdn --from-file=cdn=rails.googlecdn.yml
-    ```
+   ```shell
+   kubectl create secret generic gitlab-rails-cdn --from-file=cdn=rails.googlecdn.yml
+   ```
 
 1. Set `global.appConfig.artifacts.cdn.secret` to `gitlab-rails-cdn`. If you're setting this via a `helm`
    parameter, use:

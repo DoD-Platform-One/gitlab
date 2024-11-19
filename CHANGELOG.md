@@ -3,26 +3,46 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.5.1-bb.0] (2024-11-13)
 
-## [8.3.0-bb.3] (2024-11-07)
+### Changed
+
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter (source) v1.65.0 -> v1.66.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) v17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse (source) 17.3.6 -> 17.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl (source) 17.3.6 -> 17.5.1
+
+## [8.3.6-bb.3] (2024-11-07)
 
 ### Changed
 
 - move token job for GCPE to GCPE prep for subchart
 
-## [8.3.0-bb.2] (2024-11-05)
+## [8.3.6-bb.2] (2024-11-05)
 
 ### Changed
 
 - add webhook token job for GCPE integration
 
-## [8.3.0-bb.1] (2024-11-04)
+## [8.3.6-bb.1] (2024-11-04)
 
 ### Changed
 
 - fix template helper to include proper security context
 
-## [8.3.0-bb.0] (2024-10-23)
+## [8.3.6-bb.0] (2024-10-23)
 
 ### Changed
 

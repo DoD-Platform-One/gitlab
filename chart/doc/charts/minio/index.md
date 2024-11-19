@@ -63,39 +63,48 @@ minio:
 The table below contains all the possible charts configurations that can be supplied
 to the `helm install` command using the `--set` flags:
 
-| Parameter                      | Default                       | Description                             |
-| ------------------------------ | ----------------------------- | --------------------------------------- |
-| `common.labels`                | `{}`                          | Supplemental labels that are applied to all objects created by this chart.  |
-| `defaultBuckets`               | `[{"name": "registry"}]`      | MinIO default buckets                   |
-| `deployment.strategy`          | { `type`: `Recreate` }      | Allows one to configure the update strategy utilized by the deployment |
-| `image`                        | `minio/minio`                 | MinIO image                             |
-| `imagePullPolicy`              | `Always`                      | MinIO image pull policy                 |
-| `imageTag`                     | `RELEASE.2017-12-28T01-21-00Z` | MinIO image tag                         |
-| `minioConfig.browser`          | `on`                          | MinIO browser flag                      |
-| `minioConfig.domain`           |                               | MinIO domain                            |
-| `minioConfig.region`           | `us-east-1`                   | MinIO region                            |
-| `minioMc.image`                | `minio/mc`                    | MinIO mc image                          |
-| `minioMc.tag`                  | `latest`                      | MinIO mc image tag                      |
-| `mountPath`                    | `/export`                     | MinIO configuration file mount path     |
-| `persistence.accessMode`       | `ReadWriteOnce`               | MinIO persistence access mode           |
-| `persistence.enabled`          | `true`                        | MinIO enable persistence flag           |
-| `persistence.matchExpressions` |                               | MinIO label-expression matches to bind  |
-| `persistence.matchLabels`      |                               | MinIO label-value matches to bind       |
-| `persistence.size`             | `10Gi`                        | MinIO persistence volume size           |
-| `persistence.storageClass`     |                               | MinIO storageClassName for provisioning |
-| `persistence.subPath`          |                               | MinIO persistence volume mount path     |
-| `persistence.volumeName`       |                               | MinIO existing persistent volume name   |
-| `priorityClassName`            |                               | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |
-| `pullSecrets`                  |                               | Secrets for the image repository        |
-| `resources.requests.cpu`       | `250m`                        | MinIO minimum CPU requested             |
-| `resources.requests.memory`    | `256Mi`                       | MinIO minimum memory requested          |
-| `securityContext.fsGroup`      | `1000`                        | Group ID to start the pod with          |
-| `securityContext.runAsUser`    | `1000`                        | User ID to start the pod with           |
-| `securityContext.fsGroupChangePolicy` |                        | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |
-| `servicePort`                  | `9000`                        | MinIO service port                      |
-| `serviceType`                  | `ClusterIP`                   | MinIO service type                      |
-| `tolerations`                  | `[]`                          | Toleration labels for pod assignment    |
-| `jobAnnotations`               | `{}`                          | Annotations for the job spec            |
+| Parameter                                                | Default                        | Description                                                                                                                       |
+|----------------------------------------------------------|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `common.labels`                                          | `{}`                           | Supplemental labels that are applied to all objects created by this chart.                                                        |
+| `init.containerSecurityContext.allowPrivilegeEscalation` | `false`                        | initContainer specific: Controls whether a process can gain more privileges than its parent process                               |
+| `init.containerSecurityContext.runAsNonRoot`             | `true`                         | initContainer specific: Controls whether the container runs with a non-root user                                                  |
+| `init.containerSecurityContext.capabilities.drop`        | `[ "ALL" ]`                    | initContainer specific: Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the container |
+| `defaultBuckets`                                         | `[{"name": "registry"}]`       | MinIO default buckets                                                                                                             |
+| `deployment.strategy`                                    | { `type`: `Recreate` }         | Allows one to configure the update strategy utilized by the deployment                                                            |
+| `image`                                                  | `minio/minio`                  | MinIO image                                                                                                                       |
+| `imagePullPolicy`                                        | `Always`                       | MinIO image pull policy                                                                                                           |
+| `imageTag`                                               | `RELEASE.2017-12-28T01-21-00Z` | MinIO image tag                                                                                                                   |
+| `minioConfig.browser`                                    | `on`                           | MinIO browser flag                                                                                                                |
+| `minioConfig.domain`                                     |                                | MinIO domain                                                                                                                      |
+| `minioConfig.region`                                     | `us-east-1`                    | MinIO region                                                                                                                      |
+| `minioMc.image`                                          | `minio/mc`                     | MinIO mc image                                                                                                                    |
+| `minioMc.tag`                                            | `latest`                       | MinIO mc image tag                                                                                                                |
+| `mountPath`                                              | `/export`                      | MinIO configuration file mount path                                                                                               |
+| `persistence.accessMode`                                 | `ReadWriteOnce`                | MinIO persistence access mode                                                                                                     |
+| `persistence.enabled`                                    | `true`                         | MinIO enable persistence flag                                                                                                     |
+| `persistence.matchExpressions`                           |                                | MinIO label-expression matches to bind                                                                                            |
+| `persistence.matchLabels`                                |                                | MinIO label-value matches to bind                                                                                                 |
+| `persistence.size`                                       | `10Gi`                         | MinIO persistence volume size                                                                                                     |
+| `persistence.storageClass`                               |                                | MinIO storageClassName for provisioning                                                                                           |
+| `persistence.subPath`                                    |                                | MinIO persistence volume mount path                                                                                               |
+| `persistence.volumeName`                                 |                                | MinIO existing persistent volume name                                                                                             |
+| `priorityClassName`                                      |                                | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods.              |
+| `pullSecrets`                                            |                                | Secrets for the image repository                                                                                                  |
+| `resources.requests.cpu`                                 | `250m`                         | MinIO minimum CPU requested                                                                                                       |
+| `resources.requests.memory`                              | `256Mi`                        | MinIO minimum memory requested                                                                                                    |
+| `securityContext.fsGroup`                                | `1000`                         | Group ID to start the pod with                                                                                                    |
+| `securityContext.runAsUser`                              | `1000`                         | User ID to start the pod with                                                                                                     |
+| `securityContext.fsGroupChangePolicy`                    |                                | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23)                                             |
+| `securityContext.seccompProfile.type`                    | `RuntimeDefault`               | Seccomp profile to use                                                                                                            |
+| `containerSecurityContext.runAsUser`                     | `1000`                         | Allow to overwrite the specific security context under which the container is started                                             |
+| `containerSecurityContext.allowPrivilegeEscalation`      | `false`                        | Controls whether a process of the Gitaly container can gain more privileges than its parent process                               |
+| `containerSecurityContext.runAsNonRoot`                  | `true`                         | Controls whether the container runs with a non-root user                                                                          |
+| `containerSecurityContext.capabilities.drop`             | `[ "ALL" ]`                    | Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the Gitaly container                  |
+| `serviceAccount.automountServiceAccountToken` | `false`        | Indicates whether or not the default ServiceAccount access token should be mounted in pods |
+| `servicePort`                                            | `9000`                         | MinIO service port                                                                                                                |
+| `serviceType`                                            | `ClusterIP`                    | MinIO service type                                                                                                                |
+| `tolerations`                                            | `[]`                           | Toleration labels for pod assignment                                                                                              |
+| `jobAnnotations`                                         | `{}`                           | Annotations for the job spec                                                                                                      |
 
 ## Chart configuration examples
 
@@ -116,6 +125,14 @@ pullSecrets:
 - name: my-secret-name
 - name: my-secondary-secret-name
 ```
+
+### serviceAccount
+
+This section controls if the default ServiceAccount access token should be mounted in pods.
+
+| Name                           |  Type   | Default | Description                                                                                                                                                                      |
+| :----------------------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `automountServiceAccountToken` | Boolean | `false` | Controls if the default ServiceAccount access token should be mounted in pods. You should not enable this unless it is required by certain sidecars to work properly (for example, Istio). |
 
 ### tolerations
 

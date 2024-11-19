@@ -347,17 +347,17 @@ To rotate the PostgreSQL secret:
 1. Complete the general [rotating secrets](#rotating-secrets) instructions for the PostgreSQL secret.
 1. Exec into the PostgreSQL pod and update the passwords in the database:
 
-    ```shell
-    # Exec into the PostgreSQL pod
-    kubectl exec -it <name>-postgresql-0 -- sh
+   ```shell
+   # Exec into the PostgreSQL pod
+   kubectl exec -it <name>-postgresql-0 -- sh
 
-    # Inside the pod, update the passwords in the database
-    sed -i 's/^\(local .*\)md5$/\1trust/' /opt/bitnami/postgresql/conf/pg_hba.conf
-    pg_ctl reload ; sleep 1
-    echo "ALTER USER postgres WITH PASSWORD '$(echo $POSTGRES_POSTGRES_PASSWORD)' ; ALTER USER gitlab WITH PASSWORD '$(echo POSTGRES_PASSWORD)'" | psql -U postgres -d gitlabhq_production -f -
-    sed -i 's/^\(local .*\)trust$/\1md5/' /opt/bitnami/postgresql/conf/pg_hba.conf
-    pg_ctl reload
-    ```
+   # Inside the pod, update the passwords in the database
+   sed -i 's/^\(local .*\)md5$/\1trust/' /opt/bitnami/postgresql/conf/pg_hba.conf
+   pg_ctl reload ; sleep 1
+   echo "ALTER USER postgres WITH PASSWORD '$(echo $POSTGRES_POSTGRES_PASSWORD)' ; ALTER USER gitlab WITH PASSWORD '$(echo POSTGRES_PASSWORD)'" | psql -U postgres -d gitlabhq_production -f -
+   sed -i 's/^\(local .*\)trust$/\1md5/' /opt/bitnami/postgresql/conf/pg_hba.conf
+   pg_ctl reload
+   ```
 
 1. Delete the `gitlab-exporter`, `postgresql`, `toolbox`, `sidekiq` and `webservice` pods using the `kubectl delete pod`
 command so the new pods are loaded with the new secret and allow them to connect to the

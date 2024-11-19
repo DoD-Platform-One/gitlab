@@ -213,14 +213,14 @@ To migrate existing container registry to the metadata database in one step:
        readonly:
          enabled: true  # must remain set to true while the migration is executed
      database:
-       configure: true
-       enabled: false
+       configure: true  # must be true for the migration step
+       enabled: false  # must be false!
        name: registry  # must match the database name you created above
        user: registry  # must match the database username you created above
        password:
          secret: gitlab-registry-database-password  # must match the secret name
          key: password  # must match the secret key to read the password from
-       sslmode: verify-full  # SSL connection mode. See http://www.postgresql.cn/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS for more options.
+       sslmode: verify-full  # SSL connection mode. See https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-PROTECTION for more options.
        ssl:
          secret: gitlab-registry-postgresql-ssl  # you will need to create this secret manually
          clientKey: client-key.pem
@@ -249,7 +249,8 @@ To migrate existing container registry to the metadata database in one step:
    /usr/bin/registry database import /etc/docker/registry/config.yml
    ```
 
-1. Update the registry configuration to enable the database and disable read-only mode:
+1. If the command completed successfully, all images are now fully imported. You
+   can now enable the database and turn off read-only mode in the configuration:
 
    ```yaml
    registry:
@@ -258,6 +259,7 @@ To migrate existing container registry to the metadata database in one step:
        readonly:
          enabled: false
      database:
+       configure: true  # once database.enabled is set to true, this option can be removed
        enabled: true
        name: registry
        user: registry
@@ -322,7 +324,7 @@ If you must halt the operation, you have to restart this step.
        password:
          secret: gitlab-registry-database-password  # must match the secret name
          key: password  # must match the secret key to read the password from
-       sslmode: verify-full  # SSL connection mode. See http://www.postgresql.cn/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS for more options.
+       sslmode: verify-full  # SSL connection mode. See https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-PROTECTION for more options.
        ssl:
          secret: gitlab-registry-postgresql-ssl  # you will need to create this secret manually
          clientKey: client-key.pem
@@ -381,7 +383,7 @@ Allow enough time for downtime during this process.
        password:
          secret: gitlab-registry-database-password  # must match the secret name
          key: password  # must match the secret key to read the password from
-       sslmode: verify-full  # SSL connection mode. See http://www.postgresql.cn/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS for more options.
+       sslmode: verify-full  # SSL connection mode. See https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-PROTECTION for more options.
        ssl:
          secret: gitlab-registry-postgresql-ssl  # you will need to create this secret manually
          clientKey: client-key.pem
@@ -420,14 +422,14 @@ Allow enough time for downtime during this process.
        readonly:
          enabled: false
      database:
-       configure: true
+       configure: true  # once database.enabled is set to true, this option can be removed
        enabled: true   # must be true!
        name: registry  # must match the database name you created above
        user: registry  # must match the database username you created above
        password:
          secret: gitlab-registry-database-password  # must match the secret name
          key: password  # must match the secret key to read the password from
-       sslmode: verify-full  # SSL connection mode. See http://www.postgresql.cn/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS for more options.
+       sslmode: verify-full  # SSL connection mode. See https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-PROTECTION for more options.
        ssl:
          secret: gitlab-registry-postgresql-ssl  # you will need to create this secret manually
          clientKey: client-key.pem

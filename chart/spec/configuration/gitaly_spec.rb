@@ -549,6 +549,7 @@ describe 'Gitaly configuration' do
                 memoryBytes: 32212254720
                 cpuShares: 512
                 cpuQuotaUs: 200000
+                maxCgroupsPerRepo: 2
       )).deep_merge(default_values)
     end
 
@@ -578,6 +579,7 @@ describe 'Gitaly configuration' do
           memory_bytes = 32212254720
           cpu_shares = 512
           cpu_quota_us = 200000
+          max_cgroups_per_repo = 2
           CONFIG
         )
       end
@@ -626,7 +628,7 @@ describe 'Gitaly configuration' do
                 periodSeconds: 1
                 timeoutSeconds: 2
                 successThreshold: 1
-                failureThreshold: 30
+                failureThreshold: 60
       )).merge(default_values)
     end
 
@@ -645,7 +647,7 @@ describe 'Gitaly configuration' do
         expect(gitaly_startup_probe).to include(
           'initialDelaySeconds' => 5,
           'exec' => { "command" => ["/scripts/healthcheck"] },
-          'failureThreshold' => 30,
+          'failureThreshold' => 60,
           'periodSeconds' => 1,
           'timeoutSeconds' => 2,
           'successThreshold' => 1
@@ -673,10 +675,10 @@ describe 'Gitaly configuration' do
 
         expect(gitaly_container).not_to have_key('startupProbe')
         expect(gitaly_readiness_probe).to include(
-          'initialDelaySeconds' => 10
+          'initialDelaySeconds' => 0
         )
         expect(gitaly_liveness_probe).to include(
-          'initialDelaySeconds' => 30
+          'initialDelaySeconds' => 0
         )
       end
     end
@@ -757,6 +759,93 @@ describe 'Gitaly configuration' do
         config_toml = gitaly_config[gitaly_configmap]['data']['config.toml.tpl']
 
         expect(config_toml).to include "graceful_restart_timeout = \"2m0s\""
+      end
+    end
+  end
+
+  context 'gitaly service' do
+    let(:values) do
+      YAML.safe_load(%(
+      global:
+        gitaly:
+          enabled: true
+      gitlab:
+        gitaly:
+          service:
+            type: #{gitaly_service_type}
+            clusterIP: #{gitaly_cluster_ip_address}
+            loadBalancerIP: #{gitaly_lb_ip_address}
+      )).merge(default_values)
+    end
+
+    let(:gitaly_service) { 'Service/test-gitaly' }
+
+    context 'when service.clusterIP is given' do
+      let(:gitaly_service_type) { 'ClusterIP' }
+      let(:gitaly_cluster_ip_address) { '10.0.0.1' }
+      let(:gitaly_lb_ip_address) {}
+
+      it 'has ClusterIP type and no customizations by default' do
+        t = HelmTemplate.new(values)
+        service = t.resources_by_kind('Service')[gitaly_service]
+        expect(service['spec']).to include('type' => 'ClusterIP')
+        expect(service['spec']).not_to have_key('loadBalancerIP')
+      end
+
+      it 'sets the clusterIP' do
+        t = HelmTemplate.new(values)
+        service = t.resources_by_kind('Service')[gitaly_service]
+        expect(service['spec']).to include('type' => 'ClusterIP')
+        expect(service['spec']).to include('clusterIP' => '10.0.0.1')
+        expect(service['spec']).not_to have_key('loadBalancerIP')
+      end
+    end
+
+    context 'when service.loadBalancerIP is given' do
+      let(:gitaly_service_type) { 'LoadBalancer' }
+      let(:gitaly_cluster_ip_address) {}
+      let(:gitaly_lb_ip_address) { '10.0.0.8' }
+
+      it 'has LoadBalancerIP type and no customizations by default' do
+        t = HelmTemplate.new(values)
+        service = t.resources_by_kind('Service')[gitaly_service]
+        expect(service['spec']).to include('type' => 'LoadBalancer')
+        expect(service['spec']).not_to have_key('clusterIP')
+      end
+
+      it 'sets the LoadBalancerIP' do
+        t = HelmTemplate.new(values)
+        service = t.resources_by_kind('Service')[gitaly_service]
+        expect(service['spec']).to include('type' => 'LoadBalancer')
+        expect(service['spec']).to include('loadBalancerIP' => '10.0.0.8')
+        expect(service['spec']).not_to have_key('clusterIP')
+      end
+    end
+
+    context 'when service.clusterIP and service.loadBalancerIP is given' do
+      let(:gitaly_service_type) { 'LoadBalancer' }
+      let(:gitaly_cluster_ip_address) { '10.0.0.1' }
+      let(:gitaly_lb_ip_address) { '10.0.0.8' }
+
+      it 'sets the LoadBalancerIP and ClusterIP' do
+        t = HelmTemplate.new(values)
+        service = t.resources_by_kind('Service')[gitaly_service]
+        expect(service['spec']).to include('type' => 'LoadBalancer')
+        expect(service['spec']).to include('clusterIP' => '10.0.0.1')
+        expect(service['spec']).to include('loadBalancerIP' => '10.0.0.8')
+      end
+    end
+
+    context 'when service.type is NodePort and clusterIP is None' do
+      let(:gitaly_service_type) { 'NodePort' }
+      let(:gitaly_cluster_ip_address) { 'None' }
+      let(:gitaly_lb_ip_address) {}
+
+      it 'it does not set a clusterIP' do
+        t = HelmTemplate.new(values)
+        service = t.resources_by_kind('Service')[gitaly_service]
+        expect(service['spec']).to include('type' => 'NodePort')
+        expect(service['spec']).not_to have_key('clusterIP')
       end
     end
   end

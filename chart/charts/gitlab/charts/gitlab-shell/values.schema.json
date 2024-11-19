@@ -447,6 +447,10 @@
           "title": "IP address to assign to LoadBalancer",
           "type": "string"
         },
+        "allocateLoadBalancerNodePorts": {
+          "title": "If the LoadBalancer Service should also have a NodePort",
+          "type": "boolean"
+        },
         "loadBalancerSourceRanges": {
           "title": "List of IP CIDRs allowed access to LoadBalancer",
           "type": "array"

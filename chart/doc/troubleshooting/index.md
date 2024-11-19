@@ -13,15 +13,15 @@ then it's probably because you didn't follow the right upgrade path, as you firs
 
 1. List all your releases to identify your GitLab Helm release name (you will need to include `-n <namespace>` if your release was not deployed to the `default` K8s namespace):
 
-    ```shell
-    helm ls
-    ```
+   ```shell
+   helm ls
+   ```
 
 1. Assuming that your GitLab Helm release is called `gitlab` you then need to look at the release history and identify the last successful revision (you can see the status of a revision under `DESCRIPTION`):
 
-    ```shell
-    helm history gitlab
-    ```
+   ```shell
+   helm history gitlab
+   ```
 
 1. Assuming your most recent successful revision is `1` use this command to roll back:
 
@@ -243,15 +243,15 @@ actually applied to the deployment.
 
 1. Remove the old **CertManager** Deployment.
 
-    ```shell
-    kubectl delete deployments -l app=cert-manager --cascade
-    ```
+   ```shell
+   kubectl delete deployments -l app=cert-manager --cascade
+   ```
 
 1. Run the upgrade again. This time install the new Custom Resource Definitions
 
-    ```shell
-    helm upgrade --install --values - YOUR-RELEASE-NAME gitlab/gitlab < <(helm get values YOUR-RELEASE-NAME)
-    ```
+   ```shell
+   helm upgrade --install --values - YOUR-RELEASE-NAME gitlab/gitlab < <(helm get values YOUR-RELEASE-NAME)
+   ```
 
 ### cannot patch `gitlab-kube-state-metrics` with kind Deployment
 

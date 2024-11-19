@@ -77,27 +77,16 @@ To configure Zoekt for a top-level group in GitLab:
    kubectl exec <toolbox pod name> -it -c toolbox -- gitlab-rails console -e production
    ```
 
-1. Enable the feature flags for Zoekt:
-
-   ```shell
-   ::Feature.enable(:index_code_with_zoekt)
-   ::Feature.enable(:search_code_with_zoekt)
-   ```
-
+1. [Enable exact code search](https://docs.gitlab.com/ee/integration/exact_code_search/zoekt.html#enable-exact-code-search).
 1. Set up indexing:
 
    ```shell
-   # Select one of the Zoekt nodes
-   node = ::Search::Zoekt::Node.last
-   # Use the name of your top-level group
+   node = ::Search::Zoekt::Node.online.last
    namespace = Namespace.find_by_full_path('<top-level-group-to-index>')
    enabled_namespace = Search::Zoekt::EnabledNamespace.find_or_create_by(namespace: namespace)
-   node.indices.create!(zoekt_enabled_namespace_id: enabled_namespace.id, namespace_id: namespace.id, state: :ready)
+   replica = enabled_namespace.replicas.find_or_create_by(namespace_id: enabled_namespace.root_namespace_id)
+   replica.ready!
+   node.indices.create!(zoekt_enabled_namespace_id: enabled_namespace.id, namespace_id: namespace.id, zoekt_replica_id: replica.id, state: :ready)
    ```
 
 Zoekt can now index projects in that group after any project is updated or created.
-
-## Enable exact code search
-
-After you install and configure Zoekt, you can
-[enable exact code search](https://docs.gitlab.com/ee/integration/exact_code_search/zoekt.html#enable-exact-code-search) in GitLab.

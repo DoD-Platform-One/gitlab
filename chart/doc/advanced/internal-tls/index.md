@@ -91,10 +91,8 @@ helper, and _is not intended for production use_.
 
 The script expects two environment variables to be set:
 
-1. `NAMESPACE`: The Kubernetes Namespace you will later install GitLab to.
-  This defaults to `default`, as with `kubectl`.
-1. `RELEASE`: The Helm Release name you will later use to install GitLab.
-  This defaults to `gitlab`.
+1. `NAMESPACE`: The Kubernetes Namespace you will later install GitLab to. This defaults to `default`, as with `kubectl`.
+1. `RELEASE`: The Helm Release name you will later use to install GitLab. This defaults to `gitlab`.
 
 To operate this script, you may `export` the two variables, or prepend the
 script name with their values.

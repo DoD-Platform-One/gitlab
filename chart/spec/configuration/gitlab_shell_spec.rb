@@ -23,6 +23,43 @@ describe 'gitlab-shell configuration' do
     expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
   end
 
+  context 'when service.type is LoadBalancer' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitlab-shell:
+            service:
+              type: LoadBalancer
+      )).deep_merge(default_values)
+    end
+
+    it 'renders the type' do
+      expect_successful_exit_code
+
+      expect(t.dig('Service/test-gitlab-shell', 'spec', 'type')).to eq('LoadBalancer')
+      expect(t.dig('Service/test-gitlab-shell', 'spec').keys).to_not include('allocateLoadBalancerNodePorts')
+    end
+
+    context 'when allocateLoadBalancerNodePorts is set' do
+      let(:values) do
+        YAML.safe_load(%(
+        gitlab:
+          gitlab-shell:
+            service:
+              type: LoadBalancer
+              allocateLoadBalancerNodePorts: false
+        )).deep_merge(default_values)
+      end
+
+      it 'renders allocateLoadBalancerNodePorts' do
+        expect_successful_exit_code
+
+        expect(t.dig('Service/test-gitlab-shell', 'spec', 'type')).to eq('LoadBalancer')
+        expect(t.dig('Service/test-gitlab-shell', 'spec', 'allocateLoadBalancerNodePorts')).to be(false)
+      end
+    end
+  end
+
   context 'when gitlab-sshd is enabled' do
     using RSpec::Parameterized::TableSyntax
 

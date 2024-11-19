@@ -483,8 +483,8 @@ for the exhaustive list of configuration options.
 
 ### PostgreSQL
 
-Prefix PostgreSQL values with `postgresql`. For example, set the storage class value
-using `postgresql.persitence.storageClass`.
+Prefix PostgreSQL values with `postgresql`. For example, set the storage class of the
+primary by using `postgresql.primary.persistence.storageClass`.
 
 Refer to the [Bitnami PostgreSQL chart documentation](https://artifacthub.io/packages/helm/bitnami/postgresql)
 for the exhaustive list of configuration options.

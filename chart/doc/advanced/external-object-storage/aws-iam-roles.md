@@ -121,6 +121,10 @@ registry:
     create: false
     name: gitlab-registry
 gitlab:
+  migrations:
+    serviceAccount:
+      create: false
+      name: gitlab-migrations
   webservice:
     serviceAccount:
       create: false
@@ -134,6 +138,8 @@ gitlab:
       create: false
       name: gitlab-toolbox
 ```
+
+Ensure that the IAM role's trust policy is configured to [trust these Kubernetes service accounts](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html).
 
 #### Using chart-owned service accounts
 
@@ -156,6 +162,10 @@ registry:
     annotations:
       eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab-registry
 gitlab:
+  migrations:
+    serviceAccount:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxxxxx:role/gitlab
   webservice:
     serviceAccount:
       annotations:
