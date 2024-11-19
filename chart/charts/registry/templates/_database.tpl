@@ -44,6 +44,16 @@ database:
     maxidletime: {{ .Values.database.pool.maxidletime }}
     {{- end }}
   {{- end }}
+  {{- if .Values.database.backgroundMigrations.enabled }}
+  backgroundmigrations:
+    enabled: {{ .Values.database.backgroundMigrations.enabled }}
+    {{- if .Values.database.backgroundMigrations.jobInterval }}
+    jobinterval: {{ .Values.database.backgroundMigrations.jobInterval | quote }}
+    {{- end }}
+    {{- if .Values.database.backgroundMigrations.maxJobRetries }}
+    maxjobretries: {{ .Values.database.backgroundMigrations.maxJobRetries }}
+    {{- end }}
+  {{- end }}
 {{- end }}
 {{- end -}}
 

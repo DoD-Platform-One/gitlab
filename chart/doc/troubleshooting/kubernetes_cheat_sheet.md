@@ -320,7 +320,7 @@ To patch the source code in the `toolbox` pod:
 
 1. Patch the local files on the `toolbox` pod:
 
-    ```shell
-    cd /srv/gitlab
-    busybox patch -p1 -f < ~/<mr_iid>.patch
-    ```
+   ```shell
+   cd /srv/gitlab
+   busybox patch -p1 -f < ~/<mr_iid>.patch
+   ```

@@ -50,3 +50,11 @@ tls:
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Labels to select Pods created by the KAS Deployment. Used for Service, PodMonitor, ServiceMonitor, etc.
+*/}}
+{{- define "kas.podSelectorLabels" -}}
+app: {{ template "name" . }}
+release: {{ .Release.Name }}
+{{- end -}}

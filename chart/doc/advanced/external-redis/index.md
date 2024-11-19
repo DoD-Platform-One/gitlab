@@ -131,8 +131,7 @@ The flip side of the flexibility of `redisYmlOverride` is that it is less user f
    you have three Redis instances that share a single set of Sentinels,
    you have to repeat the Sentinel configuration three times.
 1. The CNG images [expect a valid `resque.yml` and `cable.yml`](https://gitlab.com/gitlab-org/build/CNG/-/blob/4d314e505edb25ccefd4297d212bfbbb5bc562f9/gitlab-rails/scripts/lib/checks/redis.rb#L54)
-  so you still need to configure at least `global.redis.host` to get a
-  `resque.yml` file.
+   so you still need to configure at least `global.redis.host` to get a `resque.yml` file.
 
 ## Troubleshooting
 

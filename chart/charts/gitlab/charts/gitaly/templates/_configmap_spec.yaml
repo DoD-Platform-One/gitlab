@@ -210,5 +210,8 @@ data:
     {{-     if .cpuQuotaUs }}
     cpu_quota_us = {{ .cpuQuotaUs | int64 }}
     {{-     end }}
+    {{-     if .maxCgroupsPerRepo }}
+    max_cgroups_per_repo = {{ .maxCgroupsPerRepo | int64 }}
+    {{-     end }}
     {{-   end }}
     {{- end }}

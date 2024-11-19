@@ -1,8 +1,18 @@
+// Overrides from gluon commands.js
+Cypress.Commands.add('deleteGitlabProject', (url, username, projectName) => {
+  cy.visit(`${url}/${username}/${projectName}/edit`)
+  cy.get('section[data-testid="advanced-settings-content"]').click()
+  cy.get('button[data-testid="delete-button"]').click()
+  cy.get('input[data-testid="confirm-name-field"]').type(`${username}/${projectName}`)
+  cy.get('button[data-testid="confirm-delete-button"]').click()
+})
+
 Cypress.on('uncaught:exception', (err, runnable) => {
   // returning false here prevents Cypress from failing the test
   // gitlab throws this error in the console which by default fails the cypress test
   return false
 })
+
 
 describe('Gitlab Signup', () => {
   it('Check user is able to signup', () => {
@@ -104,7 +114,7 @@ describe('Create Gitlab Project', () => {
 
    //Browse to created user and delete
    cy.visit(`${Cypress.env('url')}/admin/users/${Cypress.env('gitlab_username')}`)
-   cy.get('div[data-testid="user-actions-2"]').find('button[data-testid="base-dropdown-toggle"]').click()
+   cy.get(`div[data-qa-username="${Cypress.env('gitlab_username')}"]`).find('button[data-testid="base-dropdown-toggle"]').click()
    cy.get('li[data-testid="delete-deleteWithContributions"]').find('button').click()
    cy.get('input[name="username"]').type(`${Cypress.env('gitlab_first_name')} ${Cypress.env('gitlab_last_name')}`)
    cy.contains('span', 'Delete user and contributions').click({force: true})

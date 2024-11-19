@@ -24,6 +24,191 @@ describe 'global configuration' do
     end
   end
 
+  describe 'global serviceaccount token automount' do
+    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
+
+    context 'global enabled, local unset' do
+      let(:global_service_account) do
+        YAML.safe_load(%(
+          global:
+            serviceAccount:
+              enabled: true
+              automountServiceAccountToken: true
+          gitlab:
+            gitaly:
+              serviceAccount: {}
+        )).deep_merge(default_values)
+      end
+
+      it 'serviceaccount token for gitaly' do
+        t = HelmTemplate.new(global_service_account)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+
+        expect(gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['automountServiceAccountToken']).to eq(true)
+      end
+    end
+
+    context 'global enabled, local disabled' do
+      let(:global_service_account) do
+        YAML.safe_load(%(
+          global:
+            serviceAccount:
+              enabled: true
+              automountServiceAccountToken: true
+          gitlab:
+            gitaly:
+              serviceAccount:
+                automountServiceAccountToken: false
+        )).deep_merge(default_values)
+      end
+
+      it 'serviceaccount token for gitaly' do
+        t = HelmTemplate.new(global_service_account)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+
+        expect(gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['automountServiceAccountToken']).to eq(false)
+      end
+    end
+
+    context 'global enabled, local enabled' do
+      let(:global_service_account) do
+        YAML.safe_load(%(
+          global:
+            serviceAccount:
+              enabled: true
+              automountServiceAccountToken: true
+          gitlab:
+            gitaly:
+              serviceAccount:
+                automountServiceAccountToken: true
+        )).deep_merge(default_values)
+      end
+
+      it 'serviceaccount token for gitaly' do
+        t = HelmTemplate.new(global_service_account)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+
+        expect(gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['automountServiceAccountToken']).to eq(true)
+      end
+    end
+
+    context 'global disabled, local enabled' do
+      let(:global_service_account) do
+        YAML.safe_load(%(
+          global:
+            serviceAccount:
+              enabled: true
+              automountServiceAccountToken: false
+          gitlab:
+            gitaly:
+              serviceAccount:
+                automountServiceAccountToken: true
+        )).deep_merge(default_values)
+      end
+
+      it 'serviceaccount token for gitaly' do
+        t = HelmTemplate.new(global_service_account)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+
+        expect(gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['automountServiceAccountToken']).to eq(true)
+      end
+    end
+  end
+
+  describe 'NGINX global serviceaccount token automount' do
+    let(:nginx_sa) { 'ServiceAccount/test-nginx-ingress' }
+    let(:nginx_backend_sa) { 'ServiceAccount/test-nginx-ingress-backend' }
+
+    context 'global enabled, local unset' do
+      let(:nginx_service_account) do
+        YAML.safe_load(%(
+          global:
+            serviceAccount:
+              enabled: true
+              automountServiceAccountToken: true
+          nginx-ingress:
+            enabled: true
+            serviceAccount: {}
+            defaultBackend:
+              enabled: true
+              serviceAccount: {}
+        )).deep_merge(default_values)
+      end
+
+      it 'serviceaccount token for nginx-ingress' do
+        t = HelmTemplate.new(nginx_service_account)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        nginx_item = t.resources_by_kind('ServiceAccount').select { |key| key == nginx_sa }
+        expect(nginx_item[nginx_sa]['automountServiceAccountToken']).to eq(true)
+
+        nginx_item = t.resources_by_kind('ServiceAccount').select { |key| key == nginx_backend_sa }
+        expect(nginx_item[nginx_backend_sa]['automountServiceAccountToken']).to eq(true)
+      end
+    end
+
+    context 'global enabled, local disabled' do
+      let(:nginx_service_account) do
+        YAML.safe_load(%(
+          global:
+            serviceAccount:
+              enabled: true
+              automountServiceAccountToken: true
+          nginx-ingress:
+            enabled: true
+            serviceAccount:
+              automountServiceAccountToken: false
+            defaultBackend:
+              enabled: true
+              serviceAccount:
+                automountServiceAccountToken: false
+        )).deep_merge(default_values)
+      end
+
+      it 'serviceaccount token for nginx-ingress' do
+        t = HelmTemplate.new(nginx_service_account)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        nginx_item = t.resources_by_kind('ServiceAccount').select { |key| key == nginx_sa }
+        expect(nginx_item[nginx_sa]['automountServiceAccountToken']).to eq(false)
+
+        nginx_item = t.resources_by_kind('ServiceAccount').select { |key| key == nginx_backend_sa }
+        expect(nginx_item[nginx_backend_sa]['automountServiceAccountToken']).to eq(false)
+      end
+    end
+
+    context 'global disable, local enabled' do
+      let(:nginx_service_account) do
+        YAML.safe_load(%(
+          global:
+            serviceAccount:
+              enabled: true
+              automountServiceAccountToken: false
+          nginx-ingress:
+            enabled: true
+            serviceAccount:
+              automountServiceAccountToken: true
+            defaultBackend:
+              enabled: true
+              serviceAccount:
+                automountServiceAccountToken: true
+        )).deep_merge(default_values)
+      end
+
+      it 'serviceaccount token for nginx-ingress' do
+        t = HelmTemplate.new(nginx_service_account)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        nginx_item = t.resources_by_kind('ServiceAccount').select { |key| key == nginx_sa }
+        expect(nginx_item[nginx_sa]['automountServiceAccountToken']).to eq(true)
+
+        nginx_item = t.resources_by_kind('ServiceAccount').select { |key| key == nginx_backend_sa }
+        expect(nginx_item[nginx_backend_sa]['automountServiceAccountToken']).to eq(true)
+      end
+    end
+  end
+
   describe 'registry and geo sync enabled' do
     let(:registry_notifications) do
       YAML.safe_load(%(

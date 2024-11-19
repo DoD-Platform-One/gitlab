@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v4.6.0-gitlab'
+  tag: 'v4.10.0-gitlab'
   # pullPolicy: IfNotPresent
 # pullSecrets: []
 
@@ -132,7 +132,12 @@ init:
   resources:
     requests:
       cpu: 50m
-  containerSecurityContext: {}
+  containerSecurityContext:
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    capabilities:
+      drop: [ "ALL" ]
   script: |-
     if [ -e /config/accesskey ] ; then
       sed -i -e 's@ACCESS_KEY@'"$(cat /config/accesskey)"'@' -e 's@SECRET_KEY@'"$(cat /config/secretkey)"'@' /registry/config.yml
@@ -347,10 +352,16 @@ securityContext:
   runAsUser: 1000
   fsGroup: 1000
   # fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: "RuntimeDefault"
 
 ## Allow to overwrite the specific security context under which the container is running.
 containerSecurityContext:
   runAsUser: 1000
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  capabilities:
+    drop: [ "ALL" ]
 
 # Disable reporting by default
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#reporting
@@ -370,11 +381,13 @@ profiling:
 
 serviceAccount:
   create: false
+  ## Used for local override of global ServiceAccount token mounting
+  # automountServiceAccountToken: false
+
 
 
 # Disable metadata database by default
-# NOTE: The metadata database is a beta feature from version 16.4 and later. Please
-# review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
+# Please review the [feedback issue](https://gitlab.com/gitlab-org/gitlab/-/issues/423459)
 # and associated documentation before enabling this feature.
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database
 database:
@@ -393,6 +406,8 @@ database:
     backoffLimit: 6
     # Annotations for the job
     annotations: {}
+  backgroundMigrations:
+    enabled: false
 
 redis:
   # Redis cache to be used in conjunction with the metadata database.

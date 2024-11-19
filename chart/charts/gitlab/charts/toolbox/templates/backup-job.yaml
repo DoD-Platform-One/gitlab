@@ -21,6 +21,9 @@ spec:
   startingDeadlineSeconds: {{ .Values.backups.cron.startingDeadlineSeconds }}
   successfulJobsHistoryLimit: {{ .Values.backups.cron.successfulJobsHistoryLimit }}
   suspend: {{ .Values.backups.cron.suspend }}
+  {{- if .Values.backups.cron.timeZone }}
+  timeZone: {{ .Values.backups.cron.timeZone | quote }}
+  {{- end }}
   jobTemplate:
     spec:
       backoffLimit: {{ .Values.backups.cron.backoffLimit }}

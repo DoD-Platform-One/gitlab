@@ -42,9 +42,41 @@ The following adjustments were made to the NGINX fork:
   - `controller.service.enableShell`.
   - `controller.service.internal.enableShell`.
   (follows the exisiting chart pattern of `controller.service.enableHttp(s)`)
+- Add the template call `{{ include "ingress-nginx.automountServiceAccountToken" . }}` to `controller-serviceaccount.yaml`
+- Add the template to `_helpers.tpl`:
+
+  ```go
+  {{/*
+  Set if the default ServiceAccount token should be mounted by Kubernetes or not.
+
+  Default is 'true'
+  */}}
+  {{- define "ingress-nginx.automountServiceAccountToken" -}}
+  automountServiceAccountToken: {{ pluck "automountServiceAccountToken" .Values.serviceAccount .Values.global.serviceAccount | first }}
+  {{- end -}}
+  ```
+
+- Add the template call `{{ include "ingress-nginx.defaultBackend.automountServiceAccountToken" . }}` to `default-backend-serviceaccount.yaml`
+- Add the template to `_helpers.tpl`:
+
+  ```go
+  {{/*
+  Set if the default ServiceAccount token should be mounted by Kubernetes or not.
+
+  Default is 'true'
+  */}}
+  {{- define "ingress-nginx.defaultBackend.automountServiceAccountToken" -}}
+  automountServiceAccountToken: {{ pluck "automountServiceAccountToken" .Values.defaultBackend.serviceAccount .Values.global.serviceAccount | first }}
+  {{- end -}}
+  ```
+
+- Add the following attributes to comply with Pod Security Standards Profile Restricted:
+  - `controller-deployment.yaml`
+    - `spec.template.spec.containers[0].securityContext.runAsNonRoot`
+    - `spec.template.spec.containers[0].securityContext.seccompProfile`
 - Add the following new RBAC rules. This is necessary while our chart is on 4.0.6, but we've bumped the controller image to 1.11.2. Once we bring the chart to 4.11.2, we can remove this patch. It was required because the controller now uses endpointslices to track endpoints.
-  This was added to both: `charts/nginx-ingress/templates/clusterrole.yaml` and `charts/nginx-ingress/templates/controller-role.yaml`:
-  
+  This was added to both: `charts/nginx-ingress/templates/clusterrole.yaml` and `charts/nginx-ingress/templates/controller-role.yaml`: 
+
   ```yaml
   - apiGroups:
       - discovery.k8s.io

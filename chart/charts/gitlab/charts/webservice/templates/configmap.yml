@@ -53,6 +53,8 @@ data:
         username_changing_enabled: {{ eq .usernameChangingEnabled true }}
         issue_closing_pattern: {{ .issueClosingPattern | quote }}
         default_theme: {{ .defaultTheme }}
+        default_color_mode: {{ .defaultColorMode }}
+        default_syntax_highlighting_theme: {{ .defaultSyntaxHighlightingTheme }}
         {{- include "gitlab.appConfig.defaultProjectsFeatures.configuration" $ | nindent 8 }}
         {{- if hasKey .initialDefaults "signupEnabled" }}
         signup_enabled: {{ .initialDefaults.signupEnabled }}

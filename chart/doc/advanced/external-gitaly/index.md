@@ -246,11 +246,11 @@ Gitaly port for your Kubernetes pod IP range.
 
 1. Apply the new configuration using the `gitlab.yml` and `mixed-gitaly.yml` files:
 
-    ```shell
-    helm upgrade --install gitlab gitlab/gitlab \
-      -f gitlab.yml \
-      -f mixed-gitaly.yml
-    ```
+   ```shell
+   helm upgrade --install gitlab gitlab/gitlab \
+     -f gitlab.yml \
+     -f mixed-gitaly.yml
+   ```
 
 1. On the Toolbox pod, confirm that GitLab can connect to the external Gitaly successfully:
 
@@ -320,9 +320,9 @@ Schedule the move by following the steps indicated in [moving repositories](http
 
 1. Consider generating a consolidated `gitlab.yml` for the future that includes the external Gitaly configuration:
 
-    ```shell
-    helm get values <RELEASE_NAME> -o yaml > gitlab.yml
-    ```
+   ```shell
+   helm get values <RELEASE_NAME> -o yaml > gitlab.yml
+   ```
 
 1. Disable the internal Gitaly subchart in the `gitlab.yml` file, and point the new `default` repository storage to the external Gitaly service. [GitLab requires a default repository storage](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#gitlab-requires-a-default-repository-storage):
 
@@ -521,11 +521,11 @@ IP address for the external Gitaly service to the `nginx-ingress` configuration 
 
 1. Apply the new configuration using both `gitlab.yml` and `ingress-only-allow-ext-gitaly.yml` files:
 
-    ```shell
-    helm upgrade <release> gitlab/gitlab \
-      -f gitlab.yml \
-      -f ingress-only-allow-ext-gitaly.yml
-    ```
+   ```shell
+   helm upgrade <release> gitlab/gitlab \
+     -f gitlab.yml \
+     -f ingress-only-allow-ext-gitaly.yml
+   ```
 
 **8. Create list of repository checksums**
 
@@ -590,12 +590,12 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
 
 1. Apply the new configuration using the `gitlab.yml`, `ingress-only-allow-ext-gitaly.yml`, and `external-gitaly.yml` files:
 
-    ```shell
-    helm upgrade --install gitlab gitlab/gitlab \
-      -f gitlab.yml \
-      -f ingress-only-allow-ext-gitaly.yml \
-      -f external-gitaly.yml
-    ```
+   ```shell
+   helm upgrade --install gitlab gitlab/gitlab \
+     -f gitlab.yml \
+     -f ingress-only-allow-ext-gitaly.yml \
+     -f external-gitaly.yml
+   ```
 
 1. Scale up your Webservice pods to the original replica count if they aren't running. This is required so we can test the
    GitLab to external Gitaly connection in the following steps.

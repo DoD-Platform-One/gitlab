@@ -44,6 +44,9 @@ Table below contains all the possible charts configurations that can be supplied
 | `init.image.repository`     | initContainer image repository           | `registry.gitlab.com/gitlab-org/build/cng/gitlab-base` |
 | `init.image.tag`            | initContainer image tag                  | `master`          |
 | `init.image.containerSecurityContext` | init container securityContext overrides | `{}`    |
+| `init.containerSecurityContext.allowPrivilegeEscalation` | initContainer specific: Controls whether a process can gain more privileges than its parent process                                                                             | `false`                                                                               |
+| `init.containerSecurityContext.runAsNonRoot`             | initContainer specific: Controls whether the container runs with a non-root user                                                                                                | `true`                                                                                |
+| `init.containerSecurityContext.capabilities.drop`        | initContainer specific: Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the container                                               | `[ "ALL" ]`                                                                           |
 | `enabled`                   | Migrations enable flag                   | `true`            |
 | `tolerations`               | Toleration labels for pod assignment     | `[]`              |
 | `affinity`                  | [Affinity rules](../index.md#affinity) for pod assignment            | `{}`              |
@@ -55,16 +58,25 @@ Table below contains all the possible charts configurations that can be supplied
 | `psql.password.secret`      | psql secret                              | `gitlab-postgres` |
 | `psql.password.key`         | key to psql password in psql secret      | `psql-password`   |
 | `psql.port`                 | Set PostgreSQL server port. Takes precedence over `global.psql.port` |   |
-| `resources.requests.cpu`    | `250m`                                   | GitLab Migrations minimum CPU |
-| `resources.requests.memory` | `200Mi`                                  | GitLab Migrations minimum memory |
-| `securityContext.fsGroup`   | `1000`                                   | Group ID under which the pod should be started |
-| `securityContext.runAsUser` | `1000`                                   | User ID under which the pod should be started |
-| `securityContext.fsGroupChangePolicy` |                                | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |
+| `resources.requests.cpu`    | GitLab Migrations minimum CPU                  | `250m`                                   |
+| `resources.requests.memory` | GitLab Migrations minimum memory               | `200Mi`                                  |
+| `securityContext.fsGroup`   | Group ID under which the pod should be started | `1000`                                   |
+| `securityContext.runAsUser` | User ID under which the pod should be started  | `1000`                                   |
+| `securityContext.fsGroupChangePolicy` | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |    |
+| `securityContext.seccompProfile.type`                    | Seccomp profile to use                                                                                                                                                          | `RuntimeDefault`                                                                      |
 | `containerSecurityContext.runAsUser`  | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started | `1000` |
+| `containerSecurityContext.allowPrivilegeEscalation`      | Controls whether a process of the container can gain more privileges than its parent process                                                                                    | `false`                                                                               |
+| `containerSecurityContext.runAsNonRoot`                  | Controls whether the container runs with a non-root user                                                                                                                        | `true`                                                                                |
+| `containerSecurityContext.capabilities.drop`             | Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the Gitaly container                                                                | `[ "ALL" ]`                                                                           |
+| `serviceAccount.annotations` | ServiceAccount annotations              | `{}`                                                    |
+| `serviceAccount.automountServiceAccountToken`| Indicates whether or not the default ServiceAccount access token should be mounted in pods | `false`    |
+| `serviceAccount.create`     | Indicates whether or not a ServiceAccount should be created                                      | `false`           |
+| `serviceAccount.enabled`    | Indicates whether or not to use a ServiceAccount                                | `false`           |
+| `serviceAccount.name`       | Name of the ServiceAccount. If not set, the full chart name is used  |                   |
 | `extraInitContainers`       | List of extra init containers to include |                   |
 | `extraContainers`           | List of extra containers to include      |                   |
 | `extraVolumes`              | List of extra volumes to create          |                   |
-| `extraVolumeMounts`         | List of extra volumes mounts to do      |                   |
+| `extraVolumeMounts`         | List of extra volumes mounts to do       |                   |
 | `extraEnv`                  | List of extra environment variables to expose |              |
 | `extraEnvFrom`              | List of extra environment variables from other data sources to expose|                              |
 | `bootsnap.enabled`          | Enable the Bootsnap cache for Rails      | `true`            |
@@ -136,6 +148,18 @@ image:
   - name: my-secret-name
   - name: my-secondary-secret-name
 ```
+
+### serviceAccount
+
+This section controls if a ServiceAccount should be created and if the default access token should be mounted in pods.
+
+| Name                           |  Type   | Default | Description                                                                                                                                                                      |
+| :----------------------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `annotations`                  | Map     | `{}`    | ServiceAccount annotations.                                                                                                                                                      |
+| `automountServiceAccountToken` | Boolean | `false` | Controls if the default ServiceAccount access token should be mounted in pods. You should not enable this unless it is required by certain sidecars to work properly (for example, Istio). |
+| `create`                       | Boolean | `false` | Indicates whether or not a ServiceAccount should be created.                                                                                                                     |
+| `enabled`                      | Boolean | `false` | Indicates whether or not to use a ServiceAccount.                                                                                                                                |
+| `name`                         | String  |         | Name of the ServiceAccount. If not set, the full chart name is used.                                                                                                             |
 
 ### affinity
 

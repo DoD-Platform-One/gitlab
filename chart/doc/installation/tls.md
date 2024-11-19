@@ -16,7 +16,7 @@ acquire the TLS certificates for your deployment. Extensive details can be found
 ## Option 1: cert-manager and Let's Encrypt
 
 Let’s Encrypt is a free, automated, and open Certificate Authority. Certificates can be automatically requested
-using various tools. This chart comes ready to integrate with a popular choice [cert-manager](https://github.com/jetstack/cert-manager).
+using various tools. This chart comes ready to integrate with a popular choice [cert-manager](https://github.com/cert-manager/cert-manager).
 
 *If you are already using cert-manager*, you can use `global.ingress.annotations` to configure [appropriate annotations](https://cert-manager.io/docs/usage/ingress/#supported-annotations) for your cert-manager deployment.
 

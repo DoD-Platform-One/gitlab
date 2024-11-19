@@ -54,7 +54,7 @@ Docker images that are used for `initContainers` and various `Job`s.
 We leverage the following existing official containers for
 underlying services:
 
-- Docker Distribution ([Docker Registry 2.0](https://github.com/docker/distribution))
+- Docker Distribution ([Docker Registry 2.0](https://github.com/distribution/distribution))
 - Prometheus
 - NGINX Ingress
 - cert-manager

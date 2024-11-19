@@ -36,9 +36,7 @@ spec:
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
-      securityContext:
-        runAsUser: {{ .Values.securityContext.runAsUser }}
-        fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- include "gitlab.podSecurityContext" .Values.securityContext | nindent 6 }}
       {{- if or .Values.serviceAccount.enabled .Values.global.serviceAccount.enabled }}
       serviceAccountName: {{ include "gitlab.serviceAccount.name" . }}
       {{- end }}
@@ -52,6 +50,7 @@ spec:
         imagePullPolicy: {{ .Values.init.image.pullPolicy }}
         {{- else }}
         {{- include "gitlab.image.pullPolicy" $initImageCfg | indent 8 }}
+        {{- include "gitlab.init.containerSecurityContext" $ | indent 8 }}
         {{- end }}
         args: ['sh', '/config/configure']
         volumeMounts:
@@ -92,6 +91,7 @@ spec:
         {{- include "gitlab.certificates.volumeMount" . | nindent 10 }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
+        {{- include "gitlab.containerSecurityContext" $ | indent 8 }}
         env:
         - name: BYPASS_SCHEMA_VERSION
           value: 'true'

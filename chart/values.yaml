@@ -57,7 +57,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "17.3.6"
+  gitlabVersion: "17.5.1"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -269,6 +269,8 @@ global:
     usernameChangingEnabled: true
     issueClosingPattern:
     defaultTheme:
+    defaultColorMode:
+    defaultSyntaxHighlightingTheme:
     defaultProjectsFeatures:
       issues: true
       mergeRequests: true
@@ -823,7 +825,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -872,13 +874,15 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     securityContext:
       # in most base images, this is `nobody:nogroup`
       runAsUser: 65534
       fsGroup: 65534
+      seccompProfile:
+        type: "RuntimeDefault"
   gitlabBase:
     image:
       # repository: busybox
@@ -887,7 +891,7 @@ global:
       # 1. UBI does not have the newly required /scripts/set-config template generator in its entrypoint.
       #   a. trying gitlab-base per https://repo1.dso.mil/dsop/gitlab/gitlab/gitlab-base/-/issues/77
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base
-      tag: "17.3.6"
+      tag: "17.5.1"
       pullSecrets:
       - name: private-registry
 
@@ -958,12 +962,16 @@ upgradeCheck:
     runAsUser: 65534
     runAsGroup: 65534
     fsGroup: 65534
+    seccompProfile:
+      type: "RuntimeDefault"
+  ## Allow to overwrite the specific security context under which the container is running.
   containerSecurityContext:
     runAsUser: 65534
     runAsGroup: 65534
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
     capabilities:
-      drop:
-        - ALL
+      drop: [ "ALL" ]
   tolerations: []
   annotations:
     sidecar.istio.io/inject: "true"
@@ -1116,6 +1124,26 @@ prometheus:
       type: Recreate
     image:
       tag: v2.38.0
+    containerSecurityContext:
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities:
+        drop: [ "ALL" ]
+      seccompProfile:
+        type: "RuntimeDefault"
+  podSecurityPolicy:
+    enabled: false
+  configmapReload:
+    prometheus:
+      containerSecurityContext:
+        runAsUser: 1000
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: [ "ALL" ]
+        seccompProfile:
+          type: "RuntimeDefault"
   serverFiles:
     prometheus.yml:
       scrape_configs:
@@ -1261,7 +1289,7 @@ redis:
     image:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
-      tag: v1.65.0
+      tag: v1.66.0
       pullSecrets: []
     resources:
       limits:
@@ -1450,7 +1478,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 17.3.6
+    tag: 17.5.1
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1505,10 +1533,13 @@ shared-secrets:
     runAsUser: 65534
     runAsGroup: 65534
     fsGroup: 65534
+    seccompProfile:
+      type: "RuntimeDefault"
   containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
     capabilities:
-      drop:
-        - ALL
+      drop: [ "ALL" ]
   tolerations: []
   podLabels: {}
   annotations:
@@ -1543,6 +1574,9 @@ gitlab-runner:
   podAnnotations:
     gitlab.com/prometheus_scrape: "true"
     gitlab.com/prometheus_port: 9252
+  podSecurityContext:
+    seccompProfile:
+      type: "RuntimeDefault"
   securityContext:
     capabilities:
       drop:
@@ -1584,7 +1618,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1661,7 +1695,7 @@ gitlab:
         - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1706,7 +1740,7 @@ gitlab:
         memory: 1.5G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1755,7 +1789,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1768,7 +1802,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1792,7 +1826,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1829,7 +1863,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1870,7 +1904,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
       - name: private-registry
     init:
@@ -1914,7 +1948,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 17.3.6
+      tag: 17.5.1
       pullSecrets:
         - name: private-registry
     containerSecurityContext:
@@ -1931,7 +1965,7 @@ gitlab:
         type: ClusterIP
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 17.3.6
+      tag: 17.5.1
     containerSecurityContext:
       capabilities:
         drop:
@@ -1942,7 +1976,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.3.6
+      tag: 17.5.1
     init:
       resources:
         limits:

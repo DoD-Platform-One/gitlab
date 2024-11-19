@@ -13,7 +13,7 @@ DETAILS:
 The following applications within the GitLab chart require persistent storage to maintain state.
 
 - [Gitaly](../charts/gitlab/gitaly/index.md) (persists the Git repositories)
-- [PostgreSQL](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) (persists the GitLab database data)
+- [PostgreSQL](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) (persists the GitLab database data)
 - [Redis](https://github.com/bitnami/charts/tree/main/bitnami/redis) (persists GitLab job data)
 - [MinIO](../charts/minio/index.md) (persists the object storage data)
 
@@ -75,7 +75,7 @@ Follow the links below for further reading and additional persistence options:
 - [Gitaly persistence configuration](../charts/gitlab/gitaly/index.md#git-repository-persistence)
 - [MinIO persistence configuration](../charts/minio/index.md#persistence)
 - [Redis persistence configuration](https://github.com/bitnami/charts/tree/main/bitnami/redis#persistence)
-- [Upstream PostgreSQL chart configuration](https://github.com/bitnami/charts/tree/master/bitnami/postgresql#configuration-and-installation-details)
+- [Upstream PostgreSQL chart configuration](https://github.com/bitnami/charts/tree/main/bitnami/postgresql#configuration-and-installation-details)
 
 > **Note**: Some of the advanced persistence options differ between PostgreSQL and the others, so it's important to check
 > the specific documentation for each before making changes.
@@ -103,7 +103,7 @@ kubectl create -f *PV_YAML_FILE*
 
 NOTE:
 If you need to deploy in multiple zones, you should review
-[Amazon's own documentation on storage classes](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html)
+[Amazon's own documentation on storage classes](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)
 when defining your storage solution.
 
 1. [Create a persistent disk in the cluster.](https://kubernetes.io/docs/concepts/storage/volumes/#creating-an-ebs-volume)

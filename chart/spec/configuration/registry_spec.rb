@@ -258,6 +258,74 @@ describe 'registry configuration' do
         end
       end
 
+      context 'when backgroundMigrations is enabled' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              database:
+                enabled: true
+                backgroundMigrations:
+                  enabled: true
+                  maxJobRetries: 3
+                  jobInterval: 5s
+          )).deep_merge(default_values)
+        end
+
+        it 'populates the database backgroundmigrations settings correctly' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            database:
+              enabled: true
+              host: "test-postgresql.default.svc"
+              port: 5432
+              user: registry
+              password: "DB_PASSWORD_FILE"
+              dbname: registry
+              sslmode: disable
+              backgroundmigrations:
+                enabled: true
+                jobinterval: "5s"
+                maxjobretries: 3
+            CONFIG
+          )
+        end
+      end
+
+      context 'when backgroundMigrations is enabled and configured properly without maxJobRetries and jobInterval' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              database:
+                enabled: true
+                backgroundMigrations:
+                  enabled: true
+          )).deep_merge(default_values)
+        end
+
+        it 'populates the backgroundmigrations settings without maxjobretries and jobinterval' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            database:
+              enabled: true
+              host: "test-postgresql.default.svc"
+              port: 5432
+              user: registry
+              password: "DB_PASSWORD_FILE"
+              dbname: registry
+              sslmode: disable
+              backgroundmigrations:
+                enabled: true
+            CONFIG
+          )
+        end
+      end
+
       context 'when extraEnv and extraEnvFrom are set' do
         let(:values) do
           YAML.safe_load(%(

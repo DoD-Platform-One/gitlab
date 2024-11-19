@@ -154,7 +154,7 @@ objects. Therefore, it's best to plan ahead before deploying your production ins
 ### TLS certificates
 
 You should be running GitLab with HTTPS, which requires TLS certificates. By default, the
-GitLab chart installs and configures [`cert-manager`](https://github.com/jetstack/cert-manager)
+GitLab chart installs and configures [`cert-manager`](https://github.com/cert-manager/cert-manager)
 to obtain free TLS certificates.
 
 If you have your own wildcard certificate, or you already have `cert-manager` installed, or you
@@ -257,7 +257,7 @@ across all certificates used for the exporter endpoints:
      `extraSecretMounts:` configuration.
    - Set that as the `tls_config.ca_file` for the Prometheus `scrape_config`.
 
-The [Prometheus TLS values example](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/prometheus/values-tls.yaml)
+The [Prometheus TLS values example](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/prometheus/values-tls.yaml)
 provides an example for this shared configuration by:
 
 1. Setting `tls_config.server_name` to `metrics.gitlab` for the pod/endpoint

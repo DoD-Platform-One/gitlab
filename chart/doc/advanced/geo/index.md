@@ -172,7 +172,6 @@ puma['enable']=false
 gitlab_workhorse['enable']=false
 nginx['enable']=false
 geo_logcursor['enable']=false
-grafana['enable']=false
 gitaly['enable']=false
 redis['enable']=false
 gitlab_kas['enable']=false
@@ -398,7 +397,6 @@ puma['enable']=false
 gitlab_workhorse['enable']=false
 nginx['enable']=false
 geo_logcursor['enable']=false
-grafana['enable']=false
 gitaly['enable']=false
 redis['enable']=false
 prometheus_monitoring['enable'] = false
@@ -751,12 +749,6 @@ In some cases, you may want to give users control over which site they visit. Fo
      1. Select the pencil icon to **Edit the secondary site**.
      1. Edit the External URL, for example `https://shanghai.gitlab.example.com`.
      1. Select **Save changes**.
-   - Using a Rails runner command:
-     1. In a toolbox container in the primary site:
-
-        ```shell
-        kubectl --namespace gitlab exec -ti gitlab-geo-toolbox-XXX -- gitlab-rails runner "GeoNode.secondary_nodes.last.update!(url: 'https://shanghai.gitlab.example.com')"
-        ```
 
 1. Redeploy the secondary site's chart:
 
