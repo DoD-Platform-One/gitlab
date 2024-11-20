@@ -3,6 +3,28 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [8.5.2-bb.0] (2024-11-19)
+
+### Changed
+
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse (source) 7.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl (source) 17.5.1 -> 17.5.2
+- registry1.dso.mil/ironbank/opensource/postgres/postgresql (source) 14.13 -> 14.14
+- registry1.dso.mil/ironbank/redhat/ubi/ubi9 (source) 9.4 -> 9.5
+
 ## [8.5.1-bb.0] (2024-11-13)
 
 ### Changed
