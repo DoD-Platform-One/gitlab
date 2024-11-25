@@ -1,15 +1,14 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.5.2-bb.0](https://img.shields.io/badge/Version-8.5.2--bb.0-informational?style=flat-square) ![AppVersion: 17.5.2](https://img.shields.io/badge/AppVersion-17.5.2-informational?style=flat-square)
+![Version: 8.5.2-bb.0](https://img.shields.io/badge/Version-8.5.2--bb.0-informational?style=flat-square) ![AppVersion: 17.5.2](https://img.shields.io/badge/AppVersion-17.5.2-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream References
-
 - <https://about.gitlab.com/>
 
-- <https://gitlab.com/gitlab-org/charts/gitlab>
+* <https://gitlab.com/gitlab-org/charts/gitlab>
 
 ## Upstream Release Notes
 
@@ -28,7 +27,7 @@ The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab
 
 Install Helm
 
-<https://helm.sh/docs/intro/install/>
+https://helm.sh/docs/intro/install/
 
 ## Deployment
 
@@ -1147,3 +1146,4 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 ---
 
 _This file is programatically generated using `helm-docs` and some BigBang-specific templates. The `gluon` repository has [instructions for regenerating package READMEs](https://repo1.dso.mil/big-bang/product/packages/gluon/-/blob/master/docs/bb-package-readme.md)._
+

@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - registry1.dso.mil/ironbank/gitlab/gitlab/kubectl (source) 17.5.1 -> 17.5.2
 - registry1.dso.mil/ironbank/opensource/postgres/postgresql (source) 14.13 -> 14.14
 - registry1.dso.mil/ironbank/redhat/ubi/ubi9 (source) 9.4 -> 9.5
+- Added the maintenance track annotation and badge
 
 ## [8.5.1-bb.0] (2024-11-13)
 
