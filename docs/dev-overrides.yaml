@@ -23,6 +23,20 @@ clusterAuditor:
 gatekeeper:
   enabled: false
 
+kyverno:
+  enabled: true
+
+kyvernoPolicies:
+  enabled: true
+  values:
+    policies:
+      require-non-root-group:
+        exclude:
+          any:
+            - resources:
+                namespaces:
+                  - gitlab-runner
+
 istioOperator:
   enabled: true
 
@@ -61,6 +75,21 @@ addons:
 
   gitlabRunner:
     enabled: true
+    values:
+      autoRegister:
+        enabled: true
+      # Allow gitlab runner to run unprotected branches
+      runners:
+        protected: false
+
+      networkPolicies:
+        enabled: true
+        controlPlaneCidr: 172.20.0.0/29
+        kubeAPIPort: 6443
+    # If you are testing the runner, uncomment the following
+#    git:
+#      tag: null
+#      branch: "your-development-branch-name"
 
   gitlab:
     enabled: true
