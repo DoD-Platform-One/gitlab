@@ -8,15 +8,26 @@ export CI_CONTAINER_NAME=ci_job_build_${CI_JOB_ID}
 
 # Derive the Helm RELEASE argument from CI_ENVIRONMENT_SLUG
 if [[ $CI_ENVIRONMENT_SLUG =~ ^[^-]+-review ]]; then
+  # if multiarch deployment is on - we will be deploying *two*
+  # charts - one for "amd64" and second for "arm64" thus the need
+  # to avoid name collision:
+  if [ "${DEPLOY_MULTIARCH}" == "true" ]; then
+    RELEASE_NAME="rvw-a-${REVIEW_REF_PREFIX}${CI_COMMIT_SHORT_SHA}"
+  else
+    RELEASE_NAME=rvw-${REVIEW_REF_PREFIX}${CI_COMMIT_SHORT_SHA}
+  fi
   # if a "review", use $REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
-  RELEASE_NAME=rvw-${REVIEW_REF_PREFIX}${CI_COMMIT_SHORT_SHA}
   # Trim release name to leave room for prefixes/suffixes
   RELEASE_NAME=${RELEASE_NAME:0:30}
   # Trim any hyphens in the suffix
   RELEASE_NAME=${RELEASE_NAME%-}
 else
   # otherwise, use CI_ENVIRONMENT_SLUG
-  RELEASE_NAME=$CI_ENVIRONMENT_SLUG
+  if [ "${DEPLOY_MULTIARCH}" == "true" ]; then
+    RELEASE_NAME="a-${CI_ENVIRONMENT_SLUG}"
+  else
+    RELEASE_NAME=$CI_ENVIRONMENT_SLUG
+  fi
 fi
 export RELEASE_NAME
 
@@ -43,6 +54,7 @@ function previousDeployFailed() {
 }
 
 function deploy() {
+  echo "DEPLOY_MULTIARCH: $DEPLOY_MULTIARCH"
   # Cleanup and previous installs, as FAILED and PENDING_UPGRADE will cause errors with `upgrade`
   if [ "$RELEASE_NAME" != "production" ] && previousDeployFailed ; then
     echo "Deployment in bad state, cleaning up $RELEASE_NAME"
@@ -154,10 +166,14 @@ CIYAML
 
     SENTRY_CONFIGURATION="-f ci.sentry.yaml"
   fi
-
+  MULTIARCH_CONFIGURATION=""
+  if [ "${DEPLOY_MULTIARCH}" == "true" ]; then
+    MULTIARCH_CONFIGURATION="-f scripts/ci/arm_nodeselectors.yaml"
+  fi
   helm upgrade --install \
     $WAIT \
     ${SENTRY_CONFIGURATION} \
+    ${MULTIARCH_CONFIGURATION} \
     -f ci.details.yaml \
     -f ci.scale.yaml \
     -f ci.psql.yaml \

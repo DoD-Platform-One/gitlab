@@ -279,7 +279,7 @@ If the endpoint can be and is TLS-enabled they will also set the
 `gitlab.com/prometheus_scheme: "https"` annotation, as well as the
 `prometheus.io/scheme: "https"` annotation, either of which can be used with a
 `relabel_config` to set the Prometheus `__scheme__` target label.
-The [Prometheus TLS values example](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples/prometheus/values-tls.yaml)
+The [Prometheus TLS values example](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/prometheus/values-tls.yaml)
 includes a `relabel_config` that targets `__scheme__` using the
 `gitlab.com/prometheus_scheme: "https"` annotation.
 

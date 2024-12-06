@@ -198,15 +198,35 @@ module Gitlab
       return [stdout, status]
     end
 
-    def set_runner_token
+    def update_application_settings
       cmd = full_command(
-        "gitlab-rails runner \"" \
-        "settings = ApplicationSetting.current_without_cache; " \
-        "settings.update_columns(encrypted_customers_dot_jwt_signing_key_iv: nil, encrypted_customers_dot_jwt_signing_key: nil, encrypted_ci_jwt_signing_key_iv: nil, encrypted_ci_jwt_signing_key: nil, error_tracking_access_token_encrypted: nil); " \
-        "settings.set_runners_registration_token('#{runner_registration_token}'); " \
-        "settings.save!; " \
-        "Ci::Runner.delete_all" \
-        "\""
+        <<~RAILS_RUNNER
+        gitlab-rails runner "
+        settings = ApplicationSetting.current_without_cache;
+
+        # Reset runner token
+        settings.update_columns(
+          encrypted_customers_dot_jwt_signing_key_iv: nil,
+          encrypted_customers_dot_jwt_signing_key: nil,
+          encrypted_ci_jwt_signing_key_iv: nil,
+          encrypted_ci_jwt_signing_key: nil,
+          error_tracking_access_token_encrypted: nil);
+        settings.set_runners_registration_token('#{runner_registration_token}');
+
+        # Set FIPS restrictions
+        if File.file?('/etc/system-fips')
+          settings.rsa_key_restriction=3072;
+          settings.dsa_key_restriction=-1;
+          settings.ecdsa_key_restriction=256;
+          settings.ed25519_key_restriction=256;
+          settings.ecdsa_sk_key_restriction=256;
+          settings.ed25519_sk_key_restriction=256;
+        end
+
+        settings.save!;
+        Ci::Runner.delete_all;
+        "
+        RAILS_RUNNER
       )
 
       stdout, status = Open3.capture2e(cmd)

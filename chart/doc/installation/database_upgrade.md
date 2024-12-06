@@ -31,7 +31,7 @@ not a drop in replacement. Manual steps need to be performed to upgrade the data
 The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
 
 NOTE:
-As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) from `7.7.0` to `8.9.4`.
+As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) from `7.7.0` to `8.9.4`.
 This is not a drop in replacement. Manual steps need to be performed to upgrade the database.
 The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
 

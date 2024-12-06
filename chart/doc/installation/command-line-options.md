@@ -47,7 +47,7 @@ helm inspect values gitlab/gitlab
 | `global.psql.password.secret`                  | Global name of the secret containing the psql password                                      | _Uses in-cluster non-production PostgreSQL_   |
 | `global.registry.bucket`                       | registry bucket name                                                                        | `registry`                                    |
 | `global.service.annotations`                   | Annotations to add to every `Service`                                                       | {}                                            |
-| `global.raills.sessionStore.sessionCookieTokenPrefix`  | Prefix for the generated session cookies                                        | ""                                            |
+| `global.rails.sessionStore.sessionCookieTokenPrefix`  | Prefix for the generated session cookies                                        | ""                                            |
 | `global.deployment.annotations`                | Annotations to add to every `Deployment`                                                    | {}                                            |
 | `global.time_zone`                             | Global time zone                                                                            | UTC                                           |
 
@@ -232,8 +232,9 @@ See the [instructions for creating secrets](secrets.md).
 | `nginx-ingress.rbac.createRole`        | Create and use namespaced role        | true    |
 | `prometheus.rbac.create`               | Create and use RBAC resources         | true    |
 
-If you're setting `nginx-ingress.rbac.create` to `false` to configure the RBAC rules by yourself, on
-GitLab chart v8.5.0+, you'll [need to also configure extra rules](../releases/8_0.md#upgrade-to-85x).
+If you're setting `nginx-ingress.rbac.create` to `false` to configure the RBAC rules by yourself, you
+might need to add specific RBAC rules
+[depending on your chart version](../releases/8_0.md#upgrade-to-86x-851-843-836).
 
 ## Advanced NGINX Ingress configuration
 
