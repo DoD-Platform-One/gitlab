@@ -43,7 +43,3 @@ changelogs/
 # CHANGELOG.md
 bin/
 spec/
-# dependencies.io
-dependencies.yml
-deps.yml
-dependencies_io/

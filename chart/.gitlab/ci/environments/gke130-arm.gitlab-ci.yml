@@ -1,0 +1,98 @@
+.review_gke130a_common_vars: &review_gke130a_common_vars
+  DNS_PROVIDER: "google"
+  AGENT_NAME: "gke130-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v130.helm-charts.win"
+  KUBE_NAMESPACE: "helm-charts-win"
+  DEPLOY_MULTIARCH: "true"
+
+create_review_gke130a:
+  stage: review
+  image: busybox
+  variables:
+    <<: *review_gke130a_common_vars
+    GIT_STRATEGY: none
+  script:
+    - echo "Configuring gke130_review/a-$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA to automatically stop in $REVIEW_APPS_AUTO_STOP_IN."
+  environment: &gke130a_environment
+    name: &gke130a_name gke130_review/a-$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke130a
+    auto_stop_in: $REVIEW_APPS_AUTO_STOP_IN
+    action: start
+
+review_gke130a:
+  variables:
+    <<: *review_gke130a_common_vars
+  extends: .review_template
+  environment:
+    <<: *gke130a_environment
+    action: access
+  # initially allow arm64 failures
+  allow_failure: true
+  rules:
+    # Initially we only execute for:
+    # * MRs and Default branch 
+    # * Triggered pipelines (from CNG)
+    - if: '$PIPELINE_TYPE == "CANONICAL_FEATURE_BRANCH_PIPELINE" && $CI_PIPELINE_SOURCE == "pipeline" && $TEST_BRANCH == "true"'
+    - if: '$PIPELINE_TYPE != "CANONICAL_MR_PIPELINE" && $PIPELINE_TYPE != "CANONICAL_DEFAULT_BRANCH_PIPELINE"'
+      when: never
+    - !reference [.review_template, rules]
+
+stop_review_gke130a:
+  variables:
+    <<: *review_gke130a_common_vars
+  extends: .stop_review_template
+  # initially allow arm64 failures
+  allow_failure: true
+  environment:
+    # name: gke130_review/a-$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    name: *gke130a_name
+    action: stop
+
+review_specs_gke130a:
+  extends: .specs
+  variables:
+    <<: *review_gke130a_common_vars
+    VARIABLES_FILE: "variables/review_gke130a"
+    RSPEC_TAGS: type:feature
+  # initially allow arm64 failures
+  allow_failure: true
+  environment:
+    <<: *gke130a_environment
+    action: access
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
+  needs: ["review_gke130a"]
+
+qa_gke130a:
+  extends: .qa_branch
+  variables:
+    VARIABLES_FILE: "variables/review_gke130a"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  # initially allow arm64 failures
+  allow_failure: true
+  environment:
+    <<: *gke130a_environment
+    action: access
+  needs:
+    - review_gke130a
+    - job: review_specs_gke130a
+      artifacts: false
+
+qa_gke130a_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against GKE130'
+
+qa_gke130a_manual_full_suite:
+  extends: .qa_branch
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/review_gke130a"
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
+  # initially allow arm64 failures
+  allow_failure: true
+  environment:
+    <<: *gke130a_environment
+    action: access
+  needs: ["qa_gke130a_full_suite_manual_trigger"]

@@ -1,0 +1,84 @@
+.review_eks130_common_vars: &review_eks130_common_vars
+  DNS_PROVIDER: "aws"
+  AGENT_NAME: "eks130-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "sandbox.eks.helm-charts.win"
+  KUBE_NAMESPACE: "eks-helm-charts-win"
+
+create_review_eks130:
+  stage: review
+  image: busybox
+  variables:
+    <<: *review_eks130_common_vars
+    GIT_STRATEGY: none
+  script:
+    - echo "Configuring eks130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA to automatically stop in $REVIEW_APPS_AUTO_STOP_IN."
+  environment:
+    name: eks130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    on_stop: stop_review_eks130
+    auto_stop_in: $REVIEW_APPS_AUTO_STOP_IN
+    action: start
+
+review_eks130:
+  variables:
+    <<: *review_eks130_common_vars
+  extends: .review_template
+  environment:
+    name: eks130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_eks130
+    auto_stop_in: "${REVIEW_APPS_AUTO_STOP_IN}"
+    action: access
+
+stop_review_eks130:
+  variables:
+    <<: *review_eks130_common_vars
+  extends: .stop_review_template
+  environment:
+    name: eks130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    action: stop
+
+review_specs_eks130:
+  extends: .specs
+  variables:
+    <<: *review_eks130_common_vars
+    VARIABLES_FILE: "variables/review_eks130"
+    RSPEC_TAGS: type:feature
+  environment:
+    name: eks130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_eks130
+    action: access
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
+  needs: ["review_eks130"]
+
+qa_eks130:
+  extends: .qa_branch
+  variables:
+    VARIABLES_FILE: "variables/review_eks130"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  environment:
+    name: eks130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    on_stop: stop_review_eks130
+    action: access
+  needs:
+    - review_eks130
+    - job: review_specs_eks130
+      artifacts: false
+
+qa_eks130_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against EKS 130'
+
+qa_eks130_manual_full_suite:
+  extends: .qa_branch
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/review_eks130"
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
+  environment:
+    name: eks130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    on_stop: stop_review_eks130
+    action: access
+  needs: ["qa_eks130_full_suite_manual_trigger"]

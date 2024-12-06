@@ -54,16 +54,16 @@ stop_review_vcluster_128:
   extends: .stop_review_app_template
   variables: !reference [review_vcluster_128, variables]
 
-# Kubernetes 1.29
+# Kubernetes 1.31
 
-review_vcluster_129:
+review_vcluster_131:
   extends: .review_app_template
   variables:
-    VCLUSTER_K8S_VERSION: "1.29"
-    VCLUSTER_NAME: vcluster-1-29-${REVIEW_REF_PREFIX}${CI_COMMIT_SHORT_SHA}
+    VCLUSTER_K8S_VERSION: "1.31"
+    VCLUSTER_NAME: vcluster-1-31-${REVIEW_REF_PREFIX}${CI_COMMIT_SHORT_SHA}
   environment:
-    on_stop: stop_review_vcluster_129
+    on_stop: stop_review_vcluster_131
 
-stop_review_vcluster_129:
+stop_review_vcluster_131:
   extends: .stop_review_app_template
-  variables: !reference [review_vcluster_129, variables]
+  variables: !reference [review_vcluster_131, variables]

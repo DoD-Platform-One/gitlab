@@ -31,6 +31,8 @@ init:
     requests:
       cpu: 50m
 
+annotations: {}
+
 # Tolerations for pod scheduling
 tolerations: []
 affinity: {}
@@ -81,6 +83,7 @@ serviceAccount:
 | Parameter                              | Description                                                                                                                                                                                        | Default                                                                                                                                                                 |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------                                                                                                              |
 | `affinity`                             | `{}`                                                       | [Affinity rules](../index.md#affinity) for pod assignment                                                                                                                                                               |
+| `annotations`                          | Pod annotations.                                                                                                                                                                                   | `{}`                                                                                                                                                                    |
 | `deployment.strategy`                  | Allows one to configure the update strategy utilized by the deployment                                                                                                                             | `{}`                                                                                                                                                                    |
 | `enabled`                              | Mailroom enablement flag                                                                                                                                                                           | `true`                                                                                                                                                                  |
 | `hpa.behavior`                         | Behavior contains the specifications for up- and downscaling behavior (requires `autoscaling/v2beta2` or higher)                                                                                   | `{scaleDown: {stabilizationWindowSeconds: 300 }}`                                                                                                                       |

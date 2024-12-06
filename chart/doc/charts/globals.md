@@ -1643,8 +1643,8 @@ kubectl create secret generic <secret_object_name> --from-literal=secretKey=<duo
 
 ### OmniAuth
 
-GitLab can leverage OmniAuth to allow users to sign in using Twitter, GitHub, Google,
-and other popular services. Expanded documentation can be found in the [OmniAuth documentation](https://docs.gitlab.com/ee/integration/omniauth.html)
+GitLab can leverage OmniAuth to allow users to sign in using GitHub, Google,
+and other popular services. Expanded documentation can be found in the [OmniAuth documentation](https://docs.gitlab.com/ee/integration/omniauth.html#configure-common-settings)
 for GitLab.
 
 ```yaml
@@ -1666,20 +1666,20 @@ omniauth:
   # - name: group_saml
 ```
 
-| Name                      | Type    | Default     | Description |
-|:------------------------- |:-------:|:----------- |:----------- |
-| `allowBypassTwoFactor`    |         |             | Allows users to log in with the specified providers without two factor authentication. Can be set to `true`, `false`, or an array of providers. See [Bypassing two factor authentication](https://docs.gitlab.com/ee/integration/omniauth.html#bypassing-two-factor-authentication). |
-| `allowSingleSignOn`       | Array | `['saml']`     | Enable the automatic creation of accounts when signing in with OmniAuth. Input the [name of the OmniAuth Provider](https://docs.gitlab.com/ee/integration/omniauth.html#supported-providers). |
-| `autoLinkLdapUser`        | Boolean | `false`     | Can be used if you have LDAP / ActiveDirectory integration enabled. When enabled, users automatically created through OmniAuth will be linked to their LDAP entry as well. |
-| `autoLinkSamlUser`        | Boolean | `false`     | Can be used if you have SAML integration enabled. When enabled, users automatically created through OmniAuth will be linked to their SAML entry as well. |
-| `autoLinkUser`            |         |             | Allows users authenticating via an OmniAuth provider to be automatically linked to a current GitLab user if their emails match. Can be set to `true`, `false`, or an array of providers. |
-| `autoSignInWithProvider`  |         | `nil`       | Single provider name allowed to automatically sign in. This should match the name of the provider, such as `saml` or `google_oauth2`. |
-| `blockAutoCreatedUsers`   | Boolean | `true`      | If `true` auto created users will be blocked by default and will have to be unblocked by an administrator before they are able to sign in. |
-| `enabled`                 | Boolean | `false`     | Enable / disable the use of OmniAuth with GitLab. |
-| `externalProviders`       |         | `[]`        | You can define which OmniAuth providers you want to be `external`, so that all users **creating accounts, or logging in via these providers** will be unable to access internal projects. You will need to use the full name of the provider, like `google_oauth2` for Google. See [Configure OmniAuth Providers as External](https://docs.gitlab.com/ee/integration/omniauth.html#configure-omniauth-providers-as-external). |
-| `providers`               |         | `[]`        | [See below](#providers). |
-| `syncProfileAttributes`   |         | `['email']` | List of profile attributes to sync from the provider upon login. See [Keep OmniAuth user profiles up to date](https://docs.gitlab.com/ee/integration/omniauth.html#keep-omniauth-user-profiles-up-to-date) for options. |
-| `syncProfileFromProvider` |         | `[]`        | List of provider names that GitLab should automatically sync profile information from. Entries should match the name of the provider, such as `saml` or `google_oauth2`. See [Keep OmniAuth user profiles up to date](https://docs.gitlab.com/ee/integration/omniauth.html#keep-omniauth-user-profiles-up-to-date). |
+| Name                      | Type    | Default     |
+|:------------------------- |:-------:|:----------- |
+| `allowBypassTwoFactor`    | Boolean or Array |   `false` |
+| `allowSingleSignOn`       | Boolean or Array   | `['saml']`  |
+| `autoLinkLdapUser`        | Boolean | `false`     | 
+| `autoLinkSamlUser`        | Boolean | `false`     |
+| `autoLinkUser`            | Boolean or Array | `false` |
+| `autoSignInWithProvider`  |         | `nil`       |
+| `blockAutoCreatedUsers`   | Boolean | `true`      |
+| `enabled`                 | Boolean | `false`     |
+| `externalProviders`       |         | `[]`        |
+| `providers`               |         | `[]`        |
+| `syncProfileAttributes`   |         | `['email']` |
+| `syncProfileFromProvider` |         | `[]`        |
 
 #### providers
 

@@ -70,6 +70,137 @@ describe 'checkConfig registry' do
                      error_description: 'when when database.sslmode is not valid'
   end
 
+  describe 'registry.database.loadBalancing (record)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: true
+            loadBalancing:
+              enabled: true
+              record: db-replica-registry.service.consul
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: true
+            loadBalancing:
+              enabled: true
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { '`database.loadBalancing` requires `record` to be provided' }
+
+    include_examples 'config validation',
+                     success_description: 'when database load balancing is enabled, with record',
+                     error_description: 'when database load balancing is enabled, with no record'
+  end
+
+  describe 'registry.database.loadBalancing requires database.enabled to be true' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: true
+            loadBalancing:
+              enabled: true
+              record: db-replica-registry.service.consul
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: false
+            loadBalancing:
+              enabled: true
+              record: db-replica-registry.service.consul
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling database load balancing requires the metadata database to be enabled.' }
+
+    include_examples 'config validation',
+                     success_description: 'when database load balancing is enabled, with database enabled',
+                     error_description: 'when database load balancing is enabled, with database disabled'
+  end
+
+  describe 'registry.database.loadBalancing requires redis.cache.enabled to be true' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: true
+            loadBalancing:
+              enabled: true
+              record: db-replica-registry.service.consul
+      )).merge(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            cache:
+              enabled: false
+          database:
+            enabled: true
+            loadBalancing:
+              enabled: true
+              record: db-replica-registry.service.consul
+      )).merge(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling database load balancing requires Redis caching to be enabled.' }
+
+    include_examples 'config validation',
+                     success_description: 'when database load balancing is enabled, with redis cache enabled',
+                     error_description: 'when database load balancing is enabled, with redis cache disabled'
+  end
+
   describe 'gitlab.checkConfig.registry.sentry.dsn' do
     let(:success_values) do
       YAML.safe_load(%(

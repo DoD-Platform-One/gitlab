@@ -106,7 +106,7 @@ to ensure that the application does not malfunction to the schema not matching
 expectations of the codebase.
 
 1. Find the `migrations` Job. `kubectl get job -lapp=migrations`
-1. Find the Pod being run by the Job. `kubectl get pod -ljob-name=<job-name>`
+1. Find the Pod being run by the Job. `kubectl get pod -lbatch.kubernetes.io/job-name=<job-name>`
 1. Examine the output, checking the `STATUS` column.
 
 If the `STATUS` is `Running`, continue. If the `STATUS` is `Completed`, the application containers should start shortly after the next check passes.

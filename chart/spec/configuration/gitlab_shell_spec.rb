@@ -264,4 +264,69 @@ describe 'gitlab-shell configuration' do
       end
     end
   end
+
+  context 'for PAT' do
+    let(:enabled) { nil }
+    let(:allowed_scopes) { nil }
+
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitlab-shell:
+            config:
+              pat:
+                enabled: #{enabled}
+                allowedScopes: #{allowed_scopes}
+      )).deep_merge(default_values)
+    end
+
+    let(:config) { t.dig('ConfigMap/test-gitlab-shell', 'data', 'config.yml.tpl') }
+
+    let(:rendered_config) do
+      rendered = RuntimeTemplate.gomplate(raw_template: config)
+      YAML.safe_load(rendered, aliases: true)
+    end
+
+    context 'when unset' do
+      it 'renders default settings for pat' do
+        expect_successful_exit_code
+
+        expect(rendered_config['pat']['enabled']).to eq(true)
+        expect(rendered_config['pat']['allowed_scopes']).to eq([])
+      end
+    end
+
+    context 'when PAT disabled' do
+      let(:enabled) { false }
+
+      it 'renders pat.enabled as disabled' do
+        expect_successful_exit_code
+
+        expect(rendered_config['pat']['enabled']).to eq(false)
+        expect(rendered_config['pat']['allowed_scopes']).to eq([])
+      end
+    end
+
+    context 'when PAT enabled' do
+      let(:enabled) { true }
+
+      it 'renders pat.enabled as enabled' do
+        expect_successful_exit_code
+
+        expect(rendered_config['pat']['enabled']).to eq(true)
+        expect(rendered_config['pat']['allowed_scopes']).to eq([])
+      end
+    end
+
+    context 'when PAT allowed_scopes are set' do
+      let(:allowed_scopes) { ['read_repository', 'read_api'] }
+
+      it 'renders pat.allowed_scopes' do
+        expect_successful_exit_code
+
+        expect(rendered_config['pat']['enabled']).to eq(true)
+        expect(rendered_config['pat']['allowed_scopes']).to match_array(['read_repository', 'read_api'])
+      end
+    end
+  end
 end

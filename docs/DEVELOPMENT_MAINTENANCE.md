@@ -104,7 +104,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
     helm upgrade -n bigbang --create-namespace --install \
      bigbang ./chart \
      -f https://repo1.dso.mil/big-bang/bigbang/-/raw/master/tests/test-values.yaml \
-     -f https://repo1.dso.mil/big-bang/product/packages/gitlab/-/blob/main/docs/dev-overrides.yaml \
+     -f https://repo1.dso.mil/big-bang/product/packages/gitlab/-/raw/main/docs/dev-overrides.yaml \
      --set addons.gitlab.git.branch=YOUR-WORKING-BRANCH-NAME-HERE
    ```
 

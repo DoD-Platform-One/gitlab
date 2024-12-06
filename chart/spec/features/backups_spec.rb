@@ -28,7 +28,7 @@ describe "Restoring a backup" do
     stdout, status = restore_from_backup(skip: 'db')
     fail stdout unless status.success?
 
-    stdout, status = set_runner_token
+    stdout, status = update_application_settings
     fail stdout unless status.success?
 
     stdout, status = enable_legacy_runner_registration

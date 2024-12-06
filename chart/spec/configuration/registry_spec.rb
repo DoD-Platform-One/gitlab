@@ -427,6 +427,140 @@ describe 'registry configuration' do
           end
         end
       end
+
+      describe 'database loadBalancing config' do
+        context 'when replicaCheckInterval is provided' do
+          let(:values) do
+            YAML.safe_load(%(
+              registry:
+                redis:
+                  cache:
+                    enabled: true
+                database:
+                  enabled: true
+                  loadBalancing:
+                    enabled: true
+                    record: db-replica-registry.service.consul
+                    replicaCheckInterval: 1s
+            )).deep_merge(default_values)
+          end
+
+          it 'populates the replicacheckinterval setting correctly' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+              <<~CONFIG
+              database:
+                enabled: true
+                host: "test-postgresql.default.svc"
+                port: 5432
+                user: registry
+                password: "DB_PASSWORD_FILE"
+                dbname: registry
+                sslmode: disable
+                loadbalancing:
+                  enabled: true
+                  record: "db-replica-registry.service.consul"
+                  replicacheckinterval: "1s"
+              CONFIG
+            )
+          end
+        end
+
+        context 'when replicaCheckInterval is not provided' do
+          let(:values) do
+            YAML.safe_load(%(
+              registry:
+                redis:
+                  cache:
+                    enabled: true
+                database:
+                  enabled: true
+                  loadBalancing:
+                    enabled: true
+                    record: db-replica-registry.service.consul
+            )).deep_merge(default_values)
+          end
+
+          it 'does not include the replicaCheckInterval setting' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).not_to include('replicacheckinterval')
+          end
+        end
+
+        context 'when nameserver.host and nameserver.port are provided' do
+          let(:values) do
+            YAML.safe_load(%(
+              registry:
+                redis:
+                  cache:
+                    enabled: true
+                database:
+                  enabled: true
+                  loadBalancing:
+                    enabled: true
+                    record: db-replica-registry.service.consul
+                    nameserver:
+                      host: "nameserver.example.com"
+                      port: 5353
+            )).deep_merge(default_values)
+          end
+
+          it 'populates the nameserver host and port settings correctly' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+              <<~CONFIG
+              database:
+                enabled: true
+                host: "test-postgresql.default.svc"
+                port: 5432
+                user: registry
+                password: "DB_PASSWORD_FILE"
+                dbname: registry
+                sslmode: disable
+                loadbalancing:
+                  enabled: true
+                  nameserver: "nameserver.example.com"
+                  port: 5353
+                  record: "db-replica-registry.service.consul"
+              CONFIG
+            )
+          end
+        end
+
+        context 'when nameserver.host and nameserver.port are not provided' do
+          let(:values) do
+            YAML.safe_load(%(
+              registry:
+                redis:
+                  cache:
+                    enabled: true
+                database:
+                  enabled: true
+                  loadBalancing:
+                    enabled: true
+                    record: db-replica-registry.service.consul
+            )).deep_merge(default_values)
+          end
+
+          it 'does not include the nameserver or port settings' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            # there are other `port` attributes in the output, so we need to isolate the `loadbalancing` section prior to validations
+            loadbalancing_block = t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl').match(/loadbalancing:\n(?:.*\n)*?/)
+
+            expect(loadbalancing_block).not_to be_nil
+            expect(loadbalancing_block.to_s).not_to include('nameserver')
+            expect(loadbalancing_block.to_s).not_to include('port')
+          end
+        end
+      end
     end
 
     describe 'redis cache config' do

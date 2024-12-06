@@ -1,0 +1,39 @@
+---
+
+global:
+  nodeSelector:
+    kubernetes.io/arch: arm64
+
+minio:
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+gitlab-runner:
+  nodeSelector:
+    kubernetes.io/arch: arm64
+
+postgresql:
+  primary:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+  readReplicas:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+  backup.cronjob.labels:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+
+# Redis fails with arm64
+# redis:
+#   master:
+#     nodeSelector:
+#       kubernetes.io/arch: arm64
+#   replica:
+#     nodeSelector:
+#       kubernetes.io/arch: arm64
+
+
+nginx-ingress:
+  nodeSelector:
+    kubernetes.io/arch: amd64
+

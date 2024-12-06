@@ -453,6 +453,22 @@ describe 'Mailroom configuration' do
     end
   end
 
+  context 'When customer provides additional annotations' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          mailroom:
+            annotations:
+              test-annotation: mailroom-annotation-value
+      )).deep_merge(default_values)
+    end
+    it 'Populates the additional annotations in the expected manner' do
+      t = HelmTemplate.new(values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+      expect(t.dig('Deployment/test-mailroom', 'spec', 'template', 'metadata', 'annotations')).to include('test-annotation' => 'mailroom-annotation-value')
+    end
+  end
+
   context 'When customer provides additional labels' do
     let(:values) do
       YAML.safe_load(%(

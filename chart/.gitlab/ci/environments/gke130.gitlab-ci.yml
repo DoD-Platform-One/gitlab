@@ -1,0 +1,85 @@
+.review_gke130_common_vars: &review_gke130_common_vars
+  DNS_PROVIDER: "google"
+  AGENT_NAME: "gke130-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "cloud-native-v130.helm-charts.win"
+  KUBE_NAMESPACE: "helm-charts-win"
+
+create_review_gke130:
+  stage: review
+  image: busybox
+  variables:
+    <<: *review_gke130_common_vars
+    GIT_STRATEGY: none
+  script:
+    - echo "Configuring gke130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA to automatically stop in $REVIEW_APPS_AUTO_STOP_IN."
+  environment:
+    name: gke130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke130
+    auto_stop_in: $REVIEW_APPS_AUTO_STOP_IN
+    action: start
+
+review_gke130:
+  variables:
+    <<: *review_gke130_common_vars
+  extends: .review_template
+  environment:
+    name: gke130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke130
+    auto_stop_in: "${REVIEW_APPS_AUTO_STOP_IN}"
+    action: access
+
+stop_review_gke130:
+  variables:
+    <<: *review_gke130_common_vars
+  extends: .stop_review_template
+  environment:
+    name: gke130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    action: stop
+
+review_specs_gke130:
+  extends: .specs
+  variables:
+    <<: *review_gke130_common_vars
+    VARIABLES_FILE: "variables/review_gke130"
+    RSPEC_TAGS: type:feature
+  environment:
+    name: gke130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    url: https://gitlab-$CI_ENVIRONENMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review_gke130
+    action: access
+  rules:
+    - !reference [.rule:skip_if_no_cluster]
+    - !reference [.specs, rules]
+  needs: ["review_gke130"]
+
+qa_gke130:
+  extends: .qa_branch
+  variables:
+    VARIABLES_FILE: "variables/review_gke130"
+    TEST_SUITE: $QA_SANITY_SUITE_OPTIONS
+  environment:
+    name: gke130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    on_stop: stop_review_gke130
+    action: access
+  needs:
+    - review_gke130
+    - job: review_specs_gke130
+      artifacts: false
+
+qa_gke130_full_suite_manual_trigger:
+  extends: .qa_full_suite_manual_trigger
+  script: echo 'The job will trigger Full E2E suite against GKE130'
+
+qa_gke130_manual_full_suite:
+  extends: .qa_branch
+  parallel: 7
+  variables:
+    VARIABLES_FILE: "variables/review_gke130"
+    TEST_SUITE: $QA_FULL_SUITE_OPTIONS
+  environment:
+    name: gke130_review/$REVIEW_REF_PREFIX$CI_COMMIT_SHORT_SHA
+    on_stop: stop_review_gke130
+    action: access
+  needs: ["qa_gke130_full_suite_manual_trigger"]
