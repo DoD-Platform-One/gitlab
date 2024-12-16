@@ -4,6 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.6.2-bb.0] (2024-12-16)
+
+### Changed
+
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse (source) 17.6.1 -> 17.6.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl (source) 17.6.1 -> 17.6.2
+
 ## [8.6.1-bb.0] (2024-12-06)
 
 ### Changed
