@@ -1670,7 +1670,7 @@ omniauth:
 |:------------------------- |:-------:|:----------- |
 | `allowBypassTwoFactor`    | Boolean or Array |   `false` |
 | `allowSingleSignOn`       | Boolean or Array   | `['saml']`  |
-| `autoLinkLdapUser`        | Boolean | `false`     | 
+| `autoLinkLdapUser`        | Boolean | `false`     |
 | `autoLinkSamlUser`        | Boolean | `false`     |
 | `autoLinkUser`            | Boolean or Array | `false` |
 | `autoSignInWithProvider`  |         | `nil`       |

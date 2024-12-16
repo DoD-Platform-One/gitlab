@@ -33,6 +33,7 @@ The table below maps some of the key previous supported chart versions and suppo
 
 | Chart version | GitLab version |
 |---------------|----------------|
+| 8.6.2 | 17.6.2 |
 | 8.6.1 | 17.6.1 |
 | 8.6.0 | 17.6.0 |
 | 8.6.1 | 17.6.1 |
@@ -575,7 +576,6 @@ The table below maps some of the key previous supported chart versions and suppo
 | 6.0.2 | 15.0.2 |
 | 6.0.1 | 15.0.1 |
 | 6.0.0 | 15.0.0 |
->>>>>>> update "chart" (https://gitlab.com/gitlab-org/charts/gitlab) from "v8.6.1" (444b06a2195c8f8932847de2b727b63cbc3b8836) to "v8.6.1" (0a325d09171fcfa4a3e828052cb273f148a8ff04)
 
 To see the full list, you can issue the following command with Helm:
 

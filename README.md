@@ -1,11 +1,12 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 8.6.1-bb.0](https://img.shields.io/badge/Version-8.6.1--bb.0-informational?style=flat-square) ![AppVersion: 17.6.1](https://img.shields.io/badge/AppVersion-17.6.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 8.6.2-bb.0](https://img.shields.io/badge/Version-8.6.2--bb.0-informational?style=flat-square) ![AppVersion: 17.6.2](https://img.shields.io/badge/AppVersion-17.6.2-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
 ## Upstream References
+
 - <https://about.gitlab.com/>
 
 - <https://gitlab.com/gitlab-org/charts/gitlab>
@@ -27,7 +28,7 @@ The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
@@ -48,7 +49,7 @@ helm install gitlab chart/
 | global.image | object | `{}` |  |
 | global.pod.labels | object | `{}` |  |
 | global.edition | string | `"ee"` |  |
-| global.gitlabVersion | string | `"17.6.1"` |  |
+| global.gitlabVersion | string | `"17.6.2"` |  |
 | global.application.create | bool | `false` |  |
 | global.application.links | list | `[]` |  |
 | global.application.allowClusterRoles | bool | `true` |  |
@@ -362,7 +363,7 @@ helm install gitlab chart/
 | global.workhorse.tls.enabled | bool | `false` |  |
 | global.webservice.workerTimeout | int | `60` |  |
 | global.certificates.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/certificates"` |  |
-| global.certificates.image.tag | string | `"17.6.1"` |  |
+| global.certificates.image.tag | string | `"17.6.2"` |  |
 | global.certificates.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.certificates.init.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | global.certificates.init.securityContext.runAsUser | int | `65534` |  |
@@ -399,13 +400,13 @@ helm install gitlab chart/
 | global.certificates.customCAs[29].secret | string | `"ca-certs-dod-trust-anchors-self-signed"` |  |
 | global.certificates.customCAs[30].secret | string | `"ca-certs-eca"` |  |
 | global.kubectl.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kubectl"` |  |
-| global.kubectl.image.tag | string | `"17.6.1"` |  |
+| global.kubectl.image.tag | string | `"17.6.2"` |  |
 | global.kubectl.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.kubectl.securityContext.runAsUser | int | `65534` |  |
 | global.kubectl.securityContext.fsGroup | int | `65534` |  |
 | global.kubectl.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | global.gitlabBase.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base"` |  |
-| global.gitlabBase.image.tag | string | `"17.6.1"` |  |
+| global.gitlabBase.image.tag | string | `"17.6.2"` |  |
 | global.gitlabBase.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | global.serviceAccount.enabled | bool | `true` |  |
 | global.serviceAccount.create | bool | `true` |  |
@@ -682,7 +683,6 @@ helm install gitlab chart/
 | prometheus.serverFiles."prometheus.yml".scrape_configs[4].relabel_configs[6].target_label | string | `"kubernetes_name"` |  |
 | redis.global.imagePullSecrets[0] | string | `"private-registry"` |  |
 | redis.install | bool | `true` |  |
-| redis.image.tag | string | `"6.2.16-debian-12-r1"` |  |
 | redis.auth.existingSecret | string | `"gitlab-redis-secret"` |  |
 | redis.auth.existingSecretKey | string | `"secret"` |  |
 | redis.auth.usePasswordFiles | bool | `true` |  |
@@ -791,7 +791,7 @@ helm install gitlab chart/
 | registry.resources.requests.cpu | string | `"200m"` |  |
 | registry.resources.requests.memory | string | `"1024Mi"` |  |
 | registry.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry"` |  |
-| registry.image.tag | string | `"17.6.1"` |  |
+| registry.image.tag | string | `"17.6.2"` |  |
 | registry.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | registry.ingress.enabled | bool | `false` |  |
 | registry.metrics.enabled | bool | `true` |  |
@@ -851,7 +851,7 @@ helm install gitlab chart/
 | gitlab.toolbox.replicas | int | `1` |  |
 | gitlab.toolbox.antiAffinityLabels.matchLabels.app | string | `"gitaly"` |  |
 | gitlab.toolbox.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
-| gitlab.toolbox.image.tag | string | `"17.6.1"` |  |
+| gitlab.toolbox.image.tag | string | `"17.6.2"` |  |
 | gitlab.toolbox.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.toolbox.init.resources.requests.cpu | string | `"200m"` |  |
 | gitlab.toolbox.init.resources.requests.memory | string | `"200Mi"` |  |
@@ -888,7 +888,7 @@ helm install gitlab chart/
 | gitlab.gitlab-exporter.resources.requests.memory | string | `"200Mi"` |  |
 | gitlab.gitlab-exporter.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-exporter.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter"` |  |
-| gitlab.gitlab-exporter.image.tag | string | `"17.6.1"` |  |
+| gitlab.gitlab-exporter.image.tag | string | `"17.6.2"` |  |
 | gitlab.gitlab-exporter.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-exporter.metrics.enabled | bool | `true` |  |
 | gitlab.gitlab-exporter.metrics.port | int | `9168` |  |
@@ -910,7 +910,7 @@ helm install gitlab chart/
 | gitlab.migrations.resources.requests.cpu | string | `"500m"` |  |
 | gitlab.migrations.resources.requests.memory | string | `"1.5G"` |  |
 | gitlab.migrations.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox"` |  |
-| gitlab.migrations.image.tag | string | `"17.6.1"` |  |
+| gitlab.migrations.image.tag | string | `"17.6.2"` |  |
 | gitlab.migrations.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.migrations.securityContext.runAsUser | int | `1000` |  |
 | gitlab.migrations.securityContext.runAsGroup | int | `1000` |  |
@@ -934,14 +934,14 @@ helm install gitlab chart/
 | gitlab.webservice.resources.requests.cpu | string | `"300m"` |  |
 | gitlab.webservice.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice"` |  |
-| gitlab.webservice.image.tag | string | `"17.6.1"` |  |
+| gitlab.webservice.image.tag | string | `"17.6.2"` |  |
 | gitlab.webservice.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.webservice.workhorse.resources.limits.cpu | string | `"600m"` |  |
 | gitlab.webservice.workhorse.resources.limits.memory | string | `"2.5G"` |  |
 | gitlab.webservice.workhorse.resources.requests.cpu | string | `"600m"` |  |
 | gitlab.webservice.workhorse.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.workhorse.image | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse"` |  |
-| gitlab.webservice.workhorse.tag | string | `"17.6.1"` |  |
+| gitlab.webservice.workhorse.tag | string | `"17.6.2"` |  |
 | gitlab.webservice.workhorse.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.webservice.workhorse.metrics.enabled | bool | `true` |  |
 | gitlab.webservice.workhorse.metrics.serviceMonitor.enabled | bool | `true` |  |
@@ -952,7 +952,7 @@ helm install gitlab chart/
 | gitlab.webservice.metrics.serviceMonitor.enabled | bool | `true` |  |
 | gitlab.webservice.helmTests.enabled | bool | `false` |  |
 | gitlab.sidekiq.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq"` |  |
-| gitlab.sidekiq.image.tag | string | `"17.6.1"` |  |
+| gitlab.sidekiq.image.tag | string | `"17.6.2"` |  |
 | gitlab.sidekiq.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.sidekiq.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.sidekiq.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -970,7 +970,7 @@ helm install gitlab chart/
 | gitlab.sidekiq.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.sidekiq.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitaly.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.gitaly.image.tag | string | `"17.6.1"` |  |
+| gitlab.gitaly.image.tag | string | `"17.6.2"` |  |
 | gitlab.gitaly.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitaly.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitaly.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -990,7 +990,7 @@ helm install gitlab chart/
 | gitlab.gitaly.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitaly.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-shell.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell"` |  |
-| gitlab.gitlab-shell.image.tag | string | `"17.6.1"` |  |
+| gitlab.gitlab-shell.image.tag | string | `"17.6.2"` |  |
 | gitlab.gitlab-shell.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitlab-shell.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitlab-shell.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -1008,15 +1008,15 @@ helm install gitlab chart/
 | gitlab.gitlab-shell.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.gitlab-shell.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.mailroom.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom"` |  |
-| gitlab.mailroom.image.tag | string | `"17.6.1"` |  |
+| gitlab.mailroom.image.tag | string | `"17.6.2"` |  |
 | gitlab.mailroom.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.mailroom.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitlab-pages.service.customDomains.type | string | `"ClusterIP"` |  |
 | gitlab.gitlab-pages.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages"` |  |
-| gitlab.gitlab-pages.image.tag | string | `"17.6.1"` |  |
+| gitlab.gitlab-pages.image.tag | string | `"17.6.2"` |  |
 | gitlab.gitlab-pages.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.praefect.image.tag | string | `"17.6.1"` |  |
+| gitlab.praefect.image.tag | string | `"17.6.2"` |  |
 | gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.praefect.init.resources.limits.memory | string | `"200Mi"` |  |
 | gitlab.praefect.init.resources.requests.cpu | string | `"200m"` |  |
@@ -1147,4 +1147,3 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 ---
 
 _This file is programatically generated using `helm-docs` and some BigBang-specific templates. The `gluon` repository has [instructions for regenerating package READMEs](https://repo1.dso.mil/big-bang/product/packages/gluon/-/blob/master/docs/bb-package-readme.md)._
-
