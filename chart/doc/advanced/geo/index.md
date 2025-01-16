@@ -16,6 +16,8 @@ most platform agnostic guide, and make use of the automation included in `gitlab
 In this guide, both clusters have the same external URL. This feature is supported by the chart
 since version 7.3. See [Set up a Unified URL for Geo sites](https://docs.gitlab.com/ee/administration/geo/secondary_proxy/index.html#set-up-a-unified-url-for-geo-sites). You can optionally [configure a separate URL for the secondary site](#configure-a-separate-url-for-the-secondary-site-optional).
 
+For known issues, see the [Geo documentation](https://docs.gitlab.com/ee/administration/geo/#known-issues).
+
 NOTE:
 See the [defined terms](https://docs.gitlab.com/ee/administration/geo/glossary.html)
 to describe all aspects of Geo (mainly the distinction between `site` and `node`).
@@ -36,10 +38,6 @@ To use GitLab Geo with the GitLab Helm chart, the following requirements must be
 - The primary site must be reachable via HTTP(S) by all secondary sites.
   Secondary sites must be accessible to the primary site via HTTP(S).
 - See [requirements for running Geo](https://docs.gitlab.com/ee/administration/geo/#requirements-for-running-geo) for the full list of requirements.
-
-## Limitations
-
-See [Geo limitations](https://docs.gitlab.com/ee/administration/geo/#limitations) for a complete list of limitations.
 
 ## Overview
 

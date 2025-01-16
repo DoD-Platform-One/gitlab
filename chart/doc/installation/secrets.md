@@ -229,12 +229,17 @@ Replace `<name>` with the name of the release.
 ```shell
 cat << EOF > secrets.yml
 production:
-  secret_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 128)
-  otp_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 128)
-  db_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 128)
-  encrypted_settings_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 128)
+  secret_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-f0-9' | head -c 128)
+  otp_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-f0-9' | head -c 128)
+  db_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-f0-9' | head -c 128)
+  encrypted_settings_key_base: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-f0-9' | head -c 128)
   openid_connect_signing_key: |
 $(openssl genrsa 2048 | awk '{print "    " $0}')
+  active_record_encryption_primary_key:
+    - $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32)
+  active_record_encryption_deterministic_key:
+    - $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32)
+  active_record_encryption_key_derivation_salt: $(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 32)
 EOF
 
 kubectl create secret generic <name>-rails-secret --from-file=secrets.yml
@@ -290,6 +295,16 @@ kubectl create secret generic <name>-kas-private-api --from-literal=kas_private_
 ```
 
 This secret is referenced by the `gitlab.kas.privateApi.secret` setting.
+
+### GitLab KAS WebSocket Token secret
+
+You can leave it to the chart to auto-generate the secret, or you can create this secret manually (replace `<name>` with the name of the release):
+
+```shell
+kubectl create secret generic <name>-kas-websocket-token --from-literal=kas_websocket_token_secret=$(head -c 72 /dev/urandom | base64 -w0)
+```
+
+This secret is referenced by the `gitlab.kas.websocketToken.secret` setting.
 
 ### GitLab Suggested Reviewers secret
 

@@ -1,0 +1,103 @@
+
+rubocop:
+  image: ruby:3.1-alpine
+  stage: prepare
+  dependencies: []
+  before_script:
+    - apk add make gcc libc-dev
+  script:
+    - bundle config set --local path 'gems'
+    - bundle config set --local frozen 'true'
+    - bundle install -j $(nproc)
+    - bundle exec rubocop --parallel
+  cache:
+    key: "debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-${CI_JOB_NAME}"
+    paths:
+    - gems
+  rules:
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+
+# Perform content linting on documentation Markdown files
+check_docs_content:
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.20-vale-3.7.1-markdownlint2-0.14.0-lychee-0.15.1
+  stage: prepare
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
+    # Lint prose
+    - vale --minAlertLevel error doc
+  rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
+# Perform linting on documentation Markdown files
+check_docs_markdown:
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.20-vale-3.7.1-markdownlint2-0.14.0-lychee-0.15.1
+  stage: prepare
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
+    # Lint Markdown
+    - markdownlint-cli2 'doc/**/*.md'
+  rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
+# Perform link checking on documentation Markdown files
+check_docs_links:
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.20-vale-3.7.1-markdownlint2-0.14.0-lychee-0.15.1
+  stage: prepare
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
+    # Check Markdown links
+    - lychee --offline --include-fragments doc
+  rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
+lint_package:
+  stage: preflight
+  when: always
+  script:
+    - kubectl version --client=true --output=json
+    - helm version --template='Helm Version - {{.Version}}'
+    - helm repo add gitlab https://charts.gitlab.io
+    - helm repo add jetstack https://charts.jetstack.io
+    - helm dependency update
+    - echo "$HELM_DEFAULT_SETTINGS" | tee ./template_settings.yaml
+    - echo "$HELM_SETTINGS" | tee -a ./template_settings.yaml
+    - helm lint -f ./template_settings.yaml
+    - mkdir -p build
+    - helm package -d build .
+  artifacts:
+    expire_in: 3d
+    paths:
+    - build
+  rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /_MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /_BRANCH_PIPELINE$/'
+    - if: '$PIPELINE_TYPE == "NIGHTLY_PIPELINE"'
+    - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
+    - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
+
+specs_without_cluster:
+  extends: .specs
+  variables:
+    RSPEC_TAGS: ~type:feature
+  parallel: 6
+  rules:
+    - !reference [.specs, rules]
+    - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
+    - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
+  needs: ['lint_package']
+

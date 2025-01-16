@@ -1,0 +1,11 @@
+specs_without_cluster:
+  extends: .specs
+  variables:
+    RSPEC_TAGS: ~type:feature
+  parallel: 6
+  rules:
+    - !reference [.specs, rules]
+    - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
+    - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
+  needs: ['lint_package']
+

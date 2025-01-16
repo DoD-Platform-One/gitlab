@@ -2,6 +2,24 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.7.0 (2024-12-18)
+
+### Added (3 changes)
+
+- [Support setting a global time zone](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7bc5d71dd758578d1751693d2274ccaaa33c47e9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3649))
+- [Generate and configure KAS WebSocket Token secret](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/5805b620d6a43f56e3b7e3253de657376050a085) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4018))
+- [Add ActiveRecord::Encryption secrets](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/0e36a29da44b6d25ac39106adc1a447ea11b8d56) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3988))
+
+### Fixed (1 change)
+
+- [Fix soft global nodeAffinity](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/df556b657da9ccc16d3bb266abca8d3a2c246d1e) by @b-fein ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4013))
+
+### Changed (3 changes)
+
+- [Update dependency danger-review to v1.4.2](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/53cbb8148f90ed0d860a36fd81b2822ad36cbc4b) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4021))
+- [Update dependency container-registry to v4.14.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/dcc8ce8e48d88f5ff1aee9f0aa67bf4b505de585) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4017))
+- [Update Helm release gitlab-runner to v0.71.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/45c82f324306ca23d68384a65103ec889c1b6cee) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4011))
+
 ## 8.6.2 (2024-12-10)
 
 No changes.
@@ -30,6 +48,16 @@ No changes.
 - [Update Helm release gitlab-runner to v0.70.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/b82f0a50ae6ec26a79fe9cc307c862c816f3ac78) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3958))
 - [Update Helm release gitlab-runner to v0.70.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/ea3833fd35e5d201c96e9da5b4892b610df19781) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3955))
 - [Bump nginx-controller from 1.3.1 to 1.11.2](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c8f6090ec807dde86d4f6fd92803ada8b125868e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3901))
+
+## 8.5.4 (2024-12-10)
+
+No changes.
+
+## 8.5.3 (2024-11-26)
+
+### Changed (1 change)
+
+- [Update Helm release gitlab-runner to v0.70.3](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/657e3f8162b87547af92a5f23daca717491c071c)
 
 ## 8.5.2 (2024-11-12)
 
@@ -67,6 +95,14 @@ No changes.
 ### Removed (1 change)
 
 - [Remove 'ci_jwt_signing_key' secret migrated to ApplicationSetting](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/b23acb2484f63ebb7e0f461033f5a3542519b3c9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3910))
+
+## 8.4.6 (2024-12-10)
+
+No changes.
+
+## 8.4.5 (2024-11-26)
+
+No changes.
 
 ## 8.4.4 (2024-11-12)
 

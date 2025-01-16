@@ -28,7 +28,7 @@ spec:
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        cluster-autoscaler.kubernetes.io/safe-to-evict: {{ .Values.hpa.safeToEvict | quote }}
       {{- if and .Values.metrics.enabled (not .Values.metrics.serviceMonitor.enabled) (not $.Values.metrics.podMonitor.enabled) }}
         gitlab.com/prometheus_scrape: "true"
         gitlab.com/prometheus_port: {{ .Values.observability.port | quote }}
@@ -75,6 +75,7 @@ spec:
               value: "{{ include "gitlab.kas.internal.scheme" . }}://$(POD_IP):{{ .Values.service.privateApiPort }}"
             {{- include "gitlab.extraEnv" . | nindent 12 }}
             {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
+            {{- include "gitlab.timeZone.env" . | nindent 12 }}
           ports:
             - containerPort: {{ .Values.service.internalPort }}
               name: {{ template "name" . }}
@@ -124,6 +125,11 @@ spec:
                 items:
                   - key: {{ template "gitlab.kas.privateApi.key" . }}
                     path: .gitlab_kas_private_api_secret
+            - secret:
+                name: {{ template "gitlab.kas.websocketToken.secret" . }}
+                items:
+                  - key: {{ template "gitlab.kas.websocketToken.key" . }}
+                    path: .gitlab_kas_websocket_token_secret
             {{- if $.Values.global.kas.tls.enabled }}
             - secret:
                 name: {{ .Values.global.kas.tls.secretName | quote }}

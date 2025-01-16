@@ -298,7 +298,7 @@ To have TLS access to the GitLab Pages feature you must:
 
 ### Pages domain without wildcard DNS
 
-> - [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5570) as a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) in GitLab 17.2.
+> - [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5570) as a [beta](https://docs.gitlab.com/ee/policy/development_stages_support.html#beta) in GitLab 17.2.
 > - [Generally available](https://gitlab.com/gitlab-org/gitlab/-/issues/483365) in GitLab 17.4.
 
 WARNING:

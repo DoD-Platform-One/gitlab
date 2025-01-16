@@ -170,7 +170,7 @@ describe 'local affinity configuration' do
         if key == 'Deployment/test-registry'
           expect(t.dig(key, 'spec', 'template', 'spec', 'affinity', 'nodeAffinity', 'preferredDuringSchedulingIgnoredDuringExecution')).to be_present
           expect(t.dig(key, 'spec', 'template', 'spec', 'affinity', 'nodeAffinity', 'requiredDuringSchedulingIgnoredDuringExecution')).not_to be_present
-          expect(t.dig(key, 'spec', 'template', 'spec', 'affinity', 'nodeAffinity', 'preferredDuringSchedulingIgnoredDuringExecution')[0]['nodeSelectorTerms'][0]['matchExpressions'][0]['key']).to eq('override.com/zone')
+          expect(t.dig(key, 'spec', 'template', 'spec', 'affinity', 'nodeAffinity', 'preferredDuringSchedulingIgnoredDuringExecution')[0]['preference']['matchExpressions'][0]['key']).to eq('override.com/zone')
         else
           expect(t.dig(key, 'spec', 'template', 'spec', 'affinity', 'nodeAffinity', 'requiredDuringSchedulingIgnoredDuringExecution')).to be_present
           expect(t.dig(key, 'spec', 'template', 'spec', 'affinity', 'nodeAffinity', 'preferredDuringSchedulingIgnoredDuringExecution')).not_to be_present

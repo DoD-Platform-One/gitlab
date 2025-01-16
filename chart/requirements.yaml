@@ -36,11 +36,11 @@ dependencies:
   version: '*.*.*'
   alias: nginx-ingress-geo
 - name: gitlab-zoekt
-  version: 1.4.2
+  version: 1.4.3
   repository: https://charts.gitlab.io/
   condition: gitlab-zoekt.install
 - name: gluon
-  version: "0.5.3"
+  version: "0.5.12"
   repository: "oci://registry1.dso.mil/bigbang"
 - name: traefik
   repository: https://helm.traefik.io/traefik

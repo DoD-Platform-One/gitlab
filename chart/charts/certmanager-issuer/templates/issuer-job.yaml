@@ -30,6 +30,8 @@ spec:
           command: ['/bin/bash', '/scripts/create-issuer', '/scripts/issuer.yml']
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           {{- include "gitlab.containerSecurityContext" $ | indent 10 }}
+          env:
+          {{- include "gitlab.timeZone.env" . | nindent 10 }}
           volumeMounts:
             - name: scripts
               mountPath: /scripts

@@ -76,7 +76,13 @@ workflow:
         PIPELINE_TYPE: FORK_FEATURE_BRANCH_PIPELINE
     # Support Merge Request pipelines
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$PIPELINE_TYPE != null && $LIMIT_TO != null && $LIMIT_TO != ""'
 
 .rule:skip_if_no_cluster:
   if: '$KUBECONFIG == null'
   when: never
+
+# Sister rule to ".rule:skip_if_no_cluster" as only jobs with `environment` set get KUBECONFIG set
+.rule:skip_if_fork:
+    - if: '$CI_SERVER_HOST != "gitlab.com" && $CI_PROJECT_PATH != $CANONICAL_PROJECT_PATH'
+      when: never

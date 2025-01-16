@@ -14,6 +14,7 @@
     {{- toYaml . | nindent 4 }}
   {{- end }}
   env:
+  {{- include "gitlab.timeZone.env" . | nindent 2 }}
   {{- include "gitlab.extraEnv" . | nindent 2 }}
   {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" (dict)) | nindent 2 }}
   volumeMounts:

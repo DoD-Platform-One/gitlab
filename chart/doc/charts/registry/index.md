@@ -76,7 +76,7 @@ registry:
       interval: 24h
       dryrun: false
   image:
-    tag: 'v4.13.0-gitlab'
+    tag: 'v4.14.0-gitlab'
     pullPolicy: IfNotPresent
   annotations:
   service:
@@ -142,6 +142,7 @@ registry:
     secretName:
     verify: true
     caSecretName:
+    cipherSuites:
 ```
 
 If you chose to deploy this chart as a standalone, remove the `registry` at the top level.
@@ -186,7 +187,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `image.pullPolicy`                                       |                                                                      | Pull policy for the registry image                                                                                                                                                                                                                                                                                                                 |
 | `image.pullSecrets`                                      |                                                                      | Secrets to use for image repository                                                                                                                                                                                                                                                                                                                |
 | `image.repository`                                       | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry` | Registry image                                                                                                                                                                                                                                                                                                                                     |
-| `image.tag`                                              | `v4.13.0-gitlab`                                                     | Version of the image to use                                                                                                                                                                                                                                                                                                                        |
+| `image.tag`                                              | `v4.14.0-gitlab`                                                     | Version of the image to use                                                                                                                                                                                                                                                                                                                        |
 | `init.image.repository`                                  |                                                                      | initContainer image                                                                                                                                                                                                                                                                                                                                |
 | `init.image.tag`                                         |                                                                      | initContainer image tag                                                                                                                                                                                                                                                                                                                            |
 | `init.containerSecurityContext`                          |                                                                      | initContainer specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                                                                             |
@@ -429,7 +430,7 @@ You can change the included version of the Registry and `pullPolicy`.
 
 Default settings:
 
-- `tag: 'v4.13.0-gitlab'`
+- `tag: 'v4.14.0-gitlab'`
 - `pullPolicy: 'IfNotPresent'`
 
 ## Configuring the `service`
@@ -460,6 +461,7 @@ This section controls the registry Ingress.
 | `enabled`              | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used.                                                                                    |
 | `tls.enabled`          | Boolean | `true`  | When set to `false`, you disable TLS for the Registry subchart. This is mainly useful for cases in which you cannot use TLS termination at `ingress-level`, like when you have a TLS-terminating proxy before the Ingress Controller. |
 | `tls.secretName`       | String  |         | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry URL. When not set, the `global.ingress.tls.secretName` is used instead. Defaults to not being set.                                   |
+| `tls.cipherSuites`     |  Array  | `[]`    | The list of cipher suites that Container registry should present to the client during TLS handshake.                        |
 
 ## Configuring TLS
 
@@ -504,6 +506,13 @@ registry:
     verify: true
     caSecretName: registry-tls-ca
 ```
+
+### Container Registry cipher suites
+
+Normally `tls.cipherSuites` option should be used only in some very unusual configurations where registry is deployed in a standalone mode and/or some non-default Ingress is used that does not support modern cipher suites.
+In a standard GitLab deployment, the NGINX Ingress will choose the highest supported TLS version by the container-registry backend, which is TLS1.3 at the moment.
+TLS1.3 does not allow for configuring ciphers and is secure by default.
+In case when for some reason TLS1.3 is unavailable, the default TLS1.2 ciphers list that Container Registry is using is also compatible with NGINX Ingress default settings and is secure as well.
 
 ### Configuring TLS for the debug port
 
@@ -989,7 +998,7 @@ profiling:
 
 ### database
 
-> - [Introduced](https://gitlab.com/groups/gitlab-org/-/epics/5521) in GitLab 16.4 as a [beta](https://docs.gitlab.com/ee/policy/experiment-beta-support.html#beta) feature.
+> - [Introduced](https://gitlab.com/groups/gitlab-org/-/epics/5521) in GitLab 16.4 as a [beta](https://docs.gitlab.com/ee/policy/development_stages_support.html#beta) feature.
 > - [Generally available](https://gitlab.com/gitlab-org/gitlab/-/issues/423459) in GitLab 17.3.
 
 The `database` property is optional and enables the [metadata database](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#database).

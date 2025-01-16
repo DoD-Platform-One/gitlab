@@ -43,6 +43,11 @@ hpa:
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
+  # When Cluster Autoscaler (CA) wants to shut down a node, it only waits for up to 10 minutes for Pods
+  # to shut down and then terminates them anyway.
+  # This might not be enough for kas to drain all proxied connections.
+  # Hence, you might want to configure CA to not evict kas.
+  safeToEvict: "true"
 
 keda:
   enabled: false
@@ -128,6 +133,10 @@ workhorse: {}
   # port: 8181
 # merged with the default kas config
 customConfig: {}
+
+websocketToken: {}
+  # secret:
+  # key:
 
 privateApi: {}
   # secret:

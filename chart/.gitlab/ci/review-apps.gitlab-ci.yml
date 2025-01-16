@@ -15,8 +15,9 @@
 
 .review_app_template:
   extends: .review_app_common
-  dependencies:
-    - pin_image_versions
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: pin_image_versions
   script:
     - cluster_connect
     - kubectl version --output=json

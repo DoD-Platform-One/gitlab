@@ -2,6 +2,7 @@ require 'active_support'
 require 'open-uri'
 require 'base64'
 require 'fugit'
+require 'api_helper'
 
 module Gitlab
   def self.included(klass)
@@ -59,13 +60,6 @@ module Gitlab
       end
 
       false
-    end
-
-    def enforce_root_password(password)
-      cmd = full_command("gitlab-rails runner \"user = User.find(1); user.user_type = :human ; user.password='#{password}'; user.password_confirmation='#{password}'; user.save!\"")
-
-      stdout, status = Open3.capture2e(cmd)
-      return [stdout, status]
     end
 
     def set_admin_token
@@ -160,6 +154,21 @@ module Gitlab
       raise stdout unless status.success?
     end
 
+    def wait_for_runner_contact(retries: 5, interval: 30)
+      uri = "runners/all?status=online"
+      retries.times do
+        response = ApiHelper.invoke_get_request(uri)
+
+        if response.empty?
+          sleep(interval)
+          next
+        end
+
+        return
+      end
+      raise 'No Runner online'
+    end
+
     def restore_from_backup(skip: [])
       skip_flags=''
 
@@ -167,69 +176,16 @@ module Gitlab
         skip_flags += " --skip #{skipped}"
       end
 
-      cmd = full_command("backup-utility --restore -t #{original_backup_prefix} #{skip_flags}", { GITLAB_ASSUME_YES: "1" })
+      cmd = full_command("backup-utility --restore -t #{backup_prefix} #{skip_flags}", { GITLAB_ASSUME_YES: "1" })
       stdout, status = Open3.capture2e(cmd)
 
       return [stdout, status]
     end
 
     def backup_instance
-      cmd = full_command("backup-utility -t #{new_backup_prefix}", { GITLAB_ASSUME_YES: "1" })
+      cmd = full_command("backup-utility -t #{backup_prefix}", { GITLAB_ASSUME_YES: "1" })
       stdout, status = Open3.capture2e(cmd)
 
-      return [stdout, status]
-    end
-
-    def run_migrations
-      cmd = full_command("gitlab-rake db:migrate")
-
-      stdout, status = Open3.capture2e(cmd)
-      return [stdout, status]
-    end
-
-    def restart_gitlab_runner
-      filters = "app=#{runner_app_label}"
-
-      if ENV['RELEASE_NAME']
-        filters="#{filters},release=#{ENV['RELEASE_NAME']}"
-      end
-
-      stdout, status = Open3.capture2e("kubectl delete pods -l #{filters} --wait=true")
-      return [stdout, status]
-    end
-
-    def update_application_settings
-      cmd = full_command(
-        <<~RAILS_RUNNER
-        gitlab-rails runner "
-        settings = ApplicationSetting.current_without_cache;
-
-        # Reset runner token
-        settings.update_columns(
-          encrypted_customers_dot_jwt_signing_key_iv: nil,
-          encrypted_customers_dot_jwt_signing_key: nil,
-          encrypted_ci_jwt_signing_key_iv: nil,
-          encrypted_ci_jwt_signing_key: nil,
-          error_tracking_access_token_encrypted: nil);
-        settings.set_runners_registration_token('#{runner_registration_token}');
-
-        # Set FIPS restrictions
-        if File.file?('/etc/system-fips')
-          settings.rsa_key_restriction=3072;
-          settings.dsa_key_restriction=-1;
-          settings.ecdsa_key_restriction=256;
-          settings.ed25519_key_restriction=256;
-          settings.ecdsa_sk_key_restriction=256;
-          settings.ed25519_sk_key_restriction=256;
-        end
-
-        settings.save!;
-        Ci::Runner.delete_all;
-        "
-        RAILS_RUNNER
-      )
-
-      stdout, status = Open3.capture2e(cmd)
       return [stdout, status]
     end
 
@@ -282,56 +238,8 @@ module Gitlab
       )
     end
 
-    def object_storage
-      return @object_storage if @object_storage
-
-      if ENV['S3_CONFIG_PATH']
-        s3_access_key = File.read("#{ENV['S3_CONFIG_PATH']}/accesskey")
-        s3_secret_key = File.read("#{ENV['S3_CONFIG_PATH']}/secretkey")
-      end
-
-      s3_access_key ||= ENV['S3_ACCESS_KEY']
-      s3_secret_key ||= ENV['S3_SECRET_KEY']
-
-      conf = {
-        region: ENV['S3_REGION'] || 'us-east-1',
-        access_key_id: s3_access_key,
-        secret_access_key: s3_secret_key,
-        endpoint: ENV['S3_ENDPOINT'],
-        force_path_style: true
-      }
-
-      @object_storage = Aws::S3::Client.new(conf)
-    end
-
-    def ensure_backups_on_object_storage
-      file = URI.open(original_backup_source_url).read
-      object_storage.put_object(
-        bucket: 'gitlab-backups',
-        key: original_backup_name,
-        body: file
-      )
-      puts "Uploaded #{original_backup_name}"
-    end
-
-    def original_backup_prefix
-      ENV['TEST_BACKUP_PREFIX']
-    end
-
-    def original_backup_name
-      "#{original_backup_prefix}_gitlab_backup.tar"
-    end
-
-    def original_backup_source_url
-      "https://storage.googleapis.com/gitlab-charts-ci/test-backups/#{original_backup_name}"
-    end
-
-    def new_backup_prefix
+    def backup_prefix
       'test-backup'
-    end
-
-    def new_backup_name
-      "#{new_backup_prefix}_gitlab_backup.tar"
     end
 
     def runner_app_label
