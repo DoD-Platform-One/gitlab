@@ -592,7 +592,7 @@ describe 'Gitaly configuration' do
         expect(gitaly_init_container['image']).to eq('registry.gitlab.com/gitlab-org/build/cng/gitaly-init-cgroups:master')
         expect(gitaly_init_container['imagePullPolicy']).to eq('IfNotPresent')
         expect(gitaly_init_container['securityContext']).to include('runAsUser' => 0, 'runAsGroup' => 0)
-        expect(gitaly_init_container_env.map { |env| env['name'] }).to match_array(['GITALY_POD_UID', 'CGROUP_PATH', 'OUTPUT_PATH'])
+        expect(gitaly_init_container_env.map { |env| env['name'] }).to match_array(%w[GITALY_POD_UID CGROUP_PATH OUTPUT_PATH TZ])
       end
     end
 

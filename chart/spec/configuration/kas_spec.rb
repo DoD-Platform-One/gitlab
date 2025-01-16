@@ -197,7 +197,8 @@ describe 'kas configuration' do
                   "certificate_file" => "/etc/kas/tls.crt",
                   "key_file" => "/etc/kas/tls.key"
                 },
-                "url_path_prefix" => "/k8s-proxy"
+                "url_path_prefix" => "/k8s-proxy",
+                "websocket_token_secret_file" => "/etc/kas/.gitlab_kas_websocket_token_secret"
               }
             }
 
@@ -231,6 +232,10 @@ describe 'kas configuration' do
             expect(config_yaml_data['private_api']).to eq(expected_config)
           end
         end
+      end
+
+      it 'configures the websocket token secret file' do
+        expect(config_yaml_data['agent']['kubernetes_api']['websocket_token_secret_file']).to eq('/etc/kas/.gitlab_kas_websocket_token_secret')
       end
 
       context 'when customConfig is given' do
@@ -751,6 +756,26 @@ describe 'kas configuration' do
         it 'contains the minReadySeconds customization' do
           expect(deployment['spec']).to include('minReadySeconds' => 60)
         end
+      end
+
+      it 'creates WebSocket Token secret volume' do
+        init_etc_kas_volume = deployment['spec']['template']['spec']['volumes'].find do |volume|
+          volume['name'] == 'init-etc-kas'
+        end
+
+        expect(init_etc_kas_volume['projected']['sources']).to include(
+          {
+            "secret" => {
+              "name" => "test-kas-websocket-token",
+              "items" => [
+                {
+                  "key" => "kas_websocket_token_secret",
+                  "path" => ".gitlab_kas_websocket_token_secret"
+                }
+              ]
+            }
+          }
+        )
       end
 
       describe 'tls' do

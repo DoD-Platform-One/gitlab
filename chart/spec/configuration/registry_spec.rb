@@ -142,6 +142,41 @@ describe 'registry configuration' do
       end
     end
 
+    context 'when TLS ciphers are configured' do
+      let(:values) do
+        YAML.safe_load(%(
+          registry:
+            tls:
+              cipherSuites:
+                - TLS_ECDHE_ECDSA_AES_128_GCM_SHA256
+                - TLS_ECDHE_ECDSA_AES_256_GCM_SHA384
+                - TLS_ECDHE_ECDSA_CHACHA20_POLY1305_SHA256
+        )).deep_merge(tls_values)
+      end
+
+      it 'renders deployment as expected' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+          <<~TLS_CONFIG
+          http:
+            addr: :5000
+            # `host` is not configurable
+            # `prefix` is not configurable
+            tls:
+              certificate: /etc/docker/registry/tls/tls.crt
+              key: /etc/docker/registry/tls/tls.key
+              ciphersuites:
+                - TLS_ECDHE_ECDSA_AES_128_GCM_SHA256
+                - TLS_ECDHE_ECDSA_AES_256_GCM_SHA384
+                - TLS_ECDHE_ECDSA_CHACHA20_POLY1305_SHA256
+              minimumTLS: "tls1.2"
+          TLS_CONFIG
+        )
+      end
+    end
+
     context 'when provided global TLS configuration' do
       let(:values) do
         YAML.safe_load(%(

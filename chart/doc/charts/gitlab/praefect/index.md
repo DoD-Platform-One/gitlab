@@ -119,7 +119,7 @@ global:
 ### Migrating to Praefect
 
 NOTE:
-Group-level wikis [cannot be moved using the API](https://docs.gitlab.com/ee/api/project_repository_storage_moves.html#limitations) at this time.
+Group wikis [cannot be moved by using the API](https://docs.gitlab.com/ee/api/project_repository_storage_moves.html).
 
 When migrating from standalone Gitaly instances to a Praefect setup, `global.praefect.replaceInternalGitaly` can be set to `false`.
 This ensures that the existing Gitaly instances are preserved while the new Praefect-managed Gitaly instances are created.

@@ -413,4 +413,85 @@ describe 'global configuration' do
       end
     end
   end
+
+  describe 'global.time_zone: set timezone for each GitLab pod' do
+    let(:tz_values) do
+      YAML.safe_load(%(
+        certmanager:
+          install: false
+        global:
+          time_zone: "America/Chicago"
+          praefect:
+            enabled: true
+          spamcheck:
+            enabled: true
+          pages:
+            enabled: true
+          ingress:
+            configureCertmanager: false
+          job:
+            nameSuffixOverride: '1'
+      )).deep_merge(default_values)
+    end
+
+    let(:ignored_deployments) do
+      [
+        'Deployment/test-gitlab-runner',
+        'Deployment/test-prometheus-server',
+        'Deployment/test-minio',
+        'Deployment/test-certmanager',
+        'Deployment/test-certmanager-cainjector',
+        'Deployment/test-certmanager-webhook'
+      ]
+    end
+
+    let(:ignored_statefulsets) do
+      [
+        'StatefulSet/test-postgresql',
+        'StatefulSet/test-redis-master'
+      ]
+    end
+
+    let(:ignored_jobs) do
+      [
+        'Job/test-minio-create-buckets-1',
+        'Job/test-shared-secrets-1',
+        'Job/test-gitlab-upgrade-check',
+        'Job/test-cert-manager-startupapicheck'
+      ]
+    end
+
+    it 'sets the provided timezone on all pods' do
+      t = HelmTemplate.new(tz_values)
+      expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+      objects = t.resources_by_kind('Deployment').reject { |key, _| ignored_deployments.include? key }
+      objects.merge! t.resources_by_kind('StatefulSet').reject { |key, _| ignored_statefulsets.include? key }
+      # shared secrets jobs come out as test-shared-secrets-1-xxx, need to .match those
+      objects.merge! t.resources_by_kind('Job').reject { |key, _| ignored_jobs.any? { |ij| key.match(ij) } }
+      objects.merge! t.resources_by_kind('DaemonSet')
+
+      objects.each do |o, content|
+        content['spec']['template']['spec']['containers'].each do |c|
+          c['env'].each do |tz|
+            if tz['name'] == 'TZ'
+              expect(tz['value']).to match('America/Chicago'), "Expected #{o}'s 'containers' have the env variable 'TZ' set to 'America/Chicago'. Container is #{c}"
+              break
+            end
+          end
+        end
+
+        next unless content['spec']['template']['spec'].key?('initContainers')
+
+        content['spec']['template']['spec']['initContainers'].each do |ic|
+          ic['env'].each do |tz|
+            if tz['name'] == 'TZ'
+              expect(tz['value']).to match('America/Chicago'), "Expected #{o}'s 'containers' have the env variable 'TZ' set to 'America/Chicago'. Container is #{ic}"
+              break
+            end
+          end
+        end
+      end
+    end
+  end
 end

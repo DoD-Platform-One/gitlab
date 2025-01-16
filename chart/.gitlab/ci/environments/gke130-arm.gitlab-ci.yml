@@ -1,3 +1,17 @@
+include:
+  - component: "gitlab.com/gitlab-org/quality/pipeline-common/allure-report@9.6.3"
+    inputs:
+      job_name: "e2e-test-gke130a"
+      job_stage: "qa-report"
+      gitlab_auth_token_variable_name: "DANGER_GITLAB_API_TOKEN"
+      aws_access_key_id_variable_name: "QA_ALLURE_AWS_ACCESS_KEY_ID"
+      aws_secret_access_key_variable_name: "QA_ALLURE_AWS_SECRET_ACCESS_KEY"
+      allure_results_glob: "gitlab-qa-run-*/**/allure-results"
+    rules:
+      - if: '$CI_SERVER_HOST != "gitlab.com"'
+        when: never
+      - if: '$CI_PIPELINE_SOURCE == "pipeline" || $CI_PIPELINE_SOURCE == "parent_pipeline"'
+
 .review_gke130a_common_vars: &review_gke130a_common_vars
   DNS_PROVIDER: "google"
   AGENT_NAME: "gke130-ci-cluster"
@@ -29,14 +43,6 @@ review_gke130a:
     action: access
   # initially allow arm64 failures
   allow_failure: true
-  rules:
-    # Initially we only execute for:
-    # * MRs and Default branch 
-    # * Triggered pipelines (from CNG)
-    - if: '$PIPELINE_TYPE == "CANONICAL_FEATURE_BRANCH_PIPELINE" && $CI_PIPELINE_SOURCE == "pipeline" && $TEST_BRANCH == "true"'
-    - if: '$PIPELINE_TYPE != "CANONICAL_MR_PIPELINE" && $PIPELINE_TYPE != "CANONICAL_DEFAULT_BRANCH_PIPELINE"'
-      when: never
-    - !reference [.review_template, rules]
 
 stop_review_gke130a:
   variables:

@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v4.13.0-gitlab'
+  tag: 'v4.14.0-gitlab'
   # pullPolicy: IfNotPresent
 # pullSecrets: []
 
@@ -448,3 +448,10 @@ tls:
   # NGINX Ingress related
   verify: true
   caSecretName: # Kubernetes secret, type Opaque, with `ca.crt` key
+  # cipherSuites:
+  #   - TLS_ECDHE_ECDSA_AES_128_GCM_SHA256
+  #   - TLS_ECDHE_ECDSA_AES_256_GCM_SHA384
+  #   - TLS_ECDHE_ECDSA_CHACHA20_POLY1305_SHA256
+  #   - TLS_ECDHE_RSA_AES_128_GCM_SHA256
+  #   - TLS_ECDHE_RSA_AES_256_GCM_SHA384
+  #   - TLS_ECDHE_RSA_CHACHA20_POLY1305_SHA256

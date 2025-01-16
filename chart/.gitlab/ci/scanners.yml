@@ -1,0 +1,19 @@
+include:
+  - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
+  - template: Jobs/SAST.latest.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.latest.gitlab-ci.yml
+
+dependency_scanning:
+  needs: []
+  before_script: []
+secret_detection:
+  needs: []
+  before_script: []
+sast:
+  needs: []
+  before_script: []
+iac-sast:
+  needs: []
+  before_script: []
+

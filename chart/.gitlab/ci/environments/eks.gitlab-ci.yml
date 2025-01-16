@@ -1,3 +1,17 @@
+include:
+  - component: "gitlab.com/gitlab-org/quality/pipeline-common/allure-report@9.6.3"
+    inputs:
+      job_name: "e2e-test-eks"
+      job_stage: "qa-report"
+      gitlab_auth_token_variable_name: "DANGER_GITLAB_API_TOKEN"
+      aws_access_key_id_variable_name: "QA_ALLURE_AWS_ACCESS_KEY_ID"
+      aws_secret_access_key_variable_name: "QA_ALLURE_AWS_SECRET_ACCESS_KEY"
+      allure_results_glob: "gitlab-qa-run-*/**/allure-results"
+    rules:
+      - if: '$CI_SERVER_HOST != "gitlab.com"'
+        when: never
+      - if: '$CI_PIPELINE_SOURCE == "pipeline" || $CI_PIPELINE_SOURCE == "parent_pipeline"'
+
 .review_eks_common_vars: &review_eks_common_vars
   DNS_PROVIDER: "aws"
   AGENT_NAME: "eks129-ci-cluster"

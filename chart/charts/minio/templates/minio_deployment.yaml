@@ -78,6 +78,8 @@ spec:
               mountPath: /config
             - name: minio-server-config
               mountPath: /minio
+          env:
+            {{- include "gitlab.timeZone.env" . | nindent 12 }}
           resources:
 {{ toYaml .Values.init.resources | indent 12 }}
       {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6}}
@@ -87,6 +89,8 @@ spec:
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           args: ["-C", "{{ default "/tmp/.minio" .Values.configPath }}", "--quiet", "server", "{{ .Values.mountPath }}"]
           {{- include "gitlab.containerSecurityContext" $ | indent 10 }}
+          env:
+            {{- include "gitlab.timeZone.env" $ | nindent 10 }}
           volumeMounts:
             - name: export
               mountPath: {{ .Values.mountPath }}

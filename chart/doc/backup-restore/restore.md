@@ -55,6 +55,11 @@ the rails secret from a Linux package instance, secrets are stored in JSON forma
      secret_key_base: <your secret key base value>
      otp_key_base: <your otp key base value>
      openid_connect_signing_key: <your openid signing key>
+     active_record_encryption_primary_key:
+     - 'your active record encryption primary key'
+     active_record_encryption_deterministic_key:
+     - 'your active record encryption deterministic key'
+     active_record_encryption_key_derivation_salt: 'your active record key derivation salt'
    ```
 
 To restore the rails secrets from a YAML file:

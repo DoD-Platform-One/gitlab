@@ -46,35 +46,6 @@ NOTE:
 This will delete all data in the databases and should not be run in
 production.
 
-## Backup used for testing needs to be updated
-
-Certain jobs in CI use a backup of GitLab during testing. Complete the steps below to update this backup when needed:
-
-1. Install the most latest version of the chart that is compatible with the current backup
-   into a development cluster.
-1. [Restore the backup](../backup-restore/restore.md#restoring-the-backup-file) currently
-   used in CI. The backup is available at `https://storage.cloud.google.com/gitlab-charts-ci/test-backups/<BACKUP_PREFIX>_gitlab_backup.tar`.
-   The current `BACKUP_PREFIX` is defined in `.gitlab-ci.yml`.
-
-   - If you are using the bundled MinIO with a self-signed certificate you may want
-     to use `awscli` instead of `s3cmd` to avoid SSL errors.
-     To do this, [first configure `awscli`](https://min.io/docs/minio/linux/integrations/aws-cli-with-minio.html)
-     inside your toolbox, and then pass `--s3tool awscli --aws-s3-endpoint-url http://gitlab-minio-svc:9000` to
-     your backup and restore commands.
-
-1. [Ensure the background migrations all complete](https://docs.gitlab.com/ee/update/#check-for-background-migrations-before-upgrading), forcing them to complete if needed.
-1. Upgrade the Helm release to use the new CNG images which have the new backup/restore
-   changes by setting `global.gitlabVersion=<CNG tag>`.
-1. [Create a new backup](../backup-restore/backup.md) from the `toolbox` Pod.
-1. Download the new backup from the `gitlab-backups` bucket.
-1. Ask in `#g_distribution` to upload the backup to Google Cloud Storage (GCS):
-   1. Project: `cloud-native-182609`, path: `gitlab-charts-ci/test-backups/`
-   1. Edit access and add `Entity=Public`, `Name=allUsers`, and `Access=Reader`.
-1. Finally, update `.variables.TEST_BACKUP_PREFIX` in `.gitlab-ci.yml` and open a merge request.
-   - For example: If the filename is `1708623546_2024_02_22_16.9.1-ee_gitlab_backup`, then the prefix is `1708623546_2024_02_22_16.9.1-ee`.
-
-Future pipelines will now use the new backup artifact during testing.
-
 ## CI clusters are low on available resources
 
 You may notice one or more CI clusters run low on available resources like CPU

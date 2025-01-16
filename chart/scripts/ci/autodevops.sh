@@ -240,17 +240,6 @@ function wait_for_deploy {
   echo ""
 }
 
-function restart_toolbox() {
-  # restart the toolbox pods, by deleting them
-  # the ReplicaSet of the Deployment will re-create them
-  # this ensure we run up-to-date on tags like `master` when there
-  # have been no changes to the configuration to warrant a restart
-  # via metadata checksum annotations
-  kubectl -n ${NAMESPACE} delete pods -lapp=toolbox,release=${RELEASE_NAME}
-  # always "succeed" so not to block.
-  return 0
-}
-
 function ensure_namespace() {
   kubectl describe namespace "$NAMESPACE" || kubectl create namespace "$NAMESPACE"
 }

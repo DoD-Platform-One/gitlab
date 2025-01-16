@@ -34,15 +34,15 @@ dependencies:
   version: '*.*.*'
 - name: gitlab-zoekt
   repository: https://charts.gitlab.io/
-  version: 1.4.2
+  version: 1.4.3
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
-  version: 0.5.3
+  version: 0.5.12
 - name: traefik
   repository: https://helm.traefik.io/traefik
   version: 10.19.4
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:208bdd8f1c59e101010235eb006510a3eb4ff24677f7fb1ec0d93b888d242792
-generated: "2024-12-06T12:04:32.305073916-06:00"
+digest: sha256:21dd06b33ea0567bdece9abb2a3dff308e4d9111d4f3c91667e8d12c7d7e92d0
+generated: "2025-01-15T13:08:24.330905-05:00"

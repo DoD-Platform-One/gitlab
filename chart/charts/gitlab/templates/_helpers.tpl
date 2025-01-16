@@ -105,11 +105,11 @@ affinity:
     nodeAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
         - weight: 1
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: {{ default .Values.global.affinity.nodeAffinity.key .Values.affinity.nodeAffinity.key | quote }}
-                  operator: In
-                  values: {{ default .Values.global.affinity.nodeAffinity.values .Values.affinity.nodeAffinity.values | toYaml | nindent 18 }}
+          preference:
+            matchExpressions:
+              - key: {{ default .Values.global.affinity.nodeAffinity.key .Values.affinity.nodeAffinity.key | quote }}
+                operator: In
+                values: {{ default .Values.global.affinity.nodeAffinity.values .Values.affinity.nodeAffinity.values | toYaml | nindent 16 }}
   {{- end -}}
 {{- end -}}
 {{- end }}
@@ -128,3 +128,17 @@ storage: {{ .storage.name }}
 release: {{ .Release.Name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Renders the TZ (time zone) environment variable.
+Except the root context as argument.
+
+Usage:
+  {{ include "gitlab.timeZone.env" $root }}
+*/}}
+{{- define "gitlab.timeZone.env" -}}
+{{- with $.Values.global.time_zone }}
+- name: TZ
+  value: {{ . | quote }}
+{{- end }}
+{{- end -}}

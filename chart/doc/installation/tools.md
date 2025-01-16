@@ -11,7 +11,7 @@ DETAILS:
 **Offering:** Self-managed
 
 Before you deploy GitLab in a Kubernetes cluster, install the following
-prerequisites and decide on the options you'll use when you install.
+prerequisites and decide on the options to use when you install.
 
 ## Prerequisites
 

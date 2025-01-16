@@ -82,6 +82,7 @@ spec:
               value: /registry
           {{- include "gitlab.extraEnv" . | nindent 12 }}
           {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
+          {{- include "gitlab.timeZone.env" . | nindent 12 }}
         {{- if or .Values.database.enabled .Values.database.configure }}
         - name: dependencies
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ include "gitlab.image.tagSuffix" . }}"
@@ -95,6 +96,7 @@ spec:
           resources:
             {{- toYaml .Values.init.resources | nindent 12 }}
           env:
+          {{- include "gitlab.timeZone.env" . | nindent 10 }}
           {{- include "gitlab.extraEnv" . | nindent 10 }}
           {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
         {{- end }}
@@ -105,6 +107,7 @@ spec:
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           {{- include "gitlab.containerSecurityContext" $ | indent 10 }}
           env:
+          {{- include "gitlab.timeZone.env" . | nindent 10 }}
           {{- include "gitlab.extraEnv" . | nindent 10 }}
           {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 10 }}
           volumeMounts:

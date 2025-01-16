@@ -25,6 +25,9 @@ data:
         {{- if and .Values.tls.clientCAs (kindIs "slice" .Values.tls.clientCAs) }}
         clientCAs: {{- toYaml .Values.tls.clientCAs | nindent 10 }}
         {{- end }}
+        {{- if and .Values.tls.cipherSuites (kindIs "slice" .Values.tls.cipherSuites) }}
+        ciphersuites: {{- toYaml .Values.tls.cipherSuites | nindent 10 }}
+        {{- end }}
         minimumTLS: {{ default "tls1.2" .Values.tls.minimumTLS | quote }}
       {{- end }}
       {{- if .Values.debug }}
