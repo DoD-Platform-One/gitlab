@@ -19,7 +19,7 @@ function gen_random_base64(){
 
 # Args: yaml file, search path
 function fetch_rails_value(){
-  local value=$(yq ".${2}" $1)
+  local value=$(yq --prettyPrint --no-colors ".${2}" $1)
 
   # Don't return null values
   if [ "${value}" != "null" ]; then echo "${value}"; fi
@@ -209,9 +209,9 @@ stringData:
       openid_connect_signing_key: |
 $(echo "${openid_connect_signing_key}" | awk '{print "        " $0}')
       active_record_encryption_primary_key:
-      $active_record_encryption_primary_keys
+        $active_record_encryption_primary_keys
       active_record_encryption_deterministic_key:
-      $active_record_encryption_deterministic_keys
+        $active_record_encryption_deterministic_keys
       active_record_encryption_key_derivation_salt: $active_record_encryption_key_derivation_salt
 EOF
   kubectl --validate=false --namespace=$namespace apply -f rails-secrets.yml
