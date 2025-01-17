@@ -2,6 +2,26 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.7.4 (2025-01-15)
+
+No changes.
+
+## 8.7.3 (2025-01-08)
+
+No changes.
+
+## 8.7.2 (2024-12-27)
+
+### Fixed (1 change)
+
+- [Revert certmanager-issuer time zone change](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/99befdf99b7f07639d7b6ceb83ea8b534085bbe3) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4044))
+
+## 8.7.1 (2024-12-20)
+
+### Fixed (1 change)
+
+- [Shared Secrets: consume idiomatic returns from yq](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/19e1aa90c41e3559959f27b4a3baf67669905400) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4039))
+
 ## 8.7.0 (2024-12-18)
 
 ### Added (3 changes)
