@@ -1,27 +1,48 @@
 {
-    "baseBranches": ["main"],
+    "baseBranches": [
+        "main"
+    ],
     "configWarningReuseIssue": false,
     "dependencyDashboard": true,
     "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
     "draftPR": true,
-    "enabledManagers": ["helm-values", "regex"],
-    "ignorePaths": ["chart/charts/**", "chart/examples/**", "chart/scripts/**"],
-    "labels": ["gitlab","renovate"],
+    "enabledManagers": [
+        "helm-values",
+        "custom.regex"
+    ],
+    "ignorePaths": [
+        "chart/charts/**",
+        "chart/examples/**",
+        "chart/scripts/**"
+    ],
+    "labels": [
+        "gitlab",
+        "renovate"
+    ],
     "commitMessagePrefix": "SKIP UPDATE CHECK",
     "packageRules": [
         {
-            "matchDatasources": ["docker"],
+            "matchDatasources": [
+                "docker"
+            ],
             "groupName": "Ironbank"
         },
         {
-            "matchDatasources": ["docker"],
-            "matchPackageNames": ["registry1.dso.mil/ironbank/opensource/postgres/postgresql"],
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "registry1.dso.mil/ironbank/opensource/postgres/postgresql"
+            ],
             "allowedVersions": "14.x"
         }
     ],
-    "regexManagers": [
+    "customManagers": [
         {
-            "fileMatch": ["^chart/Chart\\.yaml$"],
+            "customType": "regex",
+            "fileMatch": [
+                "^chart/Chart\\.yaml$"
+            ],
             "matchStrings": [
                 "appVersion:[^\\S\\r\\n]+(?<currentValue>.+)"
             ],
@@ -29,28 +50,40 @@
             "datasourceTemplate": "docker"
         },
         {
-            "fileMatch": ["^chart/Chart\\.yaml$"],
+            "customType": "regex",
+            "fileMatch": [
+                "^chart/Chart\\.yaml$"
+            ],
             "matchStrings": [
                 "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
             ],
             "datasourceTemplate": "docker"
         },
         {
-            "fileMatch": ["^chart/values\\.yaml$"],
+            "customType": "regex",
+            "fileMatch": [
+                "^chart/values\\.yaml$"
+            ],
             "matchStrings": [
                 "image:[^\\S\\r\\n]+(?<depName>.+)\\s+tag:[^\\S\\r\\n]+(?<currentValue>[\\d\\.]+)"
             ],
             "datasourceTemplate": "docker"
         },
         {
-            "fileMatch": ["^tests/images\\.txt$"],
+            "customType": "regex",
+            "fileMatch": [
+                "^tests/images\\.txt$"
+            ],
             "matchStrings": [
-              "s*(?<depName>.+):(?<currentValue>.+)"
+                "s*(?<depName>.+):(?<currentValue>.+)"
             ],
             "datasourceTemplate": "docker"
         },
         {
-            "fileMatch": ["^chart/Chart\\.yaml$"],
+            "customType": "regex",
+            "fileMatch": [
+                "^chart/Chart\\.yaml$"
+            ],
             "matchStrings": [
                 "- Gitlab:\\s+(?<currentValue>.+)"
             ],
@@ -59,7 +92,10 @@
             "datasourceTemplate": "docker"
         },
         {
-            "fileMatch": ["^chart/requirements\\.yaml$"],
+            "customType": "regex",
+            "fileMatch": [
+                "^chart/requirements\\.yaml$"
+            ],
             "matchStrings": [
                 "- name:[\\s]+gluon[\\s]+version:[\\s]+(?<currentValue>.*)"
             ],
@@ -67,8 +103,9 @@
             "depNameTemplate": "bigbang/gluon",
             "datasourceTemplate": "docker"
         }
-
     ],
     "separateMajorMinor": false,
-    "postUpdateOptions": ["helmUpdateSubChartArchives"]
+    "postUpdateOptions": [
+        "helmUpdateSubChartArchives"
+    ]
 }
