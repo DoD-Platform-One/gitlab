@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.7.4-bb.1] (2024-01-22)
+
+### Changed
+
+- Adjusted peerauth exception for minio to not be created whenever minio for gitlab is disabled
+
 ## [8.7.4-bb.0] (2024-01-17)
 
 ### Changed
