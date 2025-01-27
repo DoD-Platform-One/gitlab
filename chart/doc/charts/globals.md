@@ -256,7 +256,7 @@ with the `-fips` extension to the image tag.
 --set global.image.tagSuffix="-fips"
 ```
 
-## Custom timezone for all containers 
+## Custom timezone for all containers
 
 If you wish to set a custom timezone for all the GitLab containers, you can use the `global.time_zone` key. Refer to `TZ identifier` on the [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for the available values. Default is `UTC`.
 
@@ -460,6 +460,7 @@ global:
   redis:
     host: redis.example.com
     serviceName: redis
+    database: 7
     port: 6379
     auth:
       enabled: true
@@ -476,6 +477,7 @@ global:
 | `host`             | String  |         | The hostname of the Redis server with the database to use. This can be omitted in lieu of `serviceName`. |
 | `serviceName`      | String  | `redis` | The name of the `service` which is operating the Redis database. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Redis as a part of the overall GitLab chart. |
 | `port`             | Integer | `6379`  | The port on which to connect to the Redis server. |
+| `database`         | Integer | `0`     | The database to connect to on the Redis server. |
 | `user`             | String  |         | The user used to authenticate against Redis (Redis 6.0+). |
 | `auth.enabled`     | Boolean    | true    | The `auth.enabled` provides a toggle for using a password with the Redis instance. |
 | `auth.key`         | String  |         | The `auth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
@@ -1362,10 +1364,10 @@ This property has two sub-keys: `secret` and `key`.
 - `key` is the name of the key in the secret which houses the YAML block. Defaults to `connection`.
 
 Valid configuration keys can be found in the [GitLab Job Artifacts Administration](https://docs.gitlab.com/ee/administration/job_artifacts.html#s3-compatible-connection-settings)
-documentation. This matches to [Fog](https://github.com/fog), and is different between
+documentation. This matches to [Fog](https://github.com/fog/fog.github.com), and is different between
 provider modules.
 
-Examples for [AWS](https://fog.io/storage/#using-amazon-s3-and-fog) and [Google](https://fog.io/storage/#google-cloud-storage)
+Examples for [AWS](https://fog.github.io/storage/#using-amazon-s3-and-fog) and [Google](https://fog.github.io/storage/#google-cloud-storage)
 providers can be found in [`examples/objectstorage`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage).
 
 - [`rails.s3.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/objectstorage/rails.s3.yaml)

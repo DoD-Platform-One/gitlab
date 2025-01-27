@@ -45,6 +45,26 @@ describe 'Redis configuration' do
         expect(resque_yml.dig('production', 'write_timeout')).to eq(5)
       end
     end
+
+    context 'custom redis database value' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: resque.redis
+              port: 6379
+              database: 4
+          redis:
+            install: false
+        )).deep_merge(default_values)
+      end
+
+      it 'configures Redis' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+        expect(t.dig('ConfigMap/test-webservice','data','resque.yml.erb')).to include("resque.redis:6379/4")
+      end
+    end
   end
 
   describe 'global.redis.auth.enabled' do

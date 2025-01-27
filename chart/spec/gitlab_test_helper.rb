@@ -150,7 +150,9 @@ module Gitlab
         filters="#{filters},release=#{ENV['RELEASE_NAME']}"
       end
 
-      stdout, status = Open3.capture2e("kubectl rollout status #{type} -l'#{filters}' --timeout=#{kube_timeout_parse('KUBE_ROLLOUT_TIMEOUT')}")
+      cmd = "kubectl rollout status #{type} -l'#{filters}' --timeout=#{kube_timeout_parse('KUBE_ROLLOUT_TIMEOUT')}"
+      puts "Executing in Namespace #{ENV['KUBE_NAMESPACE']}: #{cmd}"
+      stdout, status = Open3.capture2e(cmd)
       raise stdout unless status.success?
     end
 

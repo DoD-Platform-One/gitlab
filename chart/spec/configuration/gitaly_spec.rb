@@ -527,6 +527,42 @@ describe 'Gitaly configuration' do
     end
   end
 
+  context 'shareProcessNamespace' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            shareProcessNamespace: #{share_process_namespace_enabled}
+      )).merge(default_values)
+    end
+
+    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
+
+    context 'when enabled' do
+      let(:share_process_namespace_enabled) { true }
+
+      it 'enables shareProcessNamespace' do
+        t = HelmTemplate.new(values)
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_template_spec = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']
+        expect(gitaly_template_spec).to include(
+          'shareProcessNamespace' => true
+        )
+      end
+    end
+
+    context 'when not enabled' do
+      let(:share_process_namespace_enabled) { false }
+
+      it 'does not set shareProcessNamespace' do
+        t = HelmTemplate.new(values)
+        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
+        gitaly_template_spec = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']
+        expect(gitaly_template_spec).not_to include('shareProcessNamespace')
+      end
+    end
+  end
+
   context 'cgroups' do
     let(:values) do
       YAML.safe_load(%(

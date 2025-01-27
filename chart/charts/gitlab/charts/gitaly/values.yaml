@@ -33,6 +33,10 @@ common:
 podLabels: {}
 serviceLabels: {}
 
+# Allows process namespace sharing within the pod
+# This makes processes in a container visible to all other containers in the same pod.
+shareProcessNamespace: false
+
 init:
   image: {}
     # repository:

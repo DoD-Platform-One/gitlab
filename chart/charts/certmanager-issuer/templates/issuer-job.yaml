@@ -10,6 +10,7 @@ metadata:
     {{- include "gitlab.commonLabels" . | nindent 4 }}
 spec:
   activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
   template:
     metadata:
       labels:

@@ -268,6 +268,7 @@ Return the workhorse redis configuration.
 {{- end }}
 {{- include "gitlab.redis.selectedMergedConfig" . -}}
 [redis]
+DB = {{ .redisMergedConfig.database }}
 {{- if not .redisMergedConfig.sentinels }}
 {{- $userinfo := "" }}
 {{- if .redisMergedConfig.user }}

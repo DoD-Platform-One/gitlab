@@ -26,3 +26,5 @@ common:
   labels: {}
 
 useNewIngressForCerts: false
+
+ttlSecondsAfterFinished: 1800

@@ -64,6 +64,22 @@ check_docs_links:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
+# https://github.com/zegl/kube-score
+# Initially motivated to detect duplicated environment variable definitions
+kube-score:
+  image:
+    name: "zegl/kube-score:v1.19.0@sha256:94137f32ce139dc9fbdbbd380249025e4d378c282ff151a100b981cdeeb923b6"
+    entrypoint: [""]
+  stage: prepare
+  script:
+    - helm dependency build
+    - helm template . --set certmanager-issuer.email=gitlab@example.com  > /tmp/test.yaml
+    - /kube-score score --ignore-container-cpu-limit --ignore-container-memory-limit --ignore-test "container-image-pull-policy,container-security-context-user-group-id,container-ephemeral-storage-request-and-limit,container-security-context-readonlyrootfilesystem,pod-probes,pod-networkpolicy,container-resources,deployment-has-poddisruptionbudget,deployment-replicas,deployment-has-host-podantiaffinity" /tmp/test.yaml
+  rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
 lint_package:
   stage: preflight
   when: always
@@ -100,4 +116,3 @@ specs_without_cluster:
     - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'
     - if: '$PIPELINE_TYPE == "RELEASE_PIPELINE"'
   needs: ['lint_package']
-

@@ -49,6 +49,9 @@ spec:
         prometheus.io/path: {{ $.Values.metrics.path }}
       {{- end }}
     spec:
+      {{- if .Values.shareProcessNamespace }}
+      shareProcessNamespace: {{ .Values.shareProcessNamespace }}
+      {{- end }}
       {{- if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}

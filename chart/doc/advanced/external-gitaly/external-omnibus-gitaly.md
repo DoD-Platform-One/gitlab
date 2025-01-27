@@ -56,7 +56,7 @@ gitlab_kas['enable'] = false
 prometheus['enable'] = false
 alertmanager['enable'] = false
 
-# If you don't run a seperate monitoring node you can
+# If you don't run a separate monitoring node you can
 # Enable Prometheus access & disable these extra services
 # This makes Prometheus listen on all interfaces. You must use firewalls to restrict access to this address/port.
 # prometheus['listen_address'] = '0.0.0.0:9090'

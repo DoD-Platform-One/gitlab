@@ -4,6 +4,7 @@
   stage: review
   cache: {}
   dependencies: []
+  needs: []
   before_script:
   - gem install gitlab --no-doc
   # We need to download the script rather than clone the repo since the

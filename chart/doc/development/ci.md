@@ -8,8 +8,8 @@
 
 ### LIMIT_TO
 
-`LIMIT_TO` allows to isolate singular logical block of pipeline and *only* execute that block skipping all other blocks. This allows for faster iteration as developer may choose to test only a singular platform before code is ready for more thorough testing. It also allows for external pipeline invocations for very specific scenarios. 
+`LIMIT_TO` allows to isolate singular logical block of pipeline and *only* execute that block skipping all other blocks. This allows for faster iteration as developer may choose to test only a singular platform before code is ready for more thorough testing. It also allows for external pipeline invocations for very specific scenarios.
 
 `LIMIT_TO` accepts only a single value.
 
-Empty value implies that there are no limits and that pipeline shall be executed in full. 
+Empty value implies that there are no limits and that pipeline shall be executed in full.

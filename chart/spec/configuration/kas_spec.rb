@@ -290,6 +290,19 @@ describe 'kas configuration' do
           ))
         end
 
+        let(:sentinels_database) do
+          YAML.safe_load(%(
+            redis:
+              host: global.host
+              database: 6
+              sentinels:
+              - host: sentinel1.example.com
+                port: 26379
+              - host: sentinel2.example.com
+                port: 26379
+          ))
+        end
+
         context 'when redis is disabled' do
           let(:kas_values) do
             default_kas_values.deep_merge!(YAML.safe_load(%(
@@ -336,9 +349,28 @@ describe 'kas configuration' do
             end
           end
 
+          context 'when global redis has database value' do
+            let(:kas_values) do
+              default_kas_values.deep_merge!(YAML.safe_load(%(
+                global:
+                  redis:
+                    database: 3
+              )))
+            end
+
+            it 'has set url' do
+              expect(config_yaml_data['redis']).to include(YAML.safe_load(%(
+                database_index: 3
+                server:
+                  address: test-redis-master.default.svc:6379
+              )))
+            end
+          end
+
           context 'when no sentinel is setup' do
             it 'takes the global redis config' do
               expect(config_yaml_data['redis']).to include(YAML.safe_load(%(
+                database_index: 0
                 password_file: /etc/kas/redis/redis-password
                 server:
                   address: test-redis-master.default.svc:6379
@@ -359,6 +391,28 @@ describe 'kas configuration' do
 
             it 'takes the global sentinel redis config' do
               expect(config_yaml_data['redis']).to include(YAML.safe_load(%(
+                database_index: 0
+                sentinel:
+                  addresses:
+                    - sentinel1.example.com:26379
+                    - sentinel2.example.com:26379
+                  master_name: global.host
+              )))
+            end
+          end
+
+          context 'when sentinel and database are setup' do
+            let(:kas_values) do
+              vals = default_kas_values
+              vals['global'].deep_merge!(sentinels_database)
+              vals.deep_merge!('redis' => { 'install' => false })
+            end
+
+            it_behaves_like 'mounts global redis secret'
+
+            it 'takes the global sentinel and database redis config' do
+              expect(config_yaml_data['redis']).to include(YAML.safe_load(%(
+                database_index: 6
                 sentinel:
                   addresses:
                     - sentinel1.example.com:26379
@@ -439,6 +493,7 @@ describe 'kas configuration' do
               let(:sentinels) { {} }
               it 'configures a sharedState server config' do
                 expect(config_yaml_data['redis']).to include(YAML.safe_load(%(
+                  database_index: 0
                   password_file: /etc/kas/redis/sharedState-password
                   server:
                     address: shared.redis:6378

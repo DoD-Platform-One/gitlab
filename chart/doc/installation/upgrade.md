@@ -21,9 +21,7 @@ Because the GitLab chart versions don't follow the same numbering as GitLab vers
 see the [version mappings](version_mappings.md) between them.
 
 NOTE:
-**Zero-downtime upgrades** are not available with the GitLab charts.
-Ongoing work to support this feature can be tracked via
-[the GitLab Operator epic](https://gitlab.com/groups/gitlab-org/cloud-native/-/epics/52).
+**Zero-downtime upgrades** are not available with the GitLab charts but can be achieved by using [GitLab Operator](https://docs.gitlab.com/operator/gitlab_upgrades.html).
 
 We also recommend that you take a [backup](../backup-restore/index.md) first. Also note that you
 must provide all values using `helm upgrade --set key=value` syntax or `-f values.yaml` instead of

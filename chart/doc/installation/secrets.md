@@ -224,6 +224,8 @@ This secret is referenced by the `global.praefect.authToken.secret` setting.
 
 ### GitLab Rails secret
 
+> - The `active_record_encryption_*` keys were added in [GitLab 17.8](../releases/8_0.md#upgrade-to-880).
+
 Replace `<name>` with the name of the release.
 
 ```shell
@@ -249,9 +251,6 @@ This secret is referenced by the `global.railsSecrets.secret` setting.
 
 It is **not recommended**  to rotate this secret as it contains the database encryption keys. If the secret is
 rotated, the result will be the same behavior exhibited [when the secrets file is lost](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#when-the-secrets-file-is-lost).
-
-NOTE:
-The `encrypted_settings_key_base` was added in GitLab `13.7`, and will be required for GitLab `14.0`.
 
 ### GitLab Workhorse secret
 
