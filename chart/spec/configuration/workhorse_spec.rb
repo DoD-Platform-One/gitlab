@@ -155,7 +155,7 @@ describe 'Workhorse configuration' do
   context 'configuring dedicated redis' do
     let(:template) { HelmTemplate.new(values) }
 
-    context 'with global redis' do
+    context 'with default redis database' do
       let(:values) do
         YAML.safe_load(%(
           global:
@@ -166,7 +166,7 @@ describe 'Workhorse configuration' do
                 secret: global-secret
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge(default_values)
       end
 
       it 'renders the global redis config' do
@@ -176,8 +176,41 @@ describe 'Workhorse configuration' do
 
         redis_config = toml['redis']
 
-        expect(redis_config.keys).to match_array(%w[URL Password])
+        expect(redis_config.keys).to match_array(%w[URL Password DB])
         expect(redis_config['URL']).to eq('redis://global.redis:6379')
+        expect(redis_config['DB']).to eq(0)
+        expect(redis_config['Password']).to eq(global_redis_password)
+
+        expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/redis-password')
+        expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/redis-password')
+      end
+    end
+
+    context 'with global redis' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            redis:
+              host: global.redis
+              database: 3
+              auth:
+                enabled: true
+                secret: global-secret
+          redis:
+            install: false
+        )).deep_merge(default_values)
+      end
+
+      it 'renders the global redis config' do
+        toml = render_toml(raw_toml)
+
+        expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
+
+        redis_config = toml['redis']
+
+        expect(redis_config.keys).to match_array(%w[URL Password DB])
+        expect(redis_config['URL']).to eq('redis://global.redis:6379')
+        expect(redis_config['DB']).to eq(3)
         expect(redis_config['Password']).to eq(global_redis_password)
 
         expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/redis-password')
@@ -210,8 +243,9 @@ describe 'Workhorse configuration' do
         expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
 
         redis_config = toml['redis']
-        expect(redis_config.keys).to match_array(%w[URL Password])
+        expect(redis_config.keys).to match_array(%w[URL Password DB])
         expect(redis_config['URL']).to eq('redis://workhorse.redis:6379')
+        expect(redis_config['DB']).to eq(0)
         expect(redis_config['Password']).to eq(workhorse_redis_password)
         expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
         expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
@@ -228,8 +262,9 @@ describe 'Workhorse configuration' do
           expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
 
           redis_config = toml['redis']
-          expect(redis_config.keys).to match_array(%w[URL])
+          expect(redis_config.keys).to match_array(%w[URL DB])
           expect(redis_config['URL']).to eq('redis://workhorse.redis:6379')
+          expect(redis_config['DB']).to eq(0)
         end
       end
     end
@@ -254,8 +289,9 @@ describe 'Workhorse configuration' do
           expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
 
           redis_config = toml['redis']
-          expect(redis_config.keys).to match_array(%w[URL Password])
+          expect(redis_config.keys).to match_array(%w[URL Password DB])
           expect(redis_config['URL']).to eq('redis://redis-user@workhorse.redis:6379')
+          expect(redis_config['DB']).to eq(0)
           expect(redis_config['Password']).to eq(workhorse_redis_password)
           expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
           expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
@@ -269,6 +305,7 @@ describe 'Workhorse configuration' do
           global:
             redis:
               host: global.redis
+              database: 7
               auth:
                 enabled: true
                 secret: global-secret
@@ -290,20 +327,22 @@ describe 'Workhorse configuration' do
         expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
 
         redis_config = toml['redis']
-        expect(redis_config.keys).to match_array(%w[URL Password])
+        expect(redis_config.keys).to match_array(%w[URL Password DB])
         expect(redis_config['URL']).to eq('redis://workhorse-redis-user@workhorse.redis:6379')
+        expect(redis_config['DB']).to eq(7)
         expect(redis_config['Password']).to eq(workhorse_redis_password)
         expect(template.dig("ConfigMap/test-workhorse-default", 'data', 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
         expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
       end
     end
 
-    context 'with redis sentinel' do
+    context 'with redis sentinel and database' do
       let(:values) do
         YAML.safe_load(%(
           global:
             redis:
               host: global.redis
+              database: 9
               auth:
                 enabled: true
                 secret: global-secret
@@ -334,10 +373,11 @@ describe 'Workhorse configuration' do
         expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
 
         redis_config = toml['redis']
-        expect(redis_config.keys).to match_array(%w[Password SentinelMaster Sentinel])
+        expect(redis_config.keys).to match_array(%w[Password SentinelMaster Sentinel DB])
         expect(redis_config['SentinelMaster']).to eq('workhorse.redis')
         expect(redis_config['Sentinel']).to match_array(%w[tcp://s1.workhorse.redis:26379 tcp://s2.workhorse.redis:26379])
         expect(redis_config['Password']).to eq(workhorse_redis_password)
+        expect(redis_config['DB']).to eq(9)
         expect(template.dig("ConfigMap/test-workhorse-default", "data", 'workhorse-config.toml.tpl')).to include('redis/workhorse-password')
         expect(template.dig('ConfigMap/test-workhorse-default', 'data', 'configure')).to include('init-config/redis/workhorse-password')
       end
@@ -353,7 +393,7 @@ describe 'Workhorse configuration' do
           expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
 
           redis_config = toml['redis']
-          expect(redis_config.keys).to match_array(%w[SentinelMaster Sentinel])
+          expect(redis_config.keys).to match_array(%w[SentinelMaster Sentinel DB])
           expect(redis_config['SentinelMaster']).to eq('workhorse.redis')
           expect(redis_config['Sentinel']).to match_array(%w[tcp://s1.workhorse.redis:26379 tcp://s2.workhorse.redis:26379])
         end
@@ -397,11 +437,12 @@ describe 'Workhorse configuration' do
           expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis])
 
           redis_config = toml['redis']
-          expect(redis_config.keys).to match_array(%w[Password SentinelMaster Sentinel SentinelPassword])
+          expect(redis_config.keys).to match_array(%w[Password SentinelMaster Sentinel SentinelPassword DB])
           expect(redis_config['SentinelMaster']).to eq('workhorse.redis')
           expect(redis_config['Sentinel']).to match_array(%w[tcp://s1.workhorse.redis:26379 tcp://s2.workhorse.redis:26379])
           expect(redis_config['Password']).to eq(workhorse_redis_password)
           expect(redis_config['SentinelPassword']).to eq(global_redis_sentinel_password)
+          expect(redis_config['DB']).to eq(0)
 
           expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
 

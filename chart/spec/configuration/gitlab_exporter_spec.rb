@@ -35,8 +35,23 @@ describe 'gitlab-exporter configuration' do
 
     it 'configures Redis' do
       expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
-      expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@test-redis-master.default.svc:6379")
+      expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@test-redis-master.default.svc:6379/0")
       expect(sidekiq_config['opts']).not_to include('redis_sentinels')
+    end
+  end
+
+  context 'with custom redis database value' do
+    let(:values) do
+      YAML.safe_load(%(
+        global:
+          redis:
+            database: 4
+      )).deep_merge(default_values)
+    end
+
+    it 'configures Redis' do
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@test-redis-master.default.svc:6379/4")
     end
   end
 
@@ -103,7 +118,7 @@ describe 'gitlab-exporter configuration' do
 
     it 'configures Sentinels' do
       expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
-      expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@global.host:6379")
+      expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@global.host:6379/0")
       expect(sidekiq_config['opts']['redis_sentinels']).to eq(
         [
           { 'host' => 'sentinel1.example.com', 'port' => 26379 },
@@ -131,7 +146,7 @@ describe 'gitlab-exporter configuration' do
 
       it 'configures Sentinels' do
         expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
-        expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@queues.redis.host:6379")
+        expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@queues.redis.host:6379/0")
         expect(sidekiq_config['opts']['redis_sentinels']).to eq(
           [
             { 'host' => 'sentinel1.example.com', 'port' => 26379 },
@@ -164,7 +179,7 @@ describe 'gitlab-exporter configuration' do
 
       it 'configures Sentinels with password' do
         expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
-        expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@global.host:6379")
+        expect(sidekiq_config['opts']['redis_url']).to eq("redis://:#{password}@global.host:6379/0")
         expect(sidekiq_config['opts']['redis_sentinel_password']).to eq(RuntimeTemplate::JUNK_PASSWORD)
         expect(sidekiq_config['opts']['redis_sentinels']).to eq(
           [

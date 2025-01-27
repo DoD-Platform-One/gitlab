@@ -330,11 +330,25 @@ describe 'Mailroom configuration' do
       t = HelmTemplate.new(values)
       expect(t.exit_code).to eq(0)
       # configure the external-redis server, port, secret
-      expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).to include("external-redis:9999")
+      expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).to include("external-redis:9999/0")
       projected_volume = t.projected_volume_sources('Deployment/test-mailroom','init-mailroom-secrets')
       redis_mount =  projected_volume.select { |item| item['secret']['name'] == "external-redis-secret" }
       expect(redis_mount.length).to eq(1)
       expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).not_to include(":sentinels:")
+    end
+
+    it 'Populates configured database host, port, password' do
+      local = YAML.safe_load(%(
+        global:
+          redis:
+            host: external-redis
+            port: 9999
+            database: 7
+      ))
+      t = HelmTemplate.new(values.deep_merge(local))
+      expect(t.exit_code).to eq(0)
+      # configure the external-redis server, port, secret
+      expect(t.dig('ConfigMap/test-mailroom','data','mail_room.yml')).to include("external-redis:9999/7")
     end
 
     it 'Populates Sentinels, when configured' do

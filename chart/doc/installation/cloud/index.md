@@ -39,7 +39,7 @@ We welcome reports made to our [issue tracker](https://gitlab.com/gitlab-org/cha
 
 Some GitLab features might not work on deprecated releases or releases older than the releases listed above.
 
-For some components, like the [agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/#gitlab-agent-for-kubernetes-supported-cluster-versions) and [GitLab Operator](https://docs.gitlab.com/operator/installation.html#kubernetes), GitLab might support different cluster releases.
+For some components, like the [agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/) and [GitLab Operator](https://docs.gitlab.com/operator/installation.html), GitLab might support different cluster releases.
 
 WARNING:
 Kubernetes nodes must use the x86-64 architecture.

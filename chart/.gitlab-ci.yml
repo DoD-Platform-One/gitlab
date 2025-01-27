@@ -50,7 +50,7 @@ variables:
   DEBIAN_VERSION: bookworm
   RUBY_VERSION: "3.1.5"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "14.20.0"
+  GITLAB_QA_VERSION: "15.0.0"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -238,6 +238,8 @@ trigger_review_current:
     - job: pin_image_versions
   rules:
     - !reference [.rule:skip_if_fork]
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+      when: never
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline" && $PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/ '
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline" && $PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/ '
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
@@ -248,6 +250,8 @@ trigger_review_current:
 .trigger_review_current:
   rules:
     - !reference [.rule:skip_if_fork]
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+      when: never
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
     # Triggered from CNG
     - if: '$CI_PIPELINE_SOURCE == "pipeline" && $TEST_BRANCH == "true"'
@@ -263,6 +267,8 @@ trigger_review_secondary:
       optional: true
     - job: pin_image_versions
   rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+      when: never
     - !reference [.rule:skip_if_fork]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
       when: manual
@@ -271,6 +277,8 @@ trigger_review_secondary:
 
 .trigger_review_secondary:
   rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+      when: never
     - !reference [.rule:skip_if_fork]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -281,8 +289,10 @@ trigger_review_secondary:
     include:
       - local: .gitlab-ci.yml
     strategy: depend
+    forward:
+      pipeline_variables: true
   inherit:
-    variables: 
+    variables:
       - PIPELINE_TYPE
       - REVIEW_REF_PREFIX
       - LIMIT_TO

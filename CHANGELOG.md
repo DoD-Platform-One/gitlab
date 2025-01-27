@@ -4,6 +4,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.8.1-bb.0] (2024-01-24)
+
+### Changed
+
+- update gluon 0.5.3 -> 0.5.14
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 17.7.2 -> 17.8.1  
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.7.2 -> 17.8.1  
+
 ## [8.7.4-bb.1] (2024-01-22)
 
 ### Changed

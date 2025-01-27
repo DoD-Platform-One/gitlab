@@ -28,6 +28,7 @@ You must set the following parameters:
 Items below can be further customized if you are not using the defaults:
 
 - `global.redis.port`: The port the database is available on, defaults to `6379`.
+- `global.redis.database`: The database to connect to on the Redis server, defaults to `0`.
 
 For example, pass these values via Helm's `--set` flag while deploying:
 

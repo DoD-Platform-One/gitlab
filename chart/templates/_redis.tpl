@@ -15,7 +15,7 @@ Build a dict of redis configuration
 {{-   if and $.Values.global.redis.redisYmlOverride $.redisConfigName -}}
 {{-     $hasOverrideSecret = (kindIs "map" (dig $.redisConfigName "password" "" $.Values.global.redis.redisYmlOverride)) -}}
 {{-   end -}}
-{{-   range $want := list "host" "port" "scheme" "user" -}}
+{{-   range $want := list "host" "port" "scheme" "user" "database" -}}
 {{-     $_ := set $.redisMergedConfig $want (pluck $want (index $.Values.global.redis $.redisConfigName) $.Values.global.redis | first) -}}
 {{-   end -}}
 {{-   if and $hasOverrideSecret $.usingOverride -}}

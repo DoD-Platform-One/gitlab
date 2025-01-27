@@ -2,6 +2,30 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.8.1 (2025-01-22)
+
+No changes.
+
+## 8.8.0 (2025-01-15)
+
+### Added (1 change)
+
+- [Support configuring redis database number](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8338b2142ebb22b256420adb656addd7a7e2be95) by @gpongelli ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3995))
+
+### Fixed (3 changes)
+
+- [Remove duplicate TZ keys in Gitaly StatefulSet](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/344ee5e80a92b8880187f60c4f8833e42e01c9d2) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4046))
+- [Revert certmanager-issuer time zone change](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/703c18ffc1feab1cda16c02f7acca70f871aac11) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4043))
+- [Shared Secrets: consume idiomatic returns from yq](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/19e1aa90c41e3559959f27b4a3baf67669905400) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4039))
+
+### Changed (5 changes)
+
+- [Update dependency gitlab-exporter to v15.1.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/13bc443fde1001e18db458f3d123ae05efe7a285) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4055))
+- [Add ttlSecondsAfterFinished to certmanager_issuer](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/b9b3698b41916d69bb82c467ebbe0d1aa3473bc2) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4053))
+- [Update dependency container-registry to v4.15.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7d9b71c4adc0078424aa1e9ebfb65efd49ae20a9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4059))
+- [Update Helm release gitlab-runner to v0.72.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/13515980ce6275fff3d8241b73725a48f443d2fb) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4038))
+- [Update dependency gitlab-qa to v15](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/a1b4854886a67007690053b6f7606636d9703f53) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4032))
+
 ## 8.7.4 (2025-01-15)
 
 No changes.
@@ -15,12 +39,6 @@ No changes.
 ### Fixed (1 change)
 
 - [Revert certmanager-issuer time zone change](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/99befdf99b7f07639d7b6ceb83ea8b534085bbe3) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4044))
-
-## 8.7.1 (2024-12-20)
-
-### Fixed (1 change)
-
-- [Shared Secrets: consume idiomatic returns from yq](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/19e1aa90c41e3559959f27b4a3baf67669905400) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4039))
 
 ## 8.7.0 (2024-12-18)
 
@@ -39,6 +57,10 @@ No changes.
 - [Update dependency danger-review to v1.4.2](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/53cbb8148f90ed0d860a36fd81b2822ad36cbc4b) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4021))
 - [Update dependency container-registry to v4.14.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/dcc8ce8e48d88f5ff1aee9f0aa67bf4b505de585) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4017))
 - [Update Helm release gitlab-runner to v0.71.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/45c82f324306ca23d68384a65103ec889c1b6cee) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4011))
+
+## 8.6.3 (2025-01-08)
+
+No changes.
 
 ## 8.6.2 (2024-12-10)
 
@@ -68,6 +90,10 @@ No changes.
 - [Update Helm release gitlab-runner to v0.70.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/b82f0a50ae6ec26a79fe9cc307c862c816f3ac78) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3958))
 - [Update Helm release gitlab-runner to v0.70.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/ea3833fd35e5d201c96e9da5b4892b610df19781) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3955))
 - [Bump nginx-controller from 1.3.1 to 1.11.2](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c8f6090ec807dde86d4f6fd92803ada8b125868e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3901))
+
+## 8.5.5 (2025-01-08)
+
+No changes.
 
 ## 8.5.4 (2024-12-10)
 
