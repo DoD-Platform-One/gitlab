@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.8.1-bb.1] (2024-01-30)
+
+### Changed
+
+- Add deploymentLabels interpolation
+
 ## [8.8.1-bb.0] (2024-01-24)
 
 ### Changed

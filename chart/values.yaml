@@ -32,6 +32,7 @@ global:
 
   common:
     labels: {}
+  
 
   image: {}
     # Registry value override is only available for the following Charts:
@@ -52,7 +53,7 @@ global:
   ## Supplemental Pod labels. Will not be used for selectors.
   pod:
     labels: {}
-
+      
   ## https://docs.gitlab.com/charts/installation/deployment#deploy-the-community-edition
   edition: ee
 

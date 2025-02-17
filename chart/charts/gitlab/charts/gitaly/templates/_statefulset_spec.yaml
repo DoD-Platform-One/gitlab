@@ -30,6 +30,7 @@ spec:
         {{- end }}
         {{- include "gitlab.standardLabels" . | nindent 8 }}
         {{- include "gitlab.commonLabels" . | nindent 8 }}
+        {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
       {{- $cm := "/configmap.yml" -}}
