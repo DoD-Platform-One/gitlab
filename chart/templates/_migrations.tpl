@@ -20,3 +20,26 @@ Return the initial Enterprise license secret key
 {{- define "gitlab.migrations.license.key" -}}
 {{- coalesce .Values.global.gitlab.license.key "license" | quote -}}
 {{- end -}}
+
+{{/*
+Define the migration Job template
+*/}}
+{{- define "gitlab.migrations.job" -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-gitlab-migrations-%s" .Release.Name (randAlphaNum 6 | lower) }}
+  labels:
+    job-type: migration
+spec:
+  template:
+    metadata:
+      labels:
+        app: gitlab-migrations
+    spec:
+      containers:
+      - name: migrations
+        image: {{ .Values.migrations.image }}
+        command: ["/bin/sh", "-c", "run-migrations.sh"]
+      restartPolicy: OnFailure
+{{- end -}}

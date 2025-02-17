@@ -20,6 +20,7 @@ metadata:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
     {{- include "webservice.labels" . | nindent 4 }}
     {{- include "webservice.commonLabels" . | nindent 4 }}
+    {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 4 }}
     {{- if .deployment.labels -}}
     {{-   toYaml .deployment.labels | nindent 4 }}
     {{- end }}
@@ -44,6 +45,7 @@ spec:
       labels:
         {{- include "gitlab.standardLabels" $ | nindent 8 }}
         {{- include "webservice.labels" . | nindent 8 }}
+        {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 8 }}
         {{- include "gitlab.podLabels" $ | nindent 8 }}
         {{- include "webservice.commonLabels" . | nindent 8 }}
         {{- include "webservice.podLabels" . | nindent 8 }}

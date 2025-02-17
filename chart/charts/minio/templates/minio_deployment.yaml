@@ -11,6 +11,7 @@ metadata:
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
+    {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 4 }}
   annotations:
     {{- include "gitlab.deploymentAnnotations" . | nindent 4 }}
 spec:
@@ -29,6 +30,7 @@ spec:
         component: app
         {{- include "gitlab.standardLabels" . | nindent 8 }}
         {{- include "gitlab.commonLabels" . | nindent 8 }}
+        {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 8 }}
         {{- include "gitlab.podLabels" . | nindent 8 }}
       annotations:
 {{- if .Values.podAnnotations }}
