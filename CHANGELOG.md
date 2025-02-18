@@ -4,13 +4,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [8.8.1-bb.1] (2024-01-30)
+## [8.8.1-bb.2] (2025-02-18)
+
+### Removed
+
+- Removed reference to unused image - registry1.dso.mil/bigbang-ci/gitlab-tester:0.0.4
+- Removed Dockerfile for unused image - gitlab-tester
+
+## [8.8.1-bb.1] (2025-01-30)
 
 ### Changed
 
 - Add deploymentLabels interpolation
 
-## [8.8.1-bb.0] (2024-01-24)
+## [8.8.1-bb.0] (2025-01-24)
 
 ### Changed
 
@@ -35,7 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Adjusted peerauth exception for minio to not be created whenever minio for gitlab is disabled
 
-## [8.7.4-bb.0] (2024-01-17)
+## [8.7.4-bb.0] (2025-01-17)
 
 ### Changed
 
@@ -53,7 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 17.7.0 -> 17.7.2
 - registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.7.0 -> 17.7.2
 
-## [8.7.0-bb.0] (2024-01-15)
+## [8.7.0-bb.0] (2025-01-15)
 
 ### Changed
 
