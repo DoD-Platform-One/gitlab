@@ -45,4 +45,4 @@ dependencies:
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
 digest: sha256:c426626626761ac60ff8acc301c56da4af0a16aaf92c915c0ff04c40a30ea109
-generated: "2025-01-24T17:56:34.90962225-06:00"
+generated: "2025-02-14T16:09:31.555691-05:00"
