@@ -8,7 +8,7 @@ dependencies:
 - name: registry
   version: '*.*.*'
 - name: cert-manager
-  version: v1.12.14
+  version: v1.12.15
   repository: https://charts.jetstack.io/
   condition: certmanager.install
   alias: certmanager
@@ -36,7 +36,7 @@ dependencies:
   version: '*.*.*'
   alias: nginx-ingress-geo
 - name: gitlab-zoekt
-  version: 1.4.3
+  version: 1.5.0
   repository: https://charts.gitlab.io/
   condition: gitlab-zoekt.install
 - name: gluon

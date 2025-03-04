@@ -103,7 +103,7 @@ provider = "{% $connection.provider %}"
 aws_access_key_id = {% $connection.aws_access_key_id | strings.TrimSpace | data.ToJSON %}
 aws_secret_access_key = {% $connection.aws_secret_access_key | strings.TrimSpace | data.ToJSON %}
 {%-   else if eq $connection.provider "AzureRM" %}
-{%- $connection = coll.Merge $connection (coll.Dict "azure_storage_account_name" "" "azure_storage_account_name" "" ) %}
+{%-     $connection = coll.Merge $connection (coll.Dict "azure_storage_account_name" "" "azure_storage_access_key" "") %}
 # Azure Blob storage configuration.
 [object_storage.azurerm]
 azure_storage_account_name = {% $connection.azure_storage_account_name | strings.TrimSpace | data.ToJSON %}

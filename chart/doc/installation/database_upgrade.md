@@ -2,45 +2,61 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Upgrade the bundled PostgreSQL version
 ---
 
-# Upgrade the bundled PostgreSQL version
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
 
-NOTE:
+{{< /details >}}
+
+{{< alert type="note" >}}
+
 These steps are if you are using the bundled PostgreSQL chart (`postgresql.install` is not false), and not for external
 PostgreSQL setups.
+
+{{< /alert >}}
 
 Changing to a new major version of PostgreSQL using the bundle PostgreSQL chart is done via a backup on the existing
 database, then restoring to the new database.
 
-NOTE:
+{{< alert type="note" >}}
+
 As part of the `7.0.0` release of this chart, we upgraded the default PostgreSQL version from `12.7.0` to `14.8.0`. This
 is done by upgrading [PostgreSQL chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) version from
 `8.9.4` to `12.5.2`.
 
+{{< /alert >}}
+
 This is NOT a drop in replacement. Manual steps need to be performed to upgrade the database.
 The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
 
-NOTE:
+{{< alert type="note" >}}
+
 As part of the `5.0.0` release of this chart, we upgraded the bundled PostgreSQL version from `11.9.0` to `12.7.0`. This is
 not a drop in replacement. Manual steps need to be performed to upgrade the database.
 The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
 
-NOTE:
+{{< /alert >}}
+
+{{< alert type="note" >}}
+
 As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) from `7.7.0` to `8.9.4`.
 This is not a drop in replacement. Manual steps need to be performed to upgrade the database.
 The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
+{{< /alert >}}
 
 ## Steps for upgrading the bundled PostgreSQL
 
-NOTE:
+{{< alert type="note" >}}
+
 Starting from `7.0.0`, GitLab chart not longer mounts PostgreSQL credentials as files inside of the PostgreSQL instance.
 This is done by setting `postgresql.auth.usePasswordFiles` to `false`. This means that database credentials are passed
 as environment variables instead of password files, only for this component.
+
+{{< /alert >}}
 
 This is due to [an issue](https://github.com/bitnami/charts/issues/16707) in upstream PostgreSQL chart. If you do not
 want to use environment variables for PostgreSQL passwords and prefer to use files you need to follow the instructions
@@ -72,13 +88,19 @@ curl -s "https://gitlab.com/gitlab-org/charts/gitlab/-/raw/${GITLAB_RELEASE}/scr
 
 ### Delete existing PostgreSQL data
 
-NOTE:
+{{< alert type="note" >}}
+
 Since the PostgreSQL data format has changed, upgrading requires removing the existing PostgreSQL StatefulSet before
 upgrading the release. The StatefulSet will be recreated in the next step.
 
-WARNING:
+{{< /alert >}}
+
+{{< alert type="warning" >}}
+
 Ensure that you have created a database backup in the previous step. Without a backup, GitLab data
 will be lost.
+
+{{< /alert >}}
 
 ```shell
 kubectl delete statefulset RELEASE-NAME-postgresql
@@ -133,11 +155,14 @@ Note the following:
 
 ## Edit the existing PostgreSQL passwords Secret
 
-NOTE:
+{{< alert type="note" >}}
+
 This is only for `7.0.0` upgrade, and only when you want enforce the use password files inside of the
 PostgreSQL service containers.
 
-The new version of [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) uses different
+{{< /alert >}}
+
+The new version of [PostgreSQL chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) uses different
 keys to reference passwords in a Secrets. Instead of `postgresql-password` and `postgresql-postgres-password` it now
 uses `password` and `postgres-password`. These keys must be changed in `RELEASE-postgresql-password` Secret _WITHOUT_
 changing their values.

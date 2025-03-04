@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Upgrade the GitLab chart
 ---
 
-# Upgrade the GitLab chart
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 Before upgrading your GitLab installation, you need to check the
 [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md)
@@ -16,14 +18,17 @@ corresponding to the specific release you want to upgrade to and look for any
 [release notes](version_mappings.md#release-notes-for-each-supported-version) that might pertain to the new GitLab chart
 version.
 
-Upgrades have to follow a supported [upgrade path](https://docs.gitlab.com/ee/update/#upgrade-paths).
+Upgrades have to follow a supported [upgrade path](https://docs.gitlab.com/update/#upgrade-paths).
 Because the GitLab chart versions don't follow the same numbering as GitLab versions,
 see the [version mappings](version_mappings.md) between them.
 
-NOTE:
+{{< alert type="note" >}}
+
 **Zero-downtime upgrades** are not available with the GitLab charts but can be achieved by using [GitLab Operator](https://docs.gitlab.com/operator/gitlab_upgrades.html).
 
-We also recommend that you take a [backup](../backup-restore/index.md) first. Also note that you
+{{< /alert >}}
+
+We also recommend that you take a [backup](../backup-restore/_index.md) first. Also note that you
 must provide all values using `helm upgrade --set key=value` syntax or `-f values.yaml` instead of
 using `--reuse-values`, because some of the current values might be deprecated.
 
@@ -35,10 +40,13 @@ This safely replaces the behavior of `--reuse-values`
 
 ## Steps
 
-NOTE:
+{{< alert type="note" >}}
+
 If you're upgrading to the `7.0` version of the chart, follow the [manual upgrade steps for 7.0](#upgrade-to-version-70).
 If you're upgrading to the `6.0` version of the chart, follow the [manual upgrade steps for 6.0](#upgrade-to-version-60).
 If you're upgrading to an older version of the chart, follow the [upgrade steps for older versions](#older-upgrade-instructions).
+
+{{< /alert >}}
 
 Before you upgrade, reflect on your set values and if you've possibly "over-configured" your settings. We expect you to maintain a small list of modified values, and leverage most of the chart defaults. If you've explicitly set a large number of settings by:
 
@@ -73,9 +81,12 @@ Ensure that you explicitly set it back to `true` for future updates.
 
 ## Upgrade the bundled PostgreSQL chart
 
-NOTE:
+{{< alert type="note" >}}
+
 If you aren't using the bundled PostgreSQL chart (`postgresql.install` is false), you do not need to
 perform this step.
+
+{{< /alert >}}
 
 ### Upgrade the bundled PostgreSQL to version 13
 
@@ -90,10 +101,13 @@ To upgrade the bundled PostgreSQL to version 13, the following steps are require
 
 ## Upgrade to version 7.0
 
-WARNING:
+{{< alert type="warning" >}}
+
 If you are upgrading from the `6.x` version of the chart to the latest `7.0` release, you need
 to first update to the latest `6.11.x` patch release in order for the upgrade to work.
 The [7.0 release notes](../releases/7_0.md) describe the supported upgrade path.
+
+{{< /alert >}}
 
 The `7.0.x` release may require manual steps in order to perform the upgrade.
 
@@ -160,10 +174,13 @@ behavior for pre-existing Ingresses.
 
 ## Upgrade to version 6.0
 
-WARNING:
+{{< alert type="warning" >}}
+
 If you are upgrading from the `5.x` version of the chart to the latest `6.0` release, you need
 to first update to the latest `5.10.x` patch release in order for the upgrade to work.
 The [6.0 release notes](../releases/6_0.md) describe the supported upgrade path.
+
+{{< /alert >}}
 
 To upgrade to the `6.0` release you must first be on the latest `5.10.x` patch release. There isn't any additional
 manual changes required in `6.0` so you can [follow the regular release upgrade steps](#steps).

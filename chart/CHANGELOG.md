@@ -2,6 +2,41 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.9.1 (2025-02-26)
+
+No changes.
+
+## 8.9.0 (2025-02-19)
+
+### Added (5 changes)
+
+- [Add app.kubernetes.io name and version label to workloads](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/453577194e2f5a2add72a46e338efda8be9abb0a) by @afaras72 ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4033))
+- [Make Azure workload identity work for object storage](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/6d82072f78fe0cd8db9b5a65933b60a73a535b4c) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4116))
+- [Workhorse: Support custom Redis sentinel scheme](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/85525884c51b2e65d0fb9fa2db46e0ff625f9a83) by @joawin ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3800))
+- [Add topologySpreadConstraints](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/b2aa028d2fd9dd94a9ec5f19039a84e745023ddc) by @12bodickyn ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3599))
+- [Enable pg_sequences data collection for GitLab Exporter](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c5d0f3d1cb9b4bc4917517426bb8298fbe480861) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4065))
+
+### Fixed (2 changes)
+
+- [Mount certificates to geo-logcursor init containers](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/d211f4d39d05184c7637bf6591bf31d1d9d79533) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4122))
+- [Fix Jobs not using addional labels](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c8fb3a8ea7ddf39e9ea8b18567d9ebaf0ebee39b) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4056))
+
+### Changed (5 changes)
+
+- [Update dependency gitlab-exporter to v15.2.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/a7ce0b021e7222eb01e51bd0763c0fb0e66256b1) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4100))
+- [Update dependency container-registry to v4.15.2-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8e3c2181b382e289beb876399bd6497907cc5d3c) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4064))
+- [gitaly: Add negotiation timeouts](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8d466b11adcc3e23fe9acff03fa83aae57bdd002) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4060))
+- [Update dependency gitlab-qa to v15.1.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8bd4b2b5be0debec834f1cc8b68c40c6a8cd2bf4) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4074))
+- [Update Helm release cert-manager to v1.12.15](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/79377f1ebbade16e336e1569a640c27c3d2bb53d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4058))
+
+### Deprecated (1 change)
+
+- [Document Kubernetes 1.28 as deprecated](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/2d8580c1ed16fa762f1fcdaaf8418989f7a104cf) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4115))
+
+## 8.8.2 (2025-02-11)
+
+No changes.
+
 ## 8.8.1 (2025-01-22)
 
 No changes.
@@ -25,6 +60,14 @@ No changes.
 - [Update dependency container-registry to v4.15.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7d9b71c4adc0078424aa1e9ebfb65efd49ae20a9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4059))
 - [Update Helm release gitlab-runner to v0.72.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/13515980ce6275fff3d8241b73725a48f443d2fb) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4038))
 - [Update dependency gitlab-qa to v15](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/a1b4854886a67007690053b6f7606636d9703f53) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4032))
+
+## 8.7.6 (2025-02-11)
+
+No changes.
+
+## 8.7.5 (2025-01-22)
+
+No changes.
 
 ## 8.7.4 (2025-01-15)
 
@@ -57,6 +100,14 @@ No changes.
 - [Update dependency danger-review to v1.4.2](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/53cbb8148f90ed0d860a36fd81b2822ad36cbc4b) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4021))
 - [Update dependency container-registry to v4.14.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/dcc8ce8e48d88f5ff1aee9f0aa67bf4b505de585) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4017))
 - [Update Helm release gitlab-runner to v0.71.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/45c82f324306ca23d68384a65103ec889c1b6cee) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4011))
+
+## 8.6.5 (2025-02-11)
+
+No changes.
+
+## 8.6.4 (2025-01-22)
+
+No changes.
 
 ## 8.6.3 (2025-01-08)
 

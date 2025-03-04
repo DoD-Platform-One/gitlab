@@ -14,7 +14,7 @@ describe 'checkConfig registry' do
         registry:
           database:
             enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -26,7 +26,7 @@ describe 'checkConfig registry' do
         registry:
           database:
             enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'PostgreSQL 13 is the minimum required version' }
@@ -47,7 +47,7 @@ describe 'checkConfig registry' do
           database:
             enabled: true
             sslmode: disable
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -60,7 +60,7 @@ describe 'checkConfig registry' do
           database:
             enabled: true
             sslmode: testing
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Invalid SSL mode' }
@@ -86,7 +86,7 @@ describe 'checkConfig registry' do
             loadBalancing:
               enabled: true
               record: db-replica-registry.service.consul
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -103,7 +103,7 @@ describe 'checkConfig registry' do
             enabled: true
             loadBalancing:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { '`database.loadBalancing` requires `record` to be provided' }
@@ -129,7 +129,7 @@ describe 'checkConfig registry' do
             loadBalancing:
               enabled: true
               record: db-replica-registry.service.consul
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -147,7 +147,7 @@ describe 'checkConfig registry' do
             loadBalancing:
               enabled: true
               record: db-replica-registry.service.consul
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling database load balancing requires the metadata database to be enabled.' }
@@ -173,7 +173,7 @@ describe 'checkConfig registry' do
             loadBalancing:
               enabled: true
               record: db-replica-registry.service.consul
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -191,7 +191,7 @@ describe 'checkConfig registry' do
             loadBalancing:
               enabled: true
               record: db-replica-registry.service.consul
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling database load balancing requires Redis caching to be enabled.' }
@@ -209,7 +209,7 @@ describe 'checkConfig registry' do
             sentry:
               enabled: true
               dsn: somedsn
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -218,7 +218,7 @@ describe 'checkConfig registry' do
           reporting:
             sentry:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'When enabling sentry, you must configure at least one DSN.' }
@@ -237,7 +237,7 @@ describe 'checkConfig registry' do
           redis:
             cache:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -248,7 +248,7 @@ describe 'checkConfig registry' do
           redis:
             cache:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling the Redis cache requires the metadata database to be enabled' }
@@ -272,7 +272,7 @@ describe 'checkConfig registry' do
             cache:
               enabled: true
               host: 'localhost'
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -288,7 +288,7 @@ describe 'checkConfig registry' do
             cache:
               enabled: true
               host: ''
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling the Redis cache requires the host to not be empty' }
@@ -317,7 +317,7 @@ describe 'checkConfig registry' do
                   port: 26379
                 - host: sentinel2.example.com
                   port: 26379
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -338,7 +338,7 @@ describe 'checkConfig registry' do
                 port: 26379
               - host: sentinel2.example.com
                 port: 26379
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling the Redis cache with sentinels requires the registry.redis.cache.host to be set.' }
@@ -366,7 +366,7 @@ describe 'checkConfig registry' do
                 enabled: true
                 secret: registry-redis-cache-secret
                 key: password
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -385,7 +385,7 @@ describe 'checkConfig registry' do
               password:
                 enabled: true
                 secret: ''
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { ' Enabling the Redis cache password requires \'registry.redis.cache.password.secret\' to be set.' }
@@ -413,7 +413,7 @@ describe 'checkConfig registry' do
                 enabled: true
                 secret: registry-redis-cache-secret
                 key: password
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -433,7 +433,7 @@ describe 'checkConfig registry' do
                 enabled: true
                 secret: registry-redis-cache-secret
                 key: ''
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { ' Enabling the Redis cache password requires \'registry.redis.cache.password.key\' to be set.' }
@@ -455,7 +455,7 @@ describe 'checkConfig registry' do
             rateLimiting:
               enabled: true
               host: 'localhost'
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -469,7 +469,7 @@ describe 'checkConfig registry' do
             rateLimiting:
               enabled: true
               host: ''
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling the Redis rate-limiter requires the host to not be empty' }
@@ -496,7 +496,7 @@ describe 'checkConfig registry' do
                   port: 26379
                 - host: sentinel2.example.com
                   port: 26379
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -515,7 +515,7 @@ describe 'checkConfig registry' do
                 port: 26379
               - host: sentinel2.example.com
                 port: 26379
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling the Redis rate-limiter with sentinels requires the registry.redis.rateLimiting.host to be set.' }
@@ -541,7 +541,7 @@ describe 'checkConfig registry' do
                 enabled: true
                 secret: registry-redis-cache-secret
                 key: password
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -558,7 +558,7 @@ describe 'checkConfig registry' do
               password:
                 enabled: true
                 secret: ''
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { ' Enabling the Redis rate-limiter password requires \'registry.redis.rateLimiting.password.secret\' to be set.' }
@@ -584,7 +584,7 @@ describe 'checkConfig registry' do
                 enabled: true
                 secret: registry-redis-cache-secret
                 key: password
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -602,7 +602,7 @@ describe 'checkConfig registry' do
                 enabled: true
                 secret: registry-redis-cache-secret
                 key: ''
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { ' Enabling the Redis rate-limiter password requires \'registry.redis.rateLimiting.password.key\' to be set.' }
@@ -622,7 +622,7 @@ describe 'checkConfig registry' do
         registry:
           tls:
             enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -630,7 +630,7 @@ describe 'checkConfig registry' do
         registry:
           tls:
             enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling the service level TLS requires \'global.hosts.registry.protocol\'' }
@@ -648,7 +648,7 @@ describe 'checkConfig registry' do
             tls:
               enabled: true
               secretName: example-tls
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -657,7 +657,7 @@ describe 'checkConfig registry' do
           debug:
             tls:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'secret is required when not enabling TLS for the non-debug Registry endpoint.' }

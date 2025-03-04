@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Configure secrets for the GitLab chart
 ---
 
-# Configure secrets for the GitLab chart
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 GitLab requires a variety of secrets to operate:
 
@@ -148,8 +150,11 @@ If this secret is rotated, all SSH clients will see `hostname mismatch` errors.
 
 ### Initial Enterprise license
 
-WARNING:
+{{< alert type="warning" >}}
+
 This method will only add a license at the time of installation. Use the Admin Area in the web user interface to renew or upgrade licenses.
+
+{{< /alert >}}
 
 Create a Kubernetes secret for storing the Enterprise license for the GitLab instance.
 Replace `<name>` with the name of the release.
@@ -224,7 +229,11 @@ This secret is referenced by the `global.praefect.authToken.secret` setting.
 
 ### GitLab Rails secret
 
-> - The `active_record_encryption_*` keys were added in [GitLab 17.8](../releases/8_0.md#upgrade-to-880).
+{{< history >}}
+
+- The `active_record_encryption_*` keys were added in [GitLab 17.8](../releases/8_0.md#upgrade-to-880).
+
+{{< /history >}}
 
 Replace `<name>` with the name of the release.
 
@@ -250,7 +259,7 @@ kubectl create secret generic <name>-rails-secret --from-file=secrets.yml
 This secret is referenced by the `global.railsSecrets.secret` setting.
 
 It is **not recommended**  to rotate this secret as it contains the database encryption keys. If the secret is
-rotated, the result will be the same behavior exhibited [when the secrets file is lost](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#when-the-secrets-file-is-lost).
+rotated, the result will be the same behavior exhibited [when the secrets file is lost](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#when-the-secrets-file-is-lost).
 
 ### GitLab Workhorse secret
 
@@ -307,9 +316,12 @@ This secret is referenced by the `gitlab.kas.websocketToken.secret` setting.
 
 ### GitLab Suggested Reviewers secret
 
-NOTE:
-The Suggested Reviewers secret is created automatically and only used on GitLab SaaS.
-This secret is not needed on self-managed GitLab instances.
+{{< alert type="note" >}}
+
+The Suggested Reviewers secret is created automatically and only used on GitLab.com.
+This secret is not needed on GitLab Self-Managed.
+
+{{< /alert >}}
 
 GitLab Rails requires that a secret for Suggested Reviewers is present. You can
 leave it to the chart to auto-generate the secret, or you can create this secret
@@ -347,9 +359,12 @@ This secret is referenced by the `global.psql.password.secret` setting.
 
 #### Changing the PostgreSQL password for the bundled PostgreSQL subchart
 
-WARNING:
+{{< alert type="warning" >}}
+
 The default Helm chart configuration is **not intended for production**, which includes the bundled PostgreSQL
 subchart.
+
+{{< /alert >}}
 
 The bundled PostgreSQL subchart only configures the database with the passwords from the secret when the database is initially created.
 Additional steps need to be taken to change the passwords in an existing database.
@@ -428,7 +443,7 @@ Some charts have further secrets to enable functionality that can not be automat
 
 ### OmniAuth
 
-In order to enable the use of [OmniAuth Providers](https://docs.gitlab.com/ee/integration/omniauth.html) with the deployed GitLab, please follow the [instructions in the Globals chart](../charts/globals.md#omniauth)
+In order to enable the use of [OmniAuth Providers](https://docs.gitlab.com/integration/omniauth/) with the deployed GitLab, please follow the [instructions in the Globals chart](../charts/globals.md#omniauth)
 
 ### LDAP Password
 
@@ -441,8 +456,11 @@ kubectl create secret generic ldap-main-password --from-literal=password=yourpas
 Then use `--set global.appConfig.ldap.servers.main.password.secret=ldap-main-password` to
 inject the password into your configuration.
 
-NOTE:
+{{< alert type="note" >}}
+
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+{{< /alert >}}
 
 ### SMTP password
 
@@ -455,15 +473,18 @@ kubectl create secret generic smtp-password --from-literal=password=yourpassword
 
 Then use `--set global.smtp.password.secret=smtp-password` in your Helm command.
 
-NOTE:
+{{< alert type="note" >}}
+
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+{{< /alert >}}
 
 ### IMAP password for incoming emails
 
 GitLab uses authentication strings such as app passwords, tokens, or IMAP
 passwords to access incoming emails.
 
-[Find your email provider in the GitLab incoming email documentation](https://docs.gitlab.com/ee/administration/incoming_email.html)
+[Find your email provider in the GitLab incoming email documentation](https://docs.gitlab.com/administration/incoming_email/)
 and set its required authentication string as a Kubernetes secret.
 
 ```shell
@@ -473,16 +494,19 @@ kubectl create secret generic incoming-email-password --from-literal="password=a
 Then use `--set global.appConfig.incomingEmail.password.secret=incoming-email-password`
 in your Helm command along with other required settings as specified [in the docs](command-line-options.md#incoming-email-configuration).
 
-NOTE:
+{{< alert type="note" >}}
+
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+{{< /alert >}}
 
 ### IMAP password for Service Desk emails
 
 GitLab uses authentication strings such as app passwords, tokens, or IMAP
 passwords to access
-[Service Desk emails](https://docs.gitlab.com/ee/user/project/service_desk/configure.html#custom-email-address).
+[Service Desk emails](https://docs.gitlab.com/user/project/service_desk/configure/#custom-email-address).
 
-[Find your email provider in the GitLab incoming email documentation](https://docs.gitlab.com/ee/administration/incoming_email.html)
+[Find your email provider in the GitLab incoming email documentation](https://docs.gitlab.com/administration/incoming_email/)
 and set its required authentication string as a Kubernetes secret.
 
 ```shell
@@ -492,8 +516,11 @@ kubectl create secret generic service-desk-email-password --from-literal="passwo
 Then use `--set global.appConfig.serviceDeskEmail.password.secret=service-desk-email-password`
 in your Helm command along with other required settings as specified [in the docs](command-line-options.md#service-desk-email-configuration).
 
-NOTE:
+{{< alert type="note" >}}
+
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+{{< /alert >}}
 
 ### GitLab incoming email auth token
 
@@ -534,7 +561,7 @@ This secret is referenced by the `gitlab.zoekt.gateway.basicAuth.secretName` set
 
 ### Microsoft Graph client secret for incoming emails
 
-To let GitLab have access to [incoming emails](https://docs.gitlab.com/ee/administration/incoming_email.html)
+To let GitLab have access to [incoming emails](https://docs.gitlab.com/administration/incoming_email/)
 store the password of the IMAP account in a Kubernetes secret:
 
 ```shell
@@ -544,12 +571,15 @@ kubectl create secret generic incoming-email-client-secret --from-literal=secret
 Then, use `--set global.appConfig.incomingEmail.clientSecret.secret=incoming-email-client-secret`
 in your Helm command along with other required settings as specified [in the docs](command-line-options.md#incoming-email-configuration).
 
-NOTE:
+{{< alert type="note" >}}
+
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+{{< /alert >}}
 
 ### Microsoft Graph client secret for Service Desk emails
 
-To let GitLab have access to [service_desk emails](https://docs.gitlab.com/ee/user/project/service_desk/configure.html#custom-email-address)
+To let GitLab have access to [service_desk emails](https://docs.gitlab.com/user/project/service_desk/configure/#custom-email-address)
 store the password of the IMAP account in a Kubernetes secret:
 
 ```shell
@@ -559,8 +589,11 @@ kubectl create secret generic service-desk-email-client-secret --from-literal=se
 Then, use `--set global.appConfig.serviceDeskEmail.clientSecret.secret=service-desk-email-client-secret`
 in your Helm command along with other required settings as specified [in the docs](command-line-options.md#service-desk-email-configuration).
 
-NOTE:
+{{< alert type="note" >}}
+
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+{{< /alert >}}
 
 ### Microsoft Graph client secret for outgoing emails
 
@@ -573,8 +606,11 @@ kubectl create secret generic microsoft-graph-mailer-client-secret --from-litera
 Then, use `--set global.appConfig.microsoft_graph_mailer.client_secret.secret=microsoft-graph-mailer-client-secret`
 in your Helm command.
 
-NOTE:
+{{< alert type="note" >}}
+
 Use the `Secret` name, not the _actual password_ when configuring the Helm property.
+
+{{< /alert >}}
 
 ### S/MIME Certificate
 
@@ -597,7 +633,7 @@ secret that contains the S/MIME certificate.
 
 ### Smartcard Authentication
 
-[Smartcard authentication](https://docs.gitlab.com/ee/administration/auth/smartcard.html)
+[Smartcard authentication](https://docs.gitlab.com/administration/auth/smartcard/)
 uses a custom Certificate Authority (CA) to sign client certificates. The
 certificate of this custom CA needs to be injected to the Webservice pod for it
 to verify whether a client certificate is valid or not. This is provided as a

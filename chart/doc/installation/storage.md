@@ -2,20 +2,22 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Configure storage for the GitLab chart
 ---
 
-# Configure storage for the GitLab chart
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 The following applications within the GitLab chart require persistent storage to maintain state.
 
-- [Gitaly](../charts/gitlab/gitaly/index.md) (persists the Git repositories)
+- [Gitaly](../charts/gitlab/gitaly/_index.md) (persists the Git repositories)
 - [PostgreSQL](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) (persists the GitLab database data)
 - [Redis](https://github.com/bitnami/charts/tree/main/bitnami/redis) (persists GitLab job data)
-- [MinIO](../charts/minio/index.md) (persists the object storage data)
+- [MinIO](../charts/minio/_index.md) (persists the object storage data)
 
 The administrator may choose to provision this storage using [dynamic](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#dynamic) or [static](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#static) volume provisioning.
 
@@ -72,8 +74,8 @@ helm install -upgrade gitlab gitlab/gitlab -f HELM_OPTIONS_YAML_FILE
 
 Follow the links below for further reading and additional persistence options:
 
-- [Gitaly persistence configuration](../charts/gitlab/gitaly/index.md#git-repository-persistence)
-- [MinIO persistence configuration](../charts/minio/index.md#persistence)
+- [Gitaly persistence configuration](../charts/gitlab/gitaly/_index.md#git-repository-persistence)
+- [MinIO persistence configuration](../charts/minio/_index.md#persistence)
 - [Redis persistence configuration](https://github.com/bitnami/charts/tree/main/bitnami/redis#persistence)
 - [Upstream PostgreSQL chart configuration](https://github.com/bitnami/charts/tree/main/bitnami/postgresql#configuration-and-installation-details)
 
@@ -101,10 +103,13 @@ kubectl create -f *PV_YAML_FILE*
 
 ### Using Amazon EKS
 
-NOTE:
+{{< alert type="note" >}}
+
 If you need to deploy in multiple zones, you should review
 [Amazon's own documentation on storage classes](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)
 when defining your storage solution.
+
+{{< /alert >}}
 
 1. [Create a persistent disk in the cluster.](https://kubernetes.io/docs/concepts/storage/volumes/#creating-an-ebs-volume)
 
@@ -165,8 +170,8 @@ After the initial installation, storage changes like migrating to new volumes,
 or changing disk sizes, require editing the Kubernetes objects outside of the
 Helm upgrade command.
 
-See the [managing persistent volumes documentation](../advanced/persistent-volumes/index.md).
+See the [managing persistent volumes documentation](../advanced/persistent-volumes/_index.md).
 
 ## Optional volumes
 
-For larger installations, you may need to add persistent storage to the Toolbox to get backups/restores working. See our [troubleshooting documentation](../backup-restore/index.md#pod-eviction-issues) for a guide on how to do this.
+For larger installations, you may need to add persistent storage to the Toolbox to get backups/restores working. See our [troubleshooting documentation](../backup-restore/_index.md#pod-eviction-issues) for a guide on how to do this.

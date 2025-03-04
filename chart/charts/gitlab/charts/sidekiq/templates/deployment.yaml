@@ -34,8 +34,8 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "gitlab.standardLabels" $ | nindent 4 }}
-    {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 4 }}
     {{- include "sidekiq.commonLabels" (dict "pod" .common.labels "global" $.Values.common.labels) | nindent 4 }}
+    {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 4 }}
     queue-pod-name: {{ .name }}
   annotations:
     {{- include "gitlab.deploymentAnnotations" $ | nindent 4 }}
@@ -51,8 +51,8 @@ spec:
     metadata:
       labels:
         {{- include "gitlab.standardLabels" $ | nindent 8 }}
+        {{- include "sidekiq.commonLabels" (dict "pod" .common.labels "global" $.Values.common.labels) | nindent 8 }}
         {{- include "gitlab.app.kubernetes.io.labels" $ | nindent 8 }}
-        {{- include "sidekiq.commonLabels" (dict "pod" .common.labels "global" $.Values.common.labels) | nindent 8 }}  
         {{- include "sidekiq.podLabels" (dict "pod" .podLabels ) | nindent 8 }}
         queue-pod-name: {{ .name }}
       annotations:
@@ -78,6 +78,9 @@ spec:
       {{- end }}
       {{- end }}
     spec:
+      {{- if $.Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- toYaml $.Values.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
       {{- with $tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}

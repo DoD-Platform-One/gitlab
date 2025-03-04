@@ -8,3 +8,4 @@ chart/tests/cypress/support/
 chart/tests/cypress/screenshots/
 chart/tests/cypress/videos/
 node_modules
+debug.yaml

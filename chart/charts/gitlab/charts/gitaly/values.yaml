@@ -245,3 +245,7 @@ backup: {}
 # default enable gomemlimit to avoid gc related OOM errors
 gomemlimit:
   enabled: true
+
+timeout: {}
+  # uploadPackNegotiation: "10m"
+  # uploadArchiveNegotiation: "1m"

@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Setup standalone Gitaly
 ---
-
-# Setup standalone Gitaly
 
 The instructions here make use of the [Linux package](https://about.gitlab.com/install/#ubuntu) for Ubuntu.
 This package provides versions of the services that are guaranteed to be compatible with the charts' services.
@@ -26,7 +25,7 @@ the Linux package installation, **_do not_** provide the `EXTERNAL_URL=` value. 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be
 _very_ explicit about what's enabled on this node, using the following contents
 based on the documentation for
-[running Gitaly on its own server](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#run-gitaly-on-its-own-server).
+[running Gitaly on its own server](https://docs.gitlab.com/administration/gitaly/configure_gitaly/#run-gitaly-on-its-own-server).
 
 _**NOTE**: The values below should be replaced_
 

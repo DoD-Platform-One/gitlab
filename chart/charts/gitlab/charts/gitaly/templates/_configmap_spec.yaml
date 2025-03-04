@@ -215,3 +215,13 @@ data:
     {{-     end }}
     {{-   end }}
     {{- end }}
+    
+    {{- with .Values.timeout }}
+    [timeout]
+    {{- with .uploadPackNegotiation }}
+    upload_pack_negotiation = {{ . | quote }}
+    {{- end }}
+    {{- with .uploadArchiveNegotiation }}
+    upload_archive_negotiation = {{ . | quote }}
+    {{- end }}
+    {{- end }}

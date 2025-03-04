@@ -6,5 +6,7 @@
 provider: AzureRM
 # Specify storage account/access
 azure_storage_account_name: YOUR_AZURE_STORAGE_ACCOUNT_NAME
+# This can be omitted if a workload or managed identity is used
 azure_storage_access_key: YOUR_AZURE_STORAGE_ACCOUNT_KEY
+# Optional
 azure_storage_domain: blob.core.windows.net

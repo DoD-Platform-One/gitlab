@@ -186,9 +186,8 @@ spec:
             {{- end }}
           {{-  if .Values.statefulset.startupProbe.enabled }}
           startupProbe:
-            exec:
-              command:
-              - /scripts/healthcheck
+            grpc:
+              port: {{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}
             initialDelaySeconds: {{ .Values.statefulset.startupProbe.initialDelaySeconds }}
             periodSeconds:  {{ .Values.statefulset.startupProbe.periodSeconds }}
             timeoutSeconds:  {{ .Values.statefulset.startupProbe.timeoutSeconds }}
@@ -196,18 +195,16 @@ spec:
             failureThreshold: {{ .Values.statefulset.startupProbe.failureThreshold }}
           {{- end }}
           livenessProbe:
-            exec:
-              command:
-              - /scripts/healthcheck
+            grpc:
+              port: {{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}
             initialDelaySeconds: {{ ternary 0 .Values.statefulset.livenessProbe.initialDelaySeconds .Values.statefulset.startupProbe.enabled }}
             periodSeconds: {{ .Values.statefulset.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.statefulset.livenessProbe.timeoutSeconds }}
             successThreshold: {{ .Values.statefulset.livenessProbe.successThreshold }}
             failureThreshold: {{ .Values.statefulset.livenessProbe.failureThreshold }}
           readinessProbe:
-            exec:
-              command:
-              - /scripts/healthcheck
+            grpc:
+              port: {{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}
             initialDelaySeconds: {{ ternary 0 .Values.statefulset.readinessProbe.initialDelaySeconds .Values.statefulset.startupProbe.enabled }}
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.statefulset.readinessProbe.timeoutSeconds }}

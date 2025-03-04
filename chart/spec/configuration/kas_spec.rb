@@ -83,7 +83,7 @@ describe 'kas configuration' do
             serviceLabels:
               service: true
               global: service
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     it 'Populates the additional labels in the expected manner' do
@@ -231,11 +231,88 @@ describe 'kas configuration' do
 
             expect(config_yaml_data['private_api']).to eq(expected_config)
           end
+
+          context 'when AutoFlow enabled' do
+            let(:kas_values) do
+              default_kas_values.deep_merge!(YAML.safe_load(%(
+                  global:
+                    kas:
+                      tls:
+                        enabled: true
+                  gitlab:
+                    kas:
+                      autoflow:
+                        enabled: true
+                        temporal:
+                          namespace: some-namespace.id42
+                          workerMtls:
+                            secretName: worker-mtls
+                          workflowDataEncryption:
+                            codecServer:
+                              authorizedUserEmails: []
+                )))
+            end
+
+            it 'configures the AutoFlow codec server with certificate files' do
+              expected_config = {
+                "network" => "tcp",
+                "address" => :"8142",
+                "certificate_file" => "/etc/kas/tls.crt",
+                "key_file" => "/etc/kas/tls.key"
+              }
+
+              expect(config_yaml_data['autoflow']['temporal']['workflow_data_encryption']['codec_server']['listen']).to eq(expected_config)
+            end
+          end
         end
       end
 
       it 'configures the websocket token secret file' do
         expect(config_yaml_data['agent']['kubernetes_api']['websocket_token_secret_file']).to eq('/etc/kas/.gitlab_kas_websocket_token_secret')
+      end
+
+      context 'when AutoFlow is enabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  autoflow:
+                    enabled: true
+                    temporal:
+                      namespace: some-namespace.id42
+                      workerMtls:
+                        secretName: worker-mtls
+                      workflowDataEncryption:
+                        codecServer:
+                          authorizedUserEmails: ["maintainer@gitlab.example.com"]
+            )))
+        end
+
+        it 'configures the autoflow config node' do
+          expected_config = {
+            "temporal" => {
+              "host_port" => "some-namespace.id42.tmprl.cloud:7233",
+              "namespace" => "some-namespace.id42",
+              "enable_tls" => true,
+              "certificate_file" => "/etc/kas/temporal-worker-client-mtls.crt",
+              "key_file" => "/etc/kas/temporal-worker-client-mtls.key",
+              "workflow_data_encryption" => {
+                "secret_key_file" => "/etc/kas/.gitlab_kas_autoflow_temporal_workflow_data_encryption_secret",
+                "codec_server" => {
+                  "listen" => {
+                    "address" => :"8142",
+                    "network" => "tcp"
+                  },
+                  "temporal_oidc_url" => "https://login.tmprl.cloud/.well-known/openid-configuration",
+                  "temporal_web_ui_url" => "https://cloud.temporal.io",
+                  "authorized_user_emails" => ["maintainer@gitlab.example.com"]
+                }
+              }
+            }
+          }
+
+          expect(config_yaml_data['autoflow']).to eq(expected_config)
+        end
       end
 
       context 'when customConfig is given' do
@@ -724,6 +801,48 @@ describe 'kas configuration' do
           end
         end
       end
+
+      context 'when autoflow.enabled is given' do
+        let(:autoflow_enabled) { true }
+        let(:kas_values) do
+          default_kas_values.deep_merge!(
+            'gitlab' => {
+              'kas' => {
+                'autoflow' => {
+                  'enabled' => autoflow_enabled,
+                  'temporal' => {
+                    'namespace' => 'some-namespace.id42',
+                    'workerMtls' => {
+                      'secretName' => 'worker-mtls'
+                    },
+                    'workflowDataEncryption' => {
+                      'codecServer' => {
+                        'authorizedUserEmails' => []
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          )
+        end
+
+        context 'when autoflow.enabled is true' do
+          let(:autoflow_enabled) { true }
+
+          it 'exports autoflow codec server port' do
+            expect(service['spec']['ports']).to include(include("name" => "tcp-kas-autoflow-codec-server-api"))
+          end
+        end
+
+        context 'when autoflow.enabled is false' do
+          let(:autoflow_enabled) { false }
+
+          it 'exports no autoflow codec server port' do
+            expect(service['spec']['ports']).not_to include(include("name" => "tcp-kas-autoflow-codec-server-api"))
+          end
+        end
+      end
     end
 
     describe 'templates/deployment.yaml' do
@@ -831,6 +950,75 @@ describe 'kas configuration' do
             }
           }
         )
+      end
+
+      context 'when AutoFlow is enabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  autoflow:
+                    enabled: true
+                    temporal:
+                      namespace: some-namespace.id42
+                      workerMtls:
+                        secretName: worker-mtls
+                      workflowDataEncryption:
+                        codecServer:
+                          authorizedUserEmails: ["maintainer@gitlab.example.com"]
+            )))
+        end
+
+        it 'creates AutoFlow Temporal Workflow Data Encryption secret volume' do
+          init_etc_kas_volume = deployment['spec']['template']['spec']['volumes'].find do |volume|
+            volume['name'] == 'init-etc-kas'
+          end
+
+          expect(init_etc_kas_volume['projected']['sources']).to include(
+            {
+              "secret" => {
+                "name" => "test-kas-autoflow-temporal-workflow-data-encryption-secret",
+                "items" => [
+                  {
+                    "key" => "kas_autoflow_temporal_workflow_data_encryption",
+                    "path" => ".gitlab_kas_autoflow_temporal_workflow_data_encryption_secret"
+                  }
+                ]
+              }
+            }
+          )
+        end
+      end
+
+      context 'when AutoFlow is disabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  autoflow:
+                    enabled: false
+            )))
+        end
+
+        it 'des not creates AutoFlow Temporal Workflow Data Encryption secret volume' do
+          init_etc_kas_volume = deployment['spec']['template']['spec']['volumes'].find do |volume|
+            volume['name'] == 'init-etc-kas'
+          end
+
+          expect(init_etc_kas_volume['projected']['sources']).not_to include(
+            {
+              "secret" => {
+                "name" => "test-kas-autoflow-temporal-workflow-data-encryption-secret",
+                "items" => [
+                  {
+                    "key" => "kas_autoflow_temporal_workflow_data_encryption",
+                    "path" => ".gitlab_kas_autoflow_temporal_workflow_data_encryption_secret"
+                  }
+                ]
+              }
+            }
+          )
+        end
       end
 
       describe 'tls' do

@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Resource usage
 ---
-
-# Resource usage
 
 ## Resource Requests
 
@@ -88,20 +87,20 @@ In future tests we will try to include sustained concurrent load, to better matc
   - cpu: > `300m` (greater than stress task)
   - memory: > `20M` (greater than stress task)
 
-Check the [troubleshooting documentation](../troubleshooting/index.md#git-over-ssh-the-remote-end-hung-up-unexpectedly)
+Check the [troubleshooting documentation](../troubleshooting/_index.md#git-over-ssh-the-remote-end-hung-up-unexpectedly)
 for details on what might happen if `gitlab.gitlab-shell.resources.limits.memory` is set too low.
 
 ### Webservice
 
 Webservice resources were analyzed during testing with the
-[10k reference architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html).
-Notes can be found in the [Webservice resources documentation](../charts/gitlab/webservice/index.md#resources).
+[10k reference architecture](https://docs.gitlab.com/administration/reference_architectures/10k_users/).
+Notes can be found in the [Webservice resources documentation](../charts/gitlab/webservice/_index.md#resources).
 
 ### Sidekiq
 
 Sidekiq resources were analyzed during testing with the
-[10k reference architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html).
-Notes can be found in the [Sidekiq resources documentation](../charts/gitlab/sidekiq/index.md#resources).
+[10k reference architecture](https://docs.gitlab.com/administration/reference_architectures/10k_users/).
+Notes can be found in the [Sidekiq resources documentation](../charts/gitlab/sidekiq/_index.md#resources).
 
 ### KAS
 

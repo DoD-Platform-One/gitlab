@@ -1,0 +1,21 @@
+controlPlane:
+  backingStore:
+    etcd:
+      deploy:
+        enabled: true
+  distro:
+    k8s:
+      enabled: true
+      version: "$VCLUSTER_K8S_VERSION"
+  statefulSet:
+    scheduling:
+      podManagementPolicy: OrderedReady
+sync:
+  toHost:
+    ingresses:
+      enabled: true
+integrations:
+  metricsServer:
+    enabled: true
+    nodes: true
+    pods: true

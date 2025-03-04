@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Configure TLS for the GitLab chart
 ---
 
-# Configure TLS for the GitLab chart
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 This chart is capable of doing TLS termination using the NGINX Ingress Controller. You have the choice of how to
 acquire the TLS certificates for your deployment. Extensive details can be found in [global Ingress settings](../charts/globals.md#configure-ingress-settings).
@@ -111,8 +113,11 @@ helm install gitlab gitlab/gitlab \
   --set gitlab.kas.ingress.tls.secretName=RELEASE-kas-tls
 ```
 
-NOTE:
+{{< alert type="note" >}}
+
 If you are configuring your GitLab instance to talk with other services, it may be necessary to [provide the certificate chains](../charts/globals.md#custom-certificate-authorities) for those services to GitLab through the Helm chart as well.
+
+{{< /alert >}}
 
 ## Option 4: Use auto-generated self-signed wildcard certificate
 
@@ -120,9 +125,12 @@ These charts also provide the capability to provide a auto-generated self-signed
 This can be useful in environments where Let's Encrypt is not an option, but security via SSL is still
 desired. This functionality is provided by the [shared-secrets](../charts/shared-secrets.md) job.
 
-NOTE:
+{{< alert type="note" >}}
+
 The `gitlab-runner` chart does not function properly with self-signed certificates. We recommend
 disabling it, as shown below.
+
+{{< /alert >}}
 
 ```shell
 helm install gitlab gitlab/gitlab \
@@ -140,7 +148,7 @@ also use directly for GitLab Runner via `gitlab-runner.certsSecretName=RELEASE-w
 
 ## TLS requirement for GitLab Pages
 
-For [GitLab Pages with TLS support](https://docs.gitlab.com/ee/administration/pages/#wildcard-domains-with-tls-support),
+For [GitLab Pages with TLS support](https://docs.gitlab.com/administration/pages/#wildcard-domains-with-tls-support),
 a wildcard certificate applicable for `*.<pages domain>` (default value of
 `<pages domain>` is `pages.<base domain>`) is required.
 

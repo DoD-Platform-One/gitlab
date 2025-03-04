@@ -24,13 +24,14 @@
 # Note: Auto CI does not work with multiple buildpacks yet
 
 default:
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-slim-ruby-${RUBY_VERSION}:kubectl-1.30-helm-3.10-helm_kubeconform-0.1.17-vcluster-0.19-awscli-1.32.93
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-slim-ruby-${RUBY_VERSION}:kubectl-1.31-helm-3.16-helm_kubeconform-0.1.17-vcluster-0.22-awscli-1.37.9
 
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
   DOCKER_VERSION: "27.1.1"
   HELM_VERSION: "3.10.3"
-  KUBECTL_VERSION: "1.27.9"
+  KUBECTL_VERSION: "1.28.3"
+  VCLUSTER_VERSION: "default"
   STABLE_REPO_URL: "https://charts.helm.sh/stable"
   GOOGLE_APPLICATION_CREDENTIALS: ${CI_PROJECT_DIR}/.google_keyfile.json
   # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
@@ -48,9 +49,9 @@ variables:
   QA_SANITY_SUITE_OPTIONS: '--tag smoke --tag ~skip_live_env --tag ~orchestrated'
   GITLAB_QA_ADMIN_ACCESS_TOKEN: $GITLAB_ADMIN_TOKEN
   DEBIAN_VERSION: bookworm
-  RUBY_VERSION: "3.1.5"
+  RUBY_VERSION: "3.3.7"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "15.0.0"
+  GITLAB_QA_VERSION: "15.1.0"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -135,8 +136,8 @@ tag_auto_deploy:
     - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_TRIGGER_PIPELINE"'
 
 .source_autodevops:
- before_script:
-   - source scripts/ci/autodevops.sh
+  before_script:
+    - source scripts/ci/autodevops.sh
 
 update-trigger-branch:
   stage: prepare
@@ -237,7 +238,7 @@ trigger_review_current:
       optional: true
     - job: pin_image_versions
   rules:
-    - !reference [.rule:skip_if_fork]
+    - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
       when: never
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline" && $PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/ '
@@ -249,7 +250,7 @@ trigger_review_current:
 
 .trigger_review_current:
   rules:
-    - !reference [.rule:skip_if_fork]
+    - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
       when: never
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
@@ -269,7 +270,7 @@ trigger_review_secondary:
   rules:
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
       when: never
-    - !reference [.rule:skip_if_fork]
+    - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -279,7 +280,7 @@ trigger_review_secondary:
   rules:
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
       when: never
-    - !reference [.rule:skip_if_fork]
+    - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
@@ -293,6 +294,9 @@ trigger_review_secondary:
       pipeline_variables: true
   inherit:
     variables:
+      - CI_PROJECT_PATH
+      - CANONICAL_PROJECT_PATH
+      - SECURITY_PROJECT_PATH
       - PIPELINE_TYPE
       - REVIEW_REF_PREFIX
       - LIMIT_TO
@@ -391,7 +395,7 @@ trigger-eks130:
 
 # ---------------------------------------------------------------------------
 
-.specs: &specs
+.specs:
   image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-golang-${GO_VERSION}-rust-${RUST_VERSION}-node-20.12-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.45-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36
   stage: specs
   services:
@@ -407,9 +411,9 @@ trigger-eks130:
     CHROME_VERSION: "123"
   extends: .source_autodevops
   script:
-    - ./scripts/ci/install_spec_dependencies
+    - ./scripts/ci/install_spec_dependencies.sh
     - set_context
-    - ./scripts/ci/run_specs
+    - ./scripts/ci/run_specs.sh
   artifacts:
     when: on_failure
     expire_in: 7d

@@ -75,6 +75,7 @@ ingress:
   tls: {}
   agentPath: /
   k8sApiPath: /k8s-proxy
+  autoflowCodecServerApiPath: /autoflow/codec-server
 maxReplicas: 10
 maxUnavailable: 1
 minReplicas: 2
@@ -95,6 +96,7 @@ service:
   apiInternalPort: 8153
   kubernetesApiPort: 8154
   privateApiPort: 8155
+  autoflowCodecServerApiPort: 8142
   type: ClusterIP
   # loadBalancerIP:
   # loadBalancerSourceRanges:
@@ -137,6 +139,19 @@ customConfig: {}
 websocketToken: {}
   # secret:
   # key:
+
+## Configure AutoFlow. AutoFlow is a GitLab internal-use experiment.
+autoflow: {}
+  # enabled: true
+  # temporal:
+  #   namespace: 'xxx'
+  #   workerMtls:
+  #     secretName:
+  #   workflowDataEncryption:
+  #     secret:
+  #     key:
+  #     codecServer:
+  #       authorizedUserEmails: ["maintainer@gitlab.example.com"]
 
 privateApi: {}
   # secret:
@@ -185,3 +200,13 @@ affinity:
 
 # Priority class assigned to pods
 priorityClassName: ""
+
+## Topology spread constraints rely on node labels to identify the topology domain(s) that each Node is in.
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: []
+ # - labelSelector:
+ #     matchLabels:
+ #       app: name
+ #     maxSkew: 1
+ #     topologyKey: topology.kubernetes.io/zone
+ #     whenUnsatisfiable: DoNotSchedule

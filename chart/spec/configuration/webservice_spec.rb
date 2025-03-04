@@ -77,4 +77,55 @@ describe 'webservice configuration' do
       expect(extra_ingress['spec']['tls'][0]['secretName']).to eql('another-local-tls')
     end
   end
+
+  context 'setting nginx service-upstream annotation' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          webservice:
+            ingress:
+              serviceUpstream: true
+      )).deep_merge(super())
+    end
+
+    it 'nginx service-upstream annotation is added' do
+      expect(default_ingress["metadata"]["annotations"]).to include(
+        "nginx.ingress.kubernetes.io/service-upstream" => "true"
+      )
+    end
+  end
+
+  context 'providing own nginx annotation' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          webservice:
+            ingress:
+              serviceUpstream: true
+              annotations:
+                nginx.ingress.kubernetes.io/service-upstream: "false"
+      )).deep_merge(super())
+    end
+
+    it 'provided annotation takes precedence over local setting' do
+      expect(default_ingress["metadata"]["annotations"]).to include(
+        "nginx.ingress.kubernetes.io/service-upstream" => "false"
+      )
+    end
+  end
+
+  context 'using traefik as ingress provider' do
+    let(:values) do
+      YAML.safe_load(%(
+        global:
+          ingress:
+            provider: traefik
+      )).deep_merge(super())
+    end
+
+    it 'does not contain any nginx.ingress annotations' do
+      nginx_annotations = default_ingress["metadata"]["annotations"].keys.select { |key| key.include?("nginx.ingress") }
+      expect(nginx_annotations).to be_empty
+    end
+  end
 end

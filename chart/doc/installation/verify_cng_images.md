@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Verifying integrity of CNG images
 ---
-
-# Verifying integrity of CNG images
 
 To ensure the CNG images aren't tampered with after they are pushed to the
 registry, their digests are signed using
@@ -13,11 +12,14 @@ and SHA256 hashes. Keys are stored in PEM-encoded PKCS8 format.
 
 These digests can be verified using `cosign verify` command as described below:
 
-NOTE:
+{{< alert type="note" >}}
+
 The images are signed using a private key and can be only verified
 locally using the corresponding public key. Moving to a keyless
 signing/verification with GitLab.com OIDC provider is being discussed
 in [issue 638](https://gitlab.com/gitlab-org/build/CNG/-/issues/638).
+
+{{< /alert >}}
 
 1. Download the public key used for signing from [https://charts.gitlab.io/cosign.pub](https://charts.gitlab.io/cosign.pub):
 

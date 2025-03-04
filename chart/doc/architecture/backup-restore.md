@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Backup and restore
 ---
-
-# Backup and restore
 
 This document explains the technical implementation of the backup and restore into/from CNG.
 
@@ -45,7 +44,7 @@ Backups are made using the following steps, in order:
 
 - `--skip <component>`
 
-  You can skip parts of the backup process by using `--skip <component>` for every component that you want to skip in the backup process. Skippable components are found in [Excluding specific data from the backup](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#excluding-specific-data-from-the-backup).
+  You can skip parts of the backup process by using `--skip <component>` for every component that you want to skip in the backup process. Skippable components are found in [Excluding specific data from the backup](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#excluding-specific-data-from-the-backup).
 
 - `-t <timestamp-override-value>`
 
@@ -59,12 +58,15 @@ Backups are made using the following steps, in order:
 
   It is also possible to specify the storage class in which the backup is stored using `--storage-class <storage-class-name>`, allowing you to save on backup storage costs. If unspecified, this will use the default of the storage backend.
 
-  NOTE:
-  This storage class name is passed through as-is to the storage class argument of your specified backend.
+  {{< alert type="note" >}}
+
+This storage class name is passed through as-is to the storage class argument of your specified backend.
+
+  {{< /alert >}}
 
 #### GitLab backup bucket
 
-The default name of the bucket that will be used to store backups is `gitlab-backups`. This is configurable
+The default name of the bucket used to store backups is `gitlab-backups`. This is configurable
 using the `BACKUP_BUCKET_NAME` environment variable.
 
 #### Backing up to Google Cloud Storage
@@ -92,5 +94,8 @@ After fetching the backup tar the sequence of execution is:
    - clean up the corresponding bucket
    - restore the backup content into the corresponding bucket
 
-NOTE:
+{{< alert type="note" >}}
+
 If the restore fails, the user will need to revert to previous backup using data in `tmp` directory of the backup bucket. This is currently a manual process.
+
+{{< /alert >}}

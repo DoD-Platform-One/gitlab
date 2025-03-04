@@ -105,6 +105,10 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{/* _checkConfig_omniauth.tpl*/}}
 {{- $messages = append $messages (include "gitlab.checkConfig.omniauth.providerFormat" .) -}}
 
+{{/* _checkConfig_kas.tpl*/}}
+{{- $messages = append $messages (include "gitlab.checkConfig.kas.autoflowTemporalNamespace" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.kas.autoflowTemporalWorkerMtls" .) -}}
+
 {{/* other checks */}}
 {{- $messages = append $messages (include "gitlab.checkConfig.multipleRedis" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.redisYmlOverride" .) -}}

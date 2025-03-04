@@ -4,6 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.9.1-bb.0] (2025-02-28)
+
+### Changed
+
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl (source) 17.8.2 -> 17.9.1
+- registry1.dso.mil/ironbank/opensource/postgres/postgresql (source) 14.16 -> 14.17
+
 ## [8.8.2-bb.0] (2025-02-24)
 
 ### Changed

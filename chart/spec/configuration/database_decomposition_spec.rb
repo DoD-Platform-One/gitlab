@@ -287,6 +287,14 @@ describe 'Database configuration' do
                 applicationName: embedding
                 host: embedding.host.name
                 load_balancing: false
+              sec:
+                username: sec-user
+                password:
+                  secret: sec-password
+                preparedStatements: false
+                databaseTasks: false
+                applicationName: sec
+
           postgresql:
             install: false
         )))
@@ -297,7 +305,7 @@ describe 'Database configuration' do
         expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
 
         db_config = database_config(t, 'webservice')
-        expect(db_config['production'].keys).to contain_exactly('main', 'ci', 'embedding')
+        expect(db_config['production'].keys).to contain_exactly('main', 'ci', 'embedding', 'sec')
 
         # check `main` stanza
         main_config = db_config['production']['main']
@@ -329,12 +337,22 @@ describe 'Database configuration' do
         expect(embedding_config['database_tasks']).to eq(true)
         expect(embedding_config['load_balancing']).to eq(nil)
 
+        # check `sec` stanza
+        sec_config = db_config['production']['sec']
+        expect(sec_config['host']).to eq('global-server')
+        expect(sec_config['port']).to eq(5432)
+        expect(sec_config['username']).to eq('sec-user')
+        expect(sec_config['application_name']).to eq('sec')
+        expect(sec_config['prepared_statements']).to eq(false)
+        expect(sec_config['database_tasks']).to eq(false)
+        expect(ci_config['load_balancing']).to eq({ 'hosts' => ['a.secondary.global', 'b.secondary.global'] })
+
         # Check the secret mounts
         webservice_secret_mounts = t.projected_volume_sources('Deployment/test-webservice-default', 'init-webservice-secrets').select do |item|
           item['secret']['items'][0]['key'] == 'postgresql-password'
         end
         psql_secret_mounts = webservice_secret_mounts.map { |x| x['secret']['name'] }
-        expect(psql_secret_mounts).to contain_exactly('main-password', 'ci-password', 'embedding-password')
+        expect(psql_secret_mounts).to contain_exactly('main-password', 'ci-password', 'embedding-password', 'sec-password')
       end
     end
 

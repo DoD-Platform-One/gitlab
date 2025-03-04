@@ -30,9 +30,6 @@ describe 'certmanager_issuer configuration' do
       # Expectation for the metadata name prefix
       expect(issuer_job["metadata"]["name"]).to match(/^test-issuer-[a-f0-9]+$/)
 
-      # Expectation for the container image needs to be a regex to work for master and stable branches.
-      expect(issuer_job["spec"]["template"]["spec"]["containers"][0]["image"]).to match(%r{^registry\.gitlab\.com/gitlab-org/build/cng/kubectl:(v\d+\.\d+\.\d+|master)$})
-
       # Expectation for the rest of the structure
       expect(issuer_job).to include(
         "apiVersion" => "batch/v1",
@@ -41,7 +38,7 @@ describe 'certmanager_issuer configuration' do
           "namespace" => "default",
           "labels" => {
             "app" => "certmanager-issuer",
-            "chart" => "certmanager-issuer-0.2.0",
+            "chart" => "certmanager-issuer-0.2.1",
             "release" => "test",
             "heritage" => "Helm"
           }
@@ -50,7 +47,14 @@ describe 'certmanager_issuer configuration' do
           "activeDeadlineSeconds" => 300,
           "ttlSecondsAfterFinished" => 1800,
           "template" => include(
-            "metadata" => { "labels" => { "app" => "certmanager-issuer", "release" => "test" } },
+            "metadata" => include(
+              "labels" => include(
+                "app" => "certmanager-issuer",
+                "chart" => "certmanager-issuer-0.2.1",
+                "release" => "test",
+                "heritage" => "Helm"
+              )
+            ),
             "spec" => include(
               "securityContext" => { "runAsUser" => 65534, "fsGroup" => 65534, "seccompProfile" => { "type" => "RuntimeDefault" } },
               "serviceAccountName" => "test-certmanager-issuer",
@@ -59,6 +63,7 @@ describe 'certmanager_issuer configuration' do
                 include(
                   "name" => "create-issuer",
                   "command" => ["/bin/bash", "/scripts/create-issuer", "/scripts/issuer.yml"],
+                  "image" => "registry.gitlab.com/gitlab-org/build/cng/kubectl:v42.0.0",
                   "securityContext" => {
                     "allowPrivilegeEscalation" => false,
                     "capabilities" => { "drop" => ["ALL"] },

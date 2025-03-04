@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: GitLab chart prerequisites
 ---
 
-# GitLab chart prerequisites
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 Before you deploy GitLab in a Kubernetes cluster, install the following
 prerequisites and decide on the options to use when you install.
@@ -32,7 +34,7 @@ is provided by [`bitnami/PostgreSQL`](https://artifacthub.io/packages/helm/bitna
 This deployment is for trial purposes only and **not recommended for use in production**.
 
 You should set up an
-[external, production-ready PostgreSQL instance](../advanced/external-db/index.md).
+[external, production-ready PostgreSQL instance](../advanced/external-db/_index.md).
 Recommended default versions:
 
 - PostgreSQL 13 since GitLab chart 6.0.
@@ -48,7 +50,7 @@ is provided by [`bitnami/Redis`](https://artifacthub.io/packages/helm/bitnami/re
 This deployment is for trial purposes only and **not recommended for use in production**.
 
 You should set up an
-[external, production-ready Redis instance](../advanced/external-redis/index.md).
+[external, production-ready Redis instance](../advanced/external-redis/_index.md).
 For all the available configuration settings, see the
 [Redis globals documentation](../charts/globals.md#configure-redis-settings).
 
@@ -58,10 +60,10 @@ not enabled by default. Such functionality has not been load tested by GitLab.
 ### Gitaly
 
 By default, the GitLab chart includes an in-cluster Gitaly deployment. For production, running Gitaly in Kubernetes is not supported.
-[Gitaly is only supported on conventional virtual machines](https://docs.gitlab.com/ee/administration/reference_architectures/index.html#stateful-components-in-kubernetes).
+[Gitaly is only supported on conventional virtual machines](https://docs.gitlab.com/administration/reference_architectures/#stateful-components-in-kubernetes).
 
 You should set up an
-[external, production-ready Gitaly instance](../advanced/external-gitaly/index.md).
+[external, production-ready Gitaly instance](../advanced/external-gitaly/_index.md).
 For all the available configuration settings, see the
 [Gitaly globals documentation](../charts/globals.md#configure-gitaly-settings).
 
@@ -107,11 +109,14 @@ you don't need any additional DNS configuration for GitLab. However, you must de
 [has a comprehensive guide](https://github.com/kubernetes-sigs/external-dns#deploying-to-a-cluster)
 for each supported provider.
 
-NOTE:
+{{< alert type="note" >}}
+
 If you enable custom domain support for GitLab Pages, `external-dns` no
 longer works for the Pages domain (`pages.<global.hosts.domain>` by default).
 You must manually configure the DNS entry to point the domain to the
 external IP address dedicated to Pages.
+
+{{< /alert >}}
 
 If you provision a [GKE cluster](cloud/gke.md) by using the provided script,
 `external-dns` is automatically installed in your cluster.
@@ -147,9 +152,12 @@ dynamic provisioner creates the underlying persistent volumes. If you would like
 to customize the `storageClass` or manually create and assign volumes, review
 the [storage documentation](storage.md).
 
-NOTE:
+{{< alert type="note" >}}
+
 After the initial deployment, making changes to your storage settings requires manually editing Kubernetes
 objects. Therefore, it's best to plan ahead before deploying your production instance to avoid extra storage migration work.
+
+{{< /alert >}}
 
 ### TLS certificates
 
@@ -293,21 +301,21 @@ Prometheus `tls_config.server_name`.
 
 | Service | Metrics Port(default) | Supports TLS? | Notes/Docs/Issue |
 | ---     | ---                   | ---           | ---              |
-| [Gitaly](../charts/gitlab/gitaly/index.md)                   | 9236  | YES | Enabled using `global.gitaly.tls.enabled=true` <br>Default Secret: `RELEASE-gitaly-tls` <br>[Docs: Running Gitaly over TLS](../charts/gitlab/gitaly/index.md#running-gitaly-over-tls) |
-| [GitLab Exporter](../charts/gitlab/gitlab-exporter/index.md) | 9168  | YES | Enabled using `gitlab.gitlab-exporter.tls.enabled=true` <br>Default Secret: `RELEASE-gitlab-exporter-tls` |
-| [GitLab Pages](../charts/gitlab/gitlab-pages/index.md)       | 9235  | YES | Enabled using `gitlab.gitlab-pages.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-pages-metrics-tls` <br>[Docs: General settings](../charts/gitlab/gitlab-pages/index.md#general-settings) |
-| [GitLab Runner](../charts/gitlab/gitlab-runner/index.md)     | 9252  | NO  | [Issue - Add TLS Support for Metrics Endpoint](https://gitlab.com/gitlab-org/gitlab-runner/-/issues/29176) |
-| [GitLab Shell](../charts/gitlab/gitlab-shell/index.md)       | 9122  | NO  | The GitLab Shell metrics exporter is only enabled when using [`gitlab-sshd`](https://docs.gitlab.com/ee/administration/operations/gitlab_sshd.html). OpenSSH is recommended for environments that require TLS |
-| [KAS](../charts/gitlab/kas/index.md)                         | 8151  | YES | Can be configured using `global.kas.customConfig.observability.listen.certificate_file` and `global.kas.customConfig.observability.listen.key_file` options |
-| [Praefect](../charts/gitlab/praefect/index.md)               | 9236  | YES | Enabled using `global.praefect.tls.enabled=true` <br>Default Secret: `RELEASE-praefect-tls` <br>[Docs: Running Praefect over TLS](../charts/gitlab/praefect/index.md#running-praefect-over-tls) |
-| [Registry](../charts/registry/index.md)                      | 5100  | YES | Enabled using `registry.debug.tls.enabled=true` <br>[Docs: Registry - Configuring TLS for the debug port](../charts/registry/index.md#configuring-tls-for-the-debug-port) |
-| [Sidekiq](../charts/gitlab/sidekiq/index.md)                 | 3807  | YES | Enabled using `gitlab.sidekiq.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-sidekiq-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/sidekiq/index.md#installation-command-line-options) |
-| [Webservice](../charts/gitlab/sidekiq/index.md)              | 8083  | YES | Enabled using `gitlab.webservice.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-webservice-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/webservice/index.md#installation-command-line-options) |
-| [Ingress-NGINX](../charts/nginx/index.md)                    | 10254 | NO  | Does not support TLS on metrics/healthcheck port |
+| [Gitaly](../charts/gitlab/gitaly/_index.md)                   | 9236  | YES | Enabled using `global.gitaly.tls.enabled=true` <br>Default Secret: `RELEASE-gitaly-tls` <br>[Docs: Running Gitaly over TLS](../charts/gitlab/gitaly/_index.md#running-gitaly-over-tls) |
+| [GitLab Exporter](../charts/gitlab/gitlab-exporter/_index.md) | 9168  | YES | Enabled using `gitlab.gitlab-exporter.tls.enabled=true` <br>Default Secret: `RELEASE-gitlab-exporter-tls` |
+| [GitLab Pages](../charts/gitlab/gitlab-pages/_index.md)       | 9235  | YES | Enabled using `gitlab.gitlab-pages.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-pages-metrics-tls` <br>[Docs: General settings](../charts/gitlab/gitlab-pages/_index.md#general-settings) |
+| [GitLab Runner](../charts/gitlab/gitlab-runner/_index.md)     | 9252  | NO  | [Issue - Add TLS Support for Metrics Endpoint](https://gitlab.com/gitlab-org/gitlab-runner/-/issues/29176) |
+| [GitLab Shell](../charts/gitlab/gitlab-shell/_index.md)       | 9122  | NO  | The GitLab Shell metrics exporter is only enabled when using [`gitlab-sshd`](https://docs.gitlab.com/administration/operations/gitlab_sshd/). OpenSSH is recommended for environments that require TLS |
+| [KAS](../charts/gitlab/kas/_index.md)                         | 8151  | YES | Can be configured using `global.kas.customConfig.observability.listen.certificate_file` and `global.kas.customConfig.observability.listen.key_file` options |
+| [Praefect](../charts/gitlab/praefect/_index.md)               | 9236  | YES | Enabled using `global.praefect.tls.enabled=true` <br>Default Secret: `RELEASE-praefect-tls` <br>[Docs: Running Praefect over TLS](../charts/gitlab/praefect/_index.md#running-praefect-over-tls) |
+| [Registry](../charts/registry/_index.md)                      | 5100  | YES | Enabled using `registry.debug.tls.enabled=true` <br>[Docs: Registry - Configuring TLS for the debug port](../charts/registry/_index.md#configuring-tls-for-the-debug-port) |
+| [Sidekiq](../charts/gitlab/sidekiq/_index.md)                 | 3807  | YES | Enabled using `gitlab.sidekiq.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-sidekiq-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/sidekiq/_index.md#installation-command-line-options) |
+| [Webservice](../charts/gitlab/sidekiq/_index.md)              | 8083  | YES | Enabled using `gitlab.webservice.metrics.tls.enabled=true` <br>Default Secret: `RELEASE-webservice-metrics-tls` <br>[Docs: Installation command line options](../charts/gitlab/webservice/_index.md#installation-command-line-options) |
+| [Ingress-NGINX](../charts/nginx/_index.md)                    | 10254 | NO  | Does not support TLS on metrics/healthcheck port |
 
 For the webservice pod, the exposed port is the standalone webrick exporter in
 the webservice container. The workhorse container port is not scraped. See the
-[Webservice Metrics documentation](../charts/gitlab/webservice/index.md#metrics)
+[Webservice Metrics documentation](../charts/gitlab/webservice/_index.md#metrics)
 for additional details.
 
 ### Outgoing email
@@ -326,12 +334,12 @@ If your Kubernetes cluster is on GKE, be aware that SMTP
 ### Incoming email
 
 The configuration of incoming email is documented in the
-[mailroom chart](../charts/gitlab/mailroom/index.md#incoming-email).
+[mailroom chart](../charts/gitlab/mailroom/_index.md#incoming-email).
 
 ### Service Desk email
 
 The configuration of incoming email is documented in the
-[mailroom chart](../charts/gitlab/mailroom/index.md#service-desk-email).
+[mailroom chart](../charts/gitlab/mailroom/_index.md#service-desk-email).
 
 ### RBAC
 
@@ -347,4 +355,4 @@ have RBAC enabled, you must disable these settings:
 
 ## Next steps
 
-[Set up your cloud provider and create your cluster](cloud/index.md).
+[Set up your cloud provider and create your cluster](cloud/_index.md).

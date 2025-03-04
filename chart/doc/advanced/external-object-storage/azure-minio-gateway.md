@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Azure MinIO gateway when using the GitLab chart
 ---
-
-# Azure MinIO gateway when using the GitLab chart
 
 [MinIO](https://min.io/) is an object storage server that exposes S3-compatible APIs and it has a gateway feature that allows proxying requests to Azure Blob Storage. To set up our gateway, we will make use of Azure's Web App on Linux.
 

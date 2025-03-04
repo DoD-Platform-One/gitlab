@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Deploy Development Branch
 ---
-
-# Deploy Development Branch
 
 First ensure that your development environment is set up for charts development.
 See the [Development environment setup](environment_setup.md) page for instructions.
@@ -25,7 +24,7 @@ relative path would be `file://../gitlab-runner/` and the absolute path would be
 `file:///home/USER/charts/gitlab-runner/`. Pay close attention with absolute paths as it
 is very easy to miss the leading slash on the file path.
 
-Other steps from the [installation documentation](../installation/index.md) still apply. The difference is when deploying
+Other steps from the [installation documentation](../installation/_index.md) still apply. The difference is when deploying
 a development branch, you need to add additional upstream repositories and update the local dependencies, then pass the local
 Git repository location to the Helm command.
 

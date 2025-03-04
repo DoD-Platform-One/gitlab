@@ -115,8 +115,8 @@ ingress:
     # secretName:
     # smartcardSecretName:
     # enabled: true
-  annotations:
-    nginx.ingress.kubernetes.io/service-upstream: "true"
+  serviceUpstream: true
+  annotations: {}
   configureCertmanager:
   # Use this in combination of .deployments below
   requireBasePath: true
@@ -133,8 +133,8 @@ extraIngress:
     # secretName:
     # smartcardSecretName:
     # enabled: true
-  annotations:
-    nginx.ingress.kubernetes.io/service-upstream: "true"
+  serviceUpstream: true
+  annotations: {}
   configureCertmanager:
   # Use this in combination of .deployments below
   requireBasePath: true
@@ -508,3 +508,13 @@ deployments: {}
 affinity:
   podAntiAffinity:
     topologyKey:
+
+## Topology spread constraints rely on node labels to identify the topology domain(s) that each Node is in.
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: []
+ # - labelSelector:
+ #     matchLabels:
+ #       app: name
+ #     maxSkew: 1
+ #     topologyKey: topology.kubernetes.io/zone
+ #     whenUnsatisfiable: DoNotSchedule

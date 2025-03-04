@@ -30,7 +30,7 @@ username: {{ .redisMergedConfig.user }}
 {{- if .redisMergedConfig.password.enabled }}
 password_file: /etc/kas/redis/{{ printf "%s-password" (default "redis" .redisConfigName) }}
 {{- end }}
-database_index: {{ .redisMergedConfig.database }} 
+database_index: {{ .redisMergedConfig.database }}
 {{- if not .redisMergedConfig.sentinels }}
 server:
   address: {{ template "gitlab.redis.host" . }}:{{ template "gitlab.redis.port" . }}

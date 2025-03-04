@@ -16,7 +16,7 @@ describe 'checkConfig postgresql' do
               hosts: [a, b, c]
         postgresql:
           install: false
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -30,7 +30,7 @@ describe 'checkConfig postgresql' do
               hosts: [a, b, c]
         postgresql:
           install: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'PostgreSQL is set to install, but database load balancing is also enabled' }
@@ -51,7 +51,7 @@ describe 'checkConfig postgresql' do
                 hosts: [a, b, c]
           postgresql:
             install: false
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -65,7 +65,7 @@ describe 'checkConfig postgresql' do
                 invalid: item
           postgresql:
             install: false
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'You must specify `load_balancing.hosts` or `load_balancing.discover`' }
@@ -87,7 +87,7 @@ describe 'checkConfig postgresql' do
                 hosts: [a, b, c]
           postgresql:
             install: false
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -101,7 +101,7 @@ describe 'checkConfig postgresql' do
                 hosts: a
           postgresql:
             install: false
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'Database load balancing using `hosts` is configured, but does not appear to be a list' }
@@ -124,7 +124,7 @@ describe 'checkConfig postgresql' do
                   record: secondary
           postgresql:
             install: false
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -138,7 +138,7 @@ describe 'checkConfig postgresql' do
                 discover: true
           postgresql:
             install: false
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'Database load balancing using `discover` is configured, but does not appear to be a map' }
@@ -155,7 +155,7 @@ describe 'checkConfig postgresql' do
         postgresql:
           image:
             tag: 13
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -163,7 +163,7 @@ describe 'checkConfig postgresql' do
         postgresql:
           image:
             tag: 12
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'The minimum required version is PostgreSQL 13.' }

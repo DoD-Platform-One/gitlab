@@ -11,7 +11,7 @@ describe 'checkConfig sidekiq' do
             pods:
             - name: valid-1
               queues: merge,post_receive
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -21,7 +21,7 @@ describe 'checkConfig sidekiq' do
             pods:
             - name: invalid-1
               queues: [merge]
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'not a string' }
@@ -40,7 +40,7 @@ describe 'checkConfig sidekiq' do
               deployment:
                 terminationGracePeriodSeconds: 30
               timeout: 10
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -50,7 +50,7 @@ describe 'checkConfig sidekiq' do
               deployment:
                 terminationGracePeriodSeconds: 30
               timeout: 40
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'You must set `terminationGracePeriodSeconds` (30) longer than `timeout` (40) for pod `all-in-1`.' }
@@ -68,7 +68,7 @@ describe 'checkConfig sidekiq' do
               pods:
                 - name: 'valid-1'
                   timeout: 10
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -78,7 +78,7 @@ describe 'checkConfig sidekiq' do
               pods:
                 - name: 'valid-1'
                   timeout: 50
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'You must set `terminationGracePeriodSeconds` (30) longer than `timeout` (50) for pod `valid-1`.' }
@@ -96,7 +96,7 @@ describe 'checkConfig sidekiq' do
               pods:
                 - name: 'valid-1'
                   terminationGracePeriodSeconds: 50
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -106,7 +106,7 @@ describe 'checkConfig sidekiq' do
               pods:
                 - name: 'valid-1'
                   terminationGracePeriodSeconds: 1
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'You must set `terminationGracePeriodSeconds` (1) longer than `timeout` (25) for pod `valid-1`.' }
@@ -125,7 +125,7 @@ describe 'checkConfig sidekiq' do
                 - name: 'valid-1'
                   terminationGracePeriodSeconds: 50
                   timeout: 10
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -136,7 +136,7 @@ describe 'checkConfig sidekiq' do
                 - name: 'valid-1'
                   terminationGracePeriodSeconds: 50
                   timeout: 60
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'You must set `terminationGracePeriodSeconds` (50) longer than `timeout` (60) for pod `valid-1`.' }
@@ -159,7 +159,7 @@ describe 'checkConfig sidekiq' do
             appConfig:
               sidekiq:
                 routingRules: []
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'succeeds' do
@@ -181,7 +181,7 @@ describe 'checkConfig sidekiq' do
                   - ["feature_category=search", "search"]
                   - ["feature_category=memory|resource_boundary=memory", "memory-bound"]
                   - ["*", "default", "default"]
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'succeeds' do
@@ -198,7 +198,7 @@ describe 'checkConfig sidekiq' do
             appConfig:
               sidekiq:
                 routingRules: 'hello'
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -217,7 +217,7 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - "feature_category=pages"
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -236,7 +236,7 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - []
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -255,7 +255,7 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - ["hello"]
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -274,7 +274,7 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - ["resource_boundary=cpu", "cpu_boundary", "something", "something"]
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -293,7 +293,7 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - ["rule", 123]
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -312,7 +312,7 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - ["rule", "default", 123]
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -331,7 +331,7 @@ describe 'checkConfig sidekiq' do
                 routingRules:
                 - ["resource_boundary=cpu", "cpu_boundary"]
                 - [123, 'valid-queue']
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       it 'returns an error' do
@@ -355,7 +355,7 @@ describe 'checkConfig sidekiq' do
                 port: 8082
               health_checks:
                 port: 8083
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -367,7 +367,7 @@ describe 'checkConfig sidekiq' do
                 port: 8082
               health_checks:
                 port: 8082
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       include_examples 'config validation',
@@ -385,7 +385,7 @@ describe 'checkConfig sidekiq' do
                 port: 8082
               health_checks:
                 port: 8082
-        )).deep_merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       include_examples 'config validation',

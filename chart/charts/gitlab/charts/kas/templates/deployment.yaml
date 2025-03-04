@@ -43,6 +43,9 @@ spec:
         {{ $key }}: {{ $value | quote }}
       {{- end }}
     spec:
+      {{- if $.Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- toYaml $.Values.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
       {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- if .Values.tolerations }}
       tolerations:
@@ -87,6 +90,13 @@ spec:
               name: {{ template "name" . }}-private-api
             - containerPort: {{ .Values.observability.port }}
               name: http-metrics
+            {{- if (.Values.autoflow).enabled }}
+            - containerPort: {{ .Values.service.autoflowCodecServerApiPort }}
+              # Below abbreviation because of 15 chars name limit.
+              # af=autoflow
+              # cs=codec server
+              name: {{ template "name" . }}-af-cs-api
+            {{- end }}
           readinessProbe:
             httpGet:
               path: {{ .Values.observability.readinessProbe.path }}
@@ -132,6 +142,20 @@ spec:
                 items:
                   - key: {{ template "gitlab.kas.websocketToken.key" . }}
                     path: .gitlab_kas_websocket_token_secret
+            {{- if (.Values.autoflow).enabled }}
+            - secret:
+                name: {{ template "gitlab.kas.autoflow.temporal.workflowDataEncryption.secret" . }}
+                items:
+                  - key: {{ template "gitlab.kas.autoflow.temporal.workflowDataEncryption.key" . }}
+                    path: .gitlab_kas_autoflow_temporal_workflow_data_encryption_secret
+            - secret:
+                name: {{ ((.Values.autoflow.temporal).workerMtls).secretName | quote }}
+                items:
+                  - key: tls.crt
+                    path: temporal-worker-client-mtls.crt
+                  - key: tls.key
+                    path: temporal-worker-client-mtls.key
+            {{- end }}
             {{- if $.Values.global.kas.tls.enabled }}
             - secret:
                 name: {{ .Values.global.kas.tls.secretName | quote }}
