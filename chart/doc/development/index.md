@@ -179,7 +179,7 @@ can not resolve the MinIO domain name and find the correct endpoint (you can see
 
 Developers may encounter unique issues while working on new chart features.
 [Refer to the troubleshooting guide](troubleshooting.md) for
-information if your **_development_** cluster seems to have strange issues.
+information if your ***development*** cluster seems to have strange issues.
 
 NOTE:
 The troubleshooting steps outlined in the link above are for development

@@ -43,14 +43,17 @@ class HelmTemplate
     { "certmanager-issuer" => { "email" => "test@example.com" } }
   end
 
+  # The final defaults stubs the stable version so that the spec values are dependent on which branch
+  # the tests are running on, since on stable versions will have a semVer value, while the default branch
+  # will have `master`.
   def self.defaults
-    HelmTemplate.certmanager_issuer
+    HelmTemplate.certmanager_issuer.deep_merge!({ 'global' => { 'gitlabVersion' => "v42.0.0" } })
   end
 
   def self.with_defaults(yaml)
     yaml ||= {}
     hash = yaml.is_a?(Hash) ? yaml : YAML.safe_load(yaml)
-    hash.deep_merge!(HelmTemplate.defaults)
+    HelmTemplate.defaults.deep_merge!(hash)
   end
 
   attr_reader :mapped

@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Architecture
 ---
-
-# Architecture
 
 We plan to support three tiers of components:
 
@@ -83,22 +82,22 @@ documented individually, and laid in a structure that matches the
 [charts](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts) directory structure.
 
 Non-GitLab components are packaged and documented on the top level. GitLab
-component services are documented under the [GitLab](../charts/gitlab/index.md) chart:
+component services are documented under the [GitLab](../charts/gitlab/_index.md) chart:
 
-- [NGINX](../charts/nginx/index.md)
-- [MinIO](../charts/minio/index.md)
-- [Registry](../charts/registry/index.md)
-- GitLab/[Gitaly](../charts/gitlab/gitaly/index.md)
-- GitLab/[GitLab Exporter](../charts/gitlab/gitlab-exporter/index.md)
-- GitLab/[GitLab Shell](../charts/gitlab/gitlab-shell/index.md)
-- GitLab/[Migrations](../charts/gitlab/migrations/index.md)
-- GitLab/[Sidekiq](../charts/gitlab/sidekiq/index.md)
-- GitLab/[Webservice](../charts/gitlab/webservice/index.md)
+- [NGINX](../charts/nginx/_index.md)
+- [MinIO](../charts/minio/_index.md)
+- [Registry](../charts/registry/_index.md)
+- GitLab/[Gitaly](../charts/gitlab/gitaly/_index.md)
+- GitLab/[GitLab Exporter](../charts/gitlab/gitlab-exporter/_index.md)
+- GitLab/[GitLab Shell](../charts/gitlab/gitlab-shell/_index.md)
+- GitLab/[Migrations](../charts/gitlab/migrations/_index.md)
+- GitLab/[Sidekiq](../charts/gitlab/sidekiq/_index.md)
+- GitLab/[Webservice](../charts/gitlab/webservice/_index.md)
 
 ### Components list
 
 A list of which components are deployed when using the chart, and configuration instructions if needed,
-is available on the [architecture components list](https://docs.gitlab.com/ee/development/architecture.html#component-list) page.
+is available on the [architecture components list](https://docs.gitlab.com/development/architecture/#component-list) page.
 
 ## Design Decisions
 

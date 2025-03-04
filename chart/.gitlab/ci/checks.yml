@@ -21,7 +21,7 @@ rubocop:
 
 # Perform content linting on documentation Markdown files
 check_docs_content:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.20-vale-3.7.1-markdownlint2-0.14.0-lychee-0.15.1
+  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/lint-markdown:alpine-3.20-vale-3.9.3-markdownlint2-0.17.1-lychee-0.15.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -36,7 +36,7 @@ check_docs_content:
 
 # Perform linting on documentation Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.20-vale-3.7.1-markdownlint2-0.14.0-lychee-0.15.1
+  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/lint-markdown:alpine-3.20-vale-3.9.3-markdownlint2-0.17.1-lychee-0.15.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -51,7 +51,7 @@ check_docs_markdown:
 
 # Perform link checking on documentation Markdown files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.20-vale-3.7.1-markdownlint2-0.14.0-lychee-0.15.1
+  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/lint-markdown:alpine-3.20-vale-3.9.3-markdownlint2-0.17.1-lychee-0.15.1
   stage: prepare
   cache: {}
   dependencies: []
@@ -60,6 +60,29 @@ check_docs_links:
     # Check Markdown links
     - lychee --offline --include-fragments doc
   rules:
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
+docs-test hugo:
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/hugomods/hugo:exts-0.142.0
+  stage: prepare
+  before_script:
+    - apk add --no-cache git make nodejs npm bash
+    - git clone --depth 1 https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com.git
+    - cd docs-gitlab-com
+    - make add-latest-icons
+    # Copy the current project's docs to the appropriate location in the docs website
+    - mkdir content/charts
+    - cp -r ../doc/* content/charts/
+  script:
+    # Test that Hugo will build
+    - hugo --gc --printPathWarnings --panicOnWarning
+    # Test for invalid index pages
+    # See https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/-/blob/main/scripts/check-index-filenames.sh
+    - make check-index-pages SEARCH_DIR="../doc"
+  rules:
+    - !reference [.rule:skip_if_fork]
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
@@ -99,7 +122,6 @@ lint_package:
     paths:
     - build
   rules:
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /_MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /_BRANCH_PIPELINE$/'
     - if: '$PIPELINE_TYPE == "NIGHTLY_PIPELINE"'

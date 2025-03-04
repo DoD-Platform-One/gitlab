@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: GitLab chart versions
 ---
 
-# GitLab chart versions
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 The GitLab chart doesn't have the same version number as GitLab itself. This means that breaking changes can be
 introduced to the chart independent of GitLab.
@@ -23,6 +25,7 @@ helm search repo -l gitlab/gitlab
 
 ## Release notes for each supported version
 
+- [9.0](../releases/9_0.md)
 - [8.0](../releases/8_0.md)
 - [7.0](../releases/7_0.md)
 - [6.0](../releases/6_0.md)
@@ -33,12 +36,19 @@ The table below maps some of the key previous supported chart versions and suppo
 
 | Chart version | GitLab version |
 |---------------|----------------|
+| 8.9.1 | 17.9.1 |
+| 8.9.0 | 17.9.0 |
+| 8.8.2 | 17.8.2 |
 | 8.8.1 | 17.8.1 |
 | 8.8.0 | 17.8.0 |
+| 8.7.6 | 17.7.4 |
+| 8.7.5 | 17.7.3 |
 | 8.7.4 | 17.7.2 |
 | 8.7.3 | 17.7.1 |
 | 8.7.2 | 17.7.0 |
 | 8.7.0 | 17.7.0 |
+| 8.6.5 | 17.6.5 |
+| 8.6.4 | 17.6.4 |
 | 8.6.3 | 17.6.3 |
 | 8.6.2 | 17.6.2 |
 | 8.6.1 | 17.6.1 |

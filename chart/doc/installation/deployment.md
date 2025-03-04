@@ -2,24 +2,29 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Deploy the GitLab Helm chart
 ---
 
-# Deploy the GitLab Helm chart
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 Before running `helm install`, you need to make some decisions about how you will run GitLab.
 Options can be specified using Helm's `--set option.name=value` command-line option.
 This guide will cover required values and common options.
 For a complete list of options, read [Installation command line options](command-line-options.md).
 
-WARNING:
+{{< alert type="warning" >}}
+
 The default Helm chart configuration is **not intended for production**.
 The default chart creates a proof of concept (PoC) implementation where all GitLab
 services are deployed in the cluster. For production deployments, you must follow the
-[Cloud Native Hybrid reference architecture](index.md#use-the-reference-architectures).
+[Cloud Native Hybrid reference architecture](_index.md#use-the-reference-architectures).
+
+{{< /alert >}}
 
 For a production deployment, you should have strong working knowledge of Kubernetes.
 This method of deployment has different management, observability, and concepts than traditional deployments.
@@ -106,10 +111,10 @@ specifying `--set global.edition=ce`. If you also specified
 individual images (for example, `--set gitlab.unicorn.image.repository=registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ce`),
 you need to omit any occurrence of those images.
 
-After the deployment, you can [activate your Enterprise Edition license](https://docs.gitlab.com/ee/administration/license.html).
+After the deployment, you can [activate your Enterprise Edition license](https://docs.gitlab.com/administration/license/).
 
 ## Recommended next steps
 
 After completing your installation, consider taking the
-[recommended next steps](https://docs.gitlab.com/ee/install/next_steps.html),
+[recommended next steps](https://docs.gitlab.com/install/next_steps/),
 including authentication options and sign-up restrictions.

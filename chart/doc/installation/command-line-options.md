@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: GitLab Helm chart deployment options
 ---
 
-# GitLab Helm chart deployment options
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 This page lists commonly used values of the GitLab chart. For a complete list of the available options, refer
 to the documentation for each subchart.
@@ -108,7 +110,7 @@ helm inspect values gitlab/gitlab
 
 ### Common settings
 
-See [incoming email configuration examples documentation](https://docs.gitlab.com/ee/administration/incoming_email.html#configuration-examples)
+See [incoming email configuration examples documentation](https://docs.gitlab.com/administration/incoming_email/#configuration-examples)
 for more information.
 
 | Parameter                                         | Description                                                                                            | Default                                                    |
@@ -155,7 +157,7 @@ See the [instructions for creating secrets](secrets.md).
 
 As a requirement for Service Desk, the Incoming Mail must be [configured](#incoming-email-configuration).
 Note that the email address for both Incoming Mail and Service Desk must use
-[email sub-addressing](https://docs.gitlab.com/ee/administration/incoming_email.html#email-sub-addressing).
+[email sub-addressing](https://docs.gitlab.com/administration/incoming_email/#email-sub-addressing).
 When setting the email addresses in each section the tag added to the username
 must be `+%{key}`.
 
@@ -240,7 +242,7 @@ might need to add specific RBAC rules
 
 Prefix NGINX Ingress values with `nginx-ingress`. For example, set the controller image tag using `nginx-ingress.controller.image.tag`.
 
-See [`nginx-ingress` chart](../charts/nginx/index.md).
+See [`nginx-ingress` chart](../charts/nginx/_index.md).
 
 ## Advanced in-cluster Redis configuration
 
@@ -317,7 +319,7 @@ settings from the [Redis chart](https://github.com/bitnami/charts/tree/main/bitn
 | `gitlab-runner.resources.requests.memory` | runner resources |  |
 | `gitlab-runner.runners.privileged` | run in privileged mode, needed for `dind` | false |
 | `gitlab-runner.runners.cache.secretName` | secret to get `accesskey` and `secretkey` from | `gitlab-minio` |
-| `gitlab-runner.runners.config` | Runner configuration as string | See [Chart documentation](../charts/gitlab/gitlab-runner/index.md#default-runner-configuration) |
+| `gitlab-runner.runners.config` | Runner configuration as string | See [Chart documentation](../charts/gitlab/gitlab-runner/_index.md#default-runner-configuration) |
 | `gitlab-runner.unregisterRunners` | Unregisters all runners in the local `config.toml` when the chart is installed. If the token is prefixed with `glrt-`, the runner manager is deleted, not the runner. The runner manager is identified by the runner and the machine that contains the `config.toml`. If the runner was registered with a registration token, the runner is deleted. | true |
 | `gitlab.geo-logcursor.securityContext.fsGroup` | Group ID under which the pod should be started | `1000` |
 | `gitlab.geo-logcursor.securityContext.runAsUser` | User ID under which the pod should be started | `1000` |
@@ -494,4 +496,4 @@ for the exhaustive list of configuration options.
 
 In certain scenarios (i.e. offline environment), you may want to bring your own images rather than pulling them down from the Internet. This requires specifying your own Docker image registry/repository for each of the charts that make up the GitLab release.
 
-Refer to the [custom images documentation](../advanced/custom-images/index.md) for more information.
+Refer to the [custom images documentation](../advanced/custom-images/_index.md) for more information.

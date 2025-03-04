@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Using the Shared-Secrets Job
 ---
 
-# Using the Shared-Secrets Job
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 The `shared-secrets` job is responsible for provisioning a variety of secrets
 used across the installation, unless otherwise manually specified. This includes:
@@ -19,7 +21,7 @@ used across the installation, unless otherwise manually specified. This includes
 1. MinIO, Registry, GitLab Shell, and Gitaly secrets
 1. Redis and PostgreSQL passwords
 1. SSH host keys
-1. GitLab Rails secret for [encrypted credentials](https://docs.gitlab.com/ee/administration/encrypted_configuration.html)
+1. GitLab Rails secret for [encrypted credentials](https://docs.gitlab.com/administration/encrypted_configuration/)
 
 ## Installation command line options
 
@@ -39,12 +41,12 @@ the `helm install` command using the `--set` flag:
 | `priorityClassName`        |                     | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods |
 | `rbac.create`              | `true`              | Create RBAC roles and bindings                                                                                      |
 | `resources`                |                     | resource requests, limits                                                                                           |
-| `securitContext.fsGroup`   | `65534`             | User ID to mount filesystems as                                                                                     |
-| `securitContext.runAsUser` | `65534`             | User ID to run the container as                                                                                     |
-| `selfsign.caSubject`       | `GitLab Helm Chart` | selfsign CA Subject                                                                                                 |
-| `selfsign.image.repository` | `registry.gitlab.com/gitlab-org/build/cnf/cfssl-self-sign` | selfsign image repository                                                                                           |
-| `selfsign.image.pullSecrets` |                   | Secrets for the image repository                                                                                    |
-| `selfsign.image.tag`       |                     | selfsign image tag                                                                                                  |
+| `securityContext.fsGroup`    | `65534`             | User ID to mount filesystems as                                                                                     |
+| `securityContext.runAsUser`  | `65534`             | User ID to run the container as                                                                                     |
+| `selfsign.caSubject`         | `GitLab Helm Chart` | selfsign CA Subject                                                                                                 |
+| `selfsign.image.repository`  | `registry.gitlab.com/gitlab-org/build/cnf/cfssl-self-sign` | selfsign image repository                                                                                           |
+| `selfsign.image.pullSecrets` |                     | Secrets for the image repository                                                                                    |
+| `selfsign.image.tag`         |                     | selfsign image tag                                                                                                  |
 | `selfsign.keyAlgorithm`    | `rsa`               | selfsign cert key algorithm                                                                                         |
 | `selfsign.keySize`         | `4096`              | selfsign cert key size                                                                                              |
 | `serviceAccount.enabled`   | `true`              | Define serviceAccountName on job(s)                                                                                 |
@@ -85,7 +87,10 @@ shared-secrets:
   enabled: false
 ```
 
-NOTE:
+{{< alert type="note" >}}
+
 If you disable this job, you **must** manually create all secrets,
 and provide all necessary secret content. See [installation/secrets](../installation/secrets.md#manual-secret-creation-optional)
 for further details.
+
+{{< /alert >}}

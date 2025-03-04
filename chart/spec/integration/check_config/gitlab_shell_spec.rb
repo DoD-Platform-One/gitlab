@@ -12,7 +12,7 @@ describe 'checkConfig gitlab-shell' do
             config:
               proxyProtocol: true
               proxyPolicy: use
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -22,7 +22,7 @@ describe 'checkConfig gitlab-shell' do
             config:
               proxyProtocol: true
               proxyPolicy: reject
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Either disable proxyProtocol or set proxyPolicy to "use", "require", or "ignore".' }
@@ -40,7 +40,7 @@ describe 'checkConfig gitlab-shell' do
             metrics:
               enabled: true
             sshDaemon: gitlab-sshd
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -50,7 +50,7 @@ describe 'checkConfig gitlab-shell' do
             metrics:
               enabled: true
             sshDaemon: openssh
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Either disable metrics or set sshDaemon to "gitlab-sshd".' }

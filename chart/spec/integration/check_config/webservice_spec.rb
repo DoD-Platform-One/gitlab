@@ -11,7 +11,7 @@ describe 'checkConfig webservice' do
             maxRequestDurationSeconds: 50
             webservice:
               workerTimeout: 60
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -21,7 +21,7 @@ describe 'checkConfig webservice' do
             maxRequestDurationSeconds: 70
             webservice:
               workerTimeout: 60
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'global.appConfig.maxRequestDurationSeconds (70) is greater than or equal to global.webservice.workerTimeout (60)' }
@@ -40,7 +40,7 @@ describe 'checkConfig webservice' do
               terminationGracePeriodSeconds: 50
             shutdown:
               blackoutSeconds: 10
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -51,7 +51,7 @@ describe 'checkConfig webservice' do
               terminationGracePeriodSeconds: 5
             shutdown:
               blackoutSeconds: 20
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'You must set terminationGracePeriodSeconds (5) longer than blackoutSeconds (20)' }

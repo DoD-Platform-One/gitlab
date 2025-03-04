@@ -67,7 +67,7 @@ end
 describe 'image tag configuration' do
   context 'no global.gitlabVersion configured' do
     begin
-      values = HelmTemplate.with_defaults %(
+      values = HelmTemplate.certmanager_issuer.deep_merge!(%(
         global:
           pages:
             enabled: true
@@ -78,7 +78,7 @@ describe 'image tag configuration' do
           ingress:
             # To ensure the cfsl-self-sign image is used
             configureCertmanager: false
-        )
+        ))
       template = HelmTemplate.new values
     rescue StandardError
       # Skip these examples when helm or chart dependencies are missing

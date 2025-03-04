@@ -40,6 +40,9 @@ spec:
         prometheus.io/path: {{ .Values.metrics.path }}
       {{- end }}
     spec:
+      {{- if $.Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- toYaml $.Values.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
       {{- include "gitlab.affinity" . | nindent 6 }}
       {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- if .Values.tolerations }}

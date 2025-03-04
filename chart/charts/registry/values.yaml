@@ -455,3 +455,13 @@ tls:
   #   - TLS_ECDHE_RSA_AES_128_GCM_SHA256
   #   - TLS_ECDHE_RSA_AES_256_GCM_SHA384
   #   - TLS_ECDHE_RSA_CHACHA20_POLY1305_SHA256
+
+## Topology spread constraints rely on node labels to identify the topology domain(s) that each Node is in.
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: []
+ # - labelSelector:
+ #     matchLabels:
+ #       app: name
+ #     maxSkew: 1
+ #     topologyKey: topology.kubernetes.io/zone
+ #     whenUnsatisfiable: DoNotSchedule

@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Design Decisions
 ---
-
-# Design Decisions
 
 This documentation collects reasoning and decisions made
 regarding the design of the Helm charts in this repository. Proposals welcome, see [Decision Making](decision-making.md) for how we apply decisions.
@@ -30,7 +29,7 @@ from properties to secrets (in observance of our preference).
 
 As a means of preventing a user from accidentally deploying an updated version of these
 charts which includes a breaking change against a configuration that would not function, we
-have chosen to implement [deprecation](../development/index.md#handling-configuration-deprecations) notifications. These are designed to detect
+have chosen to implement [deprecation](../development/_index.md#handling-configuration-deprecations) notifications. These are designed to detect
 properties have been relocated, altered, replaced, or removed entirely, then inform
 the user of what changes need to be made to the configuration. This may include informing
 the user to see documentation on how to replace a property with a secret. These notifications
@@ -103,7 +102,7 @@ Related issue:
 ## Forked charts
 
 The following charts have been forked or re-created in this repository following
-our [guidelines for forking](../development/index.md#guidelines-for-forking)
+our [guidelines for forking](../development/_index.md#guidelines-for-forking)
 
 ### Redis
 
@@ -118,7 +117,7 @@ which has added optional HA support.
 
 ### MinIO
 
-Our [MinIO chart](../charts/minio/index.md) was altered from the upstream [MinIO](https://github.com/helm/charts/tree/master/stable/minio).
+Our [MinIO chart](../charts/minio/_index.md) was altered from the upstream [MinIO](https://github.com/helm/charts/tree/master/stable/minio).
 
 - Make use of pre-existing Kubernetes secrets instead of creating new ones from properties.
 - Remove providing the sensitive keys via Environment.
@@ -127,14 +126,14 @@ Our [MinIO chart](../charts/minio/index.md) was altered from the upstream [MinIO
 
 ### registry
 
-Our [registry chart](../charts/registry/index.md) was altered from the upstream [`docker-registry`](https://github.com/helm/charts/tree/master/stable/docker-registry).
+Our [registry chart](../charts/registry/_index.md) was altered from the upstream [`docker-registry`](https://github.com/helm/charts/tree/master/stable/docker-registry).
 
 - Enable the use of in-chart MinIO services automatically.
 - Automatically hook authentication to the GitLab services.
 
 ### NGINX Ingress
 
-Our [NGINX Ingress chart](../charts/nginx/index.md) was altered from the upstream [NGINX Ingress](https://github.com/kubernetes/ingress-nginx).
+Our [NGINX Ingress chart](../charts/nginx/_index.md) was altered from the upstream [NGINX Ingress](https://github.com/kubernetes/ingress-nginx).
 
 - Add feature to allow for the TCP ConfigMap to be external to the chart
 - Add feature to allow Ingress class to be templated based on release name

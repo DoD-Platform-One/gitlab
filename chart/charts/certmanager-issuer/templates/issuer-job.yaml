@@ -14,8 +14,9 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "name" . }}
-        release: {{ .Release.Name }}
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
     spec:
       {{- include "gitlab.nodeSelector" . | nindent 6 }}
       {{- include "gitlab.podSecurityContext" .Values.global.kubectl.securityContext | nindent 6 }}

@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Configure RBAC for the GitLab chart
 ---
 
-# Configure RBAC for the GitLab chart
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 Until Kubernetes 1.7, there were no permissions within a cluster. With the launch of 1.7, there is now a role based access control system ([RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)) which determines what services can perform actions within a cluster.
 

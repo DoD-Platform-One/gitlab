@@ -36,8 +36,9 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "name" . }}
-        release: {{ .Release.Name }}
+        {{- include "gitlab.standardLabels" . | nindent 8 }}
+        {{- include "gitlab.commonLabels" . | nindent 8 }}
+        {{- include "gitlab.podLabels" . | nindent 8 }}
       {{- if .Values.upgradeCheck.annotations }}
       {{-   range $key, $value := .Values.upgradeCheck.annotations }}
       annotations:

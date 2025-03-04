@@ -15,6 +15,7 @@ describe 'Labels configuration' do
 
   let(:ignored_charts) do
     [
+      'Job/test-certmanager-startupapicheck',
       'Deployment/test-certmanager-cainjector',
       'Deployment/test-certmanager-webhook',
       'Deployment/test-certmanager',
@@ -49,7 +50,18 @@ describe 'Labels configuration' do
       resources_by_kind = t.resources_by_kind('Deployment').reject{ |key, _| ignored_charts.include? key }
 
       resources_by_kind.each do |key, _|
-        expect(t.dig(key, 'spec', 'template', 'metadata', 'labels')).to include(default_values['global']['pod']['labels'])
+        expect(t.dig(key, 'spec', 'template', 'metadata', 'labels')).to include(default_values['global']['pod']['labels']), key
+      end
+    end
+
+    it 'Populates labels for all Job templates' do
+      t = HelmTemplate.new(default_values)
+      expect(t.exit_code).to eq(0)
+
+      resources_by_kind = t.resources_by_kind('Job').reject{ |key, _| ignored_charts.include? key }
+
+      resources_by_kind.each do |key, _|
+        expect(t.dig(key, 'spec', 'template', 'metadata', 'labels')).to include(default_values['global']['pod']['labels']), key
       end
     end
 

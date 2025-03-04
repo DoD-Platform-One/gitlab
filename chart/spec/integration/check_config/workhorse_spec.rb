@@ -17,7 +17,7 @@ describe 'checkConfig workhorse' do
                 exporter:
                   tls:
                     enabled: true
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -33,7 +33,7 @@ describe 'checkConfig workhorse' do
                 exporter:
                   tls:
                     enabled: true
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'The monitoring exporter TLS depends on the main workhorse listener using TLS.' }

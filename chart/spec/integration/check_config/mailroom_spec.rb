@@ -16,7 +16,7 @@ describe 'checkConfig mailroom' do
               clientId: MY-CLIENT-ID
               clientSecret:
                 secret: secret
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -28,7 +28,7 @@ describe 'checkConfig mailroom' do
               inboxMethod: microsoft_graph
               clientSecret:
                 secret: secret
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'be sure to specify the tenant ID' }
@@ -57,7 +57,7 @@ describe 'checkConfig mailroom' do
               clientId: MY-CLIENT-ID
               clientSecret:
                 secret: secret
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -76,7 +76,7 @@ describe 'checkConfig mailroom' do
               inboxMethod: microsoft_graph
               clientSecret:
                 secret: secret
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'be sure to specify the tenant ID' }

@@ -11,7 +11,7 @@ describe 'checkConfig toolbox' do
             replicas: 1
             persistence:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -21,7 +21,7 @@ describe 'checkConfig toolbox' do
             replicas: 2
             persistence:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'more than 1 replica, but also with a PersistentVolumeClaim' }
@@ -43,7 +43,7 @@ describe 'checkConfig toolbox' do
                   config:
                     secret: s3cmd-config
                     key: config
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_values) do
@@ -56,7 +56,7 @@ describe 'checkConfig toolbox' do
                   config:
                     # secret: s3cmd-config
                     key: config
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       let(:error_output) { 'A valid object storage config secret is needed for backups.' }
@@ -77,7 +77,7 @@ describe 'checkConfig toolbox' do
                     config:
                       # secret: s3cmd-config
                       key: config
-          )).merge(default_required_values)
+          )).deep_merge!(default_required_values)
         end
 
         include_examples 'config validation',
@@ -96,7 +96,7 @@ describe 'checkConfig toolbox' do
                   config:
                     # secret: s3cmd-config
                     key: config
-        )).merge(default_required_values)
+        )).deep_merge!(default_required_values)
       end
 
       include_examples 'config validation',

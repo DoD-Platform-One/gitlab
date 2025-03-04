@@ -35,7 +35,7 @@ describe 'Redis configuration' do
               connectTimeout: 3
               readTimeout: 4
               writeTimeout: 5
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'renders {connect,read,write}_timeout values' do
@@ -56,7 +56,7 @@ describe 'Redis configuration' do
               database: 4
           redis:
             install: false
-        )).deep_merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'configures Redis' do
@@ -74,7 +74,7 @@ describe 'Redis configuration' do
           redis:
             auth:
               enabled: true
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     context 'when true' do
@@ -92,7 +92,7 @@ describe 'Redis configuration' do
             redis:
               auth:
                 enabled: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'do not populate password' do
@@ -110,7 +110,7 @@ describe 'Redis configuration' do
           redis:
             sentinelAuth:
               enabled: true
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     context 'when true' do
@@ -128,7 +128,7 @@ describe 'Redis configuration' do
             redis:
               senntinelAuth:
                 enabled: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'do not populate password' do
@@ -157,7 +157,7 @@ describe 'Redis configuration' do
 
             redis:
               install: false
-          )).merge(default_values)
+          )).deep_merge!(default_values)
         end
 
         it 'skips render only for invalid secret' do
@@ -209,7 +209,7 @@ describe 'Redis configuration' do
                       key: password
             redis:
               install: false
-          )).merge(default_values)
+          )).deep_merge!(default_values)
         end
 
         it 'renders both secret without namespace clash' do
@@ -253,7 +253,7 @@ describe 'Redis configuration' do
                       key: password
             redis:
               install: false
-          )).merge(default_values)
+          )).deep_merge!(default_values)
         end
 
         it 'renders custom enabled secrets as a volume alongside other secrets' do
@@ -301,7 +301,7 @@ describe 'Redis configuration' do
 
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
         end
 
         it 'replaces password with ERB string where required' do
@@ -352,7 +352,7 @@ describe 'Redis configuration' do
                 foo: bar
           redis:
             install: true
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'fails to template (checkConfig)' do
@@ -378,7 +378,7 @@ describe 'Redis configuration' do
                   password: <%= File.read('/path/to/password').chomp %>
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'renders arbitrary values' do
@@ -405,7 +405,7 @@ describe 'Redis configuration' do
                 host: cache.redis
           redis:
             install: true
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'fails to template (checkConfig)' do
@@ -426,7 +426,7 @@ describe 'Redis configuration' do
                 host: cache.redis
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'sub-queue inherits all of password from global.redis' do
@@ -457,7 +457,7 @@ describe 'Redis configuration' do
                   secret: rspec-cache
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'sub-queue inherits from global' do
@@ -491,7 +491,7 @@ describe 'Redis configuration' do
                   secret: rspec-cache
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'sub-queue uses password, global does not' do
@@ -525,7 +525,7 @@ describe 'Redis configuration' do
                   secret: rspec-cache
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'sub-queue does not use password, global does' do
@@ -557,7 +557,7 @@ describe 'Redis configuration' do
                 host: cache.redis
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'global uses user' do
@@ -579,7 +579,7 @@ describe 'Redis configuration' do
                 port: 9999
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'sub-queue uses port, global host' do
@@ -612,7 +612,7 @@ describe 'Redis configuration' do
                   port: 26379
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'separate sentinels are populated' do
@@ -642,7 +642,7 @@ describe 'Redis configuration' do
                   port: 26379
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'sub-queue sentinels are populated' do
@@ -674,7 +674,7 @@ describe 'Redis configuration' do
                 - host: s2.cluster-cache.redis
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'Only nested redis cluster is populated' do
@@ -704,7 +704,7 @@ describe 'Redis configuration' do
                 - host: s2.cluster-cache.redis
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'Only nested redis cluster is populated' do
@@ -739,7 +739,7 @@ describe 'Redis configuration' do
                 - host: s2.cluster-cache.redis
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       let(:redis_cluster_yml_erb) { template.dig('ConfigMap/test-webservice', 'data', 'redis.cluster_cache.yml.erb') }
@@ -768,7 +768,7 @@ describe 'Redis configuration' do
                 - host: s2.cluster-cache.redis
           redis:
             install: false
-        )).merge(default_values)
+        )).deep_merge!(default_values)
       end
 
       it 'No values are inherited by nested redis cluster' do

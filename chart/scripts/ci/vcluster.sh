@@ -9,18 +9,33 @@ function cluster_connect() {
   fi
 }
 
+function vcluster_install() {
+  if [ -z "${VCLUSTER_VERSION}" ] || [ "${VCLUSTER_VERSION,,}" == "default" ]; then
+    echo "No version specified, using default image version"
+  else
+    echo "Install vcluster version ${VCLUSTER_VERSION}"
+    curl -Lo /tmp/vcluster "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-amd64"
+    install -c -m 0755 /tmp/vcluster /usr/local/bin
+  fi
+  vcluster version
+}
+
 function vcluster_name() {
   printf ${VCLUSTER_NAME:0:52}
 }
 
 function vcluster_create() {
+  envsubst '$VCLUSTER_K8S_VERSION' < ./scripts/ci/vcluster.template.yaml > ./vcluster.yaml
+  cat vcluster.yaml
+
   local vcluster_name=$(vcluster_name)
   vcluster create ${vcluster_name} \
     --upgrade \
     --namespace=${vcluster_name} \
-    --kubernetes-version=${VCLUSTER_K8S_VERSION} \
     --connect=false \
-    --update-current=false
+    --values ./vcluster.yaml
+
+  kubectl annotate namespace ${vcluster_name} janitor/ttl=2d
 }
 
 function vcluster_run() {
@@ -44,7 +59,7 @@ function vcluster_helm_rollout_status() {
 }
 
 function vcluster_delete() {
-  vcluster delete $(vcluster_name)
+  vcluster delete $(vcluster_name) --delete-configmap --delete-namespace --ignore-not-found
 }
 
 function vcluster_info() {

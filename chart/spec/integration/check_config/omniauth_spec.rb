@@ -17,7 +17,7 @@ describe 'checkConfig omniauth' do
                 - name: kerberos
                   label: Kerberos
                   icon: "https://example.org/kerberos.png"
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -29,7 +29,7 @@ describe 'checkConfig omniauth' do
                 - name: oauth2_generic
                   app_id: id
                   app_secret: secret
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { "each provider should only contain either:" }

@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Setup standalone Redis
 ---
-
-# Setup standalone Redis
 
 The instructions here make use of the [Linux package](https://about.gitlab.com/install/#ubuntu) for Ubuntu. This package
 provides versions of the services that are guaranteed to be compatible with the charts' services.
@@ -24,8 +23,11 @@ Follow the installation instructions for the [Linux package](https://about.gitla
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be _very_ explicit about what is enabled on this node, use the contents below.
 
-NOTE:
-This example is not intended to provide [Redis for scaling](https://docs.gitlab.com/ee/administration/redis/index.html).
+{{< alert type="note" >}}
+
+This example is not intended to provide [Redis for scaling](https://docs.gitlab.com/administration/redis/).
+
+{{< /alert >}}
 
 - `REDIS_PASSWORD` should be replaced with the value in the [`gitlab-redis` secret](../../installation/secrets.md#redis-password).
 

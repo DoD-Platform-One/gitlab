@@ -59,3 +59,27 @@ Return the gitlab-kas WebSocket Token secret
 {{- end -}}
 {{- default "kas_websocket_token_secret" $key | quote -}}
 {{- end -}}
+
+{{/*
+Return the gitlab-kas AutoFlow Temporal Workflow data encryption secret
+*/}}
+
+{{- define "gitlab.kas.autoflow.temporal.workflowDataEncryption.secret" -}}
+{{- $secret := "" -}}
+{{- if eq .Chart.Name "kas" -}}
+{{-    $secret = ((.Values.autoflow.temporal).workflowDataEncryption).secret -}}
+{{- else -}}
+{{-    $secret = ((.Values.gitlab.kas.autoflow.temporal).workflowDataEncryption).secret -}}
+{{- end -}}
+{{- default (printf "%s-kas-autoflow-temporal-workflow-data-encryption-secret" .Release.Name) $secret | quote -}}
+{{- end -}}
+
+{{- define "gitlab.kas.autoflow.temporal.workflowDataEncryption.key" -}}
+{{- $key := "" -}}
+{{- if eq .Chart.Name "kas" -}}
+{{-    $key = ((.Values.autoflow.temporal).workflowDataEncryption).key -}}
+{{- else -}}
+{{-    $key = ((.Values.gitlab.kas.autoflow.temporal).workflowDataEncryption).key -}}
+{{- end -}}
+{{- default "kas_autoflow_temporal_workflow_data_encryption" $key | quote -}}
+{{- end -}}

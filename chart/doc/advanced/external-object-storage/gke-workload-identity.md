@@ -2,11 +2,14 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Workload Identity Federation for GKE using the GitLab chart
 ---
 
-# Workload Identity Federation for GKE using the GitLab chart
+{{< history >}}
 
-> - [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3434) in GitLab 17.0.
+- [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3434) in GitLab 17.0.
+
+{{< /history >}}
 
 The default configuration for external object storage in the charts uses
 secret keys. [Workload Identity Federation for GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity)

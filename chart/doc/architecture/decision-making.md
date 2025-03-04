@@ -2,9 +2,8 @@
 stage: Enablement
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#designated-technical-writers
+title: Decision Making
 ---
-
-# Decision Making
 
 Changes to this repository are first reviewed using the [merge request workflow](https://handbook.gitlab.com/handbook/engineering/infrastructure/core-platform/systems/distribution/merge_requests/) then merged by project maintainers.
 

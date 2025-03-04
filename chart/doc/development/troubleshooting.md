@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Troubleshooting GitLab chart development environment
 ---
-
-# Troubleshooting GitLab chart development environment
 
 All steps noted here are for **DEVELOPMENT ENVIRONMENTS ONLY**.
 Administrators may find the information insightful, but the outlined fixes
@@ -30,9 +29,12 @@ claims.
 kubectl delete secrets,pvc -lrelease=RELEASE_NAME
 ```
 
-NOTE:
+{{< alert type="note" >}}
+
 This deletes all Kubernetes secrets including TLS certificates and all data
 in the database. This should not be performed in a production instance.
+
+{{< /alert >}}
 
 ## Database is broken and needs reset
 
@@ -42,9 +44,12 @@ The database environment can be reset in a development environment by:
 1. Delete the PostgreSQL PersistentVolumeClaim
 1. Deploy GitLab again with `helm upgrade --install`
 
-NOTE:
+{{< alert type="note" >}}
+
 This will delete all data in the databases and should not be run in
 production.
+
+{{< /alert >}}
 
 ## CI clusters are low on available resources
 

@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Set up standalone PostgreSQL database
 ---
-
-# Set up standalone PostgreSQL database
 
 We'll make use of the [Linux package](https://about.gitlab.com/install/#ubuntu) for Ubuntu. This package provides versions of the services that are guaranteed to be compatible with the charts' services.
 
@@ -23,7 +22,7 @@ Follow the installation instructions for the [Linux package](https://about.gitla
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be very explicit about what is enabled on this node, use the contents below.
 
-_Note_: This example is not intended to provide [PostgreSQL for scaling](https://docs.gitlab.com/ee/administration/postgresql/index.html).
+_Note_: This example is not intended to provide [PostgreSQL for scaling](https://docs.gitlab.com/administration/postgresql/).
 
 _**NOTE**: The values below should be replaced_
 

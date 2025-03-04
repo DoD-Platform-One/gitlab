@@ -21,7 +21,7 @@ describe 'checkConfig template' do
       YAML.safe_load(%(
         redis:
           install: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -32,7 +32,7 @@ describe 'checkConfig template' do
           redis:
             cache:
               host: foo
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'If configuring multiple Redis servers, you can not use the in-chart Redis server' }
@@ -50,7 +50,7 @@ describe 'checkConfig template' do
             enabled: true
             create: false
             name: myaccount
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -60,7 +60,7 @@ describe 'checkConfig template' do
             enabled: true
             create: true
             name: myaccount
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Please set `global.serviceAccount.create=false`' }

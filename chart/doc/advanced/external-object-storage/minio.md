@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Configure MinIO with the GitLab chart
 ---
-
-# Configure MinIO with the GitLab chart
 
 [MinIO](https://min.io/) is an object storage server that exposes S3-compatible APIs.
 

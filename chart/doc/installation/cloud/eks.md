@@ -2,13 +2,15 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Preparing EKS resources for the GitLab chart
 ---
 
-# Preparing EKS resources for the GitLab chart
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 For a fully functional GitLab instance, you need a few resources before
 deploying the GitLab chart.
@@ -76,10 +78,13 @@ Administrators may also want to consider the
 [new AWS Service Operator for Kubernetes](https://aws.amazon.com/blogs/opensource/aws-service-operator-kubernetes-available/)
 to simplify this process.
 
-NOTE:
+{{< alert type="note" >}}
+
 Enabling the AWS Service Operator requires a method of managing roles within the cluster. The initial
 services handling that management task are provided by third party developers. Administrators should
 keep that in mind when planning for deployment.
+
+{{< /alert >}}
 
 ## Persistent Volume Management
 
@@ -126,10 +131,13 @@ and then mapping your desired DNS name to the created ELB using a CNAME
 record. Since the ELB must be created first before its hostname can be
 retrieved, follow the next instructions to install GitLab.
 
-NOTE:
+{{< alert type="note" >}}
+
 For environments where AWS LoadBalancers are required,
 [Amazon's Elastic Load Balancers](https://docs.aws.amazon.com/eks/latest/userguide/load-balancing.html)
 require specialized configuration. See [Cloud provider LoadBalancers](../../charts/globals.md#cloud-provider-loadbalancers)
+
+{{< /alert >}}
 
 ## Next Steps
 

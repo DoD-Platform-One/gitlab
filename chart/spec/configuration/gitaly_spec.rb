@@ -370,6 +370,50 @@ describe 'Gitaly configuration' do
     end
   end
 
+  context 'timeout' do
+    context 'when enabled' do
+      let(:values) do
+        YAML.safe_load(%(
+          gitlab:
+            gitaly:
+              timeout:
+                uploadPackNegotiation: 10m
+                uploadArchiveNegotiation: 20m
+        )).merge(default_values)
+      end
+
+      let(:template) { HelmTemplate.new(values) }
+
+      it 'populates a timeout section in config.toml.tpl' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
+
+        pack_objects_cache_section = <<~CONFIG
+          [timeout]
+          upload_pack_negotiation = "10m"
+          upload_archive_negotiation = "20m"
+        CONFIG
+
+        expect(config_toml).to include(pack_objects_cache_section)
+      end
+    end
+
+    context 'when not enabled' do
+      let(:values) do
+        YAML.safe_load(%(
+          gitlab:
+            gitaly:
+        )).merge(default_values)
+      end
+      let(:template) { HelmTemplate.new(values) }
+
+      it 'does not populate a timeout section in config.toml.tpl' do
+        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
+
+        expect(config_toml).not_to match(/^\[timeout\]/)
+      end
+    end
+  end
+
   context 'gpg signing' do
     let(:values) do
       HelmTemplate.with_defaults %(
@@ -682,7 +726,7 @@ describe 'Gitaly configuration' do
 
         expect(gitaly_startup_probe).to include(
           'initialDelaySeconds' => 5,
-          'exec' => { "command" => ["/scripts/healthcheck"] },
+          'grpc' => { "port" => 8075 },
           'failureThreshold' => 60,
           'periodSeconds' => 1,
           'timeoutSeconds' => 2,

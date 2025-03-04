@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Changelog entries
 ---
-
-# Changelog entries
 
 This guide contains instructions for when and how to generate a changelog entry
 file, as well as information and history about our changelog process.
@@ -166,4 +165,4 @@ found the workflow to be appealing and familiar.
 
 ---
 
-[Return to Development documentation](index.md)
+[Return to Development documentation](_index.md)

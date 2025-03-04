@@ -2,9 +2,8 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Writing bats tests for scripts used in the charts project
 ---
-
-# Writing bats tests for scripts used in the charts project
 
 The following are notes and conventions used for creating bats tests for the
 GitLab chart.

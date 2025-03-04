@@ -2,6 +2,12 @@
 {{- $WARNING := "\n=== WARNING" -}}
 {{- $CRITICAL := "\n=== CRITICAL" -}}
 
+{{ $NOTICE }}
+GitLab 18/GitLab chart 9.0 will release in May 2025.
+Please check the upcoming deprecations and removals at:
+* https://docs.gitlab.com/ee/update/deprecations.html#gitlab-180, and
+* https://docs.gitlab.com/charts/releases/9_0.html.
+
 {{- /* If any development subchart is enabled, note it is not production ready */}}
 {{- $enabledNonProdCharts := fromJsonArray (include "gitlab.nonProdCharts.enabledNames" .) -}}
 {{- if not (empty $enabledNonProdCharts) }}

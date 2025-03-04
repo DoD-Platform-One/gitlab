@@ -23,7 +23,7 @@ describe 'checkConfig gitaly' do
             enabled: true
             tls:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -43,7 +43,7 @@ describe 'checkConfig gitaly' do
             enabled: true
             tls:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'global.praefect.virtualStorages[1].tlsSecretName not specified (\'vs2\')' }
@@ -62,7 +62,7 @@ describe 'checkConfig gitaly' do
             external:
             - name: default
               hostname: bar
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -71,7 +71,7 @@ describe 'checkConfig gitaly' do
           gitaly:
             enabled: false
             external: []
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'external Gitaly repos needs to be specified if global.gitaly.enabled is not set' }
@@ -92,7 +92,7 @@ describe 'checkConfig gitaly' do
             external:
               - name: foo
                 hostname: bar
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -106,7 +106,7 @@ describe 'checkConfig gitaly' do
             external:
               - name: foo
                 hostname: bar
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Each storage name must be unique.' }
@@ -130,7 +130,7 @@ describe 'checkConfig gitaly' do
             replaceInternalGitaly: false
             virtualStorages:
             - name: defaultPraefect
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -146,7 +146,7 @@ describe 'checkConfig gitaly' do
             replaceInternalGitaly: false
             virtualStorages:
             - name: foo
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Each storage name must be unique.' }
@@ -167,7 +167,7 @@ describe 'checkConfig gitaly' do
             external:
               - name: external1
                 hostname: foo
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -180,7 +180,7 @@ describe 'checkConfig gitaly' do
             external:
               - name: bar
                 hostname: baz
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'There must be one (and only one) storage named \'default\'.' }
@@ -206,7 +206,7 @@ describe 'checkConfig gitaly' do
             replaceInternalGitaly: false
             virtualStorages:
             - name: praefect1
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -224,7 +224,7 @@ describe 'checkConfig gitaly' do
             replaceInternalGitaly: false
             virtualStorages:
             - name: praefect1
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'There must be one (and only one) storage named \'default\'.' }
@@ -244,7 +244,7 @@ describe 'checkConfig gitaly' do
             - name: default
               gitalyReplicas: 3
               defaultReplicationFactor: 2
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -256,7 +256,7 @@ describe 'checkConfig gitaly' do
             - name: default
               gitalyReplicas: 2
               defaultReplicationFactor: 3
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { '\'defaultReplicationFactor\' is not correct.' }

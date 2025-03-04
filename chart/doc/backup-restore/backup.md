@@ -2,19 +2,21 @@
 stage: Systems
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: Backing up a GitLab installation
 ---
 
-# Backing up a GitLab installation
+{{< details >}}
 
-DETAILS:
-**Tier:** Free, Premium, Ultimate
-**Offering:** Self-managed
+- Tier: Free, Premium, Ultimate
+- Offering: GitLab Self-Managed
+
+{{< /details >}}
 
 GitLab backups are taken by running the `backup-utility` command in the Toolbox pod provided in the chart. Backups can also be automated by enabling the [Cron based backup](#cron-based-backup) functionality of this chart.
 
 Before running the backup for the first time, you should ensure the
-[Toolbox is properly configured](../charts/gitlab/toolbox/index.md#configuration)
-for access to [object storage](index.md#object-storage).
+[Toolbox is properly configured](../charts/gitlab/toolbox/_index.md#configuration)
+for access to [object storage](_index.md#object-storage).
 
 Follow these steps for backing up a GitLab Helm chart based installation.
 
@@ -32,19 +34,22 @@ Follow these steps for backing up a GitLab Helm chart based installation.
    kubectl exec <Toolbox pod name> -it -- backup-utility
    ```
 
-1. Visit the `gitlab-backups` bucket in the object storage service and ensure a tarball has been added. It will be named in `<timestamp>_gitlab_backup.tar` format. Read what the [backup timestamp](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#backup-timestamp) is about.
+1. Visit the `gitlab-backups` bucket in the object storage service and ensure a tarball has been added. It will be named in `<timestamp>_gitlab_backup.tar` format. Read what the [backup timestamp](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#backup-timestamp) is about.
 
 1. This tarball is required for restoration.
 
 ## Cron based backup
 
-NOTE:
+{{< alert type="note" >}}
+
 The Kubernetes CronJob created by the Helm chart
 sets the `cluster-autoscaler.kubernetes.io/safe-to-evict: "false"`
 annotation on the jobTemplate. Some Kubernetes environments, such as
 GKE Autopilot, don't allow this annotation to be set and will not create
 Job Pods for the backup.
 This annotation can be changed by setting the `gitlab.toolbox.backups.cron.safeToEvict` parameter to `true`, which will allow the Jobs to be created but at the risk of being evicted and corrupting the backup.
+
+{{< /alert >}}
 
 Cron based backups can be enabled in this chart to happen at regular intervals as defined by the [Kubernetes schedule](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/#schedule).
 
@@ -60,7 +65,7 @@ The backup utility can take some extra arguments.
 
 ### Skipping components
 
-Skip components by using the `--skip` argument. Valid components names can be found at [Excluding specific data from the backup](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#excluding-specific-data-from-the-backup).
+Skip components by using the `--skip` argument. Valid components names can be found at [Excluding specific data from the backup](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#excluding-specific-data-from-the-backup).
 
 Each component must have its own `--skip` argument. For example:
 
@@ -119,21 +124,28 @@ gitlab:
         extraArgs: "--s3tool awscli --aws-s3-endpoint-url <MINIO-INGRESS-URL>"
 ```
 
-NOTE:
+{{< alert type="note" >}}
+
 The S3 CLI tool `s5cmd` support is under investigation.
 See [issue 523](https://gitlab.com/gitlab-org/build/CNG/-/issues/523) to track
 the progress.
 
+{{< /alert >}}
+
 ### Server-side repository backups
 
-> - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/438393) in GitLab 17.0.
+{{< history >}}
+
+- [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/438393) in GitLab 17.0.
+
+{{< /history >}}
 
 Instead of storing large repository backups in the backup archive, repository
 backups can be configured so that the Gitaly node that hosts each repository is
 responsible for creating the backup and streaming it to object storage. This
 helps reduce the network resources required to create and restore a backup.
 
-See [Create server-side repository backups](https://docs.gitlab.com/ee/administration/backup_restore/backup_gitlab.html#create-server-side-repository-backups).
+See [Create server-side repository backups](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#create-server-side-repository-backups).
 
 ### Other arguments
 
@@ -163,5 +175,5 @@ You also need to save a copy of the rails secrets as these are not included in t
 
 ## Additional Information
 
-- [GitLab chart Backup/Restore Introduction](index.md)
+- [GitLab chart Backup/Restore Introduction](_index.md)
 - [Restoring a GitLab installation](restore.md)

@@ -9,7 +9,7 @@ describe 'checkConfig nginx' do
         nginx-ingress:
           rbac:
             scope: false
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -17,7 +17,7 @@ describe 'checkConfig nginx' do
         nginx-ingress:
           rbac:
             scope: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Namespaced IngressClasses do not exist' }

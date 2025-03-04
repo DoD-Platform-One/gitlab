@@ -16,7 +16,7 @@ describe 'checkConfig duo' do
               secretKey:
                 secret: SecretName
                 key: KeyName
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -25,7 +25,7 @@ describe 'checkConfig duo' do
           appConfig:
             duoAuth:
               enabled: true
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling Duo Auth requires hostname to be present' }
@@ -47,7 +47,7 @@ describe 'checkConfig duo' do
               secretKey:
                 secret: SecretName
                 key: KeyName
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -57,7 +57,7 @@ describe 'checkConfig duo' do
             duoAuth:
               enabled: true
               hostname: test.api.hostname
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling Duo Auth requires integrationKey to be present' }
@@ -79,7 +79,7 @@ describe 'checkConfig duo' do
               secretKey:
                 secret: SecretName
                 key: KeyName
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_values) do
@@ -90,7 +90,7 @@ describe 'checkConfig duo' do
               enabled: true
               hostname: test.api.hostname
               integrationKey: dummy_integration_key
-      )).merge(default_required_values)
+      )).deep_merge!(default_required_values)
     end
 
     let(:error_output) { 'Enabling Duo Auth requires secretKey.secret to be present' }

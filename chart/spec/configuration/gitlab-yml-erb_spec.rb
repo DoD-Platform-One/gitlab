@@ -35,7 +35,7 @@ describe 'gitlab.yml.erb configuration' do
                 object_src: "'none'"
                 script_src: "'self' 'unsafe-inline' 'unsafe-eval'"
                 style_src: "'self'"
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     let(:no_directives) do
@@ -44,7 +44,7 @@ describe 'gitlab.yml.erb configuration' do
           appConfig:
             contentSecurityPolicy:
               enabled: true
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     it 'populates the gitlab.yml.erb' do
@@ -73,7 +73,7 @@ describe 'gitlab.yml.erb configuration' do
           appConfig:
             extra:
               matomoDisableCookies: #{value}
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     context 'when true' do
@@ -127,7 +127,7 @@ describe 'gitlab.yml.erb configuration' do
           appConfig:
             extra:
               oneTrustId: #{value}
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     context 'when configured' do
@@ -166,7 +166,7 @@ describe 'gitlab.yml.erb configuration' do
           appConfig:
             extra:
               bizible: #{value}
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     context 'when true' do
@@ -219,7 +219,7 @@ describe 'gitlab.yml.erb configuration' do
         global:
           appConfig:
             cdnHost: #{value}
-      )).merge(default_values)
+      )).deep_merge!(default_values)
     end
 
     context 'when configured' do
@@ -273,7 +273,7 @@ describe 'gitlab.yml.erb configuration' do
 
   context 'sidekiq.routingRules on web' do
     let(:required_values) do
-      value.merge(default_values)
+      value.deep_merge!(default_values)
     end
 
     context 'when empty array' do
@@ -343,7 +343,7 @@ describe 'gitlab.yml.erb configuration' do
 
   context 'sidekiq.routingRules on Sidekiq' do
     let(:required_values) do
-      value.merge(default_values)
+      value.deep_merge!(default_values)
     end
 
     context 'when empty array' do

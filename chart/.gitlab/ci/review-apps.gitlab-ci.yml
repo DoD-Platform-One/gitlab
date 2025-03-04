@@ -1,12 +1,13 @@
 .review_app_common:
   stage: review
   variables:
-    AGENT_NAME: "gke129-ci-cluster" # connect to 1.29 cluster until we have a dedicated cluster
+    AGENT_NAME: "gkevc-ci-cluster"
   environment:
-    name: gke129_vcluster/${VCLUSTER_NAME}
+    name: gkevc_review/${VCLUSTER_NAME}
     auto_stop_in: 1 hour
   before_script:
     - source scripts/ci/vcluster.sh
+    - vcluster_install
   allow_failure: true
   rules:
     - !reference [.rule:skip_if_no_cluster]
@@ -46,7 +47,7 @@
 review_vcluster_128:
   extends: .review_app_template
   variables:
-    VCLUSTER_K8S_VERSION: "1.28"
+    VCLUSTER_K8S_VERSION: "v1.28.0"
     VCLUSTER_NAME: vcluster-1-28-${REVIEW_REF_PREFIX}${CI_COMMIT_SHORT_SHA}
   environment:
     on_stop: stop_review_vcluster_128
@@ -60,7 +61,7 @@ stop_review_vcluster_128:
 review_vcluster_131:
   extends: .review_app_template
   variables:
-    VCLUSTER_K8S_VERSION: "1.31"
+    VCLUSTER_K8S_VERSION: "v1.31.0"
     VCLUSTER_NAME: vcluster-1-31-${REVIEW_REF_PREFIX}${CI_COMMIT_SHORT_SHA}
   environment:
     on_stop: stop_review_vcluster_131

@@ -134,6 +134,13 @@ generate_secret_if_needed {{ template "gitlab.kas.privateApi.secret" . }} --from
 
 # Gitlab-kas WebSocket Token secret
 generate_secret_if_needed {{ template "gitlab.kas.websocketToken.secret" . }} --from-literal={{ template "gitlab.kas.websocketToken.key" . }}=$(gen_random_base64 72)
+
+{{ if (.Values.gitlab.kas.autoflow).enabled -}}
+# Gitlab-kas AutoFlow Temporal Workflow Data Encryption Secret
+trap 'shred --remove autoflow-temporal-workflow-data-encryption-secret.bin' EXIT
+openssl rand 32 > autoflow-temporal-workflow-data-encryption-secret.bin
+generate_secret_if_needed {{ template "gitlab.kas.autoflow.temporal.workflowDataEncryption.secret" . }} --from-file={{ template "gitlab.kas.autoflow.temporal.workflowDataEncryption.key" . }}=autoflow-temporal-workflow-data-encryption-secret.bin
+{{ end }}
 {{ end }}
 
 # Gitlab-suggested-reviewers secret
