@@ -37,11 +37,18 @@ kyvernoPolicies:
                 namespaces:
                   - gitlab-runner
 
+
 istioOperator:
   enabled: true
 
 istio:
   enabled: true
+
+istioCore:
+  enabled: false
+
+istioGateway:
+  enabled: false
 
 jaeger:
   enabled: false
