@@ -928,8 +928,8 @@ helm install gitlab chart/
 | gitlab.webservice.containerSecurityContext.runAsUser | int | `1000` |  |
 | gitlab.webservice.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.webservice.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| gitlab.webservice.resources.limits.cpu | string | `"1000m"` |  |
-| gitlab.webservice.resources.limits.memory | string | `"2.5G"` |  |
+| gitlab.webservice.resources.limits.cpu | string | `"1500m"` |  |
+| gitlab.webservice.resources.limits.memory | string | `"3G"` |  |
 | gitlab.webservice.resources.requests.cpu | string | `"300m"` |  |
 | gitlab.webservice.resources.requests.memory | string | `"2.5G"` |  |
 | gitlab.webservice.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice"` |  |
@@ -969,7 +969,7 @@ helm install gitlab chart/
 | gitlab.sidekiq.containerSecurityContext.runAsGroup | int | `1000` |  |
 | gitlab.sidekiq.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.gitaly.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.gitaly.image.tag | string | `"17.9.1"` |  |
+| gitlab.gitaly.image.tag | string | `"17.9.2"` |  |
 | gitlab.gitaly.image.pullSecrets[0].name | string | `"private-registry"` |  |
 | gitlab.gitaly.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.gitaly.init.resources.limits.memory | string | `"200Mi"` |  |
@@ -1015,7 +1015,7 @@ helm install gitlab chart/
 | gitlab.gitlab-pages.image.tag | string | `"17.9.2"` |  |
 | gitlab.gitlab-pages.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
-| gitlab.praefect.image.tag | string | `"17.9.1"` |  |
+| gitlab.praefect.image.tag | string | `"17.9.2"` |  |
 | gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |
 | gitlab.praefect.init.resources.limits.memory | string | `"200Mi"` |  |
 | gitlab.praefect.init.resources.requests.cpu | string | `"200m"` |  |
@@ -1146,5 +1146,4 @@ Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in 
 ---
 
 _This file is programatically generated using `helm-docs` and some BigBang-specific templates. The `gluon` repository has [instructions for regenerating package READMEs](https://repo1.dso.mil/big-bang/product/packages/gluon/-/blob/master/docs/bb-package-readme.md)._
-
 

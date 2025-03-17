@@ -32,7 +32,7 @@ annotations:
       condition: shared-secrets.enabled
       image: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign:1.6.1
     - name: gitaly
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:17.9.1
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:17.9.2
     - name: gitlab-container-registry
       condition: registry.enabled
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry:17.9.2

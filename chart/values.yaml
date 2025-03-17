@@ -1865,7 +1865,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.9.1
+      tag: 17.9.2
       pullSecrets:
       - name: private-registry
     init:
@@ -1978,7 +1978,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 17.9.1
+      tag: 17.9.2
     init:
       resources:
         limits:
