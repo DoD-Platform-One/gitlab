@@ -144,6 +144,7 @@ To enable the database:
          secret: gitlab-registry-database-password # must match the secret name
          key: password  # must match the secret key to read the password from
        sslmode: verify-full
+       # these settings are inherited from `global.psql.ssl`
        ssl:
          secret: gitlab-registry-postgresql-ssl # you will need to create this secret manually
          clientKey: client-key.pem

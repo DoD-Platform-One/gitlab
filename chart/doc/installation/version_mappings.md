@@ -36,6 +36,7 @@ The table below maps some of the key previous supported chart versions and suppo
 
 | Chart version | GitLab version |
 |---------------|----------------|
+| 8.9.2 | 17.9.2 |
 | 8.9.1 | 17.9.1 |
 | 8.9.0 | 17.9.0 |
 | 8.8.2 | 17.8.2 |
