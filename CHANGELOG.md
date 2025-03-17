@@ -4,9 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [8.9.2-bb.0] (2025-03-13)
+## [8.9.2-bb.0] (2025-03-17)
 ### Changed
 - registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.67.0 -> v1.68.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 17.9.1 -> 17.9.2
 - registry1.dso.mil/ironbank/gitlab/gitlab/certificates 17.9.1 -> 17.9.2
 - registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 17.9.1 -> 17.9.2
 - registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 17.9.1 -> 17.9.2
