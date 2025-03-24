@@ -165,9 +165,7 @@ spec:
                   - key: tls.key
                     path: tls.key
             {{- end }}
-            {{- if .Values.redis.enabled -}}
-            {{-   $instance := empty .Values.global.redis.kas | ternary "sharedState" "kas" }}
-            {{-   include "gitlab.redis.secrets" (dict "globalContext" $ "instances" $instance "mountRedisYmlOverrideSecrets" false) | nindent 12 }}
-            {{-   include "gitlab.redisSentinel.secret" $ | nindent 12 }}
-            {{- end }}
+            {{- $instance := empty .Values.global.redis.kas | ternary "sharedState" "kas" }}
+            {{- include "gitlab.redis.secrets" (dict "globalContext" $ "instances" $instance "mountRedisYmlOverrideSecrets" false) | nindent 12 }}
+            {{- include "gitlab.redisSentinel.secret" $ | nindent 12 }}
 {{- end }}

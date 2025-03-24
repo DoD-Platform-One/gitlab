@@ -148,7 +148,7 @@ and they will assist you with any issues you are having.
   - Check the output of `kubectl get events -w --all-namespaces`.
   - Check the logs of pods within `gitlab-managed-apps` namespace.
 
-- How to get your initial administrator password <https://docs.gitlab.com/charts/installation/deployment.html#initial-login>:
+- How to get your [initial administrator password](../installation/deployment.md#initial-login):
 
   ```shell
   # find the name of the secret containing the password

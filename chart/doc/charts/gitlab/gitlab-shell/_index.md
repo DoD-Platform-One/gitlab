@@ -430,8 +430,11 @@ following network policy:
   - From the `nginx-ingress` pod to port `2222`
   - From the `prometheus` pod to port `9122`
 
-    NOTE:
+    {{< alert type="note" >}}
+
     Access from `prometheus` to port `9122` is only necessary when the SSH daemon is set to `gitlab-sshd`
+
+    {{< /alert >}}
 
 - Allows Egress requests:
   - To the `webservice` pod to port `8181`

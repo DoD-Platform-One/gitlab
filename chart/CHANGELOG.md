@@ -2,6 +2,31 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.10.0 (2025-03-19)
+
+### Added (2 changes)
+
+- [Support configuration for KAS client timeout](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7eef185ddc07135ca5542cd01cd774f1aa950404) by @filippolmt ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4153))
+- [Document how to set up workload identity with Azure Kubernetes Service](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/563c7448014a6c3dcd0ef5987014b289e0699f39) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4119))
+
+### Fixed (1 change)
+
+- [Registry migration: Mount PostgreSQL certificates for mutual TLS](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/1160e8ce5c0223020a6a5fc70acd3d9f7a4352aa) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4137))
+
+### Changed (7 changes)
+
+- [Update dependency gitlab-qa to v15.3.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/76cdf4c38e5543645381b25cd3d3d476c008cd02) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4088))
+- [Update dependency container-registry to v4.17.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/812bec92ad44055ded60aea578c9bba261ccee26) by @gitlab-dependency-update-bot ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4155))
+- [Update redis from 6.2 to 7.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/a780f682a8cdff0a68e65a3303bb0f31f9ea43ee) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3977))
+- [Update Helm release gitlab-runner to v0.74.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/19abe16be3f710d7176b130f76db1bde0f5e910a) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4071))
+- [Bump KAS memory resource request](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/2f95dd4dbb07a1077ecfba7cb6688e843ef2f27e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4138))
+- [Update Helm release cert-manager to v1.12.16](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/3a6275ec284a0be14d69c8bda20907993a529edc) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4130))
+- [Update dependency container-registry to v4.16.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/17a23868a747eb4d301697afdef68df2c30bd380) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4125))
+
+### Other (1 change)
+
+- [Remove flag to toggle Redis in KAS chart](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/f75858ec82e9cada9c15720995a7a4182e6d76e7) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4165))
+
 ## 8.9.2 (2025-03-11)
 
 No changes.
@@ -37,6 +62,26 @@ No changes.
 
 - [Document Kubernetes 1.28 as deprecated](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/2d8580c1ed16fa762f1fcdaaf8418989f7a104cf) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4115))
 
+## 8.8.5 (2025-03-11)
+
+### Changed (1 change)
+
+- [Update Helm release gitlab-runner to v0.73.3](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/e372f3a6c0d460b82699a63ddc61cd6a6a5795dc)
+
+## 8.8.4 (2025-02-26)
+
+### Fixed (1 change)
+
+- [Mount certificates to geo-logcursor init containers](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/f402369fc566993f684c5074659f963581d99bb2)
+
+### Changed (1 change)
+
+- [Update dependency gitlab-exporter to v15.2.0](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/c580fcf40e0a157d42c1cec623afbe1959463fb9)
+
+## 8.8.3 (2025-02-21)
+
+No changes.
+
 ## 8.8.2 (2025-02-11)
 
 No changes.
@@ -64,6 +109,20 @@ No changes.
 - [Update dependency container-registry to v4.15.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7d9b71c4adc0078424aa1e9ebfb65efd49ae20a9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4059))
 - [Update Helm release gitlab-runner to v0.72.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/13515980ce6275fff3d8241b73725a48f443d2fb) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4038))
 - [Update dependency gitlab-qa to v15](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/a1b4854886a67007690053b6f7606636d9703f53) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4032))
+
+## 8.7.9 (2025-03-11)
+
+No changes.
+
+## 8.7.8 (2025-02-26)
+
+### Fixed (1 change)
+
+- [Mount certificates to geo-logcursor init containers](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/2add0a1028fa452230d85d2641b88c5ac4cacbaa)
+
+## 8.7.7 (2025-02-21)
+
+No changes.
 
 ## 8.7.6 (2025-02-11)
 

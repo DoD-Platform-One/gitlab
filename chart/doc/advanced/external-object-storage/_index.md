@@ -6,6 +6,34 @@ title: Configure the GitLab chart with an external object storage
 ---
 
 GitLab relies on object storage for highly-available persistent data in Kubernetes.
+GitLab supports two types of authentication methods for major cloud object storage providers: static credentials and temporary credentials through cloud-specific services.
+
+### Static credentials
+
+These credentials are long-lived access keys and secrets for all providers:
+
+- AWS S3: Access Key ID + Secret Access Key
+- Google Cloud Storage: Service Account JSON key file
+- Azure Blob Storage: Storage Account Name + Access Key, or Client ID + Tenant ID + Client Secret
+
+### Temporary credentials through Cloud IAM
+
+GitLab can retrieve provider-specific workload identity mechanisms for dynamic, short-lived credentials:
+
+- AWS S3: [IAM Roles for Service Accounts (IRSA)](aws-iam-roles.md)
+- Google Cloud Storage: [Workload Identity Federation](gke-workload-identity.md)
+- Azure Blob Storage: [Workload Identity for Azure Kubernetes Service](azure-workload-identity.md)
+
+These temporary credential mechanisms improve security by:
+
+- Eliminating long-lived static credentials.
+- Providing automated credential rotation.
+- Enabling fine-grained access control.
+- Supporting audit logging of credential usage.
+- Integrating with cloud provider IAM policies.
+
+## Disable MinIO
+
 By default, an S3-compatible storage solution named `minio` is deployed with the
 chart. For production quality deployments, we recommend using a hosted
 object storage solution like Google Cloud Storage or AWS S3.
@@ -18,23 +46,6 @@ To disable MinIO, set this option and then follow the related documentation belo
 
 An [example of the full configuration](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/values-external-objectstorage.yaml)
 has been provided in the [examples](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples).
-
-This documentation specifies usage of access and secret keys for AWS. It is also possible to use [IAM roles](aws-iam-roles.md).
-
-## S3 encryption
-
-GitLab supports [Amazon KMS](https://aws.amazon.com/kms/)
-to [encrypt data stored in S3 buckets](https://docs.gitlab.com/administration/object_storage/#encrypted-s3-buckets).
-You can enable this in two ways:
-
-- In AWS, [configure the S3 bucket to use default encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html).
-- In GitLab, enable [server side encryption headers](../../charts/globals.md#storage_options).
-
-These two options are not mutually exclusive. You can set a default encryption
-policy, but also enable server-side encryption headers to override those defaults.
-
-See the [GitLab documentation on encrypted S3 buckets](https://docs.gitlab.com/administration/object_storage/#encrypted-s3-buckets)
-for more details.
 
 ## Azure Blob Storage
 
@@ -190,6 +201,21 @@ Examples for [AWS](https://fog.github.io/storage/#using-amazon-s3-and-fog) (any 
 - [`rails.gcs.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.gcs.yaml)
 - [`rails.azure.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.azure.yaml)
 - [`rails.azurerm.yaml`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/examples/objectstorage/rails.azurerm.yaml)
+
+### S3 encryption
+
+GitLab supports [Amazon KMS](https://aws.amazon.com/kms/)
+to [encrypt data stored in S3 buckets](https://docs.gitlab.com/administration/object_storage.html#encrypted-s3-buckets).
+You can enable this in two ways:
+
+- In AWS, [configure the S3 bucket to use default encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html).
+- In GitLab, enable [server side encryption headers](../../charts/globals.md#storage_options).
+
+These two options are not mutually exclusive. You can set a default encryption
+policy, but also enable server-side encryption headers to override those defaults.
+
+See the [GitLab documentation on encrypted S3 buckets](https://docs.gitlab.com/administration/object_storage.html#encrypted-s3-buckets)
+for more details.
 
 ### appConfig configuration
 

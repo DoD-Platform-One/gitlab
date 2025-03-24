@@ -24,7 +24,7 @@ see the [version mappings](version_mappings.md) between them.
 
 {{< alert type="note" >}}
 
-**Zero-downtime upgrades** are not available with the GitLab charts but can be achieved by using [GitLab Operator](https://docs.gitlab.com/operator/gitlab_upgrades.html).
+**Zero-downtime upgrades** are not available with the GitLab charts but can be achieved by using [GitLab Operator](https://docs.gitlab.com/operator/gitlab_upgrades/).
 
 {{< /alert >}}
 

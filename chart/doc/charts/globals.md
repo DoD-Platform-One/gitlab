@@ -261,9 +261,9 @@ with the `-fips` extension to the image tag.
 --set global.image.tagSuffix="-fips"
 ```
 
-## Custom timezone for all containers
+## Custom time zone for all containers
 
-If you wish to set a custom timezone for all the GitLab containers, you can use the `global.time_zone` key. Refer to `TZ identifier` on the [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for the available values. Default is `UTC`.
+If you wish to set a custom time zone for all the GitLab containers, you can use the `global.time_zone` key. Refer to `TZ identifier` on the [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for the available values. Default is `UTC`.
 
 ```shell
 --set global.time_zone="America/Chicago"
@@ -277,7 +277,7 @@ GitLab is using two database connections: one for `main` database and one for
 
 The values under `global.psql` are defaults and are applied to both database
 configurations. If you want to use [two databases](https://docs.gitlab.com/administration/postgresql/multiple_databases/),
-you can specifiy the connection details in `global.psql.main` and `global.psql.ci`.
+you can specify the connection details in `global.psql.main` and `global.psql.ci`.
 
 ```yaml
 global:
@@ -1179,7 +1179,7 @@ application are described below:
 #### Content Security Policy
 
 Setting a Content Security Policy (CSP) can help thwart JavaScript cross-site
-scripting (XSS) attacks. See GitLab documentation for configuration details. [Content Security Policy Documentation](https://docs.gitlab.com/omnibus/settings/configuration.html#set-a-content-security-policy)
+scripting (XSS) attacks. See GitLab documentation for configuration details. [Content Security Policy Documentation](https://docs.gitlab.com/omnibus/settings/configuration/#set-a-content-security-policy)
 
 GitLab automatically provides secure default values for the CSP.
 
@@ -1445,6 +1445,7 @@ using Helm's `--set variable` option:
 ```shell
 --set global.appConfig.gitlab_kas.externalUrl="wss://custom-kas-url.example.com" \
 --set global.appConfig.gitlab_kas.internalUrl="grpc://custom-internal-url" \
+--set global.appConfig.gitlab_kas.clientTimeoutSeconds=10 # Optional, default is 5 seconds
 ```
 
 or by configuring your `values.yaml`:
@@ -1455,6 +1456,7 @@ global:
     gitlab_kas:
       externalUrl: "wss://custom-kas-url.example.com"
       internalUrl: "grpc://custom-internal-url"
+      clientTimeoutSeconds: 10 # Optional, default is 5 seconds
 ```
 
 #### External KAS
@@ -1467,6 +1469,7 @@ URLs. You can do so using Helm's `--set variable` option:
 --set global.appConfig.gitlab_kas.enabled=true \
 --set global.appConfig.gitlab_kas.externalUrl="wss://custom-kas-url.example.com" \
 --set global.appConfig.gitlab_kas.internalUrl="grpc://custom-internal-url" \
+--set global.appConfig.gitlab_kas.clientTimeoutSeconds=10 # Optional, default is 5 seconds
 ```
 
 or by configuring your `values.yaml`:
@@ -1478,6 +1481,7 @@ global:
       enabled: true
       externalUrl: "wss://custom-kas-url.example.com"
       internalUrl: "grpc://custom-internal-url"
+      clientTimeoutSeconds: 10 # Optional, default is 5 seconds
 ```
 
 #### TLS settings
@@ -1836,7 +1840,7 @@ global:
 
 ### Sentry settings
 
-Use these settings to enable [GitLab error reporting with Sentry](https://docs.gitlab.com/omnibus/settings/configuration.html#error-reporting-and-logging-with-sentry).
+Use these settings to enable [GitLab error reporting with Sentry](https://docs.gitlab.com/omnibus/settings/configuration/#error-reporting-and-logging-with-sentry).
 
 ```yaml
 global:
@@ -2550,7 +2554,7 @@ More information on the available configuration options is available in the
 [outgoing email documentation](../installation/command-line-options.md#outgoing-email-configuration).
 
 More detailed examples can be found in the
-[Linux package SMTP settings documentation](https://docs.gitlab.com/omnibus/settings/smtp.html).
+[Linux package SMTP settings documentation](https://docs.gitlab.com/omnibus/settings/smtp/).
 
 ## Platform
 

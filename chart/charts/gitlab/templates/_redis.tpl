@@ -10,7 +10,7 @@ to the service name
 {{- if .redisMergedConfig.host -}}
 {{-   .redisMergedConfig.host -}}
 {{- else -}}
-{{-   $name := default "redis" .Values.redis.serviceName -}}
+{{-   $name := default "redis" (.Values.redis).serviceName -}}
 {{-   $redisRelease := .Release.Name -}}
 {{-   if contains $name $redisRelease -}}
 {{-     $redisRelease = .Release.Name | trunc 63 | trimSuffix "-" -}}

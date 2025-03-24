@@ -380,21 +380,6 @@ describe 'kas configuration' do
           ))
         end
 
-        context 'when redis is disabled' do
-          let(:kas_values) do
-            default_kas_values.deep_merge!(YAML.safe_load(%(
-              gitlab:
-                kas:
-                  redis:
-                    enabled: false
-            )))
-          end
-
-          it 'does not have redis config' do
-            expect(config_yaml_data['redis']).to eq(nil)
-          end
-        end
-
         context 'when redisConfigName is empty' do
           context 'when global redis has a username' do
             let(:kas_values) do
@@ -1000,7 +985,7 @@ describe 'kas configuration' do
             )))
         end
 
-        it 'des not creates AutoFlow Temporal Workflow Data Encryption secret volume' do
+        it 'does not create AutoFlow Temporal Workflow Data Encryption secret volume' do
           init_etc_kas_volume = deployment['spec']['template']['spec']['volumes'].find do |volume|
             volume['name'] == 'init-etc-kas'
           end
@@ -1287,6 +1272,23 @@ describe 'kas configuration' do
               enabled: true
               external_url: wss://custom-external-url.example.com
               internal_url: grpc://custom-internal-url.example.com
+            )))
+          end
+        end
+
+        context 'when clientTimeoutSeconds is provided' do
+          let(:kas_values) do
+            default_kas_values.deep_merge!(YAML.safe_load(%(
+              global:
+                appConfig:
+                  gitlab_kas:
+                    clientTimeoutSeconds: 10
+            )))
+          end
+
+          it 'includes client_timeout_seconds with the provided value' do
+            expect(gitlab_yml(chart)).to include(YAML.safe_load(%(
+              client_timeout_seconds: 10
             )))
           end
         end

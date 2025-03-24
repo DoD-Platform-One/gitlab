@@ -486,6 +486,43 @@ cd ~
 
 After the command completes successfully, the registry is now fully migrated to the database!
 
+## Database migrations
+
+The container registry supports two types of migrations:
+
+- **Regular schema migrations**: Changes to the database structure that must run before deploying new application code. These should be fast to avoid deployment delays.
+
+- **Post-deployment migrations**: Changes to the database structure that can run while the application is running. Used for longer operations like creating indexes on large tables, avoiding startup delays and extended upgrade downtime.
+
+### Apply database migrations
+
+By default, the registry chart applies both regular schema and post-deployment migrations automatically if `database.migrations.enabled` is set to `true`.
+
+To reduce downtime during upgrades, you can skip post-deployment migrations and apply them manually after the application starts:
+
+1. Set the `SKIP_POST_DEPLOYMENT_MIGRATIONS` environment variable to `true` using `ExtraEnv` for the registry deployment:
+
+   ```yaml
+   registry:
+     extraEnv:
+       SKIP_POST_DEPLOYMENT_MIGRATIONS: true
+   ```
+
+1. After upgrading, [connect to a registry pod](_index.md#running-administrative-commands-against-the-container-registry).
+
+1. Apply pending post-deployment migrations:
+
+   ```shell
+   registry database migrate up /etc/docker/registry/config.yml
+   ```
+
+{{< alert type="note" >}}
+
+The `migrate up` command offers some extra flags that can be used to control how the migrations are applied.
+Run `registry database migrate up --help` for details.
+
+{{< /alert >}}
+
 ## Troubleshooting
 
 ### Error: `panic: interface conversion: interface {} is nil, not bool`

@@ -30,6 +30,7 @@ check_docs_content:
     # Lint prose
     - vale --minAlertLevel error doc
   rules:
+    - !reference [.rule:skip_if_dev]
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
@@ -45,6 +46,7 @@ check_docs_markdown:
     # Lint Markdown
     - markdownlint-cli2 'doc/**/*.md'
   rules:
+    - !reference [.rule:skip_if_dev]
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
@@ -60,15 +62,15 @@ check_docs_links:
     # Check Markdown links
     - lychee --offline --include-fragments doc
   rules:
+    - !reference [.rule:skip_if_dev]
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
 docs-test hugo:
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/hugomods/hugo:exts-0.142.0
+  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/docs-gitlab-com-builder:hugo-0.142.0
   stage: prepare
   before_script:
-    - apk add --no-cache git make nodejs npm bash
     - git clone --depth 1 https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com.git
     - cd docs-gitlab-com
     - make add-latest-icons

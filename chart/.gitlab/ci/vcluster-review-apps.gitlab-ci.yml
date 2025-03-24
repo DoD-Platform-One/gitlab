@@ -1,0 +1,105 @@
+.vcluster_review_common_vars: &vcluster_review_common_vars
+  DNS_PROVIDER: "google"
+  AGENT_NAME: "gkevc-ci-cluster"
+  KUBE_INGRESS_BASE_DOMAIN: "cloud-native-vcluster.helm-charts.win"
+  KUBE_NAMESPACE: "default"
+  NAMESPACE: "${KUBE_NAMESPACE}"
+  HOST_SUFFIX: "${CI_ENVIRONMENT_SLUG}"
+  VARIABLES_FILE: "variables/${CI_JOB_NAME}"
+
+.vcluster_review_template:
+  stage: review
+  retry: 1
+  variables:
+    <<: *vcluster_review_common_vars
+    VARIABLES_FILE: "variables/${CI_JOB_NAME}"
+    ADD_NGINX_DNS_ANNOTATIONS: "true"
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: pin_image_versions
+  artifacts:
+    when: always
+    paths:
+      - variables
+  allow_failure: true
+  before_script:
+    - source scripts/ci/autodevops.sh
+    - source scripts/ci/vcluster.sh
+    - vcluster_install
+  script:
+    # Set up varfile
+    - mkdir -p $(dirname "${VARIABLES_FILE}")
+    # Connect to host cluster
+    - set_context
+    - check_kube_domain
+    - kubectl version --output=json
+    # Create vcluster
+    - vcluster_create
+    - vcluster_run kubectl version --output=json
+    - vcluster_info
+    # Copy the TLS cert secret to vcluster
+    - vcluster_copy_secret ci-stack helm-charts-win-tls ${NAMESPACE}
+    # Deploy to vcluster
+    - vcluster_run ./scripts/ci/vcluster_deploy.sh
+  rules:
+    - !reference [.review_template, rules]
+
+.stop_vcluster_review_template:
+  stage: review
+  variables:
+    <<: *vcluster_review_common_vars
+    GIT_CHECKOUT: "false"
+  allow_failure: true
+  before_script:
+    # If the branch has already been deleted, fall back to master.
+    - git checkout "${CI_COMMIT_REF_NAME}" || git checkout master
+    - source scripts/ci/autodevops.sh
+    - source scripts/ci/vcluster.sh
+    - vcluster_install
+  script:
+    # Connect to host cluster
+    - set_context
+    # Delete vcluster from host
+    - vcluster_delete
+  when: manual
+  rules:
+    - !reference [.review_template, rules]
+
+.vcluster_specs_template:
+  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-golang-${GO_VERSION}-rust-${RUST_VERSION}-node-20.12-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.45-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36
+  stage: specs
+  services:
+    - docker:${DOCKER_VERSION}-dind
+  variables:
+    <<: *vcluster_review_common_vars
+    DOCKER_HOST: tcp://docker:2375
+    GITLAB_PASSWORD: ${ROOT_PASSWORD}
+    S3_CONFIG_PATH: /etc/gitlab/minio
+    RUBYGEMS_VERSION: "3.5"
+    GO_VERSION: "1.21"
+    RUST_VERSION: "1.73"
+    PG_VERSION: "14"
+    CHROME_VERSION: "123"
+    RSPEC_TAGS: type:feature
+    VCLUSTER_VERSION: "0.22.4"
+  allow_failure: true
+  before_script:
+    - source scripts/ci/autodevops.sh
+    - source scripts/ci/vcluster.sh
+    - vcluster_install
+  script:
+    - ./scripts/ci/install_spec_dependencies.sh
+    - set_context
+    - vcluster_run kubectl version --output=json
+    - vcluster_run ./scripts/ci/run_specs.sh
+  artifacts:
+    when: on_failure
+    expire_in: 7d
+    paths:
+      - tmp/capybara
+  cache:
+    key: "debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-${CI_JOB_NAME}"
+    paths:
+      - gems
+  rules:
+    - !reference [.specs, rules]

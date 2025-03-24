@@ -4,6 +4,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.10.0-bb.0] (2025-03-22)
+### Changed
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.68.0 -> v1.69.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 17.9.2 -> 17.10.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.9.2 -> 17.10.0
+
 ## [8.9.2-bb.0] (2025-03-17)
 ### Changed
 - registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.67.0 -> v1.68.0
