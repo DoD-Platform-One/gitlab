@@ -89,7 +89,7 @@ extraEnvFrom: {}
 resources:
   requests:
     cpu: 100m
-    memory: 100M
+    memory: 256Mi
 service:
   externalPort: 8150
   internalPort: 8150
@@ -177,9 +177,6 @@ containerSecurityContext:
   runAsNonRoot: true
   capabilities:
     drop: [ "ALL" ]
-
-redis:
-  enabled: true
 
 networkpolicy:
   enabled: false

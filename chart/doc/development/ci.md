@@ -9,7 +9,7 @@ title: CI setup and use
 
 | Variable   | Default Value | Description                                                                                                              |
 |------------|---------------|--------------------------------------------------------------------------------------------------------------------------|
-| `LIMIT_TO` | `""`          | Limit pipeline execution to a specific logical block. Available blocks: `eks`, `eks130`, `gke130`, `gke130a`, `vcluster`. Empty value implies absence of limits - i.e. all components shall be considered for execution. |
+| `LIMIT_TO` | `""`          | Limit pipeline execution to a specific logical block. Available blocks: `eks131`, `gke130`, `gke131`, `gke131a`, `vcluster`. Empty value implies absence of limits - i.e. all components shall be considered for execution. |
 
 ### LIMIT_TO
 

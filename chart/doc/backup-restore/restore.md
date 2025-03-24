@@ -164,7 +164,7 @@ Follow these [troubleshooting steps](../troubleshooting/_index.md#included-gitla
 ## Enable Kubernetes related settings
 
 If the restored backup was not from an existing installation of the chart, you will also need to enable some Kubernetes specific features after the restore. Such as
-[incremental CI job logging](https://docs.gitlab.com/administration/job_logs/#new-incremental-logging-architecture).
+[incremental CI job logging](https://docs.gitlab.com/administration/cicd/job_logs/#incremental-logging-architecture).
 
 1. Find your Toolbox pod by executing the following command
 

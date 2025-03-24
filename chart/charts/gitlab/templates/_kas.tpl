@@ -55,6 +55,15 @@ Returns the KAS internal URL (for GitLab backend connections)
 {{- end -}}
 
 {{/*
+Returns the KAS client timeout in seconds
+*/}}
+{{- define "gitlab.appConfig.kas.clientTimeoutSeconds" -}}
+{{- with .Values.global.appConfig.gitlab_kas.clientTimeoutSeconds -}}
+client_timeout_seconds: {{ . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the KAS service host
 */}}
 {{- define "gitlab.kas.serviceHost" -}}
@@ -68,5 +77,4 @@ Return the KAS service name
 {{- define "gitlab.kas.serviceName" -}}
 {{- include "gitlab.other.fullname" (dict "context" . "chartName" "kas") -}}
 {{- end -}}
-
 

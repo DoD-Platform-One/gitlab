@@ -107,11 +107,12 @@ chart. See the `release_chart` job in the [`charts.gitlab.io` repository](https:
 
 Further, the release tool automates management of the:
 
-- [changelog](changelog.md),
-- chart versions,
-- chart appVersions,
-- value of `global.gitlabVersion` and
-- [GitLab version to Chart version mappings](../installation/version_mappings.md).
+- [CHANGELOG](changelog.md)
+- Chart versions
+- Chart appVersions
+- Value of `global.gitlabVersion`
+- [GitLab version to Chart version mappings](../installation/version_mappings.md)
+- [Upgrade Stops](upgrade_stop.md)
 
 ### Development builds
 

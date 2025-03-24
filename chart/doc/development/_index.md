@@ -87,17 +87,26 @@ We deploy these Review apps to our EKS and GKE clusters, confirm that the Helm
 release is created successfully, and then run [GitLab QA](gitlab-qa/_index.md)
 and other [RSpec tests](rspec.md).
 
-For merge requests specifically, we make use of
-[`vcluster`](https://www.vcluster.com) to create ephemeral clusters. This
-allows us to test against newer versions of Kubernetes more quickly due to the
-ease of configuration and simplified environments that do not include External
-DNS or Cert Manager dependencies. In this case, we simply deploy the Helm
-Charts, confirm the release was created successfully, and validate that
-Webservice is in the `Ready` state. This approach takes advantage of
-[Kubernetes readiness probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
-to ensure that the application is in a healthy state. See
-[issue 5013](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5013) for
-more information on our `vcluster` implementation plan.
+We also use the [`vCluster`](https://www.vcluster.com) tool to create ephemeral
+virtual clusters. There are two types of vCluster pipelines: a headless chart
+deploy that simply checks the chart's [readiness probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) and a full deploy that runs the QA suite.
+
+The number of combinations of each supported
+[Kubernetes version](../installation/cloud/_index.md) and all available
+platforms would be large so only a subset is implemented in the CI pipelines.
+These pipelines are further classified as either `current` or `secondary`. The
+`current` pipelines test the most recent supported Kubernetes version on the
+GKE platform only.
+
+| Minor version | GKE       | EKS       | vCluster deploy | vCluster full QA |
+| ---           | ---       | ---       | ---             | ---              |
+| 1.31          | current   | secondary | secondary       | secondary        |
+| 1.31 ARM      | current   | NA        | NA              | NA               |
+| 1.30          | secondary | NA        | NA              | NA               |
+| 1.29          | secondary | NA        | NA              | NA               |
+| 1.28          | NA        | NA        | secondary       | NA               |
+
+This table is in development and subject to change.
 
 ### Managing Review apps
 

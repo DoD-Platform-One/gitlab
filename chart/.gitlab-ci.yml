@@ -51,7 +51,9 @@ variables:
   DEBIAN_VERSION: bookworm
   RUBY_VERSION: "3.3.7"
   CI_TOOLS_VERSION: "4.22.0"
-  GITLAB_QA_VERSION: "15.1.0"
+  CI_TOOLS_NAMESPACE: "gitlab-org"
+  GITLAB_NAMESPACE: "gitlab-org"
+  GITLAB_QA_VERSION: "15.3.0"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -92,6 +94,10 @@ include:
   - local: '/.gitlab/ci/review-apps.gitlab-ci.yml'
     rules:
       - if: '$LIMIT_TO == "vcluster"'
+  - local: '/.gitlab/ci/vcluster-review-apps.gitlab-ci.yml'
+  - local: '/.gitlab/ci/environments/gkevc131.gitlab-ci.yml'
+    rules:
+      - if: '$LIMIT_TO == "gkevc131"'
   - local: '/.gitlab/ci/operator.gitlab-ci.yml'
     rules:
       - if: '$LIMIT_TO == "" || $LIMIT_TO == null'
@@ -101,15 +107,15 @@ include:
   - local: '/.gitlab/ci/environments/gke130.gitlab-ci.yml'
     rules:
       - if: '$LIMIT_TO == "" || $LIMIT_TO == "gke130"'
-  - local: '/.gitlab/ci/environments/gke130-arm.gitlab-ci.yml'
+  - local: '/.gitlab/ci/environments/gke131.gitlab-ci.yml'
     rules:
-      - if: '$LIMIT_TO == "" || $LIMIT_TO == "gke130a"'
-  - local: '/.gitlab/ci/environments/eks.gitlab-ci.yml'
+      - if: '$LIMIT_TO == "" || $LIMIT_TO == "gke131"'
+  - local: '/.gitlab/ci/environments/gke131-arm.gitlab-ci.yml'
     rules:
-      - if: '$LIMIT_TO == "eks"'
-  - local: '/.gitlab/ci/environments/eks130.gitlab-ci.yml'
+      - if: '$LIMIT_TO == "" || $LIMIT_TO == "gke131a"'
+  - local: '/.gitlab/ci/environments/eks131.gitlab-ci.yml'
     rules:
-      - if: '$LIMIT_TO == "eks130"'
+      - if: '$LIMIT_TO == "eks131"'
   - local: /.gitlab/ci/scanners.yml
     rules:
       - if: '$LIMIT_TO == "" || $LIMIT_TO == null'
@@ -157,7 +163,6 @@ update-trigger-branch:
     - if: '$PIPELINE_TYPE == "CANONICAL_DEFAULT_BRANCH_PIPELINE"'
     - if: '$TRIGGER_UPDATE'  # Allow us to manually trigger this job in a pipeline if we wish using this CI variable
 
-
 pin_image_versions:
   stage: approve-review-apps
   script:
@@ -169,6 +174,10 @@ pin_image_versions:
     paths:
       - ci.digests.yaml
   rules:
+    # If we ever enable cluster tests in Dev, we have to fix the
+    # pin_image_digtests.{bats|sh} to consider images built from
+    # CNG in Dev
+    - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$LIMIT_TO != "" && $LIMIT_TO != null && $PARENT_PIPELINE_ID != $CI_PIPELINE_ID'
       when: never
     - if: '$PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/'
@@ -318,20 +327,38 @@ trigger-gke129:
 trigger-gke130:
   extends: .trigger_review_job
   needs:
-    - trigger_review_current
+    - trigger_review_secondary
   variables:
     LIMIT_TO: gke130
   rules:
-    - !reference [.trigger_review_current, rules]
+    - !reference [.trigger_review_secondary, rules]
 
-trigger-gke130a:
+trigger-gke131:
   extends: .trigger_review_job
   needs:
     - trigger_review_current
   variables:
-    LIMIT_TO: gke130a
+    LIMIT_TO: gke131
   rules:
     - !reference [.trigger_review_current, rules]
+
+trigger-gke131a:
+  extends: .trigger_review_job
+  needs:
+    - trigger_review_current
+  variables:
+    LIMIT_TO: gke131a
+  rules:
+    - !reference [.trigger_review_current, rules]
+
+trigger-gkevc131:
+  extends: .trigger_review_job
+  needs:
+    - trigger_review_secondary
+  variables:
+    LIMIT_TO: gkevc131
+  rules:
+    - !reference [.trigger_review_secondary, rules]
 
 trigger-vcluster:
   extends: .trigger_review_job
@@ -342,24 +369,14 @@ trigger-vcluster:
   rules:
     - !reference [.trigger_review_secondary, rules]
 
-trigger-eks:
+trigger-eks131:
   extends: .trigger_review_job
   needs:
     - trigger_review_secondary
   variables:
-    LIMIT_TO: eks
+    LIMIT_TO: eks131
   rules:
     - !reference [.trigger_review_secondary, rules]
-
-trigger-eks130:
-  extends: .trigger_review_job
-  needs:
-    - trigger_review_secondary
-  variables:
-    LIMIT_TO: eks130
-  rules:
-    - !reference [.trigger_review_secondary, rules]
-
 
 # Jobs using auto_stop_in that exit with a failure will not execute the on_stop
 # action. We get frequent failures during review_* jobs. Their accompanying
@@ -431,7 +448,7 @@ trigger-eks130:
     - if: '$PIPELINE_TYPE == "QA_KNAPSACK_UPDATE_PIPELINE"'
 
 .qa:
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}
+  image: "${CI_REGISTRY}/${CI_TOOLS_NAMESPACE}/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}"
   stage: qa
   services:
   - docker:${DOCKER_VERSION}-dind
@@ -471,7 +488,7 @@ trigger-eks130:
 wait_for_dev_images:
   # Remove after https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2370 is complete
   timeout: 2h
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}
+  image: "${CI_REGISTRY}/${CI_TOOLS_NAMESPACE}/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}"
   stage: prepare
   services:
   - docker:${DOCKER_VERSION}-dind
@@ -526,7 +543,7 @@ publish_devel_package:
 release_package:
   stage: release-package
   timeout: 2h
-  image: registry.gitlab.com/gitlab-org/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}
+  image: "${CI_REGISTRY}/${CI_TOOLS_NAMESPACE}/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}"
   script:
     - |
       if [[ $CI_COMMIT_REF_NAME =~ $AUTO_DEPLOY_TAG_REGEX ]]; then
@@ -588,7 +605,7 @@ knapsack-qa-report:
 
 issue-bot:
   stage: report
-  image: registry.gitlab.com/gitlab-org/distribution/issue-bot:latest
+  image: "${CI_REGISTRY}/${GITLAB_NAMESPACE}/distribution/issue-bot:latest"
   script: /issue-bot
   rules:
     - if: '$PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/'

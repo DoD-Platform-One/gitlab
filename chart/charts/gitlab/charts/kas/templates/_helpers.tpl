@@ -17,7 +17,6 @@ if there is a shared tls secret for all ingresses.
 Build Redis config for KAS
 */}}
 {{- define "kas.redis" -}}
-{{- if .Values.redis.enabled -}}
 {{- if .Values.global.redis.kas -}}
 {{-   $_ := set $ "redisConfigName" "kas" -}}
 {{- else if .Values.global.redis.sharedState -}}
@@ -48,7 +47,6 @@ sentinel:
 {{- if eq (.redisMergedConfig.scheme | default "") "rediss" }}
 tls:
   enabled: true
-{{- end -}}
 {{- end -}}
 {{- end -}}
 

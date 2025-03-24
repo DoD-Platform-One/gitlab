@@ -96,6 +96,7 @@ After fetching the backup tar the sequence of execution is:
 
 {{< alert type="note" >}}
 
-If the restore fails, the user will need to revert to previous backup using data in `tmp` directory of the backup bucket. This is currently a manual process.
+If the restore fails, the user will need to revert to a previous backup using data in `tmp` directory of the backup
+bucket, which is a manual process.
 
 {{< /alert >}}
