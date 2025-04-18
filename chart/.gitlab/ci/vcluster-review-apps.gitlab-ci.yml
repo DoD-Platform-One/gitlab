@@ -68,11 +68,9 @@
 .vcluster_specs_template:
   image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-golang-${GO_VERSION}-rust-${RUST_VERSION}-node-20.12-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.45-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36
   stage: specs
-  services:
-    - docker:${DOCKER_VERSION}-dind
+  extends: .dind
   variables:
     <<: *vcluster_review_common_vars
-    DOCKER_HOST: tcp://docker:2375
     GITLAB_PASSWORD: ${ROOT_PASSWORD}
     S3_CONFIG_PATH: /etc/gitlab/minio
     RUBYGEMS_VERSION: "3.5"

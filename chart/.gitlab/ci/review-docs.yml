@@ -1,5 +1,5 @@
 .review-docs:
-  image: ruby:3.2-alpine
+  image: ${RUBY_IMAGE}
   stage: review
   cache: {}
   dependencies: []

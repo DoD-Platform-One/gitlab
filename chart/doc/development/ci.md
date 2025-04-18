@@ -10,6 +10,9 @@ title: CI setup and use
 | Variable   | Default Value | Description                                                                                                              |
 |------------|---------------|--------------------------------------------------------------------------------------------------------------------------|
 | `LIMIT_TO` | `""`          | Limit pipeline execution to a specific logical block. Available blocks: `eks131`, `gke130`, `gke131`, `gke131a`, `vcluster`. Empty value implies absence of limits - i.e. all components shall be considered for execution. |
+| `DOCKERHUB_PREFIX` | `docker.io` | Override the prefix of DockerHub images. Allows to pull DockerHub from the dependency proxy or another mirror. |
+| `DOCKER_MIRROR` | `https://mirror.gcr.io` | Default Docker mirror in DinD jobs. |
+| `DOCKER_OPTIONS` | `--registry-mirror ${DOCKER_MIRROR}` | Flags passed to the Docker daemon. |
 
 ### LIMIT_TO
 
@@ -18,3 +21,15 @@ title: CI setup and use
 `LIMIT_TO` accepts only a single value.
 
 Empty value implies that there are no limits and that pipeline shall be executed in full.
+
+### Docker and DockerHub variables
+
+By default, CI uses some images from DockerHub. The shared runners by use a
+mirror to avoid hitting DockerHub rate limits. If your fork uses custom
+runnners, that don't use caching or mirroring, you should enable the [dependency proxy](https://docs.gitlab.com/user/packages/dependency_proxy/)
+by setting the `DOCKERHUB_PREFIX` to your proxy, for example
+`DOCKERHUB_PREFIX: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}`.
+
+The container build context by default uses the gcr DockerHub mirror. This
+behavior can be changed by overriding the `DOCKER_OPTIONS` or `DOCKER_MIRROR`
+variables.
