@@ -28,7 +28,7 @@ default:
 
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
-  DOCKER_VERSION: "27.1.1"
+  DOCKER_VERSION: "28.0.1"
   HELM_VERSION: "3.10.3"
   KUBECTL_VERSION: "1.28.3"
   VCLUSTER_VERSION: "default"
@@ -49,6 +49,7 @@ variables:
   QA_SANITY_SUITE_OPTIONS: '--tag smoke --tag ~skip_live_env --tag ~orchestrated'
   GITLAB_QA_ADMIN_ACCESS_TOKEN: $GITLAB_ADMIN_TOKEN
   DEBIAN_VERSION: bookworm
+  BUSYBOX_VERSION: "1.37"
   RUBY_VERSION: "3.3.7"
   CI_TOOLS_VERSION: "4.22.0"
   CI_TOOLS_NAMESPACE: "gitlab-org"
@@ -69,6 +70,13 @@ variables:
   REVIEW_APPS_AUTO_STOP_IN: "2 hours"
   LIMIT_TO: ""
   PARENT_PIPELINE_ID: $CI_PIPELINE_ID
+
+  # CI Images
+  DOCKERHUB_PREFIX: "docker.io" # Optionally change to dependency proxy if DockerHub rate limits become a problem.
+  BUSYBOX_IMAGE: "${DOCKERHUB_PREFIX}/busybox:${BUSYBOX_VERSION}"
+  RUBY_IMAGE: "${DOCKERHUB_PREFIX}/ruby:${RUBY_VERSION}-alpine"
+  KUBE_SCORE_IMAGE: "${DOCKERHUB_PREFIX}/zegl/kube-score:v1.19.0@sha256:94137f32ce139dc9fbdbbd380249025e4d378c282ff151a100b981cdeeb923b6"
+  DOCKER_DIND_IMAGE: "${DOCKERHUB_PREFIX}/docker:${DOCKER_VERSION}-dind"
 
 stages:
   - prepare
@@ -144,6 +152,16 @@ tag_auto_deploy:
 .source_autodevops:
   before_script:
     - source scripts/ci/autodevops.sh
+
+.dind:
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_MIRROR: https://mirror.gcr.io
+    DOCKER_OPTIONS: "--registry-mirror ${DOCKER_MIRROR}"
+  services:
+    - name: ${DOCKER_DIND_IMAGE}
+      alias: docker
+      entrypoint: [ "sh", "-c", "dockerd-entrypoint.sh $DOCKER_OPTIONS" ]
 
 update-trigger-branch:
   stage: prepare
@@ -239,7 +257,7 @@ pin_image_versions:
 
 trigger_review_current:
   stage: approve-review-apps
-  image: busybox
+  image: ${BUSYBOX_IMAGE}
   script:
     - echo "Testing current platform."
   needs:
@@ -269,7 +287,7 @@ trigger_review_current:
 
 trigger_review_secondary:
   stage: approve-review-apps
-  image: busybox
+  image: ${BUSYBOX_IMAGE}
   script:
     - echo "Testing secondary platforms."
   needs:
@@ -415,10 +433,10 @@ trigger-eks131:
 .specs:
   image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-golang-${GO_VERSION}-rust-${RUST_VERSION}-node-20.12-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.45-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36
   stage: specs
-  services:
-  - docker:${DOCKER_VERSION}-dind
+  extends:
+    - .source_autodevops
+    - .dind
   variables:
-    DOCKER_HOST: tcp://docker:2375
     GITLAB_PASSWORD: $ROOT_PASSWORD
     S3_CONFIG_PATH: /etc/gitlab/minio
     RUBYGEMS_VERSION: "3.5"
@@ -426,7 +444,6 @@ trigger-eks131:
     RUST_VERSION: "1.73"
     PG_VERSION: "14"
     CHROME_VERSION: "123"
-  extends: .source_autodevops
   script:
     - ./scripts/ci/install_spec_dependencies.sh
     - set_context
@@ -450,11 +467,9 @@ trigger-eks131:
 .qa:
   image: "${CI_REGISTRY}/${CI_TOOLS_NAMESPACE}/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}"
   stage: qa
-  services:
-  - docker:${DOCKER_VERSION}-dind
+  extends: .dind
   variables:
     QA_GENERATE_ALLURE_REPORT: "true"
-    DOCKER_HOST: tcp://docker:2375
     QA_ARTIFACTS_DIR: $CI_PROJECT_DIR
     QA_CAN_TEST_PRAEFECT: "false"
   script:
@@ -490,11 +505,9 @@ wait_for_dev_images:
   timeout: 2h
   image: "${CI_REGISTRY}/${CI_TOOLS_NAMESPACE}/gitlab-omnibus-builder/distribution_ci_tools:${CI_TOOLS_VERSION}"
   stage: prepare
-  services:
-  - docker:${DOCKER_VERSION}-dind
+  extends: .dind
   before_script: []
   variables:
-    DOCKER_HOST: tcp://docker:2375
     CNG_REGISTRY: dev.gitlab.org:5005/gitlab/charts/components/images
   script:
     - bash scripts/wait_for_images.sh
@@ -579,7 +592,7 @@ release_package:
 # QA jobs for Full E2E suites
 
 .qa_full_suite_manual_trigger:
-  image: alpine
+  image: ${BUSYBOX_IMAGE}
   stage: qa-manual
   when: manual
   artifacts:

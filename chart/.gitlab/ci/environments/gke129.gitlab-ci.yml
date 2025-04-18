@@ -21,7 +21,7 @@ include:
 
 create_review_gke129:
   stage: review
-  image: busybox
+  image: ${BUSYBOX_IMAGE}
   variables:
     <<: *review_gke129_common_vars
     GIT_STRATEGY: none

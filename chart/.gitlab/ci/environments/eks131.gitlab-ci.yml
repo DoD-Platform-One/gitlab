@@ -20,7 +20,7 @@ include:
 
 create_review_eks131:
   stage: review
-  image: busybox
+  image: ${BUSYBOX_IMAGE}
   variables:
     <<: *review_eks131_common_vars
     GIT_STRATEGY: none

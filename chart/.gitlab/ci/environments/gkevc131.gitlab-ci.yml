@@ -22,7 +22,7 @@ include:
 
 create_review_gkevc131:
   stage: review
-  image: busybox
+  image: ${BUSYBOX_IMAGE}
   variables:
     <<: *review_gkevc131_common_vars
     GIT_STRATEGY: none

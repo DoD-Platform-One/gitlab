@@ -1,6 +1,6 @@
 
 rubocop:
-  image: ruby:3.1-alpine
+  image: ${RUBY_IMAGE}
   stage: prepare
   dependencies: []
   before_script:
@@ -93,7 +93,7 @@ docs-test hugo:
 # Initially motivated to detect duplicated environment variable definitions
 kube-score:
   image:
-    name: "zegl/kube-score:v1.19.0@sha256:94137f32ce139dc9fbdbbd380249025e4d378c282ff151a100b981cdeeb923b6"
+    name: ${KUBE_SCORE_IMAGE}
     entrypoint: [""]
   stage: prepare
   script:

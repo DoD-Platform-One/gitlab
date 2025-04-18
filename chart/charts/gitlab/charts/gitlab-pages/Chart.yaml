@@ -1,7 +1,7 @@
 apiVersion: v1
 name: gitlab-pages
-version: 8.10.1
-appVersion: 17.10.1
+version: 8.10.4
+appVersion: 17.10.4
 description: Daemon for serving static websites from GitLab projects
 keywords:
 - gitlab
