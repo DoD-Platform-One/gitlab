@@ -52,7 +52,7 @@ If you want to use the legacy workflow (not recommended):
 
 ## Configuration
 
-For more information, see the documentation on [usage and configuration](https://docs.gitlab.com/runner/install/kubernetes.html).
+For more information, see the documentation on [usage and configuration](https://docs.gitlab.com/runner/install/kubernetes/).
 
 ## Deploying a stand-alone runner
 
@@ -62,7 +62,7 @@ In this case you will need to set `gitlabUrl` value to be the URL of the running
 
 ## Using Docker-in-Docker
 
-In order to run Docker-in-Docker, the runner container needs to be privileged to have access to the needed capabilities. To enable it set the `privileged` value to `true`. See the [upstream documentation](https://docs.gitlab.com/runner/install/kubernetes.html#running-docker-in-docker-containers-with-gitlab-runners) in regards to why this is does not default to `true`.
+In order to run Docker-in-Docker, the runner container needs to be privileged to have access to the needed capabilities. To enable it set the `privileged` value to `true`. See the [upstream documentation](https://docs.gitlab.com/runner/install/kubernetes_helm_chart_configuration/#use-privileged-containers-for-the-runners) in regards to why this is does not default to `true`.
 
 ### Security concerns
 

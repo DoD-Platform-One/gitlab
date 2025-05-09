@@ -245,5 +245,6 @@ spec:
           {{- include "gitlab.registry.redisCacheSecret.mount" $ | nindent 10 }}
           {{- include "gitlab.registry.redisSentinelSecret.mount" $ | nindent 10 }}
           {{- include "gitlab.registry.redisRateLimitingSecret.mount" $ | nindent 10 }}
+          {{- include "gitlab.registry.redisLoadBalancingSecret.mount" $ | nindent 10 }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
 {{- end -}}

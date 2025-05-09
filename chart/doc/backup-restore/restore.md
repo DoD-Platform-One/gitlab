@@ -105,7 +105,7 @@ The steps for restoring a GitLab installation are
    kubectl get pods -lrelease=RELEASE_NAME,app=toolbox
    ```
 
-1. Get the tarball ready in any of the above locations. Make sure it is named in the `<timestamp>_gitlab_backup.tar` format. Read what the [backup timestamp](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#backup-timestamp) is about.
+1. Get the tarball ready in any of the above locations. Make sure it is named in the `<backup_ID>_gitlab_backup.tar` format. Read what the [backup ID](https://docs.gitlab.com/administration/backup_restore/backup_archive_process/#backup-id) is about.
 
 1. Note the current number of replicas for database clients for subsequent restart:
 
@@ -126,10 +126,10 @@ The steps for restoring a GitLab installation are
 1. Run the backup utility to restore the tarball
 
    ```shell
-   kubectl exec <Toolbox pod name> -it -- backup-utility --restore -t <timestamp>
+   kubectl exec <Toolbox pod name> -it -- backup-utility --restore -t <backup_ID>
    ```
 
-   Here, `<timestamp>` is from the name of the tarball stored in `gitlab-backups` bucket. In case you want to provide a public URL, use the following command:
+   Here, `<backup_ID>` is from the name of the tarball stored in `gitlab-backups` bucket. In case you want to provide a public URL, use the following command:
 
    ```shell
    kubectl exec <Toolbox pod name> -it -- backup-utility --restore -f <URL>

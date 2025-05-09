@@ -76,7 +76,7 @@ describe 'Workhorse configuration' do
     expect(found).to eq(true)
   end
 
-  context 'with trusted CIDRs' do
+  context 'with trusted CIDRs and zip_reader_limit_bytes' do
     let(:custom_values) do
       HelmTemplate.with_defaults(%(
         gitlab:
@@ -85,6 +85,8 @@ describe 'Workhorse configuration' do
               shutdownTimeout: "30s"
               trustedCIDRsForPropagation: ["127.0.0.1/32", "192.168.0.1/32"]
               trustedCIDRsForXForwardedFor: ["1.2.3.4/32", "5.6.7.8/32"]
+              metadata:
+                zipReaderLimitBytes: 10485760
      ))
     end
 
@@ -93,10 +95,11 @@ describe 'Workhorse configuration' do
     it 'renders a TOML configuration file' do
       toml = render_toml(raw_toml)
 
-      expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis trusted_cidrs_for_propagation trusted_cidrs_for_x_forwarded_for])
+      expect(toml.keys).to match_array(%w[shutdown_timeout listeners image_resizer redis trusted_cidrs_for_propagation trusted_cidrs_for_x_forwarded_for metadata])
       expect(toml['shutdown_timeout']).to eq('30s')
       expect(toml['trusted_cidrs_for_propagation']).to eq(["127.0.0.1/32", "192.168.0.1/32"])
       expect(toml['trusted_cidrs_for_x_forwarded_for']).to eq(["1.2.3.4/32", "5.6.7.8/32"])
+      expect(toml['metadata']['zip_reader_limit_bytes']).to eq(10485760)
     end
   end
 

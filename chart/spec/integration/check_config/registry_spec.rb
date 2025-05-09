@@ -79,7 +79,7 @@ describe 'checkConfig registry' do
 
         registry:
           redis:
-            cache:
+            loadBalancing:
               enabled: true
           database:
             enabled: true
@@ -97,7 +97,7 @@ describe 'checkConfig registry' do
 
         registry:
           redis:
-            cache:
+            loadBalancing:
               enabled: true
           database:
             enabled: true
@@ -122,7 +122,7 @@ describe 'checkConfig registry' do
 
         registry:
           redis:
-            cache:
+            loadBalancing:
               enabled: true
           database:
             enabled: true
@@ -140,7 +140,7 @@ describe 'checkConfig registry' do
 
         registry:
           redis:
-            cache:
+            loadBalancing:
               enabled: true
           database:
             enabled: false
@@ -157,7 +157,7 @@ describe 'checkConfig registry' do
                      error_description: 'when database load balancing is enabled, with database disabled'
   end
 
-  describe 'registry.database.loadBalancing requires redis.cache.enabled to be true' do
+  describe 'registry.database.loadBalancing requires redis.loadbalancing.enabled to be true' do
     let(:success_values) do
       YAML.safe_load(%(
         postgresql:
@@ -166,7 +166,7 @@ describe 'checkConfig registry' do
 
         registry:
           redis:
-            cache:
+            loadBalancing:
               enabled: true
           database:
             enabled: true
@@ -184,7 +184,7 @@ describe 'checkConfig registry' do
 
         registry:
           redis:
-            cache:
+            loadBalancing:
               enabled: false
           database:
             enabled: true
@@ -194,11 +194,11 @@ describe 'checkConfig registry' do
       )).deep_merge!(default_required_values)
     end
 
-    let(:error_output) { 'Enabling database load balancing requires Redis caching to be enabled.' }
+    let(:error_output) { 'Enabling database load balancing requires a Redis connection to be enabled.' }
 
     include_examples 'config validation',
-                     success_description: 'when database load balancing is enabled, with redis cache enabled',
-                     error_description: 'when database load balancing is enabled, with redis cache disabled'
+                     success_description: 'when database load balancing is enabled, with redis connection enabled',
+                     error_description: 'when database load balancing is enabled, with redis connection disabled'
   end
 
   describe 'gitlab.checkConfig.registry.sentry.dsn' do
@@ -610,6 +610,175 @@ describe 'checkConfig registry' do
     include_examples 'config validation',
                      success_description: 'when redis rate-limiter password is enabled, with secret and key',
                      error_description: 'when redis rate-limiter password is enabled, with empty key'
+  end
+
+  describe 'registry.redis.loadBalancing (host)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: 'localhost'
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: ''
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling the load balancing Redis connection requires the host to not be empty' }
+
+    include_examples 'config validation',
+                     success_description: 'when the load balancing Redis connection is enabled, with host',
+                     error_description: 'when the load balancing Redis connection is enabled, with empty host'
+  end
+
+  describe 'registry.redis.loadBalancing (sentinels)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: 'localhost'
+              sentinels:
+                - host: sentinel1.example.com
+                  port: 26379
+                - host: sentinel2.example.com
+                  port: 26379
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: ''
+              sentinels:
+              - host: sentinel1.example.com
+                port: 26379
+              - host: sentinel2.example.com
+                port: 26379
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling the load balancing Redis connection with sentinels requires the registry.redis.loadBalancing.host to be set.' }
+
+    include_examples 'config validation',
+                     success_description: 'when the load balancing Redis connection is enabled, with sentinels',
+                     error_description: 'when the load balancing Redis connection is enabled, with sentinels and empty host'
+  end
+
+  describe 'registry.redis.loadBalancing.password (secret)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: 'localhost'
+              password:
+                enabled: true
+                secret: registry-redis-cache-secret
+                key: password
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: 'localhost'
+              password:
+                enabled: true
+                secret: ''
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_output) { ' Enabling the load balancing Redis connection with password requires \'registry.redis.loadBalancing.password.secret\' to be set.' }
+
+    include_examples 'config validation',
+                     success_description: 'when the load balancing Redis connection password is enabled, with secret and key',
+                     error_description: 'when the load balancing Redis connection password is enabled, with empty secret'
+  end
+
+  describe 'registry.redis.loadBalancing.password (key)' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: 'localhost'
+              password:
+                enabled: true
+                secret: registry-redis-cache-secret
+                key: password
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 13
+
+        registry:
+          redis:
+            loadBalancing:
+              enabled: true
+              host: 'localhost'
+              password:
+                enabled: true
+                secret: registry-redis-cache-secret
+                key: ''
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_output) { ' Enabling the load balancing Redis connection with password requires \'registry.redis.loadBalancing.password.key\' to be set.' }
+
+    include_examples 'config validation',
+                     success_description: 'when the load balancing Redis connection password is enabled, with secret and key',
+                     error_description: 'when the load balancing Redis connection password is enabled, with empty key'
   end
 
   describe 'registry.tls (hosts.protocol)' do

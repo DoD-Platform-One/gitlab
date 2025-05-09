@@ -440,4 +440,24 @@ describe 'gitlab.yml.erb configuration' do
       end
     end
   end
+
+  context 'OIDC provider token expiration' do
+    it 'populates the gitlab.yml.erb' do
+      t = HelmTemplate.new(default_values)
+
+      expect(t.stderr).to eq("")
+      expect(t.exit_code).to eq(0)
+
+      expect(YAML.safe_load(
+        t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )
+      )['production']).to include(YAML.safe_load(%(
+        oidc_provider:
+          openid_id_token_expire_in_seconds: 120
+      )))
+    end
+  end
 end

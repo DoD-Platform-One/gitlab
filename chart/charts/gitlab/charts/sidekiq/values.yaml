@@ -74,7 +74,7 @@ redis:
 psql: {}
   # port: 5432
 
-# https://docs.gitlab.com/ee/administration/operations/sidekiq_memory_killer.html#sidekiq-memorykiller
+# https://docs.gitlab.com/administration/sidekiq/sidekiq_memory_killer/
 memoryKiller:
   daemonMode: true
   maxRss: 2000000

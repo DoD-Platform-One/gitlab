@@ -699,7 +699,7 @@ describe 'GitLab Pages' do
             expect(pages_config_data).not_to match(/root-key=/)
           end
 
-          it 'does not expose listen-proxy ' do
+          it 'does not expose listen-proxy' do
             expect(pages_config_data).not_to match(/listen-proxy=/)
           end
 
@@ -766,7 +766,7 @@ describe 'GitLab Pages' do
             expect(pages_config_data).to match(%r{pages-status=/-/readiness})
           end
 
-          it 'does not expose listen-proxy ' do
+          it 'does not expose listen-proxy' do
             expect(pages_config_data).not_to match(/listen-proxy=/)
           end
         end
@@ -826,7 +826,7 @@ describe 'GitLab Pages' do
             expect(pages_config_data).to match(%r{root-key=/etc/gitlab-secrets/pages/pages.example.com.key})
           end
 
-          it 'does not expose listen-proxy ' do
+          it 'does not expose listen-proxy' do
             expect(pages_config_data).not_to match(/listen-proxy=/)
           end
         end

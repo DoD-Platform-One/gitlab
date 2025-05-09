@@ -3,27 +3,27 @@ require 'helm_template_helper'
 require 'yaml'
 require 'hash_deep_merge'
 
-IGNORED_DEPLOYMENTS = [
-  'Deployment/test-certmanager',
-  'Deployment/test-certmanager-cainjector',
-  'Deployment/test-certmanager-webhook',
-  'Deployment/test-gitlab-exporter',
-  'Deployment/test-gitlab-runner',
-  'Deployment/test-nginx-ingress-controller',
-  'Deployment/test-prometheus-server'
-].freeze
-
-SUPPORTED_STATEFULSETS = [
-  'Statefulset/test-praefect'
-].freeze
-
 describe 'local topologySpreadConstraints configuration' do
   let(:supported_statefulsets) do
-    SUPPORTED_STATEFULSETS
+    [
+      'Statefulset/test-praefect'
+    ].freeze
   end
 
   let(:ignored_deployments) do
-    IGNORED_DEPLOYMENTS
+    [
+      'Deployment/test-certmanager',
+      'Deployment/test-certmanager-cainjector',
+      'Deployment/test-certmanager-webhook',
+      'Deployment/test-cert-manager',
+      'Deployment/test-cert-manager-cainjector',
+      'Deployment/test-cert-manager-webhook',
+      'Deployment/test-gitlab-runner',
+      'Deployment/test-minio',
+      'Deployment/test-nginx-ingress-controller',
+      'Deployment/test-prometheus-server',
+      'Deployment/test-gitlab-exporter'
+    ].freeze
   end
 
   let(:default_values) do

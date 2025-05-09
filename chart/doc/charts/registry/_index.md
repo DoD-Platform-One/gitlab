@@ -324,6 +324,25 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `redis.rateLimiting.pool.size`                           | `10`                                                                 | The maximum number of socket connections.                                                                                                                                                                                                                                                                                                          |
 | `redis.rateLimiting.pool.maxlifetime`                    | `1h`                                                                 | The connection age at which the client retires a connection. Default is to not close aged connections.                                                                                                                                                                                                                                             |
 | `redis.rateLimiting.pool.idletimeout`                    | `300s`                                                               | How long to wait before closing inactive connections.                                                                                                                                                                                                                                                                                              |
+| `redis.loadBalancing.enabled`                             | `false`                                                              | When set to `true`, the Redis connection for [load balancing](#load-balancing) is enabled.                                                                                                                                                                                                                                                          |
+| `redis.loadBalancing.host`                                | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`.                                                                                                                                                                                                                                   |
+| `redis.loadBalancing.port`                                | `6379`                                                               | The port of the Redis instance.                                                                                                                                                                                                                                                                                                                    |
+| `redis.loadBalancing.cluster`                             | `[]`                                                                 | List of addresses with host and port.                                                                                                                                                                                                                                                                                                              |
+| `redis.loadBalancing.sentinels`                           | `[]`                                                                 | List sentinels with host and port.                                                                                                                                                                                                                                                                                                                 |
+| `redis.loadBalancing.mainname`                            |                                                                      | The main server name. Only applicable for Sentinel.                                                                                                                                                                                                                                                                                                |
+| `redis.loadBalancing.username`                            |                                                                      | The username used to connect to the Redis instance.                                                                                                                                                                                                                                                                                                |
+| `redis.loadBalancing.password.enabled`                    | `false`                                                              | Indicates whether the Redis instance is password protected.                                                                                                                                                                                                                                                                                        |
+| `redis.loadBalancing.password.secret`                     | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled.                                                                                                                                                                                                |
+| `redis.loadBalancing.password.key`                        | `redis-password`                                                     | Secret key in which the Redis password is stored.                                                                                                                                                                                                                                                                                                  |
+| `redis.loadBalancing.db`                                  | `0`                                                                  | The name of the database to use for each connection.                                                                                                                                                                                                                                                                                               |
+| `redis.loadBalancing.dialtimeout`                         | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                          |
+| `redis.loadBalancing.readtimeout`                         | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                           |
+| `redis.loadBalancing.writetimeout`                        | `0s`                                                                 | The timeout for writing to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                             |
+| `redis.loadBalancing.tls.enabled`                         | `false`                                                              | Set to `true` to enable TLS.                                                                                                                                                                                                                                                                                                                       |
+| `redis.loadBalancing.tls.insecure`                        | `false`                                                              | Set to `true` to disable server name verification when connecting over TLS.                                                                                                                                                                                                                                                                        |
+| `redis.loadBalancing.pool.size`                           | `10`                                                                 | The maximum number of socket connections.                                                                                                                                                                                                                                                                                                          |
+| `redis.loadBalancing.pool.maxlifetime`                    | `1h`                                                                 | The connection age at which the client retires a connection. Default is to not close aged connections.                                                                                                                                                                                                                                             |
+| `redis.loadBalancing.pool.idletimeout`                    | `300s`                                                               | How long to wait before closing inactive connections.                                                                                                                                                                                                                                                                                              |
 
 ## Chart configuration examples
 
@@ -1119,7 +1138,7 @@ This is an experimental feature under active development and must not be used in
 
 {{< /alert >}}
 
-The `loadBalancing` section allows configuring [database load balancing](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#loadbalancing). The [Redis cache](#redis-cache) must be enabled for this feature to work.
+The `loadBalancing` section allows configuring [database load balancing](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#loadbalancing). The corresponding [Redis connection](#redis-for-database-load-balancing) must be enabled for this feature to work.
 
 #### Manage the database
 
@@ -1267,6 +1286,54 @@ For example:
 ```yaml
 redis:
   rateLimiting:
+    enabled: true
+    host: localhost
+    port: 16379
+    username: registry
+    password:
+      secret: gitlab-redis-secret
+      key: redis-password
+    db: 0
+    dialtimeout: 10ms
+    readtimeout: 10ms
+    writetimeout: 10ms
+    tls:
+      enabled: true
+      insecure: true
+    pool:
+      size: 10
+      maxlifetime: 1h
+      idletimeout: 300s
+```
+
+### Redis for Database Load Balancing
+
+{{< details >}}
+
+Status: Experiment
+
+{{< /details >}}
+
+{{< history >}}
+
+- [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4180) in Charts 8.11.
+
+{{< /history >}}
+
+{{< alert type="warning" >}}
+
+[Database Load Balancing](#load-balancing) is an experimental feature under active development and must not be used in production. Use [epic 8591](https://gitlab.com/groups/gitlab-org/-/epics/8591) to follow progress and share feedback.
+
+{{< /alert >}}
+
+The `redis.loadBalancing` property is optional and provides options related to the
+[Redis connection for database load balancing](https://gitlab.com/gitlab-org/container-registry/-/blob/b4d71f24a9ae31288401a3459228aa7f8d3dd8f0/docs/configuration.md#loadbalancing-1).
+
+For example:
+
+```yaml
+redis:
+  loadBalancing:
     enabled: true
     host: localhost
     port: 16379

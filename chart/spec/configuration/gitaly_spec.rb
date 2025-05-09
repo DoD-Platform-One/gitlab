@@ -6,9 +6,20 @@ require 'yaml'
 require 'hash_deep_merge'
 
 describe 'Gitaly configuration' do
-  let(:default_values) do
-    HelmTemplate.defaults
-  end
+  let(:default_values) { HelmTemplate.defaults }
+  let(:values) { default_values }
+  let(:template) { HelmTemplate.new(values) }
+
+  let(:configmap_name) { 'ConfigMap/test-gitaly' }
+  let(:statefulset_name) { 'StatefulSet/test-gitaly' }
+  let(:service_name) { 'Service/test-gitaly' }
+
+  let(:configmap) { template.resources_by_kind('ConfigMap')[configmap_name] }
+  let(:statefulset) { template.resources_by_kind('StatefulSet')[statefulset_name] }
+  let(:service) { template.resources_by_kind('Service')[service_name] }
+
+  let(:config_toml) { configmap['data']['config.toml.tpl'] }
+  let(:gitlab_yml) { render_erb(template.dig('ConfigMap/test-webservice','data','gitlab.yml.erb')) }
 
   def render_toml(raw_template, env = {})
     # provide the gitaly_token
@@ -38,10 +49,7 @@ describe 'Gitaly configuration' do
     end
 
     it 'populates external instances to gitlab.yml' do
-      t = HelmTemplate.new(values)
-      expect(t.exit_code).to eq(0)
       # check that gitlab.yml.erb contains production.repositories.storages
-      gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
       storages = gitlab_yml['production']['repositories']['storages']
       expect(storages).to have_key('default')
       expect(storages['default']['gitaly_address']).to eq('tcp://git.example.com:8075')
@@ -61,10 +69,7 @@ describe 'Gitaly configuration' do
       end
 
       it 'populates a tls uri' do
-        t = HelmTemplate.new(values)
-        expect(t.exit_code).to eq(0)
         # check that gitlab.yml.erb contains production.repositories.storages
-        gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
         storages = gitlab_yml['production']['repositories']['storages']
         expect(storages).to have_key('default')
         expect(storages['default']['gitaly_address']).to eq('tls://git.example.com:8076')
@@ -86,10 +91,7 @@ describe 'Gitaly configuration' do
       end
 
       it 'populates a tls uri' do
-        t = HelmTemplate.new(values)
-        expect(t.exit_code).to eq(0)
         # check that gitlab.yml.erb contains production.repositories.storages
-        gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
         storages = gitlab_yml['production']['repositories']['storages']
         expect(storages).to have_key('default')
         expect(storages['default']['gitaly_address']).to eq('tls://git.example.com:8076')
@@ -112,10 +114,7 @@ describe 'Gitaly configuration' do
       end
 
       it 'populates a tcp uri' do
-        t = HelmTemplate.new(values)
-        expect(t.exit_code).to eq(0)
         # check that gitlab.yml.erb contains production.repositories.storages
-        gitlab_yml = render_erb(t.dig('ConfigMap/test-webservice','data','gitlab.yml.erb'))
         storages = gitlab_yml['production']['repositories']['storages']
         expect(storages).to have_key('default')
         expect(storages['default']['gitaly_address']).to eq('tcp://git.example.com:8075')
@@ -150,12 +149,8 @@ describe 'Gitaly configuration' do
           )).deep_merge(default_values)
         end
 
-        let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
-
         it 'should render securityContext correctly' do
-          t = HelmTemplate.new(values)
-          gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-          security_context = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['securityContext']
+          security_context = statefulset['spec']['template']['spec']['securityContext']
 
           # Helm 3.2+ renders the full security context. So we check given
           # the expected context from the table above and then check the
@@ -187,11 +182,7 @@ describe 'Gitaly configuration' do
     end
 
     it 'populates [[git.config]] sections' do
-      t = HelmTemplate.new(values)
-      expect(t.exit_code).to eq(0)
-
-      config = t.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl')
-      expect(config).to include(
+      expect(config_toml).to include(
         <<~CONFIG
         [[git.config]]
         key = "pack.threads"
@@ -237,44 +228,43 @@ describe 'Gitaly configuration' do
             persistence:
               labels:
                 foo: global
-      )).deep_merge(default_values)
+      ))
     end
+
+    let(:values) { labeled_values.deep_merge(default_values) }
 
     context 'with only gitaly' do
       it 'Populates the additional labels in the expected manner' do
-        t = HelmTemplate.new(labeled_values)
-        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
-        expect(t.dig('ConfigMap/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).to include('foo' => 'global')
-        expect(t.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
-        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
-        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
-        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
-        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).not_to include('global' => 'gitaly')
-        expect(t.dig('StatefulSet/test-gitaly', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).to include('foo' => 'global')
-        expect(t.dig('PodDisruptionBudget/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('global' => 'service')
-        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('gitaly' => 'gitaly')
-        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('global_service' => 'true')
-        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).to include('service' => 'true')
-        expect(t.dig('Service/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
-        expect(t.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+        expect(template.dig('ConfigMap/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).to include('foo' => 'global')
+        expect(template.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.dig('StatefulSet/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(template.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
+        expect(template.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
+        expect(template.dig('StatefulSet/test-gitaly', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
+        expect(template.dig('StatefulSet/test-gitaly', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).not_to include('global' => 'gitaly')
+        expect(template.dig('StatefulSet/test-gitaly', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).to include('foo' => 'global')
+        expect(template.dig('PodDisruptionBudget/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.dig('Service/test-gitaly', 'metadata', 'labels')).to include('global' => 'service')
+        expect(template.dig('Service/test-gitaly', 'metadata', 'labels')).to include('gitaly' => 'gitaly')
+        expect(template.dig('Service/test-gitaly', 'metadata', 'labels')).to include('global_service' => 'true')
+        expect(template.dig('Service/test-gitaly', 'metadata', 'labels')).to include('service' => 'true')
+        expect(template.dig('Service/test-gitaly', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(template.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
       end
 
       it 'renders a TOML configuration file' do
-        t = HelmTemplate.new(labeled_values)
-        config = t.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl')
-        toml = render_toml(config, 'HOSTNAME' => 'default')
+        rendered_toml = render_toml(config_toml, 'HOSTNAME' => 'default')
 
-        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage graceful_restart_timeout])
-        expect(toml['storage']).to eq([{ 'name' => 'default', 'path' => '/home/git/repositories' }])
-        expect(toml['auth']['token'].length).to eq(32)
+        expect(rendered_toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage graceful_restart_timeout])
+        expect(rendered_toml['storage']).to eq([{ 'name' => 'default', 'path' => '/home/git/repositories' }])
+        expect(rendered_toml['auth']['token'].length).to eq(32)
       end
     end
 
     context 'with praefect enabled' do
-      let(:praefect_labeled_values) do
+      let(:values) do
         YAML.safe_load(%(
           global:
             praefect:
@@ -285,35 +275,34 @@ describe 'Gitaly configuration' do
         )).deep_merge(default_values).deep_merge(labeled_values)
       end
 
+      let(:configmap_name) { 'ConfigMap/test-gitaly-praefect' }
+
       it 'Populates the additional labels in the expected manner' do
-        t = HelmTemplate.new(praefect_labeled_values)
-        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
-        expect(t.dig('ConfigMap/test-gitaly-praefect', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'metadata', 'labels')).to include('foo' => 'global')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'metadata', 'labels')).not_to include('global' => 'global')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).to include('storage' => 'default')
-        expect(t.dig('StatefulSet/test-gitaly-default', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).not_to include('global' => 'gitaly')
-        expect(t.dig('PodDisruptionBudget/test-gitaly-default', 'metadata', 'labels')).to include('global' => 'gitaly')
-        expect(t.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('gitaly' => 'gitaly')
-        expect(t.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('global' => 'service')
-        expect(t.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('global_service' => 'true')
-        expect(t.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('service' => 'true')
-        expect(t.dig('Service/test-gitaly-default', 'metadata', 'labels')).not_to include('global' => 'global')
-        expect(t.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+        expect(template.dig('ConfigMap/test-gitaly-praefect', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'metadata', 'labels')).to include('foo' => 'global')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'spec', 'template', 'metadata', 'labels')).to include('global' => 'pod')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'spec', 'template', 'metadata', 'labels')).to include('pod' => 'true')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'spec', 'template', 'metadata', 'labels')).to include('global_pod' => 'true')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).to include('storage' => 'default')
+        expect(template.dig('StatefulSet/test-gitaly-default', 'spec', 'volumeClaimTemplates', 0, 'metadata', 'labels')).not_to include('global' => 'gitaly')
+        expect(template.dig('PodDisruptionBudget/test-gitaly-default', 'metadata', 'labels')).to include('global' => 'gitaly')
+        expect(template.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('gitaly' => 'gitaly')
+        expect(template.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('global' => 'service')
+        expect(template.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('global_service' => 'true')
+        expect(template.dig('Service/test-gitaly-default', 'metadata', 'labels')).to include('service' => 'true')
+        expect(template.dig('Service/test-gitaly-default', 'metadata', 'labels')).not_to include('global' => 'global')
+        expect(template.dig('ServiceAccount/test-gitaly', 'metadata', 'labels')).to include('global' => 'gitaly')
       end
 
       it 'renders a TOML configuration file' do
-        t = HelmTemplate.new(praefect_labeled_values)
-        config = t.dig('ConfigMap/test-gitaly-praefect', 'data', 'config.toml.tpl')
-        toml = render_toml(config, 'HOSTNAME' => 'test-gitaly-default-0')
+        rendered_toml = render_toml(config_toml, 'HOSTNAME' => 'test-gitaly-default-0')
 
-        expect(toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage graceful_restart_timeout])
-        expect(toml['storage']).to eq([{ 'name' => 'test-gitaly-default-0', 'path' => '/home/git/repositories' }])
-        expect(toml['auth']['token'].length).to eq(32)
+        expect(rendered_toml.keys).to match_array(%w[auth bin_dir git gitlab gitlab-shell hooks listen_addr logging prometheus_listen_addr storage graceful_restart_timeout])
+        expect(rendered_toml['storage']).to eq([{ 'name' => 'test-gitaly-default-0', 'path' => '/home/git/repositories' }])
+        expect(rendered_toml['auth']['token'].length).to eq(32)
       end
     end
   end
@@ -337,20 +326,16 @@ describe 'Gitaly configuration' do
       let(:pack_objects_cache_max_age) { '10m' }
       let(:pack_objects_cache_min_occurrences) { '1' }
 
-      let(:template) { HelmTemplate.new(values) }
-
       it 'populates a pack_objects_cache section in config.toml.tpl' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
-
-        pack_objects_cache_section = <<~CONFIG
+        expect(config_toml).to include(
+          <<~CONFIG
           [pack_objects_cache]
           enabled = #{pack_objects_cache_enabled}
           dir = "#{pack_objects_cache_dir}"
           max_age = "#{pack_objects_cache_max_age}"
           min_occurrences = #{pack_objects_cache_min_occurrences}
         CONFIG
-
-        expect(config_toml).to include(pack_objects_cache_section)
+        )
       end
     end
 
@@ -360,11 +345,7 @@ describe 'Gitaly configuration' do
       let(:pack_objects_cache_max_age) { '10m' }
       let(:pack_objects_cache_min_occurrences) { '1' }
 
-      let(:template) { HelmTemplate.new(values) }
-
       it 'does not populate a pack_objects_cache section in config.toml.tpl' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
-
         expect(config_toml).not_to match(/^\[pack_objects_cache\]/)
       end
     end
@@ -382,18 +363,14 @@ describe 'Gitaly configuration' do
         )).merge(default_values)
       end
 
-      let(:template) { HelmTemplate.new(values) }
-
       it 'populates a timeout section in config.toml.tpl' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
-
-        pack_objects_cache_section = <<~CONFIG
+        expect(config_toml).to include(
+          <<~CONFIG
           [timeout]
           upload_pack_negotiation = "10m"
           upload_archive_negotiation = "20m"
         CONFIG
-
-        expect(config_toml).to include(pack_objects_cache_section)
+        )
       end
     end
 
@@ -401,14 +378,11 @@ describe 'Gitaly configuration' do
       let(:values) do
         YAML.safe_load(%(
           gitlab:
-            gitaly:
+            gitaly: {}
         )).merge(default_values)
       end
-      let(:template) { HelmTemplate.new(values) }
 
       it 'does not populate a timeout section in config.toml.tpl' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
-
         expect(config_toml).not_to match(/^\[timeout\]/)
       end
     end
@@ -431,11 +405,7 @@ describe 'Gitaly configuration' do
       let(:gpg_secret_name) { 'gpgSecret' }
       let(:gpg_secret_key) { 'gpgisfun' }
 
-      let(:template) { HelmTemplate.new(values) }
-
       it 'populates a signing_key field in config.toml.tpl' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
-
         expect(config_toml).to include "signing_key = '/etc/gitlab-secrets/gitaly/signing_key.gpg'"
       end
     end
@@ -445,11 +415,7 @@ describe 'Gitaly configuration' do
       let(:gpg_secret_name) { 'dont use me' }
       let(:gpg_secret_key) { 'gpgisunfun' }
 
-      let(:template) { HelmTemplate.new(values) }
-
       it 'does not populate a signing_key field in config.toml.tpl' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
-
         expect(config_toml).not_to match(/^signing_key = /)
       end
     end
@@ -464,8 +430,6 @@ describe 'Gitaly configuration' do
              - name: #{volume_name}
       )).deep_merge(default_values)
     end
-
-    let(:template) { HelmTemplate.new(values) }
 
     shared_examples 'a deprecated gitconfig volume' do
       it 'fails due to gitconfig deprecation' do
@@ -512,15 +476,12 @@ describe 'Gitaly configuration' do
       )).deep_merge(default_values)
     end
 
-    let(:template) { HelmTemplate.new(values) }
-    let(:gitaly_config) { template.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl') }
-
     it 'renders the template' do
       expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
     end
 
     it 'sets the object storage url' do
-      expect(gitaly_config).to include(
+      expect(config_toml).to include(
         <<~CONFIG
         [backup]
         go_cloud_url = "gs://gitaly-backups"
@@ -542,19 +503,16 @@ describe 'Gitaly configuration' do
       )).merge(default_values)
     end
 
-    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
-
     context 'when enabled' do
       let(:gomemlimit_enabled) { 'true' }
       let(:resources_limits_memory) { '100Mi' }
 
       it 'sets the env var GOMEMLIMIT' do
-        t = HelmTemplate.new(values)
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_container_env = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['env']
-        expect(gitaly_container_env).to include(
-          'name' => 'GOMEMLIMIT',
-          'valueFrom' => { 'resourceFieldRef' => { 'containerName' => 'gitaly', 'resource' => 'limits.memory' } })
+        expect(statefulset['spec']['template']['spec']['containers'][0]['env'])
+          .to include(
+            'name' => 'GOMEMLIMIT',
+            'valueFrom' => { 'resourceFieldRef' => { 'containerName' => 'gitaly', 'resource' => 'limits.memory' } }
+          )
       end
     end
 
@@ -563,10 +521,8 @@ describe 'Gitaly configuration' do
       let(:resources_limits_memory) { '' }
 
       it 'does not set the env var GOMEMLIMIT' do
-        t = HelmTemplate.new(values)
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_container_env = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['env']
-        expect(gitaly_container_env.map { |env| env['name'] }).not_to include('GOMEMLIMIT')
+        expect(statefulset['spec']['template']['spec']['containers'][0]['env'].map { |env| env['name'] })
+          .not_to include('GOMEMLIMIT')
       end
     end
   end
@@ -580,16 +536,11 @@ describe 'Gitaly configuration' do
       )).merge(default_values)
     end
 
-    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
-
     context 'when enabled' do
       let(:share_process_namespace_enabled) { true }
 
       it 'enables shareProcessNamespace' do
-        t = HelmTemplate.new(values)
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_template_spec = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']
-        expect(gitaly_template_spec).to include(
+        expect(statefulset['spec']['template']['spec']).to include(
           'shareProcessNamespace' => true
         )
       end
@@ -599,11 +550,32 @@ describe 'Gitaly configuration' do
       let(:share_process_namespace_enabled) { false }
 
       it 'does not set shareProcessNamespace' do
-        t = HelmTemplate.new(values)
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_template_spec = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']
-        expect(gitaly_template_spec).not_to include('shareProcessNamespace')
+        expect(statefulset['spec']['template']['spec']).not_to include('shareProcessNamespace')
       end
+    end
+  end
+
+  context 'bundleUri' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            bundleUri:
+              goCloudUrl: 'gs://<bucket>'
+      )).deep_merge(default_values)
+    end
+
+    let(:template) { HelmTemplate.new(values) }
+    let(:gitaly_config) { template.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl') }
+    let(:toml) { render_toml(gitaly_config, 'HOSTNAME' => 'default') }
+
+    it 'renders the template' do
+      puts values
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+    end
+
+    it 'sets the keys' do
+      expect(toml['bundle_uri']).to eq({ 'go_cloud_url' => 'gs://<bucket>' })
     end
   end
 
@@ -633,20 +605,15 @@ describe 'Gitaly configuration' do
       )).deep_merge(default_values)
     end
 
-    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
-
     context 'when enabled' do
       let(:cgroups_enabled) { true }
-
-      let(:template) { HelmTemplate.new(values) }
-      let(:gitaly_config) { template.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl') }
 
       it 'renders the template' do
         expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
       end
 
       it 'sets the cgroups config' do
-        expect(gitaly_config).to include(
+        expect(config_toml).to include(
           <<~CONFIG
           [cgroups]
           mountpoint = "{% file.Read "/etc/gitlab-secrets/gitaly-pod-cgroup" | strings.TrimSpace %}"
@@ -665,9 +632,9 @@ describe 'Gitaly configuration' do
       end
 
       it 'sets the cgroups init container' do
-        gitaly_set = template.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_init_container = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['initContainers'][0]
-        gitaly_init_container_env = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['initContainers'][0]['env']
+        gitaly_init_container = statefulset['spec']['template']['spec']['initContainers'][0]
+        gitaly_init_container_env = statefulset['spec']['template']['spec']['initContainers'][0]['env']
+
         expect(gitaly_init_container['name']).to eq('init-cgroups')
         expect(gitaly_init_container['image']).to eq('registry.gitlab.com/gitlab-org/build/cng/gitaly-init-cgroups:master')
         expect(gitaly_init_container['imagePullPolicy']).to eq('IfNotPresent')
@@ -679,19 +646,14 @@ describe 'Gitaly configuration' do
     context 'when disabled' do
       let(:cgroups_enabled) { false }
 
-      let(:template) { HelmTemplate.new(values) }
-
       it 'does not populate a cgroups field in config.toml.tpl' do
-        config_toml = template.dig('ConfigMap/test-gitaly','data','config.toml.tpl')
-
         expect(config_toml).not_to match(/^\[cgroups\]/)
         expect(config_toml).not_to match(/^\[cgroups.repositories\]/)
       end
 
       it 'does not add an initContainer to gitaly' do
-        gitaly_set = template.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_init_containers = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['initContainers']
-        expect(gitaly_init_containers.map { |c| c['name'] }).not_to include('init-cgroups')
+        expect(statefulset['spec']['template']['spec']['initContainers'].map { |c| c['name'] })
+          .not_to include('init-cgroups')
       end
     end
   end
@@ -712,17 +674,13 @@ describe 'Gitaly configuration' do
       )).merge(default_values)
     end
 
-    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
-
     context 'when enabled' do
       let(:startup_probe_enabled) { 'true' }
 
       it 'sets the startup probe config' do
-        t = HelmTemplate.new(values)
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_startup_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['startupProbe']
-        gitaly_readiness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['readinessProbe']
-        gitaly_liveness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['livenessProbe']
+        gitaly_startup_probe = statefulset['spec']['template']['spec']['containers'][0]['startupProbe']
+        gitaly_readiness_probe = statefulset['spec']['template']['spec']['containers'][0]['readinessProbe']
+        gitaly_liveness_probe = statefulset['spec']['template']['spec']['containers'][0]['livenessProbe']
 
         expect(gitaly_startup_probe).to include(
           'initialDelaySeconds' => 5,
@@ -747,11 +705,9 @@ describe 'Gitaly configuration' do
       let(:startup_probe_enabled) { 'false' }
 
       it 'does not set startup probe for the Gitaly container' do
-        t = HelmTemplate.new(values)
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_container = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]
-        gitaly_readiness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['readinessProbe']
-        gitaly_liveness_probe = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['containers'][0]['livenessProbe']
+        gitaly_container = statefulset['spec']['template']['spec']['containers'][0]
+        gitaly_readiness_probe = statefulset['spec']['template']['spec']['containers'][0]['readinessProbe']
+        gitaly_liveness_probe = statefulset['spec']['template']['spec']['containers'][0]['livenessProbe']
 
         expect(gitaly_container).not_to have_key('startupProbe')
         expect(gitaly_readiness_probe).to include(
@@ -773,27 +729,14 @@ describe 'Gitaly configuration' do
       )).merge(default_values)
     end
 
-    let(:gitaly_stateful_set) { 'StatefulSet/test-gitaly' }
-    let(:gitaly_configmap) { 'ConfigMap/test-gitaly' }
-
     context 'when default' do
       let(:graceful_restart_timeout) {}
 
       it 'sets pod termination grace period' do
-        t = HelmTemplate.new(values)
-        # STS
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_termination_grace_period = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['terminationGracePeriodSeconds']
-
-        expect(gitaly_termination_grace_period).to eq(30)
+        expect(statefulset['spec']['template']['spec']['terminationGracePeriodSeconds']).to eq(30)
       end
 
       it 'sets gitaly config termination grace period' do
-        t = HelmTemplate.new(values)
-        # ConfigMap
-        gitaly_config = t.resources_by_kind('ConfigMap').select { |key| key == gitaly_configmap }
-        config_toml = gitaly_config[gitaly_configmap]['data']['config.toml.tpl']
-
         expect(config_toml).to include "graceful_restart_timeout = \"25s\""
       end
     end
@@ -802,20 +745,10 @@ describe 'Gitaly configuration' do
       let(:graceful_restart_timeout) { 45 }
 
       it 'sets pod termination grace period' do
-        t = HelmTemplate.new(values)
-        # STS
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_termination_grace_period = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['terminationGracePeriodSeconds']
-
-        expect(gitaly_termination_grace_period).to eq(50)
+        expect(statefulset['spec']['template']['spec']['terminationGracePeriodSeconds']).to eq(50)
       end
 
       it 'sets gitaly config termination grace period' do
-        t = HelmTemplate.new(values)
-        # ConfigMap
-        gitaly_config = t.resources_by_kind('ConfigMap').select { |key| key == gitaly_configmap }
-        config_toml = gitaly_config[gitaly_configmap]['data']['config.toml.tpl']
-
         expect(config_toml).to include "graceful_restart_timeout = \"45s\""
       end
     end
@@ -824,22 +757,45 @@ describe 'Gitaly configuration' do
       let(:graceful_restart_timeout) { 120 }
 
       it 'sets pod termination grace period' do
-        t = HelmTemplate.new(values)
-        # STS
-        gitaly_set = t.resources_by_kind('StatefulSet').select { |key| key == gitaly_stateful_set }
-        gitaly_termination_grace_period = gitaly_set[gitaly_stateful_set]['spec']['template']['spec']['terminationGracePeriodSeconds']
-
-        expect(gitaly_termination_grace_period).to eq(125)
+        expect(statefulset['spec']['template']['spec']['terminationGracePeriodSeconds']).to eq(125)
       end
 
       it 'sets gitaly config termination grace period' do
-        t = HelmTemplate.new(values)
-        # ConfigMap
-        gitaly_config = t.resources_by_kind('ConfigMap').select { |key| key == gitaly_configmap }
-        config_toml = gitaly_config[gitaly_configmap]['data']['config.toml.tpl']
-
         expect(config_toml).to include "graceful_restart_timeout = \"2m0s\""
       end
+    end
+  end
+
+  context 'daily maintenace is configured' do
+    let(:values) do
+      YAML.safe_load(%(
+      global:
+        gitaly:
+          enabled: true
+      gitlab:
+        gitaly:
+          dailyMaintenance:
+            disabled: true
+            startHour: 12
+            startMinute: 59
+            duration: 5m
+            storages: ["default", "custom"]
+      )).merge(default_values)
+    end
+
+    it 'renders the template' do
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+    end
+
+    it 'has the maintenance configuration' do
+      expect(config_toml).to include <<~CONFIG
+      [daily_maintenance]
+      disabled = true
+      start_hour = 12
+      start_minute = 59
+      duration = "5m"
+      storages = ["default","custom"]
+      CONFIG
     end
   end
 
@@ -858,23 +814,17 @@ describe 'Gitaly configuration' do
       )).merge(default_values)
     end
 
-    let(:gitaly_service) { 'Service/test-gitaly' }
-
     context 'when service.clusterIP is given' do
       let(:gitaly_service_type) { 'ClusterIP' }
       let(:gitaly_cluster_ip_address) { '10.0.0.1' }
       let(:gitaly_lb_ip_address) {}
 
       it 'has ClusterIP type and no customizations by default' do
-        t = HelmTemplate.new(values)
-        service = t.resources_by_kind('Service')[gitaly_service]
         expect(service['spec']).to include('type' => 'ClusterIP')
         expect(service['spec']).not_to have_key('loadBalancerIP')
       end
 
       it 'sets the clusterIP' do
-        t = HelmTemplate.new(values)
-        service = t.resources_by_kind('Service')[gitaly_service]
         expect(service['spec']).to include('type' => 'ClusterIP')
         expect(service['spec']).to include('clusterIP' => '10.0.0.1')
         expect(service['spec']).not_to have_key('loadBalancerIP')
@@ -887,15 +837,11 @@ describe 'Gitaly configuration' do
       let(:gitaly_lb_ip_address) { '10.0.0.8' }
 
       it 'has LoadBalancerIP type and no customizations by default' do
-        t = HelmTemplate.new(values)
-        service = t.resources_by_kind('Service')[gitaly_service]
         expect(service['spec']).to include('type' => 'LoadBalancer')
         expect(service['spec']).not_to have_key('clusterIP')
       end
 
       it 'sets the LoadBalancerIP' do
-        t = HelmTemplate.new(values)
-        service = t.resources_by_kind('Service')[gitaly_service]
         expect(service['spec']).to include('type' => 'LoadBalancer')
         expect(service['spec']).to include('loadBalancerIP' => '10.0.0.8')
         expect(service['spec']).not_to have_key('clusterIP')
@@ -908,8 +854,6 @@ describe 'Gitaly configuration' do
       let(:gitaly_lb_ip_address) { '10.0.0.8' }
 
       it 'sets the LoadBalancerIP and ClusterIP' do
-        t = HelmTemplate.new(values)
-        service = t.resources_by_kind('Service')[gitaly_service]
         expect(service['spec']).to include('type' => 'LoadBalancer')
         expect(service['spec']).to include('clusterIP' => '10.0.0.1')
         expect(service['spec']).to include('loadBalancerIP' => '10.0.0.8')
@@ -922,8 +866,6 @@ describe 'Gitaly configuration' do
       let(:gitaly_lb_ip_address) {}
 
       it 'it does not set a clusterIP' do
-        t = HelmTemplate.new(values)
-        service = t.resources_by_kind('Service')[gitaly_service]
         expect(service['spec']).to include('type' => 'NodePort')
         expect(service['spec']).not_to have_key('clusterIP')
       end

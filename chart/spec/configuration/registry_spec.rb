@@ -469,7 +469,7 @@ describe 'registry configuration' do
             YAML.safe_load(%(
               registry:
                 redis:
-                  cache:
+                  loadBalancing:
                     enabled: true
                 database:
                   enabled: true
@@ -508,7 +508,7 @@ describe 'registry configuration' do
             YAML.safe_load(%(
               registry:
                 redis:
-                  cache:
+                  loadBalancing:
                     enabled: true
                 database:
                   enabled: true
@@ -531,7 +531,7 @@ describe 'registry configuration' do
             YAML.safe_load(%(
               registry:
                 redis:
-                  cache:
+                  loadBalancing:
                     enabled: true
                 database:
                   enabled: true
@@ -573,7 +573,7 @@ describe 'registry configuration' do
             YAML.safe_load(%(
               registry:
                 redis:
-                  cache:
+                  loadBalancing:
                     enabled: true
                 database:
                   enabled: true
@@ -1335,6 +1335,422 @@ describe 'registry configuration' do
 
           rate_limiting_secret = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'registry-redis-rate-limiting-secret', 'password')
           expect(rate_limiting_secret).not_to be_nil
+          cache_secret = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'registry-redis-cache-secret', 'password')
+          expect(cache_secret).not_to be_empty
+        end
+      end
+    end
+
+    describe 'redis load balancing config' do
+      context 'when redis connection for load balancing is enabled using redis global settings' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: global.redis.example.com
+                port: 16379
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+          )).deep_merge(default_values)
+        end
+
+        it 'populates the redis address with the global setting' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "global.redis.example.com:16379"
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis configuration with a single host' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+                  host: redis.example.com
+                  port: 12345
+                  username: registry
+                  db: 0
+                  password:
+                    enabled: true
+                    secret: registry-redis-load-balancing-secret
+                    key: password
+                  dialtimeout: 10ms
+                  readtimeout: 10ms
+                  writetimeout: 10ms
+                  tls:
+                    enabled: true
+                    insecure: true
+                  pool:
+                    size: 10
+                    maxlifetime: 1h
+                    idletimeout: 300s
+          )).deep_merge(default_values)
+        end
+
+        it 'populates the redis settings in the expected manner' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "redis.example.com:12345"
+                username: registry
+                password: "REDIS_LOAD_BALANCING_PASSWORD"
+                db: 0
+                dialtimeout: 10ms
+                readtimeout: 10ms
+                writetimeout: 10ms
+                tls:
+                  enabled: true
+                  insecure: true
+                pool:
+                  size: 10
+                  maxlifetime: 1h
+                  idletimeout: 300s
+            CONFIG
+          )
+
+          load_balancing_secret = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'registry-redis-load-balancing-secret', 'password')
+          expect(load_balancing_secret).not_to be_empty
+        end
+      end
+
+      context 'when customer provides a custom redis configuration with a single host without port' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+                  host: redis.example.com
+          )).deep_merge(default_values)
+        end
+
+        it 'populates the redis settings with the default port' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "redis.example.com:6379"
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis configuration with global sentinels' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: sentinel1.example.com
+                    port: 26379
+                  - host: sentinel2.example.com
+                    port: 26379
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis settings in the expected manner' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "sentinel1.example.com:26379,sentinel2.example.com:26379"
+                mainname: redis.example.com
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis configuration with local sentinels' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+                  host: redis.example.com
+                  sentinels:
+                    - host: sentinel1.example.com
+                      port: 26379
+                    - host: sentinel2.example.com
+                      port: 26379
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis settings in the expected manner' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "sentinel1.example.com:26379,sentinel2.example.com:26379"
+                mainname: redis.example.com
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis configuration with local and global sentinels' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: global1.example.com
+                    port: 26379
+                  - host: global2.example.com
+                    port: 26379
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+                  host: local.example.com
+                  sentinels:
+                    - host: local1.example.com
+                      port: 26379
+                    - host: local2.example.com
+                      port: 26379
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis settings with the local sentinels' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "local1.example.com:26379,local2.example.com:26379"
+                mainname: local.example.com
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis cache and load redis balancing configuration with global sentinels' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: global1.example.com
+                    port: 26379
+                  - host: global2.example.com
+                    port: 26379
+            registry:
+              database:
+                enabled: true
+              redis:
+                cache:
+                  enabled: true
+                loadBalancing:
+                  enabled: true
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis cache and redis load balancing settings with the global sentinels' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              cache:
+                enabled: true
+                addr: "global1.example.com:26379,global2.example.com:26379"
+                mainname: redis.example.com
+              loadbalancing:
+                enabled: true
+                addr: "global1.example.com:26379,global2.example.com:26379"
+                mainname: redis.example.com
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a redis cluster configuration' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+                  cluster:
+                    - host: redis1.cluster.example.com
+                      port: 16379
+                    - host: redis2.cluster.example.com
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis settings with the list of host:port' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "redis1.cluster.example.com:16379,redis2.cluster.example.com:6379"
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a redis cluster configuration in presense of global sentinels' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: global1.example.com
+                    port: 26379
+                  - host: global2.example.com
+                    port: 26379
+            registry:
+              redis:
+                loadBalancing:
+                  enabled: true
+                  cluster:
+                    - host: redis1.cluster.example.com
+                      port: 16379
+                    - host: redis2.cluster.example.com
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis settings with the local cluster host:port instead of global.redis.sentinels' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              loadbalancing:
+                enabled: true
+                addr: "redis1.cluster.example.com:16379,redis2.cluster.example.com:6379"
+            CONFIG
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis load balancing and cache configuration' do
+        let(:values) do
+          YAML.safe_load(%(
+            registry:
+              database:
+                enabled: true
+              redis:
+                cache:
+                  enabled: true
+                  host: redis.cache.example.com
+                  port: 12345
+                  db: 0
+                  password:
+                    enabled: true
+                    secret: registry-redis-cache-secret
+                    key: password
+                  dialtimeout: 10ms
+                  readtimeout: 10ms
+                  writetimeout: 10ms
+                  tls:
+                    enabled: true
+                    insecure: true
+                  pool:
+                    size: 10
+                    maxlifetime: 1h
+                    idletimeout: 300s
+                loadBalancing:
+                  enabled: true
+                  host: redis.load-balancing.example.com
+                  port: 54321
+                  db: 1
+                  password:
+                    enabled: true
+                    secret: registry-redis-load-balancing-secret
+                    key: password
+                  dialtimeout: 20ms
+                  readtimeout: 20ms
+                  writetimeout: 20ms
+                  tls:
+                    enabled: true
+                    insecure: false
+                  pool:
+                    size: 30
+                    maxlifetime: 2h
+                    idletimeout: 100s
+          )).deep_merge(default_values)
+        end
+
+        it 'populates the redis load balancing and cache settings in the expected manner' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            redis:
+              cache:
+                enabled: true
+                addr: "redis.cache.example.com:12345"
+                password: "REDIS_CACHE_PASSWORD"
+                db: 0
+                dialtimeout: 10ms
+                readtimeout: 10ms
+                writetimeout: 10ms
+                tls:
+                  enabled: true
+                  insecure: true
+                pool:
+                  size: 10
+                  maxlifetime: 1h
+                  idletimeout: 300s
+              loadbalancing:
+                enabled: true
+                addr: "redis.load-balancing.example.com:54321"
+                password: "REDIS_LOAD_BALANCING_PASSWORD"
+                db: 1
+                dialtimeout: 20ms
+                readtimeout: 20ms
+                writetimeout: 20ms
+                tls:
+                  enabled: true
+                  insecure: false
+                pool:
+                  size: 30
+                  maxlifetime: 2h
+                  idletimeout: 100s
+            CONFIG
+          )
+
+          load_balancing_secret = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'registry-redis-load-balancing-secret', 'password')
+          expect(load_balancing_secret).not_to be_nil
           cache_secret = t.find_projected_secret_key('Deployment/test-registry', 'registry-secrets', 'registry-redis-cache-secret', 'password')
           expect(cache_secret).not_to be_empty
         end

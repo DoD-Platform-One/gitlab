@@ -1,5 +1,5 @@
 # https://docs.gitlab.com/charts/charts/globals#configure-postgresql-settings
-# https://docs.gitlab.com/ee/administration/database_load_balancing.html
+# https://docs.gitlab.com/administration/postgresql/database_load_balancing/
 global:
   psql:
     host: primary.db.example

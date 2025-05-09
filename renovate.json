@@ -32,9 +32,9 @@
                 "docker"
             ],
             "matchPackageNames": [
-                "registry1.dso.mil/ironbank/opensource/postgres/postgresql"
+                "registry1.dso.mil/ironbank/bitnami/postgres"
             ],
-            "allowedVersions": "14.x"
+            "allowedVersions": "16.x"
         }
     ],
     "customManagers": [

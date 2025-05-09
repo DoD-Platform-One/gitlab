@@ -1,5 +1,5 @@
 # This is an example values.yaml. It shows how to configure service desk email
-# See https://docs.gitlab.com/ee/user/project/service_desk.html#using-custom-email-address
+# See https://docs.gitlab.com/user/project/service_desk/configure/#custom-email-address
 global:
   appConfig:
     incomingEmail:

@@ -55,10 +55,10 @@ registry:
     Enabling database load balancing requires the metadata database to be enabled.
     See https://docs.gitlab.com/charts/charts/registry#load-balancing
   {{- end }}
-  {{- if not $.Values.registry.redis.cache.enabled }}
+  {{- if not $.Values.registry.redis.loadBalancing.enabled }}
 registry:
-    Enabling database load balancing requires Redis caching to be enabled.
-    See https://docs.gitlab.com/charts/charts/registry/#redis-cache
+    Enabling database load balancing requires a Redis connection to be enabled.
+    See https://docs.gitlab.com/charts/charts/registry/#redis-for-database-load-balancing
   {{- end }}
   {{- if and (kindIs "string" $.Values.registry.database.loadBalancing.record) (empty $.Values.registry.database.loadBalancing.record) }}
 registry:
@@ -140,6 +140,39 @@ registry:
 {{- end -}}
 {{- end -}}
 {{/* END gitlab.checkConfig.registry.redis.rateLimiting */}}
+
+{{/*
+Ensure Registry load balancing Redis connection is configured properly and dependencies are met
+*/}}
+{{- define "gitlab.checkConfig.registry.redis.loadBalancing" -}}
+{{-   if $.Values.registry.redis.loadBalancing.enabled }}
+{{-     if  and (kindIs "string" $.Values.registry.redis.loadBalancing.host) (empty $.Values.registry.redis.loadBalancing.host) }}
+registry:
+    Enabling the load balancing Redis connection requires the host to not be empty.
+    See https://docs.gitlab.com/charts/charts/registry#redis-for-database-load-balancing
+{{-     end -}}
+{{- end -}}
+{{-   if and $.Values.registry.redis.loadBalancing.enabled $.Values.registry.redis.loadBalancing.sentinels}}
+{{-     if  and (kindIs "string" $.Values.registry.redis.loadBalancing.host) (empty $.Values.registry.redis.loadBalancing.host) }}
+registry:
+    Enabling the load balancing Redis connection with sentinels requires the registry.redis.loadBalancing.host to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-for-database-load-balancing
+{{-     end -}}
+{{- end -}}
+{{-   if and $.Values.registry.redis.loadBalancing.enabled $.Values.registry.redis.loadBalancing.password.enabled }}
+{{-     if and (kindIs "string" $.Values.registry.redis.loadBalancing.password.secret) (empty $.Values.registry.redis.loadBalancing.password.secret) }}
+registry:
+    Enabling the load balancing Redis connection with password requires 'registry.redis.loadBalancing.password.secret' to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-for-database-load-balancing
+{{-     end -}}
+{{-     if and (kindIs "string" $.Values.registry.redis.loadBalancing.password.key) (empty $.Values.registry.redis.loadBalancing.password.key) }}
+registry:
+    Enabling the load balancing Redis connection with password requires 'registry.redis.loadBalancing.password.key' to be set.
+    See https://docs.gitlab.com/charts/charts/registry#redis-for-database-load-balancing
+{{-     end -}}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.registry.redis.loadBalancing */}}
 
 {{/*
 Ensure Registry TLS has a secret when enabled

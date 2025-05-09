@@ -190,3 +190,14 @@ gitlab_docs:
   enabled: {{ eq $.Values.global.appConfig.gitlab_docs.enabled true }}
   host: {{ $.Values.global.appConfig.gitlab_docs.host | quote }}
 {{- end -}}{{/* "gitlab.appConfig.gitlab_docs.configuration" */}}
+
+{{/*
+Generates oidc_provider configuration.
+
+Usage:
+{{ include "gitlab.appConfig.oidcProvider.configuration" $ }}
+*/}}
+{{- define "gitlab.appConfig.oidcProvider.configuration" -}}
+oidc_provider:
+  openid_id_token_expire_in_seconds: {{ $.Values.global.appConfig.oidcProvider.openidIdTokenExpireInSeconds }}
+{{- end -}}{{/* "gitlab.appConfig.oidcProvider.configuration" */}}

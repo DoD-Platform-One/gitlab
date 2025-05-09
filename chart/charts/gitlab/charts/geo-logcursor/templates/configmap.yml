@@ -67,6 +67,7 @@ data:
         ssl_url: {{ .gravatar.sslUrl }}
       {{- include "gitlab.appConfig.extra" . | nindent 6 }}
       {{- end }}
+      {{- include "gitlab.appConfig.oidcProvider.configuration" $ | nindent 6 }}
       ## Object storage not needed by geo-logcursor
       artifacts:
       lfs:

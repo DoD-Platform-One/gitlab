@@ -225,3 +225,29 @@ data:
     upload_archive_negotiation = {{ . | quote }}
     {{- end }}
     {{- end }}
+
+    {{- with .Values.dailyMaintenance }}
+    [daily_maintenance]
+    {{- if hasKey . "disabled" }}
+    disabled = {{ eq .disabled true }}
+    {{- end }}
+    {{- with .startHour }}
+    start_hour = {{ . | int }}
+    {{- end }}
+    {{- with .startMinute }}
+    start_minute = {{ . | int }}
+    {{- end }}
+    {{- with .duration }}
+    duration = {{ . | quote }}
+    {{- end }}
+    {{- with .storages }}
+      {{- if kindIs "slice" . }}
+    storages = {{ . | toJson }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+    
+    {{- with .Values.bundleUri }}
+    [bundle_uri]
+    go_cloud_url = "{{ .goCloudUrl }}"
+    {{- end }}

@@ -2,6 +2,32 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 8.11.1 (2025-04-22)
+
+No changes.
+
+## 8.11.0 (2025-04-16)
+
+### Added (2 changes)
+
+- [Add support for Kubernetes 1.32](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7b48ac8758d0be5286af2e9e599583f89e3a442e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4209))
+- [Workhorse: Allow to configure zip reader limit](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c7facb3804fff808c79587ace0f7ac2cc2e6f52a) by @release.management ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4150))
+
+### Fixed (1 change)
+
+- [Apply podLabels to backup cron job pods](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/422560730617703aab46eb50c41445ef4350ee1c) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4148))
+
+### Changed (8 changes)
+
+- [Make it possible to wait for migrations container to complete](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/52b3e50a3c49e6502329788639407e42614a28ce) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4179))
+- [Update Redis chart from 17.14.6 to 18.19.4](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/857f5d647c632687e044812c93f1fc8e63f0dcf5) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4182))
+- [Update PostgreSQL chart from 12.5.2 to 12.12.10](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/854512ab8d4cf7082057bd84a0e64ab6f188e488) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4182))
+- [Don't try to generate self-signed certificates when TLS is globaly disabled](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/88fda07db98855004c75e1cc5d058c01caf320c4) by @macmenco ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/3990))
+- [Update dependency gitlab-exporter to v15.3.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/cfa22b71f488ea0ce972f4d459aa25bac485c120) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4173))
+- [Ingress NGINX: bump image tag and digest to 1.11.5](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/9dbbd04c81b872531e08f270575c63799aa291b2) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4186))
+- [Update dependency container-registry to v4.19.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/1d640153b60b512fdb508e74d13b27db3150a8b3) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4184))
+- [Update dependency container-registry to v4.18.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/3f78ebdd958db5267027a6d806a8ecdb2b1a779d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4178))
+
 ## 8.10.4 (2025-04-09)
 
 No changes.
@@ -43,6 +69,22 @@ No changes.
 
 - [Remove flag to toggle Redis in KAS chart](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/f75858ec82e9cada9c15720995a7a4182e6d76e7) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4165))
 
+## 8.9.6 (2025-04-09)
+
+No changes.
+
+## 8.9.5 (2025-04-02)
+
+No changes.
+
+## 8.9.4 (2025-04-01)
+
+No changes.
+
+## 8.9.3 (2025-03-26)
+
+No changes.
+
 ## 8.9.2 (2025-03-11)
 
 No changes.
@@ -77,6 +119,14 @@ No changes.
 ### Deprecated (1 change)
 
 - [Document Kubernetes 1.28 as deprecated](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/2d8580c1ed16fa762f1fcdaaf8418989f7a104cf) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4115))
+
+## 8.8.7 (2025-04-09)
+
+No changes.
+
+## 8.8.6 (2025-03-26)
+
+No changes.
 
 ## 8.8.5 (2025-03-11)
 

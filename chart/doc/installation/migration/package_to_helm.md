@@ -47,7 +47,7 @@ Before the migration, a few prerequisites must be met:
 1. [Create a backup tarball](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/) and [exclude all the already migrated directories](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#excluding-specific-directories-from-the-backup).
 
    For local backups (default), the backup file is stored under `/var/opt/gitlab/backups`, unless you
-   [explicitly changed the location](https://docs.gitlab.com/omnibus/settings/backups.html#manually-manage-backup-directory).
+   [explicitly changed the location](https://docs.gitlab.com/omnibus/settings/backups/#manually-manage-backup-directory).
    For [remote storage backups](https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#upload-backups-to-a-remote-cloud-storage),
    the backup file is stored in the configured bucket.
 1. [Restore from the package-based installation](../../backup-restore/restore.md)

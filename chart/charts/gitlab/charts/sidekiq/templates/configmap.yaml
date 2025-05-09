@@ -48,6 +48,9 @@ data:
         {{- if hasKey .initialDefaults "signupEnabled" }}
         signup_enabled: {{ .initialDefaults.signupEnabled }}
         {{- end }}
+        {{- if hasKey .initialDefaults "gitlabProductUsageData" }}
+        initial_gitlab_product_usage_data: {{ .initialDefaults.gitlabProductUsageData }}
+        {{- end }}
         graphql_timeout: {{ .graphQlTimeout }}
         webhook_timeout: {{ .webhookTimeout }}
         {{- end }}
@@ -100,6 +103,7 @@ data:
       {{- include "gitlab.geo.config" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sentry.configuration" $ | nindent 6 }}
       {{- include "gitlab.appConfig.sidekiq.configuration" $ | nindent 6 }}
+      {{- include "gitlab.appConfig.oidcProvider.configuration" $ | nindent 6 }}
       {{- include "gitlab.pages.config" $ | nindent 6 }}
       mattermost:
         enabled: false

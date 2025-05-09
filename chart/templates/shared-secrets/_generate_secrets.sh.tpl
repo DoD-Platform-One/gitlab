@@ -93,7 +93,9 @@ generate_secret_if_needed {{ template "gitlab.redis.password.secret" . }} --from
 
 {{ if not .Values.global.psql.host -}}
 # Postgres password
-generate_secret_if_needed {{ template "gitlab.psql.password.secret" . }} --from-literal={{ include "gitlab.psql.password.key" . }}=$(gen_random 'a-zA-Z0-9' 64) --from-literal=postgresql-postgres-password=$(gen_random 'a-zA-Z0-9' 64)
+# Fix to set both the postgres and gitlab users passwords to the same to match the upstream initdb configmap expectation
+PG_GENERATED_PASSWORD=$(gen_random 'a-zA-Z0-9' 64)
+generate_secret_if_needed {{ template "gitlab.psql.password.secret" . }} --from-literal={{ include "gitlab.psql.password.key" . }}=${PG_GENERATED_PASSWORD} --from-literal=postgresql-postgres-password=${PG_GENERATED_PASSWORD}
 {{ end }}
 
 # Gitlab shell

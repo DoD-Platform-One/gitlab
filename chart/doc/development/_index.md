@@ -72,11 +72,13 @@ GitLab CI pipelines run on pipelines for:
 - Default branch
 - Stable branches
 - Tags
+- Nightlies - run on the default branch on dev
 
 The configuration for these CI pipelines is managed in:
 
 - [`.gitlab-ci.yml`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/.gitlab-ci.yml)
 - Files under [`.gitlab/ci/`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/.gitlab/ci/)
+- Nightly builds have further configuration discussed under [nightlies](nightlies/_index.md)
 
 ### Review apps
 
@@ -100,11 +102,10 @@ GKE platform only.
 
 | Minor version | GKE       | EKS       | vCluster deploy | vCluster full QA |
 | ---           | ---       | ---       | ---             | ---              |
-| 1.31          | current   | secondary | secondary       | secondary        |
+| 1.32          | current   | secondary | secondary       | secondary        |
+| 1.31          | secondary | NA        | NA              | NA               |
 | 1.31 ARM      | current   | NA        | NA              | NA               |
 | 1.30          | secondary | NA        | NA              | NA               |
-| 1.29          | secondary | NA        | NA              | NA               |
-| 1.28          | NA        | NA        | secondary       | NA               |
 
 This table is in development and subject to change.
 

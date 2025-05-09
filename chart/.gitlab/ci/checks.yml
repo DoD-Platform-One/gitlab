@@ -21,7 +21,7 @@ rubocop:
 
 # Perform content linting on documentation Markdown files
 check_docs_content:
-  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/lint-markdown:alpine-3.20-vale-3.9.3-markdownlint2-0.17.1-lychee-0.15.1
+  image: ${DOCS_LINT_IMAGE}
   stage: prepare
   cache: {}
   dependencies: []
@@ -37,7 +37,7 @@ check_docs_content:
 
 # Perform linting on documentation Markdown files
 check_docs_markdown:
-  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/lint-markdown:alpine-3.20-vale-3.9.3-markdownlint2-0.17.1-lychee-0.15.1
+  image: ${DOCS_LINT_IMAGE}
   stage: prepare
   cache: {}
   dependencies: []
@@ -53,7 +53,7 @@ check_docs_markdown:
 
 # Perform link checking on documentation Markdown files
 check_docs_links:
-  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/lint-markdown:alpine-3.20-vale-3.9.3-markdownlint2-0.17.1-lychee-0.15.1
+  image: ${DOCS_LINT_IMAGE}
   stage: prepare
   cache: {}
   dependencies: []
@@ -68,7 +68,7 @@ check_docs_links:
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
 docs-test hugo:
-  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/docs-gitlab-com-builder:hugo-0.142.0
+  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/docs-gitlab-com-builder:hugo-0.145.0
   stage: prepare
   before_script:
     - git clone --depth 1 https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com.git

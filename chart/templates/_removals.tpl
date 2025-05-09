@@ -389,7 +389,7 @@ geo:
 {{/* WARN: Unicorn is deprecated and is removed in 14.0 */}}
 {{- if eq .Values.gitlab.webservice.webServer "unicorn" -}}
 webservice:
-   Starting with GitLab 14.0, Unicorn is no longer supported and users must switch to Puma by either setting `gitlab.webservice.webServer` value to `puma` or removing the setting reverting it to default (`puma`). Check https://docs.gitlab.com/ee/administration/operations/puma.html for details.
+   Starting with GitLab 14.0, Unicorn is no longer supported and users must switch to Puma by either setting `gitlab.webservice.webServer` value to `puma` or removing the setting reverting it to default (`puma`). Check https://docs.gitlab.com/administration/operations/puma/ for details.
 {{- end }}
 {{- end }}
 
@@ -414,7 +414,7 @@ sidekiq.pods[{{ $index }}] ({{ $pod.name }}):
 {{- define "gitlab.removal.sidekiq.queueSelector" -}}
 {{- if hasKey .Values.gitlab.sidekiq "queueSelector" }}
 sidekiq:
-    The configuration of 'gitlab.sidekiq.queueSelector' should be removed. Please follow the steps at https://docs.gitlab.com/ee/administration/sidekiq/extra_sidekiq_processes.html#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
+    The configuration of 'gitlab.sidekiq.queueSelector' should be removed. Please follow the steps at https://docs.gitlab.com/administration/sidekiq/extra_sidekiq_processes/#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
 {{- end }}
 {{- end }}
 {{/* END gitlab.removal.sidekiq.queueSelector */}}
@@ -423,7 +423,7 @@ sidekiq:
 {{- range $index, $pod := .Values.gitlab.sidekiq.pods -}}
 {{-   if hasKey $pod "queueSelector" }}
 sidekiq.pods[{{ $index }}] ({{ $pod.name }}):
-    The configuration of 'gitlab.sidekiq.pods[{{ $index }}].queueSelector' should be removed. Please follow the steps at https://docs.gitlab.com/ee/administration/sidekiq/extra_sidekiq_processes.html#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
+    The configuration of 'gitlab.sidekiq.pods[{{ $index }}].queueSelector' should be removed. Please follow the steps at https://docs.gitlab.com/administration/sidekiq/extra_sidekiq_processes/#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
 {{-   end -}}
 {{- end }}
 {{- end }}
@@ -432,7 +432,7 @@ sidekiq.pods[{{ $index }}] ({{ $pod.name }}):
 {{- define "gitlab.removal.sidekiq.negateQueues" -}}
 {{- if hasKey .Values.gitlab.sidekiq "negateQueues" }}
 sidekiq:
-    The configuration of 'gitlab.sidekiq.negateQueues' should be removed. Please follow the steps at https://docs.gitlab.com/ee/administration/sidekiq/extra_sidekiq_processes.html#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
+    The configuration of 'gitlab.sidekiq.negateQueues' should be removed. Please follow the steps at https://docs.gitlab.com/administration/sidekiq/extra_sidekiq_processes/#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
 {{- end }}
 {{- end }}
 {{/* END gitlab.removal.sidekiq.negateQueues */}}
@@ -441,7 +441,7 @@ sidekiq:
 {{- range $index, $pod := .Values.gitlab.sidekiq.pods -}}
 {{-   if hasKey $pod "negateQueues" }}
 sidekiq.pods[{{ $index }}] ({{ $pod.name }}):
-    The configuration of 'gitlab.sidekiq.pods[{{ $index }}].negateQueues' should be removed. Please follow the steps at https://docs.gitlab.com/ee/administration/sidekiq/extra_sidekiq_processes.html#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
+    The configuration of 'gitlab.sidekiq.pods[{{ $index }}].negateQueues' should be removed. Please follow the steps at https://docs.gitlab.com/administration/sidekiq/extra_sidekiq_processes/#start-multiple-processes, to run Sidekiq with multiple processes while listening to all queues.
 {{-   end -}}
 {{- end }}
 {{- end }}
@@ -513,7 +513,7 @@ gitlab.{{ $chart }}:
 {{- if kindIs "map" (index .Values.global "grafana") }}
 {{-   if and ( hasKey .Values.global.grafana "enabled" ) (eq true .Values.global.grafana.enabled)}}
 grafana:
-    The bundled Grafana chart has been removed, and thus `global.grafana.enabled` does not have any effect. It is recommended that you switch to the newer chart version from Grafana Labs available at https://artifacthub.io/packages/helm/grafana/grafana or a Grafana Operator from a trusted provider. You can find instructions to integrate Grafana with GitLab at https://docs.gitlab.com/ee/administration/monitoring/performance/grafana_configuration.html.
+    The bundled Grafana chart has been removed, and thus `global.grafana.enabled` does not have any effect. It is recommended that you switch to the newer chart version from Grafana Labs available at https://artifacthub.io/packages/helm/grafana/grafana or a Grafana Operator from a trusted provider. You can find instructions to integrate Grafana with GitLab at https://docs.gitlab.com/administration/monitoring/performance/grafana_configuration/.
 {{-   end -}}
 {{- end -}}
 {{- end -}}

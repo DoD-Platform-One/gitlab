@@ -21,7 +21,7 @@
 # - AWS LB Controller NLB TLS Termination
 #   https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/guide/use_cases/nlb_tls_termination/
 # - GitLab SSHD
-#   https://docs.gitlab.com/ee/administration/operations/gitlab_sshd.html
+#   https://docs.gitlab.com/administration/operations/gitlab_sshd/
 #
 global:
   hosts:
@@ -71,10 +71,10 @@ nginx-ingress:
       use-proxy-protocol: "true"
 gitlab:
   gitlab-shell:
-    ## https://docs.gitlab.com/ee/administration/operations/gitlab_sshd.html?tab=Helm+chart+%28Kubernetes%29#enable-gitlab-sshd
+    ## https://docs.gitlab.com/administration/operations/gitlab_sshd/?tab=Helm+chart+%28Kubernetes%29#enable-gitlab-sshd
     # gitlab-sshd supports ProxyProtocol
     sshDaemon: gitlab-sshd
-    ## https://docs.gitlab.com/ee/administration/operations/gitlab_sshd.html?tab=Helm+chart+%28Kubernetes%29#proxy-protocol-support
+    ## https://docs.gitlab.com/administration/operations/gitlab_sshd/?tab=Helm+chart+%28Kubernetes%29#proxy-protocol-support
     config:
       proxyProtocol: true
       proxyPolicy: "use"
