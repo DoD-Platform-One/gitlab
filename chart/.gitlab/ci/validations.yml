@@ -58,3 +58,9 @@
   variables:
     KUBE_VERSION: "1.31.1"
     HELM_SETTINGS: !reference ["Validate 1.28.3", variables, HELM_SETTINGS]
+
+"Validate 1.32.2":
+  extends: .kubeconform
+  variables:
+    KUBE_VERSION: "1.31.2"
+    HELM_SETTINGS: !reference ["Validate 1.28.3", variables, HELM_SETTINGS]

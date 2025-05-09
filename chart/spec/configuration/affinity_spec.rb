@@ -3,29 +3,6 @@ require 'helm_template_helper'
 require 'yaml'
 require 'hash_deep_merge'
 
-SUPPORTED_NODE_AFFINITY_DEPLOYMENTS = [
-  'Deployment/test-registry',
-  'Deployment/test-toolbox',
-  'Deployment/test-kas',
-  'Deployment/test-gitlab-shell',
-  'Deployment/test-gitlab-exporter',
-  'Deployment/test-gitlab-shell',
-  'Deployment/test-toolbox',
-  'StatefulSet/test-gitaly'
-].freeze
-IGNORED_DEPLOYMENTS = [
-  'Deployment/test-certmanager',
-  'Deployment/test-certmanager-cainjector',
-  'Deployment/test-certmanager-webhook',
-  'Deployment/test-cert-manager',
-  'Deployment/test-cert-manager-cainjector',
-  'Deployment/test-cert-manager-webhook',
-  'Deployment/test-gitlab-runner',
-  'Deployment/test-minio',
-  'Deployment/test-nginx-ingress-controller',
-  'Deployment/test-prometheus-server'
-].freeze
-
 describe 'global affinity configuration' do
   let(:default_values) do
     HelmTemplate.defaults
@@ -48,11 +25,32 @@ describe 'global affinity configuration' do
   end
 
   let(:ignored_deployments) do
-    IGNORED_DEPLOYMENTS
+    [
+      'Deployment/test-certmanager',
+      'Deployment/test-certmanager-cainjector',
+      'Deployment/test-certmanager-webhook',
+      'Deployment/test-cert-manager',
+      'Deployment/test-cert-manager-cainjector',
+      'Deployment/test-cert-manager-webhook',
+      'Deployment/test-gitlab-runner',
+      'Deployment/test-minio',
+      'Deployment/test-nginx-ingress-controller',
+      'Deployment/test-prometheus-server',
+      'Deployment/test-gitlab-exporter'
+    ].freeze
   end
 
   let(:supported_node_affinity_deployments) do
-    SUPPORTED_NODE_AFFINITY_DEPLOYMENTS
+    [
+      'Deployment/test-registry',
+      'Deployment/test-toolbox',
+      'Deployment/test-kas',
+      'Deployment/test-gitlab-shell',
+      'Deployment/test-gitlab-exporter',
+      'Deployment/test-gitlab-shell',
+      'Deployment/test-toolbox',
+      'StatefulSet/test-gitaly'
+    ].freeze
   end
 
   context 'when left with default values' do
@@ -106,12 +104,33 @@ describe 'global affinity configuration' do
 end
 
 describe 'local affinity configuration' do
-  let(:supported_node_affinity_deployments) do
-    SUPPORTED_NODE_AFFINITY_DEPLOYMENTS
+  let(:ignored_deployments) do
+    [
+      'Deployment/test-certmanager',
+      'Deployment/test-certmanager-cainjector',
+      'Deployment/test-certmanager-webhook',
+      'Deployment/test-cert-manager',
+      'Deployment/test-cert-manager-cainjector',
+      'Deployment/test-cert-manager-webhook',
+      'Deployment/test-gitlab-runner',
+      'Deployment/test-minio',
+      'Deployment/test-nginx-ingress-controller',
+      'Deployment/test-prometheus-server',
+      'Deployment/test-gitlab-exporter'
+    ].freeze
   end
 
-  let(:ignored_deployments) do
-    IGNORED_DEPLOYMENTS
+  let(:supported_node_affinity_deployments) do
+    [
+      'Deployment/test-registry',
+      'Deployment/test-toolbox',
+      'Deployment/test-kas',
+      'Deployment/test-gitlab-shell',
+      'Deployment/test-gitlab-exporter',
+      'Deployment/test-gitlab-shell',
+      'Deployment/test-toolbox',
+      'StatefulSet/test-gitaly'
+    ].freeze
   end
 
   let(:values_with_override) do

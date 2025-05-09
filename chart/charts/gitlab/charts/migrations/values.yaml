@@ -107,3 +107,12 @@ serviceAccount:
   # automountServiceAccountToken: false
   ## Name to be used for serviceAccount, otherwise defaults to chart fullname
   # name:
+
+scriptTpl: |
+  set -e;
+  /scripts/wait-for-deps;
+  {{- if include "gitlab.geo.secondary" $ }}
+  /scripts/geo-db-migrate;
+  {{- else }}
+  /scripts/db-migrate;
+  {{- end}}

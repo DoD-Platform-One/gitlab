@@ -165,6 +165,7 @@ to the `helm install` command using the `--set` flags.
 | `workhorse.shutdownTimeout`                                   | `global.webservice.workerTimeout + 1` (seconds)                 | Time to wait for all Web requests to clear from Workhorse. Examples: `1min`, `65s`.                                                                                                                                                                                                                                                                        |
 | `workhorse.trustedCIDRsForPropagation`                        |                                                                 | A list of CIDR blocks that can be trusted for propagating a correlation ID. The `-propagateCorrelationID` option must also be used in `workhorse.extraArgs` for this to work. See the [Workhorse documentation](https://docs.gitlab.com/development/workhorse/configuration/#propagate-correlation-ids) for more details. |
 | `workhorse.trustedCIDRsForXForwardedFor`                      |                                                                 | A list of CIDR blocks that can be used to resolve the actual client IP via the `X-Forwarded-For` HTTP header. This is used with `workhorse.trustedCIDRsForPropagation`. See the [Workhorse documentation](https://docs.gitlab.com/development/workhorse/configuration/#trusted-proxies) for more details.       |
+| `workhorse.metadata.zipReaderLimitBytes`                      |                                                                 | The optional number of bytes to limit the zip reader to. Introduced in GitLab 16.9. See the [Workhorse documentation](https://docs.gitlab.com/development/workhorse/configuration/#metadata-options) for more details.       |
 | `workhorse.containerSecurityContext`                          |                                                                 | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started                                                                                                                                                                                    |
 | `workhorse.containerSecurityContext.runAsUser`                | `1000`                                                          | User ID under which the container should be started                                                                                                                                                                                                                                                                                                        |
 | `workhorse.containerSecurityContext.allowPrivilegeEscalation` | `false`                                                         | Controls whether a process of the container can gain more privileges than its parent process                                                                                                                                                                                                                                                               |
@@ -570,7 +571,7 @@ gitlab:
 `proxyBodySize` is used to set the NGINX proxy maximum body size. This is commonly
 required to allow a larger Docker image than the default.
 It is equivalent to the `nginx['client_max_body_size']` configuration in a
-[Linux package installation](https://docs.gitlab.com/omnibus/settings/nginx.html#request-entity-too-large).
+[Linux package installation](https://docs.gitlab.com/omnibus/settings/nginx/#use-an-existing-passenger-and-nginx-installation).
 As an alternative option,
 you can set the body size with either of the following two parameters too:
 
@@ -770,7 +771,7 @@ This examples adds the following network policy:
 _Note the example provided is only an example and may not be complete_
 
 _Note the Webservice requires outbound connectivity to the public internet
-for images on [external object storage](../../../advanced/external-object-storage)_  
+for images on [external object storage](../../../advanced/external-object-storage)_
 
 The example is based on the assumption that `kube-dns` was deployed
 to the namespace `kube-system`, `prometheus` was deployed to the namespace

@@ -160,6 +160,12 @@ the `helm install` command using the `--set` flags.
 | `gracefulRestartTimeout`                        | `25`                                | Gitaly shutdown grace period, how long to wait for in-flight requests to complete (seconds). Pod `terminationGracePeriodSeconds` is set to this value + 5 seconds.                                                                          |
 | `timeout.uploadPackNegotiation`                |                                      | See [Configure the negotiation timeouts](https://docs.gitlab.com/administration/settings/gitaly_timeouts/#configure-the-negotiation-timeouts). |
 | `timeout.uploadArchiveNegotiation`             |                                      | See [Configure the negotiation timeouts](https://docs.gitlab.com/administration/settings/gitaly_timeouts/#configure-the-negotiation-timeouts). |
+| `dailyMaintenance.disabled`                    |                                      | Allows to disable the daily background maintenance.                                                                                            |
+| `dailyMaintenance.duration`                    |                                      | Maximum duration of the daily background maintenance. For example "1h" or "45m".                                                               |
+| `dailyMaintenance.startHour`                   |                                      | Start minute of the daily background maintenance.                                                                                              |
+| `dailyMaintenance.startMinute`                 |                                      | Start minute of the daily background maintenance.                                                                                              |
+| `dailyMaintenance.storages`                    |                                      | Array of storage names to perform the daily background maintenance. For example [ "default" ].                                                 |
+| `bundleUri.goCloudUrl`                         |                                      | See the [Bundle URIs documentation](https://docs.gitlab.com/administration/gitaly/bundle_uris/).                                               |
 
 ## Chart configuration examples
 

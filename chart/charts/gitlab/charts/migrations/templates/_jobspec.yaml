@@ -76,12 +76,10 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ coalesce .Values.image.repository (include "image.repository" .) }}:{{ coalesce .Values.image.tag (include "gitlab.versionTag" . ) }}{{ include "gitlab.image.tagSuffix" . }}"
           args:
-            - /scripts/wait-for-deps
-          {{- if include "gitlab.geo.secondary" $ }}
-            - /scripts/geo-db-migrate
-          {{- else }}
-            - /scripts/db-migrate
-          {{- end}}
+            - /bin/bash
+            - -c
+            - |
+            {{- tpl .Values.scriptTpl $ | nindent 14 }}
           {{- include "gitlab.image.pullPolicy" $imageCfg | indent 10 }}
           {{- include "gitlab.containerSecurityContext" $ | indent 10 }}
           env:

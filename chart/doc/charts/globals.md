@@ -207,7 +207,7 @@ Various cloud providers' LoadBalancer implementations have an impact on configur
 Global setting that controls the automatic configuration of [cert-manager](https://cert-manager.io/docs/installation/helm/)
 for Ingress objects. If `true`, relies on `certmanager-issuer.email` being set.
 
-If `false` and `global.ingress.tls.secretName` is not set, this will activate automatic
+If `false` and `global.ingress.tls.secretName` is not set, and `global.ingress.tls.enabled` is true or unset, then this will activate automatic
 self-signed certificate generation, which creates a **wildcard** certificate for all
 Ingress objects.
 
@@ -234,9 +234,9 @@ on enabling this, see [release notes](../releases/7_0.md#bundled-certmanager).
 
 {{< alert type="note" >}}
 
-This value should only used for development purposes, or by explicit request of GitLab support. Please avoid using this value
-on production environments and set the version as described
-in [Deploy using Helm](../installation/deployment.md#deploy-using-helm)
+This value should only be used for development purposes, or by explicit request of GitLab support. Please avoid using this value in the configuration file
+on production environments. Set the version as described
+in [Deploy using Helm](../installation/deployment.md#deploy-using-helm) instead.
 
 {{< /alert >}}
 
@@ -1146,6 +1146,8 @@ global:
     gitlab_docs:
       enabled: false
       host: ""
+    oidcProvider:
+      openidIdTokenExpireInSeconds: 120
     smartcard:
       enabled: false
       CASecret:
@@ -1875,6 +1877,21 @@ global:
 |:----------- |:-------:|:------- |:----------- |
 | `enabled`         | Boolean | `false`  | Enable or Disable the `gitlab_docs` |
 | `host`            | String  |  ""        | docs host                       |
+
+### OpenID Connect token expiration
+
+Configure OpenID Connect (OIDC) provider token expiration.
+
+```yaml
+global:
+  appConfig:
+    oidcProvider:
+      openidIdTokenExpireInSeconds: 120
+```
+
+| Name                            | Type    | Default | Description                                         |
+|---------------------------------|---------|---------|-----------------------------------------------------|
+| `openidIdTokenExpireInSeconds`  | Integer | 120     | Duration (in seconds) before ID tokens expire.      |
 
 ### Smartcard Authentication settings
 

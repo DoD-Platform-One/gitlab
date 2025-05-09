@@ -42,9 +42,8 @@ AllCops:
 Rails:
   Enabled: false
 
-# TODO re-enable and start updating rspec tests
 RSpec:
-  Enabled: false
+  Enabled: true
 
 # We are not concerned with the security of using public in charts but we want to ensure
 GitlabSecurity/PublicSend:

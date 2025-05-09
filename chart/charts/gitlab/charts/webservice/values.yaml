@@ -399,6 +399,8 @@ global:
     gitlab_docs:
       enabled: false
       host: ""
+    oidcProvider:
+      openidIdTokenExpireInSeconds: 120
 
 redis:
   auth: {}

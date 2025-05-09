@@ -29,11 +29,11 @@ below, which makes use of [Cloudflare's CFSSL](https://github.com/cloudflare/cfs
 to produce a self-signed Certificate Authority, and a wildcard certificate that can be
 used for all services.
 
-This script will:
+This script:
 
-- Generate a CA key pair.
-- Sign a certificate meant to service all GitLab component service endpoints.
-- Create two Kubernetes Secret objects:
+- Generates a CA key pair.
+- Signs a certificate meant to service all GitLab component service endpoints.
+- Creates two Kubernetes Secret objects:
   - A secret of type `kuberetes.io/tls` which has the server certificate and key pair.
   - A secret of type `Opaque` which **only** contains the public certificate of the CA as `ca.crt`
     as need by NGINX Ingress.

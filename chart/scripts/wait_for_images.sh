@@ -44,14 +44,39 @@ components=(gitlab-rails-ee gitlab-webservice-ee gitlab-workhorse-ee gitlab-side
 # ${CNG_REGISTRY%%/*} will get registry domain from the entire path. It
 # essentially says "delete the longest substring starting with a forward slash
 # from the end of the CNG_REGISTRY variable"
-docker login -u ${CNG_REGISTRY_USERNAME:-gitlab-ci-token} -p ${CNG_REGISTRY_PASSWORD:-$CI_JOB_TOKEN} ${CNG_REGISTRY%%/*}
+skopeo login -u ${CNG_REGISTRY_USERNAME:-gitlab-ci-token} -p ${CNG_REGISTRY_PASSWORD:-$CI_JOB_TOKEN} ${CNG_REGISTRY%%/*}
 
 for component in "${components[@]}"; do
   image="${CNG_REGISTRY}/${component}:${wait_on_version}"
   echo -n "Waiting for ${image}: "
-  while ! $(DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect "${image}" > /dev/null 2>&1 ) ; do
+  while ! skopeo inspect --raw "docker://${image}" >skopeo_inspect.json 2>skopeo_inspect_error.log ; do
+    if grep -q '403 (Forbidden)' skopeo_inspect_error.log ; then
+      cat skopeo_inspect_error.log
+      exit 1
+    fi
+
     echo -n ".";
     sleep 1m;
   done
-  echo "Found"
+
+  platforms=""
+  mediatype=$(yq -P .mediaType skopeo_inspect.json)
+  case $mediatype in
+  application/vnd.docker.container.image.v1+json | application/vnd.docker.distribution.manifest.v2+json)
+    # this is a single manifest, without architecture info, fetch config
+    platforms="$(skopeo inspect --raw --config "docker://${image}" | yq -P .architecture )"
+    ;;
+  application/vnd.docker.distribution.manifest.list.v2+json | application/vnd.oci.image.index.v1+json)
+    # this is a manifest list, containing platform-specific manifests
+    platforms=$(yq -P '[.manifests[].platform.architecture] | join ", "' skopeo_inspect.json)
+    ;;
+  *)
+    echo "WARNING: Unknown mediaType: $mediatype for ${component}:${wait_on_version}"
+    platforms="unknown"
+    ;;
+  esac
+
+  mv skopeo_inspect.json "${component}:${wait_on_version}.json"
+
+  echo "Found (platform(s) available: $platforms)"
 done

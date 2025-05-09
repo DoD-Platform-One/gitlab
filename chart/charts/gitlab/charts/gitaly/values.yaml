@@ -51,7 +51,7 @@ init:
       drop: [ "ALL" ]
 
 # Gitaly built-in cgroups, spawns Git processes into a cgroup per repository, protecting the service/pod from OOM events
-# ref: https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#control-groups
+# ref: https://docs.gitlab.com/administration/gitaly/cgroups/
 cgroups:
   enabled: false
   initContainer:
@@ -226,14 +226,14 @@ affinity:
        values:
 
 ## Enable the Gitaly pack-objects cache
-## ref: https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#pack-objects-cache
+## ref: https://docs.gitlab.com/administration/gitaly/configure_gitaly/#pack-objects-cache
 packObjectsCache: {}
 #  enabled: false
 #  dir: "/home/git/repositories/+gitaly/PackObjectsCache"
 #  max_age: 5m
 
 ## Enable Gitaly to GPG sign all commits created by GitLab
-## ref: https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html#configure-commit-signing-for-gitlab-ui-commits
+## ref: https://docs.gitlab.com/administration/gitaly/configure_gitaly/#configure-commit-signing-for-gitlab-ui-commits
 gpgSigning: {}
   # enabled: false
   # secret: glGPG
@@ -249,3 +249,13 @@ gomemlimit:
 timeout: {}
   # uploadPackNegotiation: "10m"
   # uploadArchiveNegotiation: "1m"
+
+dailyMaintenance: {}
+  # disabled: true
+  # startHour:
+  # startMinute:
+  # duration:
+  # storages:
+
+bundleUri: {}
+  # goCloudUrl:

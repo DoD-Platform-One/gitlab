@@ -1,6 +1,6 @@
 # When adding a group as a code owner, make sure to invite the group to the
 # project here: https://gitlab.com/gitlab-org/charts/gitlab/-/project_members
-# As described in https://docs.gitlab.com/ee/user/project/code_owners.html
+# As described in https://docs.gitlab.com/user/project/codeowners/reference/#add-a-group-as-a-code-owner
 
 * @gitlab-org/maintainers/helm-charts-gitlab @gitlab-org/delivery @gitlab-org/tw-leadership
 

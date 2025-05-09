@@ -105,6 +105,23 @@ describe 'Self-Signed Certificates configuration' do
         expect(includes_selfsigned_job(t)).to be_falsy
       end
     end
+
+    context 'when TLS is disabled globaly' do
+      let(:values) do
+        YAML.safe_load(%(
+          global:
+            ingress:
+              tls:
+                enabled: false
+        )).deep_merge(values_certmanager_disabled)
+      end
+
+      it 'does not include the Self-Signed Certificates Job' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+        expect(includes_selfsigned_job(t)).to be_falsy
+      end
+    end
   end
 end
 

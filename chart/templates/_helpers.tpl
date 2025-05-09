@@ -130,7 +130,7 @@ use the name of the service the upstream chart creates
 */}}
 {{- define "gitlab.psql.host" -}}
 {{- $local := pluck "psql" $.Values | first -}}
-{{- coalesce (pluck "host" $local .Values.global.psql | first) (printf "%s.%s.svc" (include "postgresql.primary.fullname" .) $.Release.Namespace) -}}
+{{- coalesce (pluck "host" $local .Values.global.psql | first) (printf "%s.%s.svc" (include "postgresql.v1.primary.fullname" .) $.Release.Namespace) -}}
 {{- end -}}
 
 {{/*
@@ -146,7 +146,7 @@ use the name of the initdb scripts ConfigMap the upstream chart creates
 {{/*
 Overrides the full name of PostegreSQL in the upstream chart.
 */}}
-{{- define "postgresql.primary.fullname" -}}
+{{- define "postgresql.v1.primary.fullname" -}}
 {{- $local := pluck "psql" $.Values | first -}}
 {{- coalesce (pluck "serviceName" $local .Values.global.psql | first) (printf "%s-%s" $.Release.Name "postgresql") -}}
 {{- end -}}
@@ -156,7 +156,7 @@ Overrides the username of PostegreSQL in the upstream chart.
 
 Alias of gitlab.psql.username
 */}}
-{{- define "postgresql.username" -}}
+{{- define "postgresql.v1.username" -}}
 {{- template "gitlab.psql.username" . -}}
 {{- end -}}
 
@@ -165,7 +165,7 @@ Overrides the database name of PostegreSQL in the upstream chart.
 
 Alias of gitlab.psql.database
 */}}
-{{- define "postgresql.database" -}}
+{{- define "postgresql.v1.database" -}}
 {{- template "gitlab.psql.database" . -}}
 {{- end -}}
 
@@ -403,19 +403,30 @@ true
 
 {{/*
 Detect if `.Values.ingress.tls.enabled` is set
+Returns `global.ingress.tls.enabled` if it is a boolean.
+Return true in any other case.
+*/}}
+{{- define "gitlab.global.ingress.tls.enabled" -}}
+{{- $globalSet := and (hasKey .Values.global.ingress "tls") (and (hasKey .Values.global.ingress.tls "enabled") (kindIs "bool" .Values.global.ingress.tls.enabled)) -}}
+{{- if $globalSet }}
+{{-  .Values.global.ingress.tls.enabled }}
+{{- else }}
+{{-   true }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Detect if `.Values.ingress.tls.enabled` is set
 Returns `ingress.tls.enabled` if it is a boolean,
 Returns `global.ingress.tls.enabled` if it is a boolean, and `ingress.tls.enabled` is not.
 Return true in any other case.
 */}}
 {{- define "gitlab.ingress.tls.enabled" -}}
-{{- $globalSet := and (hasKey .Values.global.ingress "tls") (and (hasKey .Values.global.ingress.tls "enabled") (kindIs "bool" .Values.global.ingress.tls.enabled)) -}}
-{{- $localSet := and (hasKey .Values.ingress "tls") (and (hasKey .Values.ingress.tls "enabled") (kindIs "bool" .Values.ingress.tls.enabled)) -}}
+{{- $localSet := and (hasKey .Values "ingress") (hasKey .Values.ingress "tls") (and (hasKey .Values.ingress.tls "enabled") (kindIs "bool" .Values.ingress.tls.enabled)) -}}
 {{- if $localSet }}
 {{-   .Values.ingress.tls.enabled }}
-{{- else if $globalSet }}
-{{-  .Values.global.ingress.tls.enabled }}
 {{- else }}
-{{-   true }}
+{{-   include "gitlab.global.ingress.tls.enabled" . }}
 {{- end -}}
 {{- end -}}
 

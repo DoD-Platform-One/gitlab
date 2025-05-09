@@ -16,6 +16,16 @@ secret keys. [Workload Identity Federation for GKE](https://cloud.google.com/kub
 makes it possible to grant access to object storage to the Kubernetes cluster using short-lived
 tokens. If you have an existing GKE cluster, read the [Google documentation on how to update the node pool to use Workload Identity Federation](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#option_2_node_pool_modification).
 
+To use the workload identity, omit the `google_json_key_string`
+for the [`object-storage.yaml`](../../charts/globals.md#connection) secret:
+
+```yaml
+provider: Google
+google_project: your-project-id
+google_client_email: null  # Will use workload identity
+google_json_key_string: null  # Will use workload identity
+```
+
 ## Troubleshooting
 
 Ensure that the [Kubernetes ServiceAccount is linked to the IAM service account](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#kubernetes-sa-to-iam)

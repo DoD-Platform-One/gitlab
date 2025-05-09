@@ -1,5 +1,5 @@
 # This is an example values.yaml. It shows how to configure service desk email
-# See https://docs.gitlab.com/ee/user/project/service_desk.html#using-custom-email-address
+# See https://docs.gitlab.com/user/project/service_desk/configure/#custom-email-address
 global:
   appConfig:
     incomingEmail:
@@ -14,7 +14,7 @@ global:
       user: myusername
       password:
         # https://docs.gitlab.com/charts/installation/secrets.html#imap-password-for-incoming-emails
-        # https://docs.gitlab.com/ee/development/emails.html
+        # https://docs.gitlab.com/development/emails/
         secret: my-incoming-mail-secret
         key: secret
       mailbox: inbox
@@ -32,7 +32,7 @@ global:
       user: myusername
       password:
         # https://docs.gitlab.com/charts/installation/secrets.html#imap-password-for-service-desk-emails
-        # https://docs.gitlab.com/ee/development/emails.html
+        # https://docs.gitlab.com/development/emails/
         secret: service-desk-email-password
         key: secret
       mailbox: inbox

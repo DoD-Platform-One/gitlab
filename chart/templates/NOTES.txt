@@ -5,7 +5,7 @@
 {{ $NOTICE }}
 GitLab 18/GitLab chart 9.0 will release in May 2025.
 Please check the upcoming deprecations and removals at:
-* https://docs.gitlab.com/ee/update/deprecations.html#gitlab-180, and
+* https://docs.gitlab.com/update/deprecations/#gitlab-180, and
 * https://docs.gitlab.com/charts/releases/9_0.html.
 
 {{- /* If any development subchart is enabled, note it is not production ready */}}
@@ -63,6 +63,9 @@ The user should ensure all necessary secrets are created according to documentat
 {{- if or .Values.gitlab.webservice.enabled .Values.registry.enabled .Values.global.minio.enabled }}
 {{-   if not (or .Values.global.ingress.configureCertmanager (include "gitlab.ingress.tls.configured" .)) }}
 {{ $WARNING }}
+{{-     if (eq (include "gitlab.global.ingress.tls.enabled" .) "false") }}
+TLS is globaly disabled. 
+{{-     else }}
 Automatic TLS certificate generation with cert-manager is disabled.
 One or more of the components does not have a TLS certificate Secret configured.
 As a result, Self-signed certificates were generated for these components.
@@ -92,6 +95,7 @@ OR all of:
 {{- end }}
 {{- if $.Values.global.kas.enabled }}
 - gitlab.kas.ingress.tls.secretName
+{{- end }}
 {{- end }}
 
 {{- if (index .Values "gitlab-runner").install }}

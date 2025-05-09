@@ -59,6 +59,16 @@ Expectation: input contents has .sentinels or .cluster, which is a List of Dict
 {{- end }}
 {{- end -}}
 
+{{- define "gitlab.registry.redisLoadBalancingSecret.mount" -}}
+{{- if .Values.redis.loadBalancing.password.enabled }}
+- secret:
+    name: {{ default (include  "redis.secretName" . ) ( .Values.redis.loadBalancing.password.secret | quote) }}
+    items:
+      - key: {{ default (include "redis.secretPasswordKey" . ) ( .Values.redis.loadBalancing.password.key | quote) }}
+        path: registry/redis-loadBalancing-password
+{{- end }}
+{{- end -}}
+
 {{/*
 Return Redis configuration.
 */}}
@@ -168,6 +178,58 @@ redis:
       {{- end }}
       {{- if .Values.redis.rateLimiting.pool.idletimeout }}
       idletimeout: {{ .Values.redis.rateLimiting.pool.idletimeout }}
+      {{- end -}}
+    {{- end -}}
+  {{- end }}
+  {{- if .Values.redis.loadBalancing.enabled }}
+  loadbalancing:
+    enabled: {{ .Values.redis.loadBalancing.enabled | eq true }}
+    {{- if .Values.redis.loadBalancing.sentinels }}
+    addr: {{ include "registry.redis.host.addresses" .Values.redis.loadBalancing | quote }}
+    mainname: {{ .Values.redis.loadBalancing.host }}
+    {{- else if .Values.redis.loadBalancing.cluster }}
+    addr: {{ include "registry.redis.host.addresses" .Values.redis.loadBalancing | quote }}
+    {{- else if .Values.redis.loadBalancing.host  }}
+    addr: {{ printf "%s:%d" .Values.redis.loadBalancing.host (int .Values.redis.loadBalancing.port | default 6379) | quote }}
+    {{- else if .redisMergedConfig.sentinels }}
+    addr: {{ include "registry.redis.host.addresses" .redisMergedConfig | quote }}
+    mainname: {{ template "gitlab.redis.host" . }}
+    {{- else }}
+    addr: {{ printf "%s:%s" ( include "gitlab.redis.host" . ) ( include "gitlab.redis.port" . ) | quote }}
+    {{- end }}
+    {{- if .Values.redis.loadBalancing.username }}
+    username: {{ .Values.redis.loadBalancing.username }}
+    {{- end }}
+    {{- if .Values.redis.loadBalancing.password.enabled }}
+    password: "REDIS_LOAD_BALANCING_PASSWORD"
+    {{- end }}
+    {{- if hasKey .Values.redis.loadBalancing "db" }}
+    db: {{ .Values.redis.loadBalancing.db }}
+    {{- end }}
+    {{- if .Values.redis.loadBalancing.dialtimeout }}
+    dialtimeout: {{ .Values.redis.loadBalancing.dialtimeout }}
+    {{- end }}
+    {{- if .Values.redis.loadBalancing.readtimeout }}
+    readtimeout: {{ .Values.redis.loadBalancing.readtimeout }}
+    {{- end }}
+    {{- if .Values.redis.loadBalancing.writetimeout }}
+    writetimeout: {{ .Values.redis.loadBalancing.writetimeout }}
+    {{- end }}
+    {{- if .Values.redis.loadBalancing.tls }}
+    tls:
+      enabled: {{ .Values.redis.loadBalancing.tls.enabled | eq true }}
+      insecure: {{ .Values.redis.loadBalancing.tls.insecure | eq true }}
+    {{- end }}
+    {{- if .Values.redis.loadBalancing.pool }}
+    pool:
+      {{- if .Values.redis.loadBalancing.pool.size }}
+      size: {{ .Values.redis.loadBalancing.pool.size }}
+      {{- end }}
+      {{- if .Values.redis.loadBalancing.pool.maxlifetime }}
+      maxlifetime: {{ .Values.redis.loadBalancing.pool.maxlifetime }}
+      {{- end }}
+      {{- if .Values.redis.loadBalancing.pool.idletimeout }}
+      idletimeout: {{ .Values.redis.loadBalancing.pool.idletimeout }}
       {{- end -}}
     {{- end -}}
   {{- end }}

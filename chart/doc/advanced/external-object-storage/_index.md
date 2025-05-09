@@ -205,7 +205,7 @@ Examples for [AWS](https://fog.github.io/storage/#using-amazon-s3-and-fog) (any 
 ### S3 encryption
 
 GitLab supports [Amazon KMS](https://aws.amazon.com/kms/)
-to [encrypt data stored in S3 buckets](https://docs.gitlab.com/administration/object_storage.html#encrypted-s3-buckets).
+to [encrypt data stored in S3 buckets](https://docs.gitlab.com/administration/object_storage/#encrypted-s3-buckets).
 You can enable this in two ways:
 
 - In AWS, [configure the S3 bucket to use default encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html).
@@ -214,7 +214,7 @@ You can enable this in two ways:
 These two options are not mutually exclusive. You can set a default encryption
 policy, but also enable server-side encryption headers to override those defaults.
 
-See the [GitLab documentation on encrypted S3 buckets](https://docs.gitlab.com/administration/object_storage.html#encrypted-s3-buckets)
+See the [GitLab documentation on encrypted S3 buckets](https://docs.gitlab.com/administration/object_storage/#encrypted-s3-buckets)
 for more details.
 
 ### appConfig configuration

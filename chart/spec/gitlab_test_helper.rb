@@ -1,4 +1,5 @@
 require 'active_support'
+require 'active_support/core_ext/object/blank'
 require 'open-uri'
 require 'base64'
 require 'fugit'
@@ -193,7 +194,7 @@ module Gitlab
 
     # Enable legacy runner registration.
     # CI/QA testing needs to migrate to the new runner registration workflow by 18.0.
-    # https://docs.gitlab.com/ee/administration/settings/continuous_integration.html#enable-runner-registrations-tokens
+    # https://docs.gitlab.com/administration/settings/continuous_integration/#allow-runner-registration-tokens
     def enable_legacy_runner_registration
       cmd = full_command(
         "gitlab-rails runner \"" \

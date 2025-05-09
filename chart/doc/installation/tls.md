@@ -132,6 +132,12 @@ disabling it, as shown below.
 
 {{< /alert >}}
 
+{{< alert type="note" >}}
+
+If you're disabling TLS globally, with something like `--set global.ingres.tls.enabled=false`, the self-signed certificates won't be generated.
+
+{{< /alert >}}
+
 ```shell
 helm install gitlab gitlab/gitlab \
   --set certmanager.install=false \

@@ -424,6 +424,23 @@ There are a number of potential causes for this error:
   Memory cgroup out of memory: Killed process 3141592 (gitlab-shell)
   ```
 
+## Error: `kex_exchange_identification: Connection closed by remote host`
+
+The following error can appear in the GitLab Shell logs:
+
+```plaintext
+subcomponent":"ssh","time":"2025-02-21T19:07:52Z","message":"kex_exchange_identification: Connection closed by remote host\r"}
+```
+
+This error is caused by OpenSSH `sshd` being unable to handle readiness and liveness probes. To resolve this error, use
+[`gitlab-sshd`](../charts/gitlab/gitlab-shell/_index.md#configuration) instead by changing `sshDaemon: openssh` to `sshDaemon: gitlab-ssd` in configuration:
+
+```yaml
+gitlab:
+  gitlab-shell: 
+    sshDaemon: gitlab-sshd
+```
+
 ## YAML configuration: `mapping values are not allowed in this context`
 
 The following error message may appear when YAML configuration contains leading spaces:

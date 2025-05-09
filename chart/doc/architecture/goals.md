@@ -37,6 +37,8 @@ Since we might be also using Consul, this may be utilized instead for consistenc
 
 ## Helm charts
 
+<!-- vale gitlab_base.SubstitutionWarning = NO -->
+
 A Helm chart will be created to manage the deployment of each GitLab specific container/service. We will then also include bundled charts to make the overall deployment easier. This is particularly
 important for this effort, as there will be significantly more complexity in
 the Docker and Kubernetes layers than the all-in-one Omnibus-based solutions.

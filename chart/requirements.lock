@@ -19,13 +19,13 @@ dependencies:
   version: 15.18.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 12.5.2
+  version: 15.5.20
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
   version: 0.74.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 17.14.6
+  version: 18.19.4
 - name: nginx-ingress
   repository: ""
   version: '*.*.*'
@@ -34,7 +34,7 @@ dependencies:
   version: '*.*.*'
 - name: gitlab-zoekt
   repository: https://charts.gitlab.io/
-  version: 1.6.2
+  version: 1.8.1
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.5.14
@@ -44,5 +44,5 @@ dependencies:
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:174be7919d68ddc6e7bc6fdc84577805f3c4865a2ec54736da7cb099d2f93be6
-generated: "2025-03-24T09:24:13.654672112-05:00"
+digest: sha256:8336ae4ee24b0863512574d4ba62a1090ef6cc9abe5d81099b3ae3ba13cca5a9
+generated: "2025-05-07T12:52:08.097294-05:00"
