@@ -1409,8 +1409,7 @@ postgresql:
   image:
 #    registry: registry1.dso.mil
 #    repository: ironbank/bitnami/postgres
-#    tag: "16.3.0"
-    debug: true
+    tag: 16.3.0
   auth:
     username: gitlab
     ## These need to be set, for the sake of bitnami/postgresql upgrade patterns.

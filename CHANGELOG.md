@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.11.2-bb.2] (2025-05-14)
+
+### Changed
+
+- Revert conditional to gitlab.checkConfig.postgresql.deprecatedVersion and explicitly set postgresql.image.tag
+
 ## [8.11.2-bb.1] (2025-05-13)
 
 ### Changed
