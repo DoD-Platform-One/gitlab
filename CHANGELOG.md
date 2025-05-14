@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.11.2-bb.1] (2025-05-13)
+
+### Changed
+
+- added conditional to gitlab.checkConfig.postgresql.deprecatedVersion
+
 ## [8.11.2-bb.0] (2025-05-12)
 
 ### Changed
