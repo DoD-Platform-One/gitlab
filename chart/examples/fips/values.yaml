@@ -1,7 +1,6 @@
 # fips/values.yaml
 
-certmanager:
-  install: false
+installCertmanager: false
 
 postgresql:
   install: false

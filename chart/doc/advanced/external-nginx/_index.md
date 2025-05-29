@@ -91,6 +91,6 @@ however for the purposes of this discussion, here are the two values that would 
 the GitLab component charts to NOT look for the built in certificate resources:
 
 ```shell
---set certmanager.install=false
+--set installCertmanager=false
 --set global.ingress.configureCertmanager=false
 ```

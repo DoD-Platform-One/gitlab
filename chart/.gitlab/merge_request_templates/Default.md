@@ -28,4 +28,7 @@ For anything in this list which will not be completed, please provide a reason i
 - [ ] MR has a green pipeline on https://gitlab.com/gitlab-org/charts/gitlab.
 - [ ] Consider downstream impact to the Operator, as per [evaluating impact from changes to GitLab Chart](https://docs.gitlab.com/operator/developer/charts_dependency).
 
+/label ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::Self Managed" ~"workflow::in dev"
+/assign me
+
 <!-- template sourced from https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/.gitlab/merge_request_templates/Default.md -->

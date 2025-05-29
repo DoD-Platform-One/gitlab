@@ -181,9 +181,9 @@ function main {
   # CLEANUP
 
   # delete project
-  canwe "delete our new gitlab project [${project_name}] via cURL"
-  delete_project "${pat_value}" "${GITLAB_HOST}" "${project_id}"
-  success "deleted project."
+#  canwe "delete our new gitlab project [${project_name}] via cURL"
+#  delete_project "${pat_value}" "${GITLAB_HOST}" "${project_id}"
+#  success "deleted project."
 
   # deactivate PAT
   canwe "deactivate our new gitlab PAT [${pat_name}] via cURL"

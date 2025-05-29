@@ -5,15 +5,17 @@ export DEBIAN_FRONTEND=noninteractive
 HELM_VERSION=${HELM_VERSION:-3.10.3}
 GOMPLATE_VERSION=${GOMPLATE_VERSION:-v3.11.4}
 DOCKER_VERSION="24.0.9-1"
-DEBIAN_VERSION_NUMBER=${DEBIAN_VERISON_NUMBER:-12}
+DEBIAN_VERSION_NUMBER=${DEBIAN_VERSION_NUMBER:-12}
+# Strip "-slim" suffix from DEBIAN_VERSION if present
 DEBIAN_VERSION=${DEBIAN_VERSION:-"bookworm"}
-DOCKER_DEB_VERSION="5:${DOCKER_VERSION}~debian.${DEBIAN_VERSION_NUMBER}~${DEBIAN_VERSION}"
+DEBIAN_VERSION_CLEAN=${DEBIAN_VERSION%%-*}
+DOCKER_DEB_VERSION="5:${DOCKER_VERSION}~debian.${DEBIAN_VERSION_NUMBER}~${DEBIAN_VERSION_CLEAN}"
 KUBECTL_VERSION=${KUBECTL_VERSION:-1.28.3}
 TARGET_DIR=${TARGET_DIR:-"/usr/local/bin"}
 
 apt-get update -qq
 apt-get install -y --no-install-recommends \
-    curl ca-certificates
+    curl ca-certificates gnupg lsb-release
 
 DOCKER_INSTALLED_VERSION=""
 if command -v docker; then
@@ -24,18 +26,23 @@ fi
 
 if [ "${STRICT_VERSIONS:-false}" == "true" ] && [ "${DOCKER_INSTALLED_VERSION}" != "${DOCKER_VERSION}" ] || [ -z "${DOCKER_INSTALLED_VERSION}" ]; then
     echo "Installing Docker version ${DOCKER_DEB_VERSION}"
-    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    # Updated Docker repository setup for Debian Bookworm
+    mkdir -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+    
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     apt-get update -qq
-    apt install -y docker-ce-cli=${DOCKER_DEB_VERSION}
+    apt-get install -y --no-install-recommends docker-ce-cli=${DOCKER_DEB_VERSION}
 fi
 # Sometimes, `docker:dind` service is not ready yet, causing exit code of 1
 # We only care about the client, anyways!
 docker version --format 'Effective: docker-{{ .Client.Version }}' || true
 
 GOMPLATE_INSTALLED_VERSION=""
-if command -v gomaplate; then
+if command -v gomplate; then
     GOMPLATE_INSTALLED_VERSION=$(gomplate -v | cut -d' ' -f3)
     echo "gomplate-${GOMPLATE_INSTALLED_VERSION} already installed"
     echo "Expected version: ${GOMPLATE_VERSION}"
@@ -47,8 +54,7 @@ if [ "${STRICT_VERSIONS:-false}" == "true" ] && [ "${GOMPLATE_INSTALLED_VERSION}
     chmod +x gomplate
     mv gomplate ${TARGET_DIR}/gomplate
 fi
-echo -n "Effective: "; gomplate -v
-
+echo -n "Effective: "; gomplate -v 2>/dev/null || echo "gomplate installation failed"
 
 HELM_INSTALLED_VERSION=""
 if command -v helm; then
@@ -65,6 +71,7 @@ if [ "${STRICT_VERSIONS:-false}" == "true" ] && [ "${HELM_INSTALLED_VERSION}" !=
     mv linux-amd64/helm ${TARGET_DIR}/helm
     rm -rf linux-amd64/
 fi
+helm version --template 'Effective: {{.Version}}' 2>/dev/null || echo "helm installation failed"
 
 KUBECTL_INSTALLED_VERSION=""
 if command -v kubectl; then
@@ -80,3 +87,4 @@ if [ "${STRICT_VERSIONS:-false}" == "true" ] && [ "${KUBECTL_INSTALLED_VERSION}"
     chmod +x kubectl
     mv kubectl ${TARGET_DIR}/kubectl
 fi
+kubectl version --client=true -o yaml 2>/dev/null || echo "kubectl installation failed"

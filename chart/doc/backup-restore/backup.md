@@ -25,7 +25,6 @@ Follow these steps for backing up a GitLab Helm chart based installation.
 1. Ensure the toolbox pod is running, by executing the following command
 
    ```shell
-   ```shell
    kubectl get pods -lrelease=<release_name>,app=toolbox
    ```
 
@@ -134,6 +133,20 @@ See [issue 523](https://gitlab.com/gitlab-org/build/CNG/-/issues/523) to track
 the progress.
 
 {{< /alert >}}
+
+#### Data integrity protection with `awscli`
+
+Recent versions of the `awscli` tool included in the toolbox enforce data
+integrity protection by default. If your object storage service does not support
+this feature, then this requirement can be disabled with:
+
+```yaml
+extraEnv:
+  AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+```
+
+The configuration can be either the toolbox pod `extraEnv` or the global
+`extraEnv`.
 
 ### Server-side repository backups
 

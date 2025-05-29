@@ -32,8 +32,7 @@ gitlab:
     enabled: true
 gitlab-runner:
   install: false
-certmanager:
-  install: false
+installCertmanager: false
 nginx-ingress:
   controller:
     replicaCount: 1   # 2

@@ -22,8 +22,7 @@ global:
     # value from below (`gitlab.gitlab-shell.service.nodePort`)
     port: 32022
 # Don't use certmanager, we'll self-sign
-certmanager:
-  install: false
+installCertmanager: false
 # Use the `ingress` addon, not our Ingress (can't map 22/80/443)
 nginx-ingress:
   enabled: false

@@ -555,6 +555,60 @@ describe 'Gitaly configuration' do
     end
   end
 
+  context 'concurrency' do
+    let(:values) do
+      YAML.safe_load(%(
+        gitlab:
+          gitaly:
+            shell:
+              concurrency:
+              - rpc: MyTestRPC
+                foo: bar
+              - rpc: AnotherTestRPC
+                max_queue_size: 10
+      )).deep_merge(default_values)
+    end
+
+    let(:template) { HelmTemplate.new(values) }
+    let(:gitaly_config) { template.dig('ConfigMap/test-gitaly', 'data', 'config.toml.tpl') }
+    let(:toml) { render_toml(gitaly_config, 'HOSTNAME' => 'test-gitaly-default-0') }
+
+    context 'with arbitrary config keys' do
+      it 'renders the template' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      end
+
+      it 'sets the concurrency keys' do
+        expect(toml['concurrency']).to eq([{ 'foo' => 'bar', 'rpc' => 'MyTestRPC' },
+          { 'max_queue_size' => 10, 'rpc' => 'AnotherTestRPC' }])
+      end
+    end
+
+    context 'with mixed Camel and Snake case values' do
+      let(:values) do
+        YAML.safe_load(%(
+          gitlab:
+            gitaly:
+              shell:
+                concurrency:
+                - rpc: CamelCaseTest
+                  MaxQueueSize: 10
+                  rpc_timeout: 5s
+        )).deep_merge(default_values)
+      end
+
+      it 'renders the template' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      end
+
+      it 'renders the only snake case keys' do
+        expect(toml['concurrency']).to eq([{ 'max_queue_size' => 10,
+                                             'rpc_timeout' => '5s',
+                                             'rpc' => 'CamelCaseTest' }])
+      end
+    end
+  end
+
   context 'bundleUri' do
     let(:values) do
       YAML.safe_load(%(

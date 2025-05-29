@@ -8,7 +8,8 @@ class TestProjectHelper
     @test_project = "testproject-#{timestamp}"
     @test_project_group = "root"
     @test_issue = "test-#{timestamp}"
-    @test_image = "#{registry_url}/#{@test_project_group}/#{@test_project}/test:#{timestamp}"
+    @test_image_tag = timestamp
+    @test_image = "#{registry_url}/#{@test_project_group}/#{@test_project}/test:#{@test_image_tag}"
     @source_image = "gcr.io/distroless/static-debian12@sha256:f4a57e8ffd7ba407bdd0eb315bb54ef1f21a2100a7f032e9102e4da34fe7c196"
   end
 
@@ -25,7 +26,17 @@ class TestProjectHelper
   end
 
   def delete_test_project
+    # Existing images/tags block project deletion.
+    delete_test_container_tag
+
     ApiHelper.invoke_delete_request("projects/#{encoded_project_path}")
+  end
+
+  def delete_test_container_tag
+    repo_path = "projects/#{encoded_project_path}/registry/repositories"
+    repo_id = ApiHelper.invoke_get_request(repo_path).first['id']
+
+    ApiHelper.invoke_delete_request("#{repo_path}/#{repo_id}/tags/#{@test_image_tag}")
   end
 
   def commit_dockerfile

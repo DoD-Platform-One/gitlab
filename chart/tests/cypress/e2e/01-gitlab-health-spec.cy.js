@@ -54,6 +54,8 @@ describe('Gitlab Login as Root and Approve User', () => {
     cy.visit(`${Cypress.env('url')}/users/sign_in`)
     cy.performGitlabLogin('root', Cypress.env('adminpassword'))
 
+    cy.get('[data-testid="welcome-title-content"]').contains('Administrator!')
+
     // approve new user
     cy.visit(`${Cypress.env('url')}/admin/users?filter=blocked_pending_approval&search_query=${Cypress.env('gitlab_email')}&sort=name_asc`)
     //cy.get('div[data-testid="user-actions-dropdown-toggle"] > button').click()

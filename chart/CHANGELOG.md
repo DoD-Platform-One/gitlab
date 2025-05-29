@@ -2,6 +2,32 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 9.0.1 (2025-05-21)
+
+No changes.
+
+## 9.0.0 (2025-05-14)
+
+### Added (2 changes)
+
+- [Update default PostgreSQL to 16](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/0a53fcf9d5df62d0e66a7d865f537c7030762580) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4200))
+- [Adds support for custom annotations to minio PVC](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8ecb835111ca3bd001c6d59b437495c7e0f55fd0) by @xMAC94x ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4248))
+
+### Changed (8 changes)
+
+- [Add gitlabProductUsageData to migrations ConfigMap](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/6cc5d92a63f7541135997399703e9ce93d94de38) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4250))
+- [Update Helm release prometheus to v27.12.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/25a7a8db668353314274d97297f0993b10bc9aa9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4258))
+- [Deprecate `certmanager.install` in favor of `installCertmanager`](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7b11940876da4a0c8e61750f2c64ee9434878683) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4246))
+- [Update dependency container-registry to v4.21.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c3d7ac50368fb517595603a74d2e555cc4a95758) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4237))
+- [Update Helm release cert-manager to v1.12.17](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/bfe9a3f3b1a875a04007e24b7a002bdea27daf78) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4236))
+- [Make runner registration token an optional secret](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/9e6c320962cce30db4632d556fc6a4235242cb54) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4226))
+- [Update dependency container-registry to v4.20.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/45f145c121de11c384395e91d8c5892929f96b7d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4229))
+- [Update dependency gitlab-qa to v15.4.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7d571191bc1623d9f302d1a0482679b7cd6a0b38) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4228))
+
+### Removed (1 change)
+
+- [Remove nginx-ingress fallback](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4bb007f998c53680a70c640743e8fef978df22a9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4225))
+
 ## 8.11.2 (2025-05-07)
 
 No changes.
@@ -31,6 +57,14 @@ No changes.
 - [Ingress NGINX: bump image tag and digest to 1.11.5](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/9dbbd04c81b872531e08f270575c63799aa291b2) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4186))
 - [Update dependency container-registry to v4.19.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/1d640153b60b512fdb508e74d13b27db3150a8b3) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4184))
 - [Update dependency container-registry to v4.18.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/3f78ebdd958db5267027a6d806a8ecdb2b1a779d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4178))
+
+## 8.10.6 (2025-05-07)
+
+No changes.
+
+## 8.10.5 (2025-04-22)
+
+No changes.
 
 ## 8.10.4 (2025-04-09)
 
@@ -72,6 +106,14 @@ No changes.
 ### Other (1 change)
 
 - [Remove flag to toggle Redis in KAS chart](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/f75858ec82e9cada9c15720995a7a4182e6d76e7) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4165))
+
+## 8.9.8 (2025-05-07)
+
+No changes.
+
+## 8.9.7 (2025-04-22)
+
+No changes.
 
 ## 8.9.6 (2025-04-09)
 

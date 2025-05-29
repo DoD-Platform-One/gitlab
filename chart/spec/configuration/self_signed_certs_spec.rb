@@ -20,8 +20,7 @@ describe 'Self-Signed Certificates configuration' do
 
     let(:values_certmanager_disabled) do
       YAML.safe_load(%(
-        certmanager:
-          install: false
+        installCertmanager: false
         global:
           ingress:
             configureCertmanager: false

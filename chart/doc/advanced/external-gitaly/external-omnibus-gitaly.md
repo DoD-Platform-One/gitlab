@@ -71,7 +71,8 @@ gitlab_rails['auto_migrate'] = false
 # fail. This can be your 'front door' GitLab URL or an internal load
 # balancer.
 gitlab_rails['internal_api_url'] = 'GITLAB_URL'
-gitlab_shell['secret_token'] = 'SHELL_TOKEN'
+# Token used by Gitaly and GitLab shell to authenticate with GitLab
+gitaly['gitlab_secret'] = 'SHELL_TOKEN'
 
 gitaly['configuration'] = {
     # Make Gitaly accept connections on all network interfaces. You must use

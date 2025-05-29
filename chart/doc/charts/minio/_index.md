@@ -54,6 +54,7 @@ minio:
     volumeName:
     matchLabels:
     matchExpressions:
+    annotations:
   serviceType:  # Upstream
   servicePort:  # Upstream
   defaultBuckets:
@@ -83,6 +84,7 @@ to the `helm install` command using the `--set` flags:
 | `minioMc.tag`                                            | `latest`                       | MinIO mc image tag                                                                                                                |
 | `mountPath`                                              | `/export`                      | MinIO configuration file mount path                                                                                               |
 | `persistence.accessMode`                                 | `ReadWriteOnce`                | MinIO persistence access mode                                                                                                     |
+| `persistence.annotations`                                |                                | MinIO PersistentVolumeClaim annotations                                                                                           |
 | `persistence.enabled`                                    | `true`                         | MinIO enable persistence flag                                                                                                     |
 | `persistence.matchExpressions`                           |                                | MinIO label-expression matches to bind                                                                                            |
 | `persistence.matchLabels`                                |                                | MinIO label-value matches to bind                                                                                                 |

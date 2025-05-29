@@ -329,8 +329,7 @@ describe 'global configuration' do
   describe 'global.image.tagSuffix: add a string to the end of all image tags' do
     let(:shell_values) do
       YAML.safe_load(%(
-        certmanager:
-          install: false
+        installCertmanager: false
         global:
           image:
             tagSuffix: -fips
@@ -417,8 +416,7 @@ describe 'global configuration' do
   describe 'global.time_zone: set timezone for each GitLab pod' do
     let(:tz_values) do
       YAML.safe_load(%(
-        certmanager:
-          install: false
+        installCertmanager: false
         global:
           time_zone: "America/Chicago"
           praefect:
