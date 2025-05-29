@@ -162,7 +162,7 @@ It is not possible to use the `nginx-ingress` chart to provide ports `22`, `80`,
 `nginx-ingress.enabled=false,global.ingress.class="nginx"`.
 
 The `certmanager` chart can not be used with minikube. You must disable this by
-setting `certmanager.install=false,global.ingress.configureCertmanager=false`.
+setting `installCertmanager=false,global.ingress.configureCertmanager=false`.
 As a result, if you don't provide your own SSL certificates, self-signed
 certificates will be generated. The `gitlab-runner` chart will accept the self-signed
 certificates via `gitlab-runner.certsSecretName`. Assuming your release name is `gitlab`,

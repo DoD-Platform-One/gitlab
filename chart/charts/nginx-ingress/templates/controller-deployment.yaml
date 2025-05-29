@@ -81,10 +81,6 @@ spec:
           {{- with .Values.controller.image }}
           {{- $tag := .tag }}
           {{- $digest := .digest }}
-          {{- if and (not $.Values.rbac.create) (not .disableFallback) }}
-          {{- $tag = .fallbackTag }}
-          {{- $digest = .fallbackDigest }}
-          {{- end }}
           image: "{{- if .repository -}}{{ .repository }}{{ else }}{{ .registry }}/{{ .image }}{{- end -}}:{{ $tag }}{{ include "gitlab.image.tagSuffix" $ }}{{- if ($digest) -}} @{{$digest}} {{- end -}}"
           {{- end }}
           imagePullPolicy: {{ .Values.controller.image.pullPolicy }}

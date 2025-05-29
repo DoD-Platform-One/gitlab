@@ -10,8 +10,7 @@ global:
     port: 32022
 
 # Don't use certmanager, we'll self-sign or use http
-certmanager:
-  install: false
+installCertmanager: false
 
 # Specify NodePorts for NGINX and reduce replicas to 1
 nginx-ingress:

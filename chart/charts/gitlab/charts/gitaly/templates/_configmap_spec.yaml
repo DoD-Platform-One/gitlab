@@ -145,15 +145,10 @@ data:
     # directory containing custom hooks
     custom_hooks_dir = "/home/git/custom_hooks"
 
-    {{- if .Values.shell.concurrency }}
-    {{-   range .Values.shell.concurrency }}
-    {{-     if and .rpc .maxPerRepo }}
-    [[concurrency]]
-    rpc = "{{ .rpc }}"
-    max_per_repo = {{ .maxPerRepo }}
-    {{-     end }}
-    {{-   end }}
-    {{- end }}
+    {{ with .Values.shell.concurrency }}
+    {{-  include "gitlab.keysToSnakeCase" . }}
+    {% `{{ dict "concurrency" . | toJson }}` | data.JSON | data.ToTOML | strings.TrimSpace %}
+    {{ end }}
 
     {{- if .Values.packObjectsCache.enabled }}
     [pack_objects_cache]

@@ -69,20 +69,20 @@ This directory is gitignored.
 Configuration can be applied during runtime by setting environment variables.
 All options have defaults, so no options are required.
 
-|Variable|Description|Default|
-|-|-|-|
-|`CLUSTER_NAME`|Name of cluster|`ocp-$USER`|
-|`BASE_DOMAIN`|Root domain for cluster|`k8s-ft.win`|
-|`GCP_PROJECT_ID`|Google Cloud project ID|`cloud-native-182609`|
-|`GCP_REGION`|Google Cloud region for cluster|`us-central1`|
-|`GOOGLE_APPLICATION_CREDENTIALS`|Path to Google Cloud service account JSON file|`gcloud.json`|
-|`GOOGLE_CREDENTIALS`|Content of Google Cloud service account JSON file|Content of `$GOOGLE_APPLICATION_CREDENTIALS`|
-|`PULL_SECRET_FILE`|Path to Red Hat pull secret file|`pull_secret`|
-|`PULL_SECRET`|Content of Red Hat pull secret file|Content of `$PULL_SECRET_FILE`|
-|`SSH_PUBLIC_KEY_FILE`|Path to SSH public key file|`$HOME/.ssh/id_rsa.pub`|
-|`SSH_PUBLIC_KEY`|Content of SSH public key file|Content of `$SSH_PUBLIC_KEY_FILE`|
-|`LOG_LEVEL`|Verbosity of `openshift-install` output|`info`|
-|`INSTALL_DIR`|Directory for install assets, useful for launching multiple clusters|`install-$CLUSTER_NAME`|
+| Variable                         | Description                                                          | Default |
+|----------------------------------|----------------------------------------------------------------------|---------|
+| `CLUSTER_NAME`                   | Name of cluster                                                      | `ocp-$USER` |
+| `BASE_DOMAIN`                    | Root domain for cluster                                              | `k8s-ft.win` |
+| `GCP_PROJECT_ID`                 | Google Cloud project ID                                              | `cloud-native-182609` |
+| `GCP_REGION`                     | Google Cloud region for cluster                                      | `us-central1` |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to Google Cloud service account JSON file                       | `gcloud.json` |
+| `GOOGLE_CREDENTIALS`             | Content of Google Cloud service account JSON file                    | Content of `$GOOGLE_APPLICATION_CREDENTIALS` |
+| `PULL_SECRET_FILE`               | Path to Red Hat pull secret file                                     | `pull_secret` |
+| `PULL_SECRET`                    | Content of Red Hat pull secret file                                  | Content of `$PULL_SECRET_FILE` |
+| `SSH_PUBLIC_KEY_FILE`            | Path to SSH public key file                                          | `$HOME/.ssh/id_rsa.pub` |
+| `SSH_PUBLIC_KEY`                 | Content of SSH public key file                                       | Content of `$SSH_PUBLIC_KEY_FILE` |
+| `LOG_LEVEL`                      | Verbosity of `openshift-install` output                              | `info`  |
+| `INSTALL_DIR`                    | Directory for install assets, useful for launching multiple clusters | `install-$CLUSTER_NAME` |
 
 {{< alert type="note" >}}
 
@@ -111,12 +111,12 @@ To destroy the OpenShift cluster:
 Configuration can be applied during runtime by setting the following environment
 variables. All options have defaults, no options are required.
 
-|Variable|Description|Default|
-|-|-|-|
-|`GOOGLE_APPLICATION_CREDENTIALS`|Path to Google Cloud service account JSON file|`gcloud.json`|
-|`GOOGLE_CREDENTIALS`|Content of Google Cloud service account JSON file|Content of `$GOOGLE_APPLICATION_CREDENTIALS`|
-|`LOG_LEVEL`|Verbosity of `openshift-install` output|`info`|
-|`INSTALL_DIR`|Directory for install assets, useful for launching multiple clusters|`install-$CLUSTER_NAME`|
+| Variable                         | Description                                                          | Default |
+|----------------------------------|----------------------------------------------------------------------|---------|
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to Google Cloud service account JSON file                       | `gcloud.json` |
+| `GOOGLE_CREDENTIALS`             | Content of Google Cloud service account JSON file                    | Content of `$GOOGLE_APPLICATION_CREDENTIALS` |
+| `LOG_LEVEL`                      | Verbosity of `openshift-install` output                              | `info`  |
+| `INSTALL_DIR`                    | Directory for install assets, useful for launching multiple clusters | `install-$CLUSTER_NAME` |
 
 ## Next steps
 

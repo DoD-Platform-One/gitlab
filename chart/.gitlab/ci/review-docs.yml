@@ -21,7 +21,7 @@
   rules:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /FEATURE_BRANCH_PIPELINE$/'
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
 
 # Trigger a docs build in docs-gitlab-com project
 # Useful to preview the docs changes live

@@ -17,7 +17,7 @@ rubocop:
   rules:
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
 
 # Perform content linting on documentation Markdown files
 check_docs_content:
@@ -31,9 +31,23 @@ check_docs_content:
     - vale --minAlertLevel error doc
   rules:
     - !reference [.rule:skip_if_dev]
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
+# Perform content linting on i18n documentation Markdown files
+check_docs_i18n_content:
+  image: ${DOCS_LINT_IMAGE}
+  stage: prepare
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
+    # Lint prose
+    - vale --minAlertLevel error --filter='.Name matches "gitlab_docs"' doc-locale
+  rules:
+    - !reference [.rule:skip_if_dev]
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE_LOCALIZATION"'
 
 # Perform linting on documentation Markdown files
 check_docs_markdown:
@@ -47,9 +61,25 @@ check_docs_markdown:
     - markdownlint-cli2 'doc/**/*.md'
   rules:
     - !reference [.rule:skip_if_dev]
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+
+# Perform linting on i18n documentation Markdown files
+check_docs_i18n_markdown:
+  image: ${DOCS_LINT_IMAGE}
+  stage: prepare
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
+    # Do not lint link-fragments, which are currently invalid in translations
+    - 'echo "  link-fragments: false" >> .markdownlint-cli2.yaml'
+    # Lint Markdown
+    - markdownlint-cli2 'doc-locale/**/*.md'
+  rules:
+    - !reference [.rule:skip_if_dev]
+    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE_LOCALIZATION"'
 
 # Perform link checking on documentation Markdown files
 check_docs_links:
@@ -63,18 +93,32 @@ check_docs_links:
     - lychee --offline --include-fragments doc
   rules:
     - !reference [.rule:skip_if_dev]
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
 docs-test hugo:
   image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/docs-gitlab-com-builder:hugo-0.145.0
   stage: prepare
+  variables:
+    DOCS_BRANCH: "main"
   before_script:
-    - git clone --depth 1 https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com.git
+    # Check if the job is running against a stable branch. If running against a stable branch, check out the
+    # corresponding version of the GitLab Docs project instead of using the 'main' branch.
+    - |
+      if [[ $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ [0-9]+-[0-9]+-stable ]]; then
+        MAJOR=$(echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | cut -d '-' -f 1)
+        MINOR=$(echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | cut -d '-' -f 2)
+        # Convert GitLab Chart style (8-9-stable-ee) to Docs style (17.9)
+        MAJOR=$((MAJOR+9))
+        DOCS_BRANCH=$MAJOR.$MINOR
+        echo "Using docs-gitlab-com branch $DOCS_BRANCH instead of main"
+      fi
+    # Clone the GitLab Docs project
+    - git clone --depth 1 --filter=tree:0 --branch $DOCS_BRANCH https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com.git
     - cd docs-gitlab-com
     - make add-latest-icons
-    # Copy the current project's docs to the appropriate location in the docs website
+    # Copy the current project's documentation to the location required by GitLab Docs
     - mkdir content/charts
     - cp -r ../doc/* content/charts/
   script:
@@ -85,7 +129,7 @@ docs-test hugo:
     - make check-index-pages SEARCH_DIR="../doc"
   rules:
     - !reference [.rule:skip_if_fork]
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
@@ -101,7 +145,7 @@ kube-score:
     - helm template . --set certmanager-issuer.email=gitlab@example.com  > /tmp/test.yaml
     - /kube-score score --ignore-container-cpu-limit --ignore-container-memory-limit --ignore-test "container-image-pull-policy,container-security-context-user-group-id,container-ephemeral-storage-request-and-limit,container-security-context-readonlyrootfilesystem,pod-probes,pod-networkpolicy,container-resources,deployment-has-poddisruptionbudget,deployment-replicas,deployment-has-host-podantiaffinity" /tmp/test.yaml
   rules:
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 

@@ -81,35 +81,35 @@ global:
     ssh: gitlab.example.com
 ```
 
-| Name                      | Type      | Default        | Description                                                                                                                                                                                                                                                                                                               |
-| :------------------------ | :-------: | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `domain`                  | String    | `example.com`  | The base domain. GitLab and Registry will be exposed on the subdomain of this setting. This defaults to `example.com`, but is not used for hosts that have their `name` property configured. See the `gitlab.name`, `minio.name`, and `registry.name` sections below.                                                     |
-| `externalIP`              |           | `nil`          | Set the external IP address that will be claimed from the provider. This will be templated into the [NGINX chart](nginx/_index.md#configuring-nginx), in place of the more complex `nginx.service.loadBalancerIP`.                                                                                                         |
-| `externalGeoIP`           |           | `nil`          | Same as `externalIP` but for the [NGINX Geo chart](nginx/_index.md#gitlab-geo). Needed to configure a static IP for [GitLab Geo](../advanced/geo/_index.md) sites using a unified URL. Must be different from `externalIP`.                                                                                                 |
-| `https`                   | Boolean   | `true`         | If set to true, you will need to ensure the NGINX chart has access to the certificates. In cases where you have TLS-termination in front of your Ingresses, you probably want to look at [`global.ingress.tls.enabled`](#configure-ingress-settings). Set to false for external URLs to use `http://` instead of `https`. |
-| `hostSuffix`              | String    |                | [See Below](#hostsuffix).                                                                                                                                                                                                                                                                                                 |
-| `gitlab.https`            | Boolean   | `false`        | If `hosts.https` or `gitlab.https` are `true`, the GitLab external URL will use `https://` instead of `http://`.                                                                                                                                                                                                          |
-| `gitlab.name`             | String    |                | The hostname for GitLab. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.                                                                                                                                                                                   |
-| `gitlab.hostnameOverride` | String    |                | Override the hostname used in Ingress configuration of the Webservice. Useful if GitLab has to be reachable behind a WAF that rewrites the Hostname to an internal hostname (e.g.: `gitlab.example.com` --> `gitlab.cluster.local`).                                                                                      |
-| `gitlab.serviceName`      | String    | `webservice`   | The name of the `service` which is operating the GitLab server. The chart will template the hostname of the service (and current `.Release.Name`) to create the proper internal serviceName.                                                                                                                              |
-| `gitlab.servicePort`      | String    | `workhorse`    | The named port of the `service` where the GitLab server can be reached.                                                                                                                                                                                                                                                   |
-| `keda.enabled`            | Boolean   | `false`        | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers`                                                                                                                                                                                                                                        |
-| `minio.https`             | Boolean   | `false`        | If `hosts.https` or `minio.https` are `true`, the MinIO external URL will use `https://` instead of `http://`.                                                                                                                                                                                                            |
-| `minio.name`              | String    | `minio`        | The hostname for MinIO. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.                                                                                                                                                                                    |
-| `minio.serviceName`       | String    | `minio`        | The name of the `service` which is operating the MinIO server. The chart will template the hostname of the service (and current `.Release.Name`) to create the proper internal serviceName.                                                                                                                               |
-| `minio.servicePort`       | String    | `minio`        | The named port of the `service` where the MinIO server can be reached.                                                                                                                                                                                                                                                    |
-| `registry.https`          | Boolean   | `false`        | If `hosts.https` or `registry.https` are `true`, the Registry external URL will use `https://` instead of `http://`.                                                                                                                                                                                                      |
-| `registry.name`           | String    | `registry`     | The hostname for Registry. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.                                                                                                                                                                                 |
-| `registry.serviceName`    | String    | `registry`     | The name of the `service` which is operating the Registry server. The chart will template the hostname of the service (and current `.Release.Name`) to create the proper internal serviceName.                                                                                                                            |
-| `registry.servicePort`    | String    | `registry`     | The named port of the `service` where the Registry server can be reached.                                                                                                                                                                                                                                                 |
-| `smartcard.name`          | String    | `smartcard`    | The hostname for smartcard authentication. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.                                                                                                                                                                 |
-| `kas.name`                | String    | `kas`          | The hostname for the KAS. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.                                                                                                                                                                                  |
-| `kas.https`               | Boolean   | `false`        | If `hosts.https` or `kas.https` are `true`, the KAS external URL will use `wss://` instead of `ws://`.                                                                                                                                                                                                                    |
-| `pages.name`              | String    | `pages`        | The hostname for GitLab Pages. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings.                                                                                                                                                                             |
-| `pages.https`             | String    |                | If `global.pages.https` or `global.hosts.pages.https` or `global.hosts.https` are `true`, then URL for GitLab Pages in the Project settings UI will use `https://` instead of `http://`.                                                                                                                                  |
-| `ssh`                     | String    |                | The hostname for cloning repositories over SSH. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
+| Name                      |  Type   | Default       | Description |
+|:--------------------------|:-------:|:--------------|:------------|
+| `domain`                  | String  | `example.com` | The base domain. GitLab and Registry will be exposed on the subdomain of this setting. This defaults to `example.com`, but is not used for hosts that have their `name` property configured. See the `gitlab.name`, `minio.name`, and `registry.name` sections below. |
+| `externalIP`              |         | `nil`         | Set the external IP address that will be claimed from the provider. This will be templated into the [NGINX chart](nginx/_index.md#configuring-nginx), in place of the more complex `nginx.service.loadBalancerIP`. |
+| `externalGeoIP`           |         | `nil`         | Same as `externalIP` but for the [NGINX Geo chart](nginx/_index.md#gitlab-geo). Needed to configure a static IP for [GitLab Geo](../advanced/geo/_index.md) sites using a unified URL. Must be different from `externalIP`. |
+| `https`                   | Boolean | `true`        | If set to true, you will need to ensure the NGINX chart has access to the certificates. In cases where you have TLS-termination in front of your Ingresses, you probably want to look at [`global.ingress.tls.enabled`](#configure-ingress-settings). Set to false for external URLs to use `http://` instead of `https`. |
+| `hostSuffix`              | String  |               | [See Below](#hostsuffix). |
+| `gitlab.https`            | Boolean | `false`       | If `hosts.https` or `gitlab.https` are `true`, the GitLab external URL will use `https://` instead of `http://`. |
+| `gitlab.name`             | String  |               | The hostname for GitLab. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
+| `gitlab.hostnameOverride` | String  |               | Override the hostname used in Ingress configuration of the Webservice. Useful if GitLab has to be reachable behind a WAF that rewrites the Hostname to an internal hostname (e.g.: `gitlab.example.com` --> `gitlab.cluster.local`). |
+| `gitlab.serviceName`      | String  | `webservice`  | The name of the `service` which is operating the GitLab server. The chart will template the hostname of the service (and current `.Release.Name`) to create the proper internal `serviceName`. |
+| `gitlab.servicePort`      | String  | `workhorse`   | The named port of the `service` where the GitLab server can be reached. |
+| `keda.enabled`            | Boolean | `false`       | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers` |
+| `minio.https`             | Boolean | `false`       | If `hosts.https` or `minio.https` are `true`, the MinIO external URL will use `https://` instead of `http://`. |
+| `minio.name`              | String  | `minio`       | The hostname for MinIO. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
+| `minio.serviceName`       | String  | `minio`       | The name of the `service` which is operating the MinIO server. The chart will template the hostname of the service (and current `.Release.Name`) to create the proper internal `serviceName`. |
+| `minio.servicePort`       | String  | `minio`       | The named port of the `service` where the MinIO server can be reached. |
+| `registry.https`          | Boolean | `false`       | If `hosts.https` or `registry.https` are `true`, the Registry external URL will use `https://` instead of `http://`. |
+| `registry.name`           | String  | `registry`    | The hostname for Registry. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
+| `registry.serviceName`    | String  | `registry`    | The name of the `service` which is operating the Registry server. The chart will template the hostname of the service (and current `.Release.Name`) to create the proper internal `serviceName`. |
+| `registry.servicePort`    | String  | `registry`    | The named port of the `service` where the Registry server can be reached. |
+| `smartcard.name`          | String  | `smartcard`   | The hostname for smartcard authentication. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
+| `kas.name`                | String  | `kas`         | The hostname for the KAS. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
+| `kas.https`               | Boolean | `false`       | If `hosts.https` or `kas.https` are `true`, the KAS external URL will use `wss://` instead of `ws://`. |
+| `pages.name`              | String  | `pages`       | The hostname for GitLab Pages. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
+| `pages.https`             | String  |               | If `global.pages.https` or `global.hosts.pages.https` or `global.hosts.https` are `true`, then URL for GitLab Pages in the Project settings UI will use `https://` instead of `http://`. |
+| `ssh`                     | String  |               | The hostname for cloning repositories over SSH. If set, this hostname is used, regardless of the `global.hosts.domain` and `global.hosts.hostSuffix` settings. |
 
-### hostSuffix
+### `hostSuffix`
 
 The `hostSuffix` is appended to the subdomain when assembling a hostname using the
 base `domain`, but is not used for hosts that have their own `name` set.
@@ -131,27 +131,27 @@ The GitLab global host settings for HPA are located under the `global.hpa` key:
 
 | Name         | Type      | Default | Description                                                           |
 | :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
-| `apiVersion` | String    |         | API version to use in the HorizontalPodAutoscaler object definitions. |
+| `apiVersion` | String    |         | API version to use in the `HorizontalPodAutoscaler` object definitions. |
 
-## Configure PodDisruptionBudget settings
+## Configure `PodDisruptionBudget` settings
 
 The GitLab global host settings for PDB are located under the `global.pdb` key:
 
 | Name         | Type      | Default | Description                                                           |
 | :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
-| `apiVersion` | String    |         | API version to use in the PodDisruptionBudget object definitions. |
+| `apiVersion` | String    |         | API version to use in the `PodDisruptionBudget` object definitions. |
 
-## Configure CronJob settings
+## Configure `CronJob` settings
 
-The GitLab global host settings for CronJobs are located under the `global.batch.cronJob` key:
+The GitLab global host settings for `CronJobs` are located under the `global.batch.cronJob` key:
 
 | Name         | Type      | Default | Description                                                           |
 | :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
-| `apiVersion` | String    |         | API version to use in the CronJob object definitions. |
+| `apiVersion` | String    |         | API version to use in the `CronJob` object definitions. |
 
 ## Configure Monitoring settings
 
-The GitLab global settings for ServiceMonitors and PodMonitors are located under the `global.monitoring` key:
+The GitLab global settings for `ServiceMonitors` and `PodMonitors` are located under the `global.monitoring` key:
 
 | Name         | Type      | Default | Description                                                           |
 | :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
@@ -161,8 +161,8 @@ The GitLab global settings for ServiceMonitors and PodMonitors are located under
 
 The GitLab global host settings for Ingress are located under the `global.ingress` key:
 
-| Name                           | Type    | Default        | Description |
-|:------------------------------ |:-------:|:-------        |:----------- |
+| Name                           |  Type   | Default        | Description |
+|:-------------------------------|:-------:|:---------------|:------------|
 | `apiVersion`                   | String  |                | API version to use in the Ingress object definitions. |
 | `annotations.*annotation-key*` | String  |                | Where `annotation-key` is a string that will be used with the value as an annotation on every Ingress. For Example: `global.ingress.annotations."nginx\.ingress\.kubernetes\.io/enable-access-log"=true`. No global annotations are provided by default. |
 | `configureCertmanager`         | Boolean | `true`         | [See below](#globalingressconfigurecertmanager). |
@@ -173,7 +173,7 @@ The GitLab global host settings for Ingress are located under the `global.ingres
 | `tls.secretName`               | String  |                | The name of the [Kubernetes TLS Secret](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) that contains a **wildcard** certificate and key for the domain used in `global.hosts.domain`. |
 | `path`                         | String  | `/`            | Default for `path` entries in [Ingress objects](https://kubernetes.io/docs/concepts/services-networking/ingress/) |
 | `pathType`                     | String  | `Prefix`       | A [Path Type](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types) allows you to specify how a path should be matched. Our current default is `Prefix` but you can use `ImplementationSpecific` or `Exact` depending on your use case. |
-| `provider`                     | String  | `nginx`       | Global setting that defines the Ingress provider to use. `nginx` is used as the default provider.  |
+| `provider`                     | String  | `nginx`        | Global setting that defines the Ingress provider to use. `nginx` is used as the default provider. |
 
 Sample [configurations for various cloud providers](https://gitlab.com/gitlab-org/charts/gitlab/-/tree/master/examples)
 can be found in the examples folder.
@@ -197,10 +197,10 @@ The only exception is when populating the [`gitlab/webservice` deployments setti
 Various cloud providers' LoadBalancer implementations have an impact on configuration of the Ingress resources and NGINX controller deployed as part of this chart. The next table provides examples.
 
 | Provider | Layer | Example snippet |
-| :-- | --: | :-- |
-| AWS | 4 | [`aws/elb-layer4-loadbalancer`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/elb-layer4-loadbalancer.yaml) |
-| AWS | 7 | [`aws/elb-layer7-loadbalancer`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/elb-layer7-loadbalancer.yaml) |
-| AWS | 7 | [`aws/alb-full`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/alb-full.yaml) |
+|:---------|------:|:----------------|
+| AWS      |     4 | [`aws/elb-layer4-loadbalancer`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/elb-layer4-loadbalancer.yaml) |
+| AWS      |     7 | [`aws/elb-layer7-loadbalancer`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/elb-layer7-loadbalancer.yaml) |
+| AWS      |     7 | [`aws/alb-full`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/alb-full.yaml) |
 
 ### `global.ingress.configureCertmanager`
 
@@ -254,7 +254,7 @@ be separately updated to versions compatible with the GitLab version.
 ## Adding suffix to all image tags
 
 If you wish to add a suffix to the name of all images used in the Helm chart, you can use the `global.image.tagSuffix` key.
-An example of this use case might be if you wish to use fips compliant container images from GitLab, which are all built
+An example of this use case might be if you wish to use FIPS-compliant container images from GitLab, which are all built
 with the `-fips` extension to the image tag.
 
 ```shell
@@ -309,27 +309,27 @@ global:
       # ...
 ```
 
-| Name                 | Type      | Default                | Description                                                                                                                                                                                    |
-| :-----------------   | :-------: | :--------------------- | :-----------                                                                                                                                                                                   |
-| `host`               | String    |                        | The hostname of the PostgreSQL server with the database to use. This can be omitted if using PostgreSQL deployed by this chart.                                                                |
-| `serviceName`        | String    |                        | The name of the `service` which is operating the PostgreSQL database. If this is present, and `host` is not, the chart will template the hostname of the service in place of the `host` value. |
-| `database`           | String    | `gitlabhq_production`  | The name of the database to use on the PostgreSQL server.                                                                                                                                      |
-| `password.useSecret` | Boolean   | `true`                 | Controls whether the password for PostgreSQL is read from a secret or file.                                                                                                                    |
-| `password.file`      | String    |                        | Defines the path to the file that contains the password for PostgreSQL. Ignored if `password.useSecret` is true                                                                                |
-| `password.key`       | String    |                        | The `password.key` attribute for PostgreSQL defines the name of the key in the secret (below) that contains the password. Ignored if `password.useSecret` is false.                            |
-| `password.secret`    | String    |                        | The `password.secret` attribute for PostgreSQL defines the name of the Kubernetes `Secret` to pull from. Ignored if `password.useSecret` is false.                                             |
-| `port`               | Integer   | `5432`                 | The port on which to connect to the PostgreSQL server.                                                                                                                                         |
-| `username`           | String    | `gitlab`               | The username with which to authenticate to the database.                                                                                                                                       |
-| `preparedStatements` | Boolean   | `false`                | If prepared statements should be used when communicating with the PostgreSQL server.                                                                                                           |
-| `databaseTasks`      | Boolean   | `true`                 | If GitLab should perform database tasks for a given database. Automatically disabled when sharing host/port/database match `main`.                                                   |
-| `connectTimeout`     | Integer   |                        | The number of seconds to wait for a database connection.                                                                                                                                       |
-| `keepalives`         | Integer   |                        | Controls whether client-side TCP keepalives are used (1, meaning on, 0, meaning off).                                                                                                          |
-| `keepalivesIdle`     | Integer   |                        | The number of seconds of inactivity after which TCP should send a keepalive message to the server. A value of zero uses the system default.                                                    |
-| `keepalivesInterval` | Integer   |                        | The number of seconds after which a TCP keepalive message that is not acknowledged by the server should be retransmitted. A value of zero uses the system default.                             |
-| `keepalivesCount`    | Integer   |                        | The number of TCP keepalives that can be lost before the client's connection to the server is considered dead. A value of zero uses the system default.                                        |
-| `tcpUserTimeout`     | Integer   |                        | The number of milliseconds that transmitted data may remain unacknowledged before a connection is forcibly closed. A value of zero uses the system default.                                    |
-| `applicationName`    | String    |                        | The name of the application connecting to the database. Set to a blank string (`""`) to disable. By default, this will be set to the name of the running process (e.g. `sidekiq`, `puma`).  |
-| `ci.enabled`         | Boolean   | `true`                 | Enables [two database connections](#configure-multiple-database-connections).                                                                                                                  |
+| Name                 |  Type   | Default               | Description |
+|:---------------------|:-------:|:----------------------|:------------|
+| `host`               | String  |                       | The hostname of the PostgreSQL server with the database to use. This can be omitted if using PostgreSQL deployed by this chart. |
+| `serviceName`        | String  |                       | The name of the `service` which is operating the PostgreSQL database. If this is present, and `host` is not, the chart will template the hostname of the service in place of the `host` value. |
+| `database`           | String  | `gitlabhq_production` | The name of the database to use on the PostgreSQL server. |
+| `password.useSecret` | Boolean | `true`                | Controls whether the password for PostgreSQL is read from a secret or file. |
+| `password.file`      | String  |                       | Defines the path to the file that contains the password for PostgreSQL. Ignored if `password.useSecret` is true |
+| `password.key`       | String  |                       | The `password.key` attribute for PostgreSQL defines the name of the key in the secret (below) that contains the password. Ignored if `password.useSecret` is false. |
+| `password.secret`    | String  |                       | The `password.secret` attribute for PostgreSQL defines the name of the Kubernetes `Secret` to pull from. Ignored if `password.useSecret` is false. |
+| `port`               | Integer | `5432`                | The port on which to connect to the PostgreSQL server. |
+| `username`           | String  | `gitlab`              | The username with which to authenticate to the database. |
+| `preparedStatements` | Boolean | `false`               | If prepared statements should be used when communicating with the PostgreSQL server. |
+| `databaseTasks`      | Boolean | `true`                | If GitLab should perform database tasks for a given database. Automatically disabled when sharing host/port/database match `main`. |
+| `connectTimeout`     | Integer |                       | The number of seconds to wait for a database connection. |
+| `keepalives`         | Integer |                       | Controls whether client-side TCP `keepalives` are used (`1`, meaning on, `0`, meaning off). |
+| `keepalivesIdle`     | Integer |                       | The number of seconds of inactivity after which TCP should send a keepalive message to the server. A value of zero uses the system default. |
+| `keepalivesInterval` | Integer |                       | The number of seconds after which a TCP keepalive message that is not acknowledged by the server should be retransmitted. A value of zero uses the system default. |
+| `keepalivesCount`    | Integer |                       | The number of TCP `keepalives` that can be lost before the client's connection to the server is considered dead. A value of zero uses the system default. |
+| `tcpUserTimeout`     | Integer |                       | The number of milliseconds that transmitted data may remain unacknowledged before a connection is forcibly closed. A value of zero uses the system default. |
+| `applicationName`    | String  |                       | The name of the application connecting to the database. Set to a blank string (`""`) to disable. By default, this will be set to the name of the running process (e.g. `sidekiq`, `puma`). |
+| `ci.enabled`         | Boolean | `true`                | Enables [two database connections](#configure-multiple-database-connections). |
 
 ### PostgreSQL per chart
 
@@ -374,7 +374,7 @@ global:
 | `clientKey`         | String  |         | Name of the key within the `Secret` containing the client certificate's key file. |
 | `serverCA`          | String  |         | Name of the key within the `Secret` containing the certificate authority for the server. |
 
-You may also need to set ```extraEnv``` values to export environment values to point to the correct keys.
+You may also need to set `extraEnv` values to export environment values to point to the correct keys.
 
 ```yaml
 global:
@@ -491,7 +491,7 @@ global:
 | `port`             | Integer | `6379`  | The port on which to connect to the Redis server. |
 | `database`         | Integer | `0`     | The database to connect to on the Redis server. |
 | `user`             | String  |         | The user used to authenticate against Redis (Redis 6.0+). |
-| `auth.enabled`     | Boolean    | true    | The `auth.enabled` provides a toggle for using a password with the Redis instance. |
+| `auth.enabled`     | Boolean | `true`  | The `auth.enabled` provides a toggle for using a password with the Redis instance. |
 | `auth.key`         | String  |         | The `auth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
 | `auth.secret`      | String  |         | The `auth.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
 | `scheme`           | String  | `redis` | The URI scheme to be used to generate Redis URLs. Valid values are `redis`, `rediss`, and `tcp`. If using `rediss` (SSL encrypted connection) scheme, the certificate used by the server should be a part of the system's trusted chains. This can be done by adding them to the [custom certificate authorities](#custom-certificate-authorities) list. |
@@ -591,7 +591,7 @@ global:
 
 | Name                       | Type       | Default | Description |
 |:-------------------------- |:----------:|:------- |:----------- |
-| `sentinelAuth.enabled`     | Boolean    | false   | The `sentinelAuth.enabled` provides a toggle for using a password with the Redis Sentinel instance. |
+| `sentinelAuth.enabled`     | Boolean    | `false` | The `sentinelAuth.enabled` provides a toggle for using a password with the Redis Sentinel instance. |
 | `sentinelAuth.key`         | String     |         | The `sentinelAuth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
 | `sentinelAuth.secret`      | String     |         | The `sentinelAuth.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
 
@@ -606,18 +606,18 @@ or [`global.redis.redisYmlOverride`](../advanced/external-redis/_index.md#redisy
 The GitLab chart includes support for running with separate Redis instances
 for different persistence classes, currently:
 
-| Instance          | Purpose                                                         |
-|:------------------|:----------------------------------------------------------------|
-| `actioncable`     | Pub/Sub queue backend for ActionCable                           |
-| `cache`           | Store cached data                                               |
-| `kas`             | Store kas specific data                                         |
-| `queues`          | Store Sidekiq background jobs                                   |
+| Instance          | Purpose |
+|:------------------|:--------|
+| `actioncable`     | Pub/Sub queue backend for ActionCable |
+| `cache`           | Store cached data |
+| `kas`             | Store KAS-specific data |
+| `queues`          | Store Sidekiq background jobs |
 | `rateLimiting`    | Store rate-limiting usage for RackAttack and Application Limits |
-| `repositoryCache` | Store repository related data                                   |
-| `sessions`        | Store user session data                                         |
-| `sharedState`     | Store various persistent data such as distributed locks         |
-| `traceChunks`     | Store job traces temporarily                                    |
-| `workhorse`       | Pub/sub queue backend for Workhorse                             |
+| `repositoryCache` | Store repository-related data |
+| `sessions`        | Store user session data |
+| `sharedState`     | Store various persistent data such as distributed locks |
+| `traceChunks`     | Store job traces temporarily |
+| `workhorse`       | Pub/sub queue backend for Workhorse |
 
 Any number of the instances may be specified. Any instances not specified
 will be handled by the primary Redis instance specified
@@ -720,7 +720,7 @@ Redis instances.
 |:------------------ |:-------:|:------- |:----------- |
 | `.host`            | String  |         | The hostname of the Redis server with the database to use. |
 | `.port`            | Integer | `6379`  | The port on which to connect to the Redis server. |
-| `.password.enabled`| Boolean | true    | The `password.enabled` provides a toggle for using a password with the Redis instance. |
+| `.password.enabled`| Boolean | `true`  | The `password.enabled` provides a toggle for using a password with the Redis instance. |
 | `.password.key`    | String  |         | The `password.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
 | `.password.secret` | String  |         | The `password.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
 
@@ -793,7 +793,7 @@ global:
 
 For more details on `bucket`, `certificate`, `httpSecret`, and `notificationSecret` settings, see the documentation within the [registry chart](registry/_index.md).
 
-For details on `enabled`, `host`, `api` and `tokenIssuer` see documentation for [command line options](../installation/command-line-options.md) and [webcervice](gitlab/webservice/_index.md)
+For details on `enabled`, `host`, `api` and `tokenIssuer` see documentation for [command line options](../installation/command-line-options.md) and [Webservice](gitlab/webservice/_index.md)
 
 `host` is used to override autogenerated external registry hostname reference.
 
@@ -930,12 +930,12 @@ It is possible to use both internal and external Gitaly nodes, but be aware that
 A sample [configuration of mixed internal and external nodes](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/gitaly/values-multiple-mixed.yaml)
 can be found in the examples folder.
 
-### authToken
+### `authToken`
 
 The `authToken` attribute for Gitaly has two sub keys:
 
 - `secret` defines the name of the Kubernetes `Secret` to pull from.
-- `key` defines the name of the key in the above secret that contains the authToken.
+- `key` defines the name of the key in the above secret that contains the `authToken`.
 
 All Gitaly nodes **must** share the same authentication token.
 
@@ -977,16 +977,16 @@ global:
     psql: {}
 ```
 
-| Name            | Type    | Default     | Description                                                        |
-| ----            | ----    | -------     | -----------                                                        |
-| enabled         | Boolean    | false       | Whether or not to enable Praefect                                  |
-| virtualStorages | List    | See [multiple virtual storages](https://docs.gitlab.com/administration/gitaly/praefect/#multiple-virtual-storages) above.  | The list of desired virtual storages (each backed by a Gitaly StatefulSet) |
-| dbSecret.secret | String  |             | The name of the secret to use for authenticating with the database |
-| dbSecret.key    | String  |             | The name of the key in `dbSecret.secret` to use                    |
-| psql.host       | String  |             | The hostname of the database server to use (when using an external database) |
-| psql.port       | String  |             | The port number of the database server (when using an external database) |
-| psql.user       | String  | `praefect` | The database user to use                                           |
-| psql.dbName | String | `praefect` | The name of the database to use |
+| Name              | Type    | Default    | Description |
+|-------------------|---------|------------|-------------|
+| `enabled`         | Boolean | `false`    | Whether or not to enable Praefect. |
+| `virtualStorages` | List    |            | The list of desired virtual storages (each backed by a Gitaly `StatefulSet`). See [multiple virtual storages](https://docs.gitlab.com/administration/gitaly/praefect/#multiple-virtual-storages) for defaults. |
+| `dbSecret.secret` | String  |            | The name of the secret to use for authenticating with the database. |
+| `dbSecret.key`    | String  |            | The name of the key in `dbSecret.secret` to use. |
+| `psql.host`       | String  |            | The hostname of the database server to use (when using an external database). |
+| `psql.port`       | String  |            | The port number of the database server (when using an external database). |
+| `psql.user`       | String  | `praefect` | The database user to use. |
+| `psql.dbName`     | String  | `praefect` | The name of the database to use. |
 
 ## Configure MinIO settings
 
@@ -1000,7 +1000,7 @@ global:
     credentials: {}
 ```
 
-## Configure appConfig settings
+## Configure `appConfig` settings
 
 The [Webservice](gitlab/webservice/_index.md), [Sidekiq](gitlab/sidekiq/_index.md), and
 [Gitaly](gitlab/gitaly/_index.md) charts share multiple settings, which are configured
@@ -1168,7 +1168,7 @@ application are described below:
 | `enableUsagePing`                   | Boolean | `true`  | A flag to disable the [usage ping support](https://docs.gitlab.com/administration/settings/usage_statistics/). |
 | `enableSeatLink`                    | Boolean | `true`  | A flag to disable the [seat link support](https://docs.gitlab.com/subscriptions/#seat-link). |
 | `enableImpersonation`               |         | `nil`   | A flag to disable [user impersonation by Administrators](https://docs.gitlab.com/api/#disable-impersonation). |
-| `applicationSettingsCacheSeconds`   | Integer | 60      | An interval value (in seconds) to invalidate the [application settings cache](https://docs.gitlab.com/administration/application_settings_cache/). |
+| `applicationSettingsCacheSeconds`   | Integer | `60`    | An interval value (in seconds) to invalidate the [application settings cache](https://docs.gitlab.com/administration/application_settings_cache/). |
 | `usernameChangingEnabled`           | Boolean | `true`  | A flag to decide if users are allowed to change their username. |
 | `issueClosingPattern`               | String  | (empty) | [Pattern to close issues automatically](https://docs.gitlab.com/administration/issue_closing_pattern/). |
 | `defaultTheme`                      | Integer |         | [Numeric ID of the default theme for the GitLab instance](https://gitlab.com/gitlab-org/gitlab-foss/blob/master/lib/gitlab/themes.rb#L17-27). It takes a number, denoting the ID of the theme. |
@@ -1214,7 +1214,7 @@ Improperly configuring the CSP rules could prevent GitLab from working properly.
 Before rolling out a policy, you may also want to change `report_only` to `true` to
 test the configuration.
 
-#### defaultProjectsFeatures
+#### `defaultProjectsFeatures`
 
 Flags to decide if new projects should be created with the respective features by
 default. All flags default to `true`.
@@ -1244,15 +1244,15 @@ However, a custom Libravatar service can also be used if needed:
 Settings to configure Analytics services like Google Analytics and Matomo are defined
 under the `extra` key below `appConfig`:
 
-| Name                      | Type   | Default | Description |
-|:------------------------- |:------:|:------- |:----------- |
-| `extra.googleAnalyticsId` | String | (empty) | Tracking ID for Google Analytics. |
-| `extra.matomoSiteId`       | String | (empty) | Matomo Site ID. |
-| `extra.matomoUrl`          | String | (empty) | Matomo URL. |
-| `extra.matomoDisableCookies`| Boolean | (empty) | Disable Matomo cookies (corresponds to `disableCookies` in the Matomo script) |
-| `extra.oneTrustId`         | String | (empty) | OneTrust ID. |
-| `extra.googleTagManagerNonceId` | String | (empty) | Google Tag Manager ID. |
-| `extra.bizible`            | Boolean | `false` | Set to true to enable Bizible script |
+| Name                            |  Type   | Default | Description |
+|:--------------------------------|:-------:|:--------|:------------|
+| `extra.googleAnalyticsId`       | String  | (empty) | Tracking ID for Google Analytics. |
+| `extra.matomoSiteId`            | String  | (empty) | Matomo Site ID. |
+| `extra.matomoUrl`               | String  | (empty) | Matomo URL. |
+| `extra.matomoDisableCookies`    | Boolean | (empty) | Disable Matomo cookies (corresponds to `disableCookies` in the Matomo script) |
+| `extra.oneTrustId`              | String  | (empty) | OneTrust ID. |
+| `extra.googleTagManagerNonceId` | String  | (empty) | Google Tag Manager ID. |
+| `extra.bizible`                 | Boolean | `false` | Set to true to enable Bizible script |
 
 ### Consolidated object storage
 
@@ -1273,7 +1273,7 @@ are not individually configured with a `connection` property.
 
 | Name             | Type    | Default | Description |
 |:---------------- |:-------:|:------- |:----------- |
-| `enabled`        | Boolean | `false`  | Enable the use of consolidated object storage. |
+| `enabled`        | Boolean | `false` | Enable the use of consolidated object storage. |
 | `proxy_download` | Boolean | `true`  | Enable proxy of all downloads via GitLab, in place of direct downloads from the `bucket`. |
 | `storage_options`| String  | `{}`    | [See below](#storage_options). |
 | `connection`     | String  | `{}`    | [See below](#connection). |
@@ -1295,17 +1295,17 @@ using this consolidated configuration.
 Each object type should be stored in different buckets.
 By default, GitLab uses these bucket names for each type:
 
-| Object type                  | Bucket Name               |
-| ---------------------------- | ------------------------- |
-| CI artifacts                 | `gitlab-artifacts`        |
-| Git LFS                      | `git-lfs`                 |
-| Packages                     | `gitlab-packages`         |
-| Uploads                      | `gitlab-uploads`          |
-| External merge request diffs | `gitlab-mr-diffs`         |
-| Terraform State              | `gitlab-terraform-state`  |
-| CI Secure Files              | `gitlab-ci-secure-files`  |
+| Object type                  | Bucket Name |
+|------------------------------|-------------|
+| CI artifacts                 | `gitlab-artifacts` |
+| Git LFS                      | `git-lfs`   |
+| Packages                     | `gitlab-packages` |
+| Uploads                      | `gitlab-uploads` |
+| External merge request diffs | `gitlab-mr-diffs` |
+| Terraform State              | `gitlab-terraform-state` |
+| CI Secure Files              | `gitlab-ci-secure-files` |
 | Dependency Proxy             | `gitlab-dependency-proxy` |
-| Pages                        | `gitlab-pages`            |
+| Pages                        | `gitlab-pages` |
 
 You can use these defaults or configure the bucket names:
 
@@ -1320,7 +1320,7 @@ You can use these defaults or configure the bucket names:
 --set global.appConfig.dependencyProxy.bucket=<BUCKET NAME>
 ```
 
-#### storage_options
+#### `storage_options`
 
 The `storage_options` are used to configure
 [S3 Server Side Encryption](https://docs.gitlab.com/administration/object_storage/#server-side-encryption-headers).
@@ -1331,7 +1331,7 @@ enable encryption, but you may want to
 To do this, you must configure GitLab to send the proper encryption headers
 in the `storage_options` configuration section:
 
-|            Setting                  | Description |
+| Setting                             | Description |
 |-------------------------------------|-------------|
 | `server_side_encryption`            | Encryption mode (`AES256` or `aws:kms`) |
 | `server_side_encryption_kms_key_id` | Amazon Resource Name. Only needed when `aws:kms` is used in `server_side_encryption`. See the [Amazon documentation on using KMS encryption](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html) |
@@ -1370,7 +1370,7 @@ as they are structurally identical aside from the default value of the `bucket` 
 | `bucket`         | String  | Various | Name of the bucket to use from object storage provider. Default will be `git-lfs`, `gitlab-artifacts`, `gitlab-uploads`, or `gitlab-packages`, depending on the service. |
 | `connection`     | String  | `{}`    | [See below](#connection). |
 
-#### connection
+#### `connection`
 
 The `connection` property has been transitioned to a Kubernetes Secret. The contents
 of this secret should be a YAML formatted file. Defaults to `{}` and will be ignored
@@ -1400,14 +1400,14 @@ kubectl create secret generic gitlab-rails-storage \
     --from-file=connection=rails.yaml
 ```
 
-#### when (only for External MR Diffs)
+#### `when` (only for External MR Diffs)
 
 `externalDiffs` setting has an additional key `when` to
 [conditionally store specific diffs on object storage](https://docs.gitlab.com/administration/merge_request_diffs/#alternative-in-database-storage).
 This setting is left empty by default in the charts, for a default value to be
 assigned by the Rails code.
 
-#### cdn (only for CI Artifacts)
+#### `cdn` (only for CI Artifacts)
 
 `artifacts` setting has an additional key `cdn` [to configure Google CDN in front of a Google Cloud Storage bucket](../advanced/external-object-storage/_index.md#google-cloud-cdn).
 
@@ -1499,11 +1499,11 @@ Prerequisites:
 
 To configure `kas` to use the certificates you created, set the following values.
 
-| Value                                    | Description                                                                      |
-|------------------------------------------|----------------------------------------------------------------------------------|
-| `global.kas.tls.enabled`                 | Mounts the certificates volume and enables TLS communication to `kas` endpoints. |
-| `global.kas.tls.secretName`    | Specifies which Kubernetes TLS secret stores your certificates.                  |
-| `global.kas.tls.caSecretName`    | Specifies which Kubernetes TLS secret stores your custom CA.                     |
+| Value                         | Description |
+|-------------------------------|-------------|
+| `global.kas.tls.enabled`      | Mounts the certificates volume and enables TLS communication to `kas` endpoints. |
+| `global.kas.tls.secretName`   | Specifies which Kubernetes TLS secret stores your certificates. |
+| `global.kas.tls.caSecretName` | Specifies which Kubernetes TLS secret stores your custom CA. |
 
 For example, you could use the following in your `values.yaml` file to deploy your chart:
 
@@ -1665,11 +1665,11 @@ global:
       #  key:
 ```
 
-| Name              | Type    | Default | Description                                |
-|:----------------- |:-------:|:------- |:------------------------------------------ |
-| `enabled`         | Boolean | `false` | Enable or disable the integration with GitLab Duo |
-| `hostname`        | String  |         | GitLab Duo API hostname                           |
-| `integrationKey` | String  |         | GitLab Duo API integration key                    |
+| Name             |  Type   | Default | Description |
+|:-----------------|:-------:|:--------|:------------|
+| `enabled`        | Boolean | `false` | Enable or disable the integration with GitLab Duo |
+| `hostname`       | String  |         | GitLab Duo API hostname |
+| `integrationKey` | String  |         | GitLab Duo API integration key |
 | `secretKey`      |         |         | GitLab Duo API secret key that must be [configured with the name of secret and key name](#configure-the-gitlab-duo-secret-key) |
 
 ### Configure the GitLab Duo secret key
@@ -1707,20 +1707,20 @@ omniauth:
   # - name: group_saml
 ```
 
-| Name                      | Type    | Default     |
-|:------------------------- |:-------:|:----------- |
-| `allowBypassTwoFactor`    | Boolean or Array |   `false` |
-| `allowSingleSignOn`       | Boolean or Array   | `['saml']`  |
-| `autoLinkLdapUser`        | Boolean | `false`     |
-| `autoLinkSamlUser`        | Boolean | `false`     |
+| Name                      | Type             | Default |
+|:--------------------------|:-----------------|:--------|
+| `allowBypassTwoFactor`    | Boolean or Array | `false` |
+| `allowSingleSignOn`       | Boolean or Array | `['saml']` |
+| `autoLinkLdapUser`        | Boolean          | `false` |
+| `autoLinkSamlUser`        | Boolean          | `false` |
 | `autoLinkUser`            | Boolean or Array | `false` |
-| `autoSignInWithProvider`  |         | `nil`       |
-| `blockAutoCreatedUsers`   | Boolean | `true`      |
-| `enabled`                 | Boolean | `false`     |
-| `externalProviders`       |         | `[]`        |
-| `providers`               |         | `[]`        |
-| `syncProfileAttributes`   |         | `['email']` |
-| `syncProfileFromProvider` |         | `[]`        |
+| `autoSignInWithProvider`  |                  | `nil`   |
+| `blockAutoCreatedUsers`   | Boolean          | `true`  |
+| `enabled`                 | Boolean          | `false` |
+| `externalProviders`       |                  | `[]`    |
+| `providers`               |                  | `[]`    |
+| `syncProfileAttributes`   |                  | `['email']` |
+| `syncProfileFromProvider` |                  | `[]`    |
 
 #### providers
 
@@ -1747,7 +1747,7 @@ in [OmniAuth Providers](https://docs.gitlab.com/integration/omniauth/). To
 create this secret, follow the appropriate instructions for retrieval of these items,
 and create a YAML or JSON file.
 
-Example of configuration of Google OAuth2:
+Example of configuration of Google OAuth 2.0:
 
 ```yaml
 name: google_oauth2
@@ -1854,12 +1854,12 @@ global:
       environment:
 ```
 
-| Name        | Type    | Default | Description |
-|:----------- |:-------:|:------- |:----------- |
-| `enabled`        | Boolean | `false`  | Enable or Disable the integration |
-| `dsn`            | String  |        | Sentry DSN for backend errors |
-| `clientside_dsn` | String  |        | Sentry DSN for front-end errors |
-| `environment`    | String  |        | See [Sentry environments](https://docs.sentry.io/concepts/key-terms/environments/) |
+| Name             |  Type   | Default | Description |
+|:-----------------|:-------:|:--------|:------------|
+| `enabled`        | Boolean | `false` | Enable or Disable the integration |
+| `dsn`            | String  |         | Sentry DSN for backend errors |
+| `clientside_dsn` | String  |         | Sentry DSN for front-end errors |
+| `environment`    | String  |         | See [Sentry environments](https://docs.sentry.io/concepts/key-terms/environments/) |
 
 ### `gitlab_docs` settings
 
@@ -1873,10 +1873,10 @@ global:
       host:
 ```
 
-| Name        | Type    | Default | Description |
-|:----------- |:-------:|:------- |:----------- |
-| `enabled`         | Boolean | `false`  | Enable or Disable the `gitlab_docs` |
-| `host`            | String  |  ""        | docs host                       |
+| Name      |  Type   | Default | Description |
+|:----------|:-------:|:--------|:------------|
+| `enabled` | Boolean | `false` | Enable or Disable the `gitlab_docs` |
+| `host`    | String  | `""`    | docs host   |
 
 ### OpenID Connect token expiration
 
@@ -1889,9 +1889,9 @@ global:
       openidIdTokenExpireInSeconds: 120
 ```
 
-| Name                            | Type    | Default | Description                                         |
-|---------------------------------|---------|---------|-----------------------------------------------------|
-| `openidIdTokenExpireInSeconds`  | Integer | 120     | Duration (in seconds) before ID tokens expire.      |
+| Name                           | Type    | Default | Description |
+|--------------------------------|---------|---------|-------------|
+| `openidIdTokenExpireInSeconds` | Integer | 120     | Duration (in seconds) before ID tokens expire. |
 
 ### Smartcard Authentication settings
 
@@ -1906,9 +1906,9 @@ global:
       requiredForGitAccess: false
 ```
 
-| Name                            | Type    | Default | Description                                      |
-| :------------------------------ | :-----: | :------ | :----------------------------------------------- |
-| `enabled`                       | Boolean | `false` | Enable or Disable smartcard authentication       |
+| Name                            |  Type   | Default | Description |
+|:--------------------------------|:-------:|:--------|:------------|
+| `enabled`                       | Boolean | `false` | Enable or Disable smartcard authentication |
 | `CASecret`                      | String  |         | Name of the secret containing the CA certificate |
 | `clientCertificateRequiredHost` | String  |         | Hostname to use for smartcard authentication. By default, the provided or computed smartcard hostname is used. |
 | `sanExtensions`                 | Boolean | `false` | Enable the use of SAN extensions to match users with certificates. |
@@ -1974,17 +1974,17 @@ global:
     port: 8181
 ```
 
-| Name        | Type    | Default | Description |
-| :---------- | :------ | :------ | :---------- |
-| serviceName | String  | `webservice-default` | Name of service to direct internal API traffic to. Do not include the Release name, as it will be templated in. Should match an entry in `gitlab.webservice.deployments`. See [`gitlab/webservice` chart](gitlab/webservice/_index.md#deployments-settings) |
-| scheme      | String  | `http` | Scheme of the API endpoint |
-| host        | String  | | Fully qualified hostname or IP address of an API endpoint. Overrides the presence of `serviceName`. |
-| port        | Integer | `8181` | Port number of associated API server. |
-| tls.enabled | Boolean | `false` | When set to `true`, enables TLS support for Workhorse. |
+| Name          | Type    | Default              | Description |
+|:--------------|:--------|:---------------------|:------------|
+| `serviceName` | String  | `webservice-default` | Name of service to direct internal API traffic to. Do not include the Release name, as it will be templated in. Should match an entry in `gitlab.webservice.deployments`. See [`gitlab/webservice` chart](gitlab/webservice/_index.md#deployments-settings) |
+| `scheme`      | String  | `http`               | Scheme of the API endpoint |
+| `host`        | String  |                      | Fully qualified hostname or IP address of an API endpoint. Overrides the presence of `serviceName`. |
+| `port`        | Integer | `8181`               | Port number of associated API server. |
+| `tls.enabled` | Boolean | `false`              | When set to `true`, enables TLS support for Workhorse. |
 
 ### Bootsnap Cache
 
-Our Rails codebase makes use of [Shopify's Bootsnap](https://github.com/Shopify/bootsnap) Gem. Settings here are used to configure that behavior.
+Our Rails codebase makes use of [Shopify Bootsnap](https://github.com/Shopify/bootsnap) Gem. Settings here are used to configure that behavior.
 
 `bootsnap.enabled` controls the activation of this feature. It defaults to `true`.
 
@@ -2007,12 +2007,12 @@ global:
       proxyProtocol: false
 ```
 
-| Name                  | Type    | Default | Description |
-|:--------------------- |:-------:|:------- |:----------- |
-| `port`                | Integer | `22`    | See [port](#port) below for specific documentation. |
-| `authToken`           |         |         | See [authToken](gitlab/gitlab-shell/_index.md#authtoken) in the GitLab Shell chart specific documentation. |
-| `hostKeys`            |         |         | See [hostKeys](gitlab/gitlab-shell/_index.md#hostkeyssecret) in the GitLab Shell chart specific documentation. |
-| `tcp.proxyProtocol`   | Boolean | `false` | See [TCP proxy protocol](#tcp-proxy-protocol) below for specific documentation. |
+| Name                |  Type   | Default | Description |
+|:--------------------|:-------:|:--------|:------------|
+| `port`              | Integer | `22`    | See [`port`](#port) below for specific documentation. |
+| `authToken`         |         |         | See [`authToken`](gitlab/gitlab-shell/_index.md#authtoken) in the GitLab Shell chart specific documentation. |
+| `hostKeys`          |         |         | See [`hostKeys`](gitlab/gitlab-shell/_index.md#hostkeyssecret) in the GitLab Shell chart specific documentation. |
+| `tcp.proxyProtocol` | Boolean | `false` | See [TCP proxy protocol](#tcp-proxy-protocol) below for specific documentation. |
 
 ### Port
 
@@ -2047,7 +2047,7 @@ nginx-ingress:
 You can enable handling [proxy protocol](https://www.haproxy.com/blog/use-the-proxy-protocol-to-preserve-a-clients-ip-address) on the SSH Ingress to properly handle a connection from an upstream proxy that adds the proxy protocol header.
 By doing so, this will prevent SSH from receiving the additional headers and not break SSH.
 
-One common environment where one needs to enable handling of proxy protocol is when using AWS with an ELB handling the inbound connections to the cluster. You can consult the [AWS layer 4 loadbalancer example](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/elb-layer4-loadbalancer.yaml) to properly set it up.
+One common environment where one needs to enable handling of proxy protocol is when using AWS with an ELB handling the inbound connections to the cluster. You can consult the [AWS layer 4 load balancer example](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/aws/elb-layer4-loadbalancer.yaml) to properly set it up.
 
 ```yaml
 global:
@@ -2089,26 +2089,26 @@ global:
     namespaceInPath: false
 ```
 
-| Name                            | Type      | Default                    | Description |
-| :---------------------------    | :-------: | :-------                   | :-----------|
-| `enabled`                       | Boolean   | False                      | Decides whether to install GitLab Pages chart in the cluster |
-| `accessControl`                 | Boolean   | False                      | Enables GitLab Pages Access Control |
-| `path`                          | String    | `/srv/gitlab/shared/pages` | Path where Pages deployment related files to be stored. Note: Unused by default, since object storage is used. |
-| `host`                          | String    |                            | Pages root domain. |
-| `port`                          | String    |                            | Port to be used to construct Pages URLs in UI. If left unset, default value of 80 or 443 is set based on HTTPS situation of Pages. |
-| `https`                         | Boolean   | True                       | Whether GitLab UI should show HTTPS URLs for Pages or not. Has precedence over `global.hosts.pages.https` and `global.hosts.https`. Set to True by default. |
-| `externalHttp`                  | List      | `[]`                       | List of IP addresses through which HTTP requests reach Pages daemon. For supporting custom domains. |
-| `externalHttps`                 | List      | `[]`                       | List of IP addresses through which HTTPS requests reach Pages daemon. For supporting custom domains. |
-| `artifactsServer`               | Boolean   | True                       | Enable viewing artifacts in GitLab Pages.|
-| `objectStore.enabled`           | Boolean   | True                       | Enable using object storage for Pages. |
-| `objectStore.bucket`            | String    | `gitlab-pages`             | Bucket to be used to store content related to Pages |
-| `objectStore.connection.secret` | String    |                            | Secret containing connection details for object storage. |
-| `objectStore.connection.key`    | String    |                            | Key within the connection secret where connection details are stored. |
-| `localStore.enabled`            | Boolean   | False                      | Enable using local storage for content related to Pages (as opposed to objectStore) |
-| `localStore.path`               | String    | `/srv/gitlab/shared/pages` | Path where pages files will be stored; only used if localStore is set to true. |
-| `apiSecret.secret`              | String    |                            | Secret containing 32 bit API key in Base64 encoded form. |
-| `apiSecret.key`                 | String    |                            | Key within the API key secret where the API key is stored. |
-| `namespaceInPath`               | Boolean   | False                      | (Beta) Enable or disable namespace in the URL path to support without wildcard DNS setup. For more information, see the [Pages domain without wildcard DNS documentation](gitlab/gitlab-pages/_index.md#pages-domain-without-wildcard-dns). |
+| Name                            |  Type   | Default                    | Description |
+|:--------------------------------|:-------:|:---------------------------|:------------|
+| `enabled`                       | Boolean | `false`                    | Decides whether to install GitLab Pages chart in the cluster |
+| `accessControl`                 | Boolean | `false`                    | Enables GitLab Pages Access Control |
+| `path`                          | String  | `/srv/gitlab/shared/pages` | Path where Pages deployment related files to be stored. Note: Unused by default, because object storage is used. |
+| `host`                          | String  |                            | Pages root domain. |
+| `port`                          | String  |                            | Port to be used to construct Pages URLs in UI. If left unset, default value of 80 or 443 is set based on HTTPS situation of Pages. |
+| `https`                         | Boolean | `true`                     | Whether GitLab UI should show HTTPS URLs for Pages or not. Has precedence over `global.hosts.pages.https` and `global.hosts.https`. |
+| `externalHttp`                  |  List   | `[]`                       | List of IP addresses through which HTTP requests reach Pages daemon. For supporting custom domains. |
+| `externalHttps`                 |  List   | `[]`                       | List of IP addresses through which HTTPS requests reach Pages daemon. For supporting custom domains. |
+| `artifactsServer`               | Boolean | `true`                     | Enable viewing artifacts in GitLab Pages. |
+| `objectStore.enabled`           | Boolean | `true`                     | Enable using object storage for Pages. |
+| `objectStore.bucket`            | String  | `gitlab-pages`             | Bucket to be used to store content related to Pages |
+| `objectStore.connection.secret` | String  |                            | Secret containing connection details for object storage. |
+| `objectStore.connection.key`    | String  |                            | Key within the connection secret where connection details are stored. |
+| `localStore.enabled`            | Boolean | `false`                    | Enable using local storage for content related to Pages (as opposed to `objectStore`) |
+| `localStore.path`               | String  | `/srv/gitlab/shared/pages` | Path where pages files will be stored; only used if `localStore` is set to true. |
+| `apiSecret.secret`              | String  |                            | Secret containing 32 bit API key in Base64 encoded form. |
+| `apiSecret.key`                 | String  |                            | Key within the API key secret where the API key is stored. |
+| `namespaceInPath`               | Boolean | `false`                    | (Beta) Enable or disable namespace in the URL path to support without wildcard DNS setup. For more information, see the [Pages domain without wildcard DNS documentation](gitlab/gitlab-pages/_index.md#pages-domain-without-wildcard-dns). |
 
 ## Configure Webservice
 
@@ -2121,7 +2121,7 @@ global:
     workerTimeout: 60
 ```
 
-### workerTimeout
+### `workerTimeout`
 
 Configure the request timeout (in seconds) after which a Webservice worker process
 is killed by the Webservice master process. The default value is 60 seconds.
@@ -2181,7 +2181,7 @@ global:
 The `.crt` extension in the Secret's key name is important for the
 [Debian update-ca-certificates package](https://manpages.debian.org/bullseye/ca-certificates/update-ca-certificates.8.en.html).
 This step ensures that the custom CA file is mounted with that extension and is processed
-in the Certificates initContainers.
+in the Certificates `initContainers`.
 Previously, when the certificates helper image was Alpine-based, the file extension was not actually required
 even though the [documentation](https://gitlab.alpinelinux.org/alpine/ca-certificates/-/blob/master/update-ca-certificates.8)
 says that it is.
@@ -2225,8 +2225,7 @@ nginx:
 gitlab-runner:
   rbac:
     clusterWideAccess: false
-certmanager:
-  install: false
+installCertmanager: false
 ```
 
 ## GitLab base image
@@ -2250,9 +2249,9 @@ global:
     # name:
 ```
 
-- Setting `global.serviceAccount.enabled` controls reference to a ServiceAccount for each component via `spec.serviceAccountName`.
-- Setting `global.serviceAccount.create` controls ServiceAccount object creation via Helm.
-- Setting `global.serviceAccount.name` controls the ServiceAccount object name and the name referenced by each component.
+- Setting `global.serviceAccount.enabled` controls reference to a Service Account for each component via `spec.serviceAccountName`.
+- Setting `global.serviceAccount.create` controls Service Account object creation via Helm.
+- Setting `global.serviceAccount.name` controls the Service Account object name and the name referenced by each component.
 - Setting `global.serviceAccount.automountServiceAccountToken` controls if the default ServiceAccount access token should be mounted in pods. You should not enable this unless it is required by certain sidecars to work properly (for example, Istio).
 
 {{< alert type="note" >}}
@@ -2324,7 +2323,7 @@ gitlab:
 With the above example configuration, nearly all components deployed by the Helm
 chart will be provided the label set `environment: production`. All components
 of the GitLab Shell chart will receive the label set `foo: bar`. Some charts
-allow for additional nesting. For example, the Sidekiq and Webservices charts
+allow for additional nesting. For example, the Sidekiq and Webservice charts
 allow for additional deployments depending on your configuration needs:
 
 ```yaml
@@ -2345,7 +2344,7 @@ Some charts that we depend on are excluded from this label configuration. Only
 the [GitLab component sub-charts](gitlab/_index.md) will receive these
 extra labels.
 
-### Pod
+### `pod`
 
 Custom labels can be applied to various Deployments and Jobs. These labels are
 supplementary to existing or preconfigured labels constructed by this Helm
@@ -2358,7 +2357,7 @@ global:
       environment: production
 ```
 
-### Service
+### `service`
 
 Custom labels can be applied to services. These labels are
 supplementary to existing or preconfigured labels constructed by this Helm
@@ -2383,10 +2382,10 @@ global:
     urlTemplate: 'http://jaeger-ui.example.com/search?service={{ service }}&tags=%7B"correlation_id"%3A"{{ correlation_id }}"%7D'
 ```
 
-- `global.tracing.connection.string` is used to configure where tracing spans would be sent. You can read more about that in [GitLab tracing documentation](https://docs.gitlab.com/development/distributed_tracing/)
+- `global.tracing.connection.string` is used to configure where tracing spans would be sent. You can read more about that in [GitLab tracing documentation](https://docs.gitlab.com/development/distributed_tracing/).
 - `global.tracing.urlTemplate` is used as a template for tracing info URL rendering in GitLab performance bar.
 
-## extraEnv
+## `extraEnv`
 
 `extraEnv` allows you to expose additional environment variables in all containers in the pods
 that are deployed via GitLab charts (`charts/gitlab/charts`). Extra environment variables set at
@@ -2434,7 +2433,7 @@ gitlab:
 
 {{< alert type="note" >}}
 
-The implementation does not support re-using a value name with different content types. You can override the same name with similar content, but no not mix sources like `secretKeyRef`, `configMapKeyRef`, etc.
+The implementation does not support reusing a value name with different content types. You can override the same name with similar content, but no not mix sources like `secretKeyRef`, `configMapKeyRef`, etc.
 
 {{< /alert >}}
 
@@ -2456,13 +2455,13 @@ global:
     # authScope
 ```
 
-| Name           | Type   | Default | Description                                                                                            |
-| :---           | :--:   | :------ | :----------                                                                                            |
-| `secret`       | String |         | Name of the secret with OAuth credentials for the service.                                             |
-| `appIdKey`     | String |         | Key in the secret under which App ID of service is stored. Default value being set is `appid`.         |
+| Name           | Type   | Default | Description |
+|:---------------|:-------|:--------|:------------|
+| `secret`       | String |         | Name of the secret with OAuth credentials for the service. |
+| `appIdKey`     | String |         | Key in the secret under which App ID of service is stored. Default value being set is `appid`. |
 | `appSecretKey` | String |         | Key in the secret under which App Secret of service is stored. Default value being set is `appsecret`. |
-| `redirectUri`  | String |         | URI to which user should be redirected after successful authorization.                                 |
-| `authScope`    | String | `api`   | Scope used for authentication with GitLab API.                                                         |
+| `redirectUri`  | String |         | URI to which user should be redirected after successful authorization. |
+| `authScope`    | String | `api`   | Scope used for authentication with GitLab API. |
 
 Check the [secrets documentation](../installation/secrets.md#oauth-integration) for more details on the secret.
 
@@ -2478,7 +2477,7 @@ kubectl create secret generic gitlab-kerberos-keytab --namespace=gitlab --from-f
 
 Kerberos integration for Git is enabled by setting `global.appConfig.kerberos.enabled=true`. This will also add the `kerberos` provider to the list of enabled [OmniAuth](https://docs.gitlab.com/integration/omniauth/) providers for ticket-based authentication in the browser.
 
-If left as `false` the Helm chart will still mount the `keytab` in the toolbox, Sidekiq, and webservice Pods, which can be used with manually configured [OmniAuth settings](#omniauth) for Kerberos.
+If left as `false` the Helm chart will still mount the `keytab` in the toolbox, Sidekiq, and Webservice pods, which can be used with manually configured [OmniAuth settings](#omniauth) for Kerberos.
 
 You can provide a Kerberos client configuration in `global.appConfig.kerberos.krb5Config`.
 
@@ -2527,7 +2526,7 @@ This enables an additional clone URL in the GitLab UI that is dedicated for Kerb
 
 {{< alert type="note" >}}
 
-Due to a current limitation with [our fork of the `nginx-ingress` Helm chart](nginx/fork.md) - specifying a `dedicatedPort` will not currently expose the port for use in the chart's `nginx-ingress` controller. Cluster operators will need to expose this port themselves. Follow [this charts issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3531) for more details and potential workarounds.
+Due to a current limitation with [our fork of the `nginx-ingress` Helm chart](nginx/_index.md) - specifying a `dedicatedPort` will not currently expose the port for use in the chart's `nginx-ingress` controller. Cluster operators will need to expose this port themselves. Follow [this charts issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3531) for more details and potential workarounds.
 
 {{< /alert >}}
 
@@ -2591,20 +2590,20 @@ global:
       topologyKey: "kubernetes.io/hostname"
 ```
 
-| Name                                   | Type   | Default                   | Description                         |
-| :------------------------------------- | :--:   | :------------------------ | :---------------------------------- |
-| `antiAffinity`                         | String |  `soft`                   | Pod anti-affinity to apply on pods. |
-| `affinity.podAntiAffinity.topologyKey` | String |  `kubernetes.io/hostname` | Pod anti-affinity topology key.     |
+| Name                                   | Type   | Default                  | Description |
+|:---------------------------------------|:-------|:-------------------------|:------------|
+| `antiAffinity`                         | String | `soft`                   | Pod anti-affinity to apply on pods. |
+| `affinity.podAntiAffinity.topologyKey` | String | `kubernetes.io/hostname` | Pod anti-affinity topology key. |
 
 - `global.antiAffinity` can take two values:
   - `soft`: Define a `preferredDuringSchedulingIgnoredDuringExecution` anti-affinity where the Kubernetes scheduler will try to enforce the rule but will not guarantee the result.
   - `hard`: Defined a `requiredDuringSchedulingIgnoredDuringExecution` anti-affinity where the rule _must_ be met for a pod to be scheduled onto a node.
-- `global.affinity.podAntiAffinity.topologyKey` define a node attribute used two divide them into logical zone. Most common `topologyKey` values are :
+- `global.affinity.podAntiAffinity.topologyKey` define a node attribute used two divide them into logical zone. Most common `topologyKey` values are:
   - `kubernetes.io/hostname`
   - `topology.kubernetes.io/zone`
   - `topology.kubernetes.io/region`
 
-Kubernetes references on [Inter-pod affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity)
+Kubernetes references on [Inter-pod affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity).
 
 ## Pod Priority and Preemption
 
@@ -2616,8 +2615,8 @@ global:
   priorityClassName: system-cluster-critical
 ```
 
-| Name                | Type   | Default | Description                      |
-| :-------------------| :--:   | :------ | :------------------------------- |
+| Name                | Type   | Default | Description |
+|:--------------------|:-------|:--------|:------------|
 | `priorityClassName` | String |         | Priority class assigned to pods. |
 
 ## Log rotation
@@ -2673,8 +2672,8 @@ Alternatively, you can use it with `helm` in the command line:
 helm <command> <options> --set global.job.nameSuffixOverride=$(date +%Y-%m-%d-%H-%M-%S)
 ```
 
-| Name                 | Type   | Default | Description                                               |
-| :--------------------| :--:   | :------ | :-------------------------------------------------------- |
+| Name                 | Type   | Default | Description |
+|:---------------------|:-------|:--------|:------------|
 | `nameSuffixOverride` | String |         | Custom suffix to replace the automatically generated hash |
 
 ## Traefik
@@ -2687,6 +2686,6 @@ global:
     apiVersion: ""
 ```
 
-| Name         | Type   | Default | Description                                             |
-| :------------| :----- | :------ | :------------------------------------------------------ |
+| Name         | Type   | Default | Description |
+|:-------------|:-------|:--------|:------------|
 | `apiVersion` | String |         | Overrides the default `apiVersion` of Traefik resources |

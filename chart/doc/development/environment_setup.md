@@ -46,16 +46,16 @@ that specifies these tools with their recommended versions. To install or update
 
 Developers working on charts also often use the following tools:
 
-Tool name | Benefits | Example use case | Link(s)
--|-|-|-
-`asdf` | Easily switch between versions of your favorite runtimes and CLI tools. | Switching between Helm 3.7 and Helm 3.9 binaries. | [GitHub](https://github.com/asdf-vm/asdf)
-`kubectx` & `kubens` | Manage and switch between Kubernetes contexts and namespaces. | Setting default namespace per selected cluster context. | [GitHub](https://github.com/ahmetb/kubectx)
-`k3s` | Lightweight Kubernetes installation (<40 MB). | Quick and reliable local chart testing. | [Homepage](https://k3s.io)
-`k9s` | Greatly reduced typing of `kubectl` commands. | Navigate and manage cluster resources quickly in a command line interface. | [GitHub](https://github.com/derailed/k9s)
-`lens` | Highly visual management and navigation of clusters. | Navigate and manage cluster resources quickly in a standalone desktop application. | [Homepage](https://k8slens.dev/)
-`stern` | Easily follow logs from multiple pods. | See logs from a set of GitLab pods together. | [GitHub](https://github.com/stern/stern)
-`dive` | Explore container layers. | A tool for exploring a container image, layer contents, and discovering ways to shrink the size of your Docker/OCI image. | [GitHub](https://github.com/wagoodman/dive), [GitLab Unfiltered](https://youtu.be/9kdE-ye6vlc)
-`container-diff` | Explore container layers. | A tool for analyzing and comparing container images. | [GitHub](https://github.com/GoogleContainerTools/container-diff)
+| Tool name                                                                  | Benefits                                                                | Example use case |
+|----------------------------------------------------------------------------|-------------------------------------------------------------------------|------------------|
+| [`asdf`](https://github.com/asdf-vm/asdf)                                  | Easily switch between versions of your favorite runtimes and CLI tools. | Switching between Helm 3.7 and Helm 3.9 binaries. |
+| [`kubectx` & `kubens`](https://github.com/ahmetb/kubectx)                  | Manage and switch between Kubernetes contexts and namespaces.           | Setting default namespace per selected cluster context. |
+| [`k3s`](https://k3s.io)                                                    | Lightweight Kubernetes installation (<40 MB).                           | Quick and reliable local chart testing. |
+| [`k9s`](https://github.com/derailed/k9s)                                   | Greatly reduced typing of `kubectl` commands.                           | Navigate and manage cluster resources quickly in a command line interface. |
+| [`lens`](https://k8slens.dev/)                                             | Highly visual management and navigation of clusters.                    | Navigate and manage cluster resources quickly in a standalone desktop application. |
+| [`stern`](https://github.com/stern/stern)                                  | Easily follow logs from multiple pods.                                  | See logs from a set of GitLab pods together. |
+| [`dive`](https://github.com/wagoodman/dive)                                | Explore container layers.                                               | A tool for exploring a container image, layer contents, and discovering ways to shrink the size of your Docker/OCI image. [GitLab Unfiltered](https://youtu.be/9kdE-ye6vlc) |
+| [`container-diff`](https://github.com/GoogleContainerTools/container-diff) | Explore container layers.                                               | A tool for analyzing and comparing container images. |
 
 ## Kubernetes cluster
 

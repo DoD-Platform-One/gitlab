@@ -181,7 +181,7 @@ We use the [upstream Prometheus chart](https://github.com/prometheus-community/h
 and do not override values from our own defaults other than a customized
 `prometheus.yml` file to limit collection of metrics to the Kubernetes API
 and the objects created by the GitLab chart. We do, however, by default disable
-`alertmanager`, `nodeExporter`, and `pushgateway`.
+`alertmanager`, `node-exporter`, `pushgateway`, and `kube-stat-metrics`.
 
 The `prometheus.yml` file instructs Prometheus to collect metrics from
 resources that have the `gitlab.com/prometheus_scrape` annotation. In addition,
@@ -209,7 +209,7 @@ prometheus:
     persistentVolume:
       enabled: false
       size: 2Gi
-  pushgateway:
+  prometheus-pushgateway:
     enabled: false
     persistentVolume:
       enabled: false

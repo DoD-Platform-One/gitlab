@@ -106,7 +106,7 @@ See the [documentation on Workload Identity Federation for GKE using the GitLab 
 When creating an IAM allow policy that references the Kubernetes ServiceAccount, grant the `roles/storage.objectAdmin` role.
 
 For backups, ensure that Google's Application Default Credentials are used by making sure that
-`gitlab.toolbox.backups.objectStorage.config.secret` and `gitlab.toolbox.backups.objectStorage.config.key` are NOT set.
+`gitlab.toolbox.backups.objectStorage.config.secret`, `gitlab.toolbox.backups.objectStorage.config.key`, and `gitlab.toolbox.backups.objectStorage.config.gcpProject` are NOT set.
 
 ### Backups to Azure blob storage
 

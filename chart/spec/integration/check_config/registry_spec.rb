@@ -9,7 +9,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -21,7 +21,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 12
+            tag: 15
 
         registry:
           database:
@@ -29,20 +29,16 @@ describe 'checkConfig registry' do
       )).deep_merge!(default_required_values)
     end
 
-    let(:error_output) { 'PostgreSQL 13 is the minimum required version' }
+    let(:error_output) { 'PostgreSQL 16 is the minimum required version' }
 
     include_examples 'config validation',
-                     success_description: 'when postgresql.image.tag is >= 13',
-                     error_description: 'when postgresql.image.tag is < 13'
+                     success_description: 'when postgresql.image.tag is >= 16',
+                     error_description: 'when postgresql.image.tag is < 15'
   end
 
   describe 'registry.database (sslmode)' do
     let(:success_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           database:
             enabled: true
@@ -52,10 +48,6 @@ describe 'checkConfig registry' do
 
     let(:error_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           database:
             enabled: true
@@ -75,7 +67,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -93,7 +85,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -118,7 +110,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -136,7 +128,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -162,7 +154,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -180,7 +172,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -263,7 +255,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -279,7 +271,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -303,7 +295,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -324,7 +316,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -353,7 +345,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -373,7 +365,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -400,7 +392,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -420,7 +412,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           database:
@@ -448,7 +440,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -462,7 +454,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -484,7 +476,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -503,7 +495,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -530,7 +522,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -548,7 +540,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -573,7 +565,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -591,7 +583,7 @@ describe 'checkConfig registry' do
       YAML.safe_load(%(
         postgresql:
           image:
-            tag: 13
+            tag: 16
 
         registry:
           redis:
@@ -615,10 +607,6 @@ describe 'checkConfig registry' do
   describe 'registry.redis.loadBalancing (host)' do
     let(:success_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:
@@ -629,10 +617,6 @@ describe 'checkConfig registry' do
 
     let(:error_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:
@@ -651,10 +635,6 @@ describe 'checkConfig registry' do
   describe 'registry.redis.loadBalancing (sentinels)' do
     let(:success_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:
@@ -670,10 +650,6 @@ describe 'checkConfig registry' do
 
     let(:error_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:
@@ -697,10 +673,6 @@ describe 'checkConfig registry' do
   describe 'registry.redis.loadBalancing.password (secret)' do
     let(:success_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:
@@ -715,10 +687,6 @@ describe 'checkConfig registry' do
 
     let(:error_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:
@@ -740,10 +708,6 @@ describe 'checkConfig registry' do
   describe 'registry.redis.loadBalancing.password (key)' do
     let(:success_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:
@@ -758,10 +722,6 @@ describe 'checkConfig registry' do
 
     let(:error_values) do
       YAML.safe_load(%(
-        postgresql:
-          image:
-            tag: 13
-
         registry:
           redis:
             loadBalancing:

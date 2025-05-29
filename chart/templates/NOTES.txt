@@ -64,7 +64,7 @@ The user should ensure all necessary secrets are created according to documentat
 {{-   if not (or .Values.global.ingress.configureCertmanager (include "gitlab.ingress.tls.configured" .)) }}
 {{ $WARNING }}
 {{-     if (eq (include "gitlab.global.ingress.tls.enabled" .) "false") }}
-TLS is globaly disabled. 
+TLS is globaly disabled.
 {{-     else }}
 Automatic TLS certificate generation with cert-manager is disabled.
 One or more of the components does not have a TLS certificate Secret configured.
@@ -153,6 +153,15 @@ Using `PAGES_UPDATE_LEGACY_STORAGE` environment variable with bundled Pages serv
 {{-   end }}
 {{- end }}
 
+{{- /* Deprecation notice for certmanager.install */}}
+{{- if hasKey .Values.certmanager "install" }}
+{{ $WARNING }}
+certmanager:
+    The configuration key `certmanager.install` has been renamed to `installCertmanager`.
+    Please update your values. The old value will be removed in GitLab 18.3/chart 9.3
+    to update the bundled certmanager and to enable schema validation.
+{{- end -}}
+
 {{- /* Deprecation notice for global.redis.password */}}
 {{- if kindIs "map" .Values.global.redis.password }}
 {{ $NOTICE }}
@@ -161,20 +170,6 @@ redis:
     `global.redis.auth` instead. This is the source of the `coalesce.go` warning
     message from Helm as well. For more details, please see:
     https://docs.gitlab.com/charts/installation/upgrade.html#use-of-globalredispassword
-{{- end -}}
-
-{{- /* If the user is managing RBAC externally with NGINX chart 4.0.6 */}}
-{{- if or (and (index .Values "nginx-ingress" "enabled")     (not (index .Values "nginx-ingress" "rbac" "create")))
-          (and (index .Values "nginx-ingress-geo" "enabled") (not (index .Values "nginx-ingress-geo" "rbac" "create"))) }}
-{{ $WARNING }}
-NGINX Ingress Controller: Default RBAC rules creation has been disabled.
-Updates to NGINX Ingress Controller require RBAC changes. Without these,
-the installation will fallback to version v1.3.1.
-
-Read more on https://docs.gitlab.com/charts/releases/8_0.html#upgrade-to-86x-851-843-836
-
-From GitLab chart 8.8+ the NGINX controller image 1.11.2+ will be the default for
-any configuration.
 {{- end -}}
 
 {{- /* run removals */}}

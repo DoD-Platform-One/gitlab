@@ -210,7 +210,7 @@ CIYAML
     --set nginx-ingress.controller.electionID="$RELEASE_NAME-nginx-election" \
     --set nginx-ingress.controller.ingressClassByName=true \
     --set nginx-ingress.controller.ingressClassResource.controllerValue="ci.gitlab.com/$RELEASE_NAME" \
-    --set certmanager.install=false \
+    --set installCertmanager=false \
     --set global.extraEnv.GITLAB_LICENSE_MODE="test" \
     --set global.extraEnv.CUSTOMER_PORTAL_URL="https://customers.staging.gitlab.com" \
     --set global.gitlab.license.secret="$RELEASE_NAME-gitlab-license" \

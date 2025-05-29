@@ -24,7 +24,7 @@
 # Note: Auto CI does not work with multiple buildpacks yet
 
 default:
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-slim-ruby-${RUBY_VERSION}:gcloud-514-kubectl-1.31-helm-3.16-helm_kubeconform-0.1.17-vcluster-0.22-awscli-1.37.9-vault-1.19.0
+  image: "${CI_REGISTRY}/${GITLAB_NAMESPACE}/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}:gcloud-514-kubectl-1.31-helm-3.16-helm_kubeconform-0.1.17-vcluster-0.22-awscli-1.37.9-vault-1.19.0"
 
 variables:
   AUTO_DEPLOY_TAG_REGEX: '^[0-9]+\.[0-9]+\.[0-9]+\+[a-z0-9]{7,}$'
@@ -40,7 +40,7 @@ variables:
   HELM_MAX_HISTORY: 20
   NAMESPACE: $KUBE_NAMESPACE
   REVIEW_REF_PREFIX: ""
-  ISSUE_BOT_LABELS_EXTRA: "group::distribution,type::maintenance,maintenance::pipelines"
+  ISSUE_BOT_LABELS_EXTRA: "group::Self Managed,type::maintenance,maintenance::pipelines"
   SAST_EXCLUDED_PATHS: "/doc,/examples,/spec"
   CANONICAL_PROJECT_PATH: 'gitlab-org/charts/gitlab'
   SECURITY_PROJECT_PATH: 'gitlab-org/security/charts/gitlab'
@@ -48,13 +48,13 @@ variables:
   QA_FULL_SUITE_OPTIONS: '--tag ~smoke --tag ~skip_live_env --tag ~orchestrated --tag ~transient'
   QA_SANITY_SUITE_OPTIONS: '--tag smoke --tag ~skip_live_env --tag ~orchestrated'
   GITLAB_QA_ADMIN_ACCESS_TOKEN: $GITLAB_ADMIN_TOKEN
-  DEBIAN_VERSION: bookworm
+  DEBIAN_VERSION: bookworm-slim
   BUSYBOX_VERSION: "1.37"
   RUBY_VERSION: "3.3.7"
   CI_TOOLS_VERSION: "4.22.0"
   CI_TOOLS_NAMESPACE: "gitlab-org"
   GITLAB_NAMESPACE: "gitlab-org"
-  GITLAB_QA_VERSION: "15.3.0"
+  GITLAB_QA_VERSION: "15.4.0"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -268,7 +268,7 @@ trigger_review_current:
     - job: pin_image_versions
   rules:
     - !reference [.rule:skip_if_not_canonical_or_security]
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
       when: never
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline" && $PIPELINE_TYPE =~ /DEFAULT_BRANCH_PIPELINE$/ '
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline" && $PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/ '
@@ -280,7 +280,7 @@ trigger_review_current:
 .trigger_review_current:
   rules:
     - !reference [.rule:skip_if_not_canonical_or_security]
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
       when: never
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
     # Triggered from CNG
@@ -297,7 +297,7 @@ trigger_review_secondary:
       optional: true
     - job: pin_image_versions
   rules:
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
       when: never
     - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
@@ -307,7 +307,7 @@ trigger_review_secondary:
 
 .trigger_review_secondary:
   rules:
-    - if: '$PIPELINE_TYPE == "DOCS_PIPELINE"'
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
       when: never
     - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
@@ -432,7 +432,7 @@ trigger-eks132:
 # ---------------------------------------------------------------------------
 
 .specs:
-  image: registry.gitlab.com/gitlab-org/gitlab-build-images/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-golang-${GO_VERSION}-rust-${RUST_VERSION}-node-20.12-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.45-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36
+  image: "${CI_REGISTRY}/${GITLAB_NAMESPACE}/gitlab-build-images/ci/debian-${DEBIAN_VERSION}-ruby-${RUBY_VERSION}-golang-${GO_VERSION}-node-20.12-postgresql-${PG_VERSION}:rubygems-${RUBYGEMS_VERSION}-git-2.49-lfs-2.9-chrome-${CHROME_VERSION}-yarn-1.22-graphicsmagick-1.3.36"
   stage: specs
   extends:
     - .source_autodevops
@@ -440,10 +440,9 @@ trigger-eks132:
   variables:
     GITLAB_PASSWORD: $ROOT_PASSWORD
     S3_CONFIG_PATH: /etc/gitlab/minio
-    RUBYGEMS_VERSION: "3.5"
-    GO_VERSION: "1.21"
-    RUST_VERSION: "1.73"
-    PG_VERSION: "14"
+    RUBYGEMS_VERSION: "3.6"
+    GO_VERSION: "1.24"
+    PG_VERSION: "16"
     CHROME_VERSION: "123"
   script:
     - ./scripts/ci/install_spec_dependencies.sh
@@ -535,7 +534,10 @@ wait_for_dev_images:
     - helm package --version=${VERSION}${VERSION_SUFFIX} .
     - chart_file=$(ls -l gitlab*.tgz | head -n 1 | awk '{print $NF}')
     - curl --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --form "chart=@${chart_file}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/${CHANNEL}/charts"
-    - ./scripts/helm_push_oci.sh "${chart_file}"
+    - |
+      if [[ $CHANNEL =~ "devel" ]]; then
+        ./scripts/helm_push_oci.sh "${chart_file}"
+      fi
 
 publish_tagged_package:
   extends: .publish_chart_package
