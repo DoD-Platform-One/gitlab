@@ -2131,6 +2131,11 @@ istio:
       enabled: true
       namespaces:
         - gitlab-runner
+    # gitlab-ci-pipelines-exporter
+    gcpe:
+      enabled: true
+      namespaces:
+        - gitlab-ci-pipelines-exporter
     monitoring:
       enabled: true
       namespaces:
