@@ -3,6 +3,10 @@
 #########################
 monitoring:
   enabled: false
+alloy:
+  enabled: false
+bbctl:
+  enabled: false
 grafana:
   enabled: false
 neuvector:

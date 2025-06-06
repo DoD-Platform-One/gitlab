@@ -3,7 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [9.0.1-bb.0] (2025-05-30)
+## [9.0.1-bb.2] (2025-06-03)
+
+### Changed
+
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.72.1 -> v1.73.0
+- registry1.dso.mil/ironbank/bitnami/redis 8.0.1 -> 8.0.2
+- registry1.dso.mil/ironbank/bitnami/redis 8.0.1 -> 8.0.2
+
+## [9.0.1-bb.1] (2025-05-30)
 
 ### Fixed
 
@@ -31,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 17.11.2 -> 18.0.1
 - registry1.dso.mil/ironbank/opensource/postgres/postgresql 14.17 -> 17.5
 - registry1.dso.mil/ironbank/redhat/ubi/ubi9 9.5 -> 9.6
+
 
 ## [8.11.2-bb.3] (2025-05-15)
 
