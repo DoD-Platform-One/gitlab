@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 9.0.1-bb.1](https://img.shields.io/badge/Version-9.0.1--bb.1-informational?style=flat-square) ![AppVersion: v18.0.1](https://img.shields.io/badge/AppVersion-v18.0.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 9.0.1-bb.2](https://img.shields.io/badge/Version-9.0.1--bb.2-informational?style=flat-square) ![AppVersion: v18.0.1](https://img.shields.io/badge/AppVersion-v18.0.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -27,7 +27,7 @@ The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab
 
 Install Helm
 
-<https://helm.sh/docs/intro/install/>
+https://helm.sh/docs/intro/install/
 
 ## Deployment
 
@@ -693,7 +693,7 @@ helm install gitlab chart/
 | redis.metrics.enabled | bool | `true` |  |
 | redis.metrics.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.metrics.image.repository | string | `"analytics/redis-exporter"` |  |
-| redis.metrics.image.tag | string | `"v1.72.1"` |  |
+| redis.metrics.image.tag | string | `"v1.73.0"` |  |
 | redis.metrics.image.pullSecrets | list | `[]` |  |
 | redis.metrics.resources.limits.cpu | string | `"250m"` |  |
 | redis.metrics.resources.limits.memory | string | `"256Mi"` |  |
@@ -710,7 +710,7 @@ helm install gitlab chart/
 | redis.securityContext.runAsNonRoot | bool | `true` |  |
 | redis.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.image.repository | string | `"redis"` |  |
-| redis.image.tag | string | `"8.0.1"` |  |
+| redis.image.tag | string | `"8.0.2"` |  |
 | redis.image.pullSecrets | list | `[]` |  |
 | redis.master.resources.limits.cpu | string | `"250m"` |  |
 | redis.master.resources.limits.memory | string | `"256Mi"` |  |
