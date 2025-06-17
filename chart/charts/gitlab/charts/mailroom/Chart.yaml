@@ -1,7 +1,7 @@
 apiVersion: v1
 name: mailroom
-version: 9.0.1
-appVersion: v18.0.1
+version: 9.0.2
+appVersion: v18.0.2
 description: Handling incoming emails
 keywords:
 - gitlab
