@@ -3,6 +3,25 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [9.0.2-bb.0] (2025-06-14)
+### Changed
+
+- update gluon 0.5.14 -> 0.6.2
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.73.0 -> v1.74.0
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 18.0.1 -> 18.0.2
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 18.0.1 -> 18.0.2
+
 ## [9.0.1-bb.3] (2025-06-03)
 
 ### Fixed
