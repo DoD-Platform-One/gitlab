@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Configure the GitLab chart with GitLab Geo
 ---
@@ -300,7 +300,7 @@ To deploy this chart as a Geo Primary, start [from this example configuration](h
 
    {{< alert type="note" >}}
 
-This assumes you are using the `gitlab` namespace. If you want to use a different namespace,
+   This assumes you are using the `gitlab` namespace. If you want to use a different namespace,
    you should also replace it in `--namespace gitlab` throughout the rest of this document.
 
    {{< /alert >}}
@@ -312,7 +312,7 @@ This assumes you are using the `gitlab` namespace. If you want to use a differen
 
    {{< alert type="note" >}}
 
-**This step is required for Geo to function.**
+   This step is required for Geo to function.
 
    {{< /alert >}}
 
@@ -465,7 +465,7 @@ After configuration above is prepared:
 
    {{< alert type="note" >}}
 
-If this step fails, you may be using the wrong IP address, or a firewall may
+   If this step fails, you may be using the wrong IP address, or a firewall may
    be preventing access to the server. Check the IP address, paying close
    attention to the difference between public and private addresses and ensure
    that, if a firewall is present, the **secondary** PostgreSQL node is

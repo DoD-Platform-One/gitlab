@@ -250,6 +250,7 @@ describe 'GitLab Pages' do
                 https: false
                 externalHttp: ['1.2.3.4']
                 externalHttps: ['1.2.3.4']
+                customDomainMode: https
                 artifactsServer: false
                 objectStore:
                   enabled: true
@@ -276,6 +277,7 @@ describe 'GitLab Pages' do
             'port' => 123,
             'external_http' => true,
             'external_https' => true,
+            'custom_domain_mode' => 'https',
             'https' => false,
             'secret_file' => '/etc/gitlab/pages/secret',
             'object_store' => {
@@ -632,9 +634,10 @@ describe 'GitLab Pages' do
 
       context 'when not enabled' do
         describe 'gitlab.yml file' do
-          it 'sets externalHTTP and externalHTTPS to false' do
+          it 'sets externalHTTP and externalHTTPS to false, and customDomainMode to nil' do
             expect(gitlab_yml_data['production']['pages']['external_http']).to be false
             expect(gitlab_yml_data['production']['pages']['external_https']).to be false
+            expect(gitlab_yml_data['production']['pages']['custom_domain_mode']).to be nil
           end
         end
 
@@ -686,9 +689,10 @@ describe 'GitLab Pages' do
         end
 
         describe 'gitlab.yml file' do
-          it 'sets externalHTTP to true and externalHTTPS to false' do
+          it 'sets externalHTTP to true, externalHTTPS to false, and customDomainMode to http' do
             expect(gitlab_yml_data['production']['pages']['external_http']).to be true
             expect(gitlab_yml_data['production']['pages']['external_https']).to be false
+            expect(gitlab_yml_data['production']['pages']['custom_domain_mode']).to eq('http')
           end
         end
 
@@ -748,9 +752,10 @@ describe 'GitLab Pages' do
         end
 
         describe 'gitlab.yml file' do
-          it 'sets externalHTTP to true and externalHTTPS to false' do
+          it 'sets externalHTTP to true, externalHTTPS to false and customDomainMode to https' do
             expect(gitlab_yml_data['production']['pages']['external_http']).to be false
             expect(gitlab_yml_data['production']['pages']['external_https']).to be true
+            expect(gitlab_yml_data['production']['pages']['custom_domain_mode']).to eq('https')
           end
         end
 
@@ -812,9 +817,10 @@ describe 'GitLab Pages' do
         end
 
         describe 'gitlab.yml file' do
-          it 'sets both externalHTTP and externalHTTPS to true' do
+          it 'sets both externalHTTP, externalHTTPS to true and customDomainMode to https' do
             expect(gitlab_yml_data['production']['pages']['external_http']).to be true
             expect(gitlab_yml_data['production']['pages']['external_https']).to be true
+            expect(gitlab_yml_data['production']['pages']['custom_domain_mode']).to eq('https')
           end
         end
 
@@ -862,6 +868,25 @@ describe 'GitLab Pages' do
             tls_mount = pages_secret_mounts.find { |mount| mount['secret']['name'] == 'test-pages-tls' }
 
             expect(tls_mount).not_to be_nil
+          end
+        end
+      end
+
+      context 'when custom domain mode is only set to https' do
+        let(:pages_enabled_values) do
+          YAML.safe_load(%(
+            global:
+              pages:
+                enabled: true
+                customDomainMode: https
+          ))
+        end
+
+        describe 'gitlab.yml file' do
+          it 'sets externalHTTP and externalHTTPS to true, and customDomainMode to https' do
+            expect(gitlab_yml_data['production']['pages']['external_http']).to be false
+            expect(gitlab_yml_data['production']['pages']['external_https']).to be false
+            expect(gitlab_yml_data['production']['pages']['custom_domain_mode']).to eq('https')
           end
         end
       end

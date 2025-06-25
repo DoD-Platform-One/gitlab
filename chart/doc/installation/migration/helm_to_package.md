@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Migrate from the Helm chart to the Linux package
 ---
@@ -59,8 +59,50 @@ To migrate from a Helm installation to a Linux package (Omnibus) installation:
      do not need to sync data between two object storages. However, the storage could be de-provisioned when
      you uninstall GitLab Helm chart if you are using the built-in MinIO instance.
 
-1. Copy the GitLab Helm backup to `/var/opt/gitlab/backups` on your Linux package instance, and
+1. Copy the GitLab Helm backup to `/var/opt/gitlab/backups` on your Linux package GitLab instance, and
    [perform the restore](https://docs.gitlab.com/administration/backup_restore/restore_gitlab/#restore-for-linux-package-installations).
+1. (Optional) Restore SSH host keys to avoid host mismatch errors on Git SSH clients:
+
+   1. Convert [`<name>-gitlab-shell-host-keys` secret](../secrets.md#ssh-host-keys) back to files using the following script (required tools: `jq`, `base64`, and `kubectl`):
+
+      ```shell
+      mkdir ssh
+      HOSTKEYS_JSON="hostkeys.json"
+      GITLAB_NAMESPACE="my_namespace"
+      kubectl get secret -n ${GITLAB_NAMESPACE} gitlab-gitlab-shell-host-keys -o json > ${HOSTKEYS_JSON}
+
+      for k in $(jq -r '.data | keys | .[]' ${HOSTKEYS_JSON}); \
+      do \
+        jq -r --arg host_key ${k} '.data[$host_key]' ${HOSTKEYS_JSON}  | base64 --decode > ssh/$k ; \
+      done
+      ```
+       
+   1. Upload the converted files to the GitLab Rails nodes.
+   1. On the target Rails node:
+      1. Back up the `/etc/ssh/` directory, for example:
+
+         ```shell
+         sudo tar -czvf /root/ssh_dir.tar.gz -C /etc ssh
+         ```
+
+      1. Remove the existing host keys:
+
+         ```shell
+         sudo find /etc/ssh -type f -name "/etc/ssh/ssh_*_key*" -delete
+         ```
+
+      1. Move the converted host key files in place (`/etc/ssh`):
+        
+         ```shell
+         for f in ssh/*; do sudo install -b -D  -o root -g root -m 0600 $f /etc/${f} ; done
+         ```
+
+      1. Restart the SSH daemon:
+
+         ```shell
+         sudo systemctl restart ssh.service
+         ```
+
 1. After the restore is complete, run the [doctor Rake tasks](https://docs.gitlab.com/administration/raketasks/check/)
    to make sure that the secrets are valid.
 1. After everything is verified, you may [uninstall](../uninstall.md)

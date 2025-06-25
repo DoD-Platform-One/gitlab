@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Restoring a GitLab installation
 ---
@@ -35,6 +35,14 @@ The backup utility provided by GitLab Helm chart supports restoring a tarball fr
 ## Restoring the secrets
 
 ### Restore the rails secrets
+
+{{<alert type="note">}}
+
+Hybrid environments deployed using the [GitLab Environment Toolkit (GET)](https://docs.gitlab.com/install/install_methods/#gitlab-environment-toolkit-get) perform automatic secret
+synchronisation between Omnibus nodes and Kubernetes that needs to be considered when performing a restore. Refer to
+[this section](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_post_considerations.md#restores) of the GET documentation for details.
+
+{{</alert>}}
 
 The GitLab chart expects rails secrets to be provided as a Kubernetes Secret with content in YAML. If you are restoring
 the rails secret from a Linux package instance, secrets are stored in JSON format in the `/etc/gitlab/gitlab-secrets.json` file. To convert the file and create the secret in YAML format:

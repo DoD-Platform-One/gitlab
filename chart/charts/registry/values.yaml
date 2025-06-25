@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v4.21.0-gitlab'
+  tag: 'v4.23.1-gitlab'
   # pullPolicy: IfNotPresent
 # pullSecrets: []
 
@@ -447,6 +447,12 @@ redis:
 # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#gc
 gc:
   disabled: false
+
+ # Container Registry rate limiter backed by Redis
+ # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#rate-limiter
+rateLimiter:
+  # Enable rate limiting for the container registry
+  enabled: false
 
 ## Configure TLS on the instance itself
 ## WARNING: All clients must trust the certificate used for service.

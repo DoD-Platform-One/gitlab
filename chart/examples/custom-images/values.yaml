@@ -46,8 +46,6 @@ gitlab:
       image: custom-repository
       tag: custom-tag
 
-# --- Charts from requirements.yaml ---
-
 certmanager:
   <<: *custom
   cainjector: *custom

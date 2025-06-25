@@ -21,20 +21,21 @@
 
 ## Technical writing files that do not need `*` rule approval,
 ## but still require an approval from a TW team DRI for each file.
-.markdownlint.yml @marcel.amirault @eread @axil @aqualls @gitlab-org/tw-leadership
-/doc/.markdownlint/ @marcel.amirault @eread @axil @aqualls @gitlab-org/tw-leadership
-/doc/.vale/ @marcel.amirault @eread @axil @aqualls @gitlab-org/tw-leadership
+.markdownlint.yml @gitlab-org/technical-writing/tw-docops @gitlab-org/tw-leadership
+/doc/.markdownlint/ @gitlab-org/technical-writing/tw-docops @gitlab-org/tw-leadership
+/doc/.vale/ @gitlab-org/technical-writing/tw-docops @gitlab-org/tw-leadership
 
 # Distribution CI/CD
 .gitlab/ci/ @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
 /scripts/ci/ @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
 .gitlab-ci.yml @gitlab-org/maintainers/helm-charts-gitlab @balasankarc
 
-# Chart Dependency
-/requirements.yaml @gitlab-org/maintainers/helm-charts-gitlab @DylanGriffith @dgruzd @terrichu @johnmason @hswimelar @jdrpereira @jaime @suleimiahmed
+[Chart Dependencies] @gitlab-org/maintainers/helm-charts-gitlab @DylanGriffith @dgruzd @terrichu @johnmason @hswimelar @jdrpereira @jaime @suleimiahmed
+/Chart.yaml
+/Chart.lock
 
 # Charts Architecture
-/doc/architecture/ @WarheadsSE @twk3 @ayufan @stanhu
+/doc/architecture/ @WarheadsSE @ayufan @stanhu
 
 ^[Documentation Directories] @gl-docsteam
 /doc/

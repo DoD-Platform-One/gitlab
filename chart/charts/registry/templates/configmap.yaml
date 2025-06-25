@@ -156,6 +156,7 @@ data:
     {{- include "registry.database.config" $ | nindent 4 }}
     {{- include "registry.gc.config" $ | nindent 4 }}
     {{- include "registry.redis.config" $ | nindent 4}}
+    {{- include "registry.rateLimiter.config" $ | nindent 4 }}
 
   # minimal configuration, in order to do database migrations
   migrations-config.yml.tpl: |

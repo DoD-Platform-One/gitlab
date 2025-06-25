@@ -1,11 +1,16 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Configure the GitLab chart with an external database
 ---
 
-For a production-ready GitLab chart deployment, use an external database.
+{{< alert type="warning" >}}
+
+The bundled bitnami PostgreSQL chart is not production ready. For a production-ready GitLab chart deployment, use an
+external database.
+
+{{< /alert >}}
 
 Prerequisites:
 

@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Preparing EKS resources for the GitLab chart
 ---
@@ -46,13 +46,13 @@ The script reads various parameters from environment variables, or command line 
 
 The table below describes all variables.
 
-| Variable          | Description                                      | Default value    |
-|-------------------|--------------------------------------------------|------------------|
-| `REGION`          | The region where your cluster lives              | `us-east-2`      |
-| `CLUSTER_NAME`    | The name of the cluster                          | `gitlab-cluster` |
-| `CLUSTER_VERSION` | The version of your EKS cluster                  | `1.29`           |
-| `NUM_NODES`       | The number of nodes required                     | `2`              |
-| `MACHINE_TYPE`    | The type of nodes to deploy                      | `m5.xlarge`      |
+| Variable          | Default value    | Description |
+|-------------------|------------------|-------------|
+| `REGION`          | `us-east-2`      | The region where your cluster lives |
+| `CLUSTER_NAME`    | `gitlab-cluster` | The name of the cluster |
+| `CLUSTER_VERSION` | `1.29`           | The version of your EKS cluster |
+| `NUM_NODES`       | `2`              | The number of nodes required |
+| `MACHINE_TYPE`    | `m5.xlarge`      | The type of nodes to deploy |
 
 Run the script, by passing in your desired parameters. It can work with the
 default parameters.

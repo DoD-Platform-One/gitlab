@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Contribute to Helm chart development
 ---
@@ -78,7 +78,7 @@ The configuration for these CI pipelines is managed in:
 
 - [`.gitlab-ci.yml`](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/.gitlab-ci.yml)
 - Files under [`.gitlab/ci/`](https://gitlab.com/gitlab-org/charts/gitlab/tree/master/.gitlab/ci/)
-- Nightly builds have further configuration discussed under [nightlies](nightlies/_index.md)
+- Every commit builds have further configuration discussed under [release](release.md#consumed-by-production-services).
 
 ### Review apps
 
@@ -102,10 +102,10 @@ GKE platform only.
 
 | Minor version | GKE       | EKS       | vCluster deploy | vCluster full QA |
 | ---           | ---       | ---       | ---             | ---              |
-| 1.32          | current   | secondary | secondary       | secondary        |
+| 1.33          | current   | NA        | secondary       | secondary        |
+| 1.32          | secondary | current   | NA              | NA               |
 | 1.31          | secondary | NA        | NA              | NA               |
 | 1.31 ARM      | current   | NA        | NA              | NA               |
-| 1.30          | secondary | NA        | NA              | NA               |
 
 This table is in development and subject to change.
 

@@ -58,7 +58,7 @@ global:
   edition: ee
 
   ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "18.0.2"
+  gitlabVersion: "18.1.0"
 
   ## https://docs.gitlab.com/charts/charts/globals#application-resource
   application:
@@ -81,7 +81,6 @@ global:
     smartcard: {}
     kas: {}
     pages: {}
-    #  name: 'pages.dev.bigbang.mil'
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
   ingress:
@@ -737,6 +736,7 @@ global:
     https: # default true
     externalHttp: []
     externalHttps: []
+    customDomainMode:
     artifactsServer: true
     localStore:
       enabled: false
@@ -847,7 +847,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     init:
@@ -896,7 +896,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -913,7 +913,7 @@ global:
       # 1. UBI does not have the newly required /scripts/set-config template generator in its entrypoint.
       #   a. trying gitlab-base per https://repo1.dso.mil/dsop/gitlab/gitlab/gitlab-base/-/issues/77
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base
-      tag: "18.0.2"
+      tag: "18.1.0"
       pullSecrets:
       - name: private-registry
 
@@ -937,6 +937,14 @@ global:
       basicAuth: {}
     indexer:
       internalApi: {}
+
+  ## https://docs.gitlab.com/ci/secrets/
+  ## Experimental, unsupported
+  openbao:
+    enabled: false
+    host:
+    https:
+    url: # If present, must be a complete URI
 
   ## https://docs.gitlab.com/charts/charts/globals
   extraEnv: {}
@@ -1126,7 +1134,7 @@ haproxy:
       - --configmap-tcp-services=$(POD_NAMESPACE)/$(POD_NAMESPACE)-haproxy-tcp
 
 ## Installation & configuration of stable/prometheus
-## See requirements.yaml for current version
+## See dependencies in Chart.yaml for current version
 prometheus:
   install: false
   rbac:
@@ -1395,7 +1403,7 @@ redis:
         memory: 256Mi
 
 ## Installation & configuration of stable/postgresql
-## See requirements.yaml for current version
+## See dependencies in Chart.yaml for current version
 postgresql:
   install: true
   postgresqlDatabase: gitlabhq_production
@@ -1508,7 +1516,7 @@ registry:
       memory: 1024Mi
   image:
     repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 18.0.2
+    tag: 18.1.0
     pullSecrets:
     - name: private-registry
   ingress:
@@ -1576,7 +1584,7 @@ shared-secrets:
     sidecar.istio.io/inject: "true"
 
 ## Installation & configuration of gitlab/gitlab-runner
-## See requirements.yaml for current version
+## See dependencies in Chart.yaml for current version
 gitlab-runner:
   install: false
   rbac:
@@ -1648,7 +1656,7 @@ gitlab:
         app: gitaly
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1725,7 +1733,7 @@ gitlab:
         - ALL
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     metrics:
@@ -1770,7 +1778,7 @@ gitlab:
         memory: 1.5G
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -1819,7 +1827,7 @@ gitlab:
         memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     workhorse:
@@ -1832,7 +1840,7 @@ gitlab:
           cpu: 600m
           memory: 2.5G
       image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
       metrics:
@@ -1856,7 +1864,7 @@ gitlab:
   sidekiq:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1893,7 +1901,7 @@ gitlab:
   gitaly:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1934,7 +1942,7 @@ gitlab:
   gitlab-shell:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
       - name: private-registry
     init:
@@ -1978,7 +1986,7 @@ gitlab:
   mailroom:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 18.0.2
+      tag: 18.1.0
       pullSecrets:
         - name: private-registry
     containerSecurityContext:
@@ -1995,7 +2003,7 @@ gitlab:
         type: ClusterIP
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 18.0.2
+      tag: 18.1.0
     containerSecurityContext:
       capabilities:
         drop:
@@ -2006,7 +2014,7 @@ gitlab:
   praefect:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 18.0.2
+      tag: 18.1.0
     init:
       resources:
         limits:

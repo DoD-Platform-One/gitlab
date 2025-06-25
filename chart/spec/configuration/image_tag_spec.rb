@@ -129,6 +129,29 @@ describe 'image tag configuration' do
       test_helper_images(template, 'should use the global gitlabVersion for the image tag', ':v1.2.3')
     end
 
+    context 'with v-prefixed version' do
+      begin
+        values = HelmTemplate.with_defaults %(
+          global:
+            gitlabVersion: v1.2.3
+        )
+        template = HelmTemplate.new values
+      rescue StandardError
+        # Skip these examples when helm or chart dependencies are missing
+        next
+      end
+
+      let(:template) do
+        template
+      end
+
+      it 'should render the template without error' do
+        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      end
+
+      test_helper_images(template, 'should preserve the v prefix when gitlabVersion already has v prefix', ':v1.2.3')
+    end
+
     context 'with local tags configured' do
       begin
         values = HelmTemplate.with_defaults %(

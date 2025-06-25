@@ -1,8 +1,8 @@
 ---
-apiVersion: v1
+apiVersion: v2
 name: gitlab
-version: 9.0.2-bb.0
-appVersion: 18.0.2
+version: 9.1.0-bb.0
+appVersion: 18.1.0
 description: GitLab is the most comprehensive AI-powered DevSecOps Platform.
 keywords:
 - gitlab
@@ -13,10 +13,63 @@ sources:
 maintainers:
 - name: GitLab Inc.
   email: support@gitlab.com
+dependencies:
+- name: gitlab
+  version: "*.*.*"
+- name: certmanager-issuer
+  version: "*.*.*"
+- name: minio
+  version: "*.*.*"
+- name: registry
+  version: "*.*.*"
+- name: cert-manager
+  version: v1.12.17
+  repository: https://charts.jetstack.io/
+  condition: certmanager.install,installCertmanager
+  alias: certmanager
+- name: prometheus
+  version: 27.20.0
+  repository: https://prometheus-community.github.io/helm-charts
+  condition: prometheus.install
+- name: postgresql
+  version: 16.7.0
+  repository: https://charts.bitnami.com/bitnami
+  condition: postgresql.install
+- name: gitlab-runner
+  version: 0.77.3
+  repository: https://charts.gitlab.io/
+  condition: gitlab-runner.install
+- name: redis
+  version: 18.19.4
+  repository: https://charts.bitnami.com/bitnami
+  condition: redis.install
+- name: nginx-ingress
+  condition: nginx-ingress.enabled
+  version: "*.*.*"
+- name: nginx-ingress
+  condition: nginx-ingress-geo.enabled
+  version: "*.*.*"
+  alias: nginx-ingress-geo
+- name: gitlab-zoekt
+  version: 2.6.0
+  repository: https://charts.gitlab.io/
+  condition: gitlab-zoekt.install
+- name: gluon
+  version: "0.6.2"
+  repository: "oci://registry1.dso.mil/bigbang"
+- name: traefik
+  repository: https://helm.traefik.io/traefik
+  condition: traefik.install
+  version: 10.19.4
+- name: kubernetes-ingress
+  alias: haproxy
+  version: 1.32.0
+  condition: haproxy.install
+  repository: https://haproxytech.github.io/helm-charts
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Gitlab: 18.0.2
+    - Gitlab: 18.1.0
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
   helm.sh/images: |
@@ -27,29 +80,29 @@ annotations:
       condition: redis.install
       image: registry1.dso.mil/ironbank/bitnami/redis:8.0.2
     - name: alpine-certificates
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/certificates:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/certificates:18.1.0
     - name: cfssl-self-sign
       condition: shared-secrets.enabled
       image: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign:1.6.1
     - name: gitaly
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:18.1.0
     - name: gitlab-container-registry
       condition: registry.enabled
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry:18.1.0
     - name: gitlab-shell
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell:18.1.0
     - name: gitlab-sidekiq
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq:18.1.0
     - name: gitlab-toolbox
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox:18.1.0
     - name: gitlab-webservice
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice:18.1.0
     - name: gitlab-workhorse
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse:18.1.0
     - name: gitlab-pages
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages:18.1.0
     - name: kubectl
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:18.1.0
     - name: mc
       image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2024-10-02T08-27-28Z
     - name: minio
@@ -61,10 +114,10 @@ annotations:
       condition: upgradeCheck.enabled
       image: registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.6
     - name: gitlab-base
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base:18.1.0
     - name: gitlab-exporter
       condition: gitlab.gitlab-exporter.enabled
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:18.0.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:18.1.0
     - name: bbtests
       condition: bbtests.enabled
       image: registry1.dso.mil/bigbang-ci/gitlab-tester:0.0.4

@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Writing RSpec tests for charts
 ---
@@ -104,7 +104,7 @@ When _adding_ properites, this has worked well. The drawback is that this does n
 
 Helm merges / coalesces configuration properties via [coalesceValues function](https://github.com/helm/helm/blob/a499b4b179307c267bdf3ec49b880e3dbd2a5591/pkg/chartutil/coalesce.go#L145-L148), which has some distinctly different behaviors to `deep_merge` as implemented here. We continue to refine how this functions within our RSpec.
 
-**General guidelines:**
+**General guidelines**:
 
 1. Be aware of and wary of the behavior of `Hash.merge`.
 1. Be aware of and wary of the behavior of `Hash.deep_merge` as offered by `hash-deep-merge` gem.

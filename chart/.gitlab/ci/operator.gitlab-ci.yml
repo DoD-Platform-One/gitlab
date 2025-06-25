@@ -7,7 +7,9 @@ trigger_operator_test:
     CHARTS_REF: "${CI_COMMIT_SHA}"
     TRIGGER_PROJECT: "${CI_PROJECT_PATH}"
   inherit:
-    variables: false
+    variables: 
+      - CANONICAL_PROJECT_PATH
+      - SECURITY_PROJECT_PATH
   allow_failure: true
   rules:
     - !reference [.rule:skip_docs_pipeline]

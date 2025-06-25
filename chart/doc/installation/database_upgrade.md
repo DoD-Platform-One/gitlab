@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Upgrade the bundled PostgreSQL version
 ---
@@ -19,7 +19,14 @@ PostgreSQL setups.
 
 {{< /alert >}}
 
-Changing to a new major version of PostgreSQL using the bundle PostgreSQL chart is done via a backup on the existing
+{{< alert type="warning" >}}
+
+The bundled bitnami PostgreSQL chart is not production ready. For a production-ready GitLab chart deployment, use an
+external database.
+
+{{< /alert >}}
+
+Changing to a new major version of PostgreSQL using the bundled PostgreSQL chart is done through a backup on the existing
 database, then restoring to the new database.
 
 {{< alert type="note" >}}
@@ -33,41 +40,7 @@ is done by upgrading [PostgreSQL chart](https://github.com/bitnami/charts/tree/m
 This is NOT a drop in replacement. Manual steps need to be performed to upgrade the database.
 The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
 
-{{< alert type="note" >}}
-
-As part of the `7.0.0` release of this chart, we upgraded the default PostgreSQL version from `12.7.0` to `14.8.0`. This
-is done by upgrading [PostgreSQL chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) version from
-`8.9.4` to `12.5.2`.
-
-{{< /alert >}}
-
-This is NOT a drop in replacement. Manual steps need to be performed to upgrade the database.
-The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
-
-{{< alert type="note" >}}
-
-As part of the `5.0.0` release of this chart, we upgraded the bundled PostgreSQL version from `11.9.0` to `12.7.0`. This is
-not a drop in replacement. Manual steps need to be performed to upgrade the database.
-The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
-
-{{< /alert >}}
-
-{{< alert type="note" >}}
-
-As part of the `4.0.0` release of this chart, we upgraded the bundled [PostgreSQL chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql) from `7.7.0` to `8.9.4`.
-This is not a drop in replacement. Manual steps need to be performed to upgrade the database.
-The steps have been documented in the [upgrade steps](#steps-for-upgrading-the-bundled-postgresql).
-{{< /alert >}}
-
 ## Steps for upgrading the bundled PostgreSQL
-
-{{< alert type="note" >}}
-
-Starting from `7.0.0`, GitLab chart not longer mounts PostgreSQL credentials as files inside of the PostgreSQL instance.
-This is done by setting `postgresql.auth.usePasswordFiles` to `false`. This means that database credentials are passed
-as environment variables instead of password files, only for this component.
-
-{{< /alert >}}
 
 This is due to [an issue](https://github.com/bitnami/charts/issues/16707) in upstream PostgreSQL chart. If you do not
 want to use environment variables for PostgreSQL passwords and prefer to use files you need to follow the instructions

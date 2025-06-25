@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Configure charts using globals
 ---
@@ -129,33 +129,33 @@ global:
 
 The GitLab global host settings for HPA are located under the `global.hpa` key:
 
-| Name         | Type      | Default | Description                                                           |
-| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
-| `apiVersion` | String    |         | API version to use in the `HorizontalPodAutoscaler` object definitions. |
+| Name         |  Type  | Default | Description |
+|:-------------|:------:|:--------|:------------|
+| `apiVersion` | String |         | API version to use in the `HorizontalPodAutoscaler` object definitions. |
 
 ## Configure `PodDisruptionBudget` settings
 
 The GitLab global host settings for PDB are located under the `global.pdb` key:
 
-| Name         | Type      | Default | Description                                                           |
-| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
-| `apiVersion` | String    |         | API version to use in the `PodDisruptionBudget` object definitions. |
+| Name         |  Type  | Default | Description |
+|:-------------|:------:|:--------|:------------|
+| `apiVersion` | String |         | API version to use in the `PodDisruptionBudget` object definitions. |
 
 ## Configure `CronJob` settings
 
 The GitLab global host settings for `CronJobs` are located under the `global.batch.cronJob` key:
 
-| Name         | Type      | Default | Description                                                           |
-| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
-| `apiVersion` | String    |         | API version to use in the `CronJob` object definitions. |
+| Name         |  Type  | Default | Description |
+|:-------------|:------:|:--------|:------------|
+| `apiVersion` | String |         | API version to use in the `CronJob` object definitions. |
 
 ## Configure Monitoring settings
 
 The GitLab global settings for `ServiceMonitors` and `PodMonitors` are located under the `global.monitoring` key:
 
-| Name         | Type      | Default | Description                                                           |
-| :----------- | :-------: | :------ | :-------------------------------------------------------------------- |
-| `enabled`    | Boolean   | `false` | Enable monitoring resources regardless of the availability of the `monitoring.coreos.com/v1` API. |
+| Name      |  Type   | Default | Description |
+|:----------|:-------:|:--------|:------------|
+| `enabled` | Boolean | `false` | Enable monitoring resources regardless of the availability of the `monitoring.coreos.com/v1` API. |
 
 ## Configure Ingress settings
 
@@ -367,12 +367,12 @@ global:
       serverCA: server-ca.pem        # Secret key containing the CA for the database server
 ```
 
-| Name                | Type    | Default | Description |
-|:-----------------   |:-------:|:------- |:----------- |
-| `secret`            | String  |         | Name of the Kubernetes `Secret` containing the following keys |
-| `clientCertificate` | String  |         | Name of the key within the `Secret` containing the client certificate. |
-| `clientKey`         | String  |         | Name of the key within the `Secret` containing the client certificate's key file. |
-| `serverCA`          | String  |         | Name of the key within the `Secret` containing the certificate authority for the server. |
+| Name                |  Type  | Default | Description |
+|:--------------------|:------:|:--------|:------------|
+| `secret`            | String |         | Name of the Kubernetes `Secret` containing the following keys |
+| `clientCertificate` | String |         | Name of the key within the `Secret` containing the client certificate. |
+| `clientKey`         | String |         | Name of the key within the `Secret` containing the client certificate's key file. |
+| `serverCA`          | String |         | Name of the key within the `Secret` containing the certificate authority for the server. |
 
 You may also need to set `extraEnv` values to export environment values to point to the correct keys.
 
@@ -481,20 +481,20 @@ global:
     scheme:
 ```
 
-| Name               | Type    | Default | Description |
-|:------------------ |:-------:|:------- |:----------- |
-| `connectTimeout`   | Integer |         | The number of seconds to wait for a Redis connection. If no value specified, the client defaults to 1 second. |
-| `readTimeout`      | Integer |         | The number of seconds to wait for a Redis read. If no value is specified, the client defaults to 1 second. |
-| `writeTimeout`     | Integer |         | The number of seconds to wait for a Redis write. If no value is specified, the client defaults to 1 second. |
-| `host`             | String  |         | The hostname of the Redis server with the database to use. This can be omitted in lieu of `serviceName`. |
-| `serviceName`      | String  | `redis` | The name of the `service` which is operating the Redis database. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Redis as a part of the overall GitLab chart. |
-| `port`             | Integer | `6379`  | The port on which to connect to the Redis server. |
-| `database`         | Integer | `0`     | The database to connect to on the Redis server. |
-| `user`             | String  |         | The user used to authenticate against Redis (Redis 6.0+). |
-| `auth.enabled`     | Boolean | `true`  | The `auth.enabled` provides a toggle for using a password with the Redis instance. |
-| `auth.key`         | String  |         | The `auth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
-| `auth.secret`      | String  |         | The `auth.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
-| `scheme`           | String  | `redis` | The URI scheme to be used to generate Redis URLs. Valid values are `redis`, `rediss`, and `tcp`. If using `rediss` (SSL encrypted connection) scheme, the certificate used by the server should be a part of the system's trusted chains. This can be done by adding them to the [custom certificate authorities](#custom-certificate-authorities) list. |
+| Name             |  Type   | Default | Description |
+|:-----------------|:-------:|:--------|:------------|
+| `connectTimeout` | Integer |         | The number of seconds to wait for a Redis connection. If no value specified, the client defaults to 1 second. |
+| `readTimeout`    | Integer |         | The number of seconds to wait for a Redis read. If no value is specified, the client defaults to 1 second. |
+| `writeTimeout`   | Integer |         | The number of seconds to wait for a Redis write. If no value is specified, the client defaults to 1 second. |
+| `host`           | String  |         | The hostname of the Redis server with the database to use. This can be omitted in lieu of `serviceName`. |
+| `serviceName`    | String  | `redis` | The name of the `service` which is operating the Redis database. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Redis as a part of the overall GitLab chart. |
+| `port`           | Integer | `6379`  | The port on which to connect to the Redis server. |
+| `database`       | Integer | `0`     | The database to connect to on the Redis server. |
+| `user`           | String  |         | The user used to authenticate against Redis (Redis 6.0+). |
+| `auth.enabled`   | Boolean | `true`  | The `auth.enabled` provides a toggle for using a password with the Redis instance. |
+| `auth.key`       | String  |         | The `auth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
+| `auth.secret`    | String  |         | The `auth.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
+| `scheme`         | String  | `redis` | The URI scheme to be used to generate Redis URLs. Valid values are `redis`, `rediss`, and `tcp`. If using `rediss` (SSL encrypted connection) scheme, the certificate used by the server should be a part of the system's trusted chains. This can be done by adding them to the [custom certificate authorities](#custom-certificate-authorities) list. |
 
 ### Configure Redis chart-specific settings
 
@@ -549,11 +549,11 @@ global:
       key: redis-password
 ```
 
-| Name               | Type    | Default | Description |
-|:------------------ |:-------:|:------- |:----------- |
-| `host`             | String  |         | The `host` attribute needs to be set to the cluster name as specified in the `sentinel.conf`.|
-| `sentinels.[].host`| String  |         | The hostname of Redis Sentinel server for a Redis HA setup. |
-| `sentinels.[].port`| Integer | `26379` | The port on which to connect to the Redis Sentinel server. |
+| Name                |  Type   | Default | Description |
+|:--------------------|:-------:|:--------|:------------|
+| `host`              | String  |         | The `host` attribute needs to be set to the cluster name as specified in the `sentinel.conf`. |
+| `sentinels.[].host` | String  |         | The hostname of Redis Sentinel server for a Redis HA setup. |
+| `sentinels.[].port` | Integer | `26379` | The port on which to connect to the Redis Sentinel server. |
 
 All the prior Redis attributes in the general [configure Redis settings](#configure-redis-settings)
 continue to apply with the Sentinel support unless re-specified in the table above.
@@ -589,11 +589,11 @@ global:
       key: sentinel-password
 ```
 
-| Name                       | Type       | Default | Description |
-|:-------------------------- |:----------:|:------- |:----------- |
-| `sentinelAuth.enabled`     | Boolean    | `false` | The `sentinelAuth.enabled` provides a toggle for using a password with the Redis Sentinel instance. |
-| `sentinelAuth.key`         | String     |         | The `sentinelAuth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
-| `sentinelAuth.secret`      | String     |         | The `sentinelAuth.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
+| Name                   |  Type   | Default | Description |
+|:-----------------------|:-------:|:--------|:------------|
+| `sentinelAuth.enabled` | Boolean | `false` | The `sentinelAuth.enabled` provides a toggle for using a password with the Redis Sentinel instance. |
+| `sentinelAuth.key`     | String  |         | The `sentinelAuth.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
+| `sentinelAuth.secret`  | String  |         | The `sentinelAuth.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
 
 `global.redis.sentinelAuth` can be used to configure a Sentinel password
 for all Sentinel instances.
@@ -716,13 +716,13 @@ global:
 The following table describes the attributes for each dictionary of the
 Redis instances.
 
-| Name               | Type    | Default | Description |
-|:------------------ |:-------:|:------- |:----------- |
-| `.host`            | String  |         | The hostname of the Redis server with the database to use. |
-| `.port`            | Integer | `6379`  | The port on which to connect to the Redis server. |
-| `.password.enabled`| Boolean | `true`  | The `password.enabled` provides a toggle for using a password with the Redis instance. |
-| `.password.key`    | String  |         | The `password.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
-| `.password.secret` | String  |         | The `password.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
+| Name                |  Type   | Default | Description |
+|:--------------------|:-------:|:--------|:------------|
+| `.host`             | String  |         | The hostname of the Redis server with the database to use. |
+| `.port`             | Integer | `6379`  | The port on which to connect to the Redis server. |
+| `.password.enabled` | Boolean | `true`  | The `password.enabled` provides a toggle for using a password with the Redis instance. |
+| `.password.key`     | String  |         | The `password.key` attribute for Redis defines the name of the key in the secret (below) that contains the password. |
+| `.password.secret`  | String  |         | The `password.secret` attribute for Redis defines the name of the Kubernetes `Secret` to pull from. |
 
 The primary Redis definition is required as there are additional persistence
 classes that have not been separated.
@@ -788,7 +788,6 @@ global:
       serviceName: registry
       port: 5000
     tokenIssuer: gitlab-issuer
-
 ```
 
 For more details on `bucket`, `certificate`, `httpSecret`, and `notificationSecret` settings, see the documentation within the [registry chart](registry/_index.md).
@@ -797,7 +796,7 @@ For details on `enabled`, `host`, `api` and `tokenIssuer` see documentation for 
 
 `host` is used to override autogenerated external registry hostname reference.
 
-### notifications
+### `notifications`
 
 This setting is used to configure
 [Registry notifications](https://distribution.github.io/distribution/about/notifications/).
@@ -878,7 +877,7 @@ The Gitaly authentication token is expected to be identical for
 all Gitaly services at this time, internal or external. Ensure these are aligned.
 See [issue #1992](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/1992) for further details.
 
-#### Internal
+#### `internal`
 
 The `internal` key currently consists of only one key, `names`, which is a list of
 [storage names](https://docs.gitlab.com/administration/repository_storage_paths/)
@@ -900,7 +899,7 @@ by re-adding a node to the `names` list.
 A sample [configuration of multiple internal nodes](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/examples/gitaly/values-multiple-internal.yaml)
 can be found in the examples folder.
 
-#### External
+#### `external`
 
 The `external` key provides a configuration for Gitaly nodes external to the cluster.
 Each item of this list has 3 keys:
@@ -941,11 +940,19 @@ All Gitaly nodes **must** share the same authentication token.
 
 ### Deprecated Gitaly settings
 
+<<<<<<< HEAD
 | Name                         | Type    | Default | Description |
 |:---------------------------- |:-------:|:------- |:----------- |
 | `host` _(deprecated)_        | String  |         | The hostname of the Gitaly server to use. This can be omitted in lieu of `serviceName`. If this setting is used, it will override any values of `internal` or `external`. |
 | `port` _(deprecated)_        | Integer | `8075`  | The port on which to connect to the Gitaly server. |
 | `serviceName` _(deprecated)_ | String  |         | The name of the `service` which is operating the Gitaly server. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Gitaly as a part of the overall GitLab chart. |
+=======
+| Name                         |  Type   | Default | Description |
+|:-----------------------------|:-------:|:--------|:------------|
+| `host` *(deprecated)*        | String  |         | The hostname of the Gitaly server to use. This can be omitted in lieu of `serviceName`. If this setting is used, it will override any values of `internal` or `external`. |
+| `port` *(deprecated)*        | Integer | `8075`  | The port on which to connect to the Gitaly server. |
+| `serviceName` *(deprecated)* | String  |         | The name of the `service` which is operating the Gitaly server. If this is present, and `host` is not, the chart will template the hostname of the service (and current `.Release.Name`) in place of the `host` value. This is convenient when using Gitaly as a part of the overall GitLab chart. |
+>>>>>>> update "chart" (https://gitlab.com/gitlab-org/charts/gitlab) from "v9.0.2" (5e1e1c247f8094368555a6a03c2ccd6d54a06568) to "v9.1.0" (8a18dded579efa254bd24fee1b9d5d0112a3fd0a)
 
 ### TLS settings
 
@@ -1161,8 +1168,8 @@ global:
 The `appConfig` settings that can be used to tweak the general properties of the Rails
 application are described below:
 
-| Name                                | Type    | Default | Description |
-|:----------------------------------- |:-------:|:------- |:----------- |
+| Name                                |  Type   | Default | Description |
+|:------------------------------------|:-------:|:--------|:------------|
 | `cdnHost`                           | String  | (empty) | Sets a base URL for a CDN to serve static assets (for example, `https://mycdnsubdomain.fictional-cdn.com`). |
 | `contentSecurityPolicy`             | Struct  |         | [See below](#content-security-policy). |
 | `enableUsagePing`                   | Boolean | `true`  | A flag to disable the [usage ping support](https://docs.gitlab.com/administration/settings/usage_statistics/). |
@@ -1234,8 +1241,8 @@ defaultProjectsFeatures:
 By default, the charts work with Gravatar avatar service available at gravatar.com.
 However, a custom Libravatar service can also be used if needed:
 
-| Name                | Type   | Default | Description |
-|:------------------- |:------:|:------- |:----------- |
+| Name                |  Type  | Default | Description |
+|:--------------------|:------:|:--------|:------------|
 | `gravatar.plainURL` | String | (empty) | [HTTP URL to Libravatar instance (instead of using gravatar.com)](https://docs.gitlab.com/administration/libravatar/). |
 | `gravatar.sslUrl`   | String | (empty) | [HTTPS URL to Libravatar instance (instead of using gravatar.com)](https://docs.gitlab.com/administration/libravatar/). |
 
@@ -1271,19 +1278,23 @@ are not individually configured with a `connection` property.
     key:
 ```
 
-| Name             | Type    | Default | Description |
-|:---------------- |:-------:|:------- |:----------- |
-| `enabled`        | Boolean | `false` | Enable the use of consolidated object storage. |
-| `proxy_download` | Boolean | `true`  | Enable proxy of all downloads via GitLab, in place of direct downloads from the `bucket`. |
-| `storage_options`| String  | `{}`    | [See below](#storage_options). |
-| `connection`     | String  | `{}`    | [See below](#connection). |
+| Name              |  Type   | Default | Description |
+|:------------------|:-------:|:--------|:------------|
+| `enabled`         | Boolean | `false` | Enable the use of consolidated object storage. |
+| `proxy_download`  | Boolean | `true`  | Enable proxy of all downloads via GitLab, in place of direct downloads from the `bucket`. |
+| `storage_options` | String  | `{}`    | [See below](#storage_options). |
+| `connection`      | String  | `{}`    | [See below](#connection). |
 
 The property structure is shared, and all properties here can be overridden by the individual
 items below. The `connection` property structure is identical.
 
-**Notice:** The `bucket`, `enabled`, and `proxy_download` properties are the only properties that must be
+{{< alert type="note" >}}
+
+The `bucket`, `enabled`, and `proxy_download` properties are the only properties that must be
 configured on a per-item level (`global.appConfig.artifacts.bucket`, ...) if you wish to
 deviate from the default values.
+
+{{< /alert >}}
 
 When using the `AWS` provider for the [connection](#connection) (which is any
 S3 compatible provider such as the included MinIO), GitLab Workhorse can offload
@@ -1363,12 +1374,12 @@ as they are structurally identical aside from the default value of the `bucket` 
     key:
 ```
 
-| Name             | Type    | Default | Description |
-|:---------------- |:-------:|:------- |:----------- |
-| `enabled`        | Boolean | Defaults to `true` for LFS, artifacts, uploads, and packages  | Enable the use of these features with object storage. |
-| `proxy_download` | Boolean | `true`  | Enable proxy of all downloads via GitLab, in place of direct downloads from the `bucket`. |
-| `bucket`         | String  | Various | Name of the bucket to use from object storage provider. Default will be `git-lfs`, `gitlab-artifacts`, `gitlab-uploads`, or `gitlab-packages`, depending on the service. |
-| `connection`     | String  | `{}`    | [See below](#connection). |
+| Name             |  Type   | Default                                                      | Description |
+|:-----------------|:-------:|:-------------------------------------------------------------|:------------|
+| `enabled`        | Boolean | Defaults to `true` for LFS, artifacts, uploads, and packages | Enable the use of these features with object storage. |
+| `proxy_download` | Boolean | `true`                                                       | Enable proxy of all downloads via GitLab, in place of direct downloads from the `bucket`. |
+| `bucket`         | String  | Various                                                      | Name of the bucket to use from object storage provider. Default will be `git-lfs`, `gitlab-artifacts`, `gitlab-uploads`, or `gitlab-packages`, depending on the service. |
+| `connection`     | String  | `{}`                                                         | [See below](#connection). |
 
 #### `connection`
 
@@ -1649,7 +1660,7 @@ for deployed pods. The `gitlab-base` container is now used for this operation, w
 
 See [Custom Certificate Authorities](#custom-certificate-authorities) for more info.
 
-### DuoAuth
+### `duoAuth`
 
 Use these settings to enable [two-factor authentication (2FA) with GitLab Duo](https://docs.gitlab.com/user/profile/account/two_factor_authentication/#enable-one-time-password).
 
@@ -1722,7 +1733,7 @@ omniauth:
 | `syncProfileAttributes`   |                  | `['email']` |
 | `syncProfileFromProvider` |                  | `[]`    |
 
-#### providers
+#### `providers`
 
 `providers` is presented as an array of maps that are used to populate `gitlab.yml`
 as when installed from source. See GitLab documentation for the available selection
@@ -1736,7 +1747,7 @@ This property has two sub-keys: `secret` and `key`:
   Defaults to `provider`
 
 Alternatively, if the provider has no other configuration than its name, you may
-use a second form with only a 'name' attribute, and optionally a `label` or
+use a second form with only a `name` attribute, and optionally a `label` or
 `icon` attribute. The eligible providers are:
 
 - [`group_saml`](https://docs.gitlab.com/integration/saml/#configure-group-saml-sso-on-a-self-managed-instance)
@@ -2072,6 +2083,7 @@ global:
     https:
     externalHttp:
     externalHttps:
+    customDomainMode:
     artifactsServer:
     objectStore:
       enabled:
@@ -2097,8 +2109,9 @@ global:
 | `host`                          | String  |                            | Pages root domain. |
 | `port`                          | String  |                            | Port to be used to construct Pages URLs in UI. If left unset, default value of 80 or 443 is set based on HTTPS situation of Pages. |
 | `https`                         | Boolean | `true`                     | Whether GitLab UI should show HTTPS URLs for Pages or not. Has precedence over `global.hosts.pages.https` and `global.hosts.https`. |
-| `externalHttp`                  |  List   | `[]`                       | List of IP addresses through which HTTP requests reach Pages daemon. For supporting custom domains. |
-| `externalHttps`                 |  List   | `[]`                       | List of IP addresses through which HTTPS requests reach Pages daemon. For supporting custom domains. |
+| `externalHttp`                  |  List   | `[]`                       | List of IP addresses through which HTTP requests reach Pages daemon. For supporting [custom domains](https://docs.gitlab.com/user/project/pages/custom_domains_ssl_tls_certification/). |
+| `externalHttps`                 |  List   | `[]`                       | List of IP addresses through which HTTPS requests reach Pages daemon. For supporting [custom domains](https://docs.gitlab.com/user/project/pages/custom_domains_ssl_tls_certification/). |
+| `customDomainMode`              | String  |                            | Configure to enable [custom domains](https://docs.gitlab.com/user/project/pages/custom_domains_ssl_tls_certification/): `http` or `https`. |
 | `artifactsServer`               | Boolean | `true`                     | Enable viewing artifacts in GitLab Pages. |
 | `objectStore.enabled`           | Boolean | `true`                     | Enable using object storage for Pages. |
 | `objectStore.bucket`            | String  | `gitlab-pages`             | Bucket to be used to store content related to Pages |
@@ -2141,7 +2154,7 @@ gitlab:
 
 {{< alert type="note" >}}
 
-These settings do not affect charts from outside of this repository, via `requirements.yaml`.
+These settings do not affect bundled third-party charts.
 
 {{< /alert >}}
 
@@ -2401,7 +2414,7 @@ global:
     SOME_OTHER_KEY: some_other_value
 ```
 
-## extraEnvFrom
+## `extraEnvFrom`
 
 `extraEnvFrom` allows to expose additional environment variables from other data sources in all
 containers in the pods. Extra environment variables can be set up at `global` level (`global.extraEnvFrom`)

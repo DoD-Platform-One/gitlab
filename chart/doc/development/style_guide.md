@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Style guide
 ---
@@ -396,7 +396,7 @@ These charts make use of cloud-native GitLab containers.
 Those containers support the use of either [ERB](https://docs.ruby-lang.org/en/2.7.0/ERB.html)
 or [gomplate](https://docs.gomplate.ca/).
 
-**Guidelines:**
+**Guidelines**:
 
 1. Use template files within ConfigMaps (example: `gitlab.yml.erb`, `config.toml.tpl`)
    - Entries _must_ use the expected extensions in order to be handled as templates.
@@ -404,11 +404,11 @@ or [gomplate](https://docs.gomplate.ca/).
 1. ERB (`.erb`) can be used for any container using Ruby during run-time execution
 1. gomplate (`.tpl`) can be used for any container.
 
-**ERB usage:**
+**ERB usage**:
 
 We make use of standard ERB, and you can expect [`json`](https://docs.ruby-lang.org/en/2.7.0/JSON.html) and [`yaml`](https://docs.ruby-lang.org/en/2.7.0/YAML.html) modules to have been pre-loaded.
 
-**gomplate usage:**
+**gomplate usage**:
 
 We make use of gomplate in order to remove the size and surface of Ruby within
 containers. We configure gomplate [syntax](https://docs.gomplate.ca/syntax/) with alternate delimiters of `{% %}`, so not
@@ -420,7 +420,7 @@ Secrets have the potential contain characters that could result invalid YAML if
 not properly encoded or quoted. Especially for complex passwords, we must be
 careful how these strings are added into various configuration formats.
 
-**Guidelines:**
+**Guidelines**:
 
 1. Quote in the ERB / Gomplate output, _not_ surrounding it.
 1. Use a format-native encoder whenever possible.

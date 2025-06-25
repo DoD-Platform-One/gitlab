@@ -54,7 +54,7 @@ variables:
   CI_TOOLS_VERSION: "4.22.0"
   CI_TOOLS_NAMESPACE: "gitlab-org"
   GITLAB_NAMESPACE: "gitlab-org"
-  GITLAB_QA_VERSION: "15.4.0"
+  GITLAB_QA_VERSION: "15.5.0"
   # STRICT_VERSIONS is used in RSpecs to ensure exact version match for tools like "helm" and "kubectl"
   STRICT_VERSIONS: "true"
   KUBE_CRD_SCHEMA_URL: "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
@@ -105,15 +105,12 @@ include:
     rules:
       - if: '$LIMIT_TO == "vcluster"'
   - local: '/.gitlab/ci/vcluster-review-apps.gitlab-ci.yml'
-  - local: '/.gitlab/ci/environments/gkevc132.gitlab-ci.yml'
+  - local: '/.gitlab/ci/environments/gkevc133.gitlab-ci.yml'
     rules:
-      - if: '$LIMIT_TO == "gkevc132"'
+      - if: '$LIMIT_TO == "gkevc133"'
   - local: '/.gitlab/ci/operator.gitlab-ci.yml'
     rules:
       - if: '$LIMIT_TO == "" || $LIMIT_TO == null'
-  - local: '/.gitlab/ci/environments/gke130.gitlab-ci.yml'
-    rules:
-      - if: '$LIMIT_TO == "" || $LIMIT_TO == "gke130"'
   - local: '/.gitlab/ci/environments/gke131.gitlab-ci.yml'
     rules:
       - if: '$LIMIT_TO == "" || $LIMIT_TO == "gke131"'
@@ -126,6 +123,9 @@ include:
   - local: '/.gitlab/ci/environments/eks132.gitlab-ci.yml'
     rules:
       - if: '$LIMIT_TO == "eks132"'
+  - local: '/.gitlab/ci/environments/gke133.gitlab-ci.yml'
+    rules:
+      - if: '$LIMIT_TO == "" || $LIMIT_TO == "gke133"'
   - local: /.gitlab/ci/scanners.yml
     rules:
       - if: '$LIMIT_TO == "" || $LIMIT_TO == null'
@@ -138,7 +138,7 @@ include:
   - local: /.gitlab/ci/review-docs.yml
     rules:
       - if: '$LIMIT_TO == "" || $LIMIT_TO == null'
-  - component: ${CI_SERVER_FQDN}/gitlab-org/components/danger-review/danger-review@2.0.0
+  - component: ${CI_SERVER_FQDN}/gitlab-org/components/danger-review/danger-review@2.1.0
     rules:
       - if: '$LIMIT_TO != "" && $LIMIT_TO != null'
         when: never
@@ -188,6 +188,7 @@ pin_image_versions:
   script:
     - apt-get update -qq
     - apt install -y bats skopeo
+    - bash ./scripts/ci/add_dependency_repos.sh
     - bats --verbose-run ./scripts/ci/pin_image_digests.bats
     - bash ./scripts/ci/pin_image_digests.sh
   artifacts:
@@ -274,6 +275,7 @@ trigger_review_current:
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline" && $PIPELINE_TYPE =~ /STABLE_BRANCH_PIPELINE$/ '
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
       when: manual
+      allow_failure: true
     # Triggered from CNG
     - if: '$CI_PIPELINE_SOURCE == "pipeline" && $TEST_BRANCH == "true"'
 
@@ -302,8 +304,14 @@ trigger_review_secondary:
     - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
       when: manual
+      allow_failure: true
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
+      allow_failure: true
+      # Triggered from CNG
+    - if: '$CI_PIPELINE_SOURCE == "pipeline" && $TEST_BRANCH == "true"'
+      when: manual
+      allow_failure: true
 
 .trigger_review_secondary:
   rules:
@@ -312,6 +320,10 @@ trigger_review_secondary:
     - !reference [.rule:skip_if_not_canonical_or_security]
     - if: '$CI_PIPELINE_SOURCE != "pipeline" && $CI_PIPELINE_SOURCE != "parent_pipeline"'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    # Triggered from CNG
+    - if: '$CI_PIPELINE_SOURCE == "pipeline" && $TEST_BRANCH == "true"'
+      when: manual
+      allow_failure: true
 
 .trigger_review_job:
   stage: review
@@ -335,15 +347,6 @@ trigger_review_secondary:
   variables:
     PARENT_PIPELINE_ID: $CI_PIPELINE_ID
 
-trigger-gke130:
-  extends: .trigger_review_job
-  needs:
-    - trigger_review_secondary
-  variables:
-    LIMIT_TO: gke130
-  rules:
-    - !reference [.trigger_review_secondary, rules]
-
 trigger-gke131:
   extends: .trigger_review_job
   needs:
@@ -365,20 +368,29 @@ trigger-gke131a:
 trigger-gke132:
   extends: .trigger_review_job
   needs:
-    - trigger_review_current
+    - trigger_review_secondary
   variables:
     LIMIT_TO: gke132
   rules:
     - !reference [.trigger_review_current, rules]
 
-trigger-gkevc132:
+trigger-gkevc133:
   extends: .trigger_review_job
   needs:
     - trigger_review_secondary
   variables:
-    LIMIT_TO: gkevc132
+    LIMIT_TO: gkevc133
   rules:
     - !reference [.trigger_review_secondary, rules]
+
+trigger-gke133:
+  extends: .trigger_review_job
+  needs:
+    - trigger_review_current
+  variables:
+    LIMIT_TO: gke133
+  rules:
+    - !reference [.trigger_review_current, rules]
 
 trigger-vcluster:
   extends: .trigger_review_job
@@ -613,6 +625,7 @@ release_package:
   image: ${BUSYBOX_IMAGE}
   stage: qa-manual
   when: manual
+  allow_failure: true
   artifacts:
     paths:
     - variables

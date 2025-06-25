@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Using the GitLab-Migrations chart
 ---
@@ -156,13 +156,13 @@ image:
 
 This section controls if a ServiceAccount should be created and if the default access token should be mounted in pods.
 
-| Name                           |  Type   | Default | Description                                                                                                                                                                      |
-| :----------------------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `annotations`                  | Map     | `{}`    | ServiceAccount annotations.                                                                                                                                                      |
+| Name                           |  Type   | Default | Description |
+|:-------------------------------|:-------:|:--------|:------------|
+| `annotations`                  |   Map   | `{}`    | ServiceAccount annotations. |
 | `automountServiceAccountToken` | Boolean | `false` | Controls if the default ServiceAccount access token should be mounted in pods. You should not enable this unless it is required by certain sidecars to work properly (for example, Istio). |
-| `create`                       | Boolean | `false` | Indicates whether or not a ServiceAccount should be created.                                                                                                                     |
-| `enabled`                      | Boolean | `false` | Indicates whether or not to use a ServiceAccount.                                                                                                                                |
-| `name`                         | String  |         | Name of the ServiceAccount. If not set, the full chart name is used.                                                                                                             |
+| `create`                       | Boolean | `false` | Indicates whether or not a ServiceAccount should be created. |
+| `enabled`                      | Boolean | `false` | Indicates whether or not to use a ServiceAccount. |
+| `name`                         | String  |         | Name of the ServiceAccount. If not set, the full chart name is used. |
 
 ### affinity
 

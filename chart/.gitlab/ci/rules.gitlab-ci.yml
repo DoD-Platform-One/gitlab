@@ -81,6 +81,8 @@ workflow:
     # Support Merge Request pipelines
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$PIPELINE_TYPE != null && $LIMIT_TO != null && $LIMIT_TO != ""'
+    # Run pipeline if a PIPELINE_TYPE is explicitly specified
+    - if: '$PIPELINE_TYPE'
 
 .rule:skip_if_no_cluster:
   if: '$KUBECONFIG == null'
@@ -94,7 +96,7 @@ workflow:
 # Skip for all repos that are not canonical or the security fork.
 # Sister rule to ".rule:skip_if_no_cluster" as only jobs with `environment` set get KUBECONFIG set
 .rule:skip_if_not_canonical_or_security:
-    - if: '$CI_SERVER_HOST != "gitlab.com" || ($CI_PROJECT_PATH != $CANONICAL_PROJECT_PATH && $CI_PROJECT_PATH != $SECURITY_PROJECT_PATH)'
+    - if: '$CI_SERVER_HOST != "gitlab.com" || (($CI_PROJECT_PATH != $CANONICAL_PROJECT_PATH) && ($CI_PROJECT_PATH != $SECURITY_PROJECT_PATH))'
       when: never
 
 .rule:skip_docs_pipeline:
@@ -104,4 +106,3 @@ workflow:
 .rule:skip_if_dev:
     - if: '$CI_PROJECT_PATH == $DEV_PROJECT_PATH'
       when: never
-      

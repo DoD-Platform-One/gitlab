@@ -165,6 +165,7 @@ data:
       ## Registry Integration
       {{- include "gitlab.appConfig.registry.configuration" $ | nindent 6 }}
       {{- include "gitlab.appConfig.smartcard.configuration" $ | nindent 6 }}
+      {{- include "gitlab.appConfig.openbao.configuration" . | nindent 6 }}
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict) | nindent 4 }}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}
@@ -211,7 +212,7 @@ data:
 
     {{- if ($.Values.workhorse.metadata).zipReaderLimitBytes }}
     [metadata]
-    zip_reader_limit_bytes = {{ $.Values.workhorse.metadata.zipReaderLimitBytes | int }}
+    zip_reader_limit_bytes = {{ $.Values.workhorse.metadata.zipReaderLimitBytes | int64 }}
     {{- end }}
 
     {{- if .workhorse.keywatcher }}

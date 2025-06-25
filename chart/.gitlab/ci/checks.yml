@@ -141,6 +141,7 @@ kube-score:
     entrypoint: [""]
   stage: prepare
   script:
+    - bash ./scripts/ci/add_dependency_repos.sh
     - helm dependency build
     - helm template . --set certmanager-issuer.email=gitlab@example.com  > /tmp/test.yaml
     - /kube-score score --ignore-container-cpu-limit --ignore-container-memory-limit --ignore-test "container-image-pull-policy,container-security-context-user-group-id,container-ephemeral-storage-request-and-limit,container-security-context-readonlyrootfilesystem,pod-probes,pod-networkpolicy,container-resources,deployment-has-poddisruptionbudget,deployment-replicas,deployment-has-host-podantiaffinity" /tmp/test.yaml

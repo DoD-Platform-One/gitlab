@@ -17,7 +17,7 @@
 - [ ] Merge Request Title and Description are up to date, accurate, and descriptive
 - [ ] MR targeting the appropriate branch
 - [ ] MR has a green pipeline on GitLab.com
-- [ ] When ready for review, MR is labeled "~workflow::ready for review" per the [Distribution MR workflow](https://handbook.gitlab.com/handbook/engineering/infrastructure/core-platform/systems/distribution/merge_requests/)
+- [ ] When ready for review, MR is labeled "~workflow::ready for review" per the [Distribution MR workflow](https://handbook.gitlab.com/handbook/engineering/infrastructure-platforms/gitlab-delivery/distribution/merge_requests/)
 
 If you are only adding documentation, do not add any of the following labels:
 
