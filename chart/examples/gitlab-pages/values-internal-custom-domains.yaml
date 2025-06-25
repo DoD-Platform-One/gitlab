@@ -9,6 +9,8 @@ global:
       - 1.2.3.4
     externalHttps:
       - 1.2.3.4
+    # Specify http/https when custom domain is enabled
+    customDomainMode: https
 gitlab:
   gitlab-pages:
     ingress:

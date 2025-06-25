@@ -2,12 +2,6 @@
 {{- $WARNING := "\n=== WARNING" -}}
 {{- $CRITICAL := "\n=== CRITICAL" -}}
 
-{{ $NOTICE }}
-GitLab 18/GitLab chart 9.0 will release in May 2025.
-Please check the upcoming deprecations and removals at:
-* https://docs.gitlab.com/update/deprecations/#gitlab-180, and
-* https://docs.gitlab.com/charts/releases/9_0.html.
-
 {{- /* If any development subchart is enabled, note it is not production ready */}}
 {{- $enabledNonProdCharts := fromJsonArray (include "gitlab.nonProdCharts.enabledNames" .) -}}
 {{- if not (empty $enabledNonProdCharts) }}
@@ -170,6 +164,16 @@ redis:
     `global.redis.auth` instead. This is the source of the `coalesce.go` warning
     message from Helm as well. For more details, please see:
     https://docs.gitlab.com/charts/installation/upgrade.html#use-of-globalredispassword
+{{- end -}}
+
+{{/*
+Warn that `global.openbao.enabled` is present and true, noting an Experimenal feature.
+*/}}
+{{- if (pluck "enabled" .Values.global.openbao | first) }}
+{{ $WARNING }}
+openbao:
+  You have enabled the configuration of OpenBao. This feature is currently Experimental, and entirely unsupported.
+  See https://docs.gitlab.com/policy/development_stages_support/#experiment
 {{- end -}}
 
 {{- /* run removals */}}

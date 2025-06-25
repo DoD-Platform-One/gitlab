@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Preparing GKE resources for the GitLab chart
 ---
@@ -42,23 +42,23 @@ The script reads various parameters from environment variables and the argument
 
 The table below describes all variables.
 
-| Variable            | Description                                                                      | Default value                    |
-|---------------------|----------------------------------------------------------------------------------|----------------------------------|
-| REGION              | The region where your cluster lives                                              | `us-central1`                    |
-| ZONE_EXTENSION      | The extension (`a`, `b`, `c`) of the zone name where your cluster instances live | `b`                              |
-| CLUSTER_NAME        | The name of the cluster                                                          | `gitlab-cluster`                 |
-| CLUSTER_VERSION     | The version of your GKE cluster                                                  | GKE default, check the [GKE release notes](https://cloud.google.com/kubernetes-engine/docs/release-notes) |
-| MACHINE_TYPE        | The cluster instances' type                                                      | `n2d-standard-4`                 |
-| NUM_NODES           | The number of nodes required.                                                    | 2                                |
-| AUTOSCALE_MIN_NODES | The minimum number of nodes the autoscaler should scale down to.                 | 0                                |
-| AUTOSCALE_MAX_NODES | The maximum number of nodes the autoscaler should scale up to.                   | `NUM_NODES`                      |
-| PROJECT             | The ID of your GCP project                                                       | No defaults, required to be set. |
-| ADMIN_USER          | The user to assign cluster-admin access to during setup                          | current gcloud user              |
-| RBAC_ENABLED        | If you know whether your cluster has RBAC enabled set this variable.             | true                             |
-| PREEMPTIBLE         | Cheaper, clusters live at *most* 24 hrs. No SLA on nodes/disks                   | false                            |
-| USE_STATIC_IP       | Create a static IP for GitLab instead of an ephemeral IP with managed DNS        | false                            |
-| INT_NETWORK         | The IP space to use within this cluster                                          | default                          |
-| SUBNETWORK          | The subnetwork to use within this cluster                                        | default                          |
+| Variable              | Default value                     | Description |
+|-----------------------|-----------------------------------|-------------|
+| `ADMIN_USER`          | current gcloud user               | The user to assign cluster-admin access to during setup. |
+| `AUTOSCALE_MAX_NODES` | `NUM_NODES`                       | The maximum number of nodes the autoscaler should scale up to. |
+| `AUTOSCALE_MIN_NODES` | `0`                               | The minimum number of nodes the autoscaler should scale down to. |
+| `CLUSTER_NAME`        | `gitlab-cluster`                  | The name of the cluster. |
+| `CLUSTER_VERSION`     | GKE default, check the [GKE release notes](https://cloud.google.com/kubernetes-engine/docs/release-notes) | The version of your GKE cluster. |
+| `INT_NETWORK`         | default                           | The IP space to use within this cluster. |
+| `MACHINE_TYPE`        | `n2d-standard-4`                  | The cluster instances' type. |
+| `NUM_NODES`           | `2`                               | The number of nodes required. |
+| `PREEMPTIBLE`         | `false`                           | Cheaper, clusters live at *most* 24 hrs. No SLA on nodes/disks. |
+| `PROJECT`             | No defaults, required to be set.  | The ID of your GCP project. |
+| `RBAC_ENABLED`        | `true`                            | If you know whether your cluster has RBAC enabled set this variable. |
+| `REGION`              | `us-central1`                     | The region where your cluster lives. |
+| `SUBNETWORK`          | default                           | The subnetwork to use within this cluster. |
+| `USE_STATIC_IP`       | `false`                           | Create a static IP for GitLab instead of an ephemeral IP with managed DNS. |
+| `ZONE_EXTENSION`      | `b`                               | The extension (`a`, `b`, `c`) of the zone name where your cluster instances live. |
 
 Run the script, by passing in your desired parameters. It can work with the
 default parameters except for `PROJECT` which is required:

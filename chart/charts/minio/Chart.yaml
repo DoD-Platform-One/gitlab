@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 name: minio
 version: 0.4.3
 appVersion: RELEASE.2017-12-28T01-21-00Z

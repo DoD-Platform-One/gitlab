@@ -196,6 +196,9 @@ spec:
                     items:
                       - key: {{ template "gitlab.gitlab-shell.authToken.key" . }}
                         path: shell/.gitlab_shell_secret
+                {{- if $.Values.global.clickhouse.enabled }}
+                  {{- include "gitlab.clickhouse.main.secrets" $ | nindent 16 }}
+                {{- end }}
                 {{- include "gitlab.gitaly.clientSecrets" . | nindent 16 }}
                 {{- include "gitlab.redis.secrets" (dict "globalContext" $) | nindent 16 }}
                 {{- include "gitlab.redisSentinel.secret" $ | nindent 16 }}

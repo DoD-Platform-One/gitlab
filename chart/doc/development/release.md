@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Helm chart releases
 ---
@@ -39,7 +39,7 @@ We will bump it for:
 ### Example release scenarios
 
 | Chart Version | GitLab Version | Release Scenario |
-| ------------- | -------------- | ---------------- |
+|---------------|----------------|------------------|
 | `0.2.0`       | `11.0.0`       | GitLab 11 release, and chart beta |
 | `0.2.1`       | `11.0.1`       | GitLab patch release |
 | `0.2.2`       | `11.0.1`       | Chart changes released |
@@ -49,7 +49,7 @@ We will bump it for:
 | `0.2.4`       | `11.0.3`       | Security release |
 | ~~`0.3.1`~~   | ~~`11.1.1`~~   | ~~Security release~~ (*1*) |
 | `0.4.1`       | `11.1.1`       | Security release (*1*) |
-| ...           | ...            | ... |
+| ...           | ...            | ...              |
 | `1.0.0`       | `11.x.0`       | GitLab minor release, along with chart GA |
 | `2.0.0`       | `11.x.x`       | Introduced some breaking change to the chart |
 | `3.0.0`       | `12.0.0`       | GitLab 12 release |
@@ -68,32 +68,32 @@ While we considered just using the GitLab version as our own, we are not yet in 
 For this chart, we propose to follow the same branching strategy as the other main GitLab components.
 
 - A `master` branch,
-- `x-x-stable` branches that we create from master per minor release.
+- `x-x-stable` branches that we create from `master` per minor release.
 - `x.x.x` tags from those stable branches.
 
 The difference between our branch names, and the other GitLab components, is that we will be using the chart's version in the branch name, rather than the GitLab version.
 
-In general, changes will be merged to master, then cherry-picked into the appropriate branch before release. GitLab image updates will happen as commits in the branches, not in master, as master will follow the latest daily images.
+In general, changes will be merged to `master`, then cherry-picked into the appropriate branch before release. GitLab image updates will happen as commits in the branches, not in `master`, as `master` will follow the latest daily images.
 
 ### Example timeline of release actions
 
 Related to releasing using the proposed branching strategy
 
 | Branch       | Tag     | Action       | Details |
-| ------------ | ------- | ------------ | ------- |
-| `0-2-stable` |         | Branch       | Branch created from master |
+|--------------|---------|--------------|---------|
+| `0-2-stable` |         | Branch       | Branch created from `master` |
 |              |         | Image update | GitLab `11.0.0-rcX` image used |
-|              |         | Pick         | Additional changes from master picked into branch |
+|              |         | Pick         | Additional changes from `master` picked into branch |
 |              |         | Image update | GitLab `11.0.0` image used |
 |              | `0.2.0` | Tag          | Chart `0.2.0` released |
-|              |         | Pick         | Fixes from master picked into branch |
+|              |         | Pick         | Fixes from `master` picked into branch |
 |              |         | Image update | GitLab `11.0.1` image used |
 |              | `0.2.1` | Tag          | Chart `0.2.1` released |
-| `0-3-stable` |         | Branch       | Branch created from master |
+| `0-3-stable` |         | Branch       | Branch created from `master` |
 |              |         | Image update | GitLab `11.1.0-rc1` image used |
 | `0-2-stable` |         | Image update | GitLab `11.0.2` image used |
 |              | `0.2.2` | Tag          | Chart  `0.2.2` released |
-| `0-3-stable` |         | Pick         | Fixes from master picked into branch |
+| `0-3-stable` |         | Pick         | Fixes from `master` picked into branch |
 |              |         | Image update | GitLab `11.1.0` image used |
 |              | `0.3.0` | Tag          | Chart `0.3.0` released |
 
@@ -101,7 +101,7 @@ Related to releasing using the proposed branching strategy
 
 Releasing a new version of the chart is handled by the Helm release tasks in the [release tools repository](https://gitlab.com/gitlab-org/release-tools).
 
-Releases are done as part of GitLab releases. When necessary, the [Distribution](https://handbook.gitlab.com/handbook/engineering/infrastructure/core-platform/systems/distribution/)
+Releases are done as part of GitLab releases. When necessary, the [Distribution](https://handbook.gitlab.com/handbook/engineering/infrastructure-platforms/gitlab-delivery/distribution/)
 team may initiate additional chart releases. The release tool triggers pipelines for packaging and publishing the
 chart. See the `release_chart` job in the [`charts.gitlab.io` repository](https://gitlab.com/charts/charts.gitlab.io).
 
@@ -135,6 +135,58 @@ to list available `devel` versions:
 ```shell
 helm search repo gitlab-devel --devel
 ```
+
+#### Consumed by production services
+
+Some development builds are built on the Dev instance and made available to a target Google Artifact Registry to be consumed by some production services.
+The target audience for these builds are the Cells infrastructure for GitLab.com.
+
+##### Helm OCI registry push script
+
+The `scripts/helm_push_oci.sh` script is used to push Helm charts to the Google Artifact Registry. This script handles Vault authentication and pushing of Helm charts to our OCI-compatible registry.
+
+##### Usage
+
+```shell
+./scripts/helm_push_oci.sh <helm_package_file>
+```
+
+##### Required Parameters
+
+- `helm_package_file`: Path to the Helm chart package file to be pushed (example: `./gitlab-chart.tgz`)
+
+##### Environment variables
+
+The script requires specific environment variables for Vault authentication:
+
+- `VAULT_AUTH_PATH`: Vault authentication path (defaults to `dev-gitlab-org`)
+- `VAULT_AUTH_ROLE`: Vault authentication role
+- `VAULT_SECRETS_PATH`: Path to the Vault secrets
+- `VAULT_ID_TOKEN`: JWT token for Vault authentication
+- `ENABLE_OCI_PUSH`: Must be set to `true` to enable pushing to the registry
+
+##### Registry details
+
+The script pushes Helm charts to:
+
+- Registry URL: `us-east1-docker.pkg.dev`
+- Registry Path: `gitlab-com-artifact-registry/gitlab-devel-chart`
+
+##### Process
+
+The script:
+
+1. Authenticates with Vault to obtain registry credentials
+1. Retrieves the service account key from Vault
+1. Logs into the Google Artifact Registry using the service account
+1. Pushes the specified Helm chart package to the OCI registry
+1. Provides detailed feedback about each operation's success or failure
+
+{{< alert type="note" >}}
+
+This script is designed to run in CI/CD environments with proper Vault access and permissions.
+
+{{< /alert >}}
 
 ### Manually releasing the chart
 

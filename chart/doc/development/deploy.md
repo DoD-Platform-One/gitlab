@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Deploy Development Branch
 ---
@@ -15,7 +15,7 @@ git clone git@gitlab.com:gitlab-org/charts/gitlab.git
 git checkout <BRANCH_NAME>
 ```
 
-Note that you can test changes to external dependencies by modifying `requirements.yaml`.
+Note that you can test changes to external dependencies by modifying the dependencies in `Chart.yaml`.
 
 It is possible to test external dependencies using a local repository. Use `file://PATH_TO_DEPENDENCY_REPO`
 where the path may be relative to the chart path or absolute. For example, if using

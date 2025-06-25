@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Preparing AKS resources for the GitLab chart
 ---
@@ -68,19 +68,19 @@ from environment variables, or command line arguments:
 
 The table below describes all available variables.
 
-| Variable                  | Description                                                                         | Default value      | Scope    |
-|---------------------------|-------------------------------------------------------------------------------------|--------------------|----------|
-| `-g --resource-group`     | Name of the resource group to use.                                                  | `gitlab-resources` | All      |
-| `-n --cluster-name`       | Name of the cluster to use.                                                         | `gitlab-cluster`   | All      |
-| `-r --region`             | Region to install the cluster in.                                                   | `eastus`           | `up`     |
-| `-v --cluster-version`    | Version of Kubernetes to use for creating the cluster.                              | Latest             | `up`     |
-| `-c --node-count`         | Number of nodes to use.                                                             | `2`                | `up`     |
-| `-s --node-vm-size`       | Type of nodes to use.                                                               | `Standard_D4s_v3`  | `up`     |
-| `-p --public-ip-name`     | Name of the public IP to create.                                                    | `gitlab-ext-ip`    | `up`     |
-| `--create-resource-group` | Create a new resource group to hold all created resources.                          | `false`            | `up`     |
-| `--create-public-ip`      | Create a public IP to use with the new cluster.                                     | `false`            | `up`     |
-| `--delete-resource-group` | Delete the resource group when using the down command.                              | `false`            | `down`   |
-| `-f --kubctl-config-file` | Kubernetes configuration file to update. Use `-` to print YAML to `stdout` instead.   | `~/.kube/config`   | `creds`  |
+| Variable                  | Default value      | Scope   | Description |
+|---------------------------|--------------------|---------|-------------|
+| `-g --resource-group`     | `gitlab-resources` | All     | Name of the resource group to use. |
+| `-n --cluster-name`       | `gitlab-cluster`   | All     | Name of the cluster to use. |
+| `-r --region`             | `eastus`           | `up`    | Region to install the cluster in. |
+| `-v --cluster-version`    | Latest             | `up`    | Version of Kubernetes to use for creating the cluster. |
+| `-c --node-count`         | `2`                | `up`    | Number of nodes to use. |
+| `-s --node-vm-size`       | `Standard_D4s_v3`  | `up`    | Type of nodes to use. |
+| `-p --public-ip-name`     | `gitlab-ext-ip`    | `up`    | Name of the public IP to create. |
+| `--create-resource-group` | `false`            | `up`    | Create a new resource group to hold all created resources. |
+| `--create-public-ip`      | `false`            | `up`    | Create a public IP to use with the new cluster. |
+| `--delete-resource-group` | `false`            | `down`  | Delete the resource group when using the down command. |
+| `-f --kubctl-config-file` | `~/.kube/config`   | `creds` | Kubernetes configuration file to update. Use `-` to print YAML to `stdout` instead. |
 
 ### Manual cluster creation
 

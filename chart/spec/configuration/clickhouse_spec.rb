@@ -7,16 +7,16 @@ describe 'ClickHouse configuration' do
   let(:charts) do
     {
       'webservice' => {
-        'identifier' => 'test-webservice-default',
-        'init_mount' => 'init-webservice-secrets'
+        identifier: 'test-webservice-default',
+        init_mount: 'init-webservice-secrets'
       },
       'sidekiq' => {
-        'identifier' => 'test-sidekiq-all-in-1-v2',
-        'init_mount' => 'init-sidekiq-secrets'
+        identifier: 'test-sidekiq-all-in-1-v2',
+        init_mount: 'init-sidekiq-secrets'
       },
       'toolbox' => {
-        'identifier' => 'test-toolbox',
-        'init_mount' => 'init-toolbox-secrets'
+        identifier: 'test-toolbox',
+        init_mount: 'init-toolbox-secrets'
       }
     }
   end
@@ -26,25 +26,35 @@ describe 'ClickHouse configuration' do
         global:
           clickhouse:
             enabled: false
+        gitlab:
+          toolbox:
+            backups:
+              cron:
+                enabled: true
     ))
   end
 
   let(:template) { HelmTemplate.new(values) }
 
-  def clickhouse_secret(chart, template)
-    chart_config = charts[chart]
-    volumes = template.dig("Deployment/#{chart_config['identifier']}", 'spec', 'template', 'spec', 'volumes')
+  def clickhouse_secret(template, kind, id, mnt_name)
+    volumes_path = kind == 'CronJob' ? 'spec.jobTemplate.spec.template.spec.volumes' : 'spec.template.spec.volumes'
+    volumes = template.dig("#{kind}/#{id}", *volumes_path.split('.'))
+    secrets = volumes.find { |volume| volume['name'] == mnt_name }
 
-    secretes = volumes.find { |volume| volume['name'] == chart_config['init_mount'] }
-    secretes['projected']['sources'].find { |item| item['secret']['name'] == 'gitlab-click-house-password' }
+    secrets['projected']['sources'].find { |item| item['secret']['name'] == 'gitlab-click-house-password' }
   end
 
   it 'does not generate the click_house.yml file', :aggregate_failures do
     expect(template.exit_code).to eq(0)
-    charts.each_key do |chart|
+    charts.each do |chart, config|
       clickhouse_erb = template.dig("ConfigMap/test-#{chart}", 'data', 'click_house.yml.erb')
       expect(clickhouse_erb).to be_nil
-      expect(clickhouse_secret(chart, template)).to be_nil
+
+      expect(clickhouse_secret(template, 'Deployment', config[:identifier], config[:init_mount])).to be_nil
+
+      next unless chart == 'toolbox'
+
+      expect(clickhouse_secret(template, 'CronJob', "#{config[:identifier]}-backup", config[:init_mount])).to be_nil
     end
   end
 
@@ -61,6 +71,11 @@ describe 'ClickHouse configuration' do
                   key: main_password
                 database: gitlab_clickhouse_main_production
                 url: 'http://localhost:3333'
+          gitlab:
+            toolbox:
+              backups:
+                cron:
+                  enabled: true
       ))
     end
 
@@ -76,7 +91,7 @@ describe 'ClickHouse configuration' do
         expect(db_config['password']).to eq("<%= File.read('/etc/gitlab/clickhouse/.main_password').chomp.to_json %>")
         expect(db_config['username']).to eq('default')
 
-        clickhouse_secret = clickhouse_secret(chart, template)
+        clickhouse_secret = clickhouse_secret(template, 'Deployment', config[:identifier], config[:init_mount])
         expect(clickhouse_secret).not_to be_nil
         expect(clickhouse_secret['secret']['items']).to eq([
                                                              {
@@ -84,6 +99,17 @@ describe 'ClickHouse configuration' do
                                                                'path' => 'clickhouse/.main_password'
                                                              }
                                                            ])
+
+        next unless chart == 'toolbox'
+
+        clickhouse_secret = clickhouse_secret(template, 'CronJob', "#{config[:identifier]}-backup", config[:init_mount])
+        expect(clickhouse_secret).not_to be_nil
+        expect(clickhouse_secret['secret']['items']).to eq([
+                                                              {
+                                                                'key' => 'password',
+                                                                'path' => 'clickhouse/.main_password'
+                                                              }
+                                                            ])
       end
     end
   end

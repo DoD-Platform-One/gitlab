@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Installing GitLab by using Helm
 ---
@@ -31,7 +31,7 @@ This method of deployment has different management, observability, and concepts 
 
 In a production deployment:
 
-- The stateful components, like PostgreSQL or Gitaly (a Git repository storage dataplane),
+- The stateful components, like PostgreSQL, Redis or Gitaly (a Git repository storage dataplane),
   must run outside the cluster on PaaS or compute instances. This configuration is required
   to scale and reliably service the variety of workloads found in production GitLab environments.
 - You should use Cloud PaaS for PostgreSQL, Redis, and object storage for all non-Git repository storage.
@@ -39,6 +39,30 @@ In a production deployment:
 If Kubernetes is not required for your GitLab instance, see the
 [reference architectures](https://docs.gitlab.com/administration/reference_architectures/)
 for simpler alternatives.
+
+## Container images
+
+The GitLab Helm chart uses the [Cloud Native GitLab (CNG)](https://gitlab.com/gitlab-org/build/CNG)
+container images to deploy GitLab. Besides the CNG images, the default configuration uses third
+party images to deploy PostgreSQL, Redis, and MinIO.
+
+Production instances should not deploy these (stateful) third party services
+with the GitLab chart as mentioned above.
+
+Refer to the following documentation for instructions on how to configure the chart to
+use external services.
+
+1. [External Database](../advanced/external-db/_index.md)
+1. [External Redis](../advanced/external-redis/_index.md)
+1. [External Object Storage](../advanced/external-object-storage/_index.md)
+
+{{< alert type="note" >}}
+
+Starting in December 2024, [Bitnami changed its build policy](https://github.com/bitnami/containers/issues/75671)
+to update only the latest stable major version of each application in the free catalog. The GitLab chart
+will continue to default to publicly available images.
+
+{{< /alert >}}
 
 ## Configure the Helm chart to use external stateful data
 

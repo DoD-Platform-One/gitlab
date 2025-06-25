@@ -1,18 +1,18 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: CI setup and use
 ---
 
 ## CI Variables
 
-| Variable   | Default Value | Description                                                                                                              |
-|------------|---------------|--------------------------------------------------------------------------------------------------------------------------|
-| `LIMIT_TO` | `""`          | Limit pipeline execution to a specific logical block. Available blocks: `eks131`, `gke130`, `gke131`, `gke131a`, `vcluster`. Empty value implies absence of limits - i.e. all components shall be considered for execution. |
-| `DOCKERHUB_PREFIX` | `docker.io` | Override the prefix of DockerHub images. Allows to pull DockerHub from the dependency proxy or another mirror. |
-| `DOCKER_MIRROR` | `https://mirror.gcr.io` | Default Docker mirror in DinD jobs. |
-| `DOCKER_OPTIONS` | `--registry-mirror ${DOCKER_MIRROR}` | Flags passed to the Docker daemon. |
+| Variable           | Default Value                        | Description |
+|--------------------|--------------------------------------|-------------|
+| `LIMIT_TO`         | `""`                                 | Limit pipeline execution to a specific logical block. Available blocks: `eks131`, `gke130`, `gke131`, `gke131a`, `vcluster`. Empty value implies absence of limits - i.e. all components shall be considered for execution. |
+| `DOCKERHUB_PREFIX` | `docker.io`                          | Override the prefix of DockerHub images. Allows to pull DockerHub from the dependency proxy or another mirror. |
+| `DOCKER_MIRROR`    | `https://mirror.gcr.io`              | Default Docker mirror in DinD jobs. |
+| `DOCKER_OPTIONS`   | `--registry-mirror ${DOCKER_MIRROR}` | Flags passed to the Docker daemon. |
 
 ### LIMIT_TO
 

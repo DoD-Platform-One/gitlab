@@ -1943,6 +1943,161 @@ describe 'registry configuration' do
     end
   end
 
+  describe 'rate limiter config' do
+    context 'when rate limiter is disabled' do
+      let(:values) do
+        HelmTemplate.with_defaults %(
+          rateLimiter:
+            enabled: false
+        )
+      end
+
+      it 'defaults to rate_limiter.enabled false' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+          <<~RATE_LIMITER_CONFIG
+          rate_limiter:
+            enabled: false
+          RATE_LIMITER_CONFIG
+        )
+      end
+    end
+
+    context 'when rate limiter is enabled' do
+      let(:values) do
+        HelmTemplate.with_defaults %(
+          registry:
+            rateLimiter:
+              enabled: true
+              limiters:
+                - name: global_rate_limit
+                  description: "Global IP rate limit"
+                  log_only: false
+                  match:
+                    type: IP
+                  precedence: 10
+                  limit:
+                    rate: 5000
+                    period: "minute"
+                    burst: 8000
+                  action:
+                    warn_threshold: 0.7
+                    warn_action: "log"
+                    hard_action: "block"
+        )
+      end
+
+      it 'properly renders rate_limiter configuration' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+          <<~RATE_LIMITER_CONFIG
+          rate_limiter:
+            enabled: true
+            limiters:
+              - name: "global_rate_limit"
+                description: "Global IP rate limit"
+                log_only: false
+                precedence: 10
+                match:
+                  type: IP
+                limit:
+                  rate: 5000
+                  period: "minute"
+                  burst: 8000
+                action:
+                  warn_threshold: 0.7
+                  warn_action: "log"
+                  hard_action: "block"
+          RATE_LIMITER_CONFIG
+        )
+      end
+    end
+
+    context 'when configured with multiple limiters' do
+      let(:values) do
+        HelmTemplate.with_defaults %(
+          registry:
+            rateLimiter:
+              enabled: true
+              limiters:
+                - name: global_rate_limit
+                  description: "Global IP rate limit"
+                  log_only: false
+                  match:
+                    type: IP
+                  precedence: 10
+                  limit:
+                    rate: 5000
+                    period: "minute"
+                    burst: 8000
+                  action:
+                    warn_threshold: 0.7
+                    warn_action: "log"
+                    hard_action: "block"
+                - name: secondary_ip_limit
+                  description: "Secondary IP rate limit"
+                  log_only: true
+                  match:
+                    type: IP
+                  precedence: 20
+                  limit:
+                    rate: 1000
+                    period: "minute"
+                    burst: 2000
+                  action:
+                    warn_threshold: 0.8
+                    warn_action: "log"
+                    hard_action: "log"
+        )
+      end
+
+      it 'properly renders multiple limiters with all fields' do
+        t = HelmTemplate.new(values)
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+          <<~RATE_LIMITER_CONFIG
+          rate_limiter:
+            enabled: true
+            limiters:
+              - name: "global_rate_limit"
+                description: "Global IP rate limit"
+                log_only: false
+                precedence: 10
+                match:
+                  type: IP
+                limit:
+                  rate: 5000
+                  period: "minute"
+                  burst: 8000
+                action:
+                  warn_threshold: 0.7
+                  warn_action: "log"
+                  hard_action: "block"
+              - name: "secondary_ip_limit"
+                description: "Secondary IP rate limit"
+                log_only: true
+                precedence: 20
+                match:
+                  type: IP
+                limit:
+                  rate: 1000
+                  period: "minute"
+                  burst: 2000
+                action:
+                  warn_threshold: 0.8
+                  warn_action: "log"
+                  hard_action: "log"
+          RATE_LIMITER_CONFIG
+        )
+      end
+    end
+  end
+
   describe 'Registry enablement' do
     context 'when registry is enabled' do
       let(:registry_values) do

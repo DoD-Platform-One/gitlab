@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Using the Container Registry
 ---
@@ -151,202 +151,202 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 
 ## Installation parameters
 
-| Parameter                                                | Default                                                              | Description                                                                                                                                                                                                                                                                                                                                        |
-| -------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `annotations`                                            |                                                                      | Pod annotations                                                                                                                                                                                                                                                                                                                                    |
-| `podLabels`                                              |                                                                      | Supplemental Pod labels. Will not be used for selectors.                                                                                                                                                                                                                                                                                           |
-| `common.labels`                                          |                                                                      | Supplemental labels that are applied to all objects created by this chart.                                                                                                                                                                                                                                                                         |
-| `authAutoRedirect`                                       | `true`                                                               | Auth auto-redirect (must be true for Windows clients to work)                                                                                                                                                                                                                                                                                      |
-| `authEndpoint`                                           | `global.hosts.gitlab.name`                                           | Auth endpoint (only host and port)                                                                                                                                                                                                                                                                                                                 |
-| `certificate.secret`                                     | `gitlab-registry`                                                    | JWT certificate                                                                                                                                                                                                                                                                                                                                    |
-| `debug.addr.port`                                        | `5001`                                                               | Debug port                                                                                                                                                                                                                                                                                                                                         |
-| `debug.tls.enabled`                                      | `false`                                                              | Enable TLS for the debug port for the registry. Impacts liveness and readiness probes, as well as the metrics endpoint (if enabled)                                                                                                                                                                                                                |
-| `debug.tls.secretName`                                   |                                                                      | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry debug endpoint. When not set and `debug.tls.enabled=true` - the debug TLS configuration will default to the registry's TLS certificate.                                                                                                           |
-| `debug.prometheus.enabled`                               | `false`                                                              | **DEPRECATED** Use `metrics.enabled`                                                                                                                                                                                                                                                                                                               |
-| `debug.prometheus.path`                                  | `""`                                                                 | **DEPRECATED** Use `metrics.path`                                                                                                                                                                                                                                                                                                                  |
-| `metrics.enabled`                                        | `false`                                                              | If a metrics endpoint should be made available for scraping                                                                                                                                                                                                                                                                                        |
-| `metrics.path`                                           | `/metrics`                                                           | Metrics endpoint path                                                                                                                                                                                                                                                                                                                              |
-| `metrics.serviceMonitor.enabled`                         | `false`                                                              | If a ServiceMonitor should be created to enable Prometheus Operator to manage the metrics scraping, note that enabling this removes the `prometheus.io` scrape annotations                                                                                                                                                                         |
-| `metrics.serviceMonitor.additionalLabels`                | `{}`                                                                 | Additional labels to add to the ServiceMonitor                                                                                                                                                                                                                                                                                                     |
-| `metrics.serviceMonitor.endpointConfig`                  | `{}`                                                                 | Additional endpoint configuration for the ServiceMonitor                                                                                                                                                                                                                                                                                           |
-| `deployment.terminationGracePeriodSeconds`               | `30`                                                                 | Optional duration in seconds the pod needs to terminate gracefully.                                                                                                                                                                                                                                                                                |
-| `deployment.strategy`                                    | `{}`                                                                 | Allows one to configure the update strategy utilized by the deployment                                                                                                                                                                                                                                                                             |
-| `draintimeout`                                           | `'0'`                                                                | Amount of time to wait for HTTP connections to drain after receiving a SIGTERM signal (e.g. `'10s'`)                                                                                                                                                                                                                                               |
-| `relativeurls`                                           | `false`                                                              | Enable the registry to return relative URLs in Location headers.                                                                                                                                                                                                                                                                                   |
-| `enabled`                                                | `true`                                                               | Enable registry flag                                                                                                                                                                                                                                                                                                                               |
-| `extraContainers`                                        |                                                                      | Multiline literal style string containing a list of containers to include                                                                                                                                                                                                                                                                                                                        |
-| `extraInitContainers`                                    |                                                                      | List of extra init containers to include                                                                                                                                                                                                                                                                                                                   |
-| `hpa.behavior`                                           | `{scaleDown: {stabilizationWindowSeconds: 300 }}`                    | Behavior contains the specifications for up- and downscaling behavior (requires `autoscaling/v2beta2` or higher)                                                                                                                                                                                                                                   |
-| `hpa.customMetrics`                                      | `[]`                                                                 | Custom metrics contains the specifications for which to use to calculate the desired replica count (overrides the default use of Average CPU Utilization configured in `targetAverageUtilization`)                                                                                                                                                 |
-| `hpa.cpu.targetType`                                     | `Utilization`                                                        | Set the autoscaling CPU target type, must be either `Utilization` or `AverageValue`                                                                                                                                                                                                                                                                |
-| `hpa.cpu.targetAverageValue`                             |                                                                      | Set the autoscaling CPU target value                                                                                                                                                                                                                                                                                                               |
-| `hpa.cpu.targetAverageUtilization`                       | `75`                                                                 | Set the autoscaling CPU target utilization                                                                                                                                                                                                                                                                                                         |
-| `hpa.memory.targetType`                                  |                                                                      | Set the autoscaling memory target type, must be either `Utilization` or `AverageValue`                                                                                                                                                                                                                                                             |
-| `hpa.memory.targetAverageValue`                          |                                                                      | Set the autoscaling memory target value                                                                                                                                                                                                                                                                                                            |
-| `hpa.memory.targetAverageUtilization`                    |                                                                      | Set the autoscaling memory target utilization                                                                                                                                                                                                                                                                                                      |
-| `hpa.minReplicas`                                        | `2`                                                                  | Minimum number of replicas                                                                                                                                                                                                                                                                                                                         |
-| `hpa.maxReplicas`                                        | `10`                                                                 | Maximum number of replicas                                                                                                                                                                                                                                                                                                                         |
-| `httpSecret`                                             |                                                                      | Https secret                                                                                                                                                                                                                                                                                                                                       |
-| `extraEnvFrom`                                           |                                                                      | List of extra environment variables from other data sources to expose                                                                                                                                                                                                                                                                              |
-| `image.pullPolicy`                                       |                                                                      | Pull policy for the registry image                                                                                                                                                                                                                                                                                                                 |
-| `image.pullSecrets`                                      |                                                                      | Secrets to use for image repository                                                                                                                                                                                                                                                                                                                |
-| `image.repository`                                       | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry` | Registry image                                                                                                                                                                                                                                                                                                                                     |
-| `image.tag`                                              | `v4.15.2-gitlab`                                                     | Version of the image to use                                                                                                                                                                                                                                                                                                                        |
-| `init.image.repository`                                  |                                                                      | initContainer image                                                                                                                                                                                                                                                                                                                                |
-| `init.image.tag`                                         |                                                                      | initContainer image tag                                                                                                                                                                                                                                                                                                                            |
-| `init.containerSecurityContext`                          |                                                                      | initContainer specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core)                                                                                                                                                                                                             |
-| `init.containerSecurityContext.runAsUser`                | `1000`                                                               | initContainer specific: User ID under which the container should be started                                                                                                                                                                                                                                                                        |
-| `init.containerSecurityContext.allowPrivilegeEscalation` | `false`                                                              | initContainer specific: Controls whether a process can gain more privileges than its parent process                                                                                                                                                                                                                                                |
-| `init.containerSecurityContext.runAsNonRoot`             | `true`                                                               | initContainer specific: Controls whether the container runs with a non-root user                                                                                                                                                                                                                                                                   |
-| `init.containerSecurityContext.capabilities.drop`        | `[ "ALL" ]`                                                          | initContainer specific: Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the container                                                                                                                                                                                                                  |
-| `keda.enabled`                                           | `false`                                                              | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers`                                                                                                                                                                                                                                                                 |
-| `keda.pollingInterval`                                   | `30`                                                                 | The interval to check each trigger on                                                                                                                                                                                                                                                                                                              |
-| `keda.cooldownPeriod`                                    | `300`                                                                | The period to wait after the last trigger reported active before scaling the resource back to 0                                                                                                                                                                                                                                                    |
-| `keda.minReplicaCount`                                   |                                                                      | Minimum number of replicas KEDA will scale the resource down to, defaults to `hpa.minReplicas`                                                                                                                                                                                                                                                     |
-| `keda.maxReplicaCount`                                   |                                                                      | Maximum number of replicas KEDA will scale the resource up to, defaults to `hpa.maxReplicas`                                                                                                                                                                                                                                                       |
-| `keda.fallback`                                          |                                                                      | KEDA fallback configuration, see the [documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/#fallback)                                                                                                                                                                                                                             |
-| `keda.hpaName`                                           |                                                                      | The name of the HPA resource KEDA will create, defaults to `keda-hpa-{scaled-object-name}`                                                                                                                                                                                                                                                         |
-| `keda.restoreToOriginalReplicaCount`                     |                                                                      | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted                                                                                                                                                                                                                         |
-| `keda.behavior`                                          |                                                                      | The specifications for up- and downscaling behavior, defaults to `hpa.behavior`                                                                                                                                                                                                                                                                    |
-| `keda.triggers`                                          |                                                                      | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory`                                                                                                                                                                                                                         |
-| `log`                                                    | `{level: info, fields: {service: registry}}`                         | Configure the logging options                                                                                                                                                                                                                                                                                                                      |
-| `minio.bucket`                                           | `global.registry.bucket`                                             | Legacy registry bucket name                                                                                                                                                                                                                                                                                                                        |
-| `maintenance.readonly.enabled`                           | `false`                                                              | Enable registry's read-only mode                                                                                                                                                                                                                                                                                                                   |
-| `maintenance.uploadpurging.enabled`                      | `true`                                                               | Enable upload purging                                                                                                                                                                                                                                                                                                                              |
-| `maintenance.uploadpurging.age`                          | `168h`                                                               | Purge uploads older than the specified age                                                                                                                                                                                                                                                                                                         |
-| `maintenance.uploadpurging.interval`                     | `24h`                                                                | Frequency at which upload purging is performed                                                                                                                                                                                                                                                                                                     |
-| `maintenance.uploadpurging.dryrun`                       | `false`                                                              | Only list which uploads will be purged without deleting                                                                                                                                                                                                                                                                                            |
-| `priorityClassName`                                      |                                                                      | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods.                                                                                                                                                                                                                               |
-| `reporting.sentry.enabled`                               | `false`                                                              | Enable reporting using Sentry                                                                                                                                                                                                                                                                                                                      |
-| `reporting.sentry.dsn`                                   |                                                                      | The Sentry DSN (Data Source Name)                                                                                                                                                                                                                                                                                                                  |
-| `reporting.sentry.environment`                           |                                                                      | The Sentry [environment](https://docs.sentry.io/concepts/key-terms/environments/)                                                                                                                                                                                                                                                                  |
-| `profiling.stackdriver.enabled`                          | `false`                                                              | Enable continuous profiling using Stackdriver                                                                                                                                                                                                                                                                                                      |
-| `profiling.stackdriver.credentials.secret`               | `gitlab-registry-profiling-creds`                                    | Name of the secret containing credentials                                                                                                                                                                                                                                                                                                          |
-| `profiling.stackdriver.credentials.key`                  | `credentials`                                                        | Secret key in which the credentials are stored                                                                                                                                                                                                                                                                                                     |
-| `profiling.stackdriver.service`                          | `RELEASE-registry` (templated Service name)                          | Name of the Stackdriver service to record profiles under                                                                                                                                                                                                                                                                                           |
-| `profiling.stackdriver.projectid`                        | GCP project where running                                            | GCP project to report profiles to                                                                                                                                                                                                                                                                                                                  |
-| `database.configure`                                     | `false`                                                              | Populate database configuration in the registry chart without enabling it. Required when [migrating an existing registry](metadata_database.md#existing-registries).                                                                                                                                                                               |
-| `database.enabled`                                       | `false`                                                              | Enable metadata database. This is an experimental feature and must not be used in production environments.                                                                                                                                                                                                                                         |
-| `database.host`                                          | `global.psql.host`                                                   | The database server hostname.                                                                                                                                                                                                                                                                                                                      |
-| `database.port`                                          | `global.psql.port`                                                   | The database server port.                                                                                                                                                                                                                                                                                                                          |
-| `database.user`                                          |                                                                      | The database username.                                                                                                                                                                                                                                                                                                                             |
-| `database.password.secret`                               | `RELEASE-registry-database-password`                                 | Name of the secret containing the database password.                                                                                                                                                                                                                                                                                               |
-| `database.password.key`                                  | `password`                                                           | Secret key in which the database password is stored.                                                                                                                                                                                                                                                                                               |
-| `database.name`                                          |                                                                      | The database name.                                                                                                                                                                                                                                                                                                                                 |
-| `database.sslmode`                                       |                                                                      | The SSL mode. Can be one of `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`.                                                                                                                                                                                                                                                 |
-| `database.ssl.secret`                                    | `global.psql.ssl.secret`                                             | A secret containing client certificate, key and certificate authority. Defaults to the main PostgreSQL SSL secret.                                                                                                                                                                                                                                 |
-| `database.ssl.clientCertificate`                         | `global.psql.ssl.clientCertificate`                                  | The key inside the secret referring the client certificate.                                                                                                                                                                                                                                                                                        |
-| `database.ssl.clientKey`                                 | `global.psql.ssl.clientKey`                                          | The key inside the secret referring the client key.                                                                                                                                                                                                                                                                                                |
-| `database.ssl.serverCA`                                  | `global.psql.ssl.serverCA`                                           | The key inside the secret referring the certificate authority (CA).                                                                                                                                                                                                                                                                                |
-| `database.connecttimeout`                                | `0`                                                                  | Maximum time to wait for a connection. Zero or not specified means waiting indefinitely.                                                                                                                                                                                                                                                           |
-| `database.draintimeout`                                  | `0`                                                                  | Maximum time to wait to drain all connections on shutdown. Zero or not specified means waiting indefinitely.                                                                                                                                                                                                                                       |
-| `database.preparedstatements`                            | `false`                                                              | Enable prepared statements. Disabled by default for compatibility with PgBouncer.                                                                                                                                                                                                                                                                  |
-| `database.primary`                                       | `false`                                                              | Target primary database server. This is used to specify a dedicated FQDN to target when running registry `database.migrations`. The `host` will be used to run `database.migrations` when not specified.                                                                                                                                           |
-| `database.pool.maxidle`                                  | `0`                                                                  | The maximum number of connections in the idle connection pool. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means no idle connections.                                                                                                                                       |
-| `database.pool.maxopen`                                  | `0`                                                                  | The maximum number of open connections to the database. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means unlimited open connections.                                                                                                                                       |
-| `database.pool.maxlifetime`                              | `0`                                                                  | The maximum amount of time a connection may be reused. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited reuse.                                                                                                                                                                                         |
-| `database.pool.maxidletime`                              | `0`                                                                  | The maximum amount of time a connection may be idle. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited duration.                                                                                                                                                                                        |
-| `database.loadBalancing.enabled`                         | `false`                                                              | Enable database load balancing. This is an experimental feature and must not be used in production environments.                                                                                                                                                                                        |
-| `database.loadBalancing.nameserver.host`                      | `localhost`                                                          | The host of the nameserver to use for looking up the DNS record.        |
-| `database.loadBalancing.nameserver.port`                            | `8600`                                                               | The port of the nameserver to use for looking up the DNS record.                                           |
-| `database.loadBalancing.record`                          |                                                                      | The SRV record to look up. This option is required for service discovery to work.      |
-| `database.loadBalancing.replicaCheckInterval`            | `1m`                                                                 | The minimum amount of time between checking the status of a replica.      |
-| `database.migrations.enabled`                            | `true`                                                               | Enable the migrations job to automatically run migrations upon initial deployment and upgrades of the Chart. Note that migrations can also be run manually from within any running Registry pods.                                                                                                                                                  |
-| `database.migrations.activeDeadlineSeconds`              | `3600`                                                               | Set the [activeDeadlineSeconds](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job.                                                                                                                                                                                                 |
-| `database.migrations.annotations`                        | `{}`                                                                 | Additional annotations to add to the migrations job.                                                                                                                                                                                                                                                                                               |
-| `database.migrations.backoffLimit`                       | `6`                                                                  | Set the [backoffLimit](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job.                                                                                                                                                                                                          |
+| Parameter                                                | Default                                                              | Description |
+|----------------------------------------------------------|----------------------------------------------------------------------|-------------|
+| `annotations`                                            |                                                                      | Pod annotations |
+| `podLabels`                                              |                                                                      | Supplemental Pod labels. Will not be used for selectors. |
+| `common.labels`                                          |                                                                      | Supplemental labels that are applied to all objects created by this chart. |
+| `authAutoRedirect`                                       | `true`                                                               | Auth auto-redirect (must be true for Windows clients to work) |
+| `authEndpoint`                                           | `global.hosts.gitlab.name`                                           | Auth endpoint (only host and port) |
+| `certificate.secret`                                     | `gitlab-registry`                                                    | JWT certificate |
+| `debug.addr.port`                                        | `5001`                                                               | Debug port  |
+| `debug.tls.enabled`                                      | `false`                                                              | Enable TLS for the debug port for the registry. Impacts liveness and readiness probes, as well as the metrics endpoint (if enabled) |
+| `debug.tls.secretName`                                   |                                                                      | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry debug endpoint. When not set and `debug.tls.enabled=true` - the debug TLS configuration will default to the registry's TLS certificate. |
+| `debug.prometheus.enabled`                               | `false`                                                              | **DEPRECATED** Use `metrics.enabled` |
+| `debug.prometheus.path`                                  | `""`                                                                 | **DEPRECATED** Use `metrics.path` |
+| `metrics.enabled`                                        | `false`                                                              | If a metrics endpoint should be made available for scraping |
+| `metrics.path`                                           | `/metrics`                                                           | Metrics endpoint path |
+| `metrics.serviceMonitor.enabled`                         | `false`                                                              | If a ServiceMonitor should be created to enable Prometheus Operator to manage the metrics scraping, note that enabling this removes the `prometheus.io` scrape annotations |
+| `metrics.serviceMonitor.additionalLabels`                | `{}`                                                                 | Additional labels to add to the ServiceMonitor |
+| `metrics.serviceMonitor.endpointConfig`                  | `{}`                                                                 | Additional endpoint configuration for the ServiceMonitor |
+| `deployment.terminationGracePeriodSeconds`               | `30`                                                                 | Optional duration in seconds the pod needs to terminate gracefully. |
+| `deployment.strategy`                                    | `{}`                                                                 | Allows one to configure the update strategy utilized by the deployment |
+| `draintimeout`                                           | `'0'`                                                                | Amount of time to wait for HTTP connections to drain after receiving a SIGTERM signal (e.g. `'10s'`) |
+| `relativeurls`                                           | `false`                                                              | Enable the registry to return relative URLs in Location headers. |
+| `enabled`                                                | `true`                                                               | Enable registry flag |
+| `extraContainers`                                        |                                                                      | Multiline literal style string containing a list of containers to include |
+| `extraInitContainers`                                    |                                                                      | List of extra init containers to include |
+| `hpa.behavior`                                           | `{scaleDown: {stabilizationWindowSeconds: 300 }}`                    | Behavior contains the specifications for up- and downscaling behavior (requires `autoscaling/v2beta2` or higher) |
+| `hpa.customMetrics`                                      | `[]`                                                                 | Custom metrics contains the specifications for which to use to calculate the desired replica count (overrides the default use of Average CPU Utilization configured in `targetAverageUtilization`) |
+| `hpa.cpu.targetType`                                     | `Utilization`                                                        | Set the autoscaling CPU target type, must be either `Utilization` or `AverageValue` |
+| `hpa.cpu.targetAverageValue`                             |                                                                      | Set the autoscaling CPU target value |
+| `hpa.cpu.targetAverageUtilization`                       | `75`                                                                 | Set the autoscaling CPU target utilization |
+| `hpa.memory.targetType`                                  |                                                                      | Set the autoscaling memory target type, must be either `Utilization` or `AverageValue` |
+| `hpa.memory.targetAverageValue`                          |                                                                      | Set the autoscaling memory target value |
+| `hpa.memory.targetAverageUtilization`                    |                                                                      | Set the autoscaling memory target utilization |
+| `hpa.minReplicas`                                        | `2`                                                                  | Minimum number of replicas |
+| `hpa.maxReplicas`                                        | `10`                                                                 | Maximum number of replicas |
+| `httpSecret`                                             |                                                                      | Https secret |
+| `extraEnvFrom`                                           |                                                                      | List of extra environment variables from other data sources to expose |
+| `image.pullPolicy`                                       |                                                                      | Pull policy for the registry image |
+| `image.pullSecrets`                                      |                                                                      | Secrets to use for image repository |
+| `image.repository`                                       | `registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry` | Registry image |
+| `image.tag`                                              | `v4.15.2-gitlab`                                                     | Version of the image to use |
+| `init.image.repository`                                  |                                                                      | initContainer image |
+| `init.image.tag`                                         |                                                                      | initContainer image tag |
+| `init.containerSecurityContext`                          |                                                                      | initContainer specific [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) |
+| `init.containerSecurityContext.runAsUser`                | `1000`                                                               | initContainer specific: User ID under which the container should be started |
+| `init.containerSecurityContext.allowPrivilegeEscalation` | `false`                                                              | initContainer specific: Controls whether a process can gain more privileges than its parent process |
+| `init.containerSecurityContext.runAsNonRoot`             | `true`                                                               | initContainer specific: Controls whether the container runs with a non-root user |
+| `init.containerSecurityContext.capabilities.drop`        | `[ "ALL" ]`                                                          | initContainer specific: Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the container |
+| `keda.enabled`                                           | `false`                                                              | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers` |
+| `keda.pollingInterval`                                   | `30`                                                                 | The interval to check each trigger on |
+| `keda.cooldownPeriod`                                    | `300`                                                                | The period to wait after the last trigger reported active before scaling the resource back to 0 |
+| `keda.minReplicaCount`                                   | `hpa.minReplicas`                                                    | Minimum number of replicas KEDA will scale the resource down to. |
+| `keda.maxReplicaCount`                                   | `hpa.maxReplicas`                                                    | Maximum number of replicas KEDA will scale the resource up to. |
+| `keda.fallback`                                          |                                                                      | KEDA fallback configuration, see the [documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/#fallback) |
+| `keda.hpaName`                                           | `keda-hpa-{scaled-object-name}`                                      | The name of the HPA resource KEDA will create. |
+| `keda.restoreToOriginalReplicaCount`                     |                                                                      | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted |
+| `keda.behavior`                                          | `hpa.behavior`                                                       | The specifications for up- and downscaling behavior. |
+| `keda.triggers`                                          |                                                                      | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory` |
+| `log`                                                    | `{level: info, fields: {service: registry}}`                         | Configure the logging options |
+| `minio.bucket`                                           | `global.registry.bucket`                                             | Legacy registry bucket name |
+| `maintenance.readonly.enabled`                           | `false`                                                              | Enable registry's read-only mode |
+| `maintenance.uploadpurging.enabled`                      | `true`                                                               | Enable upload purging |
+| `maintenance.uploadpurging.age`                          | `168h`                                                               | Purge uploads older than the specified age |
+| `maintenance.uploadpurging.interval`                     | `24h`                                                                | Frequency at which upload purging is performed |
+| `maintenance.uploadpurging.dryrun`                       | `false`                                                              | Only list which uploads will be purged without deleting |
+| `priorityClassName`                                      |                                                                      | [Priority class](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) assigned to pods. |
+| `reporting.sentry.enabled`                               | `false`                                                              | Enable reporting using Sentry |
+| `reporting.sentry.dsn`                                   |                                                                      | The Sentry DSN (Data Source Name) |
+| `reporting.sentry.environment`                           |                                                                      | The Sentry [environment](https://docs.sentry.io/concepts/key-terms/environments/) |
+| `profiling.stackdriver.enabled`                          | `false`                                                              | Enable continuous profiling using Stackdriver |
+| `profiling.stackdriver.credentials.secret`               | `gitlab-registry-profiling-creds`                                    | Name of the secret containing credentials |
+| `profiling.stackdriver.credentials.key`                  | `credentials`                                                        | Secret key in which the credentials are stored |
+| `profiling.stackdriver.service`                          | `RELEASE-registry` (templated Service name)                          | Name of the Stackdriver service to record profiles under |
+| `profiling.stackdriver.projectid`                        | GCP project where running                                            | GCP project to report profiles to |
+| `database.configure`                                     | `false`                                                              | Populate database configuration in the registry chart without enabling it. Required when [migrating an existing registry](metadata_database.md#existing-registries). |
+| `database.enabled`                                       | `false`                                                              | Enable metadata database. This is an experimental feature and must not be used in production environments. |
+| `database.host`                                          | `global.psql.host`                                                   | The database server hostname. |
+| `database.port`                                          | `global.psql.port`                                                   | The database server port. |
+| `database.user`                                          |                                                                      | The database username. |
+| `database.password.secret`                               | `RELEASE-registry-database-password`                                 | Name of the secret containing the database password. |
+| `database.password.key`                                  | `password`                                                           | Secret key in which the database password is stored. |
+| `database.name`                                          |                                                                      | The database name. |
+| `database.sslmode`                                       |                                                                      | The SSL mode. Can be one of `disable`, `allow`, `prefer`, `require`, `verify-ca` or `verify-full`. |
+| `database.ssl.secret`                                    | `global.psql.ssl.secret`                                             | A secret containing client certificate, key and certificate authority. Defaults to the main PostgreSQL SSL secret. |
+| `database.ssl.clientCertificate`                         | `global.psql.ssl.clientCertificate`                                  | The key inside the secret referring the client certificate. |
+| `database.ssl.clientKey`                                 | `global.psql.ssl.clientKey`                                          | The key inside the secret referring the client key. |
+| `database.ssl.serverCA`                                  | `global.psql.ssl.serverCA`                                           | The key inside the secret referring the certificate authority (CA). |
+| `database.connecttimeout`                                | `0`                                                                  | Maximum time to wait for a connection. Zero or not specified means waiting indefinitely. |
+| `database.draintimeout`                                  | `0`                                                                  | Maximum time to wait to drain all connections on shutdown. Zero or not specified means waiting indefinitely. |
+| `database.preparedstatements`                            | `false`                                                              | Enable prepared statements. Disabled by default for compatibility with PgBouncer. |
+| `database.primary`                                       | `false`                                                              | Target primary database server. This is used to specify a dedicated FQDN to target when running registry `database.migrations`. The `host` will be used to run `database.migrations` when not specified. |
+| `database.pool.maxidle`                                  | `0`                                                                  | The maximum number of connections in the idle connection pool. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means no idle connections. |
+| `database.pool.maxopen`                                  | `0`                                                                  | The maximum number of open connections to the database. If `maxopen` is less than `maxidle`, then `maxidle` is reduced to match the `maxopen` limit. Zero or not specified means unlimited open connections. |
+| `database.pool.maxlifetime`                              | `0`                                                                  | The maximum amount of time a connection may be reused. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited reuse. |
+| `database.pool.maxidletime`                              | `0`                                                                  | The maximum amount of time a connection may be idle. Expired connections may be closed lazily before reuse. Zero or not specified means unlimited duration. |
+| `database.loadBalancing.enabled`                         | `false`                                                              | Enable database load balancing. This is an experimental feature and must not be used in production environments. |
+| `database.loadBalancing.nameserver.host`                 | `localhost`                                                          | The host of the nameserver to use for looking up the DNS record. |
+| `database.loadBalancing.nameserver.port`                 | `8600`                                                               | The port of the nameserver to use for looking up the DNS record. |
+| `database.loadBalancing.record`                          |                                                                      | The SRV record to look up. This option is required for service discovery to work. |
+| `database.loadBalancing.replicaCheckInterval`            | `1m`                                                                 | The minimum amount of time between checking the status of a replica. |
+| `database.migrations.enabled`                            | `true`                                                               | Enable the migrations job to automatically run migrations upon initial deployment and upgrades of the Chart. Note that migrations can also be run manually from within any running Registry pods. |
+| `database.migrations.activeDeadlineSeconds`              | `3600`                                                               | Set the [activeDeadlineSeconds](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job. |
+| `database.migrations.annotations`                        | `{}`                                                                 | Additional annotations to add to the migrations job. |
+| `database.migrations.backoffLimit`                       | `6`                                                                  | Set the [backoffLimit](https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup) on the migrations job. |
 | `database.backgroundMigrations.enabled`                  | `false`                                                              | Enable background migrations for the database. This is an experimental feature for the Registry metadata database. Do not use in production. See the [specification](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/spec/gitlab/database-background-migrations.md?ref_type=heads) for a detailed explanation of how it works. |
-| `database.backgroundMigrations.jobInterval`              |                                                                      | The sleep interval between each background migration job worker run. When not specified [a default value is set by the registry](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#backgroundmigrations).                                                                                        |
-| `database.backgroundMigrations.maxJobRetries`            |                                                                      | The maximum number of retries for a failed background migration job. When not specified [a default value is set by the registry](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#backgroundmigrations).                                                                                        |
-| `gc.disabled`                                            | `true`                                                               | When set to `true`, the online GC workers are disabled.                                                                                                                                                                                                                                                                                            |
-| `gc.maxbackoff`                                          | `24h`                                                                | The maximum exponential backoff duration used to sleep between worker runs when an error occurs. Also applied when there are no tasks to be processed unless `gc.noidlebackoff` is `true`. Please note that this is not the absolute maximum, as a randomized jitter factor of up to 33% is always added.                                          |
-| `gc.noidlebackoff`                                       | `false`                                                              | When set to `true`, disables exponential backoffs between worker runs when there are no tasks to be processed.                                                                                                                                                                                                                                     |
-| `gc.transactiontimeout`                                  | `10s`                                                                | The database transaction timeout for each worker run. Each worker starts a database transaction at the start. The worker run is canceled if this timeout is exceeded to avoid stalled or long-running transactions.                                                                                                                                |
-| `gc.blobs.disabled`                                      | `false`                                                              | When set to `true`, the GC worker for blobs is disabled.                                                                                                                                                                                                                                                                                           |
-| `gc.blobs.interval`                                      | `5s`                                                                 | The initial sleep interval between each worker run.                                                                                                                                                                                                                                                                                                |
-| `gc.blobs.storagetimeout`                                | `5s`                                                                 | The timeout for storage operations. Used to limit the duration of requests to delete dangling blobs on the storage backend.                                                                                                                                                                                                                        |
-| `gc.manifests.disabled`                                  | `false`                                                              | When set to `true`, the GC worker for manifests is disabled.                                                                                                                                                                                                                                                                                       |
-| `gc.manifests.interval`                                  | `5s`                                                                 | The initial sleep interval between each worker run.                                                                                                                                                                                                                                                                                                |
-| `gc.reviewafter`                                         | `24h`                                                                | The minimum amount of time after which the garbage collector should pick up a record for review. `-1` means no wait.                                                                                                                                                                                                                               |
-| `securityContext.fsGroup`                                | `1000`                                                               | Group ID under which the pod should be started                                                                                                                                                                                                                                                                                                     |
-| `securityContext.runAsUser`                              | `1000`                                                               | User ID under which the pod should be started                                                                                                                                                                                                                                                                                                      |
-| `securityContext.fsGroupChangePolicy`                    |                                                                      | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23)                                                                                                                                                                                                                                                              |
-| `securityContext.seccompProfile.type`                    | `RuntimeDefault`                                                     | Seccomp profile to use                                                                                                                                                                                                                                                                                                                             |
-| `containerSecurityContext`                               |                                                                      | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started                                                                                                                                                                            |
-| `containerSecurityContext.runAsUser`                     | `1000`                                                               | Allow to overwrite the specific security context user ID under which the container is started                                                                                                                                                                                                                                                      |
-| `containerSecurityContext.allowPrivilegeEscalation`      | `false`                                                              | Controls whether a process of the Gitaly container can gain more privileges than its parent process                                                                                                                                                                                                                                                |
-| `containerSecurityContext.runAsNonRoot`                  | `true`                                                               | Controls whether the container runs with a non-root user                                                                                                                                                                                                                                                                                           |
-| `containerSecurityContext.capabilities.drop`             | `[ "ALL" ]`                                                          | Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the Gitaly container                                                                                                                                                                                                                                   |
-| `serviceAccount.automountServiceAccountToken`            | `false`                                                              | Indicates whether or not the default ServiceAccount access token should be mounted in pods                                                                                                                                                                                                                                                         |
-| `serviceAccount.enabled`                                 | `false`                                                              | Indicates whether or not to use a ServiceAccount                                                                                                                                                                                                                                                                                                   |
-| `serviceLabels`                                          | `{}`                                                                 | Supplemental service labels                                                                                                                                                                                                                                                                                                                        |
-| `tokenService`                                           | `container_registry`                                                 | JWT token service                                                                                                                                                                                                                                                                                                                                  |
-| `tokenIssuer`                                            | `gitlab-issuer`                                                      | JWT token issuer                                                                                                                                                                                                                                                                                                                                   |
-| `tolerations`                                            | `[]`                                                                 | Toleration labels for pod assignment                                                                                                                                                                                                                                                                                                               |
-| `affinity`                                               | `{}`                                                                 | Affinity rules for pod assignment                                                                                                                                                                                                                                                                                                                  |
-| `middleware.storage`                                     |                                                                      | configuration layer for midleware storage ([s3 for instance](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#example-middleware-configuration))                                                                                                                                                               |
-| `redis.cache.enabled`                                    | `false`                                                              | When set to `true`, the Redis cache is enabled. This feature is dependent on the [metadata database](#database) being enabled. Repository metadata will be cached on the configured Redis instance.                                                                                                                                                |
-| `redis.cache.host`                                       | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`.                                                                                                                                                                                                                                   |
-| `redis.cache.port`                                       | `6379`                                                               | The port of the Redis instance.                                                                                                                                                                                                                                                                                                                    |
-| `redis.cache.sentinels`                                  | `[]`                                                                 | List sentinels with host and port.                                                                                                                                                                                                                                                                                                                 |
-| `redis.cache.mainname`                                   |                                                                      | The main server name. Only applicable for Sentinel.                                                                                                                                                                                                                                                                                                |
-| `redis.cache.password.enabled`                           | `false`                                                              | Indicates whether the Redis cache used by the Registry is password protected.                                                                                                                                                                                                                                                                      |
-| `redis.cache.password.secret`                            | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled.                                                                                                                                                                                                |
-| `redis.cache.password.key`                               | `redis-password`                                                     | Secret key in which the Redis password is stored.                                                                                                                                                                                                                                                                                                  |
-| `redis.cache.sentinelpassword.enabled`                   | `false`                                                              | Indicates whether Redis Sentinels are password protected. If `redis.cache.sentinelpassword` is empty, the values from `global.redis.sentinelAuth` are used. Only used when `redis.cache.sentinels` is defined.                                                                                                                                     |
-| `redis.cache.sentinelpassword.secret`                    | `gitlab-redis-secret`                                                | Name of the secret containing the Redis Sentinel password.                                                                                                                                                                                                                                                                                         |
-| `redis.cache.sentinelpassword.key`                       | `redis-sentinel-password`                                            | Secret key in which the Redis Sentinel password is stored.                                                                                                                                                                                                                                                                                         |
-| `redis.cache.db`                                         | `0`                                                                  | The name of the database to use for each connection.                                                                                                                                                                                                                                                                                               |
-| `redis.cache.dialtimeout`                                | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                          |
-| `redis.cache.readtimeout`                                | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                           |
-| `redis.cache.writetimeout`                               | `0s`                                                                 | The timeout for writing to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                             |
-| `redis.cache.tls.enabled`                                | `false`                                                              | Set to `true` to enable TLS.                                                                                                                                                                                                                                                                                                                       |
-| `redis.cache.tls.insecure`                               | `false`                                                              | Set to `true` to disable server name verification when connecting over TLS.                                                                                                                                                                                                                                                                        |
-| `redis.cache.pool.size`                                  | `10`                                                                 | The maximum number of socket connections. Default is 10 connections.                                                                                                                                                                                                                                                                               |
-| `redis.cache.pool.maxlifetime`                           | `1h`                                                                 | The connection age at which client retires a connection. Default is to not close aged connections.                                                                                                                                                                                                                                                 |
-| `redis.cache.pool.idletimeout`                           | `300s`                                                               | How long to wait before closing inactive connections.                                                                                                                                                                                                                                                                                              |
-| `redis.rateLimiting.enabled`                             | `false`                                                              | When set to `true`, the Redis rate limiter is enabled. This feature is under development.                                                                                                                                                                                                                                                          |
-| `redis.rateLimiting.host`                                | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`.                                                                                                                                                                                                                                   |
-| `redis.rateLimiting.port`                                | `6379`                                                               | The port of the Redis instance.                                                                                                                                                                                                                                                                                                                    |
-| `redis.rateLimiting.cluster`                             | `[]`                                                                 | List of addresses with host and port.                                                                                                                                                                                                                                                                                                              |
-| `redis.rateLimiting.sentinels`                           | `[]`                                                                 | List sentinels with host and port.                                                                                                                                                                                                                                                                                                                 |
-| `redis.rateLimiting.mainname`                            |                                                                      | The main server name. Only applicable for Sentinel.                                                                                                                                                                                                                                                                                                |
-| `redis.rateLimiting.username`                            |                                                                      | The username used to connect to the Redis instance.                                                                                                                                                                                                                                                                                                |
-| `redis.rateLimiting.password.enabled`                    | `false`                                                              | Indicates whether the Redis instance is password protected.                                                                                                                                                                                                                                                                                        |
-| `redis.rateLimiting.password.secret`                     | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled.                                                                                                                                                                                                |
-| `redis.rateLimiting.password.key`                        | `redis-password`                                                     | Secret key in which the Redis password is stored.                                                                                                                                                                                                                                                                                                  |
-| `redis.rateLimiting.db`                                  | `0`                                                                  | The name of the database to use for each connection.                                                                                                                                                                                                                                                                                               |
-| `redis.rateLimiting.dialtimeout`                         | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                          |
-| `redis.rateLimiting.readtimeout`                         | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                           |
-| `redis.rateLimiting.writetimeout`                        | `0s`                                                                 | The timeout for writing to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                             |
-| `redis.rateLimiting.tls.enabled`                         | `false`                                                              | Set to `true` to enable TLS.                                                                                                                                                                                                                                                                                                                       |
-| `redis.rateLimiting.tls.insecure`                        | `false`                                                              | Set to `true` to disable server name verification when connecting over TLS.                                                                                                                                                                                                                                                                        |
-| `redis.rateLimiting.pool.size`                           | `10`                                                                 | The maximum number of socket connections.                                                                                                                                                                                                                                                                                                          |
-| `redis.rateLimiting.pool.maxlifetime`                    | `1h`                                                                 | The connection age at which the client retires a connection. Default is to not close aged connections.                                                                                                                                                                                                                                             |
-| `redis.rateLimiting.pool.idletimeout`                    | `300s`                                                               | How long to wait before closing inactive connections.                                                                                                                                                                                                                                                                                              |
-| `redis.loadBalancing.enabled`                             | `false`                                                              | When set to `true`, the Redis connection for [load balancing](#load-balancing) is enabled.                                                                                                                                                                                                                                                          |
-| `redis.loadBalancing.host`                                | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`.                                                                                                                                                                                                                                   |
-| `redis.loadBalancing.port`                                | `6379`                                                               | The port of the Redis instance.                                                                                                                                                                                                                                                                                                                    |
-| `redis.loadBalancing.cluster`                             | `[]`                                                                 | List of addresses with host and port.                                                                                                                                                                                                                                                                                                              |
-| `redis.loadBalancing.sentinels`                           | `[]`                                                                 | List sentinels with host and port.                                                                                                                                                                                                                                                                                                                 |
-| `redis.loadBalancing.mainname`                            |                                                                      | The main server name. Only applicable for Sentinel.                                                                                                                                                                                                                                                                                                |
-| `redis.loadBalancing.username`                            |                                                                      | The username used to connect to the Redis instance.                                                                                                                                                                                                                                                                                                |
-| `redis.loadBalancing.password.enabled`                    | `false`                                                              | Indicates whether the Redis instance is password protected.                                                                                                                                                                                                                                                                                        |
-| `redis.loadBalancing.password.secret`                     | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled.                                                                                                                                                                                                |
-| `redis.loadBalancing.password.key`                        | `redis-password`                                                     | Secret key in which the Redis password is stored.                                                                                                                                                                                                                                                                                                  |
-| `redis.loadBalancing.db`                                  | `0`                                                                  | The name of the database to use for each connection.                                                                                                                                                                                                                                                                                               |
-| `redis.loadBalancing.dialtimeout`                         | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                          |
-| `redis.loadBalancing.readtimeout`                         | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                           |
-| `redis.loadBalancing.writetimeout`                        | `0s`                                                                 | The timeout for writing to the Redis instance. Defaults to no timeout.                                                                                                                                                                                                                                                                             |
-| `redis.loadBalancing.tls.enabled`                         | `false`                                                              | Set to `true` to enable TLS.                                                                                                                                                                                                                                                                                                                       |
-| `redis.loadBalancing.tls.insecure`                        | `false`                                                              | Set to `true` to disable server name verification when connecting over TLS.                                                                                                                                                                                                                                                                        |
-| `redis.loadBalancing.pool.size`                           | `10`                                                                 | The maximum number of socket connections.                                                                                                                                                                                                                                                                                                          |
-| `redis.loadBalancing.pool.maxlifetime`                    | `1h`                                                                 | The connection age at which the client retires a connection. Default is to not close aged connections.                                                                                                                                                                                                                                             |
-| `redis.loadBalancing.pool.idletimeout`                    | `300s`                                                               | How long to wait before closing inactive connections.                                                                                                                                                                                                                                                                                              |
+| `database.backgroundMigrations.jobInterval`              |                                                                      | The sleep interval between each background migration job worker run. When not specified [a default value is set by the registry](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#backgroundmigrations). |
+| `database.backgroundMigrations.maxJobRetries`            |                                                                      | The maximum number of retries for a failed background migration job. When not specified [a default value is set by the registry](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#backgroundmigrations). |
+| `gc.disabled`                                            | `true`                                                               | When set to `true`, the online GC workers are disabled. |
+| `gc.maxbackoff`                                          | `24h`                                                                | The maximum exponential backoff duration used to sleep between worker runs when an error occurs. Also applied when there are no tasks to be processed unless `gc.noidlebackoff` is `true`. Please note that this is not the absolute maximum, as a randomized jitter factor of up to 33% is always added. |
+| `gc.noidlebackoff`                                       | `false`                                                              | When set to `true`, disables exponential backoffs between worker runs when there are no tasks to be processed. |
+| `gc.transactiontimeout`                                  | `10s`                                                                | The database transaction timeout for each worker run. Each worker starts a database transaction at the start. The worker run is canceled if this timeout is exceeded to avoid stalled or long-running transactions. |
+| `gc.blobs.disabled`                                      | `false`                                                              | When set to `true`, the GC worker for blobs is disabled. |
+| `gc.blobs.interval`                                      | `5s`                                                                 | The initial sleep interval between each worker run. |
+| `gc.blobs.storagetimeout`                                | `5s`                                                                 | The timeout for storage operations. Used to limit the duration of requests to delete dangling blobs on the storage backend. |
+| `gc.manifests.disabled`                                  | `false`                                                              | When set to `true`, the GC worker for manifests is disabled. |
+| `gc.manifests.interval`                                  | `5s`                                                                 | The initial sleep interval between each worker run. |
+| `gc.reviewafter`                                         | `24h`                                                                | The minimum amount of time after which the garbage collector should pick up a record for review. `-1` means no wait. |
+| `securityContext.fsGroup`                                | `1000`                                                               | Group ID under which the pod should be started |
+| `securityContext.runAsUser`                              | `1000`                                                               | User ID under which the pod should be started |
+| `securityContext.fsGroupChangePolicy`                    |                                                                      | Policy for changing ownership and permission of the volume (requires Kubernetes 1.23) |
+| `securityContext.seccompProfile.type`                    | `RuntimeDefault`                                                     | Seccomp profile to use |
+| `containerSecurityContext`                               |                                                                      | Override container [securityContext](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core) under which the container is started |
+| `containerSecurityContext.runAsUser`                     | `1000`                                                               | Allow to overwrite the specific security context user ID under which the container is started |
+| `containerSecurityContext.allowPrivilegeEscalation`      | `false`                                                              | Controls whether a process of the Gitaly container can gain more privileges than its parent process |
+| `containerSecurityContext.runAsNonRoot`                  | `true`                                                               | Controls whether the container runs with a non-root user |
+| `containerSecurityContext.capabilities.drop`             | `[ "ALL" ]`                                                          | Removes [Linux capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html) for the Gitaly container |
+| `serviceAccount.automountServiceAccountToken`            | `false`                                                              | Indicates whether or not the default ServiceAccount access token should be mounted in pods |
+| `serviceAccount.enabled`                                 | `false`                                                              | Indicates whether or not to use a ServiceAccount |
+| `serviceLabels`                                          | `{}`                                                                 | Supplemental service labels |
+| `tokenService`                                           | `container_registry`                                                 | JWT token service |
+| `tokenIssuer`                                            | `gitlab-issuer`                                                      | JWT token issuer |
+| `tolerations`                                            | `[]`                                                                 | Toleration labels for pod assignment |
+| `affinity`                                               | `{}`                                                                 | Affinity rules for pod assignment |
+| `middleware.storage`                                     |                                                                      | configuration layer for midleware storage ([s3 for instance](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#example-middleware-configuration)) |
+| `redis.cache.enabled`                                    | `false`                                                              | When set to `true`, the Redis cache is enabled. This feature is dependent on the [metadata database](#database) being enabled. Repository metadata will be cached on the configured Redis instance. |
+| `redis.cache.host`                                       | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`. |
+| `redis.cache.port`                                       | `6379`                                                               | The port of the Redis instance. |
+| `redis.cache.sentinels`                                  | `[]`                                                                 | List sentinels with host and port. |
+| `redis.cache.mainname`                                   |                                                                      | The main server name. Only applicable for Sentinel. |
+| `redis.cache.password.enabled`                           | `false`                                                              | Indicates whether the Redis cache used by the Registry is password protected. |
+| `redis.cache.password.secret`                            | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled. |
+| `redis.cache.password.key`                               | `redis-password`                                                     | Secret key in which the Redis password is stored. |
+| `redis.cache.sentinelpassword.enabled`                   | `false`                                                              | Indicates whether Redis Sentinels are password protected. If `redis.cache.sentinelpassword` is empty, the values from `global.redis.sentinelAuth` are used. Only used when `redis.cache.sentinels` is defined. |
+| `redis.cache.sentinelpassword.secret`                    | `gitlab-redis-secret`                                                | Name of the secret containing the Redis Sentinel password. |
+| `redis.cache.sentinelpassword.key`                       | `redis-sentinel-password`                                            | Secret key in which the Redis Sentinel password is stored. |
+| `redis.cache.db`                                         | `0`                                                                  | The name of the database to use for each connection. |
+| `redis.cache.dialtimeout`                                | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout. |
+| `redis.cache.readtimeout`                                | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout. |
+| `redis.cache.writetimeout`                               | `0s`                                                                 | The timeout for writing to the Redis instance. Defaults to no timeout. |
+| `redis.cache.tls.enabled`                                | `false`                                                              | Set to `true` to enable TLS. |
+| `redis.cache.tls.insecure`                               | `false`                                                              | Set to `true` to disable server name verification when connecting over TLS. |
+| `redis.cache.pool.size`                                  | `10`                                                                 | The maximum number of socket connections. Default is 10 connections. |
+| `redis.cache.pool.maxlifetime`                           | `1h`                                                                 | The connection age at which client retires a connection. Default is to not close aged connections. |
+| `redis.cache.pool.idletimeout`                           | `300s`                                                               | How long to wait before closing inactive connections. |
+| `redis.rateLimiting.enabled`                             | `false`                                                              | When set to `true`, the Redis rate limiter is enabled. This feature is under development. |
+| `redis.rateLimiting.host`                                | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`. |
+| `redis.rateLimiting.port`                                | `6379`                                                               | The port of the Redis instance. |
+| `redis.rateLimiting.cluster`                             | `[]`                                                                 | List of addresses with host and port. |
+| `redis.rateLimiting.sentinels`                           | `[]`                                                                 | List sentinels with host and port. |
+| `redis.rateLimiting.mainname`                            |                                                                      | The main server name. Only applicable for Sentinel. |
+| `redis.rateLimiting.username`                            |                                                                      | The username used to connect to the Redis instance. |
+| `redis.rateLimiting.password.enabled`                    | `false`                                                              | Indicates whether the Redis instance is password protected. |
+| `redis.rateLimiting.password.secret`                     | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled. |
+| `redis.rateLimiting.password.key`                        | `redis-password`                                                     | Secret key in which the Redis password is stored. |
+| `redis.rateLimiting.db`                                  | `0`                                                                  | The name of the database to use for each connection. |
+| `redis.rateLimiting.dialtimeout`                         | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout. |
+| `redis.rateLimiting.readtimeout`                         | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout. |
+| `redis.rateLimiting.writetimeout`                        | `0s`                                                                 | The timeout for writing to the Redis instance. Defaults to no timeout. |
+| `redis.rateLimiting.tls.enabled`                         | `false`                                                              | Set to `true` to enable TLS. |
+| `redis.rateLimiting.tls.insecure`                        | `false`                                                              | Set to `true` to disable server name verification when connecting over TLS. |
+| `redis.rateLimiting.pool.size`                           | `10`                                                                 | The maximum number of socket connections. |
+| `redis.rateLimiting.pool.maxlifetime`                    | `1h`                                                                 | The connection age at which the client retires a connection. Default is to not close aged connections. |
+| `redis.rateLimiting.pool.idletimeout`                    | `300s`                                                               | How long to wait before closing inactive connections. |
+| `redis.loadBalancing.enabled`                            | `false`                                                              | When set to `true`, the Redis connection for [load balancing](#load-balancing) is enabled. |
+| `redis.loadBalancing.host`                               | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`. |
+| `redis.loadBalancing.port`                               | `6379`                                                               | The port of the Redis instance. |
+| `redis.loadBalancing.cluster`                            | `[]`                                                                 | List of addresses with host and port. |
+| `redis.loadBalancing.sentinels`                          | `[]`                                                                 | List sentinels with host and port. |
+| `redis.loadBalancing.mainname`                           |                                                                      | The main server name. Only applicable for Sentinel. |
+| `redis.loadBalancing.username`                           |                                                                      | The username used to connect to the Redis instance. |
+| `redis.loadBalancing.password.enabled`                   | `false`                                                              | Indicates whether the Redis instance is password protected. |
+| `redis.loadBalancing.password.secret`                    | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled. |
+| `redis.loadBalancing.password.key`                       | `redis-password`                                                     | Secret key in which the Redis password is stored. |
+| `redis.loadBalancing.db`                                 | `0`                                                                  | The name of the database to use for each connection. |
+| `redis.loadBalancing.dialtimeout`                        | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout. |
+| `redis.loadBalancing.readtimeout`                        | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout. |
+| `redis.loadBalancing.writetimeout`                       | `0s`                                                                 | The timeout for writing to the Redis instance. Defaults to no timeout. |
+| `redis.loadBalancing.tls.enabled`                        | `false`                                                              | Set to `true` to enable TLS. |
+| `redis.loadBalancing.tls.insecure`                       | `false`                                                              | Set to `true` to disable server name verification when connecting over TLS. |
+| `redis.loadBalancing.pool.size`                          | `10`                                                                 | The maximum number of socket connections. |
+| `redis.loadBalancing.pool.maxlifetime`                   | `1h`                                                                 | The connection age at which the client retires a connection. Default is to not close aged connections. |
+| `redis.loadBalancing.pool.idletimeout`                   | `300s`                                                               | How long to wait before closing inactive connections. |
 
 ## Chart configuration examples
 
-### pullSecrets
+### `pullSecrets`
 
 `pullSecrets` allows you to authenticate to a private registry to pull images for a pod.
 
@@ -365,16 +365,16 @@ image:
   - name: my-secondary-secret-name
 ```
 
-### serviceAccount
+### `serviceAccount`
 
 This section controls if a ServiceAccount should be created and if the default access token should be mounted in pods.
 
-| Name                           |  Type   | Default | Description                                                                                                                                                                      |
-| :----------------------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name                           |  Type   | Default | Description |
+|:-------------------------------|:-------:|:--------|:------------|
 | `automountServiceAccountToken` | Boolean | `false` | Controls if the default ServiceAccount access token should be mounted in pods. You should not enable this unless it is required by certain sidecars to work properly (for example, Istio). |
-| `enabled`                      | Boolean | `false` | Indicates whether or not to use a ServiceAccount.                                                                                                                                          |
+| `enabled`                      | Boolean | `false` | Indicates whether or not to use a ServiceAccount. |
 
-### tolerations
+### `tolerations`
 
 `tolerations` allow you schedule pods on tainted worker nodes
 
@@ -392,7 +392,7 @@ tolerations:
   effect: "NoExecute"
 ```
 
-### affinity
+### `affinity`
 
 `affinity` is an optional parameter that allows you to set either or both:
 
@@ -426,7 +426,7 @@ affinity:
     topologyKey: "test.com/hostname"
 ```
 
-### annotations
+### `annotations`
 
 `annotations` allows you to add annotations to the registry pods.
 
@@ -463,28 +463,28 @@ These settings will be populated by [`values.yaml`](https://gitlab.com/gitlab-or
 
 By default, the Service is configured as:
 
-| Name             |  Type  | Default     | Description                                                           |
-| :--------------- | :----: | :---------- | :-------------------------------------------------------------------- |
-| `name`           | String | `registry`  | Configures the name of the service                                    |
-| `type`           | String | `ClusterIP` | Configures the type of the service                                    |
-| `externalPort`   |  Int   | `5000`      | Port exposed by the Service                                           |
-| `internalPort`   |  Int   | `5000`      | Port utilized by the Pod to accept request from the service           |
-| `clusterIP`      | String | `null`      | Allows one to configure a custom Cluster IP as necessary              |
+| Name             |  Type  | Default     | Description |
+|:-----------------|:------:|:------------|:------------|
+| `name`           | String | `registry`  | Configures the name of the service |
+| `type`           | String | `ClusterIP` | Configures the type of the service |
+| `externalPort`   |  Int   | `5000`      | Port exposed by the Service |
+| `internalPort`   |  Int   | `5000`      | Port utilized by the Pod to accept request from the service |
+| `clusterIP`      | String | `null`      | Allows one to configure a custom Cluster IP as necessary |
 | `loadBalancerIP` | String | `null`      | Allows one to configure a custom LoadBalancer IP address as necessary |
 
 ## Configuring the `ingress`
 
 This section controls the registry Ingress.
 
-| Name                   |  Type   | Default | Description                                                                                                                                                                                                                           |
-| :--------------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `apiVersion`           | String  |         | Value to use in the `apiVersion` field.                                                                                                                                                                                               |
-| `annotations`          | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/).                                                                                |
-| `configureCertmanager` | Boolean |         | Toggles Ingress annotation `cert-manager.io/issuer` and `acme.cert-manager.io/http01-edit-in-place`. For more information see the [TLS requirement for GitLab Pages](../../installation/tls.md).                                      |
-| `enabled`              | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used.                                                                                    |
+| Name                   |  Type   | Default | Description |
+|:-----------------------|:-------:|:--------|:------------|
+| `apiVersion`           | String  |         | Value to use in the `apiVersion` field. |
+| `annotations`          | String  |         | This field is an exact match to the standard `annotations` for [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/). |
+| `configureCertmanager` | Boolean |         | Toggles Ingress annotation `cert-manager.io/issuer` and `acme.cert-manager.io/http01-edit-in-place`. For more information see the [TLS requirement for GitLab Pages](../../installation/tls.md). |
+| `enabled`              | Boolean | `false` | Setting that controls whether to create Ingress objects for services that support them. When `false` the `global.ingress.enabled` setting is used. |
 | `tls.enabled`          | Boolean | `true`  | When set to `false`, you disable TLS for the Registry subchart. This is mainly useful for cases in which you cannot use TLS termination at `ingress-level`, like when you have a TLS-terminating proxy before the Ingress Controller. |
-| `tls.secretName`       | String  |         | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry URL. When not set, the `global.ingress.tls.secretName` is used instead. Defaults to not being set.                                   |
-| `tls.cipherSuites`     |  Array  | `[]`    | The list of cipher suites that Container registry should present to the client during TLS handshake.                        |
+| `tls.secretName`       | String  |         | The name of the Kubernetes TLS Secret that contains a valid certificate and key for the registry URL. When not set, the `global.ingress.tls.secretName` is used instead. Defaults to not being set. |
+| `tls.cipherSuites`     |  Array  | `[]`    | The list of cipher suites that Container registry should present to the client during TLS handshake. |
 
 ## Configuring TLS
 
@@ -563,12 +563,12 @@ This section controls the registry
 This configuration is optional and is used to limit egress and Ingress of the registry to specific endpoints.
 and Ingress to specific endpoints.
 
-| Name              |  Type   | Default | Description                                                                                                                                                                     |
-| :---------------- | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy` for registry                                                                                                                           |
-| `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified.                                         |
-| `ingress.rules`   |  Array  | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below      |
-| `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified.                                           |
+| Name              |  Type   | Default | Description |
+|:------------------|:-------:|:--------|:------------|
+| `enabled`         | Boolean | `false` | This setting enables the `NetworkPolicy` for registry |
+| `ingress.enabled` | Boolean | `false` | When set to `true`, the `Ingress` network policy will be activated. This will block all Ingress connections unless rules are specified. |
+| `ingress.rules`   |  Array  | `[]`    | Rules for the Ingress policy, for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
+| `egress.enabled`  | Boolean | `false` | When set to `true`, the `Egress` network policy will be activated. This will block all egress connections unless rules are specified. |
 | `egress.rules`    |  Array  | `[]`    | Rules for the egress policy, these for details see <https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource> and the example below |
 
 ### Example policy for preventing connections to all internal endpoints
@@ -672,18 +672,18 @@ If no triggers are set, the `ScaledObject` is not created.
 
 Refer to the [KEDA documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/) for more details about those settings.
 
-| Name                            | Type    | Default | Description                                                                                                                                                                     |
-| :----------------------------   | :-----: | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `enabled`                       | Boolean | `false` | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers`                                                                                              |
-| `pollingInterval`               | Integer | `30`    | The interval to check each trigger on                                                                                                                                           |
-| `cooldownPeriod`                | Integer | `300`   | The period to wait after the last trigger reported active before scaling the resource back to 0                                                                                 |
-| `minReplicaCount`               | Integer |         | Minimum number of replicas KEDA will scale the resource down to, defaults to `hpa.minReplicas`                                                                                  |
-| `maxReplicaCount`               | Integer |         | Maximum number of replicas KEDA will scale the resource up to, defaults to `hpa.maxReplicas`                                                                                    |
-| `fallback`                      | Map     |         | KEDA fallback configuration, see the [documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/#fallback)                                                          |
-| `hpaName`                       | String  |         | The name of the HPA resource KEDA will create, defaults to `keda-hpa-{scaled-object-name}`                                                                                      |
-| `restoreToOriginalReplicaCount` | Boolean |         | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted                                                      |
-| `behavior`                      | Map     |         | The specifications for up- and downscaling behavior, defaults to `hpa.behavior`                                                                                                 |
-| `triggers`                      | Array   |         | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory`                                                      |
+| Name                            |  Type   | Default                         | Description |
+|:--------------------------------|:-------:|:--------------------------------|:------------|
+| `enabled`                       | Boolean | `false`                         | Use [KEDA](https://keda.sh/) `ScaledObjects` instead of `HorizontalPodAutoscalers` |
+| `pollingInterval`               | Integer | `30`                            | The interval to check each trigger on |
+| `cooldownPeriod`                | Integer | `300`                           | The period to wait after the last trigger reported active before scaling the resource back to 0 |
+| `minReplicaCount`               | Integer | `hpa.minReplicas`               | Minimum number of replicas KEDA will scale the resource down to. |
+| `maxReplicaCount`               | Integer | `hpa.maxReplicas`               | Maximum number of replicas KEDA will scale the resource up to. |
+| `fallback`                      |   Map   |                                 | KEDA fallback configuration, see the [documentation](https://keda.sh/docs/2.10/concepts/scaling-deployments/#fallback) |
+| `hpaName`                       | String  | `keda-hpa-{scaled-object-name}` | The name of the HPA resource KEDA will create. |
+| `restoreToOriginalReplicaCount` | Boolean |                                 | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted |
+| `behavior`                      |   Map   | `hpa.behavior`                  | The specifications for up- and downscaling behavior. |
+| `triggers`                      |  Array  |                                 | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory` |
 
 ### Example policy for preventing connections to all internal endpoints
 
@@ -728,7 +728,7 @@ for integration with GitLab are exposed. For this integration, we make use of th
 settings of [Docker Distribution](https://github.com/docker/distribution), controlling
 authentication to the registry via JWT [authentication tokens](https://distribution.github.io/distribution/spec/auth/token/).
 
-### httpSecret
+### `httpSecret`
 
 Field `httpSecret` is a map that contains two items: `secret` and `key`.
 
@@ -789,7 +789,7 @@ is automatically created if not provided.
 
 To create this secret manually, see the [Redis password instructions](../../installation/secrets.md#redis-password).
 
-### authEndpoint
+### `authEndpoint`
 
 The `authEndpoint` field is a string, providing the URL to the GitLab instance(s) that
 the [registry](https://hub.docker.com/_/registry/) will authenticate to.
@@ -801,7 +801,7 @@ inside the container. For example: `authEndpoint: "https://gitlab.example.com"`
 By default this field is populated with the GitLab hostname configuration set by the
 [Global Settings](../globals.md).
 
-### certificate
+### `certificate`
 
 The `certificate` field is a map containing two items: `secret` and `key`.
 
@@ -825,7 +825,7 @@ certificate:
 By default there is a readiness and liveness probe configured to
 check `/debug/health` on port `5001` which is the debug port.
 
-### validation
+### `validation`
 
 The `validation` field is a map that controls the Docker image validation
 process in the registry. When image validation is enabled the registry rejects
@@ -839,7 +839,7 @@ The image validation is turned off by default.
 
 To enable image validation you need to explicitly set `registry.validation.disabled: false`.
 
-#### manifests
+#### `manifests`
 
 The `manifests` field allows configuration of validation policies particular to
 manifests.
@@ -849,22 +849,22 @@ which contain URLs to pass validation, that layer must match one of the regular
 expressions in the `allow` field, while not matching any regular expression in
 the `deny` field.
 
-|        Name        | Type  | Default |                                                                                     Description                                                                                      |
-| :----------------: | :---: | :------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|        Name        | Type  | Default | Description |
+|:------------------:|:-----:|:--------|:-----------:|
 |  `referencelimit`  |  Int  | `0`     | The maximum number of references, such as layers, image configurations, and other manifests, that a single manifest may have. When set to `0` (default) this validation is disabled. |
-| `payloadsizelimit` |  Int  | `0`     |                                     The maximum data size in bytes of manifest payloads. When set to `0` (default) this validation is disabled.                                      |
-|    `urls.allow`    | Array | `[]`    |                     List of regular expressions that enables URLs in the layers of manifests. When left empty (default), layers with any URLs will be rejected.                      |
-|    `urls.deny`     | Array | `[]`    |  List of regular expressions that restricts the URLs in the layers of manifests. When left empty (default), no layer with URLs which passed the `urls.allow` list will be rejected   |
+| `payloadsizelimit` |  Int  | `0`     | The maximum data size in bytes of manifest payloads. When set to `0` (default) this validation is disabled. |
+|    `urls.allow`    | Array | `[]`    | List of regular expressions that enables URLs in the layers of manifests. When left empty (default), layers with any URLs will be rejected. |
+|    `urls.deny`     | Array | `[]`    | List of regular expressions that restricts the URLs in the layers of manifests. When left empty (default), no layer with URLs which passed the `urls.allow` list will be rejected |
 
-### notifications
+### `notifications`
 
 The `notifications` field is used to configure [Registry notifications](https://distribution.github.io/distribution/about/notifications/#configuration).
 It has an empty hash as default value.
 
-|    Name     | Type  | Default |                                                     Description                                                      |
-| :---------: | :---: | :------ | :------------------------------------------------------------------------------------------------------------------: |
+|    Name     | Type  | Default | Description |
+|:-----------:|:-----:|:--------|:-----------:|
 | `endpoints` | Array | `[]`    | List of items where each item correspond to an [endpoint](https://distribution.github.io/distribution/about/configuration/#endpoints) |
-|  `events`   | Hash  | `{}`    |        Information provided in [event](https://distribution.github.io/distribution/about/configuration/#events) notifications         |
+|  `events`   | Hash  | `{}`    | Information provided in [event](https://distribution.github.io/distribution/about/configuration/#events) notifications |
 
 An example setting will look like the following:
 
@@ -893,7 +893,7 @@ notifications:
 
 <!-- vale gitlab.Spelling = NO -->
 
-### hpa
+### `hpa`
 
 <!-- vale gitlab.Spelling = YES -->
 
@@ -902,7 +902,7 @@ instances to create as a part of the set. This defaults to a `minReplicas` value
 of `2`, a `maxReplicas` value of 10, and configures the
 `cpu.targetAverageUtilization` to 75%.
 
-### storage
+### `storage`
 
 ```yaml
 storage:
@@ -976,7 +976,7 @@ will supersede this default.
 
 {{< /alert >}}
 
-### middleware.storage
+### `middleware.storage`
 
 Configuration of `middleware.storage` follows [upstream convention](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#middleware):
 
@@ -1004,15 +1004,15 @@ Within above code `options.privatekeySecret` is a `generic` Kubernetes secret co
 kubectl create secret generic cloudfront-secret-name --type=kubernetes.io/ssh-auth --from-file=private-key-ABC.pem=pk-ABCEDFGHIJKLMNOPQRST.pem
 ```
 
-`privatekey` used upstream is being auto-populated by chart from the privatekey Secret and will be **ignored** if specified.
+`privatekey` used upstream is being auto-populated by chart from the `privatekey` Secret and will be **ignored** if specified.
 
 #### `keypairid` variants
 
 Various vendors use different field names for the same construct:
 
-|   Vendor   | field name  |
-| :--------: | :---------: |
-| Google CDN |  `keyname`  |
+|   Vendor   | field name |
+|:----------:|:----------:|
+| Google CDN | `keyname`  |
 | CloudFront | `keypairid` |
 
 {{< alert type="note" >}}
@@ -1021,7 +1021,7 @@ Only configuration of `middleware.storage` section is supported at this time.
 
 {{< /alert >}}
 
-### debug
+### `debug`
 
 The debug port is enabled by default and is used for the liveness/readiness
 probe. Additionally, Prometheus metrics can be enabled via the `metrics` values.
@@ -1035,11 +1035,11 @@ metrics:
   enabled: true
 ```
 
-### health
+### `health`
 
 The `health` property is optional, and contains preferences for
 a periodic health check on the storage driver's backend storage.
-For more details, see Docker's [configuration documentation](https://distribution.github.io/distribution/about/configuration/#health).
+For more details, see the Docker [configuration documentation](https://distribution.github.io/distribution/about/configuration/#health).
 
 ```yaml
 health:
@@ -1049,7 +1049,7 @@ health:
     threshold: 3
 ```
 
-### reporting
+### `reporting`
 
 The `reporting` property is optional and enables [reporting](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#reporting)
 
@@ -1061,7 +1061,7 @@ reporting:
     environment: 'production'
 ```
 
-### profiling
+### `profiling`
 
 The `profiling` property is optional and enables [continuous profiling](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#profiling)
 
@@ -1075,7 +1075,7 @@ profiling:
     service: gitlab-registry
 ```
 
-### database
+### `database`
 
 {{< history >}}
 
@@ -1421,3 +1421,96 @@ documentation:
 
 - [General Registry documentation](https://docs.docker.com/registry/)
 - [GitLab-specific Registry documentation](https://gitlab.com/gitlab-org/container-registry/-/tree/master/docs-gitlab)
+
+## Registry Rate Limiter Configuration
+
+The Registry can be configured with rate limiting to control the traffic to your container registry instance. This helps protect your registry from abuse, DoS attacks, or excessive usage.
+
+### Notes
+
+- Rate limiting requires Redis to be configured properly via the `registry.redis.rateLimiting` settings.
+- Rate limiting is disabled by default. Set `registry.rateLimiter.enabled: true` to enable it.
+- Limiters are applied in order of precedence (lowest values first).
+- The `log_only` option can be useful for testing rate limits before enforcing them.
+
+### Rate Limiter Configuration
+
+To enable and configure rate limiting for the container registry, you can use the `registry.rateLimiter` settings:
+
+```yaml
+registry:
+  rateLimiter:
+    enabled: true
+    limiters:
+      - name: global_rate_limit
+        description: "Global IP rate limit"
+        log_only: false
+        match:
+          type: IP
+        precedence: 10
+        limit:
+          rate: 5000
+          period: "minute"
+          burst: 8000
+        action:
+          warn_threshold: 0.7
+          warn_action: "log"
+          hard_action: "block"
+```
+
+### Limiters Configuration
+
+The rate limiter uses a list of limiters to define rate limiting rules. Each limiter has the following properties:
+
+- `name`: A unique identifier for the limiter
+- `description`: A human-readable description of the limiter's purpose
+- `log_only`: When set to `true`, violations are only logged without enforcement
+- `precedence`: Defines the order in which limiters are evaluated (lower values first)
+- `match`: Criteria for matching requests
+- `limit`: The rate limit parameters
+- `action`: Actions to take when limits are reached
+
+### Limit Configuration
+
+The `limit` section defines the actual rate limit parameters:
+
+```yaml
+limit:
+  rate: 100       # Number of requests allowed
+  period: "minute" # Time period (second, minute, hour, day)
+  burst: 200      # Allowed burst capacity
+```
+
+### Action Configuration
+
+The `action` section defines what happens when limits are approached or reached:
+
+```yaml
+action:
+  warn_threshold: 0.7      # Percentage of limit to trigger warning
+  warn_action: "log"       # Action when warning threshold is reached
+  hard_action: "block"     # Action when limit is reached
+```
+
+### Examples
+
+#### Global IP Rate Limit
+
+This example limits all requests from a single IP address:
+
+```yaml
+- name: global_rate_limit
+  description: "Global IP rate limit"
+  log_only: false
+  match:
+    type: IP
+  precedence: 10
+  limit:
+    rate: 5000
+    period: "minute"
+    burst: 8000
+  action:
+    warn_threshold: 0.7
+    warn_action: "log"
+    hard_action: "block"
+```

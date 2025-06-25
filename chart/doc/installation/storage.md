@@ -1,6 +1,6 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Configure storage for the GitLab chart
 ---
@@ -21,7 +21,7 @@ The following applications within the GitLab chart require persistent storage to
 
 The administrator may choose to provision this storage using [dynamic](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#dynamic) or [static](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#static) volume provisioning.
 
-> **Important:** Minimize extra storage migration tasks after installation through pre-planning. Changes made
+> **Important**: Minimize extra storage migration tasks after installation through pre-planning. Changes made
 > after the first deployment require manual edits to existing Kubernetes objects prior to running `helm upgrade`.
 
 ## Typical Installation Behavior

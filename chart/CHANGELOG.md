@@ -2,6 +2,33 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 9.1.0 (2025-06-18)
+
+### Added (2 changes)
+
+- [Add customDomainMode parameter for Pages](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/d00ebb3cbe3f351cb33cdf90af5f635929251d65) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4275))
+- [Registry: add rate limiting configuration](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/335d5b68895b85ba281ae8fd736be3b0fe1a454e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4285))
+
+### Fixed (1 change)
+
+- [Include ClickHouse secrets in toolbox backup job](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8b3db3848d4373c4856ef44503780638119b3d4a) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4249))
+
+### Changed (13 changes)
+
+- [Update Helm release gitlab-runner to v0.77.3](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/825009dccd8b7f88c406b651acd11b7910616b6c) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4328))
+- [Update Helm release gitlab-zoekt to v2.6.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/46ee65db0d40d55ead1704b3cf8332fff8e4be28) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4333))
+- [Update dependency container-registry to v4.23.1-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/89d344e9a17f2f8af18b3703b924c43895be07a1) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4319))
+- [Update Helm release prometheus to v27.20.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/0357ad517bee8aea930dfe169f5eb17651a5f9e3) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4318))
+- [Update dependency container-registry to v4.23.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/f14207155b6042341cd1f04eb4629a5526009e74) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4306))
+- [Update Helm release gitlab-runner to v0.77.2](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/db2743b06d6d582008197d8832c0bed5229b4752) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4295))
+- [Add support for Kubernetes 1.33](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/80b6dd689726488abd41442a4d2626af15a55d76) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4293))
+- [Update dependency gitlab-exporter to v15.4.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/47bab37dd20bb69cbe1a39e3918a1c3e2d409c7a) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4283))
+- [Update dependency container-registry to v4.22.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/5c205e898f8d7175cda8fddbbe398918e67fd6e6) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4274))
+- [Update dependency gitlab-qa to v15.5.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/f58a0f3e33f34016db0987da700fbc5c53a9b978) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4271))
+- [Update Helm release prometheus to v27.14.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7f39e0da714f78f363a34e03c7e51c8d46dea380) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4265))
+- [Update dependency danger-review to v2.1.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/fb86835cb4c5b39ceea2e2349890016b2ae2ca49) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4196))
+- [Update Helm release gitlab-runner to v0.75.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/5e81a8f1e9a8a2d26de60edcf075a8797c3ea9e2) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4181))
+
 ## 9.0.2 (2025-06-11)
 
 ### Changed (1 change)
@@ -34,6 +61,14 @@ No changes.
 
 - [Remove nginx-ingress fallback](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4bb007f998c53680a70c640743e8fef978df22a9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4225))
 
+## 8.11.4 (2025-06-11)
+
+No changes.
+
+## 8.11.3 (2025-05-21)
+
+No changes.
+
 ## 8.11.2 (2025-05-07)
 
 No changes.
@@ -63,6 +98,14 @@ No changes.
 - [Ingress NGINX: bump image tag and digest to 1.11.5](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/9dbbd04c81b872531e08f270575c63799aa291b2) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4186))
 - [Update dependency container-registry to v4.19.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/1d640153b60b512fdb508e74d13b27db3150a8b3) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4184))
 - [Update dependency container-registry to v4.18.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/3f78ebdd958db5267027a6d806a8ecdb2b1a779d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4178))
+
+## 8.10.8 (2025-06-11)
+
+No changes.
+
+## 8.10.7 (2025-05-21)
+
+No changes.
 
 ## 8.10.6 (2025-05-07)
 

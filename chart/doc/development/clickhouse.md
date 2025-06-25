@@ -1,19 +1,19 @@
 ---
-stage: Systems
-group: Distribution
+stage: GitLab Delivery
+group: Self Managed
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: ClickHouse database
 ---
 
 The GitLab chart can be configured to set up GitLab with an external ClickHouse database via the HTTP interface. Required parameters:
 
-| Parameter | Description |
-| ------- | ------ |
-| `global.clickhouse.main.url` | URL for the database |
-| `global.clickhouse.main.username` | Database Username |
+| Parameter                                | Description |
+|------------------------------------------|-------------|
+| `global.clickhouse.main.url`             | URL for the database |
+| `global.clickhouse.main.username`        | Database Username |
 | `global.clickhouse.main.password.secret` | Name of the configured secret |
-| `global.clickhouse.main.password.key` | Which key to use as the password within the secret |
-| `global.clickhouse.main.database` | Database name |
+| `global.clickhouse.main.password.key`    | Which key to use as the password within the secret |
+| `global.clickhouse.main.database`        | Database name |
 
 {{< alert type="warning" >}}
 

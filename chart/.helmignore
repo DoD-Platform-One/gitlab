@@ -26,6 +26,7 @@
 .markdownlint.json
 .dockerignore
 .helmignore
+argo_translation.yml
 Dangerfile
 Rakefile
 Gemfile
@@ -33,6 +34,7 @@ Gemfile.lock
 gems/
 ci/
 doc/
+doc-locale/
 examples/
 images/
 certs/

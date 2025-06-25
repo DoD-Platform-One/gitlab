@@ -460,4 +460,120 @@ describe 'gitlab.yml.erb configuration' do
       )))
     end
   end
+
+  context 'OpenBao configuration' do
+    context 'Not present when disabled' do
+      it 'populates gitlab.yml.erb without OpenBao section' do
+        t = HelmTemplate.new(default_values)
+
+        expect(t.stderr).to eq("")
+        expect(t.exit_code).to eq(0)
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).not_to have_key('openbao')
+      end
+    end
+
+    context 'When enabled' do
+      it 'populates URL from global.hosts pattern' do
+        t = HelmTemplate.new(HelmTemplate.with_defaults(%(
+          global:
+            openbao:
+              enabled: true
+        )))
+
+        expect(t.stderr).to eq("")
+        expect(t.exit_code).to eq(0)
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(
+          'openbao' => { 'url' => 'https://openbao.example.com' }
+        )
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-sidekiq',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(
+          'openbao' => { 'url' => 'https://openbao.example.com' }
+        )
+      end
+
+      it 'populates URL from openbao.host' do
+        t = HelmTemplate.new(HelmTemplate.with_defaults(%(
+          global:
+            openbao:
+              enabled: true
+              host: 'openbao.external'
+        )))
+
+        expect(t.stderr).to eq("")
+        expect(t.exit_code).to eq(0)
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(
+          'openbao' => { 'url' => 'https://openbao.external' }
+        )
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-sidekiq',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(
+          'openbao' => { 'url' => 'https://openbao.external' }
+        )
+      end
+
+      it 'populates URL from openbao.url when specified' do
+        t = HelmTemplate.new(HelmTemplate.with_defaults(%(
+          global:
+            openbao:
+              enabled: true
+              url: http://insecure.openbao.test
+        )))
+
+        expect(t.stderr).to eq("")
+        expect(t.exit_code).to eq(0)
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(
+          'openbao' => { 'url' => 'http://insecure.openbao.test' }
+        )
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-sidekiq',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(
+          'openbao' => { 'url' => 'http://insecure.openbao.test' }
+        )
+      end
+    end
+  end
 end
