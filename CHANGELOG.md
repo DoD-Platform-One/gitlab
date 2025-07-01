@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [9.1.0-bb.1] (2025-07-01)
+### Changed
+- Added registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom:18.1.0 to the Chart.yaml
+
 ## [9.1.0-bb.0] (2025-06-20)
 ### Changed
 - registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.0.2 -> 18.1.0

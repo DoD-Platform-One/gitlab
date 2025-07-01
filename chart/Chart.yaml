@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: gitlab
-version: 9.1.0-bb.0
+version: 9.1.0-bb.1
 appVersion: 18.1.0
 description: GitLab is the most comprehensive AI-powered DevSecOps Platform.
 keywords:
@@ -121,3 +121,7 @@ annotations:
     - name: bbtests
       condition: bbtests.enabled
       image: registry1.dso.mil/bigbang-ci/gitlab-tester:0.0.4
+    - name: gitlab-mailroom
+      condition: global.appConfig.incomingEmail.enabled
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom:18.1.0
+
