@@ -2,6 +2,20 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 9.1.2 (2025-07-09)
+
+### Changed (3 changes)
+
+- [Update dependency gitlab-exporter to v15.6.0](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/97f02c396bc10ad0c56c7fa7990206de382d1bff)
+- [Update Helm release gitlab-runner to v0.78.1](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/e145358578470c1409d4adc2a7cafd29bbcd47c8)
+- [Update default NGINX controller from 1.11.5 to 1.11.7](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/af83355f292cfb3f00451a7b92824e4cc508d070)
+
+## 9.1.1 (2025-06-24)
+
+### Changed (1 change)
+
+- [Update Helm release gitlab-runner to v0.78.0](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/3f67fdfa9aeedc2cf37e48652b335f214d88108c)
+
 ## 9.1.0 (2025-06-18)
 
 ### Added (2 changes)
