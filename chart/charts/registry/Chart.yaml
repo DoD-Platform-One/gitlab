@@ -1,7 +1,7 @@
 apiVersion: v2
 name: registry
 version: 0.7.0
-appVersion: 'v4.23.1-gitlab'
+appVersion: 'v4.23.2-gitlab'
 description: Stateless, highly scalable application that stores and lets you
   distribute container images
 details: Container Registry component of GitLab

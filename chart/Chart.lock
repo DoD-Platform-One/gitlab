@@ -22,7 +22,7 @@ dependencies:
   version: 16.7.0
 - name: gitlab-runner
   repository: https://charts.gitlab.io/
-  version: 0.77.3
+  version: 0.78.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 18.19.4
@@ -37,12 +37,12 @@ dependencies:
   version: 2.6.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
-  version: 0.6.2
+  version: 0.6.3
 - name: traefik
   repository: https://helm.traefik.io/traefik
   version: 10.19.4
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:c57ec35c1bab10681869dfec33b60c1e2465b2cbf03e3b7866f46a0de9e920c0
-generated: "2025-06-23T23:23:30.853158-05:00"
+digest: sha256:158b4f761de19367abee7a1686e92e78394bfc37d1bd4c0c789b1ea459a85ba5
+generated: "2025-07-15T10:23:38.83501-05:00"
