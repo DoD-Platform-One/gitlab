@@ -17,7 +17,14 @@ Install Ubuntu Server onto the VM that you have created. Ensure that `openssh-se
 Configure networking and a hostname. Make note of the hostname/IP, and ensure it is both resolvable and reachable from your Kubernetes cluster.
 Be sure firewall policies are in place to allow traffic.
 
-Follow the installation instructions for the [Linux package](https://about.gitlab.com/install/#ubuntu). When you perform the package installation, **_do not_** provide the `EXTERNAL_URL=` value. We do not want automatic configuration to occur, as we'll provide a very specific configuration in the next step.
+Follow the installation instructions for the [Linux package](https://docs.gitlab.com/install/package/ubuntu/).
+
+{{< alert type="note" >}}
+
+When you perform the package installation, do not provide the `EXTERNAL_URL=` value.
+We do not want automatic configuration to occur, as we'll provide a very specific configuration in the next step.
+
+{{< /alert >}}
 
 ## Configure Linux package installation
 

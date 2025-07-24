@@ -64,9 +64,12 @@ cell:
     skip_sequence_alteration: {{ eq .database.skipSequenceAlteration true }}
   topology_service_client:
     address: {{ .topologyServiceClient.address | quote }}
-    ca_file: {{ .topologyServiceClient.caFile | quote }}
-    private_key_file: {{ .topologyServiceClient.privateKeyFile | quote }}
-    certificate_file: {{ .topologyServiceClient.certificateFile | quote }}
+  {{- if .topologyServiceClient.tls.enabled }}
+    private_key_file: "/srv/gitlab/config/topology-service/tls.key"
+    certificate_file: "/srv/gitlab/config/topology-service/tls.crt"
+    tls:
+      enabled: true
+  {{- end }}
 {{- end -}}
 {{- end -}}
 {{- end -}}

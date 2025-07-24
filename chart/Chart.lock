@@ -16,7 +16,7 @@ dependencies:
   version: v1.12.17
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
-  version: 27.20.0
+  version: 27.23.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 16.7.0
@@ -34,15 +34,15 @@ dependencies:
   version: '*.*.*'
 - name: gitlab-zoekt
   repository: https://charts.gitlab.io/
-  version: 2.6.0
+  version: 2.7.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
-  version: 0.6.3
+  version: 0.7.0
 - name: traefik
   repository: https://helm.traefik.io/traefik
   version: 10.19.4
 - name: kubernetes-ingress
   repository: https://haproxytech.github.io/helm-charts
   version: 1.32.0
-digest: sha256:158b4f761de19367abee7a1686e92e78394bfc37d1bd4c0c789b1ea459a85ba5
-generated: "2025-07-15T10:23:38.83501-05:00"
+digest: sha256:49395a0ae7bf4de98d02ff6088dc31587bc273ef7748b4f6a5f10695393bd1f3
+generated: "2025-07-24T12:03:10.79463-05:00"

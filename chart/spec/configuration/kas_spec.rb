@@ -854,12 +854,6 @@ describe 'kas configuration' do
       context 'env' do
         let(:env) { deployment['spec']['template']['spec']['containers'].first['env'] }
 
-        it 'sets OWN_PRIVATE_API_URL to use grpc' do
-          expect(env).to include(
-            { "name" => "OWN_PRIVATE_API_URL", "value" => "grpc://$(POD_IP):8155" }
-          )
-        end
-
         it 'sets OWN_PRIVATE_API_HOST to use its service host' do
           expect(env).to include(
             { "name" => "OWN_PRIVATE_API_HOST", "value" => "test-kas.default.svc" }
@@ -1016,12 +1010,6 @@ describe 'kas configuration' do
                       enabled: true
                       secretName: example-tls
               )))
-          end
-
-          it 'sets OWN_PRIVATE_API_URL to use grpcs' do
-            expect(deployment['spec']['template']['spec']['containers'].first['env']).to include(
-              { "name" => "OWN_PRIVATE_API_URL", "value" => "grpcs://$(POD_IP):8155" }
-            )
           end
 
           it 'creates the TLS secret volume' do

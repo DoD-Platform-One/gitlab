@@ -62,6 +62,8 @@ spec:
             - name: grpc
               containerPort: {{ $.Values.service.internalPort }}
           env:
+            - name: SPAMCHECK_CONFIG
+              value: /app/config/config.yaml
             {{- include "gitlab.timeZone.env" . | nindent 12 }}
             {{- include "gitlab.extraEnv" . | nindent 12 }}
             {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}

@@ -17,17 +17,23 @@ Install Ubuntu Server onto the VM that you have created. Ensure that `openssh-se
 Configure networking and a hostname. Make note of the hostname/IP, and ensure it is both resolvable and reachable from your Kubernetes cluster.
 Be sure firewall policies are in place to allow traffic.
 
-Follow the installation instructions for the [Linux package](https://about.gitlab.com/install/#ubuntu). When you perform
-the Linux package installation, **_do not_** provide the `EXTERNAL_URL=` value. We do not want automatic configuration to occur, as we'll provide a very specific configuration in the next step.
+Follow the installation instructions for the [Linux package](https://docs.gitlab.com/install/package/ubuntu/).
+
+{{< alert type="note" >}}
+
+When you perform the Linux package installation, do not provide the `EXTERNAL_URL=` value.
+We do not want automatic configuration to occur, as we'll provide a very specific configuration in the next step.
+
+{{< /alert >}}
 
 ## Configure Linux package installation
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be
-_very_ explicit about what's enabled on this node, using the following contents
+very explicit about what's enabled on this node, using the following contents
 based on the documentation for
 [running Gitaly on its own server](https://docs.gitlab.com/administration/gitaly/configure_gitaly/#run-gitaly-on-its-own-server).
 
-_**NOTE**: The values below should be replaced_
+These values should be replaced:
 
 - `AUTH_TOKEN` should be replaced with the value in the [`gitaly-secret` secret](../../installation/secrets.md#gitaly-secret)
 - `GITLAB_URL` should be replaced with the URL of the GitLab instance

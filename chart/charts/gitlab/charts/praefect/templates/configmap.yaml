@@ -20,14 +20,14 @@ data:
     {{- end }}
   config.toml.tpl: |
     # TCP address to listen on
-    listen_addr = '0.0.0.0:{{ include "gitlab.praefect.internalPort" . }}'
+    listen_addr = ':{{ include "gitlab.praefect.internalPort" . }}'
 
     {{- if $.Values.global.praefect.tls.enabled }}
-    tls_listen_addr = '0.0.0.0:{{ include "gitlab.praefect.tls.internalPort" . }}'
+    tls_listen_addr = ':{{ include "gitlab.praefect.tls.internalPort" . }}'
     {{- end }}
 
     {{- if .Values.metrics.enabled }}
-    prometheus_listen_addr = '0.0.0.0:{{ .Values.metrics.port  }}'
+    prometheus_listen_addr = ':{{ .Values.metrics.port  }}'
     {{- end }}
 
     prometheus_exclude_database_from_default_metrics = {{ eq true .Values.metrics.separate_database_metrics }}

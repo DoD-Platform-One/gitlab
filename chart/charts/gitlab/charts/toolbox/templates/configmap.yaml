@@ -156,6 +156,15 @@ data:
       mv "/${secret_dir}/objectstorage/.s3cfg" "/${secret_dir}/.s3cfg"
     fi
     {{- end }}
+    {{- if $.Values.global.appConfig.cell.enabled }}
+      if [ -d /init-config/topology-service ]; then
+        mkdir -p /init-secrets/topology-service
+        {{- if $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+        cp -v -L /init-config/topology-service/tls.key /init-secrets/topology-service/tls.key
+        cp -v -L /init-config/topology-service/tls.crt /init-secrets/topology-service/tls.crt
+        {{- end }}
+      fi
+    {{- end }}
   configure-gsutil: |
     if [ -e "$GOOGLE_APPLICATION_CREDENTIALS" ]; then
       # The following script is used to configure gsutil when creating backups

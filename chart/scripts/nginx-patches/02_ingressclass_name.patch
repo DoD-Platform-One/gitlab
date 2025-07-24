@@ -1,0 +1,15 @@
+# GitLab NGINX Patch: Support templating IngressClass name to support multiple
+# NGINX charts with distinct IngressClasses for GitLab Geo deployments.
+diff --git a/charts/nginx-ingress/templates/controller-ingressclass.yaml b/charts/nginx-ingress/templates/controller-ingressclass.yaml
+index 98479a529..4f90d8711 100644
+--- a/charts/nginx-ingress/templates/controller-ingressclass.yaml
++++ b/charts/nginx-ingress/templates/controller-ingressclass.yaml
+@@ -8,7 +8,7 @@ metadata:
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+     {{- end }}
+-  name: {{ .Values.controller.ingressClassResource.name }}
++  name: {{ tpl .Values.controller.ingressClassResource.name . }}
+   {{- if or .Values.controller.ingressClassResource.default .Values.controller.ingressClassResource.annotations }}
+   annotations:
+     {{- if .Values.controller.ingressClassResource.default }}

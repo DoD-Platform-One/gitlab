@@ -449,14 +449,18 @@ settings as well.
 See the [installation storage guide](../../installation/storage.md#using-the-custom-storage-class)
 for the options.
 
-> **Note**: If you made changes to the Gitaly [volume claim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims), you will need to delete the
-> Gitaly [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) before you will be able to issue a Helm update. This is
-> because the StatefulSet's Volume Template is immutable, and cannot be changed.
->
-> You can delete the StatefulSet without deleting the Gitaly Pods:
-> `kubectl --namespace <namespace> delete --cascade=false StatefulSet <release-name>-gitaly`
-> The Helm update command will recreate the StatefulSet, which will adopt and
-> update the Gitaly pods.
+{{< alert type="note" >}}
+
+If you made changes to the Gitaly [volume claim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims), you will need to delete the
+Gitaly [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) before you will be able to issue a Helm update. This is
+because the StatefulSet's Volume Template is immutable, and cannot be changed.
+
+You can delete the StatefulSet without deleting the Gitaly Pods:
+`kubectl --namespace <namespace> delete --cascade=false StatefulSet <release-name>-gitaly`
+The Helm update command will recreate the StatefulSet, which will adopt and
+update the Gitaly pods.
+
+{{< /alert >}}
 
 Update the chart, and include the updated configuration:
 

@@ -112,6 +112,7 @@ spec:
           value: '{{ .Values.global.praefect.autoMigrate | int }}'
         - name: NTP_HOST
           value: '{{ .Values.global.praefect.ntpHost }}'
+        {{- include "gitlab.godebug.env" $ | nindent 8 }}
         {{- include "gitlab.tracing.env" . | nindent 8 }}
         {{- include "gitlab.extraEnv" . | nindent 8 }}
         {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 8 }}
@@ -168,4 +169,3 @@ spec:
                   path: "praefect.key"
           {{- end }}
       {{- include "gitlab.certificates.volumes" . | nindent 6 }}
-

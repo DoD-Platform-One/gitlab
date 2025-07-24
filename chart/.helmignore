@@ -31,6 +31,7 @@ Dangerfile
 Rakefile
 Gemfile
 Gemfile.lock
+knapsack_rspec_report.json
 gems/
 ci/
 doc/

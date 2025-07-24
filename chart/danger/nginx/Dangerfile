@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+MESSAGE = <<NGINX_EOF
+The bundled NGINX Ingress subchart was updated.
+
+Please do not modify the chart directly, but instead add a patch file
+to `./scripts/nginx-patches/` and run `./scripts/update-nginx-chart.sh`.
+NGINX_EOF
+
+warn(MESSAGE) if helper.changed_files(%r{\Acharts/nginx-ingress/}).any?

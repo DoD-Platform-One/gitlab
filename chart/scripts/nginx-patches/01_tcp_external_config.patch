@@ -1,0 +1,152 @@
+# GitLab NGINX Patch: Support exposing GitLab shell for SSH.
+diff --git a/charts/nginx-ingress/templates/controller-configmap-tcp.yaml b/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
+index 131a9ad51..da632c335 100644
+--- a/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
++++ b/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
+@@ -1,4 +1,4 @@
+-{{- if .Values.tcp -}}
++{{- if and .Values.tcp (not .Values.tcpExternalConfig) -}}
+ apiVersion: v1
+ kind: ConfigMap
+ metadata:
+diff --git a/charts/nginx-ingress/values.yaml b/charts/nginx-ingress/values.yaml
+index c1d3e68e7..c58c0c791 100644
+--- a/charts/nginx-ingress/values.yaml
++++ b/charts/nginx-ingress/values.yaml
+@@ -1191,3 +1191,14 @@ portNamePrefix: ""
+ # This can be generated with: `openssl dhparam 4096 2> /dev/null | base64`
+ ## Ref: https://github.com/kubernetes/ingress-nginx/tree/main/docs/examples/customization/ssl-dh-param
+ dhParam: ""
++
++## GitLab-provided values starting below
++
++# Use an external configmap instead of generating the configmap from this chart.
++# Contents must match spec format for ingress-nginx and tcp ports must still be specified
++# using `tcp` setting above (although service name is meaningless with an external config)
++# e.g
++# --set tcp.22=ssh --set tcpExternalConfig=mynamespace/customconfigmap
++# Ref: https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/tcp
++##
++tcpExternalConfig: ""
+diff --git a/charts/nginx-ingress/templates/controller-configmap-tcp.yaml b/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
+index da632c335..34a2bce13 100644
+--- a/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
++++ b/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
+@@ -11,7 +11,7 @@ metadata:
+ {{- if .Values.controller.tcp.annotations }}
+   annotations: {{ toYaml .Values.controller.tcp.annotations | nindent 4 }}
+ {{- end }}
+-  name: {{ include "ingress-nginx.fullname" . }}-tcp
++  name: {{ template "ingress-nginx.tcp-configmap" . }}
+   namespace: {{ include "ingress-nginx.namespace" . }}
+ data: {{ tpl (toYaml .Values.tcp) . | nindent 2 }}
+ {{- end }}
+diff --git a/charts/nginx-ingress/templates/_params.tpl b/charts/nginx-ingress/templates/_params.tpl
+index 0051dc9c0..eb350c6f5 100644
+--- a/charts/nginx-ingress/templates/_params.tpl
++++ b/charts/nginx-ingress/templates/_params.tpl
+@@ -19,7 +19,9 @@
+ - --ingress-class={{ .Values.controller.ingressClass }}
+ {{- end }}
+ - --configmap={{ default "$(POD_NAMESPACE)" .Values.controller.configMapNamespace }}/{{ include "ingress-nginx.controller.fullname" . }}
+-{{- if .Values.tcp }}
++{{- if and (or .Values.controller.service.enableShell .Values.controller.service.internal.enableShell) (include "gitlab.shell.port" $) }}
++- --tcp-services-configmap={{ .Release.Namespace }}/{{ template "ingress-nginx.tcp-configmap" . }}
++{{- else if .Values.tcp }}
+ - --tcp-services-configmap={{ default "$(POD_NAMESPACE)" .Values.controller.tcp.configMapNamespace }}/{{ include "ingress-nginx.fullname" . }}-tcp
+ {{- end }}
+ {{- if .Values.udp }}
+diff --git a/charts/nginx-ingress/templates/controller-daemonset.yaml b/charts/nginx-ingress/templates/controller-daemonset.yaml
+index f6f5dbe0a..0953e45c4 100644
+--- a/charts/nginx-ingress/templates/controller-daemonset.yaml
++++ b/charts/nginx-ingress/templates/controller-daemonset.yaml
+@@ -135,6 +135,11 @@ spec:
+               containerPort: {{ .Values.controller.admissionWebhooks.port }}
+               protocol: TCP
+           {{- end }}
++          {{- if and (or .Values.controller.service.enableShell .Values.controller.service.internal.enableShell) (include "gitlab.shell.port" $) }}
++            - name: gitlab-shell
++              containerPort: {{ include "gitlab.shell.port" . | int }}
++              protocol: TCP
++          {{- end }}
+           {{- range $key, $value := .Values.tcp }}
+             - name: {{ if $.Values.portNamePrefix }}{{ $.Values.portNamePrefix }}-{{ end }}{{ $key }}-tcp
+               containerPort: {{ $key }}
+diff --git a/charts/nginx-ingress/templates/controller-deployment.yaml b/charts/nginx-ingress/templates/controller-deployment.yaml
+index 600b1fa3f..d19e0ada5 100644
+--- a/charts/nginx-ingress/templates/controller-deployment.yaml
++++ b/charts/nginx-ingress/templates/controller-deployment.yaml
+@@ -146,6 +146,11 @@ spec:
+               containerPort: {{ .Values.controller.admissionWebhooks.port }}
+               protocol: TCP
+           {{- end }}
++          {{- if and (or .Values.controller.service.enableShell .Values.controller.service.internal.enableShell) (include "gitlab.shell.port" $) }}
++            - name: gitlab-shell
++              containerPort: {{ include "gitlab.shell.port" $ | int }}
++              protocol: TCP
++          {{- end }}
+           {{- range $key, $value := .Values.tcp }}
+             - name: {{ if $.Values.portNamePrefix }}{{ $.Values.portNamePrefix }}-{{ end }}{{ $key }}-tcp
+               containerPort: {{ $key }}
+diff --git a/charts/nginx-ingress/templates/controller-service-internal.yaml b/charts/nginx-ingress/templates/controller-service-internal.yaml
+index e49c2e0db..c3129bc21 100644
+--- a/charts/nginx-ingress/templates/controller-service-internal.yaml
++++ b/charts/nginx-ingress/templates/controller-service-internal.yaml
+@@ -79,6 +79,16 @@ spec:
+       nodePort: {{ .Values.controller.service.internal.nodePorts.https }}
+     {{- end }}
+   {{- end }}
++  {{- if (and .Values.controller.service.internal.enableShell (include "gitlab.shell.port" $)) }}
++    - name: gitlab-shell
++      port: {{ include "gitlab.shell.port" $ | int }}
++      protocol: TCP
++      targetPort: gitlab-shell
++    {{- $nodePort := coalesce (index .Values.controller.service.nodePorts "gitlab-shell") .Values.global.shell.port }}
++    {{- if (and (eq .Values.controller.service.type "NodePort") (not (empty $nodePort))) }}
++      nodePort: {{ $nodePort }}
++    {{- end }}
++  {{- end }}
+   {{- range $key, $value := .Values.tcp }}
+     - name: {{ if $.Values.portNamePrefix }}{{ $.Values.portNamePrefix }}-{{ end }}{{ $key }}-tcp
+       port: {{ $key }}
+diff --git a/charts/nginx-ingress/templates/controller-service.yaml b/charts/nginx-ingress/templates/controller-service.yaml
+index f437533d8..2af0f6bb2 100644
+--- a/charts/nginx-ingress/templates/controller-service.yaml
++++ b/charts/nginx-ingress/templates/controller-service.yaml
+@@ -78,6 +78,16 @@ spec:
+       nodePort: {{ .Values.controller.service.nodePorts.https }}
+     {{- end }}
+   {{- end }}
++  {{- if (and .Values.controller.service.enableShell (include "gitlab.shell.port" $)) }}
++    - name: gitlab-shell
++      port: {{ include "gitlab.shell.port" $ | int }}
++      protocol: TCP
++      targetPort: gitlab-shell
++      {{- $nodePort := coalesce (index .Values.controller.service.nodePorts "gitlab-shell") .Values.global.shell.port }}
++      {{- if (and (eq .Values.controller.service.type "NodePort") (not (empty $nodePort))) }}
++      nodePort: {{ $nodePort }}
++      {{- end }}
++  {{- end }}
+   {{- range $key, $value := .Values.tcp }}
+     - name: {{ if $.Values.portNamePrefix }}{{ $.Values.portNamePrefix }}-{{ end }}{{ $key }}-tcp
+       port: {{ $key }}
+diff --git a/charts/nginx-ingress/values.yaml b/charts/nginx-ingress/values.yaml
+index c31dce2b0..dd2e41d04 100644
+--- a/charts/nginx-ingress/values.yaml
++++ b/charts/nginx-ingress/values.yaml
+@@ -536,6 +536,7 @@ controller:
+     enableHttp: true
+     # -- Enable the HTTPS listener on both controller services or not.
+     enableHttps: true
++    enableShell: true
+     ports:
+       # -- Port the external HTTP listener is published with.
+       http: 80
+@@ -570,6 +571,7 @@ controller:
+       # -- Annotations to be added to the internal controller service. Mandatory for the internal controller service to be created. Varies with the cloud service.
+       # Ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+       annotations: {}
++      enableShell: false
+       # -- Type of the internal controller service.
+       # Defaults to the value of `controller.service.type`.
+       # Ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types

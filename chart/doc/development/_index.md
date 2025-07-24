@@ -184,11 +184,17 @@ encounter an error when using internal domain names, e.g. with custom TLDs for d
 is that you can log in to the Registry but you can't push or pull images. This is generally because the Registry container(s)
 can not resolve the MinIO domain name and find the correct endpoint (you can see the errors in container logs).
 
+## Development features
+
+1. Cells configuration (development only)
+   - Cells-related settings, including TLS secret configuration for topology service clients, are currently in active development and subject to change. For details, see: [TLS Configuration for Cells Components template](cells/tls_configuration.md)
+
 ## Troubleshooting a development environment
 
 Developers may encounter unique issues while working on new chart features.
-[Refer to the troubleshooting guide](troubleshooting.md) for
-information if your ***development*** cluster seems to have strange issues.
+
+If your development cluster seems to have strange issues, [refer to the troubleshooting guide](troubleshooting.md)
+for more information.
 
 {{< alert type="note" >}}
 

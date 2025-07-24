@@ -60,6 +60,7 @@ to the `helm install` command using the `--set` flags:
 | `extraEnvFrom`                                           |                                                              | List of extra environment variables from other data sources to expose |
 | `gitaly.serviceName`                                     | `gitaly`                                                     | Gitaly service name |
 | `health_checks.port`                                     | `3808`                                                       | Health check server port |
+| `health_checks.listenAddr`                               | `*`                                                          | Health check listen address. |
 | `hpa.behaviour`                                          | `{scaleDown: {stabilizationWindowSeconds: 300 }}`            | Behavior contains the specifications for up- and downscaling behavior (requires `autoscaling/v2beta2` or higher) |
 | `hpa.customMetrics`                                      | `[]`                                                         | Custom metrics contains the specifications for which to use to calculate the desired replica count (overrides the default use of Average CPU Utilization configured in `targetAverageUtilization`) |
 | `hpa.cpu.targetType`                                     | `AverageValue`                                               | Set the autoscaling CPU target type, must be either `Utilization` or `AverageValue` |
@@ -96,6 +97,7 @@ to the `helm install` command using the `--set` flags:
 | `logging.format`                                         | `json`                                                       | Set to `text` for non-JSON logs |
 | `metrics.enabled`                                        | `true`                                                       | If a metrics endpoint should be made available for scraping |
 | `metrics.port`                                           | `3807`                                                       | Metrics endpoint port |
+| `metrics.listenAddr`                                     | `*`                                                          | Metrics endpoint listen address. |
 | `metrics.path`                                           | `/metrics`                                                   | Metrics endpoint path |
 | `metrics.log_enabled`                                    | `false`                                                      | Enables or disables metrics server logs written to `sidekiq_exporter.log` |
 | `metrics.podMonitor.enabled`                             | `false`                                                      | If a PodMonitor should be created to enable Prometheus Operator to manage the metrics scraping |

@@ -86,6 +86,7 @@ The table below contains all the possible charts configurations that can be supp
 | `keda.restoreToOriginalReplicaCount`            |                                                                                                      | Specifies whether the target resource should be scaled back to original replicas count after the `ScaledObject` is deleted |
 | `keda.behavior`                                 | `hpa.behavior`                                                                                       | The specifications for up- and downscaling behavior. |
 | `keda.triggers`                                 |                                                                                                      | List of triggers to activate scaling of the target resource, defaults to triggers computed from `hpa.cpu` and `hpa.memory` |
+| `listenAddr`                                    | `[::]`                                                                                               | Internal listen address. |
 | `logging.level`                                 | `info`                                                                                               | Log level   |
 | `maxReplicas`                                   | `10`                                                                                                 | HPA `maxReplicas` |
 | `maxUnavailable`                                | `1`                                                                                                  | HPA `maxUnavailable` |

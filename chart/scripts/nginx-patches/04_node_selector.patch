@@ -1,0 +1,68 @@
+# GitLab NGINX Patch: Use GitLab node selector to control Pod assignment
+# with uniform/global configuration for all charts.
+diff --git a/charts/nginx-ingress/templates/controller-deployment.yaml b/charts/nginx-ingress/templates/controller-deployment.yaml
+index a9b38f24f..90fbe86c5 100644
+--- a/charts/nginx-ingress/templates/controller-deployment.yaml
++++ b/charts/nginx-ingress/templates/controller-deployment.yaml
+@@ -205,6 +205,8 @@ spec:
+     {{- end }}
+     {{- if .Values.controller.nodeSelector }}
+       nodeSelector: {{ toYaml .Values.controller.nodeSelector | nindent 8 }}
++    {{- else }}
++      {{- include "gitlab.nodeSelector" . | nindent 6 }}
+     {{- end }}
+     {{- if .Values.controller.tolerations }}
+       tolerations: {{ toYaml .Values.controller.tolerations | nindent 8 }}
+diff --git a/charts/nginx-ingress/templates/default-backend-deployment.yaml b/charts/nginx-ingress/templates/default-backend-deployment.yaml
+index 8c0943aa4..a403b57ca 100644
+--- a/charts/nginx-ingress/templates/default-backend-deployment.yaml
++++ b/charts/nginx-ingress/templates/default-backend-deployment.yaml
+@@ -107,6 +107,8 @@ spec:
+         {{- end }}
+     {{- if .Values.defaultBackend.nodeSelector }}
+       nodeSelector: {{ toYaml .Values.defaultBackend.nodeSelector | nindent 8 }}
++    {{- else }}
++      {{- include "gitlab.nodeSelector" . | nindent 6 }}
+     {{- end }}
+       serviceAccountName: {{ include "ingress-nginx.defaultBackend.serviceAccountName" . }}
+     {{- if .Values.defaultBackend.tolerations }}
+diff --git a/charts/nginx-ingress/values.yaml b/charts/nginx-ingress/values.yaml
+index 76ace60b3..c31dce2b0 100644
+--- a/charts/nginx-ingress/values.yaml
++++ b/charts/nginx-ingress/values.yaml
+@@ -331,8 +331,9 @@ controller:
+   # -- Node labels for controller pod assignment
+   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+   ##
+-  nodeSelector:
+-    kubernetes.io/os: linux
++  ## GitLab change: disable default nodeSelector
++  # nodeSelector:
++  #  kubernetes.io/os: linux
+   ## Liveness and readiness probe values
+   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+   ##
+@@ -807,8 +808,9 @@ controller:
+       networkPolicy:
+         # -- Enable 'networkPolicy' or not
+         enabled: false
+-      nodeSelector:
+-        kubernetes.io/os: linux
++      ## GitLab change: disable default nodeSelector
++      # nodeSelector:
++      #   kubernetes.io/os: linux
+       tolerations: []
+       # -- Labels to be added to patch job resources
+       labels: {}
+@@ -1084,8 +1086,9 @@ defaultBackend:
+   # -- Node labels for default backend pod assignment
+   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+   ##
+-  nodeSelector:
+-    kubernetes.io/os: linux
++  ## GitLab change: disable default nodeSelector
++  # nodeSelector:
++  #   kubernetes.io/os: linux
+   # -- Annotations to be added to default backend pods
+   ##
+   podAnnotations: {}

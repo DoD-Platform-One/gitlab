@@ -1,0 +1,546 @@
+# GitLab NGINX Patch: Use previous selector labels to not break
+# on upgrades.
+diff --git a/charts/nginx-ingress/templates/_helpers.tpl b/charts/nginx-ingress/templates/_helpers.tpl
+index 637e82e2d..2b1f6c4a1 100644
+--- a/charts/nginx-ingress/templates/_helpers.tpl
++++ b/charts/nginx-ingress/templates/_helpers.tpl
+@@ -130,7 +130,6 @@ Common labels
+ */}}
+ {{- define "ingress-nginx.labels" -}}
+ helm.sh/chart: {{ include "ingress-nginx.chart" . }}
+-{{ include "ingress-nginx.selectorLabels" . }}
+ {{- if .Chart.AppVersion }}
+ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+ {{- end }}
+@@ -145,8 +144,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
+ Selector labels
+ */}}
+ {{- define "ingress-nginx.selectorLabels" -}}
+-app.kubernetes.io/name: {{ include "ingress-nginx.name" . }}
+-app.kubernetes.io/instance: {{ .Release.Name }}
++app: {{ include "ingress-nginx.name" . }}
++release: {{ .Release.Name }}
+ {{- end -}}
+ 
+ {{/*
+diff --git a/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-createSecret.yaml b/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-createSecret.yaml
+index d60bd7067..8874a80d7 100644
+--- a/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-createSecret.yaml
++++ b/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-createSecret.yaml
+@@ -14,6 +14,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: admission-webhook
+     {{- with .Values.controller.admissionWebhooks.patch.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-patchWebhook.yaml b/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
+index ab4ab64a7..23ef23203 100644
+--- a/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
++++ b/charts/nginx-ingress/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
+@@ -14,6 +14,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: admission-webhook
+     {{- with .Values.controller.admissionWebhooks.patch.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-configmap-addheaders.yaml b/charts/nginx-ingress/templates/controller-configmap-addheaders.yaml
+index 14adb527d..dc9cb6ed1 100644
+--- a/charts/nginx-ingress/templates/controller-configmap-addheaders.yaml
++++ b/charts/nginx-ingress/templates/controller-configmap-addheaders.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-configmap-proxyheaders.yaml b/charts/nginx-ingress/templates/controller-configmap-proxyheaders.yaml
+index b49bb0c25..69c625d00 100644
+--- a/charts/nginx-ingress/templates/controller-configmap-proxyheaders.yaml
++++ b/charts/nginx-ingress/templates/controller-configmap-proxyheaders.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-configmap-tcp.yaml b/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
+index d1b99866d..4c1e094f8 100644
+--- a/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
++++ b/charts/nginx-ingress/templates/controller-configmap-tcp.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-configmap-udp.yaml b/charts/nginx-ingress/templates/controller-configmap-udp.yaml
+index 713667553..cf43aed33 100644
+--- a/charts/nginx-ingress/templates/controller-configmap-udp.yaml
++++ b/charts/nginx-ingress/templates/controller-configmap-udp.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-configmap.yaml b/charts/nginx-ingress/templates/controller-configmap.yaml
+index c82dc2034..04191db31 100644
+--- a/charts/nginx-ingress/templates/controller-configmap.yaml
++++ b/charts/nginx-ingress/templates/controller-configmap.yaml
+@@ -5,6 +5,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-daemonset.yaml b/charts/nginx-ingress/templates/controller-daemonset.yaml
+index 86db28d9b..ce85c9870 100644
+--- a/charts/nginx-ingress/templates/controller-daemonset.yaml
++++ b/charts/nginx-ingress/templates/controller-daemonset.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -19,7 +20,7 @@ spec:
+   selector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: controller
++      component: "{{ .Values.controller.name }}"
+   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+   {{- if .Values.controller.updateStrategy }}
+   updateStrategy: {{ toYaml .Values.controller.updateStrategy | nindent 4 }}
+@@ -34,7 +35,10 @@ spec:
+       {{- end }}
+     {{- end }}
+       labels:
++        {{- include "gitlab.standardLabels" . | nindent 8 }}
++        {{- include "gitlab.commonLabels" . | nindent 8 }}
+         {{- include "ingress-nginx.labels" . | nindent 8 }}
++        component: "{{ .Values.controller.name }}"
+         app.kubernetes.io/component: controller
+         {{- with .Values.controller.labels }}
+         {{- toYaml . | nindent 8 }}
+diff --git a/charts/nginx-ingress/templates/controller-deployment.yaml b/charts/nginx-ingress/templates/controller-deployment.yaml
+index 3a903c3b5..0e10ddcbd 100644
+--- a/charts/nginx-ingress/templates/controller-deployment.yaml
++++ b/charts/nginx-ingress/templates/controller-deployment.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -23,7 +24,7 @@ spec:
+   selector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: controller
++      component: "{{ .Values.controller.name }}"
+   {{- if eq .Values.controller.autoscaling.enabled .Values.controller.keda.enabled }}
+   replicas: {{ .Values.controller.replicaCount }}
+   {{- end }}
+@@ -44,7 +45,10 @@ spec:
+       {{- end }}
+     {{- end }}
+       labels:
++        {{- include "gitlab.standardLabels" . | nindent 8 }}
++        {{- include "gitlab.commonLabels" . | nindent 8 }}
+         {{- include "ingress-nginx.labels" . | nindent 8 }}
++        component: "{{ .Values.controller.name }}"
+         app.kubernetes.io/component: controller
+         {{- with .Values.controller.labels }}
+         {{- toYaml . | nindent 8 }}
+diff --git a/charts/nginx-ingress/templates/controller-hpa.yaml b/charts/nginx-ingress/templates/controller-hpa.yaml
+index f1380f726..4608a68ec 100644
+--- a/charts/nginx-ingress/templates/controller-hpa.yaml
++++ b/charts/nginx-ingress/templates/controller-hpa.yaml
+@@ -10,6 +10,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-ingressclass-aliases.yaml b/charts/nginx-ingress/templates/controller-ingressclass-aliases.yaml
+index ac8f2a67f..2db5ef8f9 100644
+--- a/charts/nginx-ingress/templates/controller-ingressclass-aliases.yaml
++++ b/charts/nginx-ingress/templates/controller-ingressclass-aliases.yaml
+@@ -8,6 +8,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" $ | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with $.Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-ingressclass.yaml b/charts/nginx-ingress/templates/controller-ingressclass.yaml
+index 971c30214..ba6b9b51a 100644
+--- a/charts/nginx-ingress/templates/controller-ingressclass.yaml
++++ b/charts/nginx-ingress/templates/controller-ingressclass.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-keda.yaml b/charts/nginx-ingress/templates/controller-keda.yaml
+index 0a319e5c0..2e7458fce 100644
+--- a/charts/nginx-ingress/templates/controller-keda.yaml
++++ b/charts/nginx-ingress/templates/controller-keda.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-networkpolicy.yaml b/charts/nginx-ingress/templates/controller-networkpolicy.yaml
+index 1ac8b6e5e..077cc6132 100644
+--- a/charts/nginx-ingress/templates/controller-networkpolicy.yaml
++++ b/charts/nginx-ingress/templates/controller-networkpolicy.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -16,7 +17,7 @@ spec:
+   podSelector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: controller
++      component: "{{ .Values.controller.name }}"
+   policyTypes:
+     - Ingress
+     - Egress
+diff --git a/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml b/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
+index 4cf5423f4..49b9342ed 100644
+--- a/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
++++ b/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
+@@ -16,6 +16,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -29,7 +30,7 @@ spec:
+   selector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: controller
++      component: "{{ .Values.controller.name }}"
+   {{- if and .Values.controller.minAvailable (not (hasKey .Values.controller "maxUnavailable")) }}
+   minAvailable: {{ .Values.controller.minAvailable }}
+   {{- else if .Values.controller.maxUnavailable }}
+diff --git a/charts/nginx-ingress/templates/controller-prometheusrule.yaml b/charts/nginx-ingress/templates/controller-prometheusrule.yaml
+index d8551a37a..fabe9343b 100644
+--- a/charts/nginx-ingress/templates/controller-prometheusrule.yaml
++++ b/charts/nginx-ingress/templates/controller-prometheusrule.yaml
+@@ -12,6 +12,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+   {{- if .Values.controller.metrics.prometheusRule.additionalLabels }}
+     {{- toYaml .Values.controller.metrics.prometheusRule.additionalLabels | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-role.yaml b/charts/nginx-ingress/templates/controller-role.yaml
+index a8522e912..bce1d54a2 100644
+--- a/charts/nginx-ingress/templates/controller-role.yaml
++++ b/charts/nginx-ingress/templates/controller-role.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-rolebinding.yaml b/charts/nginx-ingress/templates/controller-rolebinding.yaml
+index 7c692ee50..2bc3fcc54 100644
+--- a/charts/nginx-ingress/templates/controller-rolebinding.yaml
++++ b/charts/nginx-ingress/templates/controller-rolebinding.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-secret.yaml b/charts/nginx-ingress/templates/controller-secret.yaml
+index b891f8461..951b8ea84 100644
+--- a/charts/nginx-ingress/templates/controller-secret.yaml
++++ b/charts/nginx-ingress/templates/controller-secret.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-service-internal.yaml b/charts/nginx-ingress/templates/controller-service-internal.yaml
+index c2a631fa3..80295f6fc 100644
+--- a/charts/nginx-ingress/templates/controller-service-internal.yaml
++++ b/charts/nginx-ingress/templates/controller-service-internal.yaml
+@@ -10,6 +10,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+   {{- if .Values.controller.service.labels }}
+     {{- toYaml .Values.controller.service.labels | nindent 4 }}
+@@ -113,5 +114,5 @@ spec:
+   {{- end }}
+   selector:
+     {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+-    app.kubernetes.io/component: controller
++    component: "{{ .Values.controller.name }}"
+ {{- end }}
+diff --git a/charts/nginx-ingress/templates/controller-service-metrics.yaml b/charts/nginx-ingress/templates/controller-service-metrics.yaml
+index e5eeb750d..d530a5ca2 100644
+--- a/charts/nginx-ingress/templates/controller-service-metrics.yaml
++++ b/charts/nginx-ingress/templates/controller-service-metrics.yaml
+@@ -9,6 +9,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+   {{- if .Values.controller.metrics.service.labels }}
+     {{- toYaml .Values.controller.metrics.service.labels | nindent 4 }}
+@@ -43,5 +44,5 @@ spec:
+     {{- end }}
+   selector:
+     {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+-    app.kubernetes.io/component: controller
++    component: "{{ .Values.controller.name }}"
+ {{- end }}
+diff --git a/charts/nginx-ingress/templates/controller-service-webhook.yaml b/charts/nginx-ingress/templates/controller-service-webhook.yaml
+index da1384b20..130612468 100644
+--- a/charts/nginx-ingress/templates/controller-service-webhook.yaml
++++ b/charts/nginx-ingress/templates/controller-service-webhook.yaml
+@@ -9,6 +9,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -38,5 +39,5 @@ spec:
+     {{- end }}
+   selector:
+     {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+-    app.kubernetes.io/component: controller
++    component: "{{ .Values.controller.name }}"
+ {{- end }}
+diff --git a/charts/nginx-ingress/templates/controller-service.yaml b/charts/nginx-ingress/templates/controller-service.yaml
+index 3c0707733..5e2a1bf0c 100644
+--- a/charts/nginx-ingress/templates/controller-service.yaml
++++ b/charts/nginx-ingress/templates/controller-service.yaml
+@@ -10,6 +10,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+   {{- if .Values.controller.service.labels }}
+     {{- toYaml .Values.controller.service.labels | nindent 4 }}
+@@ -111,5 +112,5 @@ spec:
+   {{- end }}
+   selector:
+     {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+-    app.kubernetes.io/component: controller
++    component: "{{ .Values.controller.name }}"
+ {{- end }}
+diff --git a/charts/nginx-ingress/templates/controller-serviceaccount.yaml b/charts/nginx-ingress/templates/controller-serviceaccount.yaml
+index 46e120e00..76439fe3c 100644
+--- a/charts/nginx-ingress/templates/controller-serviceaccount.yaml
++++ b/charts/nginx-ingress/templates/controller-serviceaccount.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- with .Values.controller.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/controller-servicemonitor.yaml b/charts/nginx-ingress/templates/controller-servicemonitor.yaml
+index d7f967713..0339d4370 100644
+--- a/charts/nginx-ingress/templates/controller-servicemonitor.yaml
++++ b/charts/nginx-ingress/templates/controller-servicemonitor.yaml
+@@ -12,6 +12,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.controller.name }}"
+     app.kubernetes.io/component: controller
+     {{- if .Values.controller.metrics.serviceMonitor.additionalLabels }}
+     {{- toYaml .Values.controller.metrics.serviceMonitor.additionalLabels | nindent 4 }}
+@@ -30,7 +31,7 @@ spec:
+   selector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: controller
++      component: "{{ .Values.controller.name }}"
+   endpoints:
+   - port: {{ .Values.controller.metrics.portName }}
+     interval: {{ .Values.controller.metrics.serviceMonitor.scrapeInterval }}
+diff --git a/charts/nginx-ingress/templates/default-backend-deployment.yaml b/charts/nginx-ingress/templates/default-backend-deployment.yaml
+index a403b57ca..6114db2d1 100644
+--- a/charts/nginx-ingress/templates/default-backend-deployment.yaml
++++ b/charts/nginx-ingress/templates/default-backend-deployment.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.defaultBackend.name }}"
+     app.kubernetes.io/component: default-backend
+     {{- with .Values.defaultBackend.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -20,7 +21,7 @@ spec:
+   selector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: default-backend
++      component: "{{ .Values.defaultBackend.name }}"
+ {{- if not .Values.defaultBackend.autoscaling.enabled }}
+   replicas: {{ .Values.defaultBackend.replicaCount }}
+ {{- end }}
+@@ -37,6 +38,7 @@ spec:
+     {{- end }}
+       labels:
+         {{- include "ingress-nginx.labels" . | nindent 8 }}
++        component: "{{ .Values.defaultBackend.name }}"
+         app.kubernetes.io/component: default-backend
+         {{- with .Values.defaultBackend.labels }}
+         {{- toYaml . | nindent 8 }}
+diff --git a/charts/nginx-ingress/templates/default-backend-extra-configmaps.yaml b/charts/nginx-ingress/templates/default-backend-extra-configmaps.yaml
+index 5c9c39beb..a23f130b2 100644
+--- a/charts/nginx-ingress/templates/default-backend-extra-configmaps.yaml
++++ b/charts/nginx-ingress/templates/default-backend-extra-configmaps.yaml
+@@ -8,6 +8,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" $ | nindent 4 }}
++    component: "{{ .Values.defaultBackend.name }}"
+     app.kubernetes.io/component: default-backend
+     {{- with $.Values.defaultBackend.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/default-backend-hpa.yaml b/charts/nginx-ingress/templates/default-backend-hpa.yaml
+index 48375f08c..8a2bb6e46 100644
+--- a/charts/nginx-ingress/templates/default-backend-hpa.yaml
++++ b/charts/nginx-ingress/templates/default-backend-hpa.yaml
+@@ -10,6 +10,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.defaultBackend.name }}"
+     app.kubernetes.io/component: default-backend
+     {{- with .Values.defaultBackend.labels }}
+     {{- toYaml . | nindent 4 }}
+diff --git a/charts/nginx-ingress/templates/default-backend-networkpolicy.yaml b/charts/nginx-ingress/templates/default-backend-networkpolicy.yaml
+index bb2e5440e..859f273f5 100644
+--- a/charts/nginx-ingress/templates/default-backend-networkpolicy.yaml
++++ b/charts/nginx-ingress/templates/default-backend-networkpolicy.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.defaultBackend.name }}"
+     app.kubernetes.io/component: default-backend
+     {{- with .Values.defaultBackend.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -16,7 +17,7 @@ spec:
+   podSelector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: default-backend
++      component: "{{ .Values.defaultBackend.name }}"
+   policyTypes:
+     - Ingress
+     - Egress
+diff --git a/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml b/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
+index 6e5425880..2719849e5 100644
+--- a/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
++++ b/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
+@@ -12,6 +12,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.defaultBackend.name }}"
+     app.kubernetes.io/component: default-backend
+     {{- with .Values.defaultBackend.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -22,7 +23,7 @@ spec:
+   selector:
+     matchLabels:
+       {{- include "ingress-nginx.selectorLabels" . | nindent 6 }}
+-      app.kubernetes.io/component: default-backend
++      component: "{{ .Values.defaultBackend.name }}"
+   {{- if and .Values.defaultBackend.minAvailable (not (hasKey .Values.defaultBackend "maxUnavailable")) }}
+   minAvailable: {{ .Values.defaultBackend.minAvailable }}
+   {{- else if .Values.defaultBackend.maxUnavailable }}
+diff --git a/charts/nginx-ingress/templates/default-backend-service.yaml b/charts/nginx-ingress/templates/default-backend-service.yaml
+index 3be36c95a..b88e93c58 100644
+--- a/charts/nginx-ingress/templates/default-backend-service.yaml
++++ b/charts/nginx-ingress/templates/default-backend-service.yaml
+@@ -9,6 +9,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.defaultBackend.name }}"
+     app.kubernetes.io/component: default-backend
+     {{- with .Values.defaultBackend.labels }}
+     {{- toYaml . | nindent 4 }}
+@@ -39,5 +40,5 @@ spec:
+     {{- end }}
+   selector:
+     {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
+-    app.kubernetes.io/component: default-backend
++    component: "{{ .Values.defaultBackend.name }}"
+ {{- end }}
+diff --git a/charts/nginx-ingress/templates/default-backend-serviceaccount.yaml b/charts/nginx-ingress/templates/default-backend-serviceaccount.yaml
+index f023c054e..c12ea8617 100644
+--- a/charts/nginx-ingress/templates/default-backend-serviceaccount.yaml
++++ b/charts/nginx-ingress/templates/default-backend-serviceaccount.yaml
+@@ -6,6 +6,7 @@ metadata:
+     {{- include "gitlab.standardLabels" . | nindent 4 }}
+     {{- include "gitlab.commonLabels" . | nindent 4 }}
+     {{- include "ingress-nginx.labels" . | nindent 4 }}
++    component: "{{ .Values.defaultBackend.name }}"
+     app.kubernetes.io/component: default-backend
+     {{- with .Values.defaultBackend.labels }}
+     {{- toYaml . | nindent 4 }}

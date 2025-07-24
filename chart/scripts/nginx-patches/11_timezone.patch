@@ -1,0 +1,25 @@
+# GitLab NGINX Patch: Set globally configured timezone to NGINX containers.
+diff --git a/charts/nginx-ingress/templates/controller-daemonset.yaml b/charts/nginx-ingress/templates/controller-daemonset.yaml
+index 3e77b9068..a8515d8e3 100644
+--- a/charts/nginx-ingress/templates/controller-daemonset.yaml
++++ b/charts/nginx-ingress/templates/controller-daemonset.yaml
+@@ -95,6 +95,7 @@ spec:
+               valueFrom:
+                 fieldRef:
+                   fieldPath: metadata.namespace
++          {{- include "gitlab.timeZone.env" . | nindent 12 }}
+           {{- if .Values.controller.enableMimalloc }}
+             - name: LD_PRELOAD
+               value: /usr/local/lib/libmimalloc.so
+diff --git a/charts/nginx-ingress/templates/controller-deployment.yaml b/charts/nginx-ingress/templates/controller-deployment.yaml
+index d56f34904..90fbe86c5 100644
+--- a/charts/nginx-ingress/templates/controller-deployment.yaml
++++ b/charts/nginx-ingress/templates/controller-deployment.yaml
+@@ -106,6 +106,7 @@ spec:
+               valueFrom:
+                 fieldRef:
+                   fieldPath: metadata.namespace
++          {{- include "gitlab.timeZone.env" . | nindent 12 }}
+           {{- if .Values.controller.enableMimalloc }}
+             - name: LD_PRELOAD
+               value: /usr/local/lib/libmimalloc.so

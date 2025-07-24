@@ -728,3 +728,39 @@ An error occurred (XAmzContentSHA256Mismatch) when calling the UploadPart operat
 This might be caused by an incompatibility of the `awscli` tool and your object
 storage service. This issue has been reported when using Dell ECS S3 Storage.
 To avoid this issue you can [disable data integrity protection](../backup-restore/backup.md#data-integrity-protection-with-awscli).
+
+## Webservice readiness probe fails
+
+Beginning with GitLab chart version 9.2 (GitLab 18.2), dual stack support for both IPv4
+and IPv6 is enabled by default. If you're running a GitLab version prior to 18.2
+with a custom monitoring IP allowlist, this may cause the Kubernetes probes
+for the webservice Pods to fail.
+
+```plaintext
+Events:
+  Type     Reason                Age                   From                     Message
+  ----     ------                ----                  ----                     -------
+[snip]
+  Warning  Unhealthy             43m (x15 over 44m)    kubelet                  Startup probe failed: HTTP probe failed with statuscode: 404
+```
+
+To fix the Webservice probes, either:
+
+- Upgrade the Webservice image to match the chart version.
+- Extend your monitoring allow list with the IPv6-mapped equivalent addressed
+  (for example `::ffff:10.0.0.0` for `10.0.0.0`).
+- Explicitly configure the monitoring endpoint to listen on IPv4 only
+  (`gitlab.webservice.monitoring.listenAddr=0.0.0.0`).
+- [Disable IP mapping on a node/kernel level.](https://docs.kernel.org/networking/ip-sysctl.html#proc-sys-net-ipv6-variables)
+
+## invalid: `spec.progressDeadlineSeconds`
+
+If using Helm `v3.18.0`, you'll get this error when upgrading your chart:
+
+```shell
+Error: UPGRADE FAILED: cannot patch "gitlab-nginx-ingress-controller" with kind Deployment: Deployment.apps "gitlab-nginx-ingress-controller" is invalid: spec.progressDeadlineSeconds: Invalid value: 0: must be greater than minReadySeconds
+```
+
+To fix it, upgrade your Helm client to `v3.18.1` or later. Alternatively, you can downgrade it to `v3.17.x`.
+
+This is due to a [Helm issue 30878](https://github.com/helm/helm/issues/30878).

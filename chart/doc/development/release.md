@@ -190,13 +190,15 @@ This script is designed to run in CI/CD environments with proper Vault access an
 
 ### Manually releasing the chart
 
+Only release managers (RM) have authorization to operate this. Chart maintainers wanting to do this should coordinate with RMs.
+
 Before manually releasing the chart, ensure all the chart changes you want from `master` have been picked into the
-stable branch for the version you will release.
+stable branch for the version you will release, and that those changes have propagated to our mirrors.
 
 For example, if you want to release version `0.2.1` of the charts, the changes will need to be in `0-2-stable`
 
 A ChatOps command exists to tag a release. Run the following command in the
-relevant release Slack channel (such as `#f_release_12_4`)
+relevant release Slack channel (such as `#f_upcoming_release`)
 
 ```plaintext
 /chatops run helm tag <charts version> <GitLab version>

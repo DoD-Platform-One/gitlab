@@ -16,19 +16,19 @@ data:
     bin_dir = "/usr/local/bin"
 
     # listen on a TCP socket. This is insecure (no authentication)
-    listen_addr = "0.0.0.0:{{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}"
+    listen_addr = ":{{ coalesce .Values.service.internalPort .Values.global.gitaly.service.internalPort }}"
 
     # Directory where internal sockets reside
     # note: no value will result in a `/tmp/gitlab-internal-*` path
     # internal_socket_dir = "/home/git"
 
     {{- if $.Values.global.gitaly.tls.enabled }}
-    tls_listen_addr = "0.0.0.0:{{ coalesce .Values.service.tls.internalPort .Values.global.gitaly.service.tls.internalPort }}"
+    tls_listen_addr = ":{{ coalesce .Values.service.tls.internalPort .Values.global.gitaly.service.tls.internalPort }}"
     {{- end }}
 
     # If metrics collection is enabled, inform gitaly about that
     {{- if .Values.metrics.enabled }}
-    prometheus_listen_addr = "0.0.0.0:{{ default .Values.metrics.port .Values.metrics.metricsPort }}"
+    prometheus_listen_addr = ":{{ default .Values.metrics.port .Values.metrics.metricsPort }}"
     {{- end }}
 
     # Graceful shutdown timeout, how long to wait for in-flight requests to complete

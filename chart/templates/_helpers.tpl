@@ -646,16 +646,38 @@ result in different hash values due to fields like `Release.IsUpgrade`,
 
 {{/*
 Return a boolean value that indicates whether a given key exists in the provided environment
-variables.
+variables from either local or global scope.
 
-Usage: {{- include checkDuplicateKeyFromEnv (dict "keyToFind" "MY_KEY", "extraEnv" .Values.extraEnv, "extraEnvFrom"
-.Values.extraEnvFrom) -}}
+Usage: {{- include checkDuplicateKeyFromEnv (dict "rootScope" $ "keyToFind" "MY_KEY") -}}
 */}}
 {{- define "checkDuplicateKeyFromEnv" -}}
   {{- $keyToFind := .keyToFind -}}
-  {{- $extraEnv := .extraEnv -}}
-  {{- $extraEnvFrom := .extraEnvFrom -}}
-  {{- $combinedKeys := merge $extraEnv $extraEnvFrom -}}
-  
-  {{ hasKey $combinedKeys $keyToFind }}
+  {{- $rootScope := .rootScope -}}
+  {{- $localHasKey := and $rootScope.Values.extraEnv (hasKey $rootScope.Values.extraEnv $keyToFind) -}}
+  {{- $globalHasKey := and $rootScope.Values.global.extraEnv (hasKey $rootScope.Values.global.extraEnv $keyToFind) -}}
+  {{- $localHasKeyFrom := and $rootScope.Values.extraEnvFrom (hasKey $rootScope.Values.extraEnvFrom $keyToFind) -}}
+  {{- $globalHasKeyFrom := and $rootScope.Values.global.extraEnvFrom (hasKey $rootScope.Values.global.extraEnvFrom $keyToFind) -}}
+  {{- if or $localHasKey $globalHasKey $localHasKeyFrom $globalHasKeyFrom -}}
+true
+  {{- else -}}
+false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Render GODEBUG environment variable if not already defined in extraEnv
+*/}}
+{{- define "gitlab.godebug.env" -}}
+{{- $godebugIsDuplicate := include "checkDuplicateKeyFromEnv" (dict "rootScope" . "keyToFind" "GODEBUG") }}
+{{- if eq $godebugIsDuplicate "false" }}
+- name: GODEBUG
+  value: 'tlsmlkem=0,tlskyber=0'
+{{- end }}
+{{- end -}}
+
+{{/*
+Return the Topology Service TLS Secret name
+*/}}
+{{- define "topology-service.tls.secret" -}}
+{{- default (printf "%s-topology-service-tls" .Release.Name) $.Values.global.appConfig.cell.topologyServiceClient.tls.secret | quote -}}
 {{- end -}}

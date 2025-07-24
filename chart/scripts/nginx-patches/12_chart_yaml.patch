@@ -1,0 +1,15 @@
+# GitLab NGINX Patch: Patch chart name and sources.
+diff --git a/charts/nginx-ingress/Chart.yaml b/charts/nginx-ingress/Chart.yaml
+index 06faa4170..c3f21ec9d 100644
+--- a/charts/nginx-ingress/Chart.yaml
++++ b/charts/nginx-ingress/Chart.yaml
+@@ -17,7 +17,8 @@ maintainers:
+ - name: Gacko
+ - name: strongjz
+ - name: tao12345666333
+-name: ingress-nginx
++name: nginx-ingress
+ sources:
++- https://gitlab.com/gitlab-org/charts/gitlab/tree/master/charts/nginx-ingress
+ - https://github.com/kubernetes/ingress-nginx
+ version: 4.12.2

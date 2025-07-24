@@ -94,7 +94,8 @@ data:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
       monitoring:
         ip_whitelist:
-          - 0.0.0.0/0
+          - "0.0.0.0/0"
+          - "::/0"
         sidekiq_exporter:
   configure: |
     {{- include "gitlab.scripts.configure.secrets" (dict "required" "rails-secrets" "optional" "postgres redis redis-sentinel") | nindent 4 }}

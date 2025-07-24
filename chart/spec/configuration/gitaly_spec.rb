@@ -126,15 +126,15 @@ describe 'Gitaly configuration' do
     context 'when the administrator changes or deletes values' do
       using RSpec::Parameterized::TableSyntax
       where(:fsGroup, :runAsUser, :fsGroupChangePolicy, :expectedContext) do
-        nil | nil | "OnRootMismatch" | { 'fsGroup' => 1000, 'runAsUser' => 1000, 'fsGroupChangePolicy' => "OnRootMismatch" }
-        nil | ""  | nil              | { 'fsGroup' => 1000 }
-        nil | 24  | ""               | { 'fsGroup' => 1000, 'runAsUser' => 24 }
-        42  | nil | "OnRootMismatch" | { 'fsGroup' => 42, 'runAsUser' => 1000, 'fsGroupChangePolicy' => "OnRootMismatch" }
-        42  | ""  | nil              | { 'fsGroup' => 42 }
-        42  | 24  | ""               | { 'fsGroup' => 42, 'runAsUser' => 24 }
-        ""  | nil | "OnRootMismatch" | { 'runAsUser' => 1000 }
-        ""  | ""  | nil              | nil
-        ""  | 24  | ""               | { 'runAsUser' => 24 }
+        nil | nil | 'OnRootMismatch' | { 'fsGroup' => 1000, 'runAsUser' => 1000, 'fsGroupChangePolicy' => 'OnRootMismatch' }
+        nil | ''  | nil              | { 'fsGroup' => 1000 }
+        nil | 24  | ''               | { 'fsGroup' => 1000, 'runAsUser' => 24 }
+        42  | nil | 'OnRootMismatch' | { 'fsGroup' => 42, 'runAsUser' => 1000, 'fsGroupChangePolicy' => 'OnRootMismatch' }
+        42  | ''  | nil              | { 'fsGroup' => 42 }
+        42  | 24  | ''               | { 'fsGroup' => 42, 'runAsUser' => 24 }
+        ''  | nil | 'OnRootMismatch' | { 'runAsUser' => 1000, 'fsGroupChangePolicy' => 'OnRootMismatch' }
+        ''  | ''  | nil              | nil
+        ''  | 24  | ''               | { 'runAsUser' => 24 }
       end
 
       with_them do
@@ -151,19 +151,7 @@ describe 'Gitaly configuration' do
 
         it 'should render securityContext correctly' do
           security_context = statefulset['spec']['template']['spec']['securityContext']
-
-          # Helm 3.2+ renders the full security context. So we check given
-          # the expected context from the table above and then check the
-          # additional attributes that are not specified in the table above.
-          full_context = { "runAsUser" => 1000, "fsGroup" => 1000 }
-          expectedContext&.each_key do |expected_key|
-            expect(security_context[expected_key]).to eq(expectedContext[expected_key])
-            full_context.delete(expected_key)
-          end
-
-          full_context.each_key do |unexpected_key|
-            expect(security_context[unexpected_key]).to eq(full_context[unexpected_key])
-          end
+          expect(security_context).to eq(expectedContext)
         end
       end
     end
@@ -776,15 +764,13 @@ describe 'Gitaly configuration' do
 
   context 'gracefulRestartTimeout' do
     let(:values) do
-      YAML.safe_load(%(
-        gitlab:
-          gitaly:
-            gracefulRestartTimeout: #{graceful_restart_timeout}
-      )).merge(default_values)
+      vals = { 'gitlab' => { 'gitaly' => {} } }
+      vals['gitlab']['gitaly']['gracefulRestartTimeout'] = graceful_restart_timeout unless graceful_restart_timeout.nil?
+      vals.merge(default_values)
     end
 
     context 'when default' do
-      let(:graceful_restart_timeout) {}
+      let(:graceful_restart_timeout) { nil }
 
       it 'sets pod termination grace period' do
         expect(statefulset['spec']['template']['spec']['terminationGracePeriodSeconds']).to eq(30)
@@ -863,8 +849,8 @@ describe 'Gitaly configuration' do
         gitaly:
           service:
             type: #{gitaly_service_type}
-            clusterIP: #{gitaly_cluster_ip_address}
-            loadBalancerIP: #{gitaly_lb_ip_address}
+            #{"clusterIP: #{gitaly_cluster_ip_address}" unless gitaly_cluster_ip_address.nil?}
+            #{"loadBalancerIP: #{gitaly_lb_ip_address}" unless gitaly_lb_ip_address.nil?}
       )).merge(default_values)
     end
 

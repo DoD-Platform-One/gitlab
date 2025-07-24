@@ -4,111 +4,71 @@ require 'yaml'
 require 'hash_deep_merge'
 
 describe 'NGINX configuration(s)' do
-  def get_ports(template, kind, name)
-    template.dig("#{kind}/#{name}", 'spec', 'template', 'spec', 'containers', 0, 'ports')
-  end
-
-  def test_exposed_ports(exposed_ports, expected_ports)
-    i = 0
-    ports_set = Set.new
-
-    while i < expected_ports.length
-      ports_set.add(exposed_ports[i]['name'])
-      i += 1
-    end
-
-    expect(ports_set.length).to eq(expected_ports.length)
-    expect(ports_set).to eq(expected_ports)
-  end
-
-  def test_deployment_ports(template, deployment_name, expected_ports)
-    ports = get_ports(template, 'Deployment', deployment_name)
-    test_exposed_ports(ports, expected_ports)
-  end
-
-  def test_daemonset_ports(template, daemonset_name, expected_ports)
-    ports = get_ports(template, 'DaemonSet', daemonset_name)
-    test_exposed_ports(ports, expected_ports)
-  end
-
-  def get_args(template, kind, name)
-    template.dig("#{kind}/#{name}", 'spec', 'template', 'spec', 'containers', 0, 'args')
-  end
-
-  describe 'nginx gitlab shell toggles' do
-    let(:object_name) do
-      'test-nginx-ingress-controller'
-    end
-
-    let(:default_values) do
-      HelmTemplate.defaults
-    end
-
-    let(:nginx_enable_daemonset) do
-      default_values.deep_merge(YAML.safe_load(%(
+  let(:values) do
+    HelmTemplate.with_defaults(%(
         nginx-ingress:
           controller:
-            kind: Both
-      )))
-    end
-
-    let(:gitlab_shell_disabled) do
-      nginx_enable_daemonset.deep_merge(YAML.safe_load(%(
-        nginx-ingress:
-          controller:
+            kind: #{kind}
             service:
-              enableShell: false
-      )))
+              enableShell: #{enable_shell}
+      ))
+  end
+
+  let(:template) { HelmTemplate.new(values) }
+  let(:workload_name) { 'test-nginx-ingress-controller' }
+
+  let(:container_ports) do
+    template.dig("#{kind}/#{workload_name}", 'spec', 'template', 'spec', 'containers', 0, 'ports').map { |p| p['name'] }
+  end
+
+  let(:container_args) do
+    template.dig("#{kind}/#{workload_name}", 'spec', 'template', 'spec', 'containers', 0, 'args')
+  end
+
+  shared_examples 'GitLab shell enabled' do
+    it 'exposes the ports' do
+      expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
+      expect(container_ports).to match_array(%w[http https metrics gitlab-shell])
     end
 
-    let(:tcp_configmap_name) do
-      '--tcp-services-configmap=default/test-nginx-ingress-tcp'
+    it 'configures the tcp configmap' do
+      expect(container_args).to include('--tcp-services-configmap=default/test-nginx-ingress-tcp')
+    end
+  end
+
+  shared_examples 'GitLab shell disabled' do
+    let(:enable_shell) { false }
+
+    it 'exposes no Shell port' do
+      expect(container_ports).not_to include('gitlab-shell')
     end
 
-    context 'with the defaults' do
-      let(:template) { HelmTemplate.new(nginx_enable_daemonset) }
+    it 'configures no tcp configmap' do
+      expect(container_args).not_to include('--tcp-services-configmap=default/test-nginx-ingress-tcp')
+    end
+  end
 
-      it 'templates successfully' do
-        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
-      end
+  context 'DaemonSet' do
+    let(:kind) { 'DaemonSet' }
 
-      it 'has gitlab shell port enabled on the nginx deployment and daemonset' do
-        expected_ports = Set['http', 'https', 'metrics', 'gitlab-shell']
-
-        test_deployment_ports(template, object_name, expected_ports)
-        test_daemonset_ports(template, object_name, expected_ports)
-      end
-
-      it 'configures the TCP services ConfigMap argument for the Deployment and Daemonset' do
-        deployment_args = get_args(template, 'Deployment', object_name)
-        expect(deployment_args).to include(tcp_configmap_name)
-
-        daemonset_args = get_args(template, 'DaemonSet', object_name)
-        expect(daemonset_args).to include(tcp_configmap_name)
-      end
+    it_behaves_like "GitLab shell enabled" do
+      let(:enable_shell) { true }
     end
 
-    context 'with gitlab shell disabled' do
-      let(:template) { HelmTemplate.new(gitlab_shell_disabled) }
+    it_behaves_like "GitLab shell disabled" do
+      let(:enable_shell) { false }
+    end
+  end
 
-      it 'templates successfully' do
-        expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
-      end
+  context 'Deployment' do
+    let(:kind) { 'Deployment' }
 
-      it 'does not have gitlab shell port enabled on the nginx deployment or daemonset' do
-        expected_ports = Set['http', 'https', 'metrics']
+    it_behaves_like "GitLab shell enabled" do
+      let(:enable_shell) { true }
+    end
 
-        test_deployment_ports(template, object_name, expected_ports)
-        test_daemonset_ports(template, object_name, expected_ports)
-      end
-
-      it 'does not configure the TCP services ConfigMap argument for the Deployment or DaemonSet' do
-        deployment_args = get_args(template, 'Deployment', object_name)
-        expect(deployment_args).not_to include(tcp_configmap_name)
-
-        daemonset_args = get_args(template, 'DaemonSet', object_name)
-        expect(daemonset_args).not_to include(tcp_configmap_name)
-      end
+    it_behaves_like "GitLab shell disabled" do
+      let(:enable_shell) { false }
     end
   end
 end

@@ -52,6 +52,7 @@ networkpolicy:
 
 metrics:
   enabled: true
+  listenAddr: "*"
   port: 3807
   path: /metrics
   log_enabled: false
@@ -66,6 +67,7 @@ metrics:
     # secretName:
 
 health_checks:
+  listenAddr: "*"
   port: 3808
 
 redis:

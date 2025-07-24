@@ -132,11 +132,12 @@ data:
       webpack:
       monitoring:
         ip_whitelist:
-          - 127.0.0.0/8
+          - "127.0.0.0/8"
+          - "::1/128"
         sidekiq_exporter:
         {{- if .Values.metrics.enabled }}
           enabled: true
-          address: 0.0.0.0
+          address: {{ .Values.metrics.listenAddr | quote }}
           port: {{ .Values.metrics.port }}
           log_enabled: {{ .Values.metrics.log_enabled }}
         {{-   if $.Values.metrics.tls.enabled }}
@@ -147,7 +148,7 @@ data:
         {{- end }}
         sidekiq_health_checks:
           enabled: true
-          address: 0.0.0.0
+          address: {{ .Values.health_checks.listenAddr | quote }}
           port: {{ .Values.health_checks.port }}
       {{- include "gitlab.appConfig.openbao.configuration" . | nindent 6 }}
   configure: |

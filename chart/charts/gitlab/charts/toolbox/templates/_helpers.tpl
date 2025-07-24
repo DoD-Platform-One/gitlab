@@ -66,4 +66,3 @@ Usage:
         path: objectstorage/.s3cfg
 {{-   end -}}
 {{- end -}}
-
