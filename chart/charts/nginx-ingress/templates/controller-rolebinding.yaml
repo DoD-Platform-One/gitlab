@@ -5,11 +5,14 @@ metadata:
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
-    component: "{{ .Values.controller.name }}"
     {{- include "ingress-nginx.labels" . | nindent 4 }}
+    component: "{{ .Values.controller.name }}"
     app.kubernetes.io/component: controller
+    {{- with .Values.controller.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   name: {{ include "ingress-nginx.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "ingress-nginx.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -17,5 +20,5 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: {{ template "ingress-nginx.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace | quote }}
+    namespace: {{ include "ingress-nginx.namespace" . }}
 {{- end }}

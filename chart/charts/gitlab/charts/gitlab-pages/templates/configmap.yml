@@ -37,16 +37,17 @@ data:
     {{- end }}
     {{- $externalAddresses := concat $.Values.global.pages.externalHttp $.Values.global.pages.externalHttps | uniq }}
     {{- if (empty ($externalAddresses)) }}
-    listen-proxy=0.0.0.0:{{ .Values.service.internalPort }}
-    listen-http=0.0.0.0:9090
+    listen-proxy=:{{ .Values.service.internalPort | int }}
+    listen-http=:9090
     {{- else }}
+      {{- $listen := .Values.useHTTPProxy | ternary "proxy" "http" }}
       {{- if not (empty $.Values.global.pages.externalHttp) }}
-    listen-{{ if .Values.useHTTPProxy }}proxy{{ else }}http{{ end }}=0.0.0.0:{{ .Values.service.internalPort | int }}
+        {{- printf "listen-%s=:%d" $listen (.Values.service.internalPort | int) | nindent 4 }}
       {{-  else  }}
-    listen-{{ if .Values.useHTTPProxy }}proxy{{ else }}http{{ end }}=0.0.0.0:9090
+        {{- printf "listen-%s=:9090" $listen | nindent 4 }}
       {{- end }}
       {{- if not (empty $.Values.global.pages.externalHttps) }}
-    listen-https{{ if .Values.useProxyV2 }}-proxyv2{{ end }}=0.0.0.0:{{ .Values.service.customDomains.internalHttpsPort | int }}
+    listen-https{{ if .Values.useProxyV2 }}-proxyv2{{ end }}=:{{ .Values.service.customDomains.internalHttpsPort | int }}
     root-cert=/etc/gitlab-secrets/pages/{{ template "gitlab.pages.hostname" $ }}.crt
     root-key=/etc/gitlab-secrets/pages/{{ template "gitlab.pages.hostname" $ }}.key
       {{- end }}

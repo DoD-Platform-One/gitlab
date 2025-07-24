@@ -12,7 +12,7 @@ data:
   gitlab-exporter.yml.erb: |
     server:
       name: webrick
-      listen_address: 0.0.0.0
+      listen_address: {{ .Values.listenAddr | quote }}
       listen_port: {{ .Values.service.internalPort }}
       {{ if .Values.tls.enabled -}}
       tls_enabled: true

@@ -73,10 +73,8 @@ check_docs_i18n_markdown:
   dependencies: []
   before_script: []
   script:
-    # Do not lint link-fragments, which are currently invalid in translations
-    - 'echo "  link-fragments: false" >> .markdownlint-cli2.yaml'
     # Lint Markdown
-    - markdownlint-cli2 'doc-locale/**/*.md'
+    - cd doc-locale && markdownlint-cli2 --config .markdownlint/.markdownlint-cli2.yaml '**/*.md'
   rules:
     - !reference [.rule:skip_if_dev]
     - if: '$PIPELINE_TYPE == "DOCS_PIPELINE_LOCALIZATION"'
@@ -179,7 +177,7 @@ specs_without_cluster:
   extends: .specs
   variables:
     RSPEC_TAGS: ~type:feature
-  parallel: 6
+  parallel: 9
   rules:
     - !reference [.specs, rules]
     - if: '$PIPELINE_TYPE == "AUTO_DEPLOY_PIPELINE"'

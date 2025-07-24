@@ -35,10 +35,7 @@ describe 'cells configuration' do
                 'skipSequenceAlteration' => false
               },
               'topologyServiceClient' => {
-                'address' => 'topology-service.gitlab.example.com:443',
-                'caFile' => 'path/to/your/ca/.pem',
-                'certificateFile' => 'path/to/your/cert/.pem',
-                'privateKeyFile' => 'path/to/your/key/.pem'
+                'address' => 'topology-service.gitlab.example.com:443'
               }
             }
           }
@@ -49,7 +46,53 @@ describe 'cells configuration' do
       HelmTemplate.new(cell_values.deep_merge!(default_values))
     end
 
-    it 'generates no cell configuration in the gitlab.yml file' do
+    it 'generates cell configuration in the gitlab.yml file' do
+      expected_values = {
+        "enabled" => true,
+        "id" => 1,
+        "database" =>
+          {
+            "skip_sequence_alteration" => false
+          },
+        "topology_service_client" => {
+          "address" => "topology-service.gitlab.example.com:443"
+        }
+      }
+
+      charts.each do |chart|
+        expect(gitlab_yml_cell(chart)).to eq(expected_values)
+      end
+    end
+  end
+
+  describe 'service TLS is configured' do
+    let(:cell_values) do
+      {
+        'global' => {
+          'appConfig' => {
+            'cell' => {
+              'enabled' => true,
+              'id' => 1,
+              'database' => {
+                'skipSequenceAlteration' => false
+              },
+              'topologyServiceClient' => {
+                'address' => 'topology-service.gitlab.example.com:443',
+                'tls' => {
+                  'enabled' => true
+                }
+              }
+            }
+          }
+        }
+      }
+    end
+
+    let(:helm_template) do
+      HelmTemplate.new(cell_values.deep_merge!(default_values))
+    end
+
+    it 'generates configuration in the gitlab.yml file with TLS' do
       expected_values = {
         "enabled" => true,
         "id" => 1,
@@ -59,9 +102,11 @@ describe 'cells configuration' do
           },
         "topology_service_client" => {
           "address" => "topology-service.gitlab.example.com:443",
-          "ca_file" => "path/to/your/ca/.pem",
-          "certificate_file" => "path/to/your/cert/.pem",
-          "private_key_file" => "path/to/your/key/.pem"
+          'certificate_file' => "/srv/gitlab/config/topology-service/tls.crt",
+          "private_key_file" => "/srv/gitlab/config/topology-service/tls.key",
+          "tls" => {
+            "enabled" => true
+          }
         }
       }
 

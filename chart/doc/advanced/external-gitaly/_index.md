@@ -38,7 +38,34 @@ You **may** need to set the following properties:
 - `global.shell.authToken.secret`: The name of the [secret which contains secret for GitLab Shell](../../installation/secrets.md#gitlab-shell-secret).
 - `global.shell.authToken.key`: The key within the secret, which contains the secret content.
 
-A complete example configuration, with two external services (`external-gitaly.yml`):
+A complete example configuration, with two external Gitaly services (`external-gitaly.yml`):
+
+```yaml
+global:
+  gitaly:
+    enabled: false
+    external:
+      - name: default                   # required, at least one service must be called 'default'.
+        hostname: node1.git.example.com # required
+        port: 8075                      # optional, default shown
+      - name: default2                  # required
+        hostname: node2.git.example.com # required
+        port: 8075                      # optional, default shown
+        tlsEnabled: false               # optional, overrides gitaly.tls.enabled
+    authToken:
+      secret: external-gitaly-token     # required
+      key: token                        # optional, default shown
+    tls:
+      enabled: false                    # optional, default shown
+```
+
+A complete example of setting up an external Praefect service.
+
+{{< alert type="note" >}}
+
+The Praefect service name [must be `default`](../../charts/globals.md#external).
+
+{{< /alert >}}
 
 ```yaml
 global:
@@ -46,9 +73,6 @@ global:
     enabled: false
     external:
       - name: default                   # required
-        hostname: node1.git.example.com # required
-        port: 8075                      # optional, default shown
-      - name: praefect                  # required
         hostname: ha.git.example.com    # required
         port: 2305                      # Praefect uses port 2305
         tlsEnabled: false               # optional, overrides gitaly.tls.enabled

@@ -28,10 +28,12 @@ tolerations: []
 monitoring:
   # Monitoring IP whitelist
   ipWhitelist:
-  - 0.0.0.0/0
+  - "0.0.0.0/0"
+  - "::/0"
   exporter:
     enabled: false
     port: 8083
+    listenAddr: '0.0.0.0'
 
 # Shutdown settings
 # Defines an interval to block healthcheck,
@@ -64,6 +66,7 @@ sshHostKeys:
 
 metrics:
   enabled: true
+  listenAddr: '0.0.0.0'
   port: 8083
   path: /metrics
   tls: {}
@@ -148,6 +151,7 @@ puma:
     max: 4
   disableWorkerKiller: true
   # workerMaxMemory: 1024 # in MB units
+  bindIp6: false
 
 hpa:
   # targetAverageValue: 1  # DEPRECATED: in favor of `hpa.cpu.targetAverageValue` below

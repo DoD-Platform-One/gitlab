@@ -45,34 +45,7 @@ To enable the Zoekt chart, set the following values:
 
 ## Set CPU and memory usage
 
-You can define requests and limits for the Zoekt chart by modifying the following GitLab.com default settings:
-
-```yaml
-  webserver:
-    resources:
-      requests:
-        cpu: 4
-        memory: 32Gi
-      limits:
-        cpu: 16
-        memory: 128Gi
-  indexer:
-    resources:
-      requests:
-        cpu: 4
-        memory: 6Gi
-      limits:
-        cpu: 16
-        memory: 12Gi
-  gateway:
-    resources:
-      requests:
-        cpu: 2
-        memory: 512Mi
-      limits:
-        cpu: 4
-        memory: 1Gi
-```
+You can define requests and limits for the Zoekt chart by modifying the GitLab.com [default settings](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/blob/master/releases/gitlab/values/gprd.yaml.gotmpl#L6-45).
 
 ## Configure Zoekt in GitLab
 

@@ -16,15 +16,22 @@ Install Ubuntu Server onto the VM that you have created. Ensure that `openssh-se
 Configure networking and a hostname. Make note of the hostname/IP, and ensure it is both resolvable and reachable from your Kubernetes cluster.
 Be sure firewall policies are in place to allow traffic.
 
-Follow the installation instructions for the [Linux package](https://about.gitlab.com/install/#ubuntu). When you perform the package installation, **_do not_** provide the `EXTERNAL_URL=` value. We do not want automatic configuration to occur, as we'll provide a very specific configuration in the next step.
+Follow the installation instructions for the [Linux package](https://docs.gitlab.com/install/package/ubuntu/).
+
+{{< alert type="note" >}}
+
+When you perform the package installation, do not provide the `EXTERNAL_URL=` value.
+We do not want automatic configuration to occur, as we'll provide a very specific configuration in the next step.
+
+{{< /alert >}}
 
 ## Configure Linux package installation
 
 Create a minimal `gitlab.rb` file to be placed at `/etc/gitlab/gitlab.rb`. Be very explicit about what is enabled on this node, use the contents below.
 
-_Note_: This example is not intended to provide [PostgreSQL for scaling](https://docs.gitlab.com/administration/postgresql/).
+This example is not intended to provide [PostgreSQL for scaling](https://docs.gitlab.com/administration/postgresql/).
 
-_**NOTE**: The values below should be replaced_
+These values should be replaced:
 
 - `DB_USERNAME` default username is `gitlab`
 - `DB_PASSSWORD` unencoded value

@@ -220,13 +220,10 @@ describe 'gitlab-shell configuration' do
     let(:lfs_pure_ssh_protocol) { nil }
 
     let(:values) do
-      YAML.safe_load(%(
-        gitlab:
-          gitlab-shell:
-            config:
-              lfs:
-                pureSSHProtocol: #{lfs_pure_ssh_protocol}
-      )).deep_merge(default_values)
+      vals = { 'gitlab' => { 'gitlab-shell' => { 'config' => { 'lfs' => {} } } } }
+      vals['gitlab']['gitlab-shell']['config']['lfs']['pureSSHProtocol'] = lfs_pure_ssh_protocol unless lfs_pure_ssh_protocol.nil?
+
+      vals.deep_merge(default_values)
     end
 
     let(:config) { t.dig('ConfigMap/test-gitlab-shell', 'data', 'config.yml.tpl') }
@@ -270,14 +267,11 @@ describe 'gitlab-shell configuration' do
     let(:allowed_scopes) { nil }
 
     let(:values) do
-      YAML.safe_load(%(
-        gitlab:
-          gitlab-shell:
-            config:
-              pat:
-                enabled: #{enabled}
-                allowedScopes: #{allowed_scopes}
-      )).deep_merge(default_values)
+      vals = { 'gitlab' => { 'gitlab-shell' => { 'config' => { 'pat' => {} } } } }
+      vals['gitlab']['gitlab-shell']['config']['pat']['enabled'] = enabled unless enabled.nil?
+      vals['gitlab']['gitlab-shell']['config']['pat']['allowedScopes'] = allowed_scopes unless allowed_scopes.nil?
+
+      vals.deep_merge(default_values)
     end
 
     let(:config) { t.dig('ConfigMap/test-gitlab-shell', 'data', 'config.yml.tpl') }

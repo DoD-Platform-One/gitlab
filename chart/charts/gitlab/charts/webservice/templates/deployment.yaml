@@ -81,7 +81,7 @@ spec:
       {{- end }}
       {{- $nodeSelectors := dict "Values" (dict "global" (dict "nodeSelector" $.Values.global.nodeSelector) "nodeSelector" .nodeSelector) -}}
       {{- include "gitlab.nodeSelector" $nodeSelectors | nindent 6 }}
-      {{- $priorityClassName := dict "Values" (dict "global" (dict "priorityClassName" $.Values.global.priorityClassName) "priorityClassName" $.Values.priorityClassName) -}}
+      {{- $priorityClassName := dict "Values" (dict "global" (dict "priorityClassName" $.Values.global.priorityClassName) "priorityClassName" (default $.Values.priorityClassName .priorityClassName)) -}}
       {{- include "gitlab.priorityClassName" $priorityClassName | nindent 6 }}
       {{- include "gitlab.podSecurityContext" $.Values.securityContext | nindent 6 }}
       {{- if eq (default $.Values.global.antiAffinity $.Values.antiAffinity) "hard" }}
@@ -154,8 +154,6 @@ spec:
             - /scripts/wait-for-deps
           env:
             {{- include "gitlab.timeZone.env" $ | nindent 12 }}
-            - name: GITALY_FEATURE_DEFAULT_ON
-              value: "1"
             - name: CONFIG_TEMPLATE_DIRECTORY
               value: '/var/opt/gitlab/templates'
             - name: CONFIG_DIRECTORY
@@ -208,8 +206,6 @@ spec:
               value: {{ $.Values.webServer }}
             - name: TMPDIR
               value: "/tmp/gitlab"
-            - name: GITALY_FEATURE_DEFAULT_ON
-              value: "1"
             - name: CONFIG_TEMPLATE_DIRECTORY
               value: '/var/opt/gitlab/templates'
             - name: CONFIG_DIRECTORY
@@ -247,6 +243,8 @@ spec:
               value: "{{ .puma.workerMaxMemory }}"
             - name: DISABLE_PUMA_WORKER_KILLER
               value: "{{ .puma.disableWorkerKiller }}"
+            - name: BIND_IP6
+              value: {{ eq .puma.bindIp6 true | quote }}
             {{- end }}
             - name: SHUTDOWN_BLACKOUT_SECONDS
               value: "{{ .shutdown.blackoutSeconds }}"
@@ -283,7 +281,17 @@ spec:
             - name: webservice-secrets
               mountPath: /srv/gitlab/config/puma.key
               subPath: puma/puma.key
-            {{- end }}
+           {{- end }}
+           {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+            - name: webservice-secrets
+              mountPath: /srv/gitlab/config/topology-service/tls.crt
+              subPath: topology-service/tls.crt
+              readOnly: true
+            - name: webservice-secrets
+              mountPath: /srv/gitlab/config/topology-service/tls.key
+              subPath: topology-service/tls.key
+              readOnly: true
+           {{- end }}
             - name: webservice-config
               mountPath: '/etc/krb5.conf'
               subPath: krb5.conf
@@ -361,6 +369,7 @@ spec:
           {{- end }}
           env:
             {{- include "gitlab.timeZone.env" $ | nindent 12 }}
+            {{- include "gitlab.godebug.env" $ | nindent 12 }}
             - name: TMPDIR
               value: "/tmp/gitlab"
             - name: GITLAB_WORKHORSE_AUTH_BACKEND
@@ -485,6 +494,15 @@ spec:
                   path: "gitlab-workhorse/tls.crt"
                 - key: "tls.key"
                   path: "gitlab-workhorse/tls.key"
+          {{- end }}
+          {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+          - secret:
+              name: {{ template "topology-service.tls.secret" $ }}
+              items:
+                - key: "tls.crt"
+                  path: "topology-service/tls.crt"
+                - key: "tls.key"
+                  path: "topology-service/tls.key"
           {{- end }}
           {{- if eq (include "webservice-metrics.tls.enabled" $) "true" }}
           - secret:

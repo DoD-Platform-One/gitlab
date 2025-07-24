@@ -352,3 +352,24 @@ end
 ```
 
 Consolidating two `it` blocks into one leads to significant time savings because it reduces the number of calls to `helm template`.
+
+## CI Integration
+
+Tests that do not need cluster access are parallelized using knapsack.
+For knapsack to evenly distribute the tests between nodes, it needs a
+report that can only be generated when all specs run on a single node.
+
+{{< alert type="note" >}}
+
+Generating the report is not a (manual) CI job because the specs run
+for 3h+ on a single node, which exceeds the default runner timeout.
+
+{{< /alert >}}
+
+To generate such a report on demand:
+
+1. Create a new VM or log into a existing one.
+1. Checkout the charts repository.
+1. Install required dependencies (e.g. using asdf/mise).
+1. Run `./scripts/generate_knapsack_report.sh`.
+1. Open a MR with the updated report.

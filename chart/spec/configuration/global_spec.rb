@@ -354,7 +354,6 @@ describe 'global configuration' do
             nameSuffixOverride: '1'
         nginx-ingress:
           controller:
-            kind: Both
             image:
               tag: fixed-version
       )).deep_merge(default_values)

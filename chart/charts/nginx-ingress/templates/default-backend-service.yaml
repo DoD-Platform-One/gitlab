@@ -8,11 +8,14 @@ metadata:
   labels:
     {{- include "gitlab.standardLabels" . | nindent 4 }}
     {{- include "gitlab.commonLabels" . | nindent 4 }}
-    component: "{{ .Values.defaultBackend.name }}"
     {{- include "ingress-nginx.labels" . | nindent 4 }}
+    component: "{{ .Values.defaultBackend.name }}"
     app.kubernetes.io/component: default-backend
+    {{- with .Values.defaultBackend.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   name: {{ include "ingress-nginx.defaultBackend.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "ingress-nginx.namespace" . }}
 spec:
   type: {{ .Values.defaultBackend.service.type }}
 {{- if .Values.defaultBackend.service.clusterIP }}
@@ -32,6 +35,9 @@ spec:
       port: {{ .Values.defaultBackend.service.servicePort }}
       protocol: TCP
       targetPort: http
+    {{- if semverCompare ">=1.20.0-0" .Capabilities.KubeVersion.Version }}
+      appProtocol: http
+    {{- end }}
   selector:
     {{- include "ingress-nginx.selectorLabels" . | nindent 4 }}
     component: "{{ .Values.defaultBackend.name }}"

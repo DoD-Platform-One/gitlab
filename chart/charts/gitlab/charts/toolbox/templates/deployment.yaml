@@ -120,8 +120,6 @@ spec:
               value: {{ .Values.global.appConfig.backups.tmpBucket }}
             - name: PAGES_BUCKET_NAME
               value: {{ .Values.global.pages.objectStore.bucket }}
-            - name: GITALY_FEATURE_DEFAULT_ON
-              value: "1"
             {{- if .Values.global.rails.bootsnap.enabled }}
             - name: ENABLE_BOOTSNAP
               value: "1"
@@ -158,6 +156,16 @@ spec:
             - name: toolbox-secrets
               mountPath: /srv/gitlab/config/secrets.yml
               subPath: rails-secrets/secrets.yml
+            {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+            - name: toolbox-secrets
+              mountPath: /srv/gitlab/config/topology-service/tls.crt
+              subPath: topology-service/tls.crt
+              readOnly: true
+            - name: toolbox-secrets
+              mountPath: /srv/gitlab/config/topology-service/tls.key
+              subPath: topology-service/tls.key
+              readOnly: true
+            {{- end }}
             - name: toolbox-tmp
               mountPath: '/srv/gitlab/tmp'
               {{- if and .Values.persistence.enabled .Values.persistence.subPath }}
@@ -216,6 +224,15 @@ spec:
           {{- include "gitlab.redisSentinel.secret" $ | nindent 10 }}
           {{- range $.Values.local.psql }}
           {{-   include "gitlab.psql.secret" . | nindent 10 }}
+          {{- end }}
+          {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+          - secret:
+              name: {{ template "topology-service.tls.secret" $ }}
+              items:
+                - key: "tls.crt"
+                  path: "topology-service/tls.crt"
+                - key: "tls.key"
+                  path: "topology-service/tls.key"
           {{- end }}
           {{- if include "gitlab.geo.secondary" $ }}
           - secret:

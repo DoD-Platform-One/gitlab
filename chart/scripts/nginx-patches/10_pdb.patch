@@ -1,0 +1,29 @@
+# GitLab NGINX Patch: Use global PDB API version.
+diff --git a/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml b/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
+index 842b74b7e..c7d5b2cfb 100644
+--- a/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
++++ b/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
+@@ -8,7 +8,8 @@
+ {{- $replicas = .Values.controller.keda.minReplicas }}
+ {{- end }}
+ {{- if gt ($replicas | int) 1 }}
+-apiVersion: {{ ternary "policy/v1" "policy/v1beta1" (semverCompare ">=1.21.0-0" .Capabilities.KubeVersion.Version) }}
++{{- $pdbCfg := (dict "global" $.Values.global.pdb "local" .Values.pdb "context" $) }}
++apiVersion: {{ template "gitlab.pdb.apiVersion" $pdbCfg }}
+ kind: PodDisruptionBudget
+ metadata:
+   labels:
+diff --git a/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml b/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
+index f2dd66906..67082d634 100644
+--- a/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
++++ b/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
+@@ -4,7 +4,8 @@
+ {{- $replicas = .Values.defaultBackend.autoscaling.minReplicas }}
+ {{- end }}
+ {{- if gt ($replicas | int) 1 }}
+-apiVersion: {{ ternary "policy/v1" "policy/v1beta1" (semverCompare ">=1.21.0-0" .Capabilities.KubeVersion.Version) }}
++{{- $pdbCfg := (dict "global" $.Values.global.pdb "local" .Values.pdb "context" $) }}
++apiVersion: {{ template "gitlab.pdb.apiVersion" $pdbCfg }}
+ kind: PodDisruptionBudget
+ metadata:
+   labels:

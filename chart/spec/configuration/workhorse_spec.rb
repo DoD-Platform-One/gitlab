@@ -542,7 +542,7 @@ CFG
       it 'renders a TOML configuration file' do
         expect(template.exit_code).to eq(0), "Unexpected error code #{template.exit_code} -- #{template.stderr}"
         expect(raw_toml).to include %([[listeners]]\n)
-        expect(raw_toml).to include %(addr = "0.0.0.0:8181"\n)
+        expect(raw_toml).to include %(addr = ":8181"\n)
         expect(raw_toml).to include %([listeners.tls]\n)
       end
       it 'annotates Ingress for TLS backend' do
@@ -555,7 +555,7 @@ CFG
     shared_examples 'monitoring TLS is enabled' do
       it 'renders a TOML configuration file' do
         expect(raw_toml).to include %([metrics_listener]\n)
-        expect(raw_toml).to include %(addr = "0.0.0.0:9229"\n)
+        expect(raw_toml).to include %(addr = ":9229"\n)
         expect(raw_toml).to include %([metrics_listener.tls]\n)
       end
     end
@@ -622,7 +622,7 @@ CFG
         listeners = toml['listeners']
         expect(listeners.count).to eq(1)
         expect(listeners.first.keys).to match_array(%w[network addr tls])
-        expect(listeners.first['addr']).to eq('0.0.0.0:8181')
+        expect(listeners.first['addr']).to eq(':8181')
       end
 
       it 'does not annotate Ingress for TLS verify' do

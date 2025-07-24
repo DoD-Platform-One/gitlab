@@ -2,7 +2,7 @@
 set -e
 
 export DEBIAN_FRONTEND=noninteractive
-HELM_VERSION=${HELM_VERSION:-3.10.3}
+HELM_VERSION=${HELM_VERSION:-3.17.3}
 GOMPLATE_VERSION=${GOMPLATE_VERSION:-v3.11.4}
 DOCKER_VERSION="24.0.9-1"
 DEBIAN_VERSION_NUMBER=${DEBIAN_VERSION_NUMBER:-12}
@@ -83,7 +83,7 @@ fi
 
 if [ "${STRICT_VERSIONS:-false}" == "true" ] && [ "${KUBECTL_INSTALLED_VERSION}" != "${KUBECTL_VERSION}" ] || [ -z "${KUBECTL_INSTALLED_VERSION}" ]; then
     echo "Installing kubectl-${KUBECTL_VERSION}"
-    curl -LsO https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+    curl -LsO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
     chmod +x kubectl
     mv kubectl ${TARGET_DIR}/kubectl
 fi

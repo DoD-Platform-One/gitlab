@@ -147,11 +147,13 @@ data:
       monitoring:
         ip_whitelist:
           {{- if kindIs "slice" .Values.monitoring.ipWhitelist }}
-          {{ toYaml .Values.monitoring.ipWhitelist | nindent 10 | trim }}
+          {{- range $ip := .Values.monitoring.ipWhitelist }}
+          - {{ $ip | trim | quote }}
+          {{- end }}
           {{- end }}
         web_exporter:
           enabled: {{ or .Values.monitoring.exporter.enabled (and .Values.metrics.enabled (eq .Values.metrics.port .Values.monitoring.exporter.port)) }}
-          address: 0.0.0.0
+          address: {{ .Values.monitoring.exporter.listenAddr | quote }}
           port: {{ .Values.monitoring.exporter.port }}
           {{- if eq (include "webservice-metrics.tls.enabled" $) "true" }}
           tls_enabled: true
@@ -179,6 +181,15 @@ data:
       mkdir -p /init-secrets/webservice-metrics
       cp -v -L /init-config/webservice-metrics/webservice-metrics.crt /init-secrets/webservice-metrics/webservice-metrics.crt
       cp -v -L /init-config/webservice-metrics/webservice-metrics.key /init-secrets/webservice-metrics/webservice-metrics.key
+    {{- end }}
+    {{- if $.Values.global.appConfig.cell.enabled }}
+      if [ -d /init-config/topology-service ]; then
+        mkdir -p /init-secrets/topology-service
+        {{- if $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+        cp -v -L /init-config/topology-service/tls.key /init-secrets/topology-service/tls.key
+        cp -v -L /init-config/topology-service/tls.crt /init-secrets/topology-service/tls.crt
+        {{- end }}
+      fi
     {{- end }}
 
 {{- include "webservice.datamodel.prepare" $ -}}
@@ -224,7 +235,7 @@ data:
     max_filesize = {{ $.Values.workhorse.imageScaler.maxFileSizeBytes | int }}
     [[listeners]]
     network = "tcp"
-    addr = "0.0.0.0:{{ default 8181 $.Values.service.workhorseInternalPort | int }}"
+    addr = ":{{ default 8181 $.Values.service.workhorseInternalPort | int }}"
     {{- if $.Values.global.workhorse.tls.enabled }}
     [listeners.tls]
     certificate = "/etc/gitlab/gitlab-workhorse/tls.crt"
@@ -233,7 +244,7 @@ data:
     {{- if or $.Values.workhorse.monitoring.exporter.enabled $.Values.workhorse.metrics.enabled }}
     [metrics_listener]
     network = "tcp"
-    addr = "0.0.0.0:{{ $.Values.workhorse.monitoring.exporter.port }}"
+    addr = ":{{ $.Values.workhorse.monitoring.exporter.port }}"
     {{- $workhorseExporterTlsEnabled := eq (include "workhorse.monitoring.exporter.tls.enabled" $ ) "true" }}
     {{- if $workhorseExporterTlsEnabled }}
     [metrics_listener.tls]

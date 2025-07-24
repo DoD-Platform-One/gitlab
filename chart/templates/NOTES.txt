@@ -176,6 +176,15 @@ openbao:
   See https://docs.gitlab.com/policy/development_stages_support/#experiment
 {{- end -}}
 
+{{- $minHelm := "3.17" }}
+{{- if semverCompare (printf "<%s" $minHelm) .Capabilities.HelmVersion.Version }}
+{{ $WARNING }}
+helm:
+  GitLab chart now recommends Helm {{ $minHelm }}+. Please make sure to update your current Helm version {{ .Capabilities.HelmVersion.Version }}.
+  Please check the release notes and test your configuration before upgrading, because Helm {{ $minHelm }}
+  changed how some values are being merged.
+{{- end }}
+
 {{- /* run removals */}}
 {{ include "gitlab.removals" . }}
 {{- /* run checkConfig */}}

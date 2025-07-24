@@ -7,7 +7,9 @@ require 'rspec/retry'
 require 'gitlab_test_helper'
 require 'rspec-parameterized'
 require 'pry'
+require 'knapsack'
 
+Knapsack::Adapters::RSpecAdapter.bind
 include Gitlab::TestHelper
 
 RSpec.configure do |config|

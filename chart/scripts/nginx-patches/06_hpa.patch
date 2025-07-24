@@ -1,0 +1,96 @@
+# GitLab NGINX Patch: Control NGINX HPAs with global chart configuration.
+diff --git a/charts/nginx-ingress/templates/controller-hpa.yaml b/charts/nginx-ingress/templates/controller-hpa.yaml
+index 7d435c6b7..f1380f726 100644
+--- a/charts/nginx-ingress/templates/controller-hpa.yaml
++++ b/charts/nginx-ingress/templates/controller-hpa.yaml
+@@ -1,5 +1,6 @@
+ {{- if and (eq .Values.controller.kind "Deployment") .Values.controller.autoscaling.enabled (not .Values.controller.keda.enabled) -}}
+-apiVersion: {{ ternary "autoscaling/v2" "autoscaling/v2beta2" (.Capabilities.APIVersions.Has "autoscaling/v2") }}
++{{- $hpaCfg := (dict "global" $.Values.global.hpa "local" .Values.controller.autoscaling "context" $) -}}
++apiVersion: {{ template "gitlab.hpa.apiVersion" $hpaCfg }}
+ kind: HorizontalPodAutoscaler
+ metadata:
+   {{- with .Values.controller.autoscaling.annotations }}
+@@ -27,23 +28,28 @@ spec:
+   - type: Resource
+     resource:
+       name: memory
++      {{- if (include "gitlab.hpa.supportsV2MetricsSpec" $hpaCfg) }}
+       target:
+         type: Utilization
+         averageUtilization: {{ . }}
++      {{- else }}
++      targetAverageUtilization: {{ . }}
++      {{- end }}
+   {{- end }}
+   {{- with .Values.controller.autoscaling.targetCPUUtilizationPercentage }}
+   - type: Resource
+     resource:
+       name: cpu
++      {{- if (include "gitlab.hpa.supportsV2MetricsSpec" $hpaCfg) }}
+       target:
+         type: Utilization
+         averageUtilization: {{ . }}
++      {{- else }}
++      targetAverageUtilization: {{ . }}
++      {{- end }}
+   {{- end }}
+   {{- with .Values.controller.autoscalingTemplate }}
+   {{- toYaml . | nindent 2 }}
+   {{- end }}
+-  {{- with .Values.controller.autoscaling.behavior }}
+-  behavior:
+-    {{- toYaml . | nindent 4 }}
+-  {{- end }}
++  {{- include "gitlab.hpa.behavior" $hpaCfg | nindent 2 }}
+ {{- end }}
+diff --git a/charts/nginx-ingress/templates/default-backend-hpa.yaml b/charts/nginx-ingress/templates/default-backend-hpa.yaml
+index b2eff1b31..48375f08c 100644
+--- a/charts/nginx-ingress/templates/default-backend-hpa.yaml
++++ b/charts/nginx-ingress/templates/default-backend-hpa.yaml
+@@ -1,5 +1,6 @@
+ {{- if and .Values.defaultBackend.enabled .Values.defaultBackend.autoscaling.enabled }}
+-apiVersion: {{ ternary "autoscaling/v2" "autoscaling/v2beta2" (.Capabilities.APIVersions.Has "autoscaling/v2") }}
++{{- $hpaCfg := (dict "global" $.Values.global.hpa "local" .Values.backendConfig.autoscaling "context" $) -}}
++apiVersion: {{ template "gitlab.hpa.apiVersion" $hpaCfg }}
+ kind: HorizontalPodAutoscaler
+ metadata:
+   {{- with .Values.defaultBackend.autoscaling.annotations }}
+@@ -27,16 +28,25 @@ spec:
+   - type: Resource
+     resource:
+       name: memory
++      {{- if (include "gitlab.hpa.supportsV2MetricsSpec" $hpaCfg) }}
+       target:
+         type: Utilization
+         averageUtilization: {{ . }}
++      {{- else }}
++      targetAverageUtilization: {{ . }}
++      {{- end }}
+   {{- end }}
+   {{- with .Values.defaultBackend.autoscaling.targetCPUUtilizationPercentage }}
+   - type: Resource
+     resource:
+       name: cpu
++      {{- if (include "gitlab.hpa.supportsV2MetricsSpec" $hpaCfg) }}
+       target:
+         type: Utilization
+         averageUtilization: {{ . }}
++      {{- else }}
++      targetAverageUtilization: {{ . }}
++      {{- end }}
+   {{- end }}
++  {{- include "gitlab.hpa.behavior" $hpaCfg | nindent 2 }}
+ {{- end }}
+diff --git a/charts/nginx-ingress/values.yaml b/charts/nginx-ingress/values.yaml
+index dd2e41d04..15aaf2ca1 100644
+--- a/charts/nginx-ingress/values.yaml
++++ b/charts/nginx-ingress/values.yaml
+@@ -1143,6 +1143,7 @@ defaultBackend:
+     maxReplicas: 2
+     targetCPUUtilizationPercentage: 50
+     targetMemoryUtilizationPercentage: 50
++    behavior: {}
+   # NetworkPolicy for default backend component.
+   networkPolicy:
+     # -- Enable 'networkPolicy' or not

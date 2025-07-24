@@ -62,7 +62,7 @@ function get_digest() {
   component=$1
   tag=$2
 
-  digest=$(skopeo inspect docker://registry.gitlab.com/gitlab-org/build/cng/$component:$tag --format "{{.Digest}}")
+  digest=$(skopeo inspect docker://registry.gitlab.com/gitlab-org/build/cng/$component:$tag --format "{{.Digest}}" --no-tags)
 
   echo -n "${digest}"
 }

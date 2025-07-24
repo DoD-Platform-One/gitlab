@@ -71,7 +71,10 @@ the rails secret from a Linux package instance, secrets are stored in JSON forma
      - 'your active record encryption deterministic key'
      active_record_encryption_key_derivation_salt: 'your active record key derivation salt'
    ```
-
+   
+1. Check that multi-line secrets like `openid_connect_signing_key` do not contain any newline characters (`\n`). Split any multi-line secrets into separate lines to avoid
+   [a decoding issue](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/3352#note_994430571) when consumed by applications.
+   
 To restore the rails secrets from a YAML file:
 
 1. Find the object name for the rails secrets:
