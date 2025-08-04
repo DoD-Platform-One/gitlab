@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: gitlab
-version: 9.2.1-bb.0
+version: 9.2.1-bb.1
 appVersion: 18.2.1
 description: GitLab is the most comprehensive AI-powered DevSecOps Platform.
 keywords:
@@ -109,7 +109,7 @@ annotations:
       image: registry1.dso.mil/ironbank/opensource/minio/minio:RELEASE.2024-06-04T19-20-08Z
     - name: postgresql
       condition: postgresql.install
-      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:17.5
+      image: registry1.dso.mil/ironbank/bitnami/postgres:17.4.0
     - name: ubi9
       condition: upgradeCheck.enabled
       image: registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.6
