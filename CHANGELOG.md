@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [9.2.1-bb.2] (2025-08-07)
+### Changed
+- add istio auth policy for redis metrics
+- change gitlab exporter to explictly listen on 0.0.0.0 in values.yaml
+
 ## [9.2.1-bb.1] (2025-08-04)
 ### Changed
 - update postgres image reference in Chart.yaml to align with default Bitnami image in values.yaml
