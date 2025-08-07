@@ -7,7 +7,7 @@ image:
   # pullSecrets: []
   # tag: master
 
-listenAddr: '::'
+listenAddr: '0.0.0.0'
 
 service:
   name: gitlab-exporter
