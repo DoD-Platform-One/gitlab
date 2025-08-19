@@ -124,12 +124,12 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 
     ```bash
     docker login registry.dev.bigbang.mil
-    docker pull busybox
+    docker pull busybox --platform linux/amd64
     docker tag busybox:latest registry.dev.bigbang.mil/test/test1:latest
-    docker push registry.dev.bigbang.mil/test/test1:latest
+    docker push registry.dev.bigbang.mil/test/test1:latest --platform linux/amd64
     docker image rm busybox:latest
     docker image rm registry.dev.bigbang.mil/test/test1:latest
-    docker pull registry.dev.bigbang.mil/test/test1:latest
+    docker pull registry.dev.bigbang.mil/test/test1:latest --platform linux/amd64
     ```
 
 1. Test a pipeline with gitlab-runner. Navigate to `https://gitlab.dev.bigbang.mil/test/test1/-/settings/ci_cd` and disable the Auto DevOps. Navigate to `https://gitlab.dev.bigbang.mil/test/test1/-/ci/editor?branch_name=main` and configure a pipeline. Verify that it completes successfully at `https://gitlab.dev.bigbang.mil/test/test1/-/pipelines`.
