@@ -5,7 +5,7 @@ metadata:
 upstream:
   type: git
   git:
-    commit: e2ec2d13771c73dd90b6cd054475c37b220e46e5
+    commit: 78e9a91726866be81f54005a08759cd7e47fd2a9
     repo: https://gitlab.com/gitlab-org/charts/gitlab
     directory: /
-    ref: v9.2.1
+    ref: v9.2.2

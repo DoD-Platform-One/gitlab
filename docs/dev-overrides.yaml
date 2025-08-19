@@ -17,9 +17,6 @@ flux:
 networkPolicies:
   enabled: true
 
-clusterAuditor:
-  enabled: false
-
 gatekeeper:
   enabled: false
 
@@ -36,22 +33,6 @@ kyvernoPolicies:
             - resources:
                 namespaces:
                   - gitlab-runner
-
-
-istioOperator:
-  enabled: true
-
-istio:
-  enabled: true
-
-istioCore:
-  enabled: false
-
-istioGateway:
-  enabled: false
-
-jaeger:
-  enabled: false
 
 kiali:
   enabled: false
