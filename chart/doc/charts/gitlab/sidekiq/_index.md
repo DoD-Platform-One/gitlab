@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Using the GitLab-Sidekiq chart
 ---
@@ -624,7 +624,7 @@ places. This examples adds the following network policy:
 {{< alert type="note" >}}
 
 The Sidekiq service requires outbound connectivity to the public
-internet for images on [external object storage](../../../advanced/external-object-storage) if no local endpoint is available.  
+internet for images on [external object storage](../../../advanced/external-object-storage) if no local endpoint is available.
 
 {{< /alert >}}
 

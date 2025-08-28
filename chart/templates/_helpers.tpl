@@ -312,6 +312,38 @@ Defaults to nil
 {{ pluck "tcpUserTimeout" $local .Values.global.psql | first -}}
 {{- end -}}
 
+{{/*
+Return the registry database username
+Checks both main chart context (.Values.registry.database.user) and 
+subchart context (.Values.database.user) for maximum compatibility.
+Priority: local > global > default ("registry")
+*/}}
+{{- define "registry.database.username" -}}
+{{- $localRegistry := default (dict) .Values.registry -}}
+{{- $localDatabase := default (dict) .Values.database -}}
+{{- $global := default (dict) .Values.global -}}
+
+{{- $localUser := dig "database" "user" "" $localRegistry | default (dig "user" "" $localDatabase) -}}
+{{- $globalUser := dig "registry" "database" "user" "" $global -}}
+{{- coalesce $localUser $globalUser "registry" -}}
+{{- end -}}
+
+{{/*
+Return the registry database name
+Checks both main chart context (.Values.registry.database.name) and 
+subchart context (.Values.database.name) for maximum compatibility.
+Priority: local > global > default ("registry")
+*/}}
+{{- define "registry.database.name" -}}
+{{- $localRegistry := default (dict) .Values.registry -}}
+{{- $localDatabase := default (dict) .Values.database -}}
+{{- $global := default (dict) .Values.global -}}
+
+{{- $localName := dig "database" "name" "" $localRegistry | default (dig "name" "" $localDatabase) -}}
+{{- $globalName := dig "registry" "database" "name" "" $global -}}
+{{- coalesce $localName $globalName "registry" -}}
+{{- end -}}
+
 {{/* ######### annotations */}}
 
 {{/*

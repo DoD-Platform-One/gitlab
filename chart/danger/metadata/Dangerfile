@@ -1,6 +1,6 @@
 fail("Please add labels to this merge request.") if helper.mr_labels.empty?
 
-warn("You may want to add ~\"group::Self Managed\" label to this MR for gitlab-insights") unless helper.mr_labels.include?("group::Self Managed")
+warn("You may want to add ~\"group::operate\" label to this MR for gitlab-insights") unless helper.mr_labels.include?("group::operate")
 
 has_pick_into_stable_label = helper.mr_labels.find { |label| label.start_with?('Pick into') }
 

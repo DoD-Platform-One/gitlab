@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: GitLab Helm chart provenance
 ---
@@ -40,7 +40,7 @@ gpg:               imported: 1
 This command downloads the key and adds it to your default keyring. You should
 put the GitLab Helm chart signing key into a separate keyring. You can use the
 `--no-default-keyring --keyring <keyring>` `gpg` options to create a new keyring
-that contains just the GitLab Chart signing key.
+that contains just the GitLab chart signing key.
 
 For example:
 

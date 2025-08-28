@@ -150,7 +150,9 @@ data:
       {{ range $index, $v := .Values.middleware.storage }}
       - name: {{ $v.name }}
         options: {{ omit $v.options "privatekeySecret" "privatekey" | toYaml | nindent 10 }}
+          {{- if $v.options.privatekeySecret }}
           privatekey: {{ printf "/etc/docker/registry/middleware.storage/%d/%s" $index $v.options.privatekeySecret.key }}
+          {{ end }}
       {{ end }}
     {{- end }}
     {{- include "registry.database.config" $ | nindent 4 }}

@@ -57,9 +57,20 @@
 {{-       end -}}
 {{-     end -}}
 {{/*    do not overwrite an existing key */}}
-{{-     if not (hasKey $ctx (camelcase $key) ) -}}
-{{-       $_ := set $ctx (camelcase $key) (get $copy $key) -}}
+{{-     if not (hasKey $ctx (include "gitlab.camelCase" $key) ) -}}
+{{-       $_ := set $ctx (include "gitlab.camelCase" $key) (get $copy $key) -}}
 {{-     end -}}
 {{-   end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Convert a key to camel case but preserve the first latter casing.
+
+E.g. convert "keepalives_idle" to "keepalivesIdle" instead of "KeepalivesIdle".
+*/}}
+{{- define "gitlab.camelCase" -}}
+{{- $in := . -}}
+{{- $camelIn := (camelcase $in) -}}
+{{- printf "%s%s" (substr 0 1 $in) (substr 1 (len $camelIn) $camelIn) -}}
 {{- end -}}

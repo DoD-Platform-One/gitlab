@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Troubleshooting the GitLab chart
 ---
@@ -437,7 +437,7 @@ This error is caused by OpenSSH `sshd` being unable to handle readiness and live
 
 ```yaml
 gitlab:
-  gitlab-shell: 
+  gitlab-shell:
     sshDaemon: gitlab-sshd
 ```
 

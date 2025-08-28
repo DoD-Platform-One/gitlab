@@ -315,6 +315,32 @@ describe 'kas configuration' do
         end
       end
 
+      context 'when workspaces is enabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  workspaces:
+                    enabled: true
+                    listenGracePeriod: "10s"
+                    shutdownGracePeriod: "100s"
+            )))
+        end
+
+        it 'configures the workspaces config node' do
+          expected_config = {
+            "enabled" => true,
+            "listen" => {
+              "listen_grace_period" => "10s",
+              "shutdown_grace_period" => "100s",
+              "network" => "tcp",
+              "address" => :"8160"
+            }
+          }
+          expect(config_yaml_data['workspaces']).to eq(expected_config)
+        end
+      end
+
       context 'when customConfig is given' do
         let(:custom_config) do
           YAML.safe_load(%(
@@ -828,6 +854,43 @@ describe 'kas configuration' do
           end
         end
       end
+
+      context 'when workspaces.enabled is given' do
+        let(:workspaces_enabled) { true }
+        let(:kas_values) do
+          default_kas_values.deep_merge!(
+            'gitlab' => {
+              'kas' => {
+                'workspaces' => {
+                  'enabled' => workspaces_enabled,
+                  "listen" => {
+                    "listen_grace_period" => "10s",
+                    "shutdown_grace_period" => "100s",
+                    "network" => "tcp",
+                    "address" => :"9000"
+                  }
+                }
+              }
+            }
+          )
+        end
+
+        context 'when workspaces.enabled is true' do
+          let(:workspaces_enabled) { true }
+
+          it 'exports workspaces server port' do
+            expect(service['spec']['ports']).to include(include("name" => "tcp-kas-workspaces-server"))
+          end
+        end
+
+        context 'when workspaces.enabled is false' do
+          let(:workspaces_enabled) { false }
+
+          it 'exports no workspaces server port' do
+            expect(service['spec']['ports']).not_to include(include("name" => "tcp-kas-workspaces-server"))
+          end
+        end
+      end
     end
 
     describe 'templates/deployment.yaml' do
@@ -997,6 +1060,46 @@ describe 'kas configuration' do
               }
             }
           )
+        end
+      end
+
+      context 'when workspaces is enabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  workspaces:
+                    enabled: true
+                    listenGracePeriod: "10s"
+                    shutdownGracePeriod: "100s"
+            )))
+        end
+
+        it 'exposes workspaces server port' do
+          workspace_server = deployment.dig('spec', 'template', 'spec', 'containers', 0, 'ports').find do |ports|
+            ports['name'] == 'kas-ws-srv'
+          end
+          expect(workspace_server['containerPort']).to eq(8160)
+        end
+      end
+
+      context 'when workspaces is disabled' do
+        let(:kas_values) do
+          default_kas_values.deep_merge!(YAML.safe_load(%(
+              gitlab:
+                kas:
+                  workspaces:
+                    enabled: false
+                    listenGracePeriod: "10s"
+                    shutdownGracePeriod: "100s"
+            )))
+        end
+
+        it 'does not expose workspaces server port' do
+          workspace_server = deployment.dig('spec', 'template', 'spec', 'containers', 0, 'ports').find do |ports|
+            ports['name'] == 'kas-workspaces-server'
+          end
+          expect(workspace_server).to be(nil)
         end
       end
 

@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Using the GitLab Pages chart
 ---
@@ -145,7 +145,7 @@ configurations that can be supplied to the `helm install` command using the
 | `logFormat`                 | `json`  | Log output format |
 | `logVerbose`                | `false` | Verbose logging |
 | `maxConnections`            |         | Limit on the number of concurrent connections to the HTTP, HTTPS or proxy listeners |
-| `maxURILength`              |         | Limit the length of URI, 0 for unlimited. |
+| `maxURILength`              |         | Limit the length of URI, 0 for unlimited. For the default setting, see [GitLab Pages global settings](https://docs.gitlab.com/administration/pages/#global-settings) for `max_uri_length` |
 | `propagateCorrelationId`    |         | Reuse existing Correlation-ID from the incoming request header `X-Request-ID` if present |
 | `redirectHttp`              | `false` | Redirect pages from HTTP to HTTPS |
 | `sentry.enabled`            | `false` | Enable Sentry reporting |
@@ -247,7 +247,7 @@ the following network policy:
   - To the `webservice` pod to port `8181`
   - To endpoints like AWS VPC endpoint for S3 `172.16.1.0/24` on port `443`
 
-_Note the example provided is only an example and may not be complete_  
+_Note the example provided is only an example and may not be complete_
 
 The example is based on the assumption that `kube-dns` was deployed
 to the namespace `kube-system`, `prometheus` was deployed to the namespace

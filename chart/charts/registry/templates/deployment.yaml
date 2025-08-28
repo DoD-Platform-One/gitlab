@@ -1,4 +1,4 @@
-{{- if .Values.enabled -}}
+{{- if and .Values.enabled .Values.api.enabled -}}
 {{- $imageCfg := dict "global" .Values.global.image "local" .Values.image -}}
 {{- $initImageCfg := include "gitlab.configure.config" $.Values | fromYaml -}}
 apiVersion: apps/v1
@@ -205,11 +205,13 @@ spec:
           {{- end }}
           {{- if .Values.middleware.storage }}
             {{-  range $index, $v := .Values.middleware.storage }}
+              {{- if $v.options.privatekeySecret }}
           - secret:
               name: {{ $v.options.privatekeySecret.secret }}
               items:
                 - key: {{ $v.options.privatekeySecret.key }}
                   path: {{ printf "middleware.storage/%d/%s" $index $v.options.privatekeySecret.key }}
+              {{- end }}
             {{- end }}
           {{- end }}
           {{- if .Values.profiling.stackdriver.credentials.secret }}

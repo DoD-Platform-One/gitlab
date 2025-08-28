@@ -58,7 +58,7 @@ Returns `true` when:
 
 {{/*
 Optionally create a node affinity rule to optionally deploy pods
-under gitlab chart in a specific zone
+under GitLab chart in a specific zone
 */}}
 {{- define "gitlab.affinity" -}}
 {{- $affinityOptions := list "hard" "soft" }}

@@ -23,14 +23,13 @@ postgresql:
     nodeSelector:
       kubernetes.io/arch: arm64
 
-# Redis fails with arm64
-# redis:
-#   master:
-#     nodeSelector:
-#       kubernetes.io/arch: arm64
-#   replica:
-#     nodeSelector:
-#       kubernetes.io/arch: arm64
+redis:
+  master:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+  replica:
+    nodeSelector:
+      kubernetes.io/arch: arm64
 
 
 nginx-ingress:

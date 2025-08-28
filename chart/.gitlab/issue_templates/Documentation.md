@@ -40,4 +40,5 @@
 
 <!-- E.g. related GitLab issues/MRs -->
 
-/label ~documentation ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::Self Managed"
+/label ~documentation
+/label ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::operate"

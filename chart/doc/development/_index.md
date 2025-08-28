@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Contribute to Helm chart development
 ---
@@ -14,6 +14,11 @@ Contributing documentation changes to the charts requires only a text editor. Do
 Before starting development, it is helpful to review the goals, architecture, and design decisions for the charts.
 
 See [Architecture of GitLab Helm charts](../architecture/_index.md) for this information.
+
+## Adding a new chart or component
+
+See the [new charts readiness documentation](readiness/_index.md) for guidance to add a new component or subchart
+to the GitLab Helm chart.
 
 ## Environment setup
 
@@ -131,26 +136,6 @@ If you notice that one or more of the `review_*` jobs have failed and need to de
      This option is helpful if you need more time to debug a failed environment.
    - View deployment: this button will open the environment URL of the running instance of GitLab.
    - Stop: this buttton will run the associated `stop_review_*` job.
-
-## When to fork upstream charts
-
-### No changes, no fork
-
-Let it be stated that any chart that does not require changes to function
-for our use *should not* be forked into this repository.
-
-### Guidelines for forking
-
-#### Sensitive information
-
-If a given chart expects that sensitive communication secrets will be presented
-from within environment, such as passwords or cryptographic keys,
-[we prefer to use `initContainers`](../architecture/decisions.md#preference-of-secrets-in-initcontainer-over-environment).
-
-#### Extending functionality
-
-There are some cases where it is needed to extend the functionality of a chart in
-such a way that an upstream may not accept.
 
 ## Handling configuration deprecations
 

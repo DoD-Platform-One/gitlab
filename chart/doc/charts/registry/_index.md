@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Using the Container Registry
 ---
@@ -174,6 +174,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `draintimeout`                                           | `'0'`                                                                | Amount of time to wait for HTTP connections to drain after receiving a SIGTERM signal (e.g. `'10s'`) |
 | `relativeurls`                                           | `false`                                                              | Enable the registry to return relative URLs in Location headers. |
 | `enabled`                                                | `true`                                                               | Enable registry flag |
+| `api.enabled`                                            | `true`                                                               | Enables the Service, Deployment, HPA and PDB resources. |
 | `extraContainers`                                        |                                                                      | Multiline literal style string containing a list of containers to include |
 | `extraInitContainers`                                    |                                                                      | List of extra init containers to include |
 | `hpa.behavior`                                           | `{scaleDown: {stabilizationWindowSeconds: 300 }}`                    | Behavior contains the specifications for up- and downscaling behavior (requires `autoscaling/v2beta2` or higher) |
@@ -225,7 +226,7 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `profiling.stackdriver.credentials.key`                  | `credentials`                                                        | Secret key in which the credentials are stored |
 | `profiling.stackdriver.service`                          | `RELEASE-registry` (templated Service name)                          | Name of the Stackdriver service to record profiles under |
 | `profiling.stackdriver.projectid`                        | GCP project where running                                            | GCP project to report profiles to |
-| `database.configure`                                     | `false`                                                              | Populate database configuration in the registry chart without enabling it. Required when [migrating an existing registry](metadata_database.md#existing-registries). |
+| `database.configure`                                     | `false`                                                              | Populate database configuration in the registry chart without enabling it. Required when [importing an existing registry](metadata_database.md#enable-for-and-import-existing-registries). |
 | `database.enabled`                                       | `false`                                                              | Enable metadata database. This is an experimental feature and must not be used in production environments. |
 | `database.host`                                          | `global.psql.host`                                                   | The database server hostname. |
 | `database.port`                                          | `global.psql.port`                                                   | The database server port. |
@@ -315,6 +316,9 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `redis.rateLimiting.password.enabled`                    | `false`                                                              | Indicates whether the Redis instance is password protected. |
 | `redis.rateLimiting.password.secret`                     | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled. |
 | `redis.rateLimiting.password.key`                        | `redis-password`                                                     | Secret key in which the Redis password is stored. |
+| `redis.rateLimiting.sentinelpassword.enabled`                   | `false`                                                              | Indicates whether Redis Sentinels are password protected. If `redis.rateLimiting.sentinelpassword` is empty, the values from `global.redis.sentinelAuth` are used. Only used when `redis.rateLimiting.sentinels` is defined. |
+| `redis.rateLimiting.sentinelpassword.secret`                    | `gitlab-redis-secret`                                                | Name of the secret containing the Redis Sentinel password. |
+| `redis.rateLimiting.sentinelpassword.key`                       | `redis-sentinel-password`                                            | Secret key in which the Redis Sentinel password is stored. |
 | `redis.rateLimiting.db`                                  | `0`                                                                  | The name of the database to use for each connection. |
 | `redis.rateLimiting.dialtimeout`                         | `0s`                                                                 | The timeout for connecting to the Redis instance. Defaults to no timeout. |
 | `redis.rateLimiting.readtimeout`                         | `0s`                                                                 | The timeout for reading from the Redis instance. Defaults to no timeout. |
@@ -444,6 +448,13 @@ to disable the components that you may not want in a given deployment. For this 
 the first setting you should decide on is `enabled`.
 
 By default, Registry is enabled out of the box. Should you wish to disable it, set `enabled: false`.
+
+## Enable resources required for the application
+
+The Service, Deployment, HPA, and PDB resources are enabled by the `registry.api.enabled` value (default: `true`).
+
+Read more about how this setting is used on GitLab.com at
+[Container Registry post deployment migrations on GitLab.com](../../development/registry_post_deployment_migrations_on_gitlab_com.md).
 
 ## Configuring the `image`
 
@@ -586,7 +597,7 @@ adds the following network restrictions to the Registry service:
   - To the internet `0.0.0.0/0` to port `443`
 
 _Note that the registry service requires outbound connectivity to the public
-internet for images on [external object storage](../../advanced/external-object-storage) if no endpoint is used_  
+internet for images on [external object storage](../../advanced/external-object-storage) if no endpoint is used_
 
 The example is based on the assumption that `kube-dns` was deployed
 to the namespace `kube-system`, `prometheus` was deployed to the namespace

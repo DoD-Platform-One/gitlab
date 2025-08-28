@@ -1,11 +1,11 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Helm chart releases
 ---
 
-## Chart Versioning
+## Chart versioning
 
 ### Major releases
 
@@ -63,7 +63,7 @@ We will bump it for:
 
 While we considered just using the GitLab version as our own, we are not yet in lockstep with GitLab releases to the point where we would make a breaking change here in the chart, and require GitLab to bump the version number to 12 for instance. For now we will move forward with a chart specific version scheme, until we get to the point where we have the charts stable enough that we are comfortable with sharing the same version, and a chart update being a reasonable reason to bump the GitLab core version.
 
-## Branches and Tags
+## Branches and tags
 
 For this chart, we propose to follow the same branching strategy as the other main GitLab components.
 

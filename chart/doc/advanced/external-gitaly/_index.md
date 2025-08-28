@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Configure the GitLab chart with an external Gitaly
 ---
@@ -170,7 +170,7 @@ To check that GitLab can connect to the external Gitaly server:
 kubectl exec -it <toolbox-pod> -- gitlab-rake gitlab:gitaly:check
 ```
 
-If you are using Gitaly with TLS, you can also check if GitLab Chart trusts the Gitaly certificate:
+If you are using Gitaly with TLS, you can also check if GitLab chart trusts the Gitaly certificate:
 
 ```shell
 kubectl exec -it <toolbox-pod> -- echo | /usr/bin/openssl s_client -connect <gitaly-host>:<gitaly-port>
@@ -194,10 +194,10 @@ This method:
 - Requires that the external Gitaly service resides within the same VPC/zone as the Gitaly pods.
 - Has not been tested with the [Praefect chart](../../charts/gitlab/praefect/_index.md) and is not supported.
 
-#### Step 1: Set up external Gitaly Service or Gitaly Cluster
+#### Step 1: Set up external Gitaly service or Gitaly Cluster (Praefect)
 
 Set up an [external Gitaly](https://docs.gitlab.com/administration/gitaly/configure_gitaly/)
-or [external Gitaly Cluster](https://docs.gitlab.com/administration/gitaly/praefect/). You must
+or [external Gitaly Cluster (Praefect)](https://docs.gitlab.com/administration/gitaly/praefect/). You must
 provide the Gitaly token and GitLab Shell secret from your Chart installation as part of those steps:
 
 ```shell
@@ -217,7 +217,7 @@ kubectl get secret <release>-gitaly-secret -ojsonpath='{.data.token}' | base64 -
 
 {{< /tab >}}
 
-{{< tab title="Gitaly Cluster" >}}
+{{< tab title="Gitaly Cluster (Praefect)" >}}
 
 - The Gitaly token extracted here should be used for the `PRAEFECT_EXTERNAL_TOKEN`.
 - The GitLab Shell secret extracted here should be used for the `GITLAB_SHELL_SECRET_TOKEN`.
@@ -229,7 +229,7 @@ kubectl get secret <release>-gitaly-secret -ojsonpath='{.data.token}' | base64 -
 Lastly, ensure that the firewall for the external Gitaly service allows traffic on the configured
 Gitaly port for your Kubernetes pod IP range.
 
-#### Step 2: Configure Instance to use new Gitaly Service
+#### Step 2: Configure instance to use new Gitaly service
 
 1. Configure GitLab to use the external Gitaly.
    If there are any Gitaly references in your main `gitlab.yml` configuration file, remove those
@@ -262,7 +262,7 @@ Gitaly port for your Kubernetes pod IP range.
 
    {{< /tab >}}
 
-   {{< tab title="Gitaly Cluster" >}}
+   {{< tab title="Gitaly Cluster (Praefect)" >}}
 
    ```yaml
    global:
@@ -309,7 +309,7 @@ Gitaly port for your Kubernetes pod IP range.
 
    {{< /tab >}}
 
-   {{< tab title="Gitaly Cluster" >}}
+   {{< tab title="Gitaly Cluster (Praefect)" >}}
 
    On all Praefect nodes, ensure that the Praefect service can connect to the Gitaly nodes:
 
@@ -388,7 +388,7 @@ Schedule the move by following the steps indicated in [moving repositories](http
 
    {{< /tab >}}
 
-   {{< tab title="Gitaly Cluster" >}}
+   {{< tab title="Gitaly Cluster (Praefect)" >}}
 
    ```yaml
    global:
@@ -435,21 +435,21 @@ external Gitaly service.
 - Does incur downtime to all users.
 - Has not been tested with the [Praefect chart](../../charts/gitlab/praefect/_index.md) and is not supported.
 
-#### Step 1: Get the current release revision of the GitLab Chart
+#### Step 1: Get the current release revision of the GitLab chart
 
 In the unlikely event that something goes wrong during the migration, get the current release
-revision of the GitLab Chart. Copy the output and put it aside just in case we need to perform a
+revision of the GitLab chart. Copy the output and put it aside just in case we need to perform a
 [rollback](#rollback):
 
 ```shell
 helm history <release> --max=1
 ```
 
-#### Step 2: Setup external Gitaly Service or Gitaly Cluster
+#### Step 2: Setup external Gitaly service or Gitaly Cluster (Praefect)
 
 Set up an [external Gitaly](https://docs.gitlab.com/administration/gitaly/configure_gitaly/)
-or [external Gitaly Cluster](https://docs.gitlab.com/administration/gitaly/praefect/). You must
-provide the Gitaly token and GitLab Shell secret from your Chart installation as part of those steps:
+or [external Gitaly Cluster (Praefect)](https://docs.gitlab.com/administration/gitaly/praefect/). You must
+provide the Gitaly token and GitLab Shell secret from your chart installation as part of those steps:
 
 ```shell
 # Get the GitLab Shell secret
@@ -468,7 +468,7 @@ kubectl get secret <release>-gitaly-secret -ojsonpath='{.data.token}' | base64 -
 
 {{< /tab >}}
 
-{{< tab title="Gitaly Cluster" >}}
+{{< tab title="Gitaly Cluster (Praefect)" >}}
 
 - The Gitaly token extracted here should be used for the `PRAEFECT_EXTERNAL_TOKEN`.
 - The GitLab Shell secret extracted here should be used for the `GITLAB_SHELL_SECRET_TOKEN`.
@@ -593,7 +593,7 @@ kubectl exec <toolbox pod name> -it -- gitlab-rake gitlab:git:checksum_projects 
 kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure_files,db,external_diffs,lfs,packages,pages,registry,terraform_state,uploads
 ```
 
-#### Step 5: Configure Instance to use new Gitaly Service
+#### Step 5: Configure instance to use new Gitaly service
 
 1. Disable the Gitaly subchart and configure GitLab to use the external Gitaly.
    If there are any Gitaly references in your main `gitlab.yml` configuration file, remove those
@@ -624,7 +624,7 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
 
    {{< /tab >}}
 
-   {{< tab title="Gitaly Cluster" >}}
+   {{< tab title="Gitaly Cluster (Praefect)" >}}
 
    ```yaml
    global:
@@ -677,7 +677,7 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
 
    {{< /tab >}}
 
-   {{< tab title="Gitaly Cluster" >}}
+   {{< tab title="Gitaly Cluster (Praefect)" >}}
 
    On all Praefect nodes, ensure that the Praefect service can connect to the Gitaly nodes:
 
@@ -701,7 +701,7 @@ kubectl exec <toolbox pod name> -it -- backup-utility --skip artifacts,ci_secure
 #### Step 6: Restore and validate repository backup
 
 1. [Restore the backup file](../../backup-restore/restore.md#restoring-the-backup-file) created previously.
-   As a result, the repositories are copied to the configured external Gitaly or Gitaly Cluster.
+   As a result, the repositories are copied to the configured external Gitaly or Gitaly Cluster (Praefect).
 
 1. [Check all GitLab repositories](https://docs.gitlab.com/administration/raketasks/check/#check-all-gitlab-repositories)
    and create a list of repository checksums. Pipe the output to a file so we can `diff` the checksums in the next step:
@@ -772,8 +772,8 @@ If you run into any problems, you can rollback the changes made so the Gitaly su
 
 The original Gitaly PVC must exist to rollback successfully.
 
-1. Rollback the GitLab Chart to the previous release using the revision number obtained
-in [Step 1: Get the current release revision of the GitLab Chart](#step-1-get-the-current-release-revision-of-the-gitlab-chart):
+1. Rollback the GitLab chart to the previous release using the revision number obtained
+in [Step 1: Get the current release revision of the GitLab chart](#step-1-get-the-current-release-revision-of-the-gitlab-chart):
 
    ```shell
    helm rollback <release> <revision>
@@ -808,4 +808,4 @@ in [Step 1: Get the current release revision of the GitLab Chart](#step-1-get-th
 
 ### Related documentation
 
-- [Migrate to Gitaly Cluster](https://docs.gitlab.com/administration/gitaly/#migrate-to-gitaly-cluster)
+- [Migrate to Gitaly Cluster (Praefect)](https://docs.gitlab.com/administration/gitaly/praefect/#migrate-to-gitaly-cluster-praefect)

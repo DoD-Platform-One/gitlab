@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v4.24.0-gitlab'
+  tag: 'v4.26.0-gitlab'
   # pullPolicy: IfNotPresent
 # pullSecrets: []
 
@@ -118,6 +118,7 @@ global:
     enabled:
     credentials: {}
   registry:
+    database: {}
     certificate: {}
     httpSecret: {}
   psql:
@@ -388,6 +389,9 @@ serviceAccount:
   ## Used for local override of global ServiceAccount token mounting
   # automountServiceAccountToken: false
 
+# Enables Service, Deployment, HPA and PDB resources
+api:
+  enabled: true
 
 
 # Disable metadata database by default
@@ -397,11 +401,11 @@ serviceAccount:
 database:
   configure: false
   enabled: false
-  user: registry
+  # user: registry
   password: {}
-  # secret: RELEASE_NAME-registry-database-password
-  # key: password
-  name: registry
+    # secret: RELEASE_NAME-registry-database-password
+    # key: password
+  # name: registry
   sslmode: disable
   ssl: {}
   # Load balancing settings

@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Configure the GitLab chart with GitLab Geo
 ---
@@ -245,7 +245,7 @@ To deploy this chart as a Geo Primary, start [from this example configuration](h
      hosts:
        domain: example.com
        # optionally configure a static IP for the default LoadBalancer
-       # externalIP: 
+       # externalIP:
        # optionally configure a static IP for the Geo LoadBalancer
        # externalGeoIP:
      # configure DB connection
