@@ -8,9 +8,9 @@ database:
   enabled: {{ .Values.database.enabled }}
   host: {{ default (include "gitlab.psql.host" .) .Values.database.host | quote }}
   port: {{ default (include "gitlab.psql.port" .) .Values.database.port }}
-  user: {{ .Values.database.user }}
+  user: {{ include "registry.database.username" . }}
   password: "DB_PASSWORD_FILE"
-  dbname: {{ .Values.database.name }}
+  dbname: {{ include "registry.database.name" . }}
   sslmode: {{ .Values.database.sslmode }}
   {{- if .Values.database.ssl }}
   sslcert: /etc/docker/registry/ssl/client-certificate.pem
@@ -73,14 +73,25 @@ database:
 {{- end }}
 {{- end -}}
 
+{{- define "gitlab.registry.database.password.secret" }}
+{{- $database := default (dict) .Values.database -}}
+{{- dig "password" "secret" "" $database | default (printf "%s-registry-database-password" .Release.Name) -}}
+{{- end -}}
+
+{{- define "gitlab.registry.database.password.key" }}
+{{- $database := default (dict) .Values.database -}}
+{{- dig "password" "key" "password" $database -}}
+{{- end -}}
+
+
 {{/*
 Return Registry's database secret entry as a projected volume
 */}}
 {{- define "gitlab.registry.database.password.projectedVolume" -}}
 - secret:
-    name: {{ default (printf "%s-registry-database-password" .Release.Name) .Values.database.password.secret }}
+    name: {{ include "gitlab.registry.database.password.secret" . }}
     items:
-      - key: {{ default "password" .Values.database.password.key }}
+      - key: {{ include "gitlab.registry.database.password.key" . }}
         path: database_password
 {{- end -}}
 

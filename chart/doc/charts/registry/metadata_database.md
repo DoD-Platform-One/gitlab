@@ -1,8 +1,8 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
-title: Manage the container registry metadata database
+title: Container registry metadata database
 ---
 
 {{< details >}}
@@ -19,34 +19,116 @@ title: Manage the container registry metadata database
 
 {{< /history >}}
 
-The metadata database enables many new registry features, including
-online garbage collection, and increases the efficiency of many registry operations.
-This page contains information on how to create the database.
+The metadata database provides many new registry features, including online garbage collection, and increases the
+efficiency of many registry operations.
 
-## Metadata database feature support
-
-You can migrate existing registries to the metadata database, and use online garbage collection.
+If you have existing registries, you can migrate to the metadata database.
 
 Some database-enabled features are only enabled for GitLab.com and automatic database provisioning for
 the registry database is not available. Review the feature support section in the
 [administration documentation](https://docs.gitlab.com/administration/packages/container_registry_metadata_database/#metadata-database-feature-support)
 for the status of features related to the container registry database.
 
-## Create the database
+## Create an external metadata database
 
-Follow the steps below to manually create the database and role.
+In production, you should create an external metadata database.
 
-{{< alert type="note" >}}
+Prerequisites:
 
-These instructions assume you are using the bundled PostgreSQL server. If you are using your own server,
-there will be some variation in how you connect.
+- Set up an [external PostgreSQL server](../../advanced/external-db/_index.md).
+
+After you set up the external PostgreSQL server:
+
+1. Create a secret for the metadata database password:
+
+   ```shell
+   kubectl create secret generic RELEASE_NAME-registry-database-password --from-literal=password=<your_registry_password>
+    ```
+
+1. Log in to your database server.
+1. Use the following SQL commands to create the user and the database:
+
+   ```sql
+   -- Create the registry user
+   CREATE USER registry WITH PASSWORD '<your_registry_password>';
+
+   -- Create the registry database
+   CREATE DATABASE registry OWNER registry;
+   ```
+
+1. For cloud-managed services, grant additional roles as needed:
+
+   {{< tabs >}}
+
+   {{< tab title="Amazon RDS" >}}
+
+   ```sql
+   GRANT rds_superuser TO registry;
+   ```
+
+   {{< /tab >}}
+
+   {{< tab title="Azure database" >}}
+
+   ```sql
+   GRANT azure_pg_admin TO registry;
+   ```
+
+   {{< /tab >}}
+
+   {{< tab title="Google Cloud SQL" >}}
+
+   ```sql
+   GRANT cloudsqlsuperuser TO registry;
+   ```
+
+   {{< /tab >}}
+
+   {{< /tabs >}}
+
+## Create a built-in metadata database
+
+{{< alert type="warning" >}}
+
+You can use the built-in cloud native metadata database for trial purposes only.
+You should not use it in production.
 
 {{< /alert >}}
+
+### Create the database automatically
+
+{{< history >}}
+
+- [Introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5931) in GitLab 18.3.
+
+{{</ history >}}
+
+Prerequisites:
+
+- Helm chart 9.3 or later.
+
+New installations that set `postgresql.install=true`
+when installing the GitLab chart, automatically create the registry database,
+username, and shared secret `RELEASE-registry-database-password`.
+
+This automatic provisioning:
+
+- Creates a dedicated `registry` database.
+- Sets up a `registry` user with appropriate permissions.
+- Generates a Kubernetes secret named `RELEASE-registry-database-password` containing the database password.
+- Configures the necessary database schema and permissions.
+
+With automatic database creation, you can skip the manual database creation
+steps and immediately [enable the metadata database](#enable-the-metadata-database).
+
+### Create the database manually
+
+To manually create the metadata database using the built-in PostgreSQL server:
 
 1. Create the secret with the database password:
 
    ```shell
-   kubectl create secret generic RELEASE_NAME-registry-database-password --from-literal=password=randomstring
+   kubectl create secret generic RELEASE_NAME-registry-database-password --from-literal=password=<your_registry_password>
    ```
 
 1. Log into your database instance:
@@ -92,21 +174,21 @@ there will be some variation in how you connect.
    ...@gitlab-postgresql-0/$ exit
    ```
 
-## Enable the metadata database for Helm charts installations
+## Enable the metadata database
+
+After you've created the database, enable it. Additional steps are required when migrating an existing container registry.
+
+### Prerequisites
 
 Prerequisites:
 
 - GitLab 17.3 or later.
-- PostgreSQL database version 12 or later, accessible from the registry pods.
+- A deployment of the [required version of PostgreSQL](https://docs.gitlab.com/install/requirements/#postgresql), accessible from the registry pods.
 - Access to the Kubernetes cluster and the Helm deployment locally.
 - SSH access to the registry pods.
 
-Follow the instructions that match your situation:
-
-- [New installation](#new-installations) or enabling the container registry for the first time.
-- Migrate existing container images to the metadata database:
-  - [One-step migration](#one-step-migration). Only recommended for relatively small registries or no requirement to avoid downtime.
-  - [Three-step migration](#three-step-migration). Recommended for larger container registries.
+Also read the [before you start](https://docs.gitlab.com/administration/packages/container_registry_metadata_database/#before-you-start)
+section of the Registry administration guide.
 
 {{< alert type="note" >}}
 
@@ -114,16 +196,10 @@ For a list of import times for various test and user registries, see [this table
 
 {{< /alert >}}
 
-### Before you start
+### Enable for new registries
 
-Read the [before you start](https://docs.gitlab.com/administration/packages/container_registry_metadata_database/#before-you-start)
-section of the Registry administration guide.
+To enable the database for a new container registry:
 
-### New installations
-
-To enable the database:
-
-1. [Create the database and Kubernetes secret](#create-the-database).
 1. Get the current Helm values for your release and save them to a file.
    For example, for a release named `gitlab` and a file named `values.yml`:
 
@@ -154,8 +230,8 @@ To enable the database:
          enabled: true  # this option will execute the schema migration as part of the registry deployment
    ```
 
-1. Optional. You can verify the schema migrations have been applied properly.
-   You can either:
+1. Optional. Verify the schema migrations have been applied properly. You can either:
+
    - Review the log output of the migrations job, for example:
 
      ```shell
@@ -174,9 +250,9 @@ To enable the database:
 
 The registry is ready to use the metadata database!
 
-### Existing registries
+### Enable for and import existing registries
 
-You can migrate your existing container registry data in one step or three steps.
+You can import your existing container registry data in one step or three steps.
 A few factors affect the duration of the migration:
 
 - The size of your existing registry data.
@@ -186,35 +262,28 @@ A few factors affect the duration of the migration:
 
 {{< alert type="note" >}}
 
-Work to automate the migration process is being tracked in [issue 5293](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5293).
+Work to automate the import process is being tracked in [issue 5293](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5293).
 
 {{< /alert >}}
 
-#### Requirements
+Before attempting the one-step or three-step import, get the current Helm values for your release and save them into a file.
+For example, for a release named `gitlab` and a file named `values.yml`:
 
-You must complete the following steps before attempting the one-step or
-three-step migration:
+```shell
+helm get values gitlab > values.yml
+```
 
-1. [Create the database and Kubernetes secret](#create-the-database).
-1. Get the current Helm values for your release and save them into a file.
-   For example, for a release named `gitlab` and a file named `values.yml`:
+#### Import in one step
 
-   ```shell
-   helm get values gitlab > values.yml
-   ```
+When doing a one-step import, be aware that:
 
-#### One-step migration
-
-When doing a one-step migration, be aware that:
-
-- The registry must remain in `read-only` mode during the migration.
-- If the Pod where the migration is being executed is terminated,
+- The registry must remain in `read-only` mode during the import.
+- If the Pod where the import is being executed is terminated,
   you have to completely restart the process. The work to improve this process is tracked in
   [issue 5293](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/5293).
 
-To migrate existing container registry to the metadata database in one step:
+To import existing container registry to the metadata database in one step:
 
-1. Follow the steps described in the [requirements section](#requirements).
 1. Find the `registry:` section in the `values.yml` file and add the `database` section.
    Set:
    - `database.configure` to `true`.
@@ -294,15 +363,15 @@ To migrate existing container registry to the metadata database in one step:
 
 You can now use the metadata database for all operations!
 
-#### Three-step migration
+#### Import in three steps
 
-You can migrate existing container registry data to the metadata database in three separate steps,
+You can import existing container registry data to the metadata database in three separate steps,
 which is recommended if:
 
 - The registry contains a large amount of data.
 - You need to minimize downtime during the migration.
 
-To migrate in three steps, you must:
+To import in three steps, you must:
 
 1. Pre-import repositories
 1. Import all repository data
@@ -311,7 +380,7 @@ To migrate in three steps, you must:
 {{< alert type="note" >}}
 
 Users have reported step one import completed at [rates of 2 to 4 TB per hour](https://gitlab.com/gitlab-org/gitlab/-/issues/423459).
-At the slower speed, registries with over 100TB of data could take longer than 48 hours.
+At the slower speed, registries with over 100 TB of data could take longer than 48 hours.
 
 {{< /alert >}}
 
@@ -323,12 +392,11 @@ on the size of your registry. You can still use the registry during this process
 {{< alert type="warning" >}}
 
 It is [not yet possible](https://gitlab.com/gitlab-org/container-registry/-/issues/1162)
-to restart the migration, so it's important to let the migration run to completion.
+to restart the import, so it's important to let the import run to completion.
 If you must halt the operation, you have to restart this step.
 
 {{< /alert >}}
 
-1. Follow the steps described in the [requirements section](#requirements).
 1. Find the `registry:` section in the `values.yml` file and add the `database` section.
    Set:
    - `database.configure` to `true`.
@@ -527,7 +595,7 @@ Run `registry database migrate up --help` for details.
 
 ### Error: `panic: interface conversion: interface {} is nil, not bool`
 
-When importing [existing registries](#existing-registries), you might see this error:
+When importing existing registries, you might see this error:
 
 ```shell
 panic: interface conversion: interface {} is nil, not bool

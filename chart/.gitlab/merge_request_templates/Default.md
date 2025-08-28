@@ -26,9 +26,10 @@ For anything in this list which will not be completed, please provide a reason i
 ## Reviewers checklist
 
 - [ ] MR has a green pipeline on https://gitlab.com/gitlab-org/charts/gitlab.
-- [ ] Consider downstream impact to the Operator, as per [evaluating impact from changes to GitLab Chart](https://docs.gitlab.com/operator/developer/charts_dependency).
+- [ ] Consider downstream impact to the Operator, as per [evaluating impact from changes to GitLab chart](https://docs.gitlab.com/operator/developer/charts_dependency).
 
-/label ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::Self Managed" ~"workflow::in dev"
+/label ~"workflow::in dev"
+/label ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::operate"
 /assign me
 
 <!-- template sourced from https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/.gitlab/merge_request_templates/Default.md -->

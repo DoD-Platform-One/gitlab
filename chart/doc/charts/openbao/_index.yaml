@@ -1,0 +1,34 @@
+---
+stage: GitLab Delivery
+group: Operate
+info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
+title: OpenBao chart
+---
+
+{{< details >}}
+
+- Tier: Ultimate
+- Offering: GitLab.com, GitLab Self-Managed
+- Status: Experiment
+
+{{< /details >}}
+
+{{< history >}}
+
+- Introduced as a [experiment](https://docs.gitlab.com/policy/development_stages_support/#experiment) in GitLab 18.3.
+
+{{< /history >}}
+
+{{< alert type="warning" >}}
+
+This feature is in [experimental](https://docs.gitlab.com/policy/development_stages_support/#experimental) and subject to change without notice.
+For more information, see [epic 14234](https://gitlab.com/groups/gitlab-org/-/epics/14243).
+
+{{< /alert >}}
+
+The OpenBao chart provides experimental support to install OpenBao.
+For more information, see the [openbao chart repository](https://gitlab.com/gitlab-org/cloud-native/charts/openbao).
+
+The chart is meant for development purposes only at the moment.
+
+See the [developer docs](../../development/openbao/_index.md) to setup OpenBao.

@@ -263,6 +263,237 @@ describe 'registry configuration' do
 
   describe 'templates/configmap.yaml' do
     describe 'database config' do
+      context 'when global registry.database.{user,name} settings are set' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              registry:
+                database:
+                  user: global_test_user
+                  name: global_test_db
+            registry:
+              database:
+                enabled: true
+                # user and name not specified locally
+          )).deep_merge(default_values)
+        end
+
+        it 'uses global registry database settings' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            database:
+              enabled: true
+              host: "test-postgresql.default.svc"
+              port: 5432
+              user: global_test_user
+              password: "DB_PASSWORD_FILE"
+              dbname: global_test_db
+              sslmode: disable
+            CONFIG
+          )
+        end
+      end
+
+      context 'when global and local registry.database.{user,name} settings are set' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              registry:
+                database:
+                  user: global_test_user
+                  name: global_test_db
+            registry:
+              database:
+                enabled: true
+                user: local_test_user
+                name: local_test_db
+          )).deep_merge(default_values)
+        end
+
+        it 'gives precedence to local registry database settings' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            database:
+              enabled: true
+              host: "test-postgresql.default.svc"
+              port: 5432
+              user: local_test_user
+              password: "DB_PASSWORD_FILE"
+              dbname: local_test_db
+              sslmode: disable
+            CONFIG
+          )
+        end
+      end
+
+      context 'when local registry settings are empty strings' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              registry:
+                database:
+                  user: global_registry_user
+                  name: global_registry_db
+            registry:
+              database:
+                enabled: true
+                user: ""
+                name: ""
+          )).deep_merge(default_values)
+        end
+
+        it 'treats empty strings as not set and falls back to global settings' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            database:
+              enabled: true
+              host: "test-postgresql.default.svc"
+              port: 5432
+              user: global_registry_user
+              password: "DB_PASSWORD_FILE"
+              dbname: global_registry_db
+              sslmode: disable
+            CONFIG
+          )
+        end
+      end
+
+      context 'when database.configure is used with global settings' do
+        let(:values) do
+          YAML.safe_load(%(
+            postgresql:
+              install: true
+              image:
+                tag: 16.6.0
+            global:
+              registry:
+                database:
+                  user: global_registry_user
+                  name: global_registry_db
+            registry:
+              database:
+                configure: true
+                enabled: false
+          )).deep_merge(default_values)
+        end
+
+        it 'respects configure flag and uses global settings' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl')).to include(
+            <<~CONFIG
+            database:
+              enabled: false
+              host: "test-postgresql.default.svc"
+              port: 5432
+              user: global_registry_user
+              password: "DB_PASSWORD_FILE"
+              dbname: global_registry_db
+              sslmode: disable
+            CONFIG
+          )
+        end
+      end
+
+      describe 'global registry database with postgresql initialization' do
+        context 'when postgresql.install is true and global.registry.database is configured' do
+          let(:values) do
+            YAML.safe_load(%(
+              postgresql:
+                install: true
+                image:
+                  tag: 16.6.0
+              global:
+                registry:
+                  database:
+                    user: global_registry_user
+                    name: global_registry_db
+              registry:
+                database:
+                  enabled: true
+                  user: local_registry_user
+                  name: local_registry_db
+            )).deep_merge(default_values)
+          end
+
+          it 'creates the registry database initialization script' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            init_script = t.dig('ConfigMap/test-postgresql-init-db', 'data', 'init_registry.sh')
+            expect(init_script).not_to be_nil
+
+            expect(init_script).to include('CREATE USER \\"local_registry_user\\" WITH CREATEDB PASSWORD \'${REGISTRY_PASSWORD}\';')
+            expect(init_script).to include('CREATE DATABASE \\"local_registry_db\\" WITH OWNER \\"local_registry_user\\";')
+            expect(init_script).to include('GRANT ALL PRIVILEGES ON DATABASE \\"local_registry_db\\" TO \\"local_registry_user\\";')
+          end
+        end
+
+        context 'when postgresql.install is false' do
+          let(:values) do
+            YAML.safe_load(%(
+              postgresql:
+                install: false
+              global:
+                registry:
+                  database:
+                    user: global_registry_user
+                    name: global_registry_name
+              registry:
+                database:
+                  enabled: true
+            )).deep_merge(default_values)
+          end
+
+          it 'does not create the registry database initialization script' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            # When postgresql.install is false, the ConfigMap should not be rendered
+            expect(t.resource_exists?('ConfigMap/test-postgresql-init-db')).to be false
+          end
+        end
+
+        context 'with default global registry database values' do
+          let(:values) do
+            YAML.safe_load(%(
+             postgresql:
+               install: true
+               image:
+                 tag: 16.6.0
+             registry:
+               database:
+                 enabled: true
+           )).deep_merge(default_values)
+          end
+
+          it 'uses default global registry database settings in the init db script' do
+            t = HelmTemplate.new(values)
+            expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+            init_script = t.dig('ConfigMap/test-postgresql-init-db', 'data', 'init_registry.sh')
+
+            # Updated expectations to match the actual escaped format
+            expect(init_script).to include('POSTGRES_POSTGRES_PASSWORD=$(cat ${POSTGRES_POSTGRES_PASSWORD_FILE})')
+            expect(init_script).to include('CREATE USER \\"registry\\" WITH CREATEDB PASSWORD \'${REGISTRY_PASSWORD}\';')
+            expect(init_script).to include('CREATE DATABASE \"registry\" WITH OWNER \"registry\";')
+            expect(init_script).to include('GRANT ALL PRIVILEGES ON DATABASE \"registry\" TO \"registry\";')
+            expect(init_script).to include('SELECT 1 FROM pg_user WHERE usename = \'registry\'')
+            expect(init_script).to include('grep -qw "registry"')
+          end
+        end
+      end
+
       context 'when primary is provided' do
         let(:values) do
           YAML.safe_load(%(
@@ -1339,6 +1570,174 @@ describe 'registry configuration' do
           expect(cache_secret).not_to be_empty
         end
       end
+
+      context 'when customer provides a custom redis rate limiting configuration with a registry Sentinel password' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: sentinel1.example.com
+                    port: 26379
+                  - host: sentinel2.example.com
+                    port: 26379
+                sentinelAuth:
+                  enabled: true
+                  secret: global-redis-sentinel-secret
+                  key: password
+            registry:
+              database:
+                enabled: true
+              redis:
+                rateLimiting:
+                  enabled: true
+                  sentinelpassword:
+                    enabled: true
+                    secret: local-redis-sentinel-secret
+                    key: password
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis rate limiting settings in the expected manner' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          registry_yml = render_yaml(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl'))
+          redis = registry_yml.dig('redis', 'ratelimiter')
+          expect(redis['enabled']).to eq(true)
+          expect(redis['addr']).to eq("sentinel1.example.com:26379,sentinel2.example.com:26379")
+          expect(redis['mainname']).to eq('redis.example.com')
+          expect(redis['sentinelpassword']).to eq(sentinel_password)
+
+          projected_secret = t.get_projected_secret('Deployment/test-registry', 'registry-secrets', 'local-redis-sentinel-secret')
+          expect(projected_secret).to eql(
+            "name" => "local-redis-sentinel-secret",
+            "items" => [
+              {
+                "key" => "password",
+                "path" => "redis-sentinel/redis-sentinel-password"
+              }
+            ]
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis cache rate limiting configuration with a registry Sentinel password' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: sentinel1.example.com
+                    port: 26379
+                  - host: sentinel2.example.com
+                    port: 26379
+                sentinelAuth:
+                  enabled: true
+                  secret: global-redis-sentinel-secret
+                  key: password
+            registry:
+              database:
+                enabled: true
+              redis:
+                cache:
+                  enabled: true
+                  sentinelpassword:
+                    enabled: true
+                    secret: local-redis-cache-sentinel-secret
+                    key: password
+                rateLimiting:
+                  enabled: true
+                  sentinelpassword:
+                    enabled: true
+                    secret: local-redis-ratelimiting-sentinel-secret
+                    key: password
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis cache and rate limiting settings in the expected manner' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          registry_yml = render_yaml(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl'))
+          redis = registry_yml.dig('redis', 'ratelimiter')
+          expect(redis['enabled']).to eq(true)
+          expect(redis['addr']).to eq("sentinel1.example.com:26379,sentinel2.example.com:26379")
+          expect(redis['mainname']).to eq('redis.example.com')
+          expect(redis['sentinelpassword']).to eq(sentinel_password)
+
+          projected_cache_secret = t.get_projected_secret('Deployment/test-registry', 'registry-secrets', 'local-redis-cache-sentinel-secret')
+          expect(projected_cache_secret).to eql(
+            "name" => "local-redis-cache-sentinel-secret",
+            "items" => [
+              {
+                "key" => "password",
+                "path" => "redis-sentinel/redis-sentinel-password"
+              }
+            ]
+          )
+          projected_ratelimiting_secret = t.get_projected_secret('Deployment/test-registry', 'registry-secrets', 'local-redis-ratelimiting-sentinel-secret')
+          expect(projected_ratelimiting_secret).to eql(
+            "name" => "local-redis-ratelimiting-sentinel-secret",
+            "items" => [
+              {
+                "key" => "password",
+                "path" => "redis-sentinel/redis-sentinel-password"
+              }
+            ]
+          )
+        end
+      end
+
+      context 'when customer provides a custom redis rate limiting configuration with global Sentinel password' do
+        let(:values) do
+          YAML.safe_load(%(
+            global:
+              redis:
+                host: redis.example.com
+                sentinels:
+                  - host: sentinel1.example.com
+                    port: 26379
+                  - host: sentinel2.example.com
+                    port: 26379
+                sentinelAuth:
+                  enabled: true
+                  secret: global-redis-sentinel-secret
+                  key: password
+            registry:
+              database:
+                enabled: true
+              redis:
+                rateLimiting:
+                  enabled: true
+        )).deep_merge(default_values)
+        end
+
+        it 'populates the redis cache settings in the expected manner' do
+          t = HelmTemplate.new(values)
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          registry_yml = render_yaml(t.dig('ConfigMap/test-registry', 'data', 'config.yml.tpl'))
+          redis = registry_yml.dig('redis', 'ratelimiter')
+          expect(redis['enabled']).to eq(true)
+          expect(redis['addr']).to eq("sentinel1.example.com:26379,sentinel2.example.com:26379")
+          expect(redis['mainname']).to eq('redis.example.com')
+          expect(redis['sentinelpassword']).to eq(sentinel_password)
+
+          projected_secret = t.get_projected_secret('Deployment/test-registry', 'registry-secrets', 'global-redis-sentinel-secret')
+          expect(projected_secret).to eql(
+            "name" => "global-redis-sentinel-secret",
+            "items" => [
+              {
+                "key" => "password",
+                "path" => "redis-sentinel/redis-sentinel-password"
+              }
+            ]
+          )
+        end
+      end
     end
 
     describe 'redis load balancing config' do
@@ -2094,6 +2493,162 @@ describe 'registry configuration' do
                   hard_action: "log"
           RATE_LIMITER_CONFIG
         )
+      end
+    end
+  end
+
+  describe 'api.enabled' do
+    let(:api_enabled) { true }
+    let(:t) { HelmTemplate.new(values) }
+
+    let(:values) do
+      YAML.safe_load(%(
+        global:
+          ingress:
+            configureCertmanager: false
+        registry:
+          enabled: true
+          api:
+            enabled: #{api_enabled}
+      ))
+    end
+
+    context 'when api.enabled is true (default)' do
+      it 'creates all registry resources' do
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        # Verify resources are created
+        expect(t.resource_exists?('Service/test-registry')).to be true
+        expect(t.resource_exists?('Deployment/test-registry')).to be true
+        expect(t.resource_exists?('HorizontalPodAutoscaler/test-registry')).to be true
+        expect(t.resource_exists?('PodDisruptionBudget/test-registry-v1')).to be true
+      end
+
+      context 'when api.enabled is combined with registry disabled' do
+        let(:values) do
+          super().merge(YAML.safe_load(%(
+            registry:
+              enabled: false
+          )))
+        end
+
+        it 'does not create any registry resources' do
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          # When registry is disabled, nothing should be created regardless of api.enabled
+          expect(t.resource_exists?('Service/test-registry')).to be false
+          expect(t.resource_exists?('Deployment/test-registry')).to be false
+          expect(t.resource_exists?('HorizontalPodAutoscaler/test-registry')).to be false
+          expect(t.resource_exists?('PodDisruptionBudget/test-registry-v1')).to be false
+        end
+      end
+    end
+
+    context 'when api.enabled is false' do
+      let(:api_enabled) { false }
+
+      it 'does not create registry application components' do
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        # Verify resources are NOT created
+        expect(t.resource_exists?('Service/test-registry')).to be false
+        expect(t.resource_exists?('Deployment/test-registry')).to be false
+        expect(t.resource_exists?('HorizontalPodAutoscaler/test-registry')).to be false
+        expect(t.resource_exists?('PodDisruptionBudget/test-registry-v1')).to be false
+      end
+    end
+  end
+
+  describe 'Registry migrations-only mode' do
+    let(:enabled) { true }
+    let(:t) { HelmTemplate.new(values) }
+
+    let(:values) do
+      YAML.safe_load(%(
+        global:
+          ingress:
+            enabled: #{enabled}
+            configureCertmanager: false
+          monitoring:
+            enabled: true
+        registry:
+          api:
+            enabled: #{enabled}
+          database:
+            enabled: true
+            migrations:
+              enabled: true
+          networkpolicy:
+            enabled: #{enabled}
+          serviceAccount:
+            enabled: true
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: #{enabled}
+      ))
+    end
+
+    context 'when api.enabled is true and other resources are enabled' do
+      it 'creates all registry resources' do
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        # Verify resources are created
+        expect(t.resource_exists?('Service/test-registry')).to be true
+        expect(t.resource_exists?('Deployment/test-registry')).to be true
+        expect(t.resource_exists?('HorizontalPodAutoscaler/test-registry')).to be true
+        expect(t.resource_exists?('PodDisruptionBudget/test-registry-v1')).to be true
+        expect(t.resource_exists?('Ingress/test-registry')).to be true
+        expect(t.resource_exists?('NetworkPolicy/test-registry-v1')).to be true
+        expect(t.resource_exists?('ConfigMap/test-registry')).to be true
+        expect(t.resource_exists?('ServiceAccount/test-registry')).to be true
+        expect(t.resource_exists?('ServiceMonitor/test-registry')).to be true
+      end
+
+      # If Keda is enabled, HPA is automatically disabled, so we verify that Keda can be enabled
+      # in a separate spec.
+      context 'when keda is enabled' do
+        let(:values) do
+          super().deep_merge(YAML.safe_load(%(
+            global:
+              keda:
+                enabled: true
+            registry:
+              keda:
+                triggers: true
+            )))
+        end
+
+        it 'creates ScaledObject resource' do
+          expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+          expect(t.resource_exists?('ScaledObject/test-registry')).to be true
+        end
+      end
+    end
+
+    # This spec verifies that it is possible to disable all resources that are not required
+    # for executing migrations.
+    # This allows the use of one Helm release for creating the Deployment and other resources
+    # and executing pre-migrations, and another Helm release for executing post-deployment
+    # migrations without the second Helm release creating duplicate resources.
+    #
+    # If a new resource is added to the chart, and it is not required
+    # for executing migrations, it should be possible to disable it using the existing
+    # `registry.api.enabled` or another Helm value. Then you can disable the new resource
+    # in this spec.
+    context 'when api.enabled is false and other resources are disabled' do
+      let(:enabled) { false }
+
+      it 'creates only the migration job' do
+        expect(t.exit_code).to eq(0), "Unexpected error code #{t.exit_code} -- #{t.stderr}"
+
+        # Verify only resources required for executing migrations are created
+        resources = t.resources('test-registry')
+        expect(resources.length).to eq(3)
+        expect(resources).to include('ConfigMap/test-registry')
+        expect(resources).to include('ServiceAccount/test-registry')
+        expect(resources).to include(a_string_including('Job/test-registry-migrations-'))
       end
     end
   end

@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Using the Praefect chart
 ---
@@ -20,12 +20,13 @@ See our [Praefect GA release Epic](https://gitlab.com/groups/gitlab-org/charts/-
 
 {{< /alert >}}
 
-The Praefect chart is used to manage a [Gitaly cluster](https://docs.gitlab.com/administration/gitaly/praefect/) inside a GitLab installment deployed with the Helm charts.
+The Praefect chart is used to manage [Gitaly Cluster (Praefect)](https://docs.gitlab.com/administration/gitaly/praefect/)
+inside a GitLab installment deployed with the Helm charts.
 
-## Known limitations and issues
+## Known issues
 
 1. The database has to be [manually created](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2310).
-1. The cluster size is fixed: [Gitaly Cluster does not currently support autoscaling](https://gitlab.com/gitlab-org/gitaly/-/issues/2997).
+1. The cluster size is fixed: [Gitaly Cluster (Praefect) does not support autoscaling](https://gitlab.com/gitlab-org/gitaly/-/issues/2997).
 1. Using a Praefect instance in the cluster to manage Gitaly instances outside the cluster is [not supported](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2662).
 
 ## Requirements
@@ -56,7 +57,8 @@ global:
 
 ### Multiple virtual storages
 
-Multiple virtual storages can be configured (see [Gitaly Cluster](https://docs.gitlab.com/administration/gitaly/praefect/) documentation). For example:
+Multiple virtual storages can be configured (see [Gitaly Cluster (Praefect)](https://docs.gitlab.com/administration/gitaly/praefect/)
+documentation). For example:
 
 ```yaml
 global:
@@ -151,7 +153,7 @@ therefore the name is already taken by the non-Praefect configuration.
 
 {{< /alert >}}
 
-The instructions to [migrate to Gitaly Cluster](https://docs.gitlab.com/administration/gitaly/#migrating-to-gitaly-cluster)
+The instructions to [migrate to Gitaly Cluster (Praefect)](https://docs.gitlab.com/administration/gitaly/praefect/#migrate-to-gitaly-cluster-praefect)
 can then be followed to move data from the `default` storage to `virtualStorage2`. If additional storages
 were defined under `global.gitaly.internal.names`, be sure to migrate repositories from those storages as well.
 
@@ -172,7 +174,7 @@ global:
       maxUnavailable: 2
 ```
 
-The instructions to [migrate to Gitaly Cluster](https://docs.gitlab.com/administration/gitaly/#migrating-to-gitaly-cluster)
+The instructions to [migrate to Gitaly Cluster (Praefect)](https://docs.gitlab.com/administration/gitaly/praefect/#migrate-to-gitaly-cluster-praefect)
 can be followed again to move data from `virtualStorage2` to the newly-added `default` storage if desired.
 
 Finally, see the [repository storage paths documentation](https://docs.gitlab.com/administration/repository_storage_paths/#choose-where-new-repositories-are-stored)

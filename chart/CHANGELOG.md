@@ -2,6 +2,58 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 9.3.0 (2025-08-20)
+
+### Added (3 changes)
+
+- [Add sentinel password support for Redis rate limiting](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/0ae7b60c3258a682dffc9547a6f546e28e2cbd2d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4417))
+- [Create registry default database](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/ac4008500582ae26ec9674ddd9ca5447371fc628) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4342))
+- [Support configuring CI/CD token issuer](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/b9d0be0f21bc24ddb276b60c7754dc8c86604d8e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4403))
+
+### Fixed (4 changes)
+
+- [fix (bug): Use the key specified in values to read password](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/d5af718b1d3d41ba7b7549418d8b508d59a12920) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4470))
+- [Fix GitLab Exporter default listenAddr](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/79fd55e0df671e3c5a1d64254b60d3656b795f7b) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4453))
+- [Fix NGINX default backend label mismatch](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4ce625cefeb2e963a3c51b3b996c55f78fc920b9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4435))
+- [NGINX Ingress: Set static election ID](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/d3f044988f046d8de6e631dad1662c56cfa73236) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4415))
+
+### Changed (11 changes)
+
+- [Update HAProxy Kubernetes Ingress from 1.32.0 to 1.39.4](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/3e95cad9dd7c657ad36cdb5620f657f03976dc9d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4463))
+- [Update dependency container-registry to v4.26.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8c25d506959d48b92fc22bb6a55a2fc3a861d98d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4466))
+- [Update Helm release openbao to v0.3.3](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/185248eee079c323b6f49af8c4708f078ecdca12) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4425))
+- [Update Helm release gitlab-runner to v0.79.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/8148d966f3e8adef4d007c9efd4065792a482247) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4439))
+- [Update Helm release gitlab-zoekt to v3](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/feca626474c56e9def9759abe4e0b696fbebdcb7) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4444))
+- [Update dependency gitlab-exporter to v16.0.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7be989f8a12fbd46db37c2bdaf5bdb52fa92dc46) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4443))
+- [PostgreSQL/Redis: Switch to bitnami legacy repo](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/aeabf360d5015d3b6858d457984b89a721adcfb9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4421))
+- [Update Helm release gitlab-runner to v0.79.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/50ce6fd781dd16e036f6e54a92d9fa53f2bcca33) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4413))
+- [Update Helm release gitlab-zoekt to v2.8.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c7c56b976e1374bf84db3e6d00a23a5e00708b70) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4422))
+- [Update certmanager from v1.12 to v1.17](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c990cd36ed7d6910be91a7bd01e65ad98fed8148) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4234))
+- [Update dependency container-registry to v4.25.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/ca12af55763a3a4ae2fe8352b35f9a7aef91d6aa) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4412))
+
+## 9.2.4 (2025-08-18)
+
+No changes.
+
+## 9.2.3 (2025-08-18)
+
+No changes.
+
+## 9.2.2 (2025-08-12)
+
+### Added (1 change)
+
+- [Support configuring CI/CD token issuer](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/992936c02038ff7e9db94d355dfb739a80603251)
+
+### Fixed (1 change)
+
+- [NGINX Ingress: Set static election ID](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/a78aae6ec8c86ed295d7d0b4e7826522a8af138a)
+
+### Changed (2 changes)
+
+- [Backport Runner 0.79.1](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/d191a17c25a9353ddc336cfdec742d79fd25c6d1)
+- [PostgreSQL/Redis: Switch to bitnami legacy repo](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/4e39f1a125a9a6916d5a65f1576a9301300d1d6e)
+
 ## 9.2.1 (2025-07-22)
 
 No changes.
@@ -31,6 +83,20 @@ No changes.
 - [Migrations: add objectstorage bits for migrations that test config](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/e17eb09c5ff81cf289900746df3473908769c4e6) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4349))
 - [Update recommended Helm version to 3.17.3+](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4e70185ac1f8ee8d755b77b87190d5e30eb91c14) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4336))
 - [Update Helm release gitlab-runner to v0.78.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c0509f329431e8eb8a9b9e991eb2608be97617c6) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4344))
+
+## 9.1.4 (2025-08-12)
+
+### Added (1 change)
+
+- [Support configuring CI/CD token issuer](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/5d88f06399d02ef17b6414c42854a6dacac701c7)
+
+### Changed (1 change)
+
+- [PostgreSQL/Redis: Switch to bitnami legacy repo](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/434201a5d8271400b4bf7a1b1c1ce45ff2aaaad7)
+
+## 9.1.3 (2025-07-22)
+
+No changes.
 
 ## 9.1.2 (2025-07-09)
 
@@ -72,6 +138,16 @@ No changes.
 - [Update Helm release prometheus to v27.14.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/7f39e0da714f78f363a34e03c7e51c8d46dea380) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4265))
 - [Update dependency danger-review to v2.1.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/fb86835cb4c5b39ceea2e2349890016b2ae2ca49) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4196))
 - [Update Helm release gitlab-runner to v0.75.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/5e81a8f1e9a8a2d26de60edcf075a8797c3ea9e2) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4181))
+
+## 9.0.6 (2025-08-12)
+
+### Changed (1 change)
+
+- [PostgreSQL/Redis: Switch to bitnami legacy repo](https://gitlab.com/gitlab-org/security/charts/gitlab/-/commit/f71b5d06e12f9a4123a0192db28b2d89ea7a08d2)
+
+## 9.0.5 (2025-07-22)
+
+No changes.
 
 ## 9.0.4 (2025-07-09)
 
@@ -120,6 +196,10 @@ No changes.
 ### Removed (1 change)
 
 - [Remove nginx-ingress fallback](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4bb007f998c53680a70c640743e8fef978df22a9) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4225))
+
+## 8.11.8 (2025-08-14)
+
+No changes.
 
 ## 8.11.7 (2025-07-09)
 

@@ -216,5 +216,8 @@ Usage:
 {{- if $.Values.global.openbao.enabled }}
 openbao:
   url: {{ include "gitlab.openbao.url" $ | quote }}
+  {{- if include "gitlab.openbao.internal_url" . }}
+  internal_url: {{ include "gitlab.openbao.internal_url" . | quote }}
+  {{- end }}
 {{- end }}
 {{- end -}}{{/* "gitlab.appConfig.openbao.configuration" */}}

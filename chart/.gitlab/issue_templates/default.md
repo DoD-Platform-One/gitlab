@@ -47,4 +47,4 @@ Support: Please do not raise support issues for GitLab.com on this tracker. See 
 
 <!-- template sourced from https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/.gitlab/issue_templates/default.md -->
 
-/label ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::Self Managed"
+/label ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::operate"

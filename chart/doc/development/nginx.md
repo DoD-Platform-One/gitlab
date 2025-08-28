@@ -1,13 +1,13 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Working with the bundled NGINX
 ---
 
 ## NGINX
 
-We provide a fork of NGINX with this chart that we maintain via patch files. 
+We provide a fork of NGINX with this chart that we maintain via patch files.
 This approach was choosen to easier upgrade NGINX chart versions and have
 a better overview of changes that we made.
 

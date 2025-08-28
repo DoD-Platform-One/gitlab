@@ -574,6 +574,50 @@ describe 'gitlab.yml.erb configuration' do
           'openbao' => { 'url' => 'http://insecure.openbao.test' }
         )
       end
+
+      it 'populates openbao.internal_url from openbao.internal_host' do
+        t = HelmTemplate.new(HelmTemplate.with_defaults(%(
+          global:
+            openbao:
+              enabled: true
+              host: 'openbao.external'
+              internal_host: 'openbao.internal'
+        )))
+
+        expect(t.exit_code).to eq(0)
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']).to include(
+          'openbao' => {
+            'url' => 'https://openbao.external',
+            'internal_url' => 'https://openbao.internal'
+          }
+        )
+      end
+
+      it 'does not populate openbao.internal_url when not configured' do
+        t = HelmTemplate.new(HelmTemplate.with_defaults(%(
+          global:
+            openbao:
+              enabled: true
+              host: 'openbao.external'
+        )))
+
+        expect(t.exit_code).to eq(0)
+
+        expect(YAML.safe_load(
+          t.dig(
+            'ConfigMap/test-webservice',
+            'data',
+            'gitlab.yml.erb'
+          )
+        )['production']['openbao']).not_to have_key('internal_url')
+      end
     end
   end
 end

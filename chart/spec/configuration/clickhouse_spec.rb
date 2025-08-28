@@ -95,7 +95,7 @@ describe 'ClickHouse configuration' do
         expect(clickhouse_secret).not_to be_nil
         expect(clickhouse_secret['secret']['items']).to eq([
                                                              {
-                                                               'key' => 'password',
+                                                               'key' => 'main_password',
                                                                'path' => 'clickhouse/.main_password'
                                                              }
                                                            ])
@@ -106,7 +106,7 @@ describe 'ClickHouse configuration' do
         expect(clickhouse_secret).not_to be_nil
         expect(clickhouse_secret['secret']['items']).to eq([
                                                               {
-                                                                'key' => 'password',
+                                                                'key' => 'main_password',
                                                                 'path' => 'clickhouse/.main_password'
                                                               }
                                                             ])

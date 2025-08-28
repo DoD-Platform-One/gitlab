@@ -68,7 +68,11 @@ data:
     {{- if not .skipStorages }}
     {% $storages := coll.Slice {{ include "gitlab.gitaly.storageNames" . }} %}
     {{- end }}
-    {% $index := index (.Env.HOSTNAME | strings.Split "-" | coll.Reverse) 0 | conv.ToInt64 %}
+    {% $hostid := index (.Env.HOSTNAME | strings.Split "-" | coll.Reverse) 0 %}
+    {% $index := 0 %}
+    {% if regexp.Match "^[0-9]+$" $hostid %}
+      {% $index = conv.ToInt64 $hostid %}
+    {% end %}
     {% if len $storages | lt $index %}
     [[storage]]
     name = "{% index $storages $index %}"

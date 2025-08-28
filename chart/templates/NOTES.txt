@@ -16,7 +16,7 @@ https://docs.gitlab.com/charts/installation/index.html#use-the-reference-archite
 
 {{- /* PostgreSQL minimum version change */}}
 {{ $NOTICE }}
-The minimum required version of PostgreSQL is now 14. See https://docs.gitlab.com/charts/installation/upgrade.html for more details.
+The minimum required version of PostgreSQL is now 16. See https://docs.gitlab.com/charts/installation/upgrade.html for more details.
 
 {{- /* If the Container Registry metadata database is enabled */}}
 {{- if eq .Values.registry.database.enabled true }}
@@ -146,15 +146,6 @@ Using `PAGES_UPDATE_LEGACY_STORAGE` environment variable with bundled Pages serv
 {{-     end }}
 {{-   end }}
 {{- end }}
-
-{{- /* Deprecation notice for certmanager.install */}}
-{{- if hasKey .Values.certmanager "install" }}
-{{ $WARNING }}
-certmanager:
-    The configuration key `certmanager.install` has been renamed to `installCertmanager`.
-    Please update your values. The old value will be removed in GitLab 18.3/chart 9.3
-    to update the bundled certmanager and to enable schema validation.
-{{- end -}}
 
 {{- /* Deprecation notice for global.redis.password */}}
 {{- if kindIs "map" .Values.global.redis.password }}

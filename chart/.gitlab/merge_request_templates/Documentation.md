@@ -45,5 +45,6 @@ Documentation-related MRs should be reviewed by a Technical Writer for a non-blo
 - [ ] Review by assigned maintainer, who can always request/require the above reviews. Maintainer's review can occur before or after a technical writer review.
 - [ ] Ensure a release milestone is set.
 
-/label ~documentation ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::Self Managed" ~"type::maintenance" ~"maintenance::refactor"  ~"workflow::in dev"
+/label ~documentation ~"type::maintenance" ~"maintenance::refactor"  ~"workflow::in dev"
+/label ~"section::infrastructure platforms" ~"devops::gitlab delivery" ~"group::operate"
 /assign me

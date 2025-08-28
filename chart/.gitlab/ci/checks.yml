@@ -107,7 +107,7 @@ docs-test hugo:
       if [[ $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ [0-9]+-[0-9]+-stable ]]; then
         MAJOR=$(echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | cut -d '-' -f 1)
         MINOR=$(echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | cut -d '-' -f 2)
-        # Convert GitLab Chart style (8-9-stable-ee) to Docs style (17.9)
+        # Convert GitLab chart style (8-9-stable-ee) to Docs style (17.9)
         MAJOR=$((MAJOR+9))
         DOCS_BRANCH=$MAJOR.$MINOR
         echo "Using docs-gitlab-com branch $DOCS_BRANCH instead of main"

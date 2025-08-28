@@ -70,3 +70,13 @@ autoflow:
         temporal_oidc_url: "https://login.tmprl.cloud/.well-known/openid-configuration"
         authorized_user_emails: {{ default list ((((.Values.autoflow).temporal).workflowDataEncryption).codecServer).authorizedUserEmails | toJson }}
 {{- end }}
+
+{{- if (.Values.workspaces).enabled }}
+workspaces:
+  enabled: {{ .Values.workspaces.enabled }}
+  listen:
+    network: "tcp"
+    address: ":{{ .Values.service.workspacesServerPort }}"
+    listen_grace_period: {{ .Values.workspaces.listenGracePeriod | quote }}
+    shutdown_grace_period: {{ .Values.workspaces.shutdownGracePeriod | quote }}
+{{- end }}

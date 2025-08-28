@@ -69,4 +69,36 @@ describe 'checkConfig template' do
                      success_description: 'when global ServiceAccount name is provided with `create=false`',
                      error_description: 'when global ServiceAccount name is provided with `create=true`'
   end
+
+  describe 'clickHouse' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        global:
+          clickhouse:
+            enabled: true
+            main:
+              password:
+                secret: clickhouse-password
+                key: main_password
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        global:
+          clickhouse:
+            enabled: true
+            main:
+              key: main_password
+              password:
+                secret: clickhouse-password
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_output) { 'Please set `global.clickhouse.main.password.key` instead' }
+
+    include_examples 'config validation',
+                     success_description: 'when clickhouse password key is provided in main.password.key',
+                     error_description: 'when clickhouse password key is provided in main.key'
+  end
 end

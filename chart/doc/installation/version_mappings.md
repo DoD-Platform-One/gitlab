@@ -1,8 +1,8 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
-title: GitLab chart versions
+title: GitLab Helm chart versions
 ---
 
 {{< details >}}
@@ -12,7 +12,7 @@ title: GitLab chart versions
 
 {{< /details >}}
 
-The GitLab chart doesn't have the same version number as GitLab itself. This means that breaking changes can be
+The GitLab Helm chart doesn't have the same version number as GitLab itself. This means that breaking changes can be
 introduced to the chart independent of GitLab.
 
 To quickly see the full list of the `gitlab` chart versions and the GitLab version
@@ -23,12 +23,16 @@ helm repo add gitlab https://charts.gitlab.io/
 helm search repo -l gitlab/gitlab
 ```
 
-## Release notes for each supported version
+## Upgrade notes for each supported version
+
+Upgrade notes for each supported version of the GitLab Helm chart are available:
 
 - [9.0](../releases/9_0.md)
 - [8.0](../releases/8_0.md)
 - [7.0](../releases/7_0.md)
 - [6.0](../releases/6_0.md)
+
+See also the project's [CHANGELOG](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md).
 
 ## Previous chart versions
 
@@ -36,16 +40,28 @@ The table below maps some of the key previous supported chart versions and suppo
 
 | Chart version | GitLab version |
 |---------------|----------------|
+<<<<<<< HEAD
+=======
+| 9.3.0 | 18.3.0 |
+| 9.2.4 | 18.2.4 |
+| 9.2.3 | 18.2.3 |
+| 9.2.2 | 18.2.2 |
+>>>>>>> update "chart" (https://gitlab.com/gitlab-org/charts/gitlab) from "v9.2.2" (78e9a91726866be81f54005a08759cd7e47fd2a9) to "v9.3.0" (9779b23585bdcf40575d9c243d8d0641007802aa)
 | 9.2.1 | 18.2.1 |
 | 9.2.0 | 18.2.0 |
+| 9.1.4 | 18.1.4 |
+| 9.1.3 | 18.1.3 |
 | 9.1.2 | 18.1.2 |
 | 9.1.1 | 18.1.1 |
 | 9.1.0 | 18.1.0 |
+| 9.0.6 | 18.0.6 |
+| 9.0.5 | 18.0.5 |
 | 9.0.4 | 18.0.4 |
 | 9.0.3 | 18.0.3 |
 | 9.0.2 | 18.0.2 |
 | 9.0.1 | 18.0.1 |
 | 9.0.0 | 18.0.0 |
+| 8.11.8 | 17.11.7 |
 | 8.11.7 | 17.11.6 |
 | 8.11.6 | 17.11.5 |
 | 8.11.5 | 17.11.5 |
@@ -644,8 +660,3 @@ To see the full list, you can issue the following command with Helm:
 helm repo add gitlab https://charts.gitlab.io/
 helm search repo -l gitlab/gitlab
 ```
-
-For more information on charts versioning, see [the relevant documentation](../development/release.md#chart-versioning).
-
-Check the [releases documentation](#release-notes-for-each-supported-version) for information on important releases,
-and see the [changelog](https://gitlab.com/gitlab-org/charts/gitlab/blob/master/CHANGELOG.md) for the full details on any release.

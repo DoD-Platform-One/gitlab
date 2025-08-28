@@ -74,6 +74,7 @@ ingress:
   annotations: {}
   tls: {}
   agentPath: /
+  workspacesServerApiPath: /workspaces
   k8sApiPath: /k8s-proxy
   autoflowCodecServerApiPath: /autoflow/codec-server
 maxReplicas: 10
@@ -93,6 +94,7 @@ resources:
 service:
   externalPort: 8150
   internalPort: 8150
+  workspacesServerPort: 8160
   apiInternalPort: 8153
   kubernetesApiPort: 8154
   privateApiPort: 8155
@@ -156,6 +158,12 @@ autoflow: {}
 privateApi: {}
   # secret:
   # key:
+
+workspaces:
+  enabled: false
+  listenGracePeriod: "1s"
+  shutdownGracePeriod: "300s"
+
 deployment:
   terminationGracePeriodSeconds: 300
   strategy: {}

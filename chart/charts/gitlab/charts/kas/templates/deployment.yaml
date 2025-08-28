@@ -92,6 +92,12 @@ spec:
               # cs=codec server
               name: {{ template "name" . }}-af-cs-api
             {{- end }}
+            {{- if (.Values.workspaces).enabled }}
+            - containerPort: {{ .Values.service.workspacesServerPort }}
+              # ws=workspaces
+              # srv=server
+              name: {{ template "name" . }}-ws-srv
+            {{- end }}
           readinessProbe:
             httpGet:
               path: {{ .Values.observability.readinessProbe.path }}

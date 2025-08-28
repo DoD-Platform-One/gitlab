@@ -38,15 +38,25 @@ Expectation: input contents has .sentinels or .cluster, which is a List of Dict
       - key: {{ .Values.redis.cache.sentinelpassword.key | quote }}
         path: redis-sentinel/redis-sentinel-password
 {{-   end }}
-{{- else }}
-{{- if .redisMergedConfig.sentinelAuth.enabled }}
+{{- end }}
+{{- if .Values.redis.rateLimiting.sentinelpassword }}
+{{-   if .Values.redis.rateLimiting.sentinelpassword.enabled }}
+- secret:
+    name: {{ .Values.redis.rateLimiting.sentinelpassword.secret | quote }}
+    items:
+      - key: {{ .Values.redis.rateLimiting.sentinelpassword.key | quote }}
+        path: redis-sentinel/redis-sentinel-password
+{{-   end }}
+{{- end }}
+{{- if not (or .Values.redis.cache.sentinelpassword .Values.redis.rateLimiting.sentinelpassword) }}
+{{-   if .redisMergedConfig.sentinelAuth.enabled }}
 - secret:
     name: {{ template "gitlab.redis.sentinelAuth.secret" . }}
     items:
       - key: {{ template "gitlab.redis.sentinelAuth.key" . }}
         path: redis-sentinel/redis-sentinel-password
+{{-   end }}
 {{- end }}
-{{- end -}}
 {{- end -}}
 
 {{- define "gitlab.registry.redisRateLimitingSecret.mount" -}}
@@ -142,6 +152,9 @@ redis:
     {{- else if .redisMergedConfig.sentinels }}
     addr: {{ include "registry.redis.host.addresses" .redisMergedConfig | quote }}
     mainname: {{ template "gitlab.redis.host" . }}
+    {{-   if .redisMergedConfig.sentinelAuth.enabled }}
+    sentinelpassword: {% file.Read "/config/redis-sentinel/redis-sentinel-password" | strings.TrimSpace | data.ToJSON %}
+    {{-   end }}
     {{- else }}
     addr: {{ printf "%s:%s" ( include "gitlab.redis.host" . ) ( include "gitlab.redis.port" . ) | quote }}
     {{- end }}

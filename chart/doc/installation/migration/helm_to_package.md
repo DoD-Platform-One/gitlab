@@ -1,6 +1,6 @@
 ---
 stage: GitLab Delivery
-group: Self Managed
+group: Operate
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://handbook.gitlab.com/handbook/product/ux/technical-writing/#assignments
 title: Migrate from the Helm chart to the Linux package
 ---
@@ -76,7 +76,7 @@ To migrate from a Helm installation to a Linux package (Omnibus) installation:
         jq -r --arg host_key ${k} '.data[$host_key]' ${HOSTKEYS_JSON}  | base64 --decode > ssh/$k ; \
       done
       ```
-       
+
    1. Upload the converted files to the GitLab Rails nodes.
    1. On the target Rails node:
       1. Back up the `/etc/ssh/` directory, for example:
@@ -92,7 +92,7 @@ To migrate from a Helm installation to a Linux package (Omnibus) installation:
          ```
 
       1. Move the converted host key files in place (`/etc/ssh`):
-        
+
          ```shell
          for f in ssh/*; do sudo install -b -D  -o root -g root -m 0600 $f /etc/${f} ; done
          ```

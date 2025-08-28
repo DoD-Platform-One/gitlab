@@ -104,6 +104,10 @@ class HelmTemplate
     @mapped.has_key?(item)
   end
 
+  def resources(partial_string)
+    @mapped.keys.select { |key| key.include?(partial_string) }
+  end
+
   def volumes(item)
     @mapped.dig(item,'spec','template','spec','volumes')
   end

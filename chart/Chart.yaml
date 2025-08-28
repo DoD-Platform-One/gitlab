@@ -1,8 +1,8 @@
 ---
 apiVersion: v2
 name: gitlab
-version: 9.2.2-bb.0
-appVersion: 18.2.2
+version: 9.3.0-bb.0
+appVersion: 18.3.0
 description: GitLab is the most comprehensive AI-powered DevSecOps Platform.
 keywords:
 - gitlab
@@ -23,9 +23,9 @@ dependencies:
 - name: registry
   version: "*.*.*"
 - name: cert-manager
-  version: v1.12.17
+  version: v1.17.4
   repository: https://charts.jetstack.io/
-  condition: certmanager.install,installCertmanager
+  condition: installCertmanager
   alias: certmanager
 - name: prometheus
   version: 27.23.0
@@ -51,9 +51,13 @@ dependencies:
   version: "*.*.*"
   alias: nginx-ingress-geo
 - name: gitlab-zoekt
-  version: 2.7.0
+  version: 3.0.0
   repository: https://charts.gitlab.io/
   condition: gitlab-zoekt.install
+- name: openbao
+  version: 0.3.3
+  repository: https://charts.gitlab.io/
+  condition: openbao.install
 - name: gluon
   version: "0.7.0"
   repository: "oci://registry1.dso.mil/bigbang"
@@ -63,46 +67,46 @@ dependencies:
   version: 10.19.4
 - name: kubernetes-ingress
   alias: haproxy
-  version: 1.32.0
+  version: 1.39.4
   condition: haproxy.install
   repository: https://haproxytech.github.io/helm-charts
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Gitlab: 18.2.2
+    - Gitlab: 18.3.0
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/CHANGELOG.md) may help when reviewing this package.
   helm.sh/images: |
     - name: redis-exporter
       condition: redis.metrics.enabled
-      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.75.0
+      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.76.0
     - name: redis
       condition: redis.install
       image: registry1.dso.mil/ironbank/bitnami/redis:8.2.0
     - name: alpine-certificates
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/certificates:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/certificates:18.3.0
     - name: cfssl-self-sign
       condition: shared-secrets.enabled
       image: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign:1.6.1
     - name: gitaly
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly:18.3.0
     - name: gitlab-container-registry
       condition: registry.enabled
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry:18.3.0
     - name: gitlab-shell
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell:18.3.0
     - name: gitlab-sidekiq
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq:18.3.0
     - name: gitlab-toolbox
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox:18.3.0
     - name: gitlab-webservice
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice:18.3.0
     - name: gitlab-workhorse
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse:18.3.0
     - name: gitlab-pages
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages:18.3.0
     - name: kubectl
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl:18.3.0
     - name: mc
       image: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2024-10-02T08-27-28Z
     - name: minio
@@ -114,14 +118,14 @@ annotations:
       condition: upgradeCheck.enabled
       image: registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.6
     - name: gitlab-base
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base:18.3.0
     - name: gitlab-exporter
       condition: gitlab.gitlab-exporter.enabled
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter:18.3.0
     - name: bbtests
       condition: bbtests.enabled
       image: registry1.dso.mil/bigbang-ci/gitlab-tester:0.0.4
     - name: gitlab-mailroom
       condition: global.appConfig.incomingEmail.enabled
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom:18.2.2
+      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom:18.3.0
 

@@ -79,6 +79,15 @@ spec:
               servicePort: {{ .Values.service.autoflowCodecServerApiPort }}
             {{- end }}
           {{- end }}
+          {{ if (.Values.workspaces).enabled }}
+          - path: "{{ trimSuffix "/" $.Values.ingress.workspacesServerApiPath }}{{ $.Values.global.ingress.path }}"
+            pathType: {{ default "Prefix" $.Values.global.ingress.pathType }}
+            backend:
+              service:
+                name: {{ template "gitlab.kas.serviceName" . }}
+                port:
+                  number: {{ .Values.service.workspacesServerPort }}
+          {{- end }}
   {{- if (and $tlsSecret (eq (include "gitlab.ingress.tls.enabled" $) "true" )) }}
   tls:
     - hosts:
