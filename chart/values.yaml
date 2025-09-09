@@ -1374,7 +1374,7 @@ redis:
   image:
     registry: registry1.dso.mil/ironbank/bitnami
     repository: redis
-    tag: 8.2.0
+    tag: 8.2.1
     pullSecrets: []
   master:
     resources:
