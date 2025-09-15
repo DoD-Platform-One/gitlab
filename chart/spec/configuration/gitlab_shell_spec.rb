@@ -83,8 +83,6 @@ describe 'gitlab-shell configuration' do
               proxyPolicy: #{proxy_policy}
               proxyHeaderTimeout: #{proxy_header_timeout}
               loginGraceTime: #{login_grace_time}
-              publicKeyAlgorithms:
-                - ssh-rsa
       )).deep_merge(default_values)
     end
 
@@ -104,14 +102,49 @@ describe 'gitlab-shell configuration' do
       expect(rendered_config['sshd']['proxy_header_timeout']).to eq(proxy_header_timeout)
       expect(rendered_config['sshd']['login_grace_time']).to eq(login_grace_time)
 
-      expect(rendered_config['sshd']['ciphers']).to include('aes128-gcm@openssh.com')
-      expect(rendered_config['sshd']['kex_algorithms']).to include('curve25519-sha256')
-      expect(rendered_config['sshd']['macs']).to include('hmac-sha2-256-etm@openssh.com')
-      expect(rendered_config['sshd']['public_key_algorithms']).to include('ssh-rsa')
+      expect(rendered_config['sshd']['ciphers']).to be_empty
+      expect(rendered_config['sshd']['kex_algorithms']).to be_empty
+      expect(rendered_config['sshd']['macs']).to be_empty
+      expect(rendered_config['sshd']['public_key_algorithms']).to be_empty
     end
 
     it 'sets 5 seconds smaller grace period' do
       expect(rendered_config['sshd']['grace_period']).to eq(grace_period - 5)
+    end
+
+    context 'when algorithms are configured' do
+      let(:values) do
+        YAML.safe_load(%(
+          gitlab:
+            gitlab-shell:
+              sshDaemon: "gitlab-sshd"
+              deployment:
+                terminationGracePeriodSeconds: #{grace_period}
+              config:
+                clientAliveInterval: #{client_alive_interval}
+                proxyProtocol: #{proxy_protocol}
+                proxyPolicy: #{proxy_policy}
+                proxyHeaderTimeout: #{proxy_header_timeout}
+                loginGraceTime: #{login_grace_time}
+                ciphers:
+                  - aes128-gcm@openssh.com
+                kexAlgorithms:
+                  - curve25519-sha256
+                macs:
+                  - hmac-sha2-256-etm@openssh.com
+                publicKeyAlgorithms:
+                  - ssh-rsa
+        )).deep_merge(default_values)
+      end
+
+      it 'renders gitlab-sshd config' do
+        expect_successful_exit_code
+
+        expect(rendered_config['sshd']['ciphers']).to eq(['aes128-gcm@openssh.com'])
+        expect(rendered_config['sshd']['kex_algorithms']).to eq(['curve25519-sha256'])
+        expect(rendered_config['sshd']['macs']).to eq(['hmac-sha2-256-etm@openssh.com'])
+        expect(rendered_config['sshd']['public_key_algorithms']).to eq(['ssh-rsa'])
+      end
     end
   end
 

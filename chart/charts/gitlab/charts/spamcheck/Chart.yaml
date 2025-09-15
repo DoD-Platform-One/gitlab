@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: spamcheck
-version: 9.3.0
+version: 9.3.2
 appVersion: 1.2.3
 description: GitLab Anti-Spam Engine
 keywords:
