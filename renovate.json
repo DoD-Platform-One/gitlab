@@ -40,8 +40,8 @@
     "customManagers": [
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/Chart\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "appVersion:[^\\S\\r\\n]+(?<currentValue>.+)"
@@ -51,8 +51,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/Chart\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
@@ -61,8 +61,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/values\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/values\\.yaml$/"
             ],
             "matchStrings": [
                 "image:[^\\S\\r\\n]+(?<depName>.+)\\s+tag:[^\\S\\r\\n]+(?<currentValue>[\\d\\.]+)"
@@ -71,8 +71,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^tests/images\\.txt$"
+            "managerFilePatterns": [
+                "/^tests/images\\.txt$/"
             ],
             "matchStrings": [
                 "s*(?<depName>.+):(?<currentValue>.+)"
@@ -81,8 +81,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/Chart\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "- Gitlab:\\s+(?<currentValue>.+)"
@@ -93,8 +93,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/requirements\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/requirements\\.yaml$/"
             ],
             "matchStrings": [
                 "- name:[\\s]+gluon[\\s]+version:[\\s]+(?<currentValue>.*)"
