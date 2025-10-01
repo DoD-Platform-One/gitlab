@@ -260,6 +260,12 @@ workhorse:
     # verify: true
     # secretName:
     # caSecretName:
+  circuitBreaker:
+    enabled: false
+    timeout: 60
+    interval: 180
+    maxRequests: 1
+    consecutiveFailures: 5
 
 psql: {}
   # port: 5432

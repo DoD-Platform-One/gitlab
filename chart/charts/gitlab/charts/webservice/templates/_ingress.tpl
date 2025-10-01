@@ -42,7 +42,7 @@ spec:
     - host: {{ .host }}
       http:
         paths:
-          - path: {{ .deployment.ingress.path }}
+          - path: {{ $global.appConfig.relativeUrlRoot }}{{ .deployment.ingress.path }}
             {{ if or (.root.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress") (eq $global.ingress.apiVersion "networking.k8s.io/v1") -}}
             pathType: {{ default .deployment.ingress.pathType $global.ingress.pathType }}
             backend:

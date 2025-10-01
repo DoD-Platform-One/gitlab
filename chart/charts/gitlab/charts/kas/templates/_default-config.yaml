@@ -71,9 +71,9 @@ autoflow:
         authorized_user_emails: {{ default list ((((.Values.autoflow).temporal).workflowDataEncryption).codecServer).authorizedUserEmails | toJson }}
 {{- end }}
 
-{{- if (.Values.workspaces).enabled }}
+{{- if .Values.global.workspaces.enabled }}
 workspaces:
-  enabled: {{ .Values.workspaces.enabled }}
+  enabled: true
   listen:
     network: "tcp"
     address: ":{{ .Values.service.workspacesServerPort }}"

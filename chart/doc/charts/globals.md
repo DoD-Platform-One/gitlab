@@ -923,7 +923,7 @@ All Gitaly nodes **must** share the same authentication token.
 
 ### TLS settings
 
-Configuring Gitaly to serve via TLS is detailed [in the Gitaly chart's documentation](gitlab/gitaly#running-gitaly-over-tls).
+Configuring Gitaly to serve via TLS is detailed [in the Gitaly chart's documentation](gitlab/gitaly/_index.md#running-gitaly-over-tls).
 
 ## Configure Praefect settings
 
@@ -984,6 +984,7 @@ with the `global.appConfig` key.
 global:
   appConfig:
     # cdnHost:
+    relativeUrlRoot: ""
     contentSecurityPolicy:
       enabled: false
       report_only: true
@@ -1132,12 +1133,19 @@ global:
 
 ### General application settings
 
+{{< history >}}
+
+- `relativeUrlRoot` setting [introduced](https://gitlab.com/gitlab-org/charts/gitlab/-/issues/6121) in GitLab 18.4.
+
+{{< /history >}}
+
 The `appConfig` settings that can be used to tweak the general properties of the Rails
 application are described below:
 
 | Name                                |  Type   | Default | Description |
 |:------------------------------------|:-------:|:--------|:------------|
 | `cdnHost`                           | String  | (empty) | Sets a base URL for a CDN to serve static assets (for example, `https://mycdnsubdomain.fictional-cdn.com`). |
+| `relativeUrlRoot`                   | String  | (empty) | Sets a [relative URL root](#configure-a-relative-url-root) for GitLab (for example, `/gitlab`). When configured, GitLab will be accessible at the specified path instead of the root path. |
 | `contentSecurityPolicy`             | Struct  |         | [See below](#content-security-policy). |
 | `enableUsagePing`                   | Boolean | `true`  | A flag to disable the [usage ping support](https://docs.gitlab.com/administration/settings/usage_statistics/). |
 | `enableSeatLink`                    | Boolean | `true`  | A flag to disable the [seat link support](https://docs.gitlab.com/subscriptions/#seat-link). |
@@ -1187,6 +1195,36 @@ global:
 Improperly configuring the CSP rules could prevent GitLab from working properly.
 Before rolling out a policy, you may also want to change `report_only` to `true` to
 test the configuration.
+
+#### Configure a relative URL root
+
+{{< details >}}
+
+- Status: Beta
+
+{{< /details >}}
+
+{{< alert type="warning" >}}
+
+Configuring a relative URL for GitLab has [known issues with Geo](https://gitlab.com/gitlab-org/gitlab/-/issues/456427) and
+[testing limitations](https://gitlab.com/gitlab-org/gitlab/-/issues/439943).
+
+{{< /alert >}}
+
+Though you should install GitLab on its own domain or subdomain, you can install under a relative URL if required. For example,
+`https://example.com/gitlab`.
+
+The ingresses of all webservice deployments will have this path prefixed.
+
+```yaml
+global:
+  appConfig:
+    relativeUrlRoot: "/gitlab"
+  hosts:
+    domain: example.com
+    gitlab:
+      name: example.com
+```
 
 #### `defaultProjectsFeatures`
 

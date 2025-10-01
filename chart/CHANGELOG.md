@@ -2,6 +2,39 @@
 documentation](doc/development/changelog.md) for instructions on adding your own
 entry.
 
+## 9.4.1 (2025-09-25)
+
+No changes.
+
+## 9.4.0 (2025-09-17)
+
+### Added (5 changes)
+
+- [Add relativeUrlRoot configuration support for GitLab charts](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/23d92c4be377248883a39e489c71df3c67fbff64) by @akshatjain9782 ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4471))
+- [Add workspaces hostname config with ingress and TLS support.](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/62f3e4bc153d4d56a06b069e89dabab75928735e) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4473))
+- [feat: Run ClickHouse migrations in GitLab-Migrations chart](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/41aba4696f3371ad1db38e9c37c73223ee92e4d8) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4458))
+- [Expose circuit breaker values in workhorse config](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/bcd68d6eb40add6c5150fc0ff340245f4789212b) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4487))
+- [Registry: add cluster support for Redis cache](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/306167fa6cc5806bd24a5c4a9642aa39b28d8059) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4456))
+
+### Fixed (2 changes)
+
+- [fix(migrations): correct typo PodAnnotations into podAnnotations](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/06ec34dd43525ad4e4d9bdd7885aa22752f9be9a) by @zadkiel ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4518))
+- [Drop hard-coded gitlab-sshd algorithms in config](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/48c4e8216291808ee39107c12f27febf0a2fd065) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4474))
+
+### Changed (11 changes)
+
+- [Update Helm release gitlab-runner to v0.80.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/b06ea25b3dc0c7d833520c023eb2088318305578) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4508))
+- [Update Helm release gitlab-zoekt to v3.4.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/076381b76f44d3c9f206eaba4961ef661e898a6a) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4513))
+- [Update Helm release gitlab-zoekt to v3.3.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c2f7a39b97d31557314ffd4857def773341cb2ee) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4511))
+- [Enable amcheck extension for postgres](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/6937db7cd2a3a622e034dd6ca05dac0b81de4a5d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4426))
+- [Update Helm release gitlab-zoekt to v3.2.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/747f65169fbdb409512334420390bda8379e2e80) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4505))
+- [Update Helm release openbao to v0.5.1](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/64d85665e3cf0e25d1dd300cb7766b9d86627047) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4476))
+- [Update dependency container-registry to v4.27.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/fb7d90d73c8503516a8920f5d6e685e98aad8a3d) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4494))
+- [Update Helm release gitlab-zoekt to v3.1.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/368b1376e6b1de2a3ea02fc9233932ac352c8499) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4489))
+- [Update Helm release gitlab-runner to v0.80.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/14a920b84e5186fa06e4a25e190a6c60e35c3d8a) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4483))
+- [Update dependency gitlab-exporter to v16.1.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/d420c9e6489842d744165858d39d0b3093667770) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4459))
+- [Update dependency container-registry to v4.26.1-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/bb95fd2687befab1b9daf0b21d55e3cc939f0973) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4469))
+
 ## 9.3.2 (2025-09-09)
 
 No changes.
@@ -38,6 +71,14 @@ No changes.
 - [Update Helm release gitlab-zoekt to v2.8.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c7c56b976e1374bf84db3e6d00a23a5e00708b70) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4422))
 - [Update certmanager from v1.12 to v1.17](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c990cd36ed7d6910be91a7bd01e65ad98fed8148) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4234))
 - [Update dependency container-registry to v4.25.0-gitlab](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/ca12af55763a3a4ae2fe8352b35f9a7aef91d6aa) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4412))
+
+## 9.2.6 (2025-09-09)
+
+No changes.
+
+## 9.2.5 (2025-08-26)
+
+No changes.
 
 ## 9.2.4 (2025-08-18)
 
@@ -91,6 +132,14 @@ No changes.
 - [Migrations: add objectstorage bits for migrations that test config](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/e17eb09c5ff81cf289900746df3473908769c4e6) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4349))
 - [Update recommended Helm version to 3.17.3+](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/4e70185ac1f8ee8d755b77b87190d5e30eb91c14) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4336))
 - [Update Helm release gitlab-runner to v0.78.0](https://gitlab.com/gitlab-org/charts/gitlab/-/commit/c0509f329431e8eb8a9b9e991eb2608be97617c6) ([merge request](https://gitlab.com/gitlab-org/charts/gitlab/-/merge_requests/4344))
+
+## 9.1.6 (2025-09-09)
+
+No changes.
+
+## 9.1.5 (2025-08-26)
+
+No changes.
 
 ## 9.1.4 (2025-08-12)
 

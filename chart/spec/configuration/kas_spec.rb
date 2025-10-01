@@ -321,9 +321,14 @@ describe 'kas configuration' do
               gitlab:
                 kas:
                   workspaces:
-                    enabled: true
                     listenGracePeriod: "10s"
                     shutdownGracePeriod: "100s"
+              global:
+                hosts:
+                  workspaces:
+                    name: workspaces.example.com
+                workspaces:
+                  enabled: true
             )))
         end
 
@@ -870,7 +875,12 @@ describe 'kas configuration' do
                     "address" => :"9000"
                   }
                 }
-              }
+              },
+              'global' => { 'hosts' => {
+                'workspaces' => {
+                  'name' => 'workspaces.example.com'
+                }
+              } }
             }
           )
         end
@@ -1072,6 +1082,10 @@ describe 'kas configuration' do
                     enabled: true
                     listenGracePeriod: "10s"
                     shutdownGracePeriod: "100s"
+                global:
+                  hosts:
+                    workspaces:
+                      name: workspaces.example.com
             )))
         end
 

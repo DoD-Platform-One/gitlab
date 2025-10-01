@@ -259,6 +259,9 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `database.backgroundMigrations.enabled`                  | `false`                                                              | Enable background migrations for the database. This is an experimental feature for the Registry metadata database. Do not use in production. See the [specification](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/spec/gitlab/database-background-migrations.md?ref_type=heads) for a detailed explanation of how it works. |
 | `database.backgroundMigrations.jobInterval`              |                                                                      | The sleep interval between each background migration job worker run. When not specified [a default value is set by the registry](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#backgroundmigrations). |
 | `database.backgroundMigrations.maxJobRetries`            |                                                                      | The maximum number of retries for a failed background migration job. When not specified [a default value is set by the registry](https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md?ref_type=heads#backgroundmigrations). |
+| `database.metrics.enabled`                               | `false`                                                              | When set to `true`, enables database metrics collection. This is an experimental feature and must not be used in production. Requires registry 4.27.0 or newer, the metadata database (`database.enabled: true`) and Redis cache (`redis.cache.enabled: true`) for distributed locking. |
+| `database.metrics.interval`                              | `10s`                                                                | The interval at which metrics are collected from the database. |
+| `database.metrics.leaseDuration`                         | `30s`                                                                | The duration for which the Redis lock is held by the metrics collector. Must be longer than `interval` to ensure continuous collection by the same instance. |
 | `gc.disabled`                                            | `true`                                                               | When set to `true`, the online GC workers are disabled. |
 | `gc.maxbackoff`                                          | `24h`                                                                | The maximum exponential backoff duration used to sleep between worker runs when an error occurs. Also applied when there are no tasks to be processed unless `gc.noidlebackoff` is `true`. Please note that this is not the absolute maximum, as a randomized jitter factor of up to 33% is always added. |
 | `gc.noidlebackoff`                                       | `false`                                                              | When set to `true`, disables exponential backoffs between worker runs when there are no tasks to be processed. |
@@ -289,8 +292,10 @@ If you chose to deploy this chart as a standalone, remove the `registry` at the 
 | `redis.cache.enabled`                                    | `false`                                                              | When set to `true`, the Redis cache is enabled. This feature is dependent on the [metadata database](#database) being enabled. Repository metadata will be cached on the configured Redis instance. |
 | `redis.cache.host`                                       | `<Redis URL>`                                                        | The hostname of the Redis instance. If empty, the value will be filled as `global.redis.host:global.redis.port`. |
 | `redis.cache.port`                                       | `6379`                                                               | The port of the Redis instance. |
+| `redis.cache.cluster`                                    | `[]`                                                                 | List of addresses with host and port. |
 | `redis.cache.sentinels`                                  | `[]`                                                                 | List sentinels with host and port. |
 | `redis.cache.mainname`                                   |                                                                      | The main server name. Only applicable for Sentinel. |
+| `redis.cache.username`                                   |                                                                      | The username used to connect to the Redis instance. |
 | `redis.cache.password.enabled`                           | `false`                                                              | Indicates whether the Redis cache used by the Registry is password protected. |
 | `redis.cache.password.secret`                            | `gitlab-redis-secret`                                                | Name of the secret containing the Redis password. This will be automatically created if not provided, when the `shared-secrets` feature is enabled. |
 | `redis.cache.password.key`                               | `redis-password`                                                     | Secret key in which the Redis password is stored. |
@@ -1220,7 +1225,7 @@ redis:
 
 #### Cluster
 
-The `redis.rateLimiting.cluster` property is a list of hosts and ports
+The `redis.cache.cluster` property is a list of hosts and ports
 to connect to a Redis cluster. For example:
 
 ```yaml

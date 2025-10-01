@@ -22,7 +22,7 @@ Prerequisites:
 - A user with full database access. See the
   [external database documentation](https://docs.gitlab.com/administration/postgresql/external/) for details.
 - A [Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/) with the password for the database user.
-- The [`pg_trgm` and `btree_gist` extensions](https://docs.gitlab.com/install/postgresql_extensions/). If you don't provide an account with
+- The [`amcheck`, `pg_trgm` and `btree_gist` extensions](https://docs.gitlab.com/install/postgresql_extensions/). If you don't provide an account with
   the Superuser flag to GitLab, ensure these extensions are loaded prior to
   proceeding with the database installation.
 

@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry
-  tag: 'v4.26.0-gitlab'
+  tag: 'v4.27.0-gitlab'
   # pullPolicy: IfNotPresent
 # pullSecrets: []
 
@@ -421,6 +421,13 @@ database:
     annotations: {}
   backgroundMigrations:
     enabled: false
+  # Database metrics configuration
+  # NOTE: This is an experimental feature and must not be used in production.
+  # https://gitlab.com/gitlab-org/container-registry/-/blob/master/docs/configuration.md#metrics
+  metrics:
+    enabled: false
+    interval: 10s
+    leaseDuration: 30s
 
 redis:
   # Redis cache to be used in conjunction with the metadata database.

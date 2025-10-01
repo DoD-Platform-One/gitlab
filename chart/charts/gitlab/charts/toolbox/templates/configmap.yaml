@@ -105,6 +105,7 @@ data:
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
       {{- include "gitlab.appConfig.kas" . | nindent 6 }}
+      {{- include "gitlab.appConfig.workspaces" . | nindent 6 }}
       {{- include "gitlab.appConfig.cell" . | nindent 6 }}
       {{- include "gitlab.appConfig.suggested_reviewers" . | nindent 6 }}
       {{- include "gitlab.appConfig.zoekt" . | nindent 6 }}
@@ -156,15 +157,7 @@ data:
       mv "/${secret_dir}/objectstorage/.s3cfg" "/${secret_dir}/.s3cfg"
     fi
     {{- end }}
-    {{- if $.Values.global.appConfig.cell.enabled }}
-      if [ -d /init-config/topology-service ]; then
-        mkdir -p /init-secrets/topology-service
-        {{- if $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
-        cp -v -L /init-config/topology-service/tls.key /init-secrets/topology-service/tls.key
-        cp -v -L /init-config/topology-service/tls.crt /init-secrets/topology-service/tls.crt
-        {{- end }}
-      fi
-    {{- end }}
+    {{- include "gitlab.topologyService.configureScript" $ | nindent 4 }}
   configure-gsutil: |
     if [ -e "$GOOGLE_APPLICATION_CREDENTIALS" ]; then
       # The following script is used to configure gsutil when creating backups

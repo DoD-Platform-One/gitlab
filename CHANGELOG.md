@@ -3,6 +3,27 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [9.4.1-bb.0] (2025-09-30)
+### Changed
+
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 18.3.2 -> 18.4.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 18.3.2 -> 18.4.1
+
+
+
 ## [9.3.2-bb.0] (2025-09-13)
 ### Changed
 - registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.76.0 -> v1.77.0

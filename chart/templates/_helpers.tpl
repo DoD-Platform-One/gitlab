@@ -54,9 +54,9 @@ Calls into the `gitlab.gitlabHost` function for the hostname part of the url.
 */}}
 {{- define "gitlab.gitlab.url" -}}
 {{- if or .Values.global.hosts.https .Values.global.hosts.gitlab.https -}}
-{{-   printf "https://%s" (include "gitlab.gitlab.hostname" .) -}}
+{{-   printf "https://%s%s" (include "gitlab.gitlab.hostname" .) .Values.global.appConfig.relativeUrlRoot -}}
 {{- else -}}
-{{-   printf "http://%s" (include "gitlab.gitlab.hostname" .) -}}
+{{-   printf "http://%s%s" (include "gitlab.gitlab.hostname" .) .Values.global.appConfig.relativeUrlRoot -}}
 {{- end -}}
 {{- end -}}
 
@@ -412,6 +412,7 @@ We're explicitly checking for an actual value being present, not the existence o
 {{- $minio       := pluck "secretName" $.Values.minio.ingress.tls | first -}}
 {{- $pages       := pluck "secretName" ((index $.Values.gitlab "gitlab-pages").ingress).tls | first -}}
 {{- $kas         := pluck "secretName" $.Values.gitlab.kas.ingress.tls | first -}}
+{{- $workspaces  := pluck "workspacesSecretName" $.Values.gitlab.kas.ingress.tls | first -}}
 {{- $smartcard   := pluck "smartcardSecretName" $.Values.gitlab.webservice.ingress.tls | first -}}
 {{/* Set each item to configured value, or !enabled
      This works because `false` is the same as empty, so we'll use the value when `enabled: true`
@@ -426,6 +427,7 @@ We're explicitly checking for an actual value being present, not the existence o
 {{- $minio       :=  default $minio (not $.Values.global.minio.enabled) -}}
 {{- $pages       :=  default $pages (not $.Values.global.pages.enabled) -}}
 {{- $kas         :=  default $kas (not $.Values.global.kas.enabled) -}}
+{{- $workspaces  :=  default $workspaces (not $.Values.global.workspaces.enabled) -}}
 {{- $smartcard   :=  default $smartcard (not $.Values.global.appConfig.smartcard.enabled) -}}
 {{/* Check that all enabled items have been configured */}}
 {{- if or $global (and $webservice $registry $minio $pages $kas $smartcard) -}}
@@ -712,4 +714,52 @@ Return the Topology Service TLS Secret name
 */}}
 {{- define "topology-service.tls.secret" -}}
 {{- default (printf "%s-topology-service-tls" .Release.Name) $.Values.global.appConfig.cell.topologyServiceClient.tls.secret | quote -}}
+{{- end -}}
+
+{{/*
+Mount topology service TLS secrets in projected volume sources
+Usage: {{ include "gitlab.topologyService.mountSecrets" $ | nindent 10 }}
+*/}}
+{{- define "gitlab.topologyService.mountSecrets" -}}
+{{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+- secret:
+    name: {{ template "topology-service.tls.secret" $ }}
+    items:
+      - key: "tls.crt"
+        path: "topology-service/tls.crt"
+      - key: "tls.key"
+        path: "topology-service/tls.key"
+{{- end }}
+{{- end -}}
+
+{{/*
+Volume mounts for topology service TLS files
+Usage: {{ include "gitlab.topologyService.volumeMounts" (dict "context" $ "secretsVolumeName" "webservice-secrets") | nindent 12 }}
+*/}}
+{{- define "gitlab.topologyService.volumeMounts" -}}
+{{- $context := .context -}}
+{{- if and $context.Values.global.appConfig.cell.enabled $context.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+- name: {{ .secretsVolumeName }}
+  mountPath: /srv/gitlab/config/topology-service/tls.crt
+  subPath: topology-service/tls.crt
+  readOnly: true
+- name: {{ .secretsVolumeName }}
+  mountPath: /srv/gitlab/config/topology-service/tls.key
+  subPath: topology-service/tls.key
+  readOnly: true
+{{- end }}
+{{- end -}}
+
+{{/*
+Configure script for topology service TLS secrets
+Usage: {{ include "gitlab.topologyService.configureScript" $ | nindent 4 }}
+*/}}
+{{- define "gitlab.topologyService.configureScript" -}}
+{{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
+  if [ -d /init-config/topology-service ]; then
+    mkdir -p /init-secrets/topology-service
+    cp -v -L /init-config/topology-service/tls.key /init-secrets/topology-service/tls.key
+    cp -v -L /init-config/topology-service/tls.crt /init-secrets/topology-service/tls.crt
+  fi
+{{- end }}
 {{- end -}}

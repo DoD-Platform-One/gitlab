@@ -29,6 +29,9 @@ data:
       gitlab:
         host: {{ template "gitlab.gitlab.hostname" . }}
         https: {{ hasPrefix "https://" (include "gitlab.gitlab.url" .) }}
+        {{- if .Values.global.appConfig.relativeUrlRoot }}
+        relative_url_root: {{ .Values.global.appConfig.relativeUrlRoot | quote }}
+        {{- end }}
         {{- with .Values.global.hosts.ssh }}
         ssh_host: {{ . | quote }}
         {{- end }}
@@ -121,6 +124,7 @@ data:
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
       {{- include "gitlab.appConfig.kas" . | nindent 6 }}
+      {{- include "gitlab.appConfig.workspaces" . | nindent 6 }}
       {{- include "gitlab.appConfig.cell" . | nindent 6 }}
       {{- include "gitlab.appConfig.suggested_reviewers" . | nindent 6 }}
       {{- include "gitlab.appConfig.zoekt" . | nindent 6 }}
@@ -160,5 +164,6 @@ data:
     {{- end }}
     {{- include "gitlab.psql.ssl.initScript" . | nindent 4 }}
     {{- include "gitlab.geo.psql.ssl.initScript" . | nindent 4 }}
+    {{- include "gitlab.topologyService.configureScript" $ | nindent 4 }}
 # Leave this here - This line denotes end of block to the parser.
 {{- end }}

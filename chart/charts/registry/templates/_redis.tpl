@@ -91,16 +91,26 @@ redis:
     {{- if .Values.redis.cache.sentinels }}
     addr: {{ include "registry.redis.host.addresses" .Values.redis.cache | quote }}
     mainname: {{ .Values.redis.cache.host }}
+    {{-   if .Values.redis.cache.sentinelpassword }}
+    {{-     if .Values.redis.cache.sentinelpassword.enabled }}
+    sentinelpassword: {% file.Read "/config/redis-sentinel/redis-sentinel-password" | strings.TrimSpace | data.ToJSON %}
+    {{-     end }}
+    {{-   end }}
+    {{- else if .Values.redis.cache.cluster }}
+    addr: {{ include "registry.redis.host.addresses" .Values.redis.cache | quote }}
     {{- else if .redisMergedConfig.sentinels }}
     addr: {{ include "registry.redis.host.addresses" .redisMergedConfig | quote }}
     mainname: {{ template "gitlab.redis.host" . }}
-    {{-   if .redisMergedConfig.sentinelAuth.enabled }}
+    {{- if .redisMergedConfig.sentinelAuth.enabled }}
     sentinelpassword: {% file.Read "/config/redis-sentinel/redis-sentinel-password" | strings.TrimSpace | data.ToJSON %}
-    {{-   end }}
+    {{- end }}
     {{- else if .Values.redis.cache.host  }}
     addr: {{ printf "%s:%d" .Values.redis.cache.host (int .Values.redis.cache.port | default 6379) | quote }}
     {{- else }}
     addr: {{ printf "%s:%s" ( include "gitlab.redis.host" . ) ( include "gitlab.redis.port" . ) | quote }}
+    {{- end }}
+    {{- if .Values.redis.cache.username }}
+    username: {{ .Values.redis.cache.username }}
     {{- end }}
     {{- if .Values.redis.cache.password.enabled }}
     password: "REDIS_CACHE_PASSWORD"

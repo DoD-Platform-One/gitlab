@@ -94,9 +94,24 @@ check_docs_links:
     - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
     - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
     - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
+  
+# Verify localized documentation files have corresponding English versions
+docs-i18n-lint paths:
+  image: ${DOCS_LINT_IMAGE}
+  stage: prepare
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
+    - scripts/docs_i18n_verify_paths
+  rules:
+    - !reference [.rule:skip_if_dev]
+    - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'
+    - if: '$PIPELINE_TYPE =~ /MR_PIPELINE$/'
+    - if: '$PIPELINE_TYPE =~ /BRANCH_PIPELINE$/'
 
 docs-test hugo:
-  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/docs-gitlab-com-builder:hugo-0.145.0
+  image: registry.gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/docs-gitlab-com-builder:hugo-0.148.2
   stage: prepare
   variables:
     DOCS_BRANCH: "main"
@@ -116,15 +131,13 @@ docs-test hugo:
     - git clone --depth 1 --filter=tree:0 --branch $DOCS_BRANCH https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com.git
     - cd docs-gitlab-com
     - make add-latest-icons
-    # Copy the current project's documentation to the location required by GitLab Docs
-    - mkdir content/charts
-    - cp -r ../doc/* content/charts/
   script:
-    # Test that Hugo will build
-    - hugo --gc --printPathWarnings --panicOnWarning
+    # Test that full i18n Hugo will build
+    - hugo --gc --printPathWarnings --panicOnWarning --environment test
     # Test for invalid index pages
     # See https://gitlab.com/gitlab-org/technical-writing/docs-gitlab-com/-/blob/main/scripts/check-index-filenames.sh
     - make check-index-pages SEARCH_DIR="../doc"
+    - make check-index-pages SEARCH_DIR="../doc-locale"
   rules:
     - !reference [.rule:skip_if_fork]
     - if: '$PIPELINE_TYPE =~ /DOCS_PIPELINE/'

@@ -36,6 +36,14 @@ Returns the KAS external URL (for external agentk connections)
 {{-   end -}}
 {{- end -}}
 
+{{/*
+Returns the workspaces external hostname
+*/}}
+{{- define "gitlab.workspaces.hostname" -}}
+{{- $hostname := $.Values.global.hosts.workspaces.name | required "Missing required workspaces host. Make sure to set `.Values.global.hosts.workspaces.name`" -}}
+{{- $hostname -}}
+{{- end -}}
+
 {{- define "gitlab.kas.internal.scheme" -}}
 {{- printf "%s" (ternary "grpcs" "grpc" (eq $.Values.global.kas.tls.enabled true)) -}}
 {{- end -}}

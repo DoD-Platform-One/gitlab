@@ -71,6 +71,25 @@ registry:
 {{/* END gitlab.checkConfig.registry.database.loadBalancing */}}
 
 {{/*
+Ensure Registry database metrics is configured properly and dependencies are met
+*/}}
+{{- define "gitlab.checkConfig.registry.database.metrics" -}}
+{{- if $.Values.registry.database.metrics.enabled }}
+  {{- if not $.Values.registry.database.enabled }}
+registry:
+    Enabling database metrics requires the metadata database to be enabled.
+    See https://docs.gitlab.com/charts/charts/registry#database-metrics
+  {{- end }}
+  {{- if not $.Values.registry.redis.cache.enabled }}
+registry:
+    Enabling database metrics requires the Redis cache connection to be enabled for distributed locking.
+    See https://docs.gitlab.com/charts/charts/registry#database-metrics
+  {{- end }}
+{{- end -}}
+{{- end -}}
+{{/* END gitlab.checkConfig.registry.database.metrics */}}
+
+{{/*
 Ensure Registry Redis cache is configured properly and dependencies are met
 */}}
 {{- define "gitlab.checkConfig.registry.redis.cache" -}}

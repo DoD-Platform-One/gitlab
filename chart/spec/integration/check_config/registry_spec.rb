@@ -193,6 +193,90 @@ describe 'checkConfig registry' do
                      error_description: 'when database load balancing is enabled, with redis connection disabled'
   end
 
+  describe 'registry.database.metrics requires database.enabled to be true' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 16
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: true
+            metrics:
+              enabled: true
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 16
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: false
+            metrics:
+              enabled: true
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling database metrics requires the metadata database to be enabled' }
+
+    include_examples 'config validation',
+                     success_description: 'when database metrics is enabled, with database enabled',
+                     error_description: 'when database metrics is enabled, with database disabled'
+  end
+
+  describe 'registry.database.metrics requires redis.cache.enabled to be true' do
+    let(:success_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 16
+
+        registry:
+          redis:
+            cache:
+              enabled: true
+          database:
+            enabled: true
+            metrics:
+              enabled: true
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_values) do
+      YAML.safe_load(%(
+        postgresql:
+          image:
+            tag: 16
+
+        registry:
+          redis:
+            cache:
+              enabled: false
+          database:
+            enabled: true
+            metrics:
+              enabled: true
+      )).deep_merge!(default_required_values)
+    end
+
+    let(:error_output) { 'Enabling database metrics requires the Redis cache connection to be enabled for distributed locking' }
+
+    include_examples 'config validation',
+                     success_description: 'when database metrics is enabled, with redis cache enabled',
+                     error_description: 'when database metrics is enabled, with redis cache disabled'
+  end
+
   describe 'gitlab.checkConfig.registry.sentry.dsn' do
     let(:success_values) do
       YAML.safe_load(%(

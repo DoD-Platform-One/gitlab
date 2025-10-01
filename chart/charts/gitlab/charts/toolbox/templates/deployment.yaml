@@ -156,16 +156,7 @@ spec:
             - name: toolbox-secrets
               mountPath: /srv/gitlab/config/secrets.yml
               subPath: rails-secrets/secrets.yml
-            {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
-            - name: toolbox-secrets
-              mountPath: /srv/gitlab/config/topology-service/tls.crt
-              subPath: topology-service/tls.crt
-              readOnly: true
-            - name: toolbox-secrets
-              mountPath: /srv/gitlab/config/topology-service/tls.key
-              subPath: topology-service/tls.key
-              readOnly: true
-            {{- end }}
+            {{- include "gitlab.topologyService.volumeMounts" (dict "context" $ "secretsVolumeName" "toolbox-secrets") | nindent 12 }}
             - name: toolbox-tmp
               mountPath: '/srv/gitlab/tmp'
               {{- if and .Values.persistence.enabled .Values.persistence.subPath }}
@@ -225,15 +216,7 @@ spec:
           {{- range $.Values.local.psql }}
           {{-   include "gitlab.psql.secret" . | nindent 10 }}
           {{- end }}
-          {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
-          - secret:
-              name: {{ template "topology-service.tls.secret" $ }}
-              items:
-                - key: "tls.crt"
-                  path: "topology-service/tls.crt"
-                - key: "tls.key"
-                  path: "topology-service/tls.key"
-          {{- end }}
+          {{- include "gitlab.topologyService.mountSecrets" $ | nindent 10 }}
           {{- if include "gitlab.geo.secondary" $ }}
           - secret:
               name: {{ template "gitlab.geo.psql.password.secret" . }}

@@ -19,7 +19,7 @@ You can pass values to the `helm install` command by using a YAML file and the `
 flag or by using multiple `--set` flags. It is recommended to use a values file that contains only the
 overrides needed for your release.
 
-The source of the default `values.yaml` file can be found [here](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/values.yaml).
+For the source of the default `values.yaml` file, see the [GitLab chart repository](https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/values.yaml).
 These contents change over releases, but you can use Helm itself to retrieve these on a per-version basis:
 
 ```shell

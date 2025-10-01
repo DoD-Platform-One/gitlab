@@ -177,6 +177,7 @@ spec:
             mountPath: /srv/gitlab/config/secrets.yml
             subPath: rails-secrets/secrets.yml
             readOnly: true
+          {{- include "gitlab.topologyService.volumeMounts" (dict "context" $ "secretsVolumeName" "sidekiq-secrets") | nindent 10 }}
           resources:
             {{- toYaml $.Values.init.resources | nindent 12 }}
       {{- include "gitlab.image.pullSecrets" $imageCfg | indent 6 }}
@@ -220,6 +221,10 @@ spec:
             {{- if $.Values.global.rails.bootsnap.enabled }}
             - name: ENABLE_BOOTSNAP
               value: "1"
+            {{- end }}
+            {{- if $.Values.global.appConfig.relativeUrlRoot }}
+            - name: RAILS_RELATIVE_URL_ROOT
+              value: {{ $.Values.global.appConfig.relativeUrlRoot | quote }}
             {{- end }}
             {{- include "gitlab.tracing.env" $ | nindent 12 }}
             {{- include "sidekiq.podExtraEnv" (dict "local" . "context" $) | nindent 12 }}
@@ -320,6 +325,7 @@ spec:
                 - key: "tls.key"
                   path: "sidekiq-metrics/sidekiq-metrics.key"
           {{- end }}
+          {{- include "gitlab.topologyService.mountSecrets" $ | nindent 10 }}
           {{- include "gitlab.gitaly.clientSecrets" $ | nindent 10 }}
           {{- if $.Values.global.clickhouse.enabled }}
             {{- include "gitlab.clickhouse.main.secrets" $ | nindent 10 }}

@@ -656,4 +656,52 @@ CFG
       it_behaves_like 'monitoring TLS is disabled'
     end
   end
+
+  context 'workhorse circuit breaker' do
+    let(:custom_values) do
+      HelmTemplate.with_defaults(%(
+        gitlab:
+          webservice:
+            workhorse:
+              circuitBreaker:
+                enabled: true
+                timeout: 99
+                interval: 200
+                maxRequests: 5
+                consecutiveFailures: 15
+     ))
+    end
+
+    let(:template) { HelmTemplate.new(custom_values) }
+
+    it 'renders a valid TOML configuration file with circuit breaker values' do
+      toml = render_toml(raw_toml)
+
+      circuit_breaker = toml['circuit_breaker']
+      expect(circuit_breaker['enabled']).to eq(true)
+      expect(circuit_breaker['timeout']).to eq(99)
+      expect(circuit_breaker['interval']).to eq(200)
+      expect(circuit_breaker['max_requests']).to eq(5)
+      expect(circuit_breaker['consecutive_failures']).to eq(15)
+    end
+
+    context 'with keywatcher: false' do
+      let(:custom_values) do
+        HelmTemplate.with_defaults(%(
+          gitlab:
+            webservice:
+              workhorse:
+                keywatcher: false
+                circuitBreaker:
+                  enabled: true
+        ))
+      end
+
+      it 'includes a redis config when circuit breaker is enabled' do
+        toml = render_toml(raw_toml)
+
+        expect(toml.keys).to include('redis')
+      end
+    end
+  end
 end
