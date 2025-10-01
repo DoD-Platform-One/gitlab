@@ -19,7 +19,9 @@ port 22 (by default; this can be changed). Ingress does not directly support TCP
 ### Direct deployment
 
 In a direct deployment, the NGINX Ingress Controller handles configuring TCP services with a
-`ConfigMap` (see docs [here](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/exposing-tcp-udp-services.md)).
+`ConfigMap`. For more information, see
+[exposing TCP and UDP services](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/exposing-tcp-udp-services.md)
+in the Ingress NGINX Controller documentation.
 Assuming your GitLab chart is deployed to the namespace `gitlab` and your Helm
 release is named `mygitlab`, your `ConfigMap` should be something like this:
 
@@ -86,7 +88,8 @@ disable the Ingress Controller that is deployed by default with this chart:
 The full scope of your TLS options are documented [elsewhere](../../installation/tls.md).
 
 If you are using an external Ingress Controller, you may also be using an external cert-manager instance
-or managing your certificates in some other custom manner. The full documentation around your TLS options is [here](../../installation/tls.md),
+or managing your certificates in some other custom manner. For full documentation about your
+TLS options, see [configure TLS for the GitLab chart](../../installation/tls.md),
 however for the purposes of this discussion, here are the two values that would need to be set to disable the cert-manager chart and tell
 the GitLab component charts to NOT look for the built in certificate resources:
 

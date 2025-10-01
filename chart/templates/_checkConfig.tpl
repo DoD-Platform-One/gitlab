@@ -75,6 +75,7 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.notifications" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.database" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.database.loadBalancing" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.registry.database.metrics" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.redis.cache" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.redis.rateLimiting" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.registry.redis.loadBalancing" .) -}}
@@ -93,6 +94,7 @@ Due to gotpl scoping, we can't make use of `range`, so we have to add action lin
 
 {{/* _checkConfig_webservice.tpl*/}}
 {{- $messages = append $messages (include "gitlab.checkConfig.appConfig.maxRequestDurationSeconds" .) -}}
+{{- $messages = append $messages (include "gitlab.checkConfig.appConfig.relativeUrlRoot" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.gracePeriod" .) -}}
 {{- $messages = append $messages (include "gitlab.checkConfig.webservice.loadBalancer" .) -}}
 

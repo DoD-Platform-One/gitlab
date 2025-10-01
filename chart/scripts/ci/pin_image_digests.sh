@@ -9,6 +9,10 @@ set -e
 # Dependencies:
 # - skopeo
 #
+# Debug Files:
+# - skopeo_errors.log: Captures detailed error output from skopeo for debugging
+#   This file should be included as a CI artifact to help diagnose registry issues
+#
 # Usage:
 # $ bash ./scripts/ci/pin_image_digests.sh
 
@@ -62,9 +66,36 @@ function get_digest() {
   component=$1
   tag=$2
 
-  digest=$(skopeo inspect docker://registry.gitlab.com/gitlab-org/build/cng/$component:$tag --format "{{.Digest}}" --no-tags)
+  # Retry configuration
+  max_retries=${GET_DIGEST_MAX_RETRIES:-3}
+  base_delay=${GET_DIGEST_BASE_DELAY:-2}
+  attempt=1
+  digest=""
 
-  echo -n "${digest}"
+  while [ $attempt -le $max_retries ]; do
+    # Try to get the digest, with failures logged silently
+    # All error details are captured in skopeo_errors.log for later analysis
+    if digest=$(skopeo inspect docker://registry.gitlab.com/gitlab-org/build/cng/$component:$tag --format "{{.Digest}}" --no-tags 2>>"skopeo_errors.log"); then
+      # Success - return the digest without any logging
+      echo -n "${digest}"
+      return 0
+    fi
+
+    # Only log retry information if this isn't the last attempt
+    if [ $attempt -lt $max_retries ]; then
+      delay=$((base_delay * (2 ** (attempt - 1))))
+      echo "Retry $attempt/$max_retries: Failed to get digest for $component:$tag, retrying in ${delay}s..." >&2
+      sleep $delay
+    fi
+
+    attempt=$((attempt + 1))
+  done
+
+  # Only log error after retries have been exhausted
+  echo "Error: Failed to get digest for $component:$tag after $max_retries attempts" >&2
+  echo "Detailed error information:" >&2
+  cat skopeo_errors.log >&2
+  return 1
 }
 
 # Gets the tag and digest to use in `<component>.image.tag`.
@@ -73,7 +104,11 @@ function get_digest() {
 function tag_and_digest() {
   component=$1
   tag=$(get_tag $component)
-  digest=$(get_digest $component $tag)
+  
+  if ! digest=$(get_digest $component $tag); then
+    echo "Error: Failed to get digest for $component, exiting" >&2
+    exit 1
+  fi
 
   echo -n "${tag}@${digest}"
 }

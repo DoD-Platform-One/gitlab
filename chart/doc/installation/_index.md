@@ -43,8 +43,9 @@ for simpler alternatives.
 ## Container images
 
 The GitLab Helm chart uses the [Cloud Native GitLab (CNG)](https://gitlab.com/gitlab-org/build/CNG)
-container images to deploy GitLab. Besides the CNG images, the default configuration uses third
-party images to deploy PostgreSQL, Redis, and MinIO.
+container images to deploy GitLab. Besides the CNG images for GitLab itself, the default configuration
+uses images published by third parties (for example, Bitnami) to deploy PostgreSQL, Redis, and MinIO
+to simplify non-production deployments.
 
 Production instances should not deploy these (stateful) third party services
 with the GitLab chart as mentioned above.
@@ -61,6 +62,13 @@ use external services.
 Starting in December 2024, [Bitnami changed its build policy](https://github.com/bitnami/containers/issues/75671)
 to update only the latest stable major version of each application in the free catalog. The GitLab chart
 will continue to default to publicly available images.
+
+In July 2025, [Bitnami announced](https://github.com/bitnami/containers/issues/75671) it will require
+a subscription to Bitnami Secure Images, a paid offering, for users to get access to secure and
+versioned charts and images.
+
+As a result, the versions of these Bitnami charts configured by GitLab will fall out of date. Teams that deploy these Bitnami charts for non-production use should take care
+to use appropriate up-to-date, patched images commensurate with their security requirements.
 
 {{< /alert >}}
 

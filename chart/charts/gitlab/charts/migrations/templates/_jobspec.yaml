@@ -21,7 +21,7 @@ spec:
   backoffLimit: {{ .Values.backoffLimit }}
   template:
     metadata:
-      {{- if or .Values.PodAnnotations .Values.annotations}}
+      {{- if or .Values.podAnnotations .Values.annotations}}
       annotations:
       {{- range $key, $value := merge .Values.podAnnotations (deepCopy .Values.annotations) }}
         {{ $key }}: {{ $value | quote }}
@@ -109,6 +109,7 @@ spec:
             - name: migrations-secrets
               mountPath: /srv/gitlab/config/secrets.yml
               subPath: rails-secrets/secrets.yml
+            {{- include "gitlab.topologyService.volumeMounts" (dict "context" $ "secretsVolumeName" "migrations-secrets") | nindent 12 }}
             - name: migrations-secrets
               mountPath: /srv/gitlab/config/initial_root_password
               subPath: migrations/initial_root_password
@@ -159,6 +160,10 @@ spec:
           {{- include "gitlab.redisSentinel.secret" $ | nindent 10 }}
           {{- range $.Values.local.psql }}
           {{-   include "gitlab.psql.secret" . | nindent 10 }}
+          {{- end }}
+          {{- include "gitlab.topologyService.mountSecrets" $ | nindent 10 }}
+          {{- if $.Values.global.clickhouse.enabled }}
+            {{- include "gitlab.clickhouse.main.secrets" $ | nindent 10 }}
           {{- end }}
           {{- if include "gitlab.geo.secondary" $ }}
           - secret:

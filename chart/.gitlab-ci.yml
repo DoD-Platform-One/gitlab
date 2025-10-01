@@ -192,8 +192,10 @@ pin_image_versions:
     - bats --verbose-run ./scripts/ci/pin_image_digests.bats
     - bash ./scripts/ci/pin_image_digests.sh
   artifacts:
+    when: always
     paths:
       - ci.digests.yaml
+      - skopeo_errors.log
   rules:
     # If we ever enable cluster tests in Dev, we have to fix the
     # pin_image_digtests.{bats|sh} to consider images built from

@@ -38,6 +38,9 @@ data:
       gitlab:
         host: {{ template "gitlab.gitlab.hostname" . }}
         https: {{ hasPrefix "https://" (include "gitlab.gitlab.url" .) }}
+        {{- if .Values.global.appConfig.relativeUrlRoot }}
+        relative_url_root: {{ .Values.global.appConfig.relativeUrlRoot | quote }}
+        {{- end }}
         {{- with .Values.global.hosts.ssh }}
         ssh_host: {{ . | quote }}
         {{- end }}
@@ -94,7 +97,7 @@ data:
       {{- if $.Values.global.appConfig.object_store.enabled }}
       # Consolidated object storage configuration
       ## property local configuration will override object_store
-      {{- include "gitlab.appConfig.objectStorage.configuration" (dict "name" "object_store" "config" $.Values.global.appConfig.object_store "context" $) | nindent 6 }}
+      {{-   include "gitlab.appConfig.objectStorage.configuration" (dict "name" "object_store" "config" $.Values.global.appConfig.object_store "context" $) | nindent 6 }}
         objects:
           {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "artifacts" "config" $.Values.global.appConfig.artifacts) | nindent 10 -}}
           {{- include "gitlab.appConfig.objectStorage.object" (dict "name" "lfs" "config" $.Values.global.appConfig.lfs) | nindent 10 -}}
@@ -133,6 +136,7 @@ data:
       backup:
         path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
       {{- include "gitlab.appConfig.kas" . | nindent 6 }}
+      {{- include "gitlab.appConfig.workspaces" . | nindent 6 }}
       {{- include "gitlab.appConfig.cell" . | nindent 6 }}
       {{- include "gitlab.appConfig.suggested_reviewers" . | nindent 6 }}
       {{- include "gitlab.appConfig.zoekt" . | nindent 6 }}
@@ -147,9 +151,9 @@ data:
       monitoring:
         ip_whitelist:
           {{- if kindIs "slice" .Values.monitoring.ipWhitelist }}
-          {{- range $ip := .Values.monitoring.ipWhitelist }}
+          {{-   range $ip := .Values.monitoring.ipWhitelist }}
           - {{ $ip | trim | quote }}
-          {{- end }}
+          {{-   end }}
           {{- end }}
         web_exporter:
           enabled: {{ or .Values.monitoring.exporter.enabled (and .Values.metrics.enabled (eq .Values.metrics.port .Values.monitoring.exporter.port)) }}
@@ -182,15 +186,7 @@ data:
       cp -v -L /init-config/webservice-metrics/webservice-metrics.crt /init-secrets/webservice-metrics/webservice-metrics.crt
       cp -v -L /init-config/webservice-metrics/webservice-metrics.key /init-secrets/webservice-metrics/webservice-metrics.key
     {{- end }}
-    {{- if $.Values.global.appConfig.cell.enabled }}
-      if [ -d /init-config/topology-service ]; then
-        mkdir -p /init-secrets/topology-service
-        {{- if $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
-        cp -v -L /init-config/topology-service/tls.key /init-secrets/topology-service/tls.key
-        cp -v -L /init-config/topology-service/tls.crt /init-secrets/topology-service/tls.crt
-        {{- end }}
-      fi
-    {{- end }}
+    {{- include "gitlab.topologyService.configureScript" $ | nindent 4 }}
 
 {{- include "webservice.datamodel.prepare" $ -}}
 {{/* BEGIN range deployments */}}
@@ -226,8 +222,8 @@ data:
     zip_reader_limit_bytes = {{ $.Values.workhorse.metadata.zipReaderLimitBytes | int64 }}
     {{- end }}
 
-    {{- if .workhorse.keywatcher }}
-    {{- include "workhorse.redis.config" $ | nindent 4 }}
+    {{- if or .workhorse.keywatcher .workhorse.circuitBreaker.enabled }}
+    {{-   include "workhorse.redis.config" $ | nindent 4 }}
     {{- end }}
     {{- include "workhorse.object_storage.config" $ | nindent 4 }}
     [image_resizer]
@@ -246,11 +242,19 @@ data:
     network = "tcp"
     addr = ":{{ $.Values.workhorse.monitoring.exporter.port }}"
     {{- $workhorseExporterTlsEnabled := eq (include "workhorse.monitoring.exporter.tls.enabled" $ ) "true" }}
-    {{- if $workhorseExporterTlsEnabled }}
+    {{-   if $workhorseExporterTlsEnabled }}
     [metrics_listener.tls]
     certificate = "/etc/gitlab/gitlab-workhorse/tls.crt"
     key = "/etc/gitlab/gitlab-workhorse/tls.key"
+    {{-   end }}
     {{- end }}
+    {{- if .workhorse.circuitBreaker.enabled }}
+    [circuit_breaker]
+    enabled = true
+    timeout = {{ .workhorse.circuitBreaker.timeout | int }}
+    interval = {{ .workhorse.circuitBreaker.interval | int }}
+    max_requests = {{ .workhorse.circuitBreaker.maxRequests | int }}
+    consecutive_failures = {{ .workhorse.circuitBreaker.consecutiveFailures | int }}
     {{- end }}
   configure: |
       set -e

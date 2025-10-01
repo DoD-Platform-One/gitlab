@@ -79,7 +79,7 @@ spec:
               servicePort: {{ .Values.service.autoflowCodecServerApiPort }}
             {{- end }}
           {{- end }}
-          {{ if (.Values.workspaces).enabled }}
+          {{ if .Values.global.workspaces.enabled }}
           - path: "{{ trimSuffix "/" $.Values.ingress.workspacesServerApiPath }}{{ $.Values.global.ingress.path }}"
             pathType: {{ default "Prefix" $.Values.global.ingress.pathType }}
             backend:

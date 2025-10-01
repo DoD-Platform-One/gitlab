@@ -40,7 +40,7 @@ the [Mattermost Forum](https://forum.mattermost.com/search?q=helm).
 
 ## Deploy GitLab Helm chart
 
-To deploy the GitLab Helm chart, follow the instructions described [here](../../_index.md).
+To deploy the GitLab Helm chart, follow the [installation instructions](../../_index.md).
 
 Here's a light way to install it:
 

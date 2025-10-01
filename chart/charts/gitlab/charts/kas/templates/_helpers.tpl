@@ -57,3 +57,16 @@ Labels to select Pods created by the KAS Deployment. Used for Service, PodMonito
 app: {{ template "name" . }}
 release: {{ .Release.Name }}
 {{- end -}}
+
+
+{{/*
+Returns the secret name for the Secret containing the TLS certificate and key for Workspaces.
+Uses `ingress.tls.workspacesSecretName` first and falls back to `global.ingress.tls.workspacesSecretName`.
+*/}}
+{{- define "workspaces.tlsSecret" -}}
+{{- $defaultName := (dict "workspacesSecretName" "") -}}
+{{- if .Values.global.ingress.configureCertmanager -}}
+{{- $_ := set $defaultName "workspacesSecretName" (printf "%s-kas-workspaces-tls" .Release.Name) -}}
+{{- end -}}
+{{- pluck "workspacesSecretName" .Values.ingress.tls .Values.global.ingress.tls $defaultName | first -}}
+{{- end -}}

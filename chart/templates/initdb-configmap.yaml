@@ -16,10 +16,10 @@ data:
     fi
   enable_extensions.sh: |
     [[ -n "${POSTGRES_POSTGRES_PASSWORD_FILE:-}" ]] && POSTGRES_POSTGRES_PASSWORD=$(cat ${POSTGRES_POSTGRES_PASSWORD_FILE})
-    PGPASSWORD=${POSTGRES_POSTGRES_PASSWORD} psql -d {{ template "gitlab.psql.database" .}} -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm; CREATE EXTENSION IF NOT EXISTS btree_gist;'
+    PGPASSWORD=${POSTGRES_POSTGRES_PASSWORD} psql -d {{ template "gitlab.psql.database" .}} -U postgres -c 'CREATE EXTENSION IF NOT EXISTS amcheck; CREATE EXTENSION IF NOT EXISTS pg_trgm; CREATE EXTENSION IF NOT EXISTS btree_gist;'
   init_registry.sh: |
     [[ -n "${POSTGRES_POSTGRES_PASSWORD_FILE:-}" ]] && POSTGRES_POSTGRES_PASSWORD=$(cat ${POSTGRES_POSTGRES_PASSWORD_FILE})
-    
+
     # Read registry database password from mounted secret file
     REGISTRY_PASSWORD_FILE="/etc/gitlab/postgres/registry_database_password"
     if [[ -f "${REGISTRY_PASSWORD_FILE}" ]]; then

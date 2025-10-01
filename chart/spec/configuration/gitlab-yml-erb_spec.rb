@@ -620,4 +620,159 @@ describe 'gitlab.yml.erb configuration' do
       end
     end
   end
+
+  context 'CI ID token configuration' do
+    let(:values) { HelmTemplate.defaults }
+    let(:template) { HelmTemplate.new(values) }
+    let(:sidekiq_config) do
+      cicd_token_config(template.dig('ConfigMap/test-sidekiq', 'data', 'gitlab.yml.erb'))
+    end
+
+    let(:webservice_config) do
+      cicd_token_config(template.dig('ConfigMap/test-webservice', 'data', 'gitlab.yml.erb'))
+    end
+
+    let(:toolbox_config) do
+      cicd_token_config(template.dig('ConfigMap/test-toolbox', 'data', 'gitlab.yml.erb'))
+    end
+
+    def cicd_token_config(gitlab_yml)
+      YAML.safe_load(gitlab_yml)['production']['ci_id_tokens']
+    end
+
+    context 'disabled (default)' do
+      it 'does not render CI ID token config' do
+        expect(sidekiq_config).to be_nil
+        expect(webservice_config).to be_nil
+        expect(toolbox_config).to be_nil
+      end
+    end
+
+    context 'enabled' do
+      let(:values) do
+        HelmTemplate.with_defaults(%(
+          global:
+            appConfig:
+              ciIdTokens:
+                issuerUrl: issuer.example.com
+          ))
+      end
+
+      it 'does render CI ID token config' do
+        expect(sidekiq_config).to eq({ 'issuer_url' => 'issuer.example.com' })
+        expect(webservice_config).to eq({ 'issuer_url' => 'issuer.example.com' })
+        expect(toolbox_config).to eq({ 'issuer_url' => 'issuer.example.com' })
+      end
+    end
+  end
+
+  context 'Workspaces host' do
+    let(:values) { HelmTemplate.defaults }
+    let(:template) { HelmTemplate.new(values) }
+
+    def gitlab_yml(chart)
+      YAML.safe_load(
+        template.dig("ConfigMap/test-#{chart}", 'data', 'gitlab.yml.erb')
+      )['production']['workspaces']['host']
+    end
+
+    %w[webservice toolbox sidekiq].each do |chart|
+      context "for #{chart}" do
+        context 'is configured' do
+          let(:values) do
+            HelmTemplate.with_defaults(%(
+             global:
+               hosts:
+                 workspaces:
+                     name: workspaces.example.com
+               workspaces:
+                 enabled: true
+             ))
+          end
+
+          it 'populates the value to gitlab.yml.erb' do
+            expect(gitlab_yml(chart)).to eq('workspaces.example.com')
+          end
+        end
+      end
+    end
+  end
+
+  context 'relativeUrlRoot configuration' do
+    let(:required_values) do
+      YAML.safe_load(%(
+        global:
+          appConfig:
+            relativeUrlRoot: #{value}
+      )).deep_merge!(default_values)
+    end
+
+    context 'when configured' do
+      let(:value) { "/gitlab" }
+
+      it 'populates relative_url_root in gitlab.yml.erb' do
+        t = HelmTemplate.new(required_values)
+        expect(t.exit_code).to eq(0)
+
+        # Check webservice config
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).to include('relative_url_root: "/gitlab"')
+
+        # Check sidekiq config
+        expect(t.dig(
+          'ConfigMap/test-sidekiq',
+          'data',
+          'gitlab.yml.erb'
+        )).to include('relative_url_root: "/gitlab"')
+      end
+
+      it 'includes relativeUrlRoot in registry auth endpoint' do
+        t = HelmTemplate.new(required_values)
+        expect(t.exit_code).to eq(0)
+
+        expect(t.dig(
+          'ConfigMap/test-registry',
+          'data',
+          'config.yml.tpl'
+        )).to include('realm: https://gitlab.example.com/gitlab/jwt/auth')
+      end
+    end
+
+    context 'when not configured' do
+      let(:value) { nil }
+
+      it 'does not populate relative_url_root in gitlab.yml.erb' do
+        t = HelmTemplate.new(required_values)
+        expect(t.exit_code).to eq(0)
+
+        # Check webservice config
+        expect(t.dig(
+          'ConfigMap/test-webservice',
+          'data',
+          'gitlab.yml.erb'
+        )).not_to include('relative_url_root')
+
+        # Check sidekiq config
+        expect(t.dig(
+          'ConfigMap/test-sidekiq',
+          'data',
+          'gitlab.yml.erb'
+        )).not_to include('relative_url_root')
+      end
+
+      it 'does not include relativeUrlRoot in registry auth endpoint' do
+        t = HelmTemplate.new(required_values)
+        expect(t.exit_code).to eq(0)
+
+        expect(t.dig(
+          'ConfigMap/test-registry',
+          'data',
+          'config.yml.tpl'
+        )).to include('realm: https://gitlab.example.com/jwt/auth')
+      end
+    end
+  end
 end

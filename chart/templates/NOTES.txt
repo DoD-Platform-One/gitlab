@@ -32,6 +32,12 @@ If you encounter a problem with either the import or operation of the registry, 
 The Container Registry database load balancing feature has been enabled. This is an experimental feature under active development and must not be used in production.
 {{- end }}
 
+{{- /* If the Container Registry database metrics is enabled */}}
+{{- if eq .Values.registry.database.metrics.enabled true }}
+{{ $WARNING }}
+The Container Registry database metrics feature has been enabled. This is an experimental feature under active development and must not be used in production.
+{{- end }}
+
 {{- /* Notifications endpoint threshold should use maxretries instead */ -}}
 {{- $usesThreshold := false }}
 {{- range $v := .Values.global.registry.notifications.endpoints }}

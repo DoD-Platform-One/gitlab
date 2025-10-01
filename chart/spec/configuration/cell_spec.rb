@@ -6,7 +6,7 @@ require 'helm_template_helper'
 require 'yaml'
 
 describe 'cells configuration' do
-  let(:charts) { %w[webservice sidekiq toolbox] }
+  let(:charts) { %w[migrations webservice sidekiq toolbox] }
   let(:default_values) do
     HelmTemplate.defaults
   end
@@ -35,7 +35,10 @@ describe 'cells configuration' do
                 'skipSequenceAlteration' => false
               },
               'topologyServiceClient' => {
-                'address' => 'topology-service.gitlab.example.com:443'
+                'address' => 'topology-service.gitlab.example.com:443',
+                'tls' => {
+                  'enabled' => false
+                }
               }
             }
           }
@@ -48,14 +51,17 @@ describe 'cells configuration' do
 
     it 'generates cell configuration in the gitlab.yml file' do
       expected_values = {
-        "enabled" => true,
-        "id" => 1,
-        "database" =>
+        'enabled' => true,
+        'id' => 1,
+        'database' =>
           {
-            "skip_sequence_alteration" => false
+            'skip_sequence_alteration' => false
           },
-        "topology_service_client" => {
-          "address" => "topology-service.gitlab.example.com:443"
+        'topology_service_client' => {
+          'address' => 'topology-service.gitlab.example.com:443',
+          'tls' => {
+            'enabled' => false
+          }
         }
       }
 

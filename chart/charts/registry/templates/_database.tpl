@@ -70,6 +70,16 @@ database:
     replicacheckinterval: {{ .Values.database.loadBalancing.replicaCheckInterval | quote }}
     {{- end }}
   {{- end }}
+  {{- if .Values.database.metrics.enabled }}
+  metrics:
+    enabled: {{ .Values.database.metrics.enabled }}
+    {{- if .Values.database.metrics.interval }}
+    interval: {{ .Values.database.metrics.interval | quote }}
+    {{- end }}
+    {{- if .Values.database.metrics.leaseDuration }}
+    leaseduration: {{ .Values.database.metrics.leaseDuration | quote }}
+    {{- end }}
+  {{- end }}
 {{- end }}
 {{- end -}}
 

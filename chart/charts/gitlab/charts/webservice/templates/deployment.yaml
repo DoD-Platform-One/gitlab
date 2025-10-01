@@ -255,6 +255,10 @@ spec:
             {{- end }}
             - name: WORKHORSE_ARCHIVE_CACHE_DISABLED
               value: "true"
+            {{- if $.Values.global.appConfig.relativeUrlRoot }}
+            - name: RAILS_RELATIVE_URL_ROOT
+              value: {{ $.Values.global.appConfig.relativeUrlRoot | quote }}
+            {{- end }}
             {{- include "webservice.extraEnv" (dict "global" $.Values.global "local" .) | nindent 12 }}
             {{- include "gitlab.extraEnvFrom" (dict "root" $ "local" .) | nindent 12 }}
           volumeMounts:
@@ -282,16 +286,7 @@ spec:
               mountPath: /srv/gitlab/config/puma.key
               subPath: puma/puma.key
            {{- end }}
-           {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
-            - name: webservice-secrets
-              mountPath: /srv/gitlab/config/topology-service/tls.crt
-              subPath: topology-service/tls.crt
-              readOnly: true
-            - name: webservice-secrets
-              mountPath: /srv/gitlab/config/topology-service/tls.key
-              subPath: topology-service/tls.key
-              readOnly: true
-           {{- end }}
+           {{- include "gitlab.topologyService.volumeMounts" (dict "context" $ "secretsVolumeName" "webservice-secrets") | nindent 12 }}
             - name: webservice-config
               mountPath: '/etc/krb5.conf'
               subPath: krb5.conf
@@ -321,7 +316,7 @@ spec:
           {{- end }}
           livenessProbe:
             httpGet:
-              path: /-/liveness
+              path: {{ $.Values.global.appConfig.relativeUrlRoot }}/-/liveness
               {{- if and (not $.Values.http.enabled) $.Values.tls.enabled }}
               scheme: HTTPS
               port: {{ $.Values.service.tls.internalPort }}
@@ -335,7 +330,7 @@ spec:
             failureThreshold: {{ .deployment.livenessProbe.failureThreshold }}
           readinessProbe:
             httpGet:
-              path: /-/readiness
+              path: {{ $.Values.global.appConfig.relativeUrlRoot }}/-/readiness
               {{- if and (not $.Values.http.enabled) $.Values.tls.enabled }}
               scheme: HTTPS
               port: {{ $.Values.service.tls.internalPort }}
@@ -373,7 +368,7 @@ spec:
             - name: TMPDIR
               value: "/tmp/gitlab"
             - name: GITLAB_WORKHORSE_AUTH_BACKEND
-              value: "http://localhost:{{ $.Values.service.internalPort }}"
+              value: "http://localhost:{{ $.Values.service.internalPort }}{{ $.Values.global.appConfig.relativeUrlRoot }}"
             - name: GITLAB_WORKHORSE_EXTRA_ARGS
               value: {{ .workhorse.extraArgs | quote }}
             - name: GITLAB_WORKHORSE_LISTEN_PORT
@@ -495,15 +490,7 @@ spec:
                 - key: "tls.key"
                   path: "gitlab-workhorse/tls.key"
           {{- end }}
-          {{- if and $.Values.global.appConfig.cell.enabled $.Values.global.appConfig.cell.topologyServiceClient.tls.enabled }}
-          - secret:
-              name: {{ template "topology-service.tls.secret" $ }}
-              items:
-                - key: "tls.crt"
-                  path: "topology-service/tls.crt"
-                - key: "tls.key"
-                  path: "topology-service/tls.key"
-          {{- end }}
+          {{- include "gitlab.topologyService.mountSecrets" $ | nindent 10 }}
           {{- if eq (include "webservice-metrics.tls.enabled" $) "true" }}
           - secret:
               name: {{ template "webservice-metrics.tls.secret" $ }}
