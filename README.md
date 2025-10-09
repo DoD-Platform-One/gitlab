@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 9.4.1-bb.0](https://img.shields.io/badge/Version-9.4.1--bb.0-informational?style=flat-square) ![AppVersion: 18.4.1](https://img.shields.io/badge/AppVersion-18.4.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 9.4.1-bb.1](https://img.shields.io/badge/Version-9.4.1--bb.1-informational?style=flat-square) ![AppVersion: 18.4.1](https://img.shields.io/badge/AppVersion-18.4.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -737,7 +737,7 @@ helm install gitlab chart/
 | redis.metrics.enabled | bool | `true` |  |
 | redis.metrics.image.registry | string | `"registry1.dso.mil/ironbank/bitnami"` |  |
 | redis.metrics.image.repository | string | `"analytics/redis-exporter"` |  |
-| redis.metrics.image.tag | string | `"v1.77.0"` |  |
+| redis.metrics.image.tag | string | `"v1.78.0"` |  |
 | redis.metrics.image.pullSecrets | list | `[]` |  |
 | redis.metrics.resources.limits.cpu | string | `"250m"` |  |
 | redis.metrics.resources.limits.memory | string | `"256Mi"` |  |
