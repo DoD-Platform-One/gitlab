@@ -1356,7 +1356,7 @@ redis:
     image:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: analytics/redis-exporter
-      tag: v1.77.0
+      tag: v1.78.0
       pullSecrets: []
     resources:
       limits:
