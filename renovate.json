@@ -6,6 +6,7 @@
     "dependencyDashboard": true,
     "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
     "draftPR": true,
+    "branchName": "renovate/ironbank",
     "enabledManagers": [
         "helm-values",
         "custom.regex"
@@ -19,12 +20,9 @@
         "gitlab",
         "renovate"
     ],
-    "commitMessagePrefix": "SKIP UPDATE CHECK",
     "packageRules": [
         {
-            "matchDatasources": [
-                "docker"
-            ],
+            "matchManagers": ["custom.regex"],
             "groupName": "Ironbank"
         },
         {
