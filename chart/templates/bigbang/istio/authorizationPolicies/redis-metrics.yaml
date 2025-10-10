@@ -1,4 +1,4 @@
-{{- if and .Values.istio.enabled .Values.istio.hardened.enabled .Values.monitoring.enabled .Values.redis.metrics.enabled -}}
+{{- if and .Values.istio.enabled .Values.istio.hardened.enabled .Values.monitoring.enabled .Values.upstream.redis.metrics.enabled -}}
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

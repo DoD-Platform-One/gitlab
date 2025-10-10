@@ -1,7 +1,0 @@
-postgresql:
-  image:
-    tag: 16
-
-registry:
-  database:
-    enabled: true

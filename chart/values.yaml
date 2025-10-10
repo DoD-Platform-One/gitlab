@@ -23,89 +23,25 @@
 
 ## The global properties are used to configure multiple charts at once.
 ## https://docs.gitlab.com/charts/charts/globals
+
 global:
 
-  # added by BigBang to help with sub-chart configuration
-  istio:
-    enabled: false
-    injection: disabled
-
-  common:
-    labels: {}
-
-
-  image: {}
-    # Registry value override is only available for the following Charts:
-    # - Spamcheck
-    # - Mailroom
-    # If specifying a value here, be sure to also configure
-    # `gitlab.<subchart>.image.repository` to a value that does not
-    # include the default registry domain `registry.gitlab.com`.
-    # Support for other charts is coming as an iterative rollout.
-    # See https://gitlab.com/gitlab-org/charts/gitlab/-/issues/2859
-    # for more information.
-    # registry:
-
-    # pullPolicy: IfNotPresent
-    # pullSecrets: []
-    # tagSuffix: ""
-
-  ## Supplemental Pod labels. Will not be used for selectors.
-  pod:
-    labels: {}
-
-  ## https://docs.gitlab.com/charts/installation/deployment#deploy-the-community-edition
-  edition: ee
-
-  ## https://docs.gitlab.com/charts/charts/globals#gitlab-version
-  gitlabVersion: "18.4.1"
-
-  ## https://docs.gitlab.com/charts/charts/globals#application-resource
-  application:
-    create: false
-    links: []
-    allowClusterRoles: true
   ## https://docs.gitlab.com/charts/charts/globals#configure-host-settings
   hosts:
     domain: dev.bigbang.mil
-    hostSuffix:
-    https: true
-    externalIP:
-    ssh: ~
     gitlab:
       name: gitlab.dev.bigbang.mil
-    minio: {}
     registry:
       name: registry.dev.bigbang.mil
-    tls: {}
-    smartcard: {}
-    kas: {}
-    pages: {}
-    openbao: {}
-    workspaces: {}
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
   ingress:
-    apiVersion: ""
+   # apiVersion: ""
     configureCertmanager: false
-    useNewIngressForCerts: false
-    provider: nginx
-    # class:
-    annotations: {}
-    enabled: false
-    tls: {}
-    #   enabled: true
-    #   secretName:
-    path: /
-    pathType: Prefix
 
   # Override the API version to use for HorizontalPodAutoscaler
   hpa:
     apiVersion: "autoscaling/v2"
-
-  # Enable KEDA globally (https://keda.sh/)
-  keda:
-    enabled: false
 
   # Override the API version to use for PodDisruptionBudget
   pdb:
@@ -115,68 +51,6 @@ global:
   batch:
     cronJob:
       apiVersion: "batch/v1"
-
-  # Override enablement of ServiceMonitor and PodMonitor objects.
-  monitoring:
-    enabled: false
-
-  gitlab:
-    ## Enterprise license for this GitLab installation
-    ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#initial-enterprise-license
-    ## If allowing shared-secrets generation, this is OPTIONAL.
-    license: {}
-      # secret: RELEASE-gitlab-license
-      # key: license
-
-  ## Initial root password for this GitLab installation
-  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#initial-root-password
-  ## If allowing shared-secrets generation, this is OPTIONAL.
-  initialRootPassword: {}
-    # secret: RELEASE-gitlab-initial-root-password
-    # key: password
-
-  ## https://docs.gitlab.com/charts/charts/globals#configure-postgresql-settings
-  psql:
-    # This exists to support template handling
-    knownDecompositions:
-      - main
-      - ci
-      - embedding
-      - sec
-    connectTimeout:
-    keepalives:
-    keepalivesIdle:
-    keepalivesInterval:
-    keepalivesCount:
-    tcpUserTimeout:
-    password: {}
-      # useSecret:
-      # secret:
-      # key:
-      # file:
-    # host: postgresql.hostedsomewhere.else
-    # port: 123
-    # username: gitlab
-    # database: gitlabhq_production
-    # applicationName:
-    # preparedStatements: false
-    # databaseTasks: true
-    main: {}
-      # host: postgresql.hostedsomewhere.else
-      # port: 123
-      # username: gitlab
-      # database: gitlabhq_production
-      # applicationName:
-      # preparedStatements: false
-      # databaseTasks: true
-    ci: {}
-      # host: postgresql.hostedsomewhere.else
-      # port: 123
-      # username: gitlab
-      # database: gitlabhq_production_ci
-      # applicationName:
-      # preparedStatements: false
-      # databaseTasks: false
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-redis-settings
   redis:
@@ -194,71 +68,6 @@ global:
           drop:
           - ALL
 
-      # secret:
-      # key:
-    # connectTimeout: 1
-    # readTimeout: 1
-    # writeTimeout: 1
-    # host: redis.hostedsomewhere.else
-    # port: 6379
-    # database: 0
-    # user: webservice
-    # sentinels:
-    #   - host:
-    #     port:
-    sentinelAuth:
-      enabled: false
-      # secret:
-      # key:
-
-  ## https://docs.gitlab.com/charts/charts/globals#configure-gitaly-settings
-  gitaly:
-    enabled: true
-    authToken: {}
-      # secret:
-      # key:
-    # serviceName:
-    internal:
-      names: [default]
-    external: []
-    service:
-      name: gitaly
-      type: ClusterIP
-      externalPort: 8075
-      internalPort: 8075
-      tls:
-        externalPort: 8076
-        internalPort: 8076
-    tls:
-      enabled: false
-      # secretName:
-
-  praefect:
-    enabled: false
-    ntpHost: pool.ntp.org
-    replaceInternalGitaly: true
-    authToken: {}
-    autoMigrate: true
-    dbSecret: {}
-    virtualStorages:
-      - name: default
-        gitalyReplicas: 3
-        maxUnavailable: 1
-    psql:
-      sslMode: disable
-    # serviceName:
-    service:
-      name: praefect
-      type: ClusterIP
-      externalPort: 8075
-      internalPort: 8075
-      tls:
-        externalPort: 8076
-        internalPort: 8076
-    tls:
-      enabled: false
-      # secretName:
-
   ## https://docs.gitlab.com/charts/charts/globals#configure-minio-settings
   minio:
     enabled: true
@@ -269,601 +78,15 @@ global:
   ## Rails based portions of this chart share many settings
   appConfig:
     ## https://docs.gitlab.com/charts/charts/globals#general-application-settings
-    # cdnHost:
-    relativeUrlRoot: ""
-    enableUsagePing: true
-    enableSeatLink: true
-    enableImpersonation:
-    applicationSettingsCacheSeconds: 60
     defaultCanCreateGroup: false
-    usernameChangingEnabled: true
-    issueClosingPattern:
-    defaultTheme:
-    defaultColorMode:
-    defaultSyntaxHighlightingTheme:
-    defaultProjectsFeatures:
-      issues: true
-      mergeRequests: true
-      wiki: true
-      snippets: true
-      builds: true
-    graphQlTimeout:
-    webhookTimeout:
-    maxRequestDurationSeconds:
-
-    ## https://docs.gitlab.com/charts/charts/globals#cron-jobs-related-settings
-    cron_jobs: {}
-      ## Flag stuck CI builds as failed
-      # stuck_ci_jobs_worker:
-      #   cron: "0 * * * *"
-      ## Schedule pipelines in the near future
-      # pipeline_schedule_worker:
-      #   cron: "3-59/10 * * * *"
-      ## Remove expired build artifacts
-      # expire_build_artifacts_worker:
-      #   cron: "*/7 * * * *"
-      ## Periodically run 'git fsck' on all repositories.
-      # repository_check_worker:
-      #   cron: "20 * * * *"
-      ## Send admin emails once a week
-      # admin_email_worker:
-      #   cron: "0 0 * * 0"
-      ## Remove outdated repository archives
-      # repository_archive_cache_worker:
-      #   cron: "0 * * * *"
-      ## Verify custom GitLab Pages domains
-      # pages_domain_verification_cron_worker:
-      #   cron: "*/15 * * * *"
-      # schedule_migrate_external_diffs_worker:
-      #   cron: "15 * * * *"
-      ## Prune stale group runners on opted-in namespaces
-      # ci_runners_stale_group_runners_prune_worker_cron:
-      #   cron: "30 * * * *"
-      ## Periodically update ci_runner_versions table with up-to-date versions and status
-      # ci_runner_versions_reconciliation_worker:
-      #   cron: "@daily"
-      ## Periodically clean up stale ci_runner_machines records
-      # ci_runners_stale_machines_cleanup_worker:
-      #   cron: "36 * * * *"
-      # ci_click_house_finished_pipelines_sync_worker:
-      #   cron: "*/4 * * * *"
-      #   args: [0, 1]
-      ### GitLab Geo
-      # Geo Primary only!
-      # geo_prune_event_log_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo repository sync worker
-      # geo_repository_sync_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo file download dispatch worker
-      # geo_file_download_dispatch_worker:
-      #  cron: "*/10 * * * *"
-      ## GitLab Geo repository verification primary batch worker
-      # geo_repository_verification_primary_batch_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo repository verification secondary scheduler worker
-      # geo_repository_verification_secondary_scheduler_worker:
-      #   cron: "*/5 * * * *"
-      ## GitLab Geo migrated local files clean up worker
-      # geo_migrated_local_files_clean_up_worker:
-      #   cron: "15 */6 * * *"
-      ### LDAP
-      # ldap_sync_worker:
-      #   cron: "30 1 * * *"
-      # ldap_group_sync_worker:
-      #   cron: "0 * * * *"
-      ### Snapshot active user statistics
-      # historical_data_worker:
-      #   cron: "0 12 * * *"
-      # loose_foreign_keys_cleanup_worker_cron:
-      #   cron: "*/5 * * * *"
-
-    ## https://docs.gitlab.com/charts/charts/globals#content-security-policy
-    contentSecurityPolicy:
-      enabled: false
-      report_only: true
-      # directives: {}
-
-    ## https://docs.gitlab.com/charts/charts/globals#gravatarlibravatar-settings
-    gravatar:
-      plainUrl:
-      sslUrl:
-
-    ## https://docs.gitlab.com/charts/charts/globals#hooking-analytics-services-to-the-gitlab-instance
-    extra:
-      googleAnalyticsId:
-      matomoUrl:
-      matomoSiteId:
-      matomoDisableCookies:
-      oneTrustId:
-      googleTagManagerNonceId:
-      bizible:
-
-    ## https://docs.gitlab.com/charts/charts/globals#lfs-artifacts-uploads-packages-external-mr-diffs-and-dependency-proxy
-    object_store:
-      enabled: false
-      proxy_download: true
-      storage_options: {}
-        # server_side_encryption:
-        # server_side_encryption_kms_key_id
-      connection: {}
-        # secret:
-        # key:
-    lfs:
-      enabled: true
-      proxy_download: true
-      bucket: git-lfs
-      connection: {}
-        # secret:
-        # key:
-    artifacts:
-      enabled: true
-      proxy_download: true
-      bucket: gitlab-artifacts
-      connection: {}
-        # secret:
-        # key:
-    uploads:
-      enabled: true
-      proxy_download: true
-      bucket: gitlab-uploads
-      connection: {}
-        # secret:
-        # key:
-    packages:
-      enabled: true
-      proxy_download: true
-      bucket: gitlab-packages
-      connection: {}
-    externalDiffs:
-      enabled: false
-      when:
-      proxy_download: true
-      bucket: gitlab-mr-diffs
-      connection: {}
-    terraformState:
-      enabled: false
-      bucket: gitlab-terraform-state
-      connection: {}
-    ciSecureFiles:
-      enabled: false
-      bucket: gitlab-ci-secure-files
-      connection: {}
-    dependencyProxy:
-      enabled: false
-      proxy_download: true
-      bucket: gitlab-dependency-proxy
-      connection: {}
-
-    backups:
-      bucket: gitlab-backups
-      tmpBucket: tmp
-
-    ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
-    ## Microsoft Graph Mailer settings
-    microsoft_graph_mailer:
-      enabled: false
-      user_id: ""
-      tenant: ""
-      client_id: ""
-      client_secret:
-        secret: ""
-        key: secret
-      azure_ad_endpoint: "https://login.microsoftonline.com"
-      graph_endpoint: "https://graph.microsoft.com"
-
-    ## https://docs.gitlab.com/charts/installation/command-line-options.html#incoming-email-configuration
-    ## https://docs.gitlab.com/charts/charts/gitlab/mailroom/index.html#incoming-email
-    incomingEmail:
-      enabled: false
-      address: ""
-      host: "imap.gmail.com"
-      port: 993
-      ssl: true
-      startTls: false
-      user: ""
-      password:
-        secret: ""
-        key: password
-      deleteAfterDelivery: true
-      expungeDeleted: false
-      logger:
-        logPath: "/dev/stdout"
-      mailbox: inbox
-      idleTimeout: 60
-      inboxMethod: "imap"
-      clientSecret:
-        key: secret
-      pollInterval: 60
-      deliveryMethod: webhook
-      authToken: {}
-        # secret:
-        # key:
-
-    ## https://docs.gitlab.com/charts/charts/gitlab/mailroom/index.html#service-desk-email
-    serviceDeskEmail:
-      enabled: false
-      address: ""
-      host: "imap.gmail.com"
-      port: 993
-      ssl: true
-      startTls: false
-      user: ""
-      password:
-        secret: ""
-        key: password
-      deleteAfterDelivery: true
-      expungeDeleted: false
-      logger:
-        logPath: "/dev/stdout"
-      mailbox: inbox
-      idleTimeout: 60
-      inboxMethod: "imap"
-      clientSecret:
-        key: secret
-      pollInterval: 60
-      deliveryMethod: webhook
-      authToken: {}
-        # secret:
-        # key:
-
-    ## https://docs.gitlab.com/charts/charts/globals#ldap
-    ldap:
-      # prevent the use of LDAP for sign-in via web.
-      preventSignin: false
-      servers: {}
-      ## See documentation for complete example of a configured LDAP server
-
-    duoAuth:
-      enabled: false
-      # hostname:
-      # integrationKey:
-      # secretKey:
-      #   secret:
-      #   key:
-
-    ## https://docs.gitlab.com/charts/charts/globals#kas-settings
-    gitlab_kas: {}
-      # secret:
-      # key:
-      # enabled:
-      # externalUrl:
-      # internalUrl:
-      # clientTimeoutSeconds:
     
-    workspaces: {}
-
-    ## Configure GitLab Cells. Cells is a GitLab internal-use experiment.
-    ## https://docs.gitlab.com/administration/cells/
-    cell:
-      enabled: false
-      # id:
-      database:
-        skipSequenceAlteration: false
-      topologyServiceClient:
-        tls:
-          enabled: false
-        # address:
-        # caFile:
-        # privateKeyFile:
-        # certificateFile:
-
-    ## https://docs.gitlab.com/charts/charts/globals#suggested-reviewers-settings
-    suggested_reviewers: {}
-      # secret:
-      # key:
-
-    ## https://docs.gitlab.com/charts/charts/globals#omniauth
     omniauth:
       enabled: false
-      autoSignInWithProvider:
-      syncProfileFromProvider: []
-      syncProfileAttributes: [email]
-      allowSingleSignOn: [saml]
-      blockAutoCreatedUsers: true
-      autoLinkLdapUser: false
-      autoLinkSamlUser: false
-      autoLinkUser: []
-      externalProviders: []
-      allowBypassTwoFactor: []
-      providers: []
-      # - secret: gitlab-google-oauth2
-      #   key: provider
 
-    ## https://docs.gitlab.com/charts/charts/globals#kerberos
-    kerberos:
-      enabled: false
-      keytab:
-        # secret:
-        key: keytab
-      servicePrincipalName: ""
-      krb5Config: ""
-      dedicatedPort:
-        enabled: false
-        port: 8443
-        https: true
-      simpleLdapLinkingAllowedRealms: []
-
-    ## https://docs.gitlab.com/charts/charts/globals#configure-appconfig-settings
-    sentry:
-      enabled: false
-      dsn:
-      clientside_dsn:
-      environment:
-
-    gitlab_docs:
-      enabled: false
-      host: ""
-
-    oidcProvider:
-      openidIdTokenExpireInSeconds: 120
-
-    smartcard:
-      enabled: false
-      CASecret:
-      clientCertificateRequiredHost:
-      sanExtensions: false
-      requiredForGitAccess: false
-
-    sidekiq:
-      routingRules: []
-
-    # Config that only applies to the defaults on initial install
-    initialDefaults: {}
-      # signupEnabled:
-      # gitlabProductUsageData: true
-  ## End of global.appConfig
-
-  oauth:
-    gitlab-pages: {}
-      # secret:
-      # appIdKey:
-      # appSecretKey:
-      # redirectUri:
-      # authScope:
-
-  ## https://docs.gitlab.com/charts/advanced/geo/
-  geo:
-    enabled: false
-    # Valid values: primary, secondary
-    role: primary
-    ## Geo Secondary only
-    # nodeName allows multiple instances behind a load balancer.
-    nodeName: # defaults to `gitlab.gitlab.host`
-    # ingressClass:
-    # PostgreSQL connection details only needed for `secondary`
-    psql:
-      password: {}
-      #   secret:
-      #   key:
-      # host: postgresql.hostedsomewhere.else
-      # port: 123
-      # username: gitlab_replicator
-      # database: gitlabhq_geo_production
-      # ssl:
-      #   secret:
-      #   clientKey:
-      #   clientCertificate:
-      #   serverCA:
-    registry:
-      replication:
-        enabled: false
-        primaryApiUrl:
-        ## Consumes global.registry.notificationSecret
 
   ## https://docs.gitlab.com/charts/charts/gitlab/kas/
   kas:
     enabled: false
-    service:
-      apiExternalPort: 8153 # port for connections from the GitLab backend
-    tls:
-      enabled: false
-      verify: true
-      # secretName:
-      # caSecretName:
-
-  workspaces:
-    ## If workspaces is enabled, you must provide a hostname under global.hosts
-    enabled: false
-
-  ## https://docs.gitlab.com/charts/charts/gitlab/spamcheck/
-  spamcheck:
-    enabled: false
-
-  ## https://docs.gitlab.com/charts/charts/globals#configure-gitlab-shell
-  shell:
-    authToken: {}
-    # secret:
-    # key:
-    hostKeys: {}
-      # secret:
-    ## https://docs.gitlab.com/charts/charts/globals#tcp-proxy-protocol
-    tcp:
-      proxyProtocol: false
-
-  ## Rails application secrets
-  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#gitlab-rails-secret
-  ## If allowing shared-secrets generation, this is OPTIONAL.
-  railsSecrets: {}
-    # secret:
-
-  ## Rails generic setting, applicable to all Rails-based containers
-  rails:
-    bootsnap: # Enable / disable Shopify/Bootsnap cache
-      enabled: true
-    sessionStore:
-      sessionCookieTokenPrefix: ""
-
-  ## https://docs.gitlab.com/charts/charts/globals#configure-registry-settings
-  registry:
-    bucket: registry
-
-    certificate: {}
-      # secret:
-    httpSecret: {}
-      # secret:
-      # key:
-    notificationSecret: {}
-      # secret:
-      # key:
-    
-    ## Container Registry database configuration
-    database: 
-      password: {}
-      # user: registry
-      # name: registry
-    tls:
-      enabled: false
-      # secretName:
-    redis:
-      cache:
-        password: {}
-      rateLimiting:
-        password: {}
-      loadBalancing:
-        password: {}
-    # https://docs.docker.com/registry/notifications/#configuration
-    notifications: {}
-      # endpoints:
-      #   - name: FooListener
-      #     url: https://foolistener.com/event
-      #     timeout: 500ms
-      #     threshold: 10 # DEPRECATED: use maxretries instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
-      #     maxretries: 5
-      #     backoff: 1s
-      #     headers:
-      #       FooBar: ['1', '2']
-      #       Authorization:
-      #         secret: gitlab-registry-authorization-header
-      #       SpecificPassword:
-      #         secret: gitlab-registry-specific-password
-      #         key: password
-      # events: {}
-
-    # Settings utilized by other services referencing registry:
-    enabled: true
-    host:
-    # port: 443
-    api:
-      protocol: http
-      serviceName: registry
-      port: 5000
-    tokenIssuer: gitlab-issuer
-
-  pages:
-    enabled: false
-    accessControl: false
-    path:
-    host:
-    port:
-    https: # default true
-    externalHttp: []
-    externalHttps: []
-    customDomainMode:
-    artifactsServer: true
-    localStore:
-      enabled: false
-      # path: /srv/gitlab/shared/pages
-    objectStore:
-      enabled: true
-      bucket: gitlab-pages
-      # proxy_download: true
-      connection: {}
-        # secret:
-        # key:
-    apiSecret: {}
-      # secret:
-      # key:
-    authSecret: {}
-      # secret:
-      # key:
-    namespaceInPath: false
-
-  ## GitLab Runner
-  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#gitlab-runner-secret
-  ## If allowing shared-secrets generation, this is OPTIONAL.
-  runner:
-    registrationToken: {}
-      # secret:
-
-  ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
-  ## Outgoing email server settings
-  smtp:
-    enabled: false
-    address: smtp.mailgun.org
-    port: 2525
-    user_name: ""
-    ## https://docs.gitlab.com/charts/installation/secrets#smtp-password
-    password:
-      secret: ""
-      key: password
-    # domain:
-    authentication: "plain"
-    starttls_auto: false
-    openssl_verify_mode: "peer"
-    open_timeout: 30
-    read_timeout: 60
-    pool: false
-
-  ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
-  ## Email persona used in email sent by GitLab
-  email:
-    from: ""
-    display_name: GitLab
-    reply_to: ""
-    subject_suffix: ""
-    smime:
-      enabled: false
-      secretName: ""
-      keyName: "tls.key"
-      certName: "tls.crt"
-
-  ## Timezone for containers.
-  time_zone: UTC
-
-  ## Global Service Annotations and Labels
-  service:
-    labels: {}
-    annotations: {}
-
-  ## Global Deployment Annotations
-  deployment:
-    annotations: {}
-
-
-  # Setting a global nodeAffinity only applies to the registry chart for now.
-  # See issue https://gitlab.com/gitlab-com/gl-infra/production-engineering/-/issues/25403 for more information
-
-  nodeAffinity:
-
-  antiAffinity: soft
-  affinity:
-    podAntiAffinity:
-      topologyKey: "kubernetes.io/hostname"
-    nodeAffinity:
-      key: topology.kubernetes.io/zone
-      values: []
-
-  # Priority class assigned to pods, may be overridden for individual components
-  # https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
-  priorityClassName: ""
-
-  ## https://docs.gitlab.com/charts/charts/globals#configure-workhorse-settings
-  ## Global settings related to Workhorse
-  workhorse:
-    serviceName: webservice-default
-    # scheme:
-    # host:
-    # port:
-    ## https://docs.gitlab.com/charts/installation/secrets#gitlab-workhorse-secret
-    # secret:
-    # key:
-    tls:
-      enabled: false
-
-  ## https://docs.gitlab.com/charts/charts/globals#configure-webservice
-  webservice:
-    workerTimeout: 60
 
   ## https://docs.gitlab.com/charts/charts/globals#custom-certificate-authorities
   # configuration of certificates container & custom CA injection
@@ -949,846 +172,329 @@ global:
     ## Name to be used for serviceAccount, otherwise defaults to chart fullname
     # name:
 
-  ## https://docs.gitlab.com/charts/charts/globals/#tracing
-  tracing:
-    connection:
-      string: ""
-    urlTemplate: ""
-
-  zoekt:
-    gateway:
-      basicAuth: {}
-    indexer:
-      internalApi: {}
-
-  ## https://docs.gitlab.com/ci/secrets/
-  ## Experimental, unsupported
-  openbao:
-    enabled: false
-    host:
-    https:
-    url: # If present, must be a complete URI
-
-  ## https://docs.gitlab.com/charts/charts/globals
-  extraEnv: {}
-  #   SOME_KEY: some_value
-  #   SOME_OTHER_KEY: some_other_value
-
-  ## https://docs.gitlab.com/charts/charts/globals
-  extraEnvFrom: {}
-  #   MY_NODE_NAME:
-  #     fieldRef:
-  #       fieldPath: spec.nodeName
-  #   MY_CPU_REQUEST:
-  #     resourceFieldRef:
-  #       containerName: test-container
-  #       resource: requests.cpu
-  #   SECRET_THING:
-  #     secretKeyRef:
-  #       name: special-secret
-  #       key: special_token
-  #       # optional: boolean
-  #   CONFIG_STRING:
-  #     configMapKeyRef:
-  #       name: useful-config
-  #       key: some-string
-  #       # optional: boolean
-
-  ## https://docs.gitlab.com/charts/charts/globals/#jobs
-  job:
-    nameSuffixOverride:
-
-  traefik:
-    apiVersion: "" # newer apiVersion: "traefik.io/v1alpha1"
-
 ## End of global
 
-upgradeCheck:
-  enabled: true
-  image:
-    repository: registry1.dso.mil/ironbank/redhat/ubi/ubi9
-    tag: "9.6"
-    pullSecrets:
-    - name: private-registry
-  securityContext:
-    # in alpine/debian/busybox based images, this is `nobody:nogroup`
-    runAsUser: 65534
-    runAsGroup: 65534
-    fsGroup: 65534
-    seccompProfile:
-      type: "RuntimeDefault"
-  ## Allow to overwrite the specific security context under which the container is running.
-  containerSecurityContext:
-    runAsUser: 65534
-    runAsGroup: 65534
-    allowPrivilegeEscalation: false
-    runAsNonRoot: true
-    capabilities:
-      drop: [ "ALL" ]
-  tolerations: []
-  annotations:
-    sidecar.istio.io/inject: "true"
-  configMapAnnotations: {}
-  resources:
-    requests:
-      cpu: 500m
-      memory: 500Mi
-    limits:
-      cpu: 500m
-      memory: 500Mi
+### -- We are exposing only the keys that BigBang overrides from the upstream chart. 
+### Please refer to the upstream chart via "helm show values ./chart/charts/<upstream-package.tar.gz>" for other value configs.
+### @default -- Upstream chart values
 
-## Settings for the Let's Encrypt ACME Issuer
-# certmanager-issuer:
-#   # The email address to register certificates requested from Let's Encrypt.
-#   # Required if using Let's Encrypt.
-#   email: email@example.com
-
-
-## Installation of certmananger.
-## This value replaces `certmanager.install` to allow certmanager schema validation to pass.
-## See requirements.yaml for current version
-installCertmanager: false
-
-## Configuration of jetstack/cert-manager
-certmanager:
-  installCRDs: false
-  nameOverride: certmanager
-
-## https://docs.gitlab.com/charts/charts/nginx/
-## https://docs.gitlab.com/charts/architecture/decisions#nginx-ingress
-## Installation & configuration of charts/ingress-nginx:
-nginx-ingress: &nginx-ingress
-  enabled: false
-  tcpExternalConfig: "true"
-  controller: &nginx-ingress-controller
-    podSecurityContext:
-      seccompProfile:
-        type: "RuntimeDefault"
+upstream:
+  nameOverride: "gitlab"
+  upgradeCheck:
+    enabled: true
     image:
-      registry: registry.gitlab.com
-      image: gitlab-org/cloud-native/mirror/images/ingress-nginx/controller
-      tag: "v1.11.7"
-      digest: "sha256:016a25cf89bf7f930869ccd7cb3dd4acbe106cd4da1419804951ef9c8636f053"
-    addHeaders:
-      Referrer-Policy: strict-origin-when-cross-origin
-    config: &nginx-ingress-controller-config
-      annotation-value-word-blocklist: "load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},',\""
-      hsts: "true"
-      hsts-include-subdomains: "false"
-      hsts-max-age: "63072000"
-      server-name-hash-bucket-size: "256"
-      use-http2: "true"
-      ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4"
-      ssl-protocols: "TLSv1.3 TLSv1.2"
-      server-tokens: "false"
-      # Configure smaller defaults for upstream-keepalive-*, see https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration
-      upstream-keepalive-connections: 100 # Limit of 100 held-open connections
-      upstream-keepalive-time:        30s # 30 second limit for connection reuse
-      upstream-keepalive-timeout:       5 # 5 second timeout to hold open idle connections
-      upstream-keepalive-requests:   1000 # 1000 requests per connection, before recycling
-
-    service:
-      externalTrafficPolicy: "Local"
-      # Configure no IP families to delegate assignment to controller based on cluster config.
-      ipFamilies: []
-      ipFamilyPolicy: "PreferDualStack"
-      appProtocol: false
-      internal:
-        appProtocol: false
-    ingressClassByName: false
-    ingressClassResource:
-      name: '{{ include "ingress.class.name" $ }}'
-    resources:
-      requests:
-        cpu: 100m
-        memory: 100Mi
-    publishService:
-      enabled: true
-    replicaCount: 2
-    minAvailable: 1
-    scope:
-      enabled: true
-    metrics:
-      enabled: true
-      service:
-        annotations:
-          gitlab.com/prometheus_scrape: "true"
-          gitlab.com/prometheus_port: "10254"
-          prometheus.io/scrape: "true"
-          prometheus.io/port: "10254"
-    admissionWebhooks:
-      enabled: false
-  defaultBackend:
-    podSecurityContext:
+      repository: registry1.dso.mil/ironbank/redhat/ubi/ubi9
+      tag: "9.6"
+      pullSecrets:
+      - name: private-registry
+    securityContext:
+      # in alpine/debian/busybox based images, this is `nobody:nogroup`
+      runAsUser: 65534
+      runAsGroup: 65534
+      fsGroup: 65534
       seccompProfile:
         type: "RuntimeDefault"
-    resources:
-      requests:
-        cpu: 5m
-        memory: 5Mi
-  rbac:
-    create: true
-    # Needed for k8s 1.20 and 1.21
-    # https://github.com/kubernetes/ingress-nginx/issues/7510
-    # https://github.com/kubernetes/ingress-nginx/issues/7519
-    scope: false
-  serviceAccount:
-    create: true
-
-# Ingress controller to handle requests forwarded from other Geo sites.
-# Configuration differences compared to the main nginx ingress:
-#   - Pass X-Forwarded-For headers as is
-#   - Use a different IngressClass name
-nginx-ingress-geo:
-  <<: *nginx-ingress
-  enabled: false
-  controller:
-    <<: *nginx-ingress-controller
-    config:
-      <<: *nginx-ingress-controller-config
-      # Pass incoming X-Forwarded-* headers to upstream. Required to handle requests
-      # from other Geo sites.
-      # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers
-      use-forwarded-headers: true
-    electionID: ingress-controller-leader-geo
-    ingressClassResource:
-      name: '{{ include "gitlab.geo.ingress.class.name" $ | quote }}'
-      controllerValue: 'k8s.io/nginx-ingress-geo'
-  # A pre-defined/static external IP can be configured with global.hosts.externalGeoIP.
-  externalIpTpl: '{{ .Values.global.hosts.externalGeoIP }}'
-
-haproxy:
-  install: false
-  controller:
-    service:
-      type: LoadBalancer
-      tcpPorts:
-        - name: ssh
-          port: 22
-          targetPort: 22
-      enablePorts:
-        # Disable QUIC (UDP based) because LoadBalancer Services do not support UDP/TCP at the same time.
-        quic: false
-    extraArgs:
-      - --configmap-tcp-services=$(POD_NAMESPACE)/$(POD_NAMESPACE)-haproxy-tcp
-
-## Installation & configuration of stable/prometheus
-## See dependencies in Chart.yaml for current version
-prometheus:
-  install: false
-  rbac:
-    create: true
-  alertmanager:
-    enabled: false
-  kube-state-metrics:
-    enabled: false
-  prometheus-node-exporter:
-    enabled: false
-  prometheus-pushgateway:
-    enabled: false
-  server:
-    enabled: false
-    retention: 15d
-    strategy:
-      type: Recreate
+    ## Allow to overwrite the specific security context under which the container is running.
     containerSecurityContext:
-      runAsUser: 1000
+      runAsUser: 65534
+      runAsGroup: 65534
       allowPrivilegeEscalation: false
       runAsNonRoot: true
       capabilities:
         drop: [ "ALL" ]
-      seccompProfile:
-        type: "RuntimeDefault"
-  podSecurityPolicy:
-    enabled: false
-  configmapReload:
-    prometheus:
-      containerSecurityContext:
-        runAsUser: 1000
-        allowPrivilegeEscalation: false
-        runAsNonRoot: true
-        capabilities:
-          drop: [ "ALL" ]
-        seccompProfile:
-          type: "RuntimeDefault"
-  serverFiles:
-    prometheus.yml:
-      scrape_configs:
-        - job_name: prometheus
-          static_configs:
-            - targets:
-                - localhost:9090
-        - job_name: kubernetes-apiservers
-          kubernetes_sd_configs:
-            - role: endpoints
-          scheme: https
-          tls_config:
-            ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-            insecure_skip_verify: true
-          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-          relabel_configs:
-            - source_labels:
-                [
-                  __meta_kubernetes_namespace,
-                  __meta_kubernetes_service_name,
-                  __meta_kubernetes_endpoint_port_name,
-                ]
-              action: keep
-              regex: default;kubernetes;https
-        - job_name: kubernetes-pods
-          kubernetes_sd_configs:
-            - role: pod
-          relabel_configs:
-            - source_labels:
-                [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scrape]
-              action: keep
-              regex: true
-            - source_labels:
-                [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_scheme]
-              action: replace
-              regex: (https?)
-              target_label: __scheme__
-            - source_labels:
-                [__meta_kubernetes_pod_annotation_gitlab_com_prometheus_path]
-              action: replace
-              target_label: __metrics_path__
-              regex: (.+)
-            - source_labels:
-                [
-                  __address__,
-                  __meta_kubernetes_pod_annotation_gitlab_com_prometheus_port,
-                ]
-              action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              target_label: __address__
-            - action: labelmap
-              regex: __meta_kubernetes_pod_label_(.+)
-            - source_labels: [__meta_kubernetes_namespace]
-              action: replace
-              target_label: kubernetes_namespace
-            - source_labels: [__meta_kubernetes_pod_name]
-              action: replace
-              target_label: kubernetes_pod_name
-        - job_name: kubernetes-service-endpoints
-          kubernetes_sd_configs:
-            - role: endpoints
-          relabel_configs:
-            - action: keep
-              regex: true
-              source_labels:
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_scrape
-            - action: replace
-              regex: (https?)
-              source_labels:
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_scheme
-              target_label: __scheme__
-            - action: replace
-              regex: (.+)
-              source_labels:
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_path
-              target_label: __metrics_path__
-            - action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              source_labels:
-                - __address__
-                - __meta_kubernetes_service_annotation_gitlab_com_prometheus_port
-              target_label: __address__
-            - action: labelmap
-              regex: __meta_kubernetes_service_label_(.+)
-            - action: replace
-              source_labels:
-                - __meta_kubernetes_namespace
-              target_label: kubernetes_namespace
-            - action: replace
-              source_labels:
-                - __meta_kubernetes_service_name
-              target_label: kubernetes_name
-            - action: replace
-              source_labels:
-                - __meta_kubernetes_pod_node_name
-              target_label: kubernetes_node
-        - job_name: kubernetes-services
-          metrics_path: /probe
-          params:
-            module: [http_2xx]
-          kubernetes_sd_configs:
-            - role: service
-          relabel_configs:
-            - source_labels:
-                [
-                  __meta_kubernetes_service_annotation_gitlab_com_prometheus_probe,
-                ]
-              action: keep
-              regex: true
-            - source_labels: [__address__]
-              target_label: __param_target
-            - target_label: __address__
-              replacement: blackbox
-            - source_labels: [__param_target]
-              target_label: instance
-            - action: labelmap
-              regex: __meta_kubernetes_service_label_(.+)
-            - source_labels: [__meta_kubernetes_namespace]
-              target_label: kubernetes_namespace
-            - source_labels: [__meta_kubernetes_service_name]
-              target_label: kubernetes_name
-
-## Configuration of Redis
-## https://docs.gitlab.com/charts/architecture/decisions#redis
-## https://docs.gitlab.com/charts/installation/deployment.html#redis
-redis:
-  global:
-    imagePullSecrets:
-    - private-registry
-
-  install: true
-  auth:
-    existingSecret: gitlab-redis-secret
-    existingSecretKey: secret
-    usePasswordFiles: true
-  architecture: standalone
-  cluster:
-    enabled: false
-  metrics:
-    enabled: true
-    image:
-      registry: registry1.dso.mil/ironbank/bitnami
-      repository: analytics/redis-exporter
-      tag: v1.78.0
-      pullSecrets: []
-    resources:
-      limits:
-        cpu: 250m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-    containerSecurityContext:
-      enabled: true
-      runAsUser: 1001
-      runAsGroup: 1001
-      runAsNonRoot: true
-      capabilities:
-        drop:
-          - ALL
-  serviceAccount:
-    automountServiceAccountToken: false
-  securityContext:
-    runAsUser: 1001
-    fsGroup: 1001
-    runAsNonRoot: true
-  image:
-    registry: registry1.dso.mil/ironbank/bitnami
-    repository: redis
-    tag: 8.2.1
-    pullSecrets: []
-  master:
-    resources:
-      limits:
-        cpu: 250m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-    containerSecurityContext:
-      enabled: true
-      runAsUser: 1001
-      runAsGroup: 1001
-      runAsNonRoot: true
-      capabilities:
-        drop:
-          - ALL
-  slave:
-    resources:
-      limits:
-        cpu: 250m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-    containerSecurityContext:
-      enabled: true
-      runAsUser: 1001
-      runAsGroup: 1001
-      runAsNonRoot: true
-      capabilities:
-        drop:
-          - ALL
-  sentinel:
-    resources:
-      limits:
-        cpu: 250m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-  volumePermissions:
-    resources:
-      limits:
-        cpu: 250m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-  sysctlImage:
-    resources:
-      limits:
-        cpu: 250m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-
-## Installation & configuration of stable/postgresql
-## See dependencies in Chart.yaml for current version
-postgresql:
-  install: true
-  postgresqlDatabase: gitlabhq_production
-  global:
-    imagePullSecrets:
-      - private-registry
-    security:
-      allowInsecureImages: true
-  image:
-    registry: registry1.dso.mil
-    repository: ironbank/bitnami/postgres
-    tag: 17.4.0
-  auth:
-    username: gitlab
-    ## These need to be set, for the sake of bitnami/postgresql upgrade patterns.
-    ## They are overridden by use of `existingSecret`
-    password: bogus-satisfy-upgrade
-    postgresPassword: bogus-satisfy-upgrade
-    database: "gitlabhq_production"
-    ##
-    usePasswordFiles: false
-    existingSecret: '{{ include "gitlab.psql.password.secret" . }}'
-    secretKeys:
-      adminPasswordKey: postgresql-postgres-password
-      userPasswordKey: '{{ include "gitlab.psql.password.key" $ }}'
-  primary:
-    resources:
-      limits:
-        cpu: 500m
-        memory: 500Mi
-      requests:
-        cpu: 500m
-        memory: 500Mi
-    ## Sets persistence to work with the IB image
-    persistence:
-      mountPath: /var/lib/postgresql
-    initdb:
-      scriptsConfigMap: '{{ include "gitlab.psql.initdbscripts" $}}'
-      user: gitlab
-    extraVolumeMounts:
-      - name: runtime
-        mountPath: /var/run/postgresql
-      - name: custom-init-scripts
-        mountPath: /docker-entrypoint-preinitdb.d/init_revision.sh
-        subPath: init_revision.sh
-      - name: registry-database-password
-        mountPath: /etc/gitlab/postgres/registry_database_password
-        subPath: database_password
-        readOnly: true
-    extraVolumes:
-      - name: runtime
-        emptyDir: { }
-      - name: registry-database-password
-        projected:
-          sources:
-            - secret:
-                name: '{{ include "gitlab.registry.database.password.secret" . }}'
-                items:
-                  - key: '{{ include "gitlab.registry.database.password.key" . }}'
-                    path: database_password
-
-    containerSecurityContext:
-      enabled: true
-      runAsUser: 1001
-      runAsGroup: 1001
-      capabilities:
-        drop:
-          - ALL
-    podAnnotations:
-      postgresql.gitlab/init-revision: "1"
-  metrics:
-    enabled: false
-    service:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9187"
-        gitlab.com/prometheus_scrape: "true"
-        gitlab.com/prometheus_port: "9187"
-
-    ## Optionally define additional custom metrics
-    ## ref: https://github.com/wrouesnel/`_exporter#adding-new-metrics-via-a-config-file
-
-  # Added by BB to get IB image working with bitnami subchart
-  ## extraEnv to set scram-sha-256 auth
-  postgresqlInitdbArgs: "-A scram-sha-256"
-  ## Sets the securityContext needed for the IB image
-  securityContext:
-    enabled: true
-    fsGroup: 26
-    runAsUser: 26
-    runAsGroup: 26
-  ## Sets persistence to work with the IB image
-  postgresqlDataDir: /var/lib/postgresql/pgdata/data
-
-  volumePermissions:
-    enabled: false
-
-## Installation & configuration charts/registry
-## https://docs.gitlab.com/charts/architecture/decisions#registry
-## https://docs.gitlab.com/charts/charts/registry/
-registry:
-  enabled: true
-  init:
-    resources:
-      limits:
-        cpu: 200m
-        memory: 200Mi
-      requests:
-        cpu: 200m
-        memory: 200Mi
-    containerSecurityContext:
-      capabilities:
-        drop:
-          - ALL
-  resources:
-    limits:
-      cpu: 200m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 1024Mi
-  image:
-    repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-    tag: 18.4.1
-    pullSecrets:
-    - name: private-registry
-  ingress:
-    enabled: false # Local setting in subchart must be overridden
-  # The registry debug.addr.port is used for metrics. Default is 5001
-  metrics:
-    enabled: true
-    path: /metrics
-    serviceMonitor:
-      enabled: true
-  securityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
-    fsGroup: 1000
-  containerSecurityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
-    capabilities:
-      drop:
-        - ALL
-
-## Automatic shared secret generation
-## https://docs.gitlab.com/charts/installation/secrets
-## https://docs.gitlab.com/charts/charts/shared-secrets.html
-shared-secrets:
-  enabled: true
-  rbac:
-    create: true
-  selfsign:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
-      tag: 1.6.1
-    keyAlgorithm: "rsa"
-    keySize: "4096"
-    expiry: "3650d"
-    caSubject: "GitLab Helm Chart"
-  env: production
-  serviceAccount:
-    enabled: true
-    create: true
-    name: # Specify a pre-existing ServiceAccount name
-    automountServiceAccountToken: false
-  resources:
-    requests:
-      cpu: 300m
-      memory: 200Mi
-    limits:
-      cpu: 300m
-      memory: 200Mi
-  securityContext:
-    # in debian/alpine based images, this is `nobody:nogroup`
-    runAsUser: 65534
-    runAsGroup: 65534
-    fsGroup: 65534
-    seccompProfile:
-      type: "RuntimeDefault"
-  containerSecurityContext:
-    allowPrivilegeEscalation: false
-    runAsNonRoot: true
-    capabilities:
-      drop: [ "ALL" ]
-  tolerations: []
-  podLabels: {}
-  annotations:
-    sidecar.istio.io/inject: "true"
-
-## Installation & configuration of gitlab/gitlab-runner
-## See dependencies in Chart.yaml for current version
-gitlab-runner:
-  install: false
-  rbac:
-    create: true
-  runners:
-    locked: false
-    # Set secret to an arbitrary value because the runner chart renders the gitlab-runner.secret template only if it is not empty.
-    # The parent/GitLab chart overrides the template to render the actual secret name.
-    secret: "nonempty"
-    config: |
-      [[runners]]
-        [runners.kubernetes]
-        image = "ubuntu:22.04"
-        {{- if .Values.global.minio.enabled }}
-        [runners.cache]
-          Type = "s3"
-          Path = "gitlab-runner"
-          Shared = true
-          [runners.cache.s3]
-            ServerAddress = {{ include "gitlab-runner.cache-tpl.s3ServerAddress" . }}
-            BucketName = "runner-cache"
-            BucketLocation = "us-east-1"
-            Insecure = false
-        {{ end }}
-  podAnnotations:
-    gitlab.com/prometheus_scrape: "true"
-    gitlab.com/prometheus_port: 9252
-  podSecurityContext:
-    seccompProfile:
-      type: "RuntimeDefault"
-  securityContext:
-    capabilities:
-      drop:
-        - ALL
-
-traefik:
-  install: false
-  ports:
-    gitlab-shell:
-      expose: true
-      port: 2222
-      exposedPort: 22
-
-## Settings for individual sub-charts under GitLab
-## Note: Many of these settings are configurable via globals
-gitlab:
-  containerSecurityContext:
-    capabilities:
-      drop:
-        - ALL
-  init:
-    containerSecurityContext:
-      capabilities:
-        drop:
-          - ALL
-  certificates:
-    init:
-      securityContext:
-        capabilities:
-          drop:
-            - ALL
-        runAsUser: 65534
-        runAsNonRoot: true
-  ## https://docs.gitlab.com/charts/charts/gitlab/toolbox
-  toolbox:
-    replicas: 1
-    antiAffinityLabels:
-      matchLabels:
-        app: gitaly
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
-    init:
-      resources:
-        requests:
-          cpu: 200m
-          memory: 200Mi
-        limits:
-          cpu: 200m
-          memory: 200Mi
-      containerSecurityContext:
-        capabilities:
-          drop:
-            - ALL
-    resources:
-      requests:
-        cpu: 2
-        memory: 3.5Gi
-      limits:
-        cpu: 2
-        memory: 3.5Gi
+    tolerations: []
     annotations:
-      sidecar.istio.io/proxyMemory: 512Mi
-      sidecar.istio.io/proxyMemoryLimit: 512Mi
-    backups:
-      cron:
-        resources:
-          requests:
-            cpu: 500m
-            memory: 768Mi
-          limits:
-            cpu: 500m
-            memory: 768Mi
-        istioShutdown: "&& echo \"Backup Complete\" && until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Istio sidecar proxy...\"; sleep 3; done && sleep 5 && echo \"Stopping the istio proxy...\" && curl -X POST http://localhost:15020/quitquitquit"
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-    containerSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      capabilities:
-        drop:
-          - ALL
-    customScripts:
-      # this will be mounted into the toolbox container at `/scripts/custom/testing.rb`
-      # execute it in the toolbox with `gitlab-rails runner /scripts/custom/testing.rb`
-      #testing.rb: |
-      #  puts "testing"
-
-  gitlab-exporter:
-    enabled: false
-    init:
-      resources:
-        limits:
-          cpu: 200m
-          memory: 200Mi
-        requests:
-          cpu: 200m
-          memory: 200Mi
-      containerSecurityContext:
-        capabilities:
-          drop:
-            - ALL
+      sidecar.istio.io/inject: "true"
+    configMapAnnotations: {}
     resources:
-      limits:
-        cpu: 150m
-        memory: 200Mi
       requests:
-        cpu: 150m
-        memory: 200Mi
-    capabilities:
-      drop:
-        - ALL
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
+        cpu: 500m
+        memory: 500Mi
+      limits:
+        cpu: 500m
+        memory: 500Mi
+
+  # Settings for the Let's Encrypt ACME Issuer
+  certmanager-issuer:
+    # The email address to register certificates requested from Let's Encrypt.
+    # Required if using Let's Encrypt.
+    email: email@example.com
+
+
+  ## Installation of certmananger.
+  ## This value replaces `certmanager.install` to allow certmanager schema validation to pass.
+  ## See requirements.yaml for current version
+  installCertmanager: false
+
+  ## Configuration of jetstack/cert-manager
+  certmanager:
+    installCRDs: false
+    nameOverride: certmanager
+
+  ## https://docs.gitlab.com/charts/charts/nginx/
+  ## https://docs.gitlab.com/charts/architecture/decisions#nginx-ingress
+  ## Installation & configuration of charts/ingress-nginx:
+  nginx-ingress: &nginx-ingress
+    enabled: false
+
+  ## Installation & configuration of stable/prometheus
+  ## See dependencies in Chart.yaml for current version
+  prometheus:
+    install: false
+
+  ## Configuration of Redis
+  ## https://docs.gitlab.com/charts/architecture/decisions#redis
+  ## https://docs.gitlab.com/charts/installation/deployment.html#redis
+  redis:
+    global:
+      imagePullSecrets:
+      - private-registry
+
+    install: true
+    auth:
+      existingSecret: gitlab-redis-secret
+      existingSecretKey: secret
+      usePasswordFiles: true
+    architecture: standalone
+    cluster:
+      enabled: false
     metrics:
       enabled: true
-      port: 9168
+      image:
+        registry: registry1.dso.mil/ironbank/bitnami
+        repository: analytics/redis-exporter
+        tag: v1.78.0
+        pullSecrets: []
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        capabilities:
+          drop:
+            - ALL
+    serviceAccount:
+      automountServiceAccountToken: false
+    securityContext:
+      runAsUser: 1001
+      fsGroup: 1001
+      runAsNonRoot: true
+    image:
+      registry: registry1.dso.mil/ironbank/bitnami
+      repository: redis
+      tag: 8.2.1
+      pullSecrets: []
+    master:
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        capabilities:
+          drop:
+            - ALL
+    slave:
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        capabilities:
+          drop:
+            - ALL
+    sentinel:
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+    volumePermissions:
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+    sysctlImage:
+      resources:
+        limits:
+          cpu: 250m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+
+  ## Installation & configuration of stable/postgresql
+  ## See dependencies in Chart.yaml for current version
+  postgresql:
+    install: true
+    postgresqlDatabase: gitlabhq_production
+    global:
+      imagePullSecrets:
+        - private-registry
+      security:
+        allowInsecureImages: true
+    image:
+      registry: registry1.dso.mil
+      repository: ironbank/bitnami/postgres
+      tag: 17.4.0
+    auth:
+      username: gitlab
+      ## These need to be set, for the sake of bitnami/postgresql upgrade patterns.
+      ## They are overridden by use of `existingSecret`
+      password: bogus-satisfy-upgrade
+      postgresPassword: bogus-satisfy-upgrade
+      database: "gitlabhq_production"
+      ##
+      usePasswordFiles: false
+      existingSecret: '{{ include "gitlab.psql.password.secret" . }}'
+      secretKeys:
+        adminPasswordKey: postgresql-postgres-password
+        userPasswordKey: '{{ include "gitlab.psql.password.key" $ }}'
+    primary:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 500Mi
+        requests:
+          cpu: 500m
+          memory: 500Mi
+      ## Sets persistence to work with the IB image
+      persistence:
+        mountPath: /var/lib/postgresql
+      initdb:
+        scriptsConfigMap: '{{ include "gitlab.psql.initdbscripts" $}}'
+        user: gitlab
+      extraVolumeMounts:
+        - mountPath: /tmp
+          name: empty-dir
+          subPath: tmp-dir
+        - mountPath: /opt/bitnami/postgresql/conf
+          name: empty-dir
+          subPath: app-conf-dir
+        - mountPath: /opt/bitnami/postgresql/tmp
+          name: empty-dir
+          subPath: app-tmp-dir
+        - name: runtime
+          mountPath: /var/run/postgresql
+        - name: custom-init-scripts
+          mountPath: /docker-entrypoint-preinitdb.d/init_revision.sh
+          subPath: init_revision.sh
+        - name: registry-database-password
+          mountPath: /etc/gitlab/postgres/registry_database_password
+          subPath: database_password
+          readOnly: true
+      extraVolumes:
+        - name: empty-dir
+          emptyDir: { }
+        - name: runtime
+          emptyDir: { }
+        - name: registry-database-password
+          projected:
+            sources:
+              - secret:
+                  name: '{{ include "gitlab.registry.database.password.secret" . }}'
+                  items:
+                    - key: '{{ include "gitlab.registry.database.password.key" . }}'
+                      path: database_password
+
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        seLinuxOptions: {}
+      podAnnotations:
+        postgresql.gitlab/init-revision: "1"
+    metrics:
+      enabled: false
+      service:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9187"
+          gitlab.com/prometheus_scrape: "true"
+          gitlab.com/prometheus_port: "9187"
+
+      ## Optionally define additional custom metrics
+      ## ref: https://github.com/wrouesnel/`_exporter#adding-new-metrics-via-a-config-file
+
+    # Added by BB to get IB image working with bitnami subchart
+    ## extraEnv to set scram-sha-256 auth
+    postgresqlInitdbArgs: "-A scram-sha-256"
+    ## Sets the securityContext needed for the IB image
+    securityContext:
+      enabled: true
+      fsGroup: 26
+      runAsUser: 26
+      runAsGroup: 26
+    ## Sets persistence to work with the IB image
+    postgresqlDataDir: /var/lib/postgresql/pgdata/data
+
+    volumePermissions:
+      enabled: false
+
+  ## Installation & configuration charts/registry
+  ## https://docs.gitlab.com/charts/architecture/decisions#registry
+  ## https://docs.gitlab.com/charts/charts/registry/
+  registry:
+    enabled: true
+    init:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+      containerSecurityContext:
+        capabilities:
+          drop:
+            - ALL
+    resources:
+      limits:
+        cpu: 200m
+        memory: 1024Mi
+      requests:
+        cpu: 200m
+        memory: 1024Mi
+    image:
+      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
+      tag: 18.4.1
+      pullSecrets:
+      - name: private-registry
+    ingress:
+      enabled: false # Local setting in subchart must be overridden
+    # The registry debug.addr.port is used for metrics. Default is 5001
+    metrics:
+      enabled: true
+      path: /metrics
       serviceMonitor:
         enabled: true
     securityContext:
@@ -1802,269 +508,473 @@ gitlab:
         drop:
           - ALL
 
-  ## https://docs.gitlab.com/charts/charts/gitlab/migrations
-  migrations:
-    # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
+  ## Automatic shared secret generation
+  ## https://docs.gitlab.com/charts/installation/secrets
+  ## https://docs.gitlab.com/charts/charts/shared-secrets.html
+  shared-secrets:
+    enabled: true
+    rbac:
+      create: true
+    selfsign:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/cfssl-self-sign
+        tag: 1.6.1
+      keyAlgorithm: "rsa"
+      keySize: "4096"
+      expiry: "3650d"
+      caSubject: "GitLab Helm Chart"
+    env: production
+    serviceAccount:
+      enabled: true
+      create: true
+      name: # Specify a pre-existing ServiceAccount name
+      automountServiceAccountToken: false
+    resources:
+      requests:
+        cpu: 300m
+        memory: 200Mi
+      limits:
+        cpu: 300m
+        memory: 200Mi
+    securityContext:
+      # in debian/alpine based images, this is `nobody:nogroup`
+      runAsUser: 65534
+      runAsGroup: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: "RuntimeDefault"
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities:
+        drop: [ "ALL" ]
+    tolerations: []
+    podLabels: {}
     annotations:
       sidecar.istio.io/inject: "true"
-    init:
-      resources:
-        limits:
-          cpu: 500m
-          memory: 768Mi
-        requests:
-          cpu: 500m
-          memory: 768Mi
-      containerSecurityContext:
-        capabilities:
-          drop:
-            - ALL
-    resources:
-      limits:
-        cpu: 500m
-        memory: 1.5G
-      requests:
-        cpu: 500m
-        memory: 1.5G
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-    containerSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      capabilities:
-        drop:
-          - ALL
 
-  ## https://docs.gitlab.com/charts/charts/gitlab/webservice
-  webservice:
+  ## Installation & configuration of gitlab/gitlab-runner
+  ## See dependencies in Chart.yaml for current version
+  gitlab-runner:
+    install: false
+
+  ## Settings for individual sub-charts under GitLab
+  ## Note: Many of these settings are configurable via globals
+  gitlab:
+    containerSecurityContext:
+      capabilities:
+        drop:
+          - ALL
     init:
-      resources:
-        # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
-        limits:
-          cpu: 200m
-          memory: 200Mi
-        requests:
-          cpu: 200m
-          memory: 200Mi
       containerSecurityContext:
         capabilities:
           drop:
             - ALL
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-    containerSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
+    certificates:
+      init:
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+          runAsUser: 65534
+          runAsNonRoot: true
+    ## https://docs.gitlab.com/charts/charts/gitlab/toolbox
+    toolbox:
+      replicas: 1
+      antiAffinityLabels:
+        matchLabels:
+          app: gitaly
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
+        tag: 18.4.1
+        pullSecrets:
+        - name: private-registry
+      init:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 200Mi
+          limits:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        requests:
+          cpu: 2
+          memory: 3.5Gi
+        limits:
+          cpu: 2
+          memory: 3.5Gi
+      annotations:
+        sidecar.istio.io/proxyMemory: 512Mi
+        sidecar.istio.io/proxyMemoryLimit: 512Mi
+      backups:
+        cron:
+          resources:
+            requests:
+              cpu: 500m
+              memory: 768Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+          istioShutdown: "&& echo \"Backup Complete\" && until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Istio sidecar proxy...\"; sleep 3; done && sleep 5 && echo \"Stopping the istio proxy...\" && curl -X POST http://localhost:15020/quitquitquit"
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        capabilities:
+          drop:
+            - ALL
+      customScripts:
+        # this will be mounted into the toolbox container at `/scripts/custom/testing.rb`
+        # execute it in the toolbox with `gitlab-rails runner /scripts/custom/testing.rb`
+        #testing.rb: |
+        #  puts "testing"
+
+    gitlab-exporter:
+      enabled: false
+      init:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        limits:
+          cpu: 150m
+          memory: 200Mi
+        requests:
+          cpu: 150m
+          memory: 200Mi
       capabilities:
         drop:
           - ALL
-    resources:
-      # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
-      limits:
-        cpu: 1500m # match upstream
-        memory: 3G # match upstream
-      requests:
-        cpu: 300m # double the default
-        memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
-    workhorse:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
+        tag: 18.4.1
+        pullSecrets:
+        - name: private-registry
+      metrics:
+        enabled: true
+        port: 9168
+        serviceMonitor:
+          enabled: true
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        capabilities:
+          drop:
+            - ALL
+
+    ## https://docs.gitlab.com/charts/charts/gitlab/migrations
+    migrations:
+      # istio sidecar injection for the migration job causes difficult errors. disable istio for this job
+      annotations:
+        sidecar.istio.io/inject: "true"
+      init:
+        resources:
+          limits:
+            cpu: 500m
+            memory: 768Mi
+          requests:
+            cpu: 500m
+            memory: 768Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1.5G
+        requests:
+          cpu: 500m
+          memory: 1.5G
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
+        tag: 18.4.1
+        pullSecrets:
+        - name: private-registry
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        capabilities:
+          drop:
+            - ALL
+
+    ## https://docs.gitlab.com/charts/charts/gitlab/webservice
+    webservice:
+      init:
+        resources:
+          # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        capabilities:
+          drop:
+            - ALL
       resources:
         # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
         limits:
-          cpu: 600m
-          memory: 2.5G
+          cpu: 1500m # match upstream
+          memory: 3G # match upstream
         requests:
-          cpu: 600m
-          memory: 2.5G
-      image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
+          cpu: 300m # double the default
+          memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
+        tag: 18.4.1
+        pullSecrets:
+        - name: private-registry
+      workhorse:
+        resources:
+          # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
+          limits:
+            cpu: 600m
+            memory: 2.5G
+          requests:
+            cpu: 600m
+            memory: 2.5G
+        image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
+        tag: 18.4.1
+        pullSecrets:
+        - name: private-registry
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      ingress:
+        enabled: false  # Local setting in subchart must be overridden
+      metrics:
+        enabled: true
+        port: 8083
+        serviceMonitor:
+          enabled: true
+      helmTests:
+        enabled: false
+    ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
+    sidekiq:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
+        tag: 18.4.1
+        pullSecrets:
+        - name: private-registry
+      init:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        requests:
+          memory: 3G
+          cpu: 1500m
+        limits:
+          memory: 3G
+          cpu: 1500m
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        capabilities:
+          drop:
+            - ALL
+
+    ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
+    gitaly:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
+        tag: 18.4.1
+        pullSecrets:
+        - name: private-registry
+      init:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        requests:
+          cpu: 400m
+          memory: 600Mi
+        limits:
+          cpu: 400m
+          memory: 600Mi
       metrics:
         enabled: true
         serviceMonitor:
           enabled: true
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
         capabilities:
           drop:
             - ALL
-    ingress:
-      enabled: false  # Local setting in subchart must be overridden
-    metrics:
-      enabled: true
-      port: 8083
-      serviceMonitor:
-        enabled: true
-    helmTests:
-      enabled: false
-  ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
-  sidekiq:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
-    init:
-      resources:
-        limits:
-          cpu: 200m
-          memory: 200Mi
-        requests:
-          cpu: 200m
-          memory: 200Mi
-      containerSecurityContext:
-        capabilities:
-          drop:
-            - ALL
-    resources:
-      requests:
-        memory: 3G
-        cpu: 1500m
-      limits:
-        memory: 3G
-        cpu: 1500m
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-    containerSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      capabilities:
-        drop:
-          - ALL
 
-  ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
-  gitaly:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
-    init:
-      resources:
-        limits:
-          cpu: 200m
-          memory: 200Mi
-        requests:
-          cpu: 200m
-          memory: 200Mi
-      containerSecurityContext:
-        capabilities:
-          drop:
-            - ALL
-    resources:
-      requests:
-        cpu: 400m
-        memory: 600Mi
-      limits:
-        cpu: 400m
-        memory: 600Mi
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-    containerSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      capabilities:
-        drop:
-          - ALL
-
-  ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
-  gitlab-shell:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-      tag: 18.4.1
-      pullSecrets:
-      - name: private-registry
-    init:
-      resources:
-        limits:
-          cpu: 200m
-          memory: 200Mi
-        requests:
-          cpu: 200m
-          memory: 200Mi
-      containerSecurityContext:
-        capabilities:
-          drop:
-            - ALL
-    resources:
-      limits:
-        cpu: 300m
-        memory: 300Mi
-      requests:
-        cpu: 300m
-        memory: 300Mi
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-    containerSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      capabilities:
-        drop:
-          - ALL
-    # metrics:
-    #   enabled: true
-    #   serviceMonitor:
-    #     enabled: true
-    # https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh
-    # gitlab-sshd is in Alpha. It is not ready for production use.
-    # is needed for prometheus servicemonitor metrics to work for gitlab-shell
-    # sshDaemon: gitlab-sshd
-
-  mailroom:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-      tag: 18.4.1
-      pullSecrets:
+    ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
+    gitlab-shell:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
+        tag: 18.4.1
+        pullSecrets:
         - name: private-registry
-    containerSecurityContext:
-      capabilities:
-        drop:
-          - ALL
+      init:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        limits:
+          cpu: 300m
+          memory: 300Mi
+        requests:
+          cpu: 300m
+          memory: 300Mi
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containerSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        capabilities:
+          drop:
+            - ALL
+      # metrics:
+      #   enabled: true
+      #   serviceMonitor:
+      #     enabled: true
+      # https://docs.gitlab.com/ee/administration/operations/fast_ssh_key_lookup.html#use-gitlab-sshd-instead-of-openssh
+      # gitlab-sshd is in Alpha. It is not ready for production use.
+      # is needed for prometheus servicemonitor metrics to work for gitlab-shell
+      # sshDaemon: gitlab-sshd
 
-  ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
-  #   gitlab-grafana:
-  ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-pages
-  gitlab-pages:
-    service:
-      customDomains:
-        type: ClusterIP
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-      tag: 18.4.1
-    containerSecurityContext:
-      capabilities:
-        drop:
-          - ALL
-  ## https://docs.gitlab.com/charts/charts/gitlab/kas
-  #   kas:
-  ## https://docs.gitlab.com/charts/charts/gitlab/praefect
-  praefect:
-    image:
-      repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-      tag: 18.4.1
+    mailroom:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
+        tag: 18.4.1
+        pullSecrets:
+          - name: private-registry
+      containerSecurityContext:
+        capabilities:
+          drop:
+            - ALL
+
+    ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-grafana
+    #   gitlab-grafana:
+    ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-pages
+    gitlab-pages:
+      service:
+        customDomains:
+          type: ClusterIP
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
+        tag: 18.4.1
+      containerSecurityContext:
+        capabilities:
+          drop:
+            - ALL
+    ## https://docs.gitlab.com/charts/charts/gitlab/kas
+    #   kas:
+    ## https://docs.gitlab.com/charts/charts/gitlab/praefect
+    praefect:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
+        tag: 18.4.1
+      init:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        requests:
+          cpu: 1
+          memory: 1Gi
+        limits:
+          cpu: 1
+          memory: 1Gi
+      containerSecurityContext:
+        capabilities:
+          drop:
+            - ALL
+
+  ## Override minio sub-chart values
+  minio:
+    ## disabling default ingress creation
+    ingress:
+      enabled: false
+    # set resource QoS
     init:
       resources:
         limits:
@@ -2078,96 +988,40 @@ gitlab:
           drop:
             - ALL
     resources:
-      requests:
-        cpu: 1
-        memory: 1Gi
       limits:
-        cpu: 1
-        memory: 1Gi
+        cpu: 200m
+        memory: 300Mi
+      requests:
+        cpu: 200m
+        memory: 300Mi
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
     containerSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
       capabilities:
         drop:
           - ALL
-
-## Installation & configuration of gitlab/gitlab-zoekt
-gitlab-zoekt:
-  install: false
-  gateway:
-    basicAuth:
-      enabled: false
-      secretName: '{{ include "gitlab.zoekt.gateway.basicAuth.secretName" $ }}'
-  indexer:
-    internalApi:
-      enabled: true
-      secretName: '{{ include "gitlab.zoekt.indexer.internalApi.secretName" $ }}'
-      secretKey: '{{ include "gitlab.zoekt.indexer.internalApi.secretKey" $ }}'
-      gitlabUrl: '{{ include "gitlab.zoekt.indexer.internalApi.gitlabUrl" $ }}'
-
-## Installation & configuration of OpenBao
-openbao:
-  install: false
-  psql: {}
-  config:
-    storage:
-      postgresql:
-        # Set predefined keys to empty values to enable us merging these keys
-        # with the main DB settings.
-        connection:
-          host: ''
-          database: ''
-          username: ''
-          sslMode: ''
-
-## Override minio sub-chart values
-minio:
-  # set resource QoS
-  init:
-    resources:
-      limits:
-        cpu: 200m
-        memory: 200Mi
-      requests:
-        cpu: 200m
-        memory: 200Mi
-    containerSecurityContext:
-      capabilities:
-        drop:
-          - ALL
-  resources:
-    limits:
-      cpu: 200m
-      memory: 300Mi
-    requests:
-      cpu: 200m
-      memory: 300Mi
-  securityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
-    fsGroup: 1000
-  containerSecurityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
-    runAsNonRoot: true
-    capabilities:
-      drop:
-        - ALL
-  # Additional job annotations
-  jobAnnotations:
-    sidecar.istio.io/inject: "true"
-  # use Ironbank hardened images for MinIO
-  image: registry1.dso.mil/ironbank/opensource/minio/minio
-  imageTag: RELEASE.2024-06-04T19-20-08Z
-  pullSecrets:
-  - name: private-registry
-  minioMc:
-    # the MinIO sub-chart config script was modified to work with newer mc version in IronBank image
-    #   chart/charts/minio/templates/_helper_create_buckets.sh
-    #       line 65
-    #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
-    image: registry1.dso.mil/ironbank/opensource/minio/mc
-    tag: RELEASE.2024-10-02T08-27-28Z
+    # Additional job annotations
+    jobAnnotations:
+      sidecar.istio.io/inject: "true"
+    # use Ironbank hardened images for MinIO
+    image: registry1.dso.mil/ironbank/opensource/minio/minio
+    imageTag: RELEASE.2024-06-04T19-20-08Z
     pullSecrets:
     - name: private-registry
+    minioMc:
+      # the MinIO sub-chart config script was modified to work with newer mc version in IronBank image
+      #   chart/charts/minio/templates/_helper_create_buckets.sh
+      #       line 65
+      #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
+      image: registry1.dso.mil/ironbank/opensource/minio/mc
+      tag: RELEASE.2024-10-02T08-27-28Z
+      pullSecrets:
+      - name: private-registry
 
 # Big Bang Additions
 domain: dev.bigbang.mil

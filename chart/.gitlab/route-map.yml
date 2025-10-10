@@ -1,5 +1,0 @@
-# Documentation
-- source: /doc/(.+?/)_index\.md/  # doc/build/_index.md
-  public: '\1'                    # build/
-- source: /doc/(.+?)\.md/         # doc/build/page.md
-  public: '\1/'                   # build/page/

@@ -64,11 +64,12 @@ addons:
   gitlabRunner:
     enabled: true
     values:
-      autoRegister:
-        enabled: true
-      # Allow gitlab runner to run unprotected branches
-      runners:
-        protected: false
+      upstream:
+        autoRegister:
+          enabled: true
+        # Allow gitlab runner to run unprotected branches
+        runners:
+          protected: false
 
       networkPolicies:
         enabled: true
@@ -95,22 +96,24 @@ addons:
       client_secret: ""
 
     values:
-      gitlab:
-        webservice:
-          minReplicas: 1
-          maxReplicas: 1
-          helmTests:
-            enabled: false
-        gitlab-shell:
-          minReplicas: 1
-          maxReplicas: 1
-        sidekiq:
-          minReplicas: 1
-          maxReplicas: 1
-      registry:
-        hpa:
-          minReplicas: 1
-          maxReplicas: 1
+      upstream:
+        gitlab:
+          upstream:
+            webservice:
+              minReplicas: 1
+              maxReplicas: 1
+              helmTests:
+                enabled: false
+            gitlab-shell:
+              minReplicas: 1
+              maxReplicas: 1
+            sidekiq:
+              minReplicas: 1
+              maxReplicas: 1
+            registry:
+              hpa:
+                minReplicas: 1
+                maxReplicas: 1
       global:
         appConfig:
           object_store:
