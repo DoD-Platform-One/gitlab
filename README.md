@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 9.4.1-bb.2](https://img.shields.io/badge/Version-9.4.1--bb.2-informational?style=flat-square) ![AppVersion: 18.4.1](https://img.shields.io/badge/AppVersion-18.4.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 9.4.1-bb.3](https://img.shields.io/badge/Version-9.4.1--bb.3-informational?style=flat-square) ![AppVersion: 18.4.1](https://img.shields.io/badge/AppVersion-18.4.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -572,6 +572,7 @@ helm install gitlab chart/
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
+| networkPolicies.vpcCidr | string | `"0.0.0.0/0"` |  |
 | networkPolicies.egressPort | string | `nil` |  |
 | networkPolicies.gitalyEgress.enabled | bool | `false` |  |
 | networkPolicies.additionalPolicies | list | `[]` |  |
