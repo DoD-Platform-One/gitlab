@@ -4,6 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.5.1-bb.0] (2025-10-23)
+### Changed
+
+
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 18.5.0 -> 18.5.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 18.5.0 -> 18.5.1
+
+
 ## [9.5.0-bb.0] (2025-10-20)
 ### Changed
 
