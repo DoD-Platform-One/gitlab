@@ -43,7 +43,7 @@ global-shared-gitlab-runner-567cf8df54-8dzfw   1/1     Running     0          4h
 ```
 
 Here is a document that lists the Gitlab components and what each one does
-<https://docs.gitlab.com/ce/development/architecture.html#component-details>
+<https://docs.gitlab.com/development/architecture/#component-details>
 
 Here are some an examples of a filter for a specific containers:
 front-end webservice

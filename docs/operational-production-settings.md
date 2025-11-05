@@ -1,6 +1,6 @@
 # Operational configuration and settings for production environments
 
-This document provides suggested settings for operational/production environment. Of course every environment is unique. These suggestions are a good starting point. Also consult the upstream Gitlab documentation and the other documents in the [./docs](./docs) directory.
+This document provides suggested settings for operational/production environment. Of course every environment is unique. These suggestions are a good starting point. Also consult the upstream Gitlab documentation and the other documents in the [./docs](../docs) directory.
 
 ## Use external database and object storage
 
@@ -60,7 +60,7 @@ When deploying this Gitlab Package chart with BigBang the deployment is controll
 
 ## Kubernetes resource request/limit settings
 
-K8s resource requests/limits for webservice and gitaly workloads should be increased from the defaults. Gitlab engineers state predicting Gitaly's resource consumption is very difficult, and will require testing to find the applicable limits/requests for each individual installation. See this [Gitlab Epic](https://gitlab.com/groups/gitlab-org/-/epics/6127) for more information. See the [docs/k8s-resources.md](./k8s-resources.md) for a list of all possible configuration values.
+K8s resource requests/limits for webservice and gitaly workloads should be increased from the defaults. Gitlab engineers state predicting Gitaly's resource consumption is very difficult, and will require testing to find the applicable limits/requests for each individual installation. See this [Gitlab Epic](https://gitlab.com/groups/gitlab-org/-/epics/6127) for more information. See the [docs/k8s-resources.md](../docs/k8s-resources.md) for a list of all possible configuration values.
 
 Recommended starting point:
 

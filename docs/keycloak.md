@@ -2,7 +2,7 @@
 
 The integration assumes that keycloak is deployed with a realm other than master (eg: baby-yoda) and a client within named gitlab. The secret is used in the gitlab keycloak configuration.
 
-This documentation is geared towards configuring GitLab to work with P1 SSO/`login.dso.mil`. To learn about deploying GtitLab with a dev version of Keycloak, see [keycloak-dev.md](./keycloak-dev.md).
+This documentation is geared towards configuring GitLab to work with P1 SSO/`login.dso.mil`. To learn about deploying GtitLab with a dev version of Keycloak, see [keycloak-dev.md](../docs/keycloak-dev.md).
 
 If the client gitlab doesn't exist in keycloak, please create the client gitlab with the following settings:
 
