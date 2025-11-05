@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.5.1-bb.1] (2025-10-30)
+### Changed
+
+- Updated devops-tester upstream image location from registry1.dso.mil/bigbang-ci/devops-tester to registry1.dso.mil/ironbank/big-bang/devops-tester
+
 ## [9.5.1-bb.0] (2025-10-23)
 ### Changed
 

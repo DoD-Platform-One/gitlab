@@ -1,12 +1,12 @@
 # Files that require bigbang integration testing
 
-### See [bb MR testing](./docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart
+### See [bb MR testing](../docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart
 
-There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within gitlab (see: [istio templates](./chart/templates/bigbang/istio/), [network policy templates](./chart/templates/bigbang/networkpolicies/), [service entry templates](./chart/templates/bigbang/serviceentries/)).
+There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within gitlab (see: [istio templates](../chart/templates/bigbang/istio/), [network policy templates](../chart/templates/bigbang/networkpolicies/), [service entry templates](../chart/templates/bigbang/serviceentries/)).
 
 Be aware that any changes to files listed in the [Modifications made to upstream chart](#modifications-made-to-upstream-chart) section will also require a codeowner to validate the changes using above method, to ensure that they do not affect the package or its integrations adversely.
 
-Be sure to also test against monitoring locally as it is integrated by default with these high-impact service control packages, and needs to be validated using the necessary chart values beneath `istio.hardened` block with `monitoring.enabled` set to true as part of your [dev-overrides.yaml](./docs/dev-overrides.yaml).
+Be sure to also test against monitoring locally as it is integrated by default with these high-impact service control packages, and needs to be validated using the necessary chart values beneath `istio.hardened` block with `monitoring.enabled` set to true as part of your [dev-overrides.yaml](../docs/dev-overrides.yaml).
 
 # Notice about updating postgres via renovate
 
@@ -104,7 +104,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
 
 1. Create a k8s dev environment. One option is to use the Big Bang [k3d-dev.sh](https://repo1.dso.mil/platform-one/big-bang/bigbang/-/tree/master/docs/developer/scripts) with no arguments which will give you the default configuration. The following steps assume you are using the script.
 1. Follow the instructions at the end of the script to connect to the k8s cluster and install flux.
-   1. Deploy gitlab with the dev values overrides from [docs/dev-overrides.yaml](./dev-overrides.yaml). Core apps are disabled for quick deployment.
+   1. Deploy gitlab with the dev values overrides from [docs/dev-overrides.yaml](../docs/dev-overrides.yaml). Core apps are disabled for quick deployment.
    1. Example helm upgrade command (run from within your local checkout of the `bigbang` repository):
 
     ```shell
@@ -115,7 +115,7 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
      --set addons.gitlab.git.branch=YOUR-WORKING-BRANCH-NAME-HERE
    ```
 
-1. Access Gitlab UI from a browser and login with SSO (to learn about deploying GitLab with a dev version of Keycloak, see [keycloak-dev.md](./keycloak-dev.md)).
+1. Access Gitlab UI from a browser and login with SSO (to learn about deploying GitLab with a dev version of Keycloak, see [keycloak-dev.md](../docs/keycloak-dev.md)).
 1. Test changing your profile image.
 1. In your profile create an access token with all privileges. Save the token for later use.
 1. Create a group called `test`.

@@ -1167,7 +1167,7 @@ bbtests:
             name: gitlab-gitlab-initial-root-password
             key: password
   scripts:
-    image: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.2"
+    image: "registry1.dso.mil/ironbank/big-bang/devops-tester:1.0"
     additionalVolumes:
       - name: docker-config
         secret:
