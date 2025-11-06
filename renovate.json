@@ -6,7 +6,7 @@
     "dependencyDashboard": true,
     "dependencyDashboardTitle": "Renovate: Upgrade Gitlab Dependencies",
     "draftPR": true,
-    "branchName": "renovate/ironbank",
+    "branchTopic": "ironbank",
     "enabledManagers": [
         "helm-values",
         "custom.regex"
@@ -32,7 +32,15 @@
             "matchPackageNames": [
                 "registry1.dso.mil/ironbank/bitnami/postgres"
             ],
-            "allowedVersions": "16.x"
+            "allowedVersions": "<=17"
+        },
+        {
+            "matchPackageNames": [
+                "registry1.dso.mil/ironbank/opensource/minio/minio", 
+                "registry1.dso.mil/ironbank/opensource/minio/mc"
+            ],
+            "versioning": "regex:(RELEASE\\.(?<major>\\d{4})-(?<minor>\\d{2})-(?<patch>\\d{2})T(?<build>\\d{2}-\\d{2}-\\d{2})Z)",
+            "allowedVersions": "!/(-amd64|-arm64)$/"
         }
     ],
     "customManagers": [
@@ -63,7 +71,10 @@
                 "/^chart/values\\.yaml$/"
             ],
             "matchStrings": [
-                "image:[^\\S\\r\\n]+(?<depName>.+)\\s+tag:[^\\S\\r\\n]+(?<currentValue>[\\d\\.]+)"
+                "image:[^\\S]+(?<depName>.+)[^\\S]+(imageTag|tag):[^\\S]+(?<currentValue>.+)",
+                "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>[\\v\\d\\.]+)",
+                "repository:[^\\S]+(?<depName>.+)[^\\S\\r\\n]+tag:[^\\S](?<currentValue>.+)",
+                "registry:[^\\S]+(?<registry>.+)[^\\S\\r\\n]+repository:[^\\S](?<depName>.+)[^\\S\\r\\n]+tag:[^\\S](?<currentValue>.+)"
             ],
             "datasourceTemplate": "docker"
         },
@@ -103,6 +114,7 @@
         }
     ],
     "separateMajorMinor": false,
+    "separateMultipleMajor": false,
     "postUpdateOptions": [
         "helmUpdateSubChartArchives"
     ]
