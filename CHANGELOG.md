@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.5.1-bb.2] (2025-11-07)
+### Changed
+
+- update gitlab chart 9.5.0 -> 9.6.0
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.79.0 -> v1.80.0
+
 ## [9.5.1-bb.1] (2025-10-30)
 ### Changed
 
