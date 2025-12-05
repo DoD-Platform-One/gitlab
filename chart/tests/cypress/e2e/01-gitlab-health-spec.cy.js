@@ -54,6 +54,15 @@ describe('Gitlab Login as Root and Approve User', () => {
     cy.visit(`${Cypress.env('url')}/users/sign_in`)
     cy.performGitlabLogin('root', Cypress.env('adminpassword'))
 
+    // close welcome redesign popup if it exists
+     cy.get('body').then($body => {
+        if ($body.find('button[aria-label="Close"]').length) {
+          cy.get('button[aria-label="Close"]').click()
+        } else if ($body.find('button:contains("Get started")').length) {
+          cy.contains('button', 'Get started').click()
+        }
+      })
+
     cy.get('[data-testid="user-avatar-content"]').should("exist")
 
     // approve new user
@@ -86,6 +95,15 @@ describe('Create Gitlab Project', () => {
       cy.performGitlabLogin(Cypress.env('gitlab_username'), Cypress.env('gitlab_password'))
     }
 
+  // close welcome redesign popup if it exists
+     cy.get('body').then($body => {
+        if ($body.find('button[aria-label="Close"]').length) {
+          cy.get('button[aria-label="Close"]').click()
+        } else if ($body.find('button:contains("Get started")').length) {
+          cy.contains('button', 'Get started').click()
+        }
+      })
+
     // if first login assign Developer role with the joining_team objective
     cy.url().then(($url) => {
       if ($url.includes('welcome')) {
@@ -113,6 +131,15 @@ describe('Create Gitlab Project', () => {
    //Sign in as Root
    cy.visit(`${Cypress.env('url')}/users/sign_in`)
    cy.performGitlabLogin('root', Cypress.env('adminpassword'))
+
+  // close welcome redesign popup if it exists
+    cy.get('body').then($body => {
+      if ($body.find('button[aria-label="Close"]').length) {
+        cy.get('button[aria-label="Close"]').click()
+      } else if ($body.find('button:contains("Get started")').length) {
+        cy.contains('button', 'Get started').click()
+      }
+    })
 
    //Browse to created user and delete
    cy.visit(`${Cypress.env('url')}/admin/users/${Cypress.env('gitlab_username')}`)

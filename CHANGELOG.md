@@ -4,6 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.6.1-bb.0] (2025-12-01)
+### Changed
+
+- update gitlab chart 9.5.2 -> 9.6.1
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.80.0 -> v1.80.1
+- ironbank/gitlab/gitlab/gitlab-webservice (source) 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 18.5.2 -> 18.6.1
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 18.5.2 -> 18.6.1
+
 ## [9.5.2-bb.0] (2025-11-18)
 ### Changed
 
