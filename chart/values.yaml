@@ -93,7 +93,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 18.5.2
+      tag: 18.6.1
       pullSecrets:
       - name: private-registry
     init:
@@ -142,7 +142,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 18.5.2
+      tag: 18.6.1
       pullSecrets:
       - name: private-registry
     securityContext:
@@ -159,7 +159,7 @@ global:
       # 1. UBI does not have the newly required /scripts/set-config template generator in its entrypoint.
       #   a. trying gitlab-base per https://repo1.dso.mil/dsop/gitlab/gitlab/gitlab-base/-/issues/77
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base
-      tag: "18.5.2"
+      tag: "18.6.1"
       pullSecrets:
       - name: private-registry
 
@@ -263,7 +263,7 @@ upstream:
       image:
         registry: registry1.dso.mil/ironbank/bitnami
         repository: analytics/redis-exporter
-        tag: v1.80.0
+        tag: v1.80.1
         pullSecrets: []
       resources:
         limits:
@@ -486,7 +486,7 @@ upstream:
         memory: 1024Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-      tag: 18.5.2
+      tag: 18.6.1
       pullSecrets:
       - name: private-registry
     ingress:
@@ -586,7 +586,7 @@ upstream:
           app: gitaly
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
       init:
@@ -663,7 +663,7 @@ upstream:
           - ALL
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
       metrics:
@@ -708,7 +708,7 @@ upstream:
           memory: 1.5G
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
       securityContext:
@@ -757,7 +757,7 @@ upstream:
           memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
       workhorse:
@@ -770,7 +770,7 @@ upstream:
             cpu: 600m
             memory: 2.5G
         image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
         metrics:
@@ -794,7 +794,7 @@ upstream:
     sidekiq:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
       init:
@@ -831,7 +831,7 @@ upstream:
     gitaly:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
       init:
@@ -872,7 +872,7 @@ upstream:
     gitlab-shell:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
         - name: private-registry
       init:
@@ -916,7 +916,7 @@ upstream:
     mailroom:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-        tag: 18.5.2
+        tag: 18.6.1
         pullSecrets:
           - name: private-registry
       containerSecurityContext:
@@ -933,7 +933,7 @@ upstream:
           type: ClusterIP
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-        tag: 18.5.2
+        tag: 18.6.1
       containerSecurityContext:
         capabilities:
           drop:
@@ -944,7 +944,7 @@ upstream:
     praefect:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-        tag: 18.5.2
+        tag: 18.6.1
       init:
         resources:
           limits:
