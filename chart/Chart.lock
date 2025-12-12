@@ -1,9 +1,9 @@
 dependencies:
 - name: gitlab
   repository: https://charts.gitlab.io
-  version: 9.6.1
+  version: 9.6.2
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.9.6
-digest: sha256:a4b94301c59c1c7871f9661fc32aa135cbc5ad9aa0d8d34c5659f4d3fd8c1e14
-generated: "2025-12-01T11:38:52.599492-06:00"
+digest: sha256:90f9951c7a53e2091aaf04f0f1e8840c1a51dacd1f8272f52f23efe4b04f865c
+generated: "2025-12-12T12:06:15.374145-06:00"
