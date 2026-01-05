@@ -1,6 +1,6 @@
 apiVersion: v2
 name: gitlab
-version: 9.7.0-bb.0
+version: 9.7.0-bb.1
 appVersion: 18.7.0
 description: GitLab is the most comprehensive AI-powered DevSecOps Platform.
 keywords:
@@ -10,6 +10,9 @@ icon: https://gitlab.com/gitlab-com/gitlab-artwork/raw/master/logo/logo-square.p
 sources:
 - https://gitlab.com/gitlab-org/charts/gitlab
 dependencies:
+- name: bb-common
+  version: 0.12.0
+  repository: oci://registry1.dso.mil/bigbang
 - name: gitlab
   version: 9.7.0
   repository: https://charts.gitlab.io
