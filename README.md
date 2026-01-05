@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 9.7.0-bb.0](https://img.shields.io/badge/Version-9.7.0--bb.0-informational?style=flat-square) ![AppVersion: 18.7.0](https://img.shields.io/badge/AppVersion-18.7.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 9.7.0-bb.1](https://img.shields.io/badge/Version-9.7.0--bb.1-informational?style=flat-square) ![AppVersion: 18.7.0](https://img.shields.io/badge/AppVersion-18.7.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -42,6 +42,9 @@ helm install gitlab chart/
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| networkPolicies | object | Basic configuration necessary for gitlab to function standalone. | Network Policy configuration; see bb-common network policy docs for details: https://repo1.dso.mil/big-bang/product/packages/bb-common/-/tree/main/docs/network-policies?ref_type=heads |
+| istio | object | Istio disabled | Istio configuration; see bb-common istio docs for details: https://repo1.dso.mil/big-bang/product/packages/bb-common/-/tree/main/docs/istio?ref_type=heads |
+| routes | object | Basic outbound routes for gitlab functionality | Routes configuration; see bb-common routes docs for details: https://repo1.dso.mil/big-bang/product/packages/bb-common/-/tree/main/docs/routes?ref_type=heads |
 | global.hosts.domain | string | `"dev.bigbang.mil"` |  |
 | global.hosts.gitlab.name | string | `"gitlab.dev.bigbang.mil"` |  |
 | global.hosts.registry.name | string | `"registry.dev.bigbang.mil"` |  |
@@ -519,63 +522,14 @@ helm install gitlab chart/
 | upstream.minio.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | upstream.minio.jobAnnotations."sidecar.istio.io/inject" | string | `"true"` |  |
 | upstream.minio.image | string | `"registry1.dso.mil/ironbank/opensource/minio/minio"` |  |
-| upstream.minio.imageTag | string | `"RELEASE.2025-10-15T17-29-55Z-4796483"` |  |
+| upstream.minio.imageTag | string | `"RELEASE.2024-06-04T19-20-08Z"` |  |
 | upstream.minio.pullSecrets[0].name | string | `"private-registry"` |  |
 | upstream.minio.minioMc.image | string | `"registry1.dso.mil/ironbank/opensource/minio/mc"` |  |
-| upstream.minio.minioMc.tag | string | `"RELEASE.2025-08-13T08-35-41Z-4797156"` |  |
+| upstream.minio.minioMc.tag | string | `"RELEASE.2024-10-02T08-27-28Z"` |  |
 | upstream.minio.minioMc.pullSecrets[0].name | string | `"private-registry"` |  |
 | domain | string | `"dev.bigbang.mil"` |  |
 | sso.enabled | bool | `false` |  |
 | sso.host | string | `"login.dso.mil"` |  |
-| istio.enabled | bool | `false` |  |
-| istio.injection | string | `"disabled"` |  |
-| istio.hardened.enabled | bool | `false` |  |
-| istio.hardened.outboundTrafficPolicyMode | string | `"REGISTRY_ONLY"` |  |
-| istio.hardened.customServiceEntries | list | `[]` |  |
-| istio.hardened.customAuthorizationPolicies | list | `[]` |  |
-| istio.hardened.gitlabRunner.enabled | bool | `true` |  |
-| istio.hardened.gitlabRunner.namespaces[0] | string | `"gitlab-runner"` |  |
-| istio.hardened.gcpe.enabled | bool | `true` |  |
-| istio.hardened.gcpe.namespaces[0] | string | `"gitlab-ci-pipelines-exporter"` |  |
-| istio.hardened.monitoring.enabled | bool | `true` |  |
-| istio.hardened.monitoring.namespaces[0] | string | `"monitoring"` |  |
-| istio.hardened.monitoring.principals[0] | string | `"cluster.local/ns/monitoring/sa/monitoring-grafana"` |  |
-| istio.hardened.monitoring.principals[1] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager"` |  |
-| istio.hardened.monitoring.principals[2] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator"` |  |
-| istio.hardened.monitoring.principals[3] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus"` |  |
-| istio.hardened.monitoring.principals[4] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics"` |  |
-| istio.hardened.monitoring.principals[5] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter"` |  |
-| istio.gitlab.enabled | bool | `true` |  |
-| istio.gitlab.annotations | object | `{}` |  |
-| istio.gitlab.labels | object | `{}` |  |
-| istio.gitlab.gateways[0] | string | `"istio-system/main"` |  |
-| istio.gitlab.hosts | string | `nil` |  |
-| istio.gitlab.selectorLabels.app | string | `"webservice"` |  |
-| istio.registry.enabled | bool | `true` |  |
-| istio.registry.annotations | object | `{}` |  |
-| istio.registry.labels | object | `{}` |  |
-| istio.registry.gateways[0] | string | `"istio-system/main"` |  |
-| istio.registry.hosts | string | `nil` |  |
-| istio.registry.selectorLabels.app | string | `"registry"` |  |
-| istio.pages.enabled | bool | `false` |  |
-| istio.pages.annotations | object | `{}` |  |
-| istio.pages.ingressLabels.app | string | `"pages-ingressgateway"` |  |
-| istio.pages.ingressLabels.istio | string | `"ingressgateway"` |  |
-| istio.pages.labels | object | `{}` |  |
-| istio.pages.gateways[0] | string | `"istio-system/pages"` |  |
-| istio.pages.customDomains.enabled | bool | `true` |  |
-| istio.pages.hosts[0] | string | `"*.pages.dev.bigbang.mil"` |  |
-| istio.mtls | object | `{"mode":"STRICT"}` | Default peer authentication |
-| istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
-| monitoring.enabled | bool | `false` |  |
-| networkPolicies.enabled | bool | `false` |  |
-| networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
-| networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
-| networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
-| networkPolicies.vpcCidr | string | `"0.0.0.0/0"` |  |
-| networkPolicies.egressPort | string | `nil` |  |
-| networkPolicies.gitalyEgress.enabled | bool | `false` |  |
-| networkPolicies.additionalPolicies | list | `[]` |  |
 | openshift | bool | `false` |  |
 | use_iam_profile | bool | `false` |  |
 | bbtests.enabled | bool | `false` |  |

@@ -1,3 +1,68 @@
+# -- Network Policy configuration; see bb-common network policy docs for details: https://repo1.dso.mil/big-bang/product/packages/bb-common/-/tree/main/docs/network-policies?ref_type=heads
+# @default -- Basic configuration necessary for gitlab to function standalone.
+networkPolicies:
+  enabled: false
+  egress:
+    from:
+      webservice:
+        podSelector:
+          matchLabels:
+            app: webservice
+        to:
+          definition:
+            kubeAPI: true
+      gitlab-runner:
+        podSelector:
+          matchLabels:
+            app: gitlab-runner
+        to:
+          definition:
+            kubeAPI: true
+      
+      # gitaly, sidekiq, migrations, toolbox, and registry are just here to set their 
+      # podSelectors for easier user configuration
+
+      gitaly:
+        podSelector:
+          matchLabels:
+            app: gitaly
+      sidekiq:
+        podSelector:
+          matchLabels:
+            app: sidekiq
+      migrations:
+        podSelector:
+          matchLabels:
+            app: migrations
+      toolbox:
+        podSelector:
+          matchLabels:
+            app: toolbox
+      registry:
+        podSelector:
+          matchLabels:
+            app: registry
+
+# -- Istio configuration; see bb-common istio docs for details: https://repo1.dso.mil/big-bang/product/packages/bb-common/-/tree/main/docs/istio?ref_type=heads
+# @default -- Istio disabled
+istio:
+  # Toggle istio integration
+  enabled: false
+
+# -- Routes configuration; see bb-common routes docs for details: https://repo1.dso.mil/big-bang/product/packages/bb-common/-/tree/main/docs/routes?ref_type=heads
+# @default -- Basic outbound routes for gitlab functionality
+routes:
+  outbound:
+    gitlab:
+      enabled: true
+      hosts:
+      - gitlab.com
+      - version.gitlab.com
+    gravatar:
+      enabled: true
+      hosts:
+      - secure.gravatar.com
+
 ## NOTICE
 #
 # Due to the scope and complexity of this chart, all possible values are
@@ -1029,114 +1094,11 @@ domain: dev.bigbang.mil
 sso:
   enabled: false
   host: login.dso.mil
-istio:
-  # Toggle istio integration
-  enabled: false
-  injection: disabled
-  hardened:
-    enabled: false
-    outboundTrafficPolicyMode: "REGISTRY_ONLY"
-    customServiceEntries: []
-      # - name: "allow-google"
-      #   enabled: true
-      #   spec:
-      #     exportTo:
-      #       - "."
-      #     hosts:
-      #       - google.com
-      #     location: MESH_EXTERNAL
-      #     ports:
-      #       - number: 443
-      #         protocol: TLS
-      #         name: https
-      #     resolution: DNS
-    customAuthorizationPolicies: []
-    # - name: "allow-nothing"
-    #   enabled: true
-    #   spec: {}
-    gitlabRunner:
-      enabled: true
-      namespaces:
-        - gitlab-runner
-    # gitlab-ci-pipelines-exporter
-    gcpe:
-      enabled: true
-      namespaces:
-        - gitlab-ci-pipelines-exporter
-    monitoring:
-      enabled: true
-      namespaces:
-        - monitoring
-      principals:
-        - cluster.local/ns/monitoring/sa/monitoring-grafana
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics
-        - cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter
-  gitlab:
-    # Toggle vs creation
-    enabled: true
-    annotations: {}
-    labels: {}
-    gateways:
-      - istio-system/main
-    # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
-    hosts: null
-    selectorLabels:
-      app: webservice
-  registry:
-    # Toggle vs creation
-    enabled: true
-    annotations: {}
-    labels: {}
-    gateways:
-      - istio-system/main
-    # optional - only affects the Istio VirtualService ingress. Does not affect Gitlab configuration
-    hosts: null
-    selectorLabels:
-      app: registry
-  pages:
-    # Toggle vs creation
-    enabled: false
-    annotations: {}
-    ingressLabels:
-      app: pages-ingressgateway
-      istio: ingressgateway
-    labels: {}
-    gateways:
-      - istio-system/pages
-    # Enable or disable custom domains
-    customDomains:
-      enabled: true
-    #only affects the Istio VirtualService ingress. Does not affect Gitlab configuration. Must be populated as a wildcard.
-    hosts:
-    - '*.pages.dev.bigbang.mil'
-  # -- Default peer authentication
-  mtls:
-    # -- STRICT = Allow only mutual TLS traffic,
-    # PERMISSIVE = Allow both plain text and mutual TLS traffic
-    mode: STRICT
-
-monitoring:
-  enabled: false
-
-networkPolicies:
-  enabled: false
-  ingressLabels:
-    app: istio-ingressgateway
-    istio: ingressgateway
-  # See `kubectl cluster-info` and then resolve to IP
-  controlPlaneCidr: 0.0.0.0/0
-  vpcCidr: 0.0.0.0/0
-  egressPort:
-  gitalyEgress:
-    enabled: false
-  additionalPolicies: []
 
 openshift: false
 
 # Track if AWS IAM Profile is used for Object Storage
+# @deprecated - use bb-common to enable IMDS access instead
 use_iam_profile: false
 
 bbtests:
