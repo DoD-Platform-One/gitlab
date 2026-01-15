@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.7.0-bb.2] (2026-01-15)
+
+### Changed
+
+- update values.yaml file with gitlab-kas Iron Bank overrides
+
+
 ## [9.7.0-bb.1] (2025-12-26)
 ### Changed
 

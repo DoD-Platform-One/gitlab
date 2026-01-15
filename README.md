@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 9.7.0-bb.1](https://img.shields.io/badge/Version-9.7.0--bb.1-informational?style=flat-square) ![AppVersion: 18.7.0](https://img.shields.io/badge/AppVersion-18.7.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 9.7.0-bb.2](https://img.shields.io/badge/Version-9.7.0--bb.2-informational?style=flat-square) ![AppVersion: 18.7.0](https://img.shields.io/badge/AppVersion-18.7.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -491,6 +491,18 @@ helm install gitlab chart/
 | upstream.gitlab.gitlab-pages.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages"` |  |
 | upstream.gitlab.gitlab-pages.image.tag | string | `"18.7.0"` |  |
 | upstream.gitlab.gitlab-pages.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| upstream.gitlab.kas.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kas"` |  |
+| upstream.gitlab.kas.image.tag | string | `"18.7.0"` |  |
+| upstream.gitlab.kas.init.resources.limits.cpu | string | `"200m"` |  |
+| upstream.gitlab.kas.init.resources.limits.memory | string | `"200Mi"` |  |
+| upstream.gitlab.kas.init.resources.requests.cpu | string | `"200m"` |  |
+| upstream.gitlab.kas.init.resources.requests.memory | string | `"200Mi"` |  |
+| upstream.gitlab.kas.init.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| upstream.gitlab.kas.resources.requests.cpu | int | `1` |  |
+| upstream.gitlab.kas.resources.requests.memory | string | `"1Gi"` |  |
+| upstream.gitlab.kas.resources.limits.cpu | int | `1` |  |
+| upstream.gitlab.kas.resources.limits.memory | string | `"1Gi"` |  |
+| upstream.gitlab.kas.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | upstream.gitlab.praefect.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitaly"` |  |
 | upstream.gitlab.praefect.image.tag | string | `"18.7.0"` |  |
 | upstream.gitlab.praefect.init.resources.limits.cpu | string | `"200m"` |  |

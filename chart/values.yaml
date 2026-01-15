@@ -19,7 +19,7 @@ networkPolicies:
           definition:
             kubeAPI: true
       
-      # gitaly, sidekiq, migrations, toolbox, and registry are just here to set their 
+      # gitaly, sidekiq, migrations, toolbox, kas and registry are just here to set their 
       # podSelectors for easier user configuration
 
       gitaly:
@@ -42,6 +42,11 @@ networkPolicies:
         podSelector:
           matchLabels:
             app: registry
+      kas:
+        podSelector:
+          matchLabels:
+            app: kas
+     
 
 # -- Istio configuration; see bb-common istio docs for details: https://repo1.dso.mil/big-bang/product/packages/bb-common/-/tree/main/docs/istio?ref_type=heads
 # @default -- Istio disabled
@@ -89,7 +94,7 @@ routes:
 ## The global properties are used to configure multiple charts at once.
 ## https://docs.gitlab.com/charts/charts/globals
 
-global:
+global: 
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-host-settings
   hosts:
@@ -98,6 +103,9 @@ global:
       name: gitlab.dev.bigbang.mil
     registry:
       name: registry.dev.bigbang.mil
+    # uncomment to enable KAS with custom hostname
+    # kas:
+    #   name: kas.dev.bigbang.mil
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
   ingress:
@@ -1004,7 +1012,33 @@ upstream:
           drop:
             - ALL
     ## https://docs.gitlab.com/charts/charts/gitlab/kas
-    #   kas:
+    kas:
+      image:
+        repository: registry1.dso.mil/ironbank/gitlab/gitlab/kas
+        tag: 18.7.0
+      init:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        containerSecurityContext:
+          capabilities:
+            drop:
+              - ALL
+      resources:
+        requests:
+          cpu: 1
+          memory: 1Gi
+        limits:
+          cpu: 1
+          memory: 1Gi
+      containerSecurityContext:
+        capabilities:
+          drop:
+            - ALL
     ## https://docs.gitlab.com/charts/charts/gitlab/praefect
     praefect:
       image:
