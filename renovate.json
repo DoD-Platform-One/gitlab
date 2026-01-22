@@ -36,11 +36,17 @@
         },
         {
             "matchPackageNames": [
-                "registry1.dso.mil/ironbank/opensource/minio/minio", 
+                "registry1.dso.mil/ironbank/opensource/minio/minio"
+            ],
+            "versioning": "regex:(RELEASE\\.(?<major>\\d{4})-(?<minor>\\d{2})-(?<patch>\\d{2})T(?<build>\\d{2}-\\d{2}-\\d{2})Z)",
+            "allowedVersions": "RELEASE.2024-06-04T19-20-08Z"
+        },
+        {
+            "matchPackageNames": [
                 "registry1.dso.mil/ironbank/opensource/minio/mc"
             ],
             "versioning": "regex:(RELEASE\\.(?<major>\\d{4})-(?<minor>\\d{2})-(?<patch>\\d{2})T(?<build>\\d{2}-\\d{2}-\\d{2})Z)",
-            "allowedVersions": "!/(-amd64|-arm64)$/"
+            "allowedVersions": "RELEASE.2024-10-02T08-27-28Z"
         }
     ],
     "customManagers": [
