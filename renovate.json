@@ -26,6 +26,10 @@
             "groupName": "Ironbank"
         },
         {
+            "matchDatasources": ["docker"],
+            "groupName": "Ironbank"
+        },
+        {
             "matchDatasources": [
                 "docker"
             ],
@@ -77,11 +81,19 @@
                 "/^chart/values\\.yaml$/"
             ],
             "matchStrings": [
-                "image:[^\\S]+(?<depName>.+)[^\\S]+(imageTag|tag):[^\\S]+(?<currentValue>.+)",
-                "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>[\\v\\d\\.]+)",
-                "repository:[^\\S]+(?<depName>.+)[^\\S\\r\\n]+tag:[^\\S](?<currentValue>.+)",
-                "registry:[^\\S]+(?<registry>.+)[^\\S\\r\\n]+repository:[^\\S](?<depName>.+)[^\\S\\r\\n]+tag:[^\\S](?<currentValue>.+)"
+                "repository:\\s*(?<depName>registry1[^\\s]+)[\\s\\S]*?tag:\\s*[\"']?(?<currentValue>[^\\s\"']+)"
             ],
+            "datasourceTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/^chart/values\\.yaml$/"
+            ],
+            "matchStrings": [
+                "registry:\\s*(?<registry>registry1[^\\s]+)[\\s\\S]*?repository:\\s*(?<depName>[^\\s]+)[\\s\\S]*?tag:\\s*[\"']?(?<currentValue>[^\\s\"']+)"
+            ],
+            "depNameTemplate": "{{{registry}}}/{{{depName}}}",
             "datasourceTemplate": "docker"
         },
         {
