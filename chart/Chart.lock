@@ -1,12 +1,12 @@
 dependencies:
 - name: bb-common
   repository: oci://registry1.dso.mil/bigbang
-  version: 0.12.0
+  version: 0.13.0
 - name: gitlab
   repository: https://charts.gitlab.io
-  version: 9.7.1
+  version: 9.8.2
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
-  version: 0.9.6
-digest: sha256:9e0bad545fb8c0241d7f503a767a17ba5a22b12c32a8e551ca1a558ca2009605
-generated: "2026-01-16T12:42:28.538166-06:00"
+  version: 0.9.7
+digest: sha256:2e2f2dc6ca34a58bacaa4dc35cf6576c27fdeec9a126c28c3ffe9191f1f0db64
+generated: "2026-01-27T15:51:29.626319-06:00"
