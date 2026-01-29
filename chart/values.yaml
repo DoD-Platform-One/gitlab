@@ -336,7 +336,7 @@ upstream:
       image:
         registry: registry1.dso.mil/ironbank/bitnami
         repository: analytics/redis-exporter
-        tag: v1.80.1
+        tag: v1.80.2
         pullSecrets: []
       resources:
         limits:
