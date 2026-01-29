@@ -1,6 +1,6 @@
 apiVersion: v2
 name: gitlab
-version: 9.8.2-bb.0
+version: 9.8.2-bb.1
 appVersion: 18.8.2
 description: GitLab is the most comprehensive AI-powered DevSecOps Platform.
 keywords:
@@ -29,7 +29,7 @@ annotations:
   helm.sh/images: |
     - name: redis-exporter
       condition: upstream.redis.metrics.enabled
-      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.80.1
+      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.80.2
     - name: redis
       condition: upstream.redis.install
       image: registry1.dso.mil/ironbank/bitnami/redis:8.4.0
