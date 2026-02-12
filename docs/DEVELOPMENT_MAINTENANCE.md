@@ -151,6 +151,9 @@ BigBang makes modifications to the upstream helm chart. The full list of changes
       artifacts:
         paths:
           - file.txt
+      tags:
+        - bb-prod-ci
+        - generic
     cache:
       paths:
         - file.txt
