@@ -4,6 +4,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.8.2-bb.2] (2026-02-12)
+
+### Changed
+
+- registry1.dso.mil/ironbank/big-bang/devops-tester 1.0 -> 1.1
+- ironbank/gitlab/gitlab/gitlab-webservice 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/kas 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 18.8.2 -> 18.8.4
+
 ## [9.8.2-bb.1] (2026-01-29)
 
 ### Changed
@@ -17,21 +38,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - update bb-common 0.12.0 -> 0.13.0
 - update gluon 0.9.6 -> 0.9.7
 - fix gitlab-workhorse image format in values.yaml for renovate compatibility
-- ironbank/gitlab/gitlab/gitlab-webservice 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/kas 18.7.1 -> 18.8.2
-- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 18.7.1 -> 18.8.2
+- ironbank/gitlab/gitlab/gitlab-webservice 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/certificates 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitaly 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/kas 18.8.2 -> 18.8.4
+- registry1.dso.mil/ironbank/gitlab/gitlab/kubectl 18.8.2 -> 18.8.4
 
 ## [9.7.1-bb.0] (2026-01-16)
 ### Changed

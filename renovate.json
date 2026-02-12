@@ -18,7 +18,9 @@
     ],
     "labels": [
         "gitlab",
-        "renovate"
+        "renovate",
+        "priority::2",
+        "kind::maintenance"
     ],
     "packageRules": [
         {
