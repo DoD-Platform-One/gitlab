@@ -94,7 +94,16 @@ routes:
 ## The global properties are used to configure multiple charts at once.
 ## https://docs.gitlab.com/charts/charts/globals
 
-global: 
+global:
+
+  # gitlab charts generally use a helper to prefer `imagePullSecrets` -- but not always.
+  # so, we define both `global.image.pullSecrets` and `global.imagePullSecrets` here at the global level
+  image:
+    pullSecrets:
+      - name: private-registry
+      
+  imagePullSecrets:
+    - name: private-registry
 
   ## https://docs.gitlab.com/charts/charts/globals#configure-host-settings
   hosts:
@@ -167,8 +176,6 @@ global:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
       tag: 18.8.4
-      pullSecrets:
-      - name: private-registry
     init:
       securityContext:
         capabilities:
@@ -216,8 +223,6 @@ global:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
       tag: 18.8.4
-      pullSecrets:
-      - name: private-registry
     securityContext:
       # in most base images, this is `nobody:nogroup`
       runAsUser: 65534
@@ -233,8 +238,6 @@ global:
       #   a. trying gitlab-base per https://repo1.dso.mil/dsop/gitlab/gitlab/gitlab-base/-/issues/77
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base
       tag: "18.8.4"
-      pullSecrets:
-      - name: private-registry
 
   ## https://docs.gitlab.com/charts/charts/globals#service-accounts
   serviceAccount:
@@ -258,8 +261,6 @@ upstream:
     image:
       repository: registry1.dso.mil/ironbank/redhat/ubi/ubi9
       tag: "9.7"
-      pullSecrets:
-      - name: private-registry
     securityContext:
       # in alpine/debian/busybox based images, this is `nobody:nogroup`
       runAsUser: 65534
@@ -319,10 +320,6 @@ upstream:
   ## https://docs.gitlab.com/charts/architecture/decisions#redis
   ## https://docs.gitlab.com/charts/installation/deployment.html#redis
   redis:
-    global:
-      imagePullSecrets:
-      - private-registry
-
     install: true
     auth:
       existingSecret: gitlab-redis-secret
@@ -337,7 +334,6 @@ upstream:
         registry: registry1.dso.mil/ironbank/bitnami
         repository: analytics/redis-exporter
         tag: v1.80.2
-        pullSecrets: []
       resources:
         limits:
           cpu: 250m
@@ -363,7 +359,6 @@ upstream:
       registry: registry1.dso.mil/ironbank/bitnami
       repository: redis
       tag: 8.4.0
-      pullSecrets: []
     master:
       resources:
         limits:
@@ -427,8 +422,6 @@ upstream:
     install: true
     postgresqlDatabase: gitlabhq_production
     global:
-      imagePullSecrets:
-        - private-registry
       security:
         allowInsecureImages: true
     image:
@@ -560,8 +553,6 @@ upstream:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
       tag: 18.8.4
-      pullSecrets:
-      - name: private-registry
     ingress:
       enabled: false # Local setting in subchart must be overridden
     # The registry debug.addr.port is used for metrics. Default is 5001
@@ -660,8 +651,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
       init:
         resources:
           requests:
@@ -737,8 +726,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
       metrics:
         enabled: true
         port: 9168
@@ -782,8 +769,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -831,8 +816,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
       workhorse:
         resources:
           # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
@@ -844,8 +827,6 @@ upstream:
             memory: 2.5G
         image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
         metrics:
           enabled: true
           serviceMonitor:
@@ -868,8 +849,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
       init:
         resources:
           limits:
@@ -905,8 +884,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
       init:
         resources:
           limits:
@@ -946,8 +923,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
         tag: 18.8.4
-        pullSecrets:
-        - name: private-registry
       init:
         resources:
           limits:
@@ -990,8 +965,6 @@ upstream:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
         tag: 18.8.4
-        pullSecrets:
-          - name: private-registry
       containerSecurityContext:
         capabilities:
           drop:
@@ -1110,8 +1083,6 @@ upstream:
     # use Ironbank hardened images for MinIO
     image: registry1.dso.mil/ironbank/opensource/minio/minio
     imageTag: RELEASE.2024-06-04T19-20-08Z
-    pullSecrets:
-    - name: private-registry
     minioMc:
       # the MinIO sub-chart config script was modified to work with newer mc version in IronBank image
       #   chart/charts/minio/templates/_helper_create_buckets.sh
@@ -1119,8 +1090,6 @@ upstream:
       #        /usr/bin/mc policy set $POLICY myminio/$BUCKET
       image: registry1.dso.mil/ironbank/opensource/minio/mc
       tag: RELEASE.2024-10-02T08-27-28Z
-      pullSecrets:
-      - name: private-registry
 
 # Big Bang Additions
 domain: dev.bigbang.mil
