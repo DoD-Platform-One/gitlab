@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.8.2-bb.3] (2026-02-24)
+
+### Changed
+
+- Updated values.yaml to use/set global image pull secrets
+
 ## [9.8.2-bb.2] (2026-02-12)
 
 ### Changed
