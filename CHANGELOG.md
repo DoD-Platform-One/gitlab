@@ -4,12 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [9.9.3-bb.0] (2026-03-12)
+## [9.9.3-bb.0] (2026-03-13)
 
 ### Changed
 
 - Updated bb-common `0.13.0` -> `0.14.1`
-- Updated gitlab `9.8.2` -> `9.9.2`
+- Updated gitlab `9.8.2` -> `9.9.3`
 - Updated gluon `0.9.7` -> `0.9.8`
 - Updated ironbank/gitlab/gitlab/gitlab-webservice 18.8.4 -> 18.9.2
 - Updated registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.80.2 -> v1.82.0
