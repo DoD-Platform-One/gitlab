@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # gitlab
 
-![Version: 9.9.3-bb.0](https://img.shields.io/badge/Version-9.9.3--bb.0-informational?style=flat-square) ![AppVersion: 18.9.2](https://img.shields.io/badge/AppVersion-18.9.2-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 9.9.3-bb.1](https://img.shields.io/badge/Version-9.9.3--bb.1-informational?style=flat-square) ![AppVersion: 18.9.2](https://img.shields.io/badge/AppVersion-18.9.2-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 GitLab is the most comprehensive AI-powered DevSecOps Platform.
 
@@ -475,6 +475,7 @@ helm install gitlab chart/
 | upstream.gitlab.gitlab-pages.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages"` |  |
 | upstream.gitlab.gitlab-pages.image.tag | string | `"18.9.2"` |  |
 | upstream.gitlab.gitlab-pages.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| upstream.gitlab.kas.ingress.enabled | bool | `false` |  |
 | upstream.gitlab.kas.image.repository | string | `"registry1.dso.mil/ironbank/gitlab/gitlab/kas"` |  |
 | upstream.gitlab.kas.image.tag | string | `"18.9.2"` |  |
 | upstream.gitlab.kas.init.resources.limits.cpu | string | `"200m"` |  |
