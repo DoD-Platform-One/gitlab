@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.9.3-bb.1] (2026-03-17)
+
+### Changed
+
+- Updated values.yaml to disable kas ingress by default
+
 ## [9.9.3-bb.0] (2026-03-13)
 
 ### Changed

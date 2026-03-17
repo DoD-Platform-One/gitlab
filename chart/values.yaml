@@ -986,6 +986,8 @@ upstream:
             - ALL
     ## https://docs.gitlab.com/charts/charts/gitlab/kas
     kas:
+      ingress:
+        enabled: false # Local setting in subchart must be overridden
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/kas
         tag: 18.9.2
