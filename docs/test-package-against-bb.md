@@ -1,6 +1,6 @@
 # Testing your Package Branch against Bigbang before Package Merge
 
-These instructions right now are written for istio changes, but the same is probably true for kyverno and possibly for others. CODEOWNERS reviewing Merge Requests (MRs) should enforce this.
+The following instructions exhibit testing against bb-common (istio) changes, however any necessary override for gitlab can be tested using this method.
 
 ## Run Bigbang Tests Against your Branch
 
