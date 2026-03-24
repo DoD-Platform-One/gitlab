@@ -175,7 +175,7 @@ global:
   certificates:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/certificates
-      tag: 18.9.2
+      tag: 18.10.0
     init:
       securityContext:
         capabilities:
@@ -222,7 +222,7 @@ global:
   kubectl:
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/kubectl
-      tag: 18.9.2
+      tag: 18.10.0
     securityContext:
       # in most base images, this is `nobody:nogroup`
       runAsUser: 65534
@@ -237,7 +237,7 @@ global:
       # 1. UBI does not have the newly required /scripts/set-config template generator in its entrypoint.
       #   a. trying gitlab-base per https://repo1.dso.mil/dsop/gitlab/gitlab/gitlab-base/-/issues/77
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-base
-      tag: "18.9.2"
+      tag: "18.10.0"
 
   ## https://docs.gitlab.com/charts/charts/globals#service-accounts
   serviceAccount:
@@ -552,7 +552,7 @@ upstream:
         memory: 1024Mi
     image:
       repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-container-registry
-      tag: 18.9.2
+      tag: 18.10.0
     ingress:
       enabled: false # Local setting in subchart must be overridden
     # The registry debug.addr.port is used for metrics. Default is 5001
@@ -650,7 +650,7 @@ upstream:
           app: gitaly
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-        tag: 18.9.2
+        tag: 18.10.0
       init:
         resources:
           requests:
@@ -725,7 +725,7 @@ upstream:
           - ALL
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-exporter
-        tag: 18.9.2
+        tag: 18.10.0
       metrics:
         enabled: true
         port: 9168
@@ -768,7 +768,7 @@ upstream:
           memory: 1.5G
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-toolbox
-        tag: 18.9.2
+        tag: 18.10.0
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -815,7 +815,7 @@ upstream:
           memory: 2.5G # = 2 * 1.25G assuming there are 2 workerProcesses configured
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-webservice
-        tag: 18.9.2
+        tag: 18.10.0
       workhorse:
         resources:
           # https://docs.gitlab.com/charts/charts/gitlab/webservice/index.html#memory-requestslimits
@@ -826,7 +826,7 @@ upstream:
             cpu: 600m
             memory: 2.5G
         image: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-workhorse
-        tag: 18.9.2
+        tag: 18.10.0
         metrics:
           enabled: true
           serviceMonitor:
@@ -848,7 +848,7 @@ upstream:
     sidekiq:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-sidekiq
-        tag: 18.9.2
+        tag: 18.10.0
       init:
         resources:
           limits:
@@ -883,7 +883,7 @@ upstream:
     gitaly:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-        tag: 18.9.2
+        tag: 18.10.0
       init:
         resources:
           limits:
@@ -922,7 +922,7 @@ upstream:
     gitlab-shell:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-shell
-        tag: 18.9.2
+        tag: 18.10.0
       init:
         resources:
           limits:
@@ -964,7 +964,7 @@ upstream:
     mailroom:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-mailroom
-        tag: 18.9.2
+        tag: 18.10.0
       containerSecurityContext:
         capabilities:
           drop:
@@ -979,7 +979,7 @@ upstream:
           type: ClusterIP
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitlab-pages
-        tag: 18.9.2
+        tag: 18.10.0
       containerSecurityContext:
         capabilities:
           drop:
@@ -990,7 +990,7 @@ upstream:
         enabled: false # Local setting in subchart must be overridden
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/kas
-        tag: 18.9.2
+        tag: 18.10.0
       init:
         resources:
           limits:
@@ -1018,7 +1018,7 @@ upstream:
     praefect:
       image:
         repository: registry1.dso.mil/ironbank/gitlab/gitlab/gitaly
-        tag: 18.9.2
+        tag: 18.10.0
       init:
         resources:
           limits:
