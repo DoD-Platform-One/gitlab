@@ -4,6 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.10.0-bb.0] (2026-03-23)
+
+### Changed
+
+- Updated gitlab `9.9.3` -> `9.10.0`
+- Updated ironbank/gitlab/gitlab/certificates 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitaly 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-base 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-container-registry 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-exporter 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-mailroom 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-pages 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-shell 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-sidekiq 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-toolbox 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-webservice 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/gitlab-workhorse 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/kas 18.9.2 -> 18.10.0
+- Updated ironbank/gitlab/gitlab/kubectl 18.9.2 -> 18.10.0
+
 ## [9.9.3-bb.1] (2026-03-17)
 
 ### Changed
